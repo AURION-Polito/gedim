@@ -1,3 +1,4 @@
+#include "test_mesh.hpp"
 
 #include <gtest/gtest.h>
 

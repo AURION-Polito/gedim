@@ -30,7 +30,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # ADD Eigen
 #######################################
-list(APPEND directories_include ${GEDIM_EXTERNALS_DIR}/eigen)
+list(APPEND gedim_include ${GEDIM_EXTERNALS_DIR}/eigen)
 
 # ADD Google Testing Environment
 ####################################### Start
@@ -68,17 +68,18 @@ if (NOT ${GMockSrc} STREQUAL "")
     list(APPEND GTestIncludes ${GMockSrc} ${GMockSrc}/include)
 endif ()
 
-list(APPEND directories_include ${GTestIncludes})
+list(APPEND unittest_include ${GTestIncludes})
 ####################################### End
 
 # ADD external libs
 set(gedim_libs ${gedim_libs} "test")
 
 # ADD code
-list(APPEND directories_include ${src_include})
-list(APPEND directories_include ${CMAKE_CURRENT_SOURCE_DIR}/test)
+list(APPEND gedim_include ${src_include})
+list(APPEND unittest_include ${test_include})
 
 # CONFIGURE PUBLIC_HEADERS FOR LIBRARY INSTALL
+####################################### Start
 set(gedim_additional_include ${CMAKE_CURRENT_BINARY_DIR}/additional_include)
 
 foreach(header ${src_headers})
@@ -98,15 +99,15 @@ foreach(header ${src_headers})
   list(APPEND gedim_public_headers ${headerDirectory}/${headerFileName}${headerExtension})
 endforeach()
 
-list(APPEND directories_include ${gedim_additional_include})
-set(gedim_include ${directories_include})
+list(APPEND gedim_include ${gedim_additional_include})
+####################################### End
 
 # Add additional files
 
 # CREATE LIBRARY
-include_directories(SYSTEM ${directories_include})
-
 add_library(${PROJECT_NAME} STATIC ${src_sources} ${src_headers})
+
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${gedim_include})
 if(${gedim_libs})
 	add_dependencies(${PROJECT_NAME} ${gedim_libs})
 	target_link_libraries(${PROJECT_NAME} ${gedim_libs})
@@ -123,7 +124,10 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # CREATE TESTS EXECUTABLE
-add_executable(unitTests mainUnitTests.cpp ${src_sources} ${gedim_public_headers} ${test_sources} ${GTestFiles})
+add_executable(unitTests mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
+
+target_include_directories(unitTests SYSTEM PUBLIC ${gedim_include})
+target_include_directories(unitTests SYSTEM PRIVATE ${unittest_include})
 if(${gedim_libs})
 	add_dependencies(unitTests ${gedim_libs})
 endif()
