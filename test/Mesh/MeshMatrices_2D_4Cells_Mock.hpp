@@ -5,13 +5,13 @@
 
 using namespace std;
 
-namespace UnitTesting
+namespace GedimUnitTesting
 {
   /// \brief Mesh generated with Triangle with parameter 0.25
   class MeshMatrices_2D_4Cells_Mock final
   {
     public:
-      GeDiM::MeshMatrices Mesh;
+      Gedim::MeshMatrices Mesh;
 
       MeshMatrices_2D_4Cells_Mock() {
         Mesh.Dimension = 2;

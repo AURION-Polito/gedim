@@ -12,7 +12,7 @@ using namespace Eigen;
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   class MpiProcess : public IMpiProcess
   {

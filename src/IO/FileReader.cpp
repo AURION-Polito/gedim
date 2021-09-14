@@ -1,6 +1,6 @@
 #include "FileReader.hpp"
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   FileReader::FileReader(const string& filePath)

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief Interface used to implement the MPI process
   /// \copyright See top level LICENSE file for details.

@@ -1,6 +1,6 @@
 #include "MpiProcess.hpp"
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   MpiProcess::MpiProcess(unsigned int rank,

@@ -34,7 +34,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   class Output;
   class Profiler;
@@ -49,18 +49,6 @@ namespace GeDiM
         FilesAndDirectories = 0,
         Files = 1,
         Directories = 2
-      };
-
-      /// \brief Exit codes for methods throughout GeDiM
-      enum ExitCodes
-      {
-        Success = 1, ///< Success flag.
-        Abort = -1, ///< Abort flag.
-        MpiError = -2, ///< MPI error flag.
-        PartitionError = -3, ///< Partitioning error flag.
-        FileError = -4, ///< File error flag.
-        GenericError = -5, ///< Generic error flag.
-        UnimplementedMethod = -6 ///< Flag for an unimplemented feature.
       };
 
       static string BlueColor;
@@ -85,10 +73,10 @@ namespace GeDiM
       /// Returns a list of paths containing the file/directory found in mainDirectory
       static void FindPaths(const string& mainDirectory, const string& objectNameToFind, vector<string>& paths, const FileFilter& filter = Output::FilesAndDirectories, const bool& hiddenElements = false);
 
-      static Output::ExitCodes GetBinaryFileSize(const string& nameFile, unsigned int& fileSize, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& startingPosition = 0);
-      static Output::ExitCodes ReadBinaryFile(const string& nameFile, void* dataToRead, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToRead, const unsigned int& startingPosition = 0);
+      static void GetBinaryFileSize(const string& nameFile, unsigned int& fileSize, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& startingPosition = 0);
+      static void ReadBinaryFile(const string& nameFile, void* dataToRead, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToRead, const unsigned int& startingPosition = 0);
       static bool ReadBinaryFile(const string& nameFile, vector<double>& dataToRead, const unsigned int& dataSizeToRead = 0, const unsigned int& startingPosition = 0);
-      static Output::ExitCodes WriteBinaryFile(const string& nameFile, const void* dataToWrite, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToWrite, const bool& append = false);
+      static void WriteBinaryFile(const string& nameFile, const void* dataToWrite, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToWrite, const bool& append = false);
       static bool WriteBinaryFile(const string& nameFile, const vector<double>& dataToWrite, const unsigned int& dataSizeToWrite = 0, const unsigned int& dataStartingPositionToWrite = 0, const bool& append = false);
 
       /// Print a line of symbol
@@ -114,31 +102,15 @@ namespace GeDiM
       /// Used to print to file, or on screen a success message
       static void PrintSuccessMessage(const string& message, const bool& onlyMaster, ...);
 
-      /// ExitCode result to string
-      static const string ExitCodeToString(const ExitCodes& result, const bool& colored = false);
-
       /// Assert for all code, generate exception if something goes wrong
       inline static void Assert(const bool& logicResult)
       {
         if (!logicResult)
           abort();
       }
-      /// Assert for all code, generate exception if something goes wrong
-      inline static void Assert(const ExitCodes& logicResult)
-      {
-        if (logicResult != Output::Success)
-          abort();
-      }
 
       /// Assert for all code, generate exception if something goes wrong with a message
       static void Assert(const bool& logicResult, const string& message, ...);
-      /// Assert for all code, generate exception if something goes wrong with a message
-      static void Assert(const ExitCodes& logicResult, const string& message, ...);
-
-      /// Assert for unit test, generate exception if something goes wrong with a message
-      static void AssertTest(const bool& logicResult, const string& message, ...);
-      /// Assert for unit test, generate exception if something goes wrong with a message
-      static void AssertTest(const ExitCodes& logicResult, const string& message, ...);
   };
 
   class LogFile
@@ -296,7 +268,7 @@ namespace GeDiM
 
     return out;
   }
-  /// General print of a list
+  /// General print of a set
   template <typename T>
   ostream& operator<<(ostream& out, const set<T>& setToPrint)
   {
@@ -325,7 +297,7 @@ namespace GeDiM
 
     return out;
   }
-  /// General print of a list
+  /// General print of a set
   template <typename T>
   ostream& operator<<(ostream& out, const set<T*>& setToPrint)
   {
@@ -351,6 +323,35 @@ namespace GeDiM
       counter++;
     }
     out<< "}";
+
+    return out;
+  }
+  /// General print of a map
+  template<typename map_key, typename map_val>
+  ostream& operator<<(ostream& out, const std::map<map_key, map_val>& mapToPrint)
+  {
+    unsigned int counter = 0;
+
+    out<< "{";
+    for (typename std::map<map_key, map_val>::const_iterator it = mapToPrint.begin();
+         it != mapToPrint.end();
+         ++it)
+    {
+      out<< (counter != 0 ? "," : "") << "{"<< it->first << ", " << it->second<< "}";
+      counter++;
+    }
+    out<< "}";
+
+    return out;
+  }
+  /// General print of a map
+  template<typename map_key, typename map_val>
+  ostream& operator<<(ostream& out, const std::map<map_key, map_val*>& mapToPrint)
+  {
+    for (typename std::map<map_key, map_val*>::const_iterator it = mapToPrint.begin();
+         it != mapToPrint.end();
+         ++it)
+      out << it->first << " => " << *(it->second) << '\n';
 
     return out;
   }

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   struct MeshMatrices final
   {

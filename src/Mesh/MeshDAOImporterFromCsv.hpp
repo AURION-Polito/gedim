@@ -7,7 +7,7 @@
 using namespace std;
 using namespace Eigen;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief MeshDAOImporterFromCsv
   /// \note each file could be EmptyFileReader if not necessary

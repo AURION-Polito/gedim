@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief Static class fot generic functions
   /// \copyright See top level LICENSE file for details.

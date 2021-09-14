@@ -1,6 +1,6 @@
 #include "Utilities.hpp"
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   list<vector<int> > Utilities::CombinationWithRepetition(int n,

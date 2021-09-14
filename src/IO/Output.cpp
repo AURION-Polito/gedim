@@ -17,7 +17,6 @@
 #include "Output.hpp"
 #include "MacroDefinitions.hpp"
 #include "MpiParallelEnvironment.hpp"
-#include "UnitTestSummary.hpp"
 #include "Utilities.hpp"
 
 #include <sys/stat.h>
@@ -43,9 +42,9 @@
 
 #include <iomanip>
 
-using namespace GeDiM;
+using namespace Gedim;
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
 #ifdef _WIN32
@@ -67,7 +66,7 @@ namespace GeDiM
   string Output::YellowColor = "";
   string Output::EndColor = "";
 #endif // _WIN32
-  int Output::MaxElementToPrint = 100;
+  int Output::MaxElementToPrint = 1000;
   int Output::StartingIndexToPrint = 0;
   // ***************************************************************************
   void Output::CreateFolder(const string& nameFolder)
@@ -260,7 +259,10 @@ namespace GeDiM
 #endif
   }
   // ***************************************************************************
-  Output::ExitCodes Output::GetBinaryFileSize(const string& nameFile, unsigned int& fileSize, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& startingPosition)
+  void Output::GetBinaryFileSize(const string& nameFile,
+                                 unsigned int& fileSize,
+                                 const unsigned int& sizeOfSingleDataToWrite,
+                                 const unsigned int& startingPosition)
   {
     /// <ul>
 
@@ -269,10 +271,7 @@ namespace GeDiM
     file.open(nameFile.c_str(), ios::binary | ios::ate);
 
     if (file.fail())
-    {
-      Output::PrintErrorMessage("File '%s' cannot be opened", false, nameFile.c_str());
-      return Output::GenericError;
-    }
+      throw runtime_error("File '" + nameFile +"' cannot be opened");
 
     /// <li> Get file size
     fileSize = 0;
@@ -280,67 +279,57 @@ namespace GeDiM
     fileSize += file.tellg();
 
     if (fileSize < (startingPosition * sizeOfSingleDataToWrite))
-    {
-      Output::PrintErrorMessage("Error in file '%s': uncorrect starting position. Expected %d, obtained %d", false, nameFile.c_str(), startingPosition, fileSize / sizeof(double));
-      return Output::GenericError;
-    }
+      throw runtime_error("Error in file '" + nameFile +
+                          "': uncorrect starting position. Expected " +
+                          to_string(startingPosition) +", obtained " +
+                          to_string(fileSize / sizeof(double)));
 
     fileSize -= startingPosition * sizeOfSingleDataToWrite;
 
     file.close();
 
-    return Output::Success;
-
     /// </ul>
   }
   // ***************************************************************************
-  Output::ExitCodes Output::ReadBinaryFile(const string& nameFile, void* dataToRead, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToRead, const unsigned int& startingPosition)
+  void Output::ReadBinaryFile(const string& nameFile, void* dataToRead, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToRead, const unsigned int& startingPosition)
   {
     /// <ul>
 
     /// <li> Get file dimension
     unsigned int fileSize = 0;
-    Output::ExitCodes result = Output::GetBinaryFileSize(nameFile, fileSize, sizeOfSingleDataToWrite, startingPosition);
-    if (result != Output::Success)
-      return result;
+    GetBinaryFileSize(nameFile, fileSize, sizeOfSingleDataToWrite, startingPosition);
 
     if (fileSize == 0)
-      return Output::Success;
+      return;
 
     /// <li> Open file
     ifstream file;
     file.open(nameFile.c_str(), ios::binary | ios::ate);
     if (file.fail())
-    {
-      Output::PrintErrorMessage("File '%s' cannot be opened", false, nameFile.c_str());
-      return Output::GenericError;
-    }
+      throw runtime_error("File '" + nameFile + "' cannot be opened");
 
     file.seekg(startingPosition * sizeOfSingleDataToWrite);
 
     if (fileSize < (dataSizeToRead * sizeOfSingleDataToWrite))
-    {
-      Output::PrintErrorMessage("Error in file '%s': uncorrect size. Expected %d, obtained %d", false, nameFile.c_str(), dataSizeToRead, fileSize / sizeof(double));
-      return Output::GenericError;
-    }
+      throw runtime_error("Error in file '" + nameFile +
+                          "': uncorrect size. Expected " +
+                          to_string(dataSizeToRead) + ", obtained " +
+                          to_string(fileSize / sizeof(double)));
 
     /// <li> Read from file
     unsigned int fileSizeToRead = dataSizeToRead == 0 ? fileSize : dataSizeToRead * sizeOfSingleDataToWrite;
     int fileContentSize = dataSizeToRead == 0 ? fileSize / sizeOfSingleDataToWrite : dataSizeToRead;
 
     if (fileContentSize == 0)
-    {
-      Output::PrintErrorMessage("Error in file '%s': uncorrect content size. Obtained %d", false, nameFile.c_str(), fileContentSize);
-      return Output::GenericError;
-    }
+      throw runtime_error("Error in file '" + nameFile +
+                          "': uncorrect content size. Obtained " +
+                          to_string(fileContentSize));
 
     file.read((char*)dataToRead, fileSizeToRead);
 
     file.close();
 
     /// </ul>
-
-    return Output::Success;
   }
   // ***************************************************************************
   bool Output::ReadBinaryFile(const string& nameFile, vector<double>& dataToRead, const unsigned int& dataSizeToRead, const unsigned int& startingPosition)
@@ -352,9 +341,7 @@ namespace GeDiM
 
     if (dataSizeToRead == 0)
     {
-      Output::ExitCodes result = Output::GetBinaryFileSize(nameFile, fileSize, sizeof(double), startingPosition);
-      if (result != Output::Success)
-        return false;
+      Output::GetBinaryFileSize(nameFile, fileSize, sizeof(double), startingPosition);
 
       if (fileSize == 0)
         return true;
@@ -369,24 +356,27 @@ namespace GeDiM
     }
 
     dataToRead.resize(fileContentSize, 0.0);
-    Output::ExitCodes result = ReadBinaryFile(nameFile, dataToRead.data(), sizeof(double), fileContentSize, startingPosition);
+    ReadBinaryFile(nameFile, dataToRead.data(), sizeof(double), fileContentSize, startingPosition);
 
+    return true;
     /// </ul>
-
-    return result == Output::Success;
   }
   // ***************************************************************************
-  Output::ExitCodes Output::WriteBinaryFile(const string& nameFile, const void* dataToWrite, const unsigned int& sizeOfSingleDataToWrite, const unsigned int& dataSizeToWrite, const bool& append)
+  void Output::WriteBinaryFile(const string& nameFile,
+                               const void* dataToWrite,
+                               const unsigned int& sizeOfSingleDataToWrite,
+                               const unsigned int& dataSizeToWrite,
+                               const bool& append)
   {
     /// <ul>
 
     if (dataToWrite == NULL)
-      return Output::GenericError;
+      throw runtime_error("empty data to write");
 
     unsigned int fileDataSize = dataSizeToWrite;
 
     if (fileDataSize == 0)
-      return Output::Success;
+      return;
 
     /// <li> Exporting file
     ofstream file;
@@ -397,20 +387,19 @@ namespace GeDiM
       file.open(nameFile.c_str(), ios::binary);
 
     if(file.fail())
-    {
-      Output::PrintErrorMessage("File '%s' cannot be opened", false, nameFile.c_str());
-      return Output::GenericError;
-    }
+      throw runtime_error("File '" + nameFile + "' cannot be opened");
 
     file.write((char *)dataToWrite, fileDataSize * sizeOfSingleDataToWrite);
     file.close();
 
     /// </ul>
-
-    return Output::Success;
   }
   // ***************************************************************************
-  bool Output::WriteBinaryFile(const string& nameFile, const vector<double>& dataToWrite, const unsigned int& dataSizeToWrite, const unsigned int& dataStartingPositionToWrite, const bool& append)
+  bool Output::WriteBinaryFile(const string& nameFile,
+                               const vector<double>& dataToWrite,
+                               const unsigned int& dataSizeToWrite,
+                               const unsigned int& dataStartingPositionToWrite,
+                               const bool& append)
   {
     /// <ul>
 
@@ -432,11 +421,10 @@ namespace GeDiM
       return true;
 
     /// <li> Exporting file
-    ExitCodes result = WriteBinaryFile(nameFile, dataToWrite.data() + dataStartingPositionToWrite, sizeof(double), fileDataSize, append);
+    WriteBinaryFile(nameFile, dataToWrite.data() + dataStartingPositionToWrite, sizeof(double), fileDataSize, append);
 
+    return true;
     /// </ul>
-
-    return result == Output::Success;
   }
   // ***************************************************************************
   void Output::PrintLine(char symbol, bool onlyMaster)
@@ -690,74 +678,6 @@ namespace GeDiM
 #endif // LOGGING
   }
   // ***************************************************************************
-  const string Output::ExitCodeToString(const Output::ExitCodes& result, const bool& colored)
-  {
-    ostringstream exitCodeToString;
-
-    if (colored)
-    {
-      switch (result)
-      {
-        case Output::Success:
-          exitCodeToString<< Output::GreenColor<< "SUCCESS"<< Output::EndColor;
-        break;
-        case Output::MpiError:
-          exitCodeToString<< Output::RedColor<< "FAILED (MpiError)"<< Output::EndColor;
-        break;
-        case Output::GenericError:
-          exitCodeToString<< Output::RedColor<< "FAILED (GenericError)"<< Output::EndColor;
-        break;
-        case Output::PartitionError:
-          exitCodeToString<< Output::RedColor<< "FAILED (PartitionError)"<< Output::EndColor;
-        break;
-        case Output::Abort:
-          exitCodeToString<< Output::RedColor<< "FAILED (Abort)"<< Output::EndColor;
-        break;
-        case Output::FileError:
-          exitCodeToString<< Output::RedColor<< "FAILED (FileError)"<< Output::EndColor;
-        break;
-        case Output::UnimplementedMethod:
-          exitCodeToString<< Output::RedColor<< "FAILED (UnimplementedMethod)"<< Output::EndColor;
-        break;
-        default:
-          exitCodeToString<< Output::RedColor<< "FAILED (Unknown)"<< Output::EndColor;
-        break;
-      }
-    }
-    else
-    {
-      switch (result)
-      {
-        case Output::Success:
-          exitCodeToString<< "SUCCESS";
-        break;
-        case Output::MpiError:
-          exitCodeToString<< "FAILED (MpiError)";
-        break;
-        case Output::GenericError:
-          exitCodeToString<< "FAILED (GenericError)";
-        break;
-        case Output::PartitionError:
-          exitCodeToString<< "FAILED (PartitionError)";
-        break;
-        case Output::Abort:
-          exitCodeToString<< "FAILED (Abort)";
-        break;
-        case Output::FileError:
-          exitCodeToString<< "FAILED (FileError)";
-        break;
-        case Output::UnimplementedMethod:
-          exitCodeToString<< "FAILED (UnimplementedMethod)";
-        break;
-        default:
-          exitCodeToString<< "FAILED (Unknown)";
-        break;
-      }
-    }
-
-    return exitCodeToString.str();
-  }
-  // ***************************************************************************
   void Output::Assert(const bool& logicResult, const string& message, ...)
   {
     if (logicResult)
@@ -795,140 +715,6 @@ namespace GeDiM
 #endif // LOGGING
 
     abort();
-  }
-  // ***************************************************************************
-  void Output::Assert(const ExitCodes& logicResult, const string& message, ...)
-  {
-    if (logicResult == Output::Success)
-      return;
-
-    if (MpiParallelEnvironment::Process().Rank() != 0 || message.empty())
-      abort();
-
-#if LOGGING > 0
-    va_list args, dupArgs;
-    va_start(args, message);
-    va_copy(dupArgs, args);
-
-    // Printing
-    ostringstream newMessage;
-#if LOGGING==1 || LOGGING==3
-    newMessage<< " >> "<< message;
-    newMessage<< " "<< ExitCodeToString(logicResult, true)<< endl;
-
-    vprintf(newMessage.str().c_str(), args);
-#endif
-
-#if LOGGING==2 || LOGGING==3
-    newMessage.str("");
-    newMessage.clear();
-    newMessage<< message;
-    newMessage<< " "<< ExitCodeToString(logicResult, false);
-
-    LogFile::PrintInfoMessage(newMessage.str(), dupArgs);
-#endif
-
-    va_end(args);
-
-#endif // LOGGING
-
-    abort();
-  }
-  // ***************************************************************************
-  void Output::AssertTest(const bool& logicResult, const string& message, ...)
-  {
-    if (MpiParallelEnvironment::Process().Rank() != 0)
-    {
-      if (!logicResult)
-        abort();
-
-      return;
-    }
-
-#if LOGGING > 0
-    // Update Unit Test Summary
-    auto unitTestUid = UnitTestSummary::CheckUnitTest(logicResult, message);
-
-    va_list args, dupArgs;
-    va_start(args, message);
-    va_copy(dupArgs, args);
-
-    // Printing
-    ostringstream newMessage;
-#if LOGGING==1 || LOGGING==3
-    newMessage<< " >> "<< unitTestUid<< " - "<< message<< " ";
-    if (logicResult)
-      newMessage<< Output::GreenColor<< "SUCCESS"<< Output::EndColor;
-    else
-      newMessage<< Output::RedColor<< "FAILED"<< Output::EndColor;
-
-    newMessage<< endl;
-
-    vprintf(newMessage.str().c_str(), args);
-#endif
-
-#if LOGGING==2 || LOGGING==3
-    newMessage.str("");
-    newMessage.clear();
-    newMessage<< message<< " ";
-    if (logicResult)
-      newMessage<< "SUCCESS";
-    else
-      newMessage<< "FAILED";
-
-    LogFile::PrintInfoMessage(newMessage.str(), dupArgs);
-#endif
-
-    va_end(args);
-
-#endif // LOGGING
-
-    if (!logicResult)
-      abort();
-  }
-  // ***************************************************************************
-  void Output::AssertTest(const ExitCodes& logicResult, const string& message, ...)
-  {
-    if (MpiParallelEnvironment::Process().Rank() != 0)
-    {
-      if (logicResult != Output::Success)
-        abort();
-
-      return;
-    }
-
-#if LOGGING > 0
-    // Update Unit Test Summary
-    auto unitTestUid = UnitTestSummary::CheckUnitTest(logicResult, message);
-
-    va_list args, dupArgs;
-    va_start(args, message);
-    va_copy(dupArgs, args);
-
-    // Printing
-    ostringstream newMessage;
-#if LOGGING==1 || LOGGING==3
-    newMessage<< " >> "<< unitTestUid<< " - "<< message<< " ";
-    newMessage<< ExitCodeToString(logicResult, true)<< endl;
-
-    vprintf(newMessage.str().c_str(), args);
-#endif
-
-#if LOGGING==2 || LOGGING==3
-    newMessage.str("");
-    newMessage.clear();
-    newMessage<< message<< " ";
-    newMessage<< ExitCodeToString(logicResult, false);
-
-    LogFile::PrintInfoMessage(newMessage.str(), dupArgs);
-#endif
-
-    va_end(args);
-
-#endif // LOGGING
-
-    if (logicResult != Output::Success)
-      abort();
   }
   // ***************************************************************************
   int LogFile::LogMaxFileSize = 2;

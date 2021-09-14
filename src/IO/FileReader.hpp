@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief C++ File Reader
   /// \copyright See top level LICENSE file for details.

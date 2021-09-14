@@ -17,9 +17,10 @@
 
 using namespace testing;
 using namespace std;
-using namespace GeDiM;
+using namespace Gedim;
 
-namespace UnitTesting {
+namespace GedimUnitTesting
+{
 
   TEST(TestMesh, TestMeshMatricesDAO)
   {
@@ -183,6 +184,8 @@ namespace UnitTesting {
     EXPECT_EQ(meshDao.Cell1DNumberNeighbourCell2D(1), 2);
     EXPECT_EQ(meshDao.Cell1DNeighbourCell2D(1, 0), 1);
     EXPECT_EQ(meshDao.Cell1DNeighbourCell2D(1, 1), 0);
+
+    cerr<< meshDao.ToString()<< endl;
 
     string exportFolder = "./Export";
     Output::CreateFolder(exportFolder);

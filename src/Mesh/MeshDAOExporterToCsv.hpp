@@ -6,7 +6,7 @@
 using namespace std;
 using namespace Eigen;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief MeshDAOExporterToCsv
   /// \copyright See top level LICENSE file for details.

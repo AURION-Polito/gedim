@@ -7,7 +7,7 @@
 using namespace std;
 using namespace Eigen;
 
-namespace GeDiM
+namespace Gedim
 {
   /// \brief The IMeshDAO (mesh data access object) class to read and write mesh data
   class IMeshDAO

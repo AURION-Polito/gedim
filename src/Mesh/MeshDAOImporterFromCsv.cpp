@@ -3,7 +3,7 @@
 #include <fstream>
 #include "FileReader.hpp"
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   MeshDAOImporterFromCsv::MeshDAOImporterFromCsv()

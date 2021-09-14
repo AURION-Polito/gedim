@@ -11,21 +11,6 @@
 /// - 1 true
 #cmakedefine01 USE_MPI
 
-/// Use PETSC
-/// - 0 false
-/// - 1 true
-#cmakedefine01 USE_PETSC
-
-/// Use VTK library
-/// - 0 VTK not enabled
-/// - 1 VTK enabled
-#cmakedefine01 ENABLE_VTK
-
-/// Use METIS library
-/// - 0 METIS not enabled
-/// - 1 METIS enabled
-#cmakedefine01 ENABLE_METIS
-
 /// Verbose Levels
 /// - 0 None
 /// - 1 Error
@@ -44,11 +29,6 @@
 // the configured options and settings for Tutorial
 #define gedim_VERSION_MAJOR @gedim_VERSION_MAJOR@
 #define gedim_VERSION_MINOR @gedim_VERSION_MINOR@
-
-// tolerances for geometric operations
-#cmakedefine TOLERANCEINTERSECTION @TOLERANCEINTERSECTION@
-#cmakedefine TOLERANCEPARALLELISM @TOLERANCEPARALLELISM@
-#cmakedefine TOLERANCEORTHOGANILITY @TOLERANCEORTHOGANILITY@
 
 /// @name Code Simplifications
 ///@{

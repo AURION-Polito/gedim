@@ -8,6 +8,18 @@ set(USE_MPI OFF CACHE BOOL "Enable MPI support")
 set(MPI_COMPILER_C mpicc CACHE STRING "C compiler used when USE_MPI is ON")
 set(MPI_COMPILER_CXX mpic++ CACHE STRING "C++ compiler used when USE_MPI is ON")
 
+set(VERBOSE 3 CACHE STRING "Select verbosity level (0, 1, 2 3 or 4)")
+set_property(CACHE VERBOSE PROPERTY STRINGS 0 1 2 3 4)
+if(NOT ${VERBOSE} MATCHES 0 AND NOT ${VERBOSE} MATCHES 1 AND NOT ${VERBOSE} MATCHES 2 AND NOT ${VERBOSE} MATCHES 3 AND NOT ${VERBOSE} MATCHES 4)
+        message(SEND_ERROR "VERBOSE variable must be either 0 (None), 1 (Error), 2 (Warning), 3 (Info) or 4 (Debug)")
+endif()
+
+set(LOGGING 3 CACHE STRING "Select logging level (0, 1, 2 or 3)")
+set_property(CACHE LOGGING PROPERTY STRINGS 0 1 2 3)
+if(NOT ${LOGGING} MATCHES 0 AND NOT ${LOGGING} MATCHES 1 AND NOT ${LOGGING} MATCHES 2 AND NOT ${LOGGING} MATCHES 3)
+        message(SEND_ERROR "LOGGING variable must be either 0 (None), 1 (Console), 2 (LogFile) or 3 (Console and LogFile)")
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif()

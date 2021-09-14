@@ -9,7 +9,7 @@
 using namespace Eigen;
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   class MeshMatricesDAO final : public IMeshDAO
   {

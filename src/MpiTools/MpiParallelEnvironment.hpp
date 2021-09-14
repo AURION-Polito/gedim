@@ -5,11 +5,7 @@
 #include <memory>
 #include "IMpiProcess.hpp"
 
-#if USE_PETSC ==1
-#include "petsc.h"
-#endif
-
-namespace GeDiM
+namespace Gedim
 {
   /// \brief Interface used to implement the Mpi Parallel Environment
   /// \copyright See top level LICENSE file for details.
@@ -25,12 +21,10 @@ namespace GeDiM
       /// \param argc command line argument counter
       /// \param argv command live argument values
       template<typename ProcessType>
-      static Output::ExitCodes Initialize(int argc,
-                                          char** argv)
+      static void Initialize(int argc,
+                             char** argv)
       {
-#if USE_PETSC == 1
-        PetscInitialize(&argc, &argv, NULL, NULL);
-#elif USE_MPI == 1
+#if USE_MPI == 1
         MPI::Init(argc, argv);
 #endif
 
@@ -45,21 +39,14 @@ namespace GeDiM
         _process.reset(new ProcessType(rank,
                                        numberProcesses,
                                        true));
-
-        return Output::Success;
       }
 
       /// Finalize the MPI Environment
-      static Output::ExitCodes Finalize()
+      static void Finalize()
       {
-#if USE_PETSC == 1
-        PetscFinalize();
-#elif USE_MPI == 1
+#if USE_MPI == 1
         MPI::Finalize();
-#else
-        return Output::Success;
 #endif
-        return Output::Success;
       }
   };
 }

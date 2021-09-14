@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   template<typename T>
@@ -550,16 +550,20 @@ namespace GeDiM
     converter<< scientific<< "Cell0DCoordinates = "<< _mesh.Cell0DCoordinates<< ";"<< endl;
     converter<< scientific<< "Cell0DMarkers = "<< _mesh.Cell0DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell0D = "<< _mesh.ActiveCell0D<< ";"<< endl;
+    converter<< scientific<< "UpdatedCell0Ds = "<< _mesh.UpdatedCell0Ds<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertyIds = "<< _mesh.Cell0DDoublePropertyIds<< ";"<< endl;
+    converter<< scientific<< "Cell0DDoublePropertyIndices = "<< _mesh.Cell0DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertySizes = "<< _mesh.Cell0DDoublePropertySizes<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertyValues = "<< _mesh.Cell0DDoublePropertyValues<< ";"<< endl;
     converter<< scientific<< "NumberCell1D = "<< _mesh.NumberCell1D<< ";"<< endl;
     converter<< scientific<< "Cell1DVertices = "<< _mesh.Cell1DVertices<< ";"<< endl;
     converter<< scientific<< "Cell1DMarkers = "<< _mesh.Cell1DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell1D = "<< _mesh.ActiveCell1D<< ";"<< endl;
+    converter<< scientific<< "UpdatedCell1Ds = "<< _mesh.UpdatedCell1Ds<< ";"<< endl;
     converter<< scientific<< "NumberCell1DNeighbourCell2D = "<< _mesh.NumberCell1DNeighbourCell2D<< ";"<< endl;
     converter<< scientific<< "Cell1DNeighbourCell2Ds = "<< _mesh.Cell1DNeighbourCell2Ds<< ";"<< endl;
     converter<< scientific<< "Cell1DDoublePropertyIds = "<< _mesh.Cell1DDoublePropertyIds<< ";"<< endl;
+    converter<< scientific<< "Cell1DDoublePropertyIndices = "<< _mesh.Cell1DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell1DDoublePropertySizes = "<< _mesh.Cell1DDoublePropertySizes<< ";"<< endl;
     converter<< scientific<< "Cell1DDoublePropertyValues = "<< _mesh.Cell1DDoublePropertyValues<< ";"<< endl;
     converter<< scientific<< "NumberCell2D = "<< _mesh.NumberCell2D<< ";"<< endl;
@@ -569,7 +573,9 @@ namespace GeDiM
     converter<< scientific<< "Cell2DEdges = "<< _mesh.Cell2DEdges<< ";"<< endl;
     converter<< scientific<< "Cell2DMarkers = "<< _mesh.Cell2DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell2D = "<< _mesh.ActiveCell2D<< ";"<< endl;
+    converter<< scientific<< "UpdatedCell2Ds = "<< _mesh.UpdatedCell2Ds<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyIds = "<< _mesh.Cell2DDoublePropertyIds<< ";"<< endl;
+    converter<< scientific<< "Cell2DDoublePropertyIndices = "<< _mesh.Cell2DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertySizes = "<< _mesh.Cell2DDoublePropertySizes<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyValues = "<< _mesh.Cell2DDoublePropertyValues<< ";"<< endl;
     converter<< scientific<< "NumberCell3D = "<< _mesh.NumberCell3D<< ";"<< endl;
@@ -581,7 +587,9 @@ namespace GeDiM
     converter<< scientific<< "Cell3DFaces = "<< _mesh.Cell3DFaces<< ";"<< endl;
     converter<< scientific<< "Cell3DMarkers = "<< _mesh.Cell3DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell3D = "<< _mesh.ActiveCell3D<< ";"<< endl;
+    converter<< scientific<< "UpdatedCell3Ds = "<< _mesh.UpdatedCell3Ds<< ";"<< endl;
     converter<< scientific<< "Cell3DDoublePropertyIds = "<< _mesh.Cell3DDoublePropertyIds<< ";"<< endl;
+    converter<< scientific<< "Cell3DDoublePropertyIndices = "<< _mesh.Cell3DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell3DDoublePropertySizes = "<< _mesh.Cell3DDoublePropertySizes<< ";"<< endl;
     converter<< scientific<< "Cell3DDoublePropertyValues = "<< _mesh.Cell3DDoublePropertyValues<< ";"<< endl;
 

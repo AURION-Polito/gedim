@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
   MeshDAOExporterToCsv::MeshDAOExporterToCsv()
