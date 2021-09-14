@@ -4,7 +4,6 @@
 #include "Output.hpp"
 #include "Eigen"
 
-using namespace MainApplication;
 using namespace std;
 
 namespace GeDiM

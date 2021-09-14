@@ -34,7 +34,7 @@
 
 using namespace std;
 
-namespace MainApplication
+namespace GeDiM
 {
   class Output;
   class Profiler;

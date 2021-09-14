@@ -45,7 +45,7 @@
 
 using namespace GeDiM;
 
-namespace MainApplication
+namespace GeDiM
 {
   // ***************************************************************************
 #ifdef _WIN32

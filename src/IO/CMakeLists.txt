@@ -1,5 +1,4 @@
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Output.cpp)
-list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/UnitTestResult.cpp)
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/UnitTestSummary.cpp)
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/FileReader.cpp)
 

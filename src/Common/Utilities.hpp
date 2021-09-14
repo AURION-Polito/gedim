@@ -4,7 +4,6 @@
 #include "Output.hpp"
 
 using namespace std;
-using namespace MainApplication;
 
 namespace GeDiM
 {
@@ -13,7 +12,6 @@ namespace GeDiM
   class Utilities
   {
     public:
-
       /// \brief Tells the compiler the parameter is unused
       template<class T>
       static void Unused(const T&) { }

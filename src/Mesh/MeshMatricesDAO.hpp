@@ -6,7 +6,6 @@
 #include "MeshMatrices.hpp"
 #include "IMeshDAO.hpp"
 
-using namespace MainApplication;
 using namespace Eigen;
 using namespace std;
 

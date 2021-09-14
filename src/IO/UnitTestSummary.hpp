@@ -20,37 +20,37 @@
 #include "Output.hpp"
 #include "UnitTestResult.hpp"
 
-namespace MainApplication
+namespace GeDiM
 {
-    class UnitTestSummary;
+  class UnitTestSummary;
 
-    class UnitTestSummary
-    {
-        protected:
-            static map<unsigned int, UnitTestResult> testPerformed; ///< unitTest results
+  class UnitTestSummary
+  {
+    protected:
+      static map<unsigned int, UnitTestResult> testPerformed; ///< unitTest results
 
-            static unsigned int numberTotalTests;
-            static unsigned int numberSuccessTests;
-            static unsigned int numberErrorTests;
-        public:
-            static const unsigned int& NumberTotalTests() { return numberTotalTests; }
-            static const unsigned int& NumberSuccessTests() { return numberSuccessTests; }
-            static const unsigned int& NumberErrorTests() { return numberErrorTests; }
+      static unsigned int numberTotalTests;
+      static unsigned int numberSuccessTests;
+      static unsigned int numberErrorTests;
+    public:
+      static const unsigned int& NumberTotalTests() { return numberTotalTests; }
+      static const unsigned int& NumberSuccessTests() { return numberSuccessTests; }
+      static const unsigned int& NumberErrorTests() { return numberErrorTests; }
 
-            /// Check the UnitTest result and create a new UnitTestResult
-            /// @return the UnitTest UId
-            static unsigned int CheckUnitTest(const bool& logicResult, const string& message);
-            /// Check the UnitTest result and create a new UnitTestResult
-            /// @return the UnitTest UId
-            static unsigned int CheckUnitTest(const Output::ExitCodes& logicResult, const string& message);
+      /// Check the UnitTest result and create a new UnitTestResult
+      /// @return the UnitTest UId
+      static unsigned int CheckUnitTest(const bool& logicResult, const string& message);
+      /// Check the UnitTest result and create a new UnitTestResult
+      /// @return the UnitTest UId
+      static unsigned int CheckUnitTest(const Output::ExitCodes& logicResult, const string& message);
 
-            /// Reset the Summary
-            static void Reset();
-            /// Print the UnitTest summary
-            static void PrintSummary();
-            /// Export the UnitTest results to filePath
-            static void ExportTestResult(const string& filePath, const char separator = ';');
-    };
+      /// Reset the Summary
+      static void Reset();
+      /// Print the UnitTest summary
+      static void PrintSummary();
+      /// Export the UnitTest results to filePath
+      static void ExportTestResult(const string& filePath, const char separator = ';');
+  };
 }
 
 #endif // __UNITTESTSUMMARY_H

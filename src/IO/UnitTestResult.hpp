@@ -19,16 +19,16 @@
 
 #include "Output.hpp"
 
-namespace MainApplication
+namespace GeDiM
 {
-    struct UnitTestResult;
+  struct UnitTestResult;
 
-    struct UnitTestResult
-    {
-        unsigned int UId; ///< Unique Id of the UnitTest
-        Output::ExitCodes Result; ///< Result of the UnitTest
-        string Message; ///< Message of the UnitTest
-    };
+  struct UnitTestResult
+  {
+      unsigned int UId; ///< Unique Id of the UnitTest
+      Output::ExitCodes Result; ///< Result of the UnitTest
+      string Message; ///< Message of the UnitTest
+  };
 }
 
 #endif // __UNITTESTRESULT_H
