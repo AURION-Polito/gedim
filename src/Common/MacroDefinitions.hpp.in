@@ -1,0 +1,65 @@
+#ifndef __MACROPARAMETERS_H
+#define __MACROPARAMETERS_H
+
+/// Activate deprecated class use
+/// - 0 false
+/// - 1 true
+#cmakedefine01 USE_DEPRECATED
+
+/// Use MPI
+/// - 0 false
+/// - 1 true
+#cmakedefine01 USE_MPI
+
+/// Use PETSC
+/// - 0 false
+/// - 1 true
+#cmakedefine01 USE_PETSC
+
+/// Use VTK library
+/// - 0 VTK not enabled
+/// - 1 VTK enabled
+#cmakedefine01 ENABLE_VTK
+
+/// Use METIS library
+/// - 0 METIS not enabled
+/// - 1 METIS enabled
+#cmakedefine01 ENABLE_METIS
+
+/// Verbose Levels
+/// - 0 None
+/// - 1 Error
+/// - 2 Warning
+/// - 3 Info
+/// - 4 Debug
+#cmakedefine VERBOSE @VERBOSE@
+
+/// Logging Levels
+/// - 0 None
+/// - 1 Only Console
+/// - 2 Only Files
+/// - 3 Console and Files
+#cmakedefine LOGGING @LOGGING@
+
+// the configured options and settings for Tutorial
+#define gedim_VERSION_MAJOR @gedim_VERSION_MAJOR@
+#define gedim_VERSION_MINOR @gedim_VERSION_MINOR@
+
+// tolerances for geometric operations
+#cmakedefine TOLERANCEINTERSECTION @TOLERANCEINTERSECTION@
+#cmakedefine TOLERANCEPARALLELISM @TOLERANCEPARALLELISM@
+#cmakedefine TOLERANCEORTHOGANILITY @TOLERANCEORTHOGANILITY@
+
+/// @name Code Simplifications
+///@{
+#ifndef MIN
+#define MIN(a,b) (a < b) ? a : b
+#endif
+
+#ifndef MAX
+#define MAX(a,b) (a > b) ? a : b
+#endif
+
+///@}
+
+#endif
