@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(GeDiM LANGUAGES CXX C VERSION 0.4)
+project(gedim LANGUAGES CXX C VERSION 0.4)
 
 # CACHE VARIABLES DEFINITION
 set(GEDIM_EXTERNALS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external CACHE STRING "Directory where GeDiM external components were built (absolute path)")
