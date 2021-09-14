@@ -136,7 +136,7 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # CREATE TESTS EXECUTABLE
-add_executable(unitTests mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
+add_executable(unitTests EXCLUDE_FROM_ALL mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
 
 target_include_directories(unitTests SYSTEM PUBLIC ${gedim_include})
 target_include_directories(unitTests SYSTEM PRIVATE ${unittest_include})
@@ -153,4 +153,5 @@ get_directory_property(parentDir PARENT_DIRECTORY)
 string(LENGTH "${parentDir}" hasParent)
 if(${hasParent})
   set(gedim_include ${gedim_include} PARENT_SCOPE)
+  set(gedim_libs ${gedim_libs} PARENT_SCOPE)
 endif()
