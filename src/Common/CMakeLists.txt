@@ -1,7 +1,7 @@
-list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Utilities.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/CommonUtilities.cpp)
 
-list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Utilities.hpp)
-list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MacroDefinitions.hpp.in)
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/CommonUtilities.hpp)
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Macro.hpp.in)
 
 list(APPEND src_include ${CMAKE_CURRENT_SOURCE_DIR})
 

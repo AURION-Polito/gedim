@@ -1,7 +1,7 @@
 #ifndef __GEDIM_IMPIPROCESS_H
 #define __GEDIM_IMPIPROCESS_H
 
-#include "Output.hpp"
+#include "IOUtilities.hpp"
 
 using namespace std;
 

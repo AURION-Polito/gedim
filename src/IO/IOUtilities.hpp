@@ -14,8 +14,8 @@
 //
 // First added:  2014-10-05
 
-#ifndef __GEDIM_OUTPUT_H
-#define __GEDIM_OUTPUT_H
+#ifndef __GEDIM_IOUtilities_H
+#define __GEDIM_IOUtilities_H
 
 #include "MacroDefinitions.hpp"
 

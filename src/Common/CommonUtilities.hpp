@@ -1,7 +1,7 @@
 #ifndef __GEDIM_UTILITIES_H
 #define __GEDIM_UTILITIES_H
 
-#include "Output.hpp"
+#include "IOUtilities.hpp"
 
 using namespace std;
 
