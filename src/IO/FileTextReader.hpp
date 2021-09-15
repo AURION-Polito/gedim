@@ -1,7 +1,7 @@
 #ifndef __GEDIM_FILEREADER_H
 #define __GEDIM_FILEREADER_H
 
-#include "IFileReader.hpp"
+#include "IFileTextReader.hpp"
 
 using namespace std;
 

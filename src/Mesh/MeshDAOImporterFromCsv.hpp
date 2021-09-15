@@ -2,7 +2,7 @@
 #define __MeshDAOImporterFromCsv_H
 
 #include "IMeshDAO.hpp"
-#include "IFileReader.hpp"
+#include "IFileTextReader.hpp"
 
 using namespace std;
 using namespace Eigen;

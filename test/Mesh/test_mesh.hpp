@@ -13,7 +13,7 @@
 
 #include "MeshDAOExporterToCsv.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
-#include "FileReader.hpp"
+#include "FileTextReader.hpp"
 
 using namespace testing;
 using namespace std;

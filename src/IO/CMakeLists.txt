@@ -1,9 +1,9 @@
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/IOUtilities.cpp)
-list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/FileReader.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/FileTextReader.cpp)
 
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IOUtilities.hpp)
-list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/FileReader.hpp)
-list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IFileReader.hpp)
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/FileTextReader.hpp)
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IFileTextReader.hpp)
 
 list(APPEND src_include ${CMAKE_CURRENT_SOURCE_DIR})
 

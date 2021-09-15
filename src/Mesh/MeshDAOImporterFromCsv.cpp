@@ -1,7 +1,7 @@
 #include "MeshDAOImporterFromCsv.hpp"
 #include <iostream>
 #include <fstream>
-#include "FileReader.hpp"
+#include "FileTextReader.hpp"
 
 namespace Gedim
 {

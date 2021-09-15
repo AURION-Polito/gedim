@@ -1,4 +1,4 @@
-#include "FileReader.hpp"
+#include "FileTextReader.hpp"
 
 namespace Gedim
 {
