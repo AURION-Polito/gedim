@@ -15,7 +15,7 @@
 // First added:  2014-10-05
 
 #include "IOUtilities.hpp"
-#include "MacroDefinitions.hpp"
+
 #include "MpiParallelEnvironment.hpp"
 #include "CommonUtilities.hpp"
 
