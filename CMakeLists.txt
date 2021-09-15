@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(gedim LANGUAGES CXX C VERSION 0.4)
+project(Gedim LANGUAGES CXX C VERSION 0.4)
 
 # CACHE VARIABLES DEFINITION
 set(GEDIM_EXTERNALS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external CACHE STRING "Directory where GeDiM external components were built (absolute path)")
@@ -42,7 +42,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # ADD Eigen
 #######################################
-list(APPEND gedim_include ${GEDIM_EXTERNALS_DIR}/eigen)
+list(APPEND ${PROJECT_NAME}_include ${GEDIM_EXTERNALS_DIR}/eigen)
 
 # ADD Google Testing Environment
 ####################################### Start
@@ -84,15 +84,15 @@ list(APPEND unittest_include ${GTestIncludes})
 ####################################### End
 
 # ADD external libs
-set(gedim_libs ${gedim_libs} "test")
+set(${PROJECT_NAME}_libs ${${PROJECT_NAME}_libs} "test")
 
 # ADD code
-list(APPEND gedim_include ${src_include})
+list(APPEND ${PROJECT_NAME}_include ${src_include})
 list(APPEND unittest_include ${test_include})
 
 # CONFIGURE PUBLIC_HEADERS FOR LIBRARY INSTALL
 ####################################### Start
-set(gedim_additional_include ${CMAKE_CURRENT_BINARY_DIR}/additional_include)
+set(${PROJECT_NAME}_additional_include ${CMAKE_CURRENT_BINARY_DIR}/additional_include)
 
 foreach(header ${src_headers})
 	get_filename_component(headerDirectory ${header} DIRECTORY)
@@ -101,17 +101,17 @@ foreach(header ${src_headers})
 	  
   if(${headerExtension} MATCHES ".hpp.in")
     set(headerExtension ".hpp")
-    set(headerDirectory ${gedim_additional_include})
+    set(headerDirectory ${${PROJECT_NAME}_additional_include})
     
     configure_file(${header} ${headerDirectory}/${headerFileName}${headerExtension})
   elseif(NOT ${headerExtension} MATCHES ".hpp" AND NOT ${headerExtension} MATCHES ".h")
     message(SEND_ERROR "Header extension not recognized for file ${headerFileName}${headerExtension}")
   endif()
     
-  list(APPEND gedim_public_headers ${headerDirectory}/${headerFileName}${headerExtension})
+  list(APPEND ${PROJECT_NAME}_public_headers ${headerDirectory}/${headerFileName}${headerExtension})
 endforeach()
 
-list(APPEND gedim_include ${gedim_additional_include})
+list(APPEND ${PROJECT_NAME}_include ${${PROJECT_NAME}_additional_include})
 ####################################### End
 
 # Add additional files
@@ -119,13 +119,13 @@ list(APPEND gedim_include ${gedim_additional_include})
 # CREATE LIBRARY
 add_library(${PROJECT_NAME} STATIC ${src_sources} ${src_headers})
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${gedim_include})
-if(${gedim_libs})
-	add_dependencies(${PROJECT_NAME} ${gedim_libs})
-	target_link_libraries(${PROJECT_NAME} ${gedim_libs})
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${${PROJECT_NAME}_include})
+if(${${PROJECT_NAME}_libs})
+	add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_libs})
+	target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_libs})
 endif()
 target_compile_options(${PROJECT_NAME} PUBLIC -fPIC )
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${gedim_public_headers}")
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${${PROJECT_NAME}_public_headers}")
 
 # ADD INSTALL DIRECTIVE
 install(TARGETS ${PROJECT_NAME}
@@ -138,20 +138,20 @@ install(TARGETS ${PROJECT_NAME}
 # CREATE TESTS EXECUTABLE
 add_executable(unitTests EXCLUDE_FROM_ALL mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
 
-target_include_directories(unitTests SYSTEM PUBLIC ${gedim_include})
+target_include_directories(unitTests SYSTEM PUBLIC ${${PROJECT_NAME}_include})
 target_include_directories(unitTests SYSTEM PRIVATE ${unittest_include})
-if(${gedim_libs})
-	add_dependencies(unitTests ${gedim_libs})
+if(${${PROJECT_NAME}_libs})
+	add_dependencies(unitTests ${${PROJECT_NAME}_libs})
 endif()
 target_link_libraries(unitTests Threads::Threads)
 
 # Set Unit Tests
 gtest_discover_tests(unitTests)
 
-# the parent scope (if any) will have the ${gedim_include} containing the directories to be included for using GeDiM
+# the parent scope (if any) will have the ${${PROJECT_NAME}_include} containing the directories to be included for using GeDiM
 get_directory_property(parentDir PARENT_DIRECTORY)
 string(LENGTH "${parentDir}" hasParent)
 if(${hasParent})
-  set(gedim_include ${gedim_include} PARENT_SCOPE)
-  set(gedim_libs ${gedim_libs} PARENT_SCOPE)
+  set(${PROJECT_NAME}_include ${${PROJECT_NAME}_include} PARENT_SCOPE)
+  set(${PROJECT_NAME}_libs ${${PROJECT_NAME}_libs} PARENT_SCOPE)
 endif()
