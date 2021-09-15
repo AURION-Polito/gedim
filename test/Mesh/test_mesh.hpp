@@ -185,8 +185,6 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell1DNeighbourCell2D(1, 0), 1);
     EXPECT_EQ(meshDao.Cell1DNeighbourCell2D(1, 1), 0);
 
-    cerr<< meshDao.ToString()<< endl;
-
     string exportFolder = "./Export";
     Output::CreateFolder(exportFolder);
     exportFolder = exportFolder + "/TestMeshMatricesDAO";

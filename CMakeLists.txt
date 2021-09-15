@@ -80,7 +80,7 @@ if (NOT ${GMockSrc} STREQUAL "")
     list(APPEND GTestIncludes ${GMockSrc} ${GMockSrc}/include)
 endif ()
 
-list(APPEND unittest_include ${GTestIncludes})
+list(APPEND ${PROJECT_NAME}_unittest_include ${GTestIncludes})
 ####################################### End
 
 # ADD external libs
@@ -88,7 +88,7 @@ set(${PROJECT_NAME}_libs ${${PROJECT_NAME}_libs} "test")
 
 # ADD code
 list(APPEND ${PROJECT_NAME}_include ${src_include})
-list(APPEND unittest_include ${test_include})
+list(APPEND ${PROJECT_NAME}_unittest_include ${test_include})
 
 # CONFIGURE PUBLIC_HEADERS FOR LIBRARY INSTALL
 ####################################### Start
@@ -136,17 +136,17 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # CREATE TESTS EXECUTABLE
-add_executable(unitTests EXCLUDE_FROM_ALL mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
+add_executable(${PROJECT_NAME}_unitTests EXCLUDE_FROM_ALL mainUnitTests.cpp ${src_sources} ${src_headers} ${test_sources} ${test_headers} ${GTestFiles})
 
-target_include_directories(unitTests SYSTEM PUBLIC ${${PROJECT_NAME}_include})
-target_include_directories(unitTests SYSTEM PRIVATE ${unittest_include})
+target_include_directories(${PROJECT_NAME}_unitTests SYSTEM PUBLIC ${${PROJECT_NAME}_include})
+target_include_directories(${PROJECT_NAME}_unitTests SYSTEM PRIVATE ${${PROJECT_NAME}_unittest_include})
 if(${${PROJECT_NAME}_libs})
-	add_dependencies(unitTests ${${PROJECT_NAME}_libs})
+	add_dependencies(${PROJECT_NAME}_unitTests ${${PROJECT_NAME}_libs})
 endif()
-target_link_libraries(unitTests Threads::Threads)
+target_link_libraries(${PROJECT_NAME}_unitTests Threads::Threads)
 
 # Set Unit Tests
-gtest_discover_tests(unitTests)
+gtest_discover_tests(${PROJECT_NAME}_unitTests)
 
 # the parent scope (if any) will have the ${${PROJECT_NAME}_include} containing the directories to be included for using GeDiM
 get_directory_property(parentDir PARENT_DIRECTORY)
