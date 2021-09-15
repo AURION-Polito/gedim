@@ -1,5 +1,5 @@
-#ifndef __IMPIPROCESS_H
-#define __IMPIPROCESS_H
+#ifndef __GEDIM_IMPIPROCESS_H
+#define __GEDIM_IMPIPROCESS_H
 
 #include "Output.hpp"
 
@@ -27,5 +27,5 @@ namespace Gedim
 	};
 }
 
-#endif // __IMPIPROCESS_H
+#endif // __GEDIM_IMPIPROCESS_H
 

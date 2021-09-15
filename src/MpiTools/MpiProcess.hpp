@@ -1,5 +1,5 @@
-#ifndef __MPIPROCESS_H
-#define __MPIPROCESS_H
+#ifndef __GEDIM_MPIPROCESS_H
+#define __GEDIM_MPIPROCESS_H
 
 #include <vector>
 #include <string>
@@ -46,5 +46,5 @@ namespace Gedim
 }
 
 
-#endif // __MPIPROCESS_H
+#endif // __GEDIM_MPIPROCESS_H
 

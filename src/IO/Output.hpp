@@ -14,8 +14,8 @@
 //
 // First added:  2014-10-05
 
-#ifndef __OUTPUT_H
-#define __OUTPUT_H
+#ifndef __GEDIM_OUTPUT_H
+#define __GEDIM_OUTPUT_H
 
 #include "MacroDefinitions.hpp"
 

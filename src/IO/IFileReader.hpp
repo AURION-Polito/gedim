@@ -1,5 +1,5 @@
-#ifndef __IFILEREADER_H
-#define __IFILEREADER_H
+#ifndef __GEDIM_IFILEREADER_H
+#define __GEDIM_IFILEREADER_H
 
 #include "Output.hpp"
 
@@ -30,4 +30,4 @@ namespace Gedim
   };
 }
 
-#endif // __IFILEREADER_H
+#endif // __GEDIM_IFILEREADER_H

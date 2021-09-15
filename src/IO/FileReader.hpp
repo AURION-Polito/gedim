@@ -1,5 +1,5 @@
-#ifndef __FILEREADER_H
-#define __FILEREADER_H
+#ifndef __GEDIM_FILEREADER_H
+#define __GEDIM_FILEREADER_H
 
 #include "IFileReader.hpp"
 
@@ -28,4 +28,4 @@ namespace Gedim
   };
 }
 
-#endif // __FILEREADER_H
+#endif // __GEDIM_FILEREADER_H

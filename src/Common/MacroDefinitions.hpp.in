@@ -1,5 +1,5 @@
-#ifndef __MACROPARAMETERS_H
-#define __MACROPARAMETERS_H
+#ifndef __GEDIM_MACROPARAMETERS_H
+#define __GEDIM_MACROPARAMETERS_H
 
 /// Activate deprecated class use
 /// - 0 false
