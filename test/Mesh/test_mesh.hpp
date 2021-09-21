@@ -30,7 +30,7 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.InitializeDimension(3));
     EXPECT_EQ(meshDao.Dimension(), 3);
 
-    EXPECT_NO_THROW(meshDao.Cell0DInitialize(2));
+    EXPECT_NO_THROW(meshDao.Cell0DsInitialize(2));
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 2);
     EXPECT_NO_THROW(meshDao.Cell0DSetState(1, true));
     EXPECT_EQ(meshDao.Cell0DIsActive(0), false);
@@ -59,7 +59,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell0DDoublePropertyValue(1, 0, 0), 15.2);
     EXPECT_EQ(meshDao.Cell0DDoublePropertyValue(1, 0, 1), 17.4);
 
-    EXPECT_NO_THROW(meshDao.Cell1DInitialize(2));
+    EXPECT_NO_THROW(meshDao.Cell1DsInitialize(2));
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 2);
     EXPECT_NO_THROW(meshDao.Cell1DInsertOrigin(1, 1));
     EXPECT_NO_THROW(meshDao.Cell1DInsertEnd(1, 0));
@@ -94,7 +94,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell1DDoublePropertyValue(1, 0, 0), 15.2);
     EXPECT_EQ(meshDao.Cell1DDoublePropertyValue(1, 0, 1), 17.4);
 
-    EXPECT_NO_THROW(meshDao.Cell2DInitialize(2));
+    EXPECT_NO_THROW(meshDao.Cell2DsInitialize(2));
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 2);
     EXPECT_NO_THROW(meshDao.Cell2DAddVertices(1, {1, 0}));
     EXPECT_EQ(meshDao.Cell2DNumberVertices(0), 0);
@@ -133,7 +133,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DDoublePropertyValue(1, 0, 0), 15.2);
     EXPECT_EQ(meshDao.Cell2DDoublePropertyValue(1, 0, 1), 17.4);
 
-    EXPECT_NO_THROW(meshDao.Cell3DInitialize(2));
+    EXPECT_NO_THROW(meshDao.Cell3DsInitialize(2));
     EXPECT_EQ(meshDao.Cell3DTotalNumber(), 2);
     EXPECT_NO_THROW(meshDao.Cell3DAddVertices(1, {1, 0}));
     EXPECT_EQ(meshDao.Cell3DNumberVertices(0), 0);

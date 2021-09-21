@@ -50,7 +50,7 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell0DInitialize(const unsigned int numberCell0Ds)
+  void MeshMatricesDAO::Cell0DsInitialize(const unsigned int numberCell0Ds)
   {
     _mesh.NumberCell0D = numberCell0Ds;
     _mesh.Cell0DCoordinates.resize(3 * _mesh.NumberCell0D, 0.0);
@@ -61,7 +61,7 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell0DAppend(const unsigned int numberCell0Ds)
   {
     unsigned int oldNumberCell0Ds = _mesh.NumberCell0D;
-    Cell0DInitialize(oldNumberCell0Ds + numberCell0Ds);
+    Cell0DsInitialize(oldNumberCell0Ds + numberCell0Ds);
     return oldNumberCell0Ds;
   }
   // ***************************************************************************
@@ -150,7 +150,7 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell1DInitialize(const unsigned int numberCell1Ds)
+  void MeshMatricesDAO::Cell1DsInitialize(const unsigned int numberCell1Ds)
   {
     _mesh.NumberCell1D = numberCell1Ds;
     _mesh.Cell1DVertices.resize(2 * _mesh.NumberCell1D, 0);
@@ -162,7 +162,7 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell1DAppend(const unsigned int numberCell1Ds)
   {
     unsigned int oldNumberCell1Ds = _mesh.NumberCell1D;
-    Cell1DInitialize(oldNumberCell1Ds + numberCell1Ds);
+    Cell1DsInitialize(oldNumberCell1Ds + numberCell1Ds);
     return oldNumberCell1Ds;
   }
   // ***************************************************************************
@@ -246,7 +246,7 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell2DInitialize(const unsigned int numberCell2Ds)
+  void MeshMatricesDAO::Cell2DsInitialize(const unsigned int numberCell2Ds)
   {
     unsigned int oldNumberCell2D = _mesh.NumberCell2D;
 
@@ -267,7 +267,7 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell2DAppend(const unsigned int numberCell2Ds)
   {
     unsigned int oldNumberCell2Ds = _mesh.NumberCell2D;
-    Cell2DInitialize(oldNumberCell2Ds + numberCell2Ds);
+    Cell2DsInitialize(oldNumberCell2Ds + numberCell2Ds);
     return oldNumberCell2Ds;
   }
   // ***************************************************************************
@@ -390,7 +390,7 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell3DInitialize(const unsigned int numberCell3Ds)
+  void MeshMatricesDAO::Cell3DsInitialize(const unsigned int numberCell3Ds)
   {
     _mesh.NumberCell3D = numberCell3Ds;
     _mesh.NumberCell3DVertices.resize(_mesh.NumberCell3D + 1, 0);
@@ -403,7 +403,7 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell3DAppend(const unsigned int numberCell3Ds)
   {
     unsigned int oldNumberCell3Ds = _mesh.NumberCell3D;
-    Cell3DInitialize(oldNumberCell3Ds + numberCell3Ds);
+    Cell3DsInitialize(oldNumberCell3Ds + numberCell3Ds);
     return oldNumberCell3Ds;
   }
   // ***************************************************************************
@@ -538,6 +538,85 @@ namespace Gedim
                                             cell3DIndex,
                                             porpertySize,
                                             0.0);
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::FillMesh2D(const MatrixXd& cell0DCoordinates,
+                                   const vector<vector<unsigned int>>& cell2DVertices)
+  {
+    InitializeDimension(2);
+
+    // Create Cell0Ds
+    const unsigned int numCell0Ds = cell0DCoordinates.cols();
+    Cell0DsInitialize(numCell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      Cell0DSetId(v, v);
+      Cell0DSetState(v, true);
+      Cell0DInsertCoordinates(v, cell0DCoordinates.col(v));
+    }
+
+    // Create Cell1Ds
+    unsigned int numCell1Ds = 0;
+    Eigen::SparseMatrix<double> cell1Ds(numCell0Ds, numCell0Ds);
+    const unsigned int numCell2Ds = cell2DVertices.size();
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const unsigned int numVertices = cell2DVertices[f].size();
+      for (unsigned int v = 0; v < numVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[f][v];
+        const unsigned int end = cell2DVertices[f][(v + 1) % numVertices];
+
+        if (cell1Ds.coeff(origin, end) == 0 &&
+            cell1Ds.coeff(end, origin) == 0)
+        {
+          cell1Ds.insert(origin, end) = numCell1Ds + 1;
+          cell1Ds.insert(end, origin) = numCell1Ds + 1;
+          numCell1Ds++;
+        }
+      }
+    }
+    cell1Ds.makeCompressed();
+
+    Cell1DsInitialize(numCell1Ds);
+    for (int k = 0; k < cell1Ds.outerSize(); k++)
+    {
+      for (SparseMatrix<double>::InnerIterator it(cell1Ds, k); it; ++it)
+      {
+        const unsigned int cell1DId = it.value() - 1;
+        Cell1DInsertOrigin(cell1DId, it.row());
+        Cell1DInsertEnd(cell1DId, it.col());
+        Cell1DSetId(cell1DId, cell1DId);
+        Cell1DSetState(cell1DId, true);
+      }
+    }
+
+    // Create Cell2Ds
+    Cell2DsInitialize(numCell2Ds);
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const unsigned int numVertices = cell2DVertices[f].size();
+
+      Cell2DInitializeVertices(f, numVertices);
+      Cell2DInitializeEdges(f, numVertices);
+
+      for (unsigned int v = 0; v < numVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[f][v];
+        const unsigned int end = cell2DVertices[f][(v + 1) % numVertices];
+        Output::Assert(cell1Ds.coeff(origin, end) != 0 || cell1Ds.coeff(end, origin) != 0);
+        const unsigned int cell1DId = (cell1Ds.coeff(origin, end) == 0) ? cell1Ds.coeff(end, origin) - 1 :
+                                                                          cell1Ds.coeff(origin, end) - 1;
+
+
+        Cell2DInsertVertex(f, v, origin);
+        if (v < numVertices - 1)
+          Cell2DInsertEdge(f, v, cell1DId);
+      }
+
+      Cell2DSetId(f, f);
+      Cell2DSetState(f, true);
+    }
   }
   // ***************************************************************************
   string MeshMatricesDAO::ToString()

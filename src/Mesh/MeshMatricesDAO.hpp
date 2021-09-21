@@ -33,7 +33,7 @@ namespace Gedim
       inline unsigned int Dimension() const
       { return _mesh.Dimension; }
 
-      void Cell0DInitialize(const unsigned int numberCell0Ds);
+      void Cell0DsInitialize(const unsigned int numberCell0Ds);
       unsigned int Cell0DAppend(const unsigned int numberCell0Ds);
       void Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
                                    const Vector3d& coordinates);
@@ -149,9 +149,9 @@ namespace Gedim
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
       inline void Cell0DInsertDoublePropertyValue(const unsigned int& cell0DIndex,
-                                                   const unsigned int& propertyIndex,
-                                                   const unsigned int& propertyValueIndex,
-                                                   const double& propertyValue)
+                                                  const unsigned int& propertyIndex,
+                                                  const unsigned int& propertyValueIndex,
+                                                  const double& propertyValue)
       {
         Output::Assert(cell0DIndex < Cell0DTotalNumber());
         Output::Assert(propertyIndex < Cell0DNumberDoubleProperties());
@@ -198,7 +198,7 @@ namespace Gedim
             propertyValueIndex];
       }
 
-      void Cell1DInitialize(const unsigned int numberCell1Ds);
+      void Cell1DsInitialize(const unsigned int numberCell1Ds);
       unsigned int Cell1DAppend(const unsigned int numberCell1Ds);
       inline void Cell1DInsertOrigin(const unsigned int& cell1DIndex,
                                      const unsigned int& originCell0DIndex)
@@ -337,9 +337,9 @@ namespace Gedim
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
       inline void Cell1DInsertDoublePropertyValue(const unsigned int& cell1DIndex,
-                                                   const unsigned int& propertyIndex,
-                                                   const unsigned int& propertyValueIndex,
-                                                   const double& propertyValue)
+                                                  const unsigned int& propertyIndex,
+                                                  const unsigned int& propertyValueIndex,
+                                                  const double& propertyValue)
       {
         Output::Assert(cell1DIndex < Cell1DTotalNumber());
         Output::Assert(propertyIndex < Cell1DNumberDoubleProperties());
@@ -387,7 +387,7 @@ namespace Gedim
       }
 
 
-      void Cell2DInitialize(const unsigned int numberCell2Ds);
+      void Cell2DsInitialize(const unsigned int numberCell2Ds);
       unsigned int Cell2DAppend(const unsigned int numberCell2Ds);
       inline void Cell2DSetMarker(const unsigned int& cell2DIndex,
                                   const unsigned int& marker)
@@ -518,9 +518,9 @@ namespace Gedim
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
       inline void Cell2DInsertDoublePropertyValue(const unsigned int& cell2DIndex,
-                                                   const unsigned int& propertyIndex,
-                                                   const unsigned int& propertyValueIndex,
-                                                   const double& propertyValue)
+                                                  const unsigned int& propertyIndex,
+                                                  const unsigned int& propertyValueIndex,
+                                                  const double& propertyValue)
       {
         Output::Assert(cell2DIndex < Cell2DTotalNumber());
         Output::Assert(propertyIndex < Cell2DNumberDoubleProperties());
@@ -568,7 +568,7 @@ namespace Gedim
       }
 
 
-      void Cell3DInitialize(const unsigned int numberCell3Ds);
+      void Cell3DsInitialize(const unsigned int numberCell3Ds);
       unsigned int Cell3DAppend(const unsigned int numberCell3Ds);
       inline void Cell3DSetMarker(const unsigned int& cell3DIndex,
                                   const unsigned int& marker)
@@ -717,9 +717,9 @@ namespace Gedim
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
       inline void Cell3DInsertDoublePropertyValue(const unsigned int& cell3DIndex,
-                                                   const unsigned int& propertyIndex,
-                                                   const unsigned int& propertyValueIndex,
-                                                   const double& propertyValue)
+                                                  const unsigned int& propertyIndex,
+                                                  const unsigned int& propertyValueIndex,
+                                                  const double& propertyValue)
       {
         Output::Assert(cell3DIndex < Cell3DTotalNumber());
         Output::Assert(propertyIndex < Cell3DNumberDoubleProperties());
@@ -766,7 +766,10 @@ namespace Gedim
             propertyValueIndex];
       }
 
+      void FillMesh2D(const MatrixXd& cell0DCoordinates,
+                      const vector<vector<unsigned int>>& cell2DVertices);
       string ToString();
+
   };
 }
 
