@@ -58,6 +58,8 @@ namespace Gedim
     _mesh.ActiveCell0D.resize(_mesh.NumberCell0D, false);
     _mesh.Cell1DAdjacency.resize(_mesh.NumberCell0D,
                                  _mesh.NumberCell0D);
+    for (unsigned int p = 0; p < Cell0DNumberDoubleProperties(); p++)
+      _mesh.Cell0DDoublePropertySizes[p].resize(_mesh.NumberCell0D + 1, 0);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell0DAppend(const unsigned int numberCell0Ds)
@@ -159,6 +161,8 @@ namespace Gedim
     _mesh.Cell1DMarkers.resize(_mesh.NumberCell1D, 0);
     _mesh.ActiveCell1D.resize(_mesh.NumberCell1D, false);
     _mesh.NumberCell1DNeighbourCell2D.resize(_mesh.NumberCell1D + 1, 0);
+    for (unsigned int p = 0; p < Cell1DNumberDoubleProperties(); p++)
+      _mesh.Cell1DDoublePropertySizes[p].resize(_mesh.NumberCell1D + 1, 0);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell1DAppend(const unsigned int numberCell1Ds)
@@ -257,6 +261,8 @@ namespace Gedim
     _mesh.NumberCell2DEdges.resize(_mesh.NumberCell2D + 1, 0);
     _mesh.Cell2DMarkers.resize(_mesh.NumberCell2D, 0);
     _mesh.ActiveCell2D.resize(_mesh.NumberCell2D, false);
+    for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
+      _mesh.Cell2DDoublePropertySizes[p].resize(_mesh.NumberCell2D + 1, 0);
 
     // update neighbours
     for (unsigned int &neigh : _mesh.Cell1DNeighbourCell2Ds)
@@ -400,6 +406,8 @@ namespace Gedim
     _mesh.NumberCell3DFaces.resize(_mesh.NumberCell3D + 1, 0);
     _mesh.Cell3DMarkers.resize(_mesh.NumberCell3D, 0);
     _mesh.ActiveCell3D.resize(_mesh.NumberCell3D, false);
+    for (unsigned int p = 0; p < Cell3DNumberDoubleProperties(); p++)
+      _mesh.Cell3DDoublePropertySizes[p].resize(_mesh.NumberCell3D + 1, 0);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell3DAppend(const unsigned int numberCell3Ds)
