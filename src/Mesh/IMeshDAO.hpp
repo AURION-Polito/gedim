@@ -237,13 +237,15 @@ namespace Gedim
       /// \brief Set the Cell1D Origin
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param originCell0DIndex the Cell0D index of Cell1D origin from 0 to Cell0DTotalNumber()
-      virtual void Cell1DInsertOrigin(const unsigned int& cell1DIndex,
-                                      const unsigned int& originCell0DIndex) = 0;
-      /// \brief Set the Cell1D End
-      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param endCell0DIndex the Cell0D index of Cell1D end from 0 to Cell0DTotalNumber()
-      virtual void Cell1DInsertEnd(const unsigned int& cell1DIndex,
-                                   const unsigned int& endCell0DIndex) = 0;
+      virtual void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
+                                        const unsigned int& originCell0DIndex,
+                                        const unsigned int& endCell0DIndex) = 0;
+      /// \return the Cell1D Index if Cell1D (origin->end) exists, Cell1DTotalNumber() otherwise
+      /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      virtual unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
+                                        const unsigned int& endCell0DIndex) const = 0;
       /// \brief Set the Cell1D Id
       /// \param cell1DIndex the index of Cell0D from 0 to Cell1DTotalNumber()
       /// \param id the id of the Cell1D
@@ -797,10 +799,12 @@ namespace Gedim
 
 
       /// \brief Fill a Mesh 2D with vertices and polygons
-      /// \param cell0DCoordinates the coordinates as Eigen MatrixXd of cell0D, size 3xCell0DTotalNumber()
-      /// \param cell2DVertices the vertices ids of the cell2Ds ordered counterclockwise
-      virtual void FillMesh2D(const MatrixXd& cell0DCoordinates,
-                              const vector<vector<unsigned int>>& cell2DVertices) = 0;
+      /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
+      /// \param cell1Ds the origin and end as Eigen MatrixXd of cell1Ds, size 2xCell1DTotalNumber()
+      /// \param cell2Ds the vertices and edges indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()x2xCell2DNumberVertices()
+      virtual void FillMesh2D(const Eigen::MatrixXd& cell0Ds,
+                              const Eigen::MatrixXi& cell1Ds,
+                              const vector<Eigen::MatrixXi>& cell2Ds) = 0;
 
       /// \return The mesh converted to string
       virtual string ToString() = 0;

@@ -13,6 +13,7 @@
 
 #include "MeshDAOExporterToCsv.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
+#include "MeshDAOImporter2DFromCsv.hpp"
 #include "FileTextReader.hpp"
 
 using namespace testing;
@@ -61,8 +62,7 @@ namespace GedimUnitTesting
 
     EXPECT_NO_THROW(meshDao.Cell1DsInitialize(2));
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 2);
-    EXPECT_NO_THROW(meshDao.Cell1DInsertOrigin(1, 1));
-    EXPECT_NO_THROW(meshDao.Cell1DInsertEnd(1, 0));
+    EXPECT_NO_THROW(meshDao.Cell1DInsertExtremes(1, 1, 0));
     EXPECT_EQ(meshDao.Cell1DOrigin(0), 0);
     EXPECT_EQ(meshDao.Cell1DEnd(0), 0);
     EXPECT_EQ(meshDao.Cell1DOrigin(1), 1);
@@ -289,6 +289,66 @@ namespace GedimUnitTesting
                                                                 csvCell2DNeighboursFile);
     importerConfiguration.Separator = exportConfiguration.Separator;
     MeshDAOImporterFromCsv importer;
+
+    EXPECT_NO_THROW(importer.Import(importerConfiguration,
+                                    importedMeshDao));
+    ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
+    ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
+    ASSERT_EQ(mesh.Mesh.Cell0DCoordinates, importedMesh.Cell0DCoordinates);
+    ASSERT_EQ(mesh.Mesh.Cell0DMarkers, importedMesh.Cell0DMarkers);
+    ASSERT_EQ(mesh.Mesh.ActiveCell0D, importedMesh.ActiveCell0D);
+    ASSERT_EQ(mesh.Mesh.Cell0DDoublePropertyIds, importedMesh.Cell0DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.NumberCell1D, importedMesh.NumberCell1D);
+    ASSERT_EQ(mesh.Mesh.Cell1DMarkers, importedMesh.Cell1DMarkers);
+    ASSERT_EQ(mesh.Mesh.ActiveCell1D, importedMesh.ActiveCell1D);
+    ASSERT_EQ(mesh.Mesh.Cell1DDoublePropertyIds, importedMesh.Cell1DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.NumberCell2D, importedMesh.NumberCell2D);
+    ASSERT_EQ(mesh.Mesh.Cell2DMarkers, importedMesh.Cell2DMarkers);
+    ASSERT_EQ(mesh.Mesh.ActiveCell2D, importedMesh.ActiveCell2D);
+    ASSERT_EQ(mesh.Mesh.Cell2DDoublePropertyIds, importedMesh.Cell2DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.NumberCell3D, importedMesh.NumberCell3D);
+    ASSERT_EQ(mesh.Mesh.Cell3DMarkers, importedMesh.Cell3DMarkers);
+    ASSERT_EQ(mesh.Mesh.ActiveCell3D, importedMesh.ActiveCell3D);
+    ASSERT_EQ(mesh.Mesh.Cell3DDoublePropertyIds, importedMesh.Cell3DDoublePropertyIds);
+  }
+
+  TEST(TestMesh, MeshDAOImporter2DFromCsv)
+  {
+    MeshMatrices_2D_26Cells_Mock mesh;
+    MeshMatricesDAO meshDao(mesh.Mesh);
+
+    string exportFolder = "./Export";
+    Output::CreateFolder(exportFolder);
+    exportFolder = exportFolder + "/MeshDAOImporter2DFromCsv";
+    Output::CreateFolder(exportFolder);
+
+    MeshDAOExporterToCsv::Configuration exportConfiguration;
+    exportConfiguration.ExportFolder = exportFolder;
+    MeshDAOExporterToCsv exporter;
+    EXPECT_NO_THROW(exporter.Export(exportConfiguration,
+                                    meshDao));
+
+    MeshMatrices importedMesh;
+    MeshMatricesDAO importedMeshDao(importedMesh);
+
+    FileReader csvCell0DsFile(exportFolder + "/" + exportConfiguration.FileCell0DsName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell1DsFile(exportFolder + "/" + exportConfiguration.FileCell1DsName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell2DsFile(exportFolder + "/" + exportConfiguration.FileCell2DsName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell0DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell0DPropertiesName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell1DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell1DPropertiesName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell2DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell2DPropertiesName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell0DNeighboursFile(exportFolder + "/" + exportConfiguration.FileCell0DNeighboursName + "." + exportConfiguration.FileExtension);
+    FileReader csvCell1DNeighboursFile(exportFolder + "/" + exportConfiguration.FileCell1DNeighboursName + "." + exportConfiguration.FileExtension);
+    MeshDAOImporter2DFromCsv::Configuration importerConfiguration(csvCell0DsFile,
+                                                                  csvCell1DsFile,
+                                                                  csvCell2DsFile,
+                                                                  csvCell0DPropertiesFile,
+                                                                  csvCell1DPropertiesFile,
+                                                                  csvCell2DPropertiesFile,
+                                                                  csvCell0DNeighboursFile,
+                                                                  csvCell1DNeighboursFile);
+    importerConfiguration.Separator = exportConfiguration.Separator;
+    MeshDAOImporter2DFromCsv importer;
 
     EXPECT_NO_THROW(importer.Import(importerConfiguration,
                                     importedMeshDao));

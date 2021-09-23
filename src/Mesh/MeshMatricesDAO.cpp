@@ -56,6 +56,8 @@ namespace Gedim
     _mesh.Cell0DCoordinates.resize(3 * _mesh.NumberCell0D, 0.0);
     _mesh.Cell0DMarkers.resize(_mesh.NumberCell0D, 0);
     _mesh.ActiveCell0D.resize(_mesh.NumberCell0D, false);
+    _mesh.Cell1DAdjacency.resize(_mesh.NumberCell0D,
+                                 _mesh.NumberCell0D);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell0DAppend(const unsigned int numberCell0Ds)
@@ -540,79 +542,52 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
-  void MeshMatricesDAO::FillMesh2D(const MatrixXd& cell0DCoordinates,
-                                   const vector<vector<unsigned int>>& cell2DVertices)
+  void MeshMatricesDAO::FillMesh2D(const MatrixXd& cell0Ds,
+                                   const MatrixXi& cell1Ds,
+                                   const vector<MatrixXi>& cell2Ds)
   {
     InitializeDimension(2);
 
     // Create Cell0Ds
-    const unsigned int numCell0Ds = cell0DCoordinates.cols();
+    Output::Assert(cell0Ds.rows() == 3);
+    const unsigned int numCell0Ds = cell0Ds.cols();
     Cell0DsInitialize(numCell0Ds);
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
       Cell0DSetId(v, v);
       Cell0DSetState(v, true);
-      Cell0DInsertCoordinates(v, cell0DCoordinates.col(v));
+      Cell0DInsertCoordinates(v, cell0Ds.col(v));
     }
 
     // Create Cell1Ds
-    unsigned int numCell1Ds = 0;
-    Eigen::SparseMatrix<double> cell1Ds(numCell0Ds, numCell0Ds);
-    const unsigned int numCell2Ds = cell2DVertices.size();
-    for (unsigned int f = 0; f < numCell2Ds; f++)
-    {
-      const unsigned int numVertices = cell2DVertices[f].size();
-      for (unsigned int v = 0; v < numVertices; v++)
-      {
-        const unsigned int origin = cell2DVertices[f][v];
-        const unsigned int end = cell2DVertices[f][(v + 1) % numVertices];
-
-        if (cell1Ds.coeff(origin, end) == 0 &&
-            cell1Ds.coeff(end, origin) == 0)
-        {
-          cell1Ds.insert(origin, end) = numCell1Ds + 1;
-          cell1Ds.insert(end, origin) = numCell1Ds + 1;
-          numCell1Ds++;
-        }
-      }
-    }
-    cell1Ds.makeCompressed();
-
+    Output::Assert(cell1Ds.rows() == 2);
+    unsigned int numCell1Ds = cell1Ds.cols();
     Cell1DsInitialize(numCell1Ds);
-    for (int k = 0; k < cell1Ds.outerSize(); k++)
+    for (int e = 0; e < cell1Ds.cols(); e++)
     {
-      for (SparseMatrix<double>::InnerIterator it(cell1Ds, k); it; ++it)
-      {
-        const unsigned int cell1DId = it.value() - 1;
-        Cell1DInsertOrigin(cell1DId, it.row());
-        Cell1DInsertEnd(cell1DId, it.col());
-        Cell1DSetId(cell1DId, cell1DId);
-        Cell1DSetState(cell1DId, true);
-      }
+      Cell1DSetId(e, e);
+      Cell1DInsertExtremes(e,
+                           cell1Ds(0, e),
+                           cell1Ds(1, e));
+      Cell1DSetState(e, true);
     }
 
     // Create Cell2Ds
+    unsigned int numCell2Ds = cell2Ds.size();
     Cell2DsInitialize(numCell2Ds);
     for (unsigned int f = 0; f < numCell2Ds; f++)
     {
-      const unsigned int numVertices = cell2DVertices[f].size();
+      const MatrixXi& polygon = cell2Ds[f];
+      Output::Assert(polygon.rows() == 2);
+      const unsigned int numVertices = polygon.cols();
 
       Cell2DInitializeVertices(f, numVertices);
       Cell2DInitializeEdges(f, numVertices);
 
       for (unsigned int v = 0; v < numVertices; v++)
-      {
-        const unsigned int origin = cell2DVertices[f][v];
-        const unsigned int end = cell2DVertices[f][(v + 1) % numVertices];
-        Output::Assert(cell1Ds.coeff(origin, end) != 0 || cell1Ds.coeff(end, origin) != 0);
-        const unsigned int cell1DId = (cell1Ds.coeff(origin, end) == 0) ? cell1Ds.coeff(end, origin) - 1 :
-                                                                          cell1Ds.coeff(origin, end) - 1;
-
-
-        Cell2DInsertVertex(f, v, origin);
-        if (v < numVertices - 1)
-          Cell2DInsertEdge(f, v, cell1DId);
-      }
+        Cell2DInsertVertex(f, v, polygon(0, v));
+      for (unsigned int e = 0; e < numVertices; e++)
+        Cell2DInsertEdge(f, e, polygon(1, e));
 
       Cell2DSetId(f, f);
       Cell2DSetState(f, true);

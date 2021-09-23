@@ -106,8 +106,9 @@ namespace Gedim
           mesh.Cell1DSetId(e, cell1D.Id);
           mesh.Cell1DSetMarker(e, cell1D.Marker);
           mesh.Cell1DSetState(e, cell1D.Active);
-          mesh.Cell1DInsertOrigin(e, cell1D.Origin);
-          mesh.Cell1DInsertEnd(e, cell1D.End);
+          mesh.Cell1DInsertExtremes(e,
+                                    cell1D.Origin,
+                                    cell1D.End);
         }
       }
     }

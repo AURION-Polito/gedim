@@ -200,17 +200,25 @@ namespace Gedim
 
       void Cell1DsInitialize(const unsigned int numberCell1Ds);
       unsigned int Cell1DAppend(const unsigned int numberCell1Ds);
-      inline void Cell1DInsertOrigin(const unsigned int& cell1DIndex,
-                                     const unsigned int& originCell0DIndex)
+      inline void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
+                                       const unsigned int& originCell0DIndex,
+                                       const unsigned int& endCell0DIndex)
       {
         Output::Assert(cell1DIndex < Cell1DTotalNumber());
+        Output::Assert(originCell0DIndex < Cell0DTotalNumber());
+        Output::Assert(endCell0DIndex < Cell0DTotalNumber());
         _mesh.Cell1DVertices[2 * cell1DIndex] = originCell0DIndex;
-      }
-      inline void Cell1DInsertEnd(const unsigned int& cell1DIndex,
-                                  const unsigned int& endCell0DIndex)
-      {
-        Output::Assert(cell1DIndex < Cell1DTotalNumber());
         _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
+        _mesh.Cell1DAdjacency.insert(originCell0DIndex,
+                                     endCell0DIndex) = cell1DIndex + 1;
+      }
+      unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
+                                const unsigned int& endCell0DIndex) const
+      {
+        const unsigned int cell1DIndex = _mesh.Cell1DAdjacency.coeff(originCell0DIndex,
+                                                                     endCell0DIndex);
+        return (cell1DIndex == 0) ? Cell1DTotalNumber() :
+                                    cell1DIndex - 1;
       }
       inline void Cell1DSetMarker(const unsigned int& cell1DIndex,
                                   const unsigned int& marker)
@@ -766,8 +774,9 @@ namespace Gedim
             propertyValueIndex];
       }
 
-      void FillMesh2D(const MatrixXd& cell0DCoordinates,
-                      const vector<vector<unsigned int>>& cell2DVertices);
+      void FillMesh2D(const Eigen::MatrixXd& cell0Ds,
+                      const Eigen::MatrixXi& cell1Ds,
+                      const vector<Eigen::MatrixXi>& cell2Ds);
       string ToString();
 
   };

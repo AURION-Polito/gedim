@@ -71,38 +71,29 @@ namespace Gedim
           IFileReader& CsvCell0DsFile;
           IFileReader& CsvCell1DsFile;
           IFileReader& CsvCell2DsFile;
-          IFileReader& CsvCell3DsFile;
           IFileReader& CsvCell0DPropertiesFile;
           IFileReader& CsvCell1DPropertiesFile;
           IFileReader& CsvCell2DPropertiesFile;
-          IFileReader& CsvCell3DPropertiesFile;
           IFileReader& CsvCell0DNeighboursFile;
           IFileReader& CsvCell1DNeighboursFile;
-          IFileReader& CsvCell2DNeighboursFile;
           char Separator = ';';
 
           Configuration(IFileReader& csvCell0DsFile,
                         IFileReader& csvCell1DsFile,
                         IFileReader& csvCell2DsFile,
-                        IFileReader& csvCell3DsFile,
                         IFileReader& csvCell0DPropertiesFile,
                         IFileReader& csvCell1DPropertiesFile,
                         IFileReader& csvCell2DPropertiesFile,
-                        IFileReader& csvCell3DPropertiesFile,
                         IFileReader& csvCell0DNeighboursFile,
-                        IFileReader& csvCell1DNeighboursFile,
-                        IFileReader& csvCell2DNeighboursFile) :
+                        IFileReader& csvCell1DNeighboursFile) :
             CsvCell0DsFile(csvCell0DsFile),
             CsvCell1DsFile(csvCell1DsFile),
             CsvCell2DsFile(csvCell2DsFile),
-            CsvCell3DsFile(csvCell3DsFile),
             CsvCell0DPropertiesFile(csvCell0DPropertiesFile),
             CsvCell1DPropertiesFile(csvCell1DPropertiesFile),
             CsvCell2DPropertiesFile(csvCell2DPropertiesFile),
-            CsvCell3DPropertiesFile(csvCell3DPropertiesFile),
             CsvCell0DNeighboursFile(csvCell0DNeighboursFile),
-            CsvCell1DNeighboursFile(csvCell1DNeighboursFile),
-            CsvCell2DNeighboursFile(csvCell2DNeighboursFile)
+            CsvCell1DNeighboursFile(csvCell1DNeighboursFile)
           { }
       };
 
@@ -131,6 +122,11 @@ namespace Gedim
       void ImportCell2Ds(IFileReader& csvFileReader,
                          const char& separator,
                          vector<Cell2D>& cell2Ds) const;
+
+      void CreateMesh2D(const vector<Cell0D>& cell0Ds,
+                        const vector<Cell1D>& cell1Ds,
+                        const vector<Cell2D>& cell2Ds,
+                        IMeshDAO& mesh);
 
       /// \brief Import Cell0DProperties; format: Id, FilePath
       /// \param ImportFolder the folder where to Import the files
@@ -204,13 +200,6 @@ namespace Gedim
       /// \param separator the file separator
       /// \param mesh the mesh to be Imported
       void ImportCell1DNeighbours(IFileReader& csvFileReader,
-                                  const char& separator,
-                                  IMeshDAO& mesh) const;
-      /// \brief Import Cell2DNeighbours; format: Id, Num3DNeighbours, 3DNeighbours
-      /// \param filePath the path of the file
-      /// \param separator the file separator
-      /// \param mesh the mesh to be Imported
-      void ImportCell2DNeighbours(IFileReader& csvFileReader,
                                   const char& separator,
                                   IMeshDAO& mesh) const;
 
