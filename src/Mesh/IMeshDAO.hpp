@@ -806,6 +806,9 @@ namespace Gedim
                               const Eigen::MatrixXi& cell1Ds,
                               const vector<Eigen::MatrixXi>& cell2Ds) = 0;
 
+      /// \brief Compact the mesh to save memory
+      virtual void Compress() = 0;
+
       /// \return The mesh converted to string
       virtual string ToString() = 0;
   };

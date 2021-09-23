@@ -352,6 +352,7 @@ namespace GedimUnitTesting
 
     EXPECT_NO_THROW(importer.Import(importerConfiguration,
                                     importedMeshDao));
+
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
     ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
     ASSERT_EQ(mesh.Mesh.Cell0DCoordinates, importedMesh.Cell0DCoordinates);

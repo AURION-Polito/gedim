@@ -777,6 +777,8 @@ namespace Gedim
       void FillMesh2D(const Eigen::MatrixXd& cell0Ds,
                       const Eigen::MatrixXi& cell1Ds,
                       const vector<Eigen::MatrixXi>& cell2Ds);
+      void Compress();
+
       string ToString();
 
   };

@@ -594,6 +594,65 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Compress()
+  {
+    _mesh.Cell0DCoordinates.shrink_to_fit();
+    _mesh.Cell0DMarkers.shrink_to_fit();
+    _mesh.ActiveCell0D.shrink_to_fit();
+    _mesh.Cell0DDoublePropertyIds.shrink_to_fit();
+    _mesh.Cell0DDoublePropertySizes.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell0DDoublePropertySizes.size(); s++)
+      _mesh.Cell0DDoublePropertySizes[s].shrink_to_fit();
+    _mesh.Cell0DDoublePropertyValues.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell0DDoublePropertyValues.size(); s++)
+      _mesh.Cell0DDoublePropertyValues[s].shrink_to_fit();
+
+    _mesh.Cell1DVertices.shrink_to_fit();
+    _mesh.Cell1DAdjacency.makeCompressed();
+    _mesh.NumberCell1DNeighbourCell2D.shrink_to_fit();
+    _mesh.Cell1DNeighbourCell2Ds.shrink_to_fit();
+    _mesh.Cell1DMarkers.shrink_to_fit();
+    _mesh.ActiveCell1D.shrink_to_fit();
+    _mesh.Cell1DDoublePropertyIds.shrink_to_fit();
+    _mesh.Cell1DDoublePropertySizes.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell1DDoublePropertySizes.size(); s++)
+      _mesh.Cell1DDoublePropertySizes[s].shrink_to_fit();
+    _mesh.Cell1DDoublePropertyValues.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell1DDoublePropertyValues.size(); s++)
+      _mesh.Cell1DDoublePropertyValues[s].shrink_to_fit();
+
+
+    _mesh.NumberCell2DVertices.shrink_to_fit();
+    _mesh.NumberCell2DEdges.shrink_to_fit();
+    _mesh.Cell2DVertices.shrink_to_fit();
+    _mesh.Cell2DEdges.shrink_to_fit();
+    _mesh.Cell2DMarkers.shrink_to_fit();
+    _mesh.ActiveCell2D.shrink_to_fit();
+    _mesh.Cell2DDoublePropertyIds.shrink_to_fit();
+    _mesh.Cell2DDoublePropertySizes.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell2DDoublePropertySizes.size(); s++)
+      _mesh.Cell2DDoublePropertySizes[s].shrink_to_fit();
+    _mesh.Cell2DDoublePropertyValues.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell2DDoublePropertyValues.size(); s++)
+      _mesh.Cell2DDoublePropertyValues[s].shrink_to_fit();
+
+    _mesh.NumberCell3DVertices.shrink_to_fit();
+    _mesh.NumberCell3DEdges.shrink_to_fit();
+    _mesh.NumberCell3DFaces.shrink_to_fit();
+    _mesh.Cell3DVertices.shrink_to_fit();
+    _mesh.Cell3DEdges.shrink_to_fit();
+    _mesh.Cell3DFaces.shrink_to_fit();
+    _mesh.Cell3DMarkers.shrink_to_fit();
+    _mesh.ActiveCell3D.shrink_to_fit();
+    _mesh.Cell3DDoublePropertyIds.shrink_to_fit();
+    _mesh.Cell3DDoublePropertySizes.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell3DDoublePropertySizes.size(); s++)
+      _mesh.Cell3DDoublePropertySizes[s].shrink_to_fit();
+    _mesh.Cell3DDoublePropertyValues.shrink_to_fit();
+    for (unsigned int s = 0; s < _mesh.Cell3DDoublePropertyValues.size(); s++)
+      _mesh.Cell3DDoublePropertyValues[s].shrink_to_fit();
+  }
+  // ***************************************************************************
   string MeshMatricesDAO::ToString()
   {
     ostringstream converter;
@@ -611,6 +670,7 @@ namespace Gedim
     converter<< scientific<< "Cell0DDoublePropertyValues = "<< _mesh.Cell0DDoublePropertyValues<< ";"<< endl;
     converter<< scientific<< "NumberCell1D = "<< _mesh.NumberCell1D<< ";"<< endl;
     converter<< scientific<< "Cell1DVertices = "<< _mesh.Cell1DVertices<< ";"<< endl;
+    converter<< scientific<< "Cell1DAdjacency = "<< _mesh.Cell1DAdjacency<< ";"<< endl;
     converter<< scientific<< "Cell1DMarkers = "<< _mesh.Cell1DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell1D = "<< _mesh.ActiveCell1D<< ";"<< endl;
     converter<< scientific<< "UpdatedCell1Ds = "<< _mesh.UpdatedCell1Ds<< ";"<< endl;

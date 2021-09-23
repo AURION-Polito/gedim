@@ -1007,6 +1007,8 @@ namespace Gedim
     ImportCell2DNeighbours(configuration.CsvCell2DNeighboursFile,
                            configuration.Separator,
                            mesh);
+
+    mesh.Compress();
   }
   // ***************************************************************************
 }

@@ -783,6 +783,8 @@ namespace Gedim
     ImportCell1DNeighbours(configuration.CsvCell1DNeighboursFile,
                            configuration.Separator,
                            mesh);
+
+    mesh.Compress();
   }
   // ***************************************************************************
 }
