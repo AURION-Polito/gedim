@@ -1,9 +1,6 @@
-# INCLUDE SUB DIRECTORIES
-add_subdirectory(Common)
-add_subdirectory(IO)
-add_subdirectory(Mesh)
-add_subdirectory(MpiTools)
-add_subdirectory(Geometry)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities.cpp)
+
+list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities.hpp)
 
 list(APPEND src_include ${CMAKE_CURRENT_SOURCE_DIR})
 

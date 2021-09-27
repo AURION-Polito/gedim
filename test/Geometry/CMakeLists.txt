@@ -1,6 +1,4 @@
-# INCLUDE SUB DIRECTORIES
-add_subdirectory(Geometry)
-add_subdirectory(Mesh)
+list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry.hpp)
 
 list(APPEND test_include ${CMAKE_CURRENT_SOURCE_DIR})
 
