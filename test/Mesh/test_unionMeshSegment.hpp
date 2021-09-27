@@ -11,7 +11,6 @@
 
 using namespace testing;
 using namespace std;
-using namespace Gedim;
 
 namespace GedimUnitTesting
 {
@@ -20,49 +19,49 @@ namespace GedimUnitTesting
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilitiesConfig;
-      GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // unify simple two points mesh
       {
-        IntersectorMesh2DSegment::IntersectionMesh meshOne;
-        IntersectorMesh2DSegment::IntersectionMesh meshTwo;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh meshOne;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh meshTwo;
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 1.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
 
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 1.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
 
         vector<double> curvilinearCoordinatesMeshOne;
         vector<double> curvilinearCoordinatesMeshTwo;
-        IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshOne, curvilinearCoordinatesMeshOne);
-        IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshTwo, curvilinearCoordinatesMeshTwo);
+        Gedim::IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshOne, curvilinearCoordinatesMeshOne);
+        Gedim::IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshTwo, curvilinearCoordinatesMeshTwo);
 
-        UnionMeshSegment UnionMeshSegment(geometryUtilities);
+        Gedim::UnionMeshSegment UnionMeshSegment(geometryUtilities);
 
-        UnionMeshSegment::UnionMesh result;
+        Gedim::UnionMeshSegment::UnionMesh result;
         ASSERT_NO_THROW(UnionMeshSegment.CreateUnionMesh(curvilinearCoordinatesMeshOne,
                                                          curvilinearCoordinatesMeshTwo,
                                                          result));
 
         EXPECT_EQ(result.Points.size(), 2);
-        EXPECT_EQ(result.Points[0.0000000000000000e+00].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
+        EXPECT_EQ(result.Points[0.0000000000000000e+00].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices[0], 0);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices[1], 0);
-        EXPECT_EQ(result.Points[1.0000000000000000e+00].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
+        EXPECT_EQ(result.Points[1.0000000000000000e+00].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices[0], 1);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices[1], 1);
@@ -70,70 +69,70 @@ namespace GedimUnitTesting
 
       // unify four points mesh with four points mesh
       {
-        IntersectorMesh2DSegment::IntersectionMesh meshOne;
-        IntersectorMesh2DSegment::IntersectionMesh meshTwo;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh meshOne;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh meshTwo;
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.25,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.5,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshOne.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 1.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
 
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.5,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 0.75,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
         meshTwo.Points.insert(pair<double,
-                              IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
+                              Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>(
                                 1.0,
-                                IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
+                                Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint()));
 
         vector<double> curvilinearCoordinatesMeshOne;
         vector<double> curvilinearCoordinatesMeshTwo;
-        IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshOne, curvilinearCoordinatesMeshOne);
-        IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshTwo, curvilinearCoordinatesMeshTwo);
+        Gedim::IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshOne, curvilinearCoordinatesMeshOne);
+        Gedim::IntersectorMesh2DSegment::ToCurvilinearCoordinates(meshTwo, curvilinearCoordinatesMeshTwo);
 
-        UnionMeshSegment UnionMeshSegment(geometryUtilities);
+        Gedim::UnionMeshSegment UnionMeshSegment(geometryUtilities);
 
-        UnionMeshSegment::UnionMesh result;
+        Gedim::UnionMeshSegment::UnionMesh result;
         ASSERT_NO_THROW(UnionMeshSegment.CreateUnionMesh(curvilinearCoordinatesMeshOne,
                                                          curvilinearCoordinatesMeshTwo,
                                                          result));
 
         EXPECT_EQ(result.Points.size(), 5);
-        EXPECT_EQ(result.Points[0.0000000000000000e+00].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
+        EXPECT_EQ(result.Points[0.0000000000000000e+00].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices[0], 0);
         EXPECT_EQ(result.Points[0.0000000000000000e+00].MeshIndices[1], 0);
-        EXPECT_EQ(result.Points[2.5000000000000000e-01].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::First);
+        EXPECT_EQ(result.Points[2.5000000000000000e-01].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::First);
         EXPECT_EQ(result.Points[2.5000000000000000e-01].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[2.5000000000000000e-01].MeshIndices[0], 1);
-        EXPECT_EQ(result.Points[5.0000000000000000e-01].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
+        EXPECT_EQ(result.Points[5.0000000000000000e-01].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
         EXPECT_EQ(result.Points[5.0000000000000000e-01].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[5.0000000000000000e-01].MeshIndices[0], 2);
         EXPECT_EQ(result.Points[5.0000000000000000e-01].MeshIndices[1], 1);
-        EXPECT_EQ(result.Points[7.5000000000000000e-01].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Second);
+        EXPECT_EQ(result.Points[7.5000000000000000e-01].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Second);
         EXPECT_EQ(result.Points[7.5000000000000000e-01].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[7.5000000000000000e-01].MeshIndices[1], 2);
-        EXPECT_EQ(result.Points[1.0000000000000000e+00].Type, UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
+        EXPECT_EQ(result.Points[1.0000000000000000e+00].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Both);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices.size(), 2);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices[0], 3);
         EXPECT_EQ(result.Points[1.0000000000000000e+00].MeshIndices[1], 3);

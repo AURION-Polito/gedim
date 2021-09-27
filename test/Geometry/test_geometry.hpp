@@ -9,7 +9,6 @@
 
 using namespace testing;
 using namespace std;
-using namespace Gedim;
 
 namespace GedimUnitTesting {
 
@@ -17,31 +16,31 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check Compare1DValues
       {
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, 1.0), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare1DValues(1.0, -1.0), GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtility.Compare1DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare2DValues
       {
-        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, 1.0), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare2DValues(1.0, -1.0), GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtility.Compare2DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare3DValues
       {
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, 1.0), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare3DValues(1.0, -1.0), GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtility.Compare3DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check IsLenghtPositive
@@ -83,25 +82,25 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check curvilinear coordinate before
       {
         ASSERT_EQ(geometryUtility.Compare1DValues(-0.5, 1.5),
-                  GeometryUtilities::CompareTypes::FirstBeforeSecond);
+                  Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
       }
 
       // check curvilinear coordinate coincident
       {
         ASSERT_EQ(geometryUtility.Compare1DValues(0.5, 0.5 + geometryUtilityConfig.Tolerance / 2.0),
-                  GeometryUtilities::CompareTypes::Coincident);
+                  Gedim::GeometryUtilities::CompareTypes::Coincident);
       }
 
       // check curvilinear coordinate before
       {
         ASSERT_EQ(geometryUtility.Compare1DValues(0.5, -1.5),
-                  GeometryUtilities::CompareTypes::SecondBeforeFirst);
+                  Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
     }
     catch (const exception& exception)
@@ -115,8 +114,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check curvilinear coordinate origin
       {
@@ -184,8 +183,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check simply no intersection
       {
@@ -194,13 +193,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 2.0);
         Eigen::Vector3d segmentTwoEnd(   1.0, 0.0, 2.0);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
       }
 
       // check no coplanarity
@@ -210,13 +209,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
       }
 
       // check MultipleIntersections, no inclusion
@@ -226,24 +225,24 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.5, 0.5, 0.0  );
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0  );
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
-        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
       }
 
       // check MultipleIntersections, no inclusion
@@ -253,24 +252,24 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(2.0, 0.0, 0.25 );
         Eigen::Vector3d segmentTwoEnd(   0.5, 0.0, 0.25 );
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 2.0 / 3.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 5.0 / 6.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
-        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
 
       // check MultipleIntersections, with inclusion
@@ -280,24 +279,24 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.5, 0.0, 0.25 );
         Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.25);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 0);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 1);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.75) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
 
 
@@ -308,17 +307,17 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, -1.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25 );
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
-        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
       }
 
       // check OneIntersection origin
@@ -328,17 +327,17 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, -1.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 0.0, 0.25 );
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
 
       // check parallel segments
@@ -348,13 +347,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999978e-01, 1.9999999999999996e+00, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   9.9999999999999978e-01, 0.0000000000000000e+00, 0.0000000000000000e+00);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
       }
 
       // check parallel segments
@@ -364,13 +363,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 1.2412670766236366e-16);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 2.4825341532472739e-17);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
       }
 
       // check intersection in first segment end and second segment origin
@@ -380,13 +379,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 1.2412670766236366e-16);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 2.4825341532472739e-17);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
       }
 
       // check intersection inside segments
@@ -396,13 +395,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 0.0000000000000000e+00);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
       }
 
       // check no intersection
@@ -412,14 +411,14 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(1.1586807759999997e+00, -2.3999999858728053e-08, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   1.1586807759999993e+00, 3.3173615759999997e+00, 0.0000000000000000e+00 );
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result;
         ASSERT_NO_THROW(geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
                                                                    segmentOneEnd,
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionLinesType, GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting);
-        ASSERT_EQ(result.IntersectionSegmentsType, GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
       }
     }
     catch (const exception& exception)
@@ -433,8 +432,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check right
       {
@@ -442,11 +441,11 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd),
-                  GeometryUtilities::PointSegmentPositionTypes::RightTheSegment);
+                  Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment);
       }
 
       // check left
@@ -455,10 +454,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment);
       }
 
       // check on segment line before origin
@@ -467,10 +466,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
       }
 
       // check on segment line after end
@@ -479,10 +478,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
       }
 
       // check on segment origin
@@ -491,10 +490,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
       }
 
       // check on segment end
@@ -503,10 +502,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
 
       // check inside segment
@@ -515,10 +514,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
 
-        GeometryUtilities::PointSegmentPositionTypes result;
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
-                                                       segmentEnd), GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+                                                       segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
       }
     }
     catch (const exception& exception)
@@ -532,8 +531,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check outside
       {
@@ -543,11 +542,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        GeometryUtilities::PointPolygonPositionResult result;
+        Gedim::GeometryUtilities::PointPolygonPositionResult result;
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, GeometryUtilities::PointPolygonPositionResult::Outside);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::Outside);
       }
 
       // check border
@@ -558,19 +557,19 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
         // border edge
-        GeometryUtilities::PointPolygonPositionResult resultBorderEdge;
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge;
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
                                                              polygonVertices,
                                                              resultBorderEdge));
-        ASSERT_EQ(resultBorderEdge.PositionType, GeometryUtilities::PointPolygonPositionResult::BorderEdge);
+        ASSERT_EQ(resultBorderEdge.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
 
         // border vertex
-        GeometryUtilities::PointPolygonPositionResult resultBorderVertex;
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex;
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
                                                              polygonVertices,
                                                              resultBorderVertex));
-        ASSERT_EQ(resultBorderVertex.PositionType, GeometryUtilities::PointPolygonPositionResult::BorderVertex);
+        ASSERT_EQ(resultBorderVertex.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
       }
 
@@ -582,11 +581,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        GeometryUtilities::PointPolygonPositionResult result;
+        Gedim::GeometryUtilities::PointPolygonPositionResult result;
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, GeometryUtilities::PointPolygonPositionResult::Inside);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::Inside);
       }
 
       // check on vertex
@@ -597,11 +596,11 @@ namespace GedimUnitTesting {
         polygonVertices.row(1)<< 2.0000000000000000e+00, 1.9234735079187608e+00, 1.8120621438385331e+00;
         polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        GeometryUtilities::PointPolygonPositionResult result;
+        Gedim::GeometryUtilities::PointPolygonPositionResult result;
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, GeometryUtilities::PointPolygonPositionResult::BorderVertex);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderVertex);
       }
     }
     catch (const exception& exception)
@@ -615,23 +614,23 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // no action
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 1;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::NoAction);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::NoAction);
         ASSERT_EQ(result.NewVertices.size(), 0);
         ASSERT_EQ(result.NewEdges.size(), 0);
         ASSERT_EQ(result.NewPolygons.size(), 0);
@@ -639,18 +638,18 @@ namespace GedimUnitTesting {
 
       // update square with one point
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.End.Index = 0;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 2);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -660,18 +659,18 @@ namespace GedimUnitTesting {
 
       // update square with two points
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.End.Index = 0;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -681,21 +680,21 @@ namespace GedimUnitTesting {
 
       // update square with two points with aligned edges
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 5;
         input.AlignedEdges.resize(1);
         input.AlignedEdges[0].OriginVertexIndex = 1;
         input.AlignedEdges[0].EndVertexIndex = 3;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 2;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.End.Index = 1;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 4);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -705,18 +704,18 @@ namespace GedimUnitTesting {
 
       // split square in two triangles
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 2;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 0);
         ASSERT_EQ(result.NewEdges.size(), 1);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -728,18 +727,18 @@ namespace GedimUnitTesting {
 
       // split square in a triangle and a trapezioid
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.End.Index = 2;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -751,18 +750,18 @@ namespace GedimUnitTesting {
 
       // split square in a two trapezioids
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.End.Index = 2;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 5);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -774,32 +773,32 @@ namespace GedimUnitTesting {
 
       // split triangle in a two triangles
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 1;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 0;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 0);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
         ASSERT_EQ(newEdgeIter->OriginId, 1);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 2);
@@ -817,32 +816,32 @@ namespace GedimUnitTesting {
 
       // split triangle in a two triangles
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 2;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 2);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
         ASSERT_EQ(newEdgeIter->OriginId, 0);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 1);
@@ -860,32 +859,32 @@ namespace GedimUnitTesting {
 
       // split triangle in a two triangles
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 2;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 1;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 1);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
         ASSERT_EQ(newEdgeIter->OriginId, 2);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 0);
@@ -903,18 +902,18 @@ namespace GedimUnitTesting {
 
       // split square in a a triangle and a trapezioid
       {
-        GeometryUtilities::SplitPolygonInput input;
+        Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
         input.Segment.End.Index = 2;
 
-        GeometryUtilities::SplitPolygonResult result;
+        Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -939,8 +938,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check normal of polygon 2D
       {
@@ -981,8 +980,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilityConfig;
-      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check rotation matrix of polygon 2D
       {

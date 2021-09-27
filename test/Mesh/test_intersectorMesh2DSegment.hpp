@@ -14,7 +14,6 @@
 
 using namespace testing;
 using namespace std;
-using namespace Gedim;
 
 namespace GedimUnitTesting
 {
@@ -22,9 +21,9 @@ namespace GedimUnitTesting
   {
     try
     {
-      GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       geometryUtilitiesConfig.Tolerance = 1e-15;
-      GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // segment inside mesh2D
       {
@@ -34,10 +33,10 @@ namespace GedimUnitTesting
         Vector3d segmentOrigin(0.25, 0.5, 0.0);
         Vector3d segmentEnd(0.5, 0.25, 0.0);
 
-        IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
-                                                          geometryUtilities);
+        Gedim::IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
+                                                                 geometryUtilities);
 
-        IntersectorMesh2DSegment::IntersectionMesh result;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh result;
         ASSERT_NO_THROW(IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin,
                                                                         segmentEnd,
                                                                         result));
@@ -59,10 +58,10 @@ namespace GedimUnitTesting
         Vector3d segmentOrigin(0.25, 0.75, 0.0);
         Vector3d segmentEnd(   0.75, 0.25, 0.0);
 
-        IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
-                                                          geometryUtilities);
+        Gedim::IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
+                                                                 geometryUtilities);
 
-        IntersectorMesh2DSegment::IntersectionMesh result;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh result;
         ASSERT_NO_THROW(IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin,
                                                                         segmentEnd,
                                                                         result));
@@ -89,10 +88,10 @@ namespace GedimUnitTesting
         Vector3d segmentOrigin(0.25, 0.75, 0.0);
         Vector3d segmentEnd(   0.75, 0.25, 0.0);
 
-        IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
-                                                          geometryUtilities);
+        Gedim::IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
+                                                                 geometryUtilities);
 
-        IntersectorMesh2DSegment::IntersectionMesh result;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh result;
         ASSERT_NO_THROW(IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin,
                                                                         segmentEnd,
                                                                         result));
@@ -122,10 +121,10 @@ namespace GedimUnitTesting
         Vector3d segmentOrigin(0.25, 0.75, 0.0);
         Vector3d segmentEnd(   0.75, 0.25, 0.0);
 
-        IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
-                                                          geometryUtilities);
+        Gedim::IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
+                                                                 geometryUtilities);
 
-        IntersectorMesh2DSegment::IntersectionMesh result;
+        Gedim::IntersectorMesh2DSegment::IntersectionMesh result;
         ASSERT_NO_THROW(IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin,
                                                                         segmentEnd,
                                                                         result));
