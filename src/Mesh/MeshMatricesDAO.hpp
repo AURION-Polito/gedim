@@ -33,8 +33,10 @@ namespace Gedim
       inline unsigned int Dimension() const
       { return _mesh.Dimension; }
 
-      void Cell0DsInitialize(const unsigned int numberCell0Ds);
-      unsigned int Cell0DAppend(const unsigned int numberCell0Ds);
+      void Cell0DsInitialize(const unsigned int& numberCell0Ds);
+      unsigned int Cell0DAppend(const unsigned int& numberCell0Ds);
+      void Cell0DRemove(const unsigned int& cell0DIndex);
+
       void Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
                                    const Vector3d& coordinates);
       inline void Cell0DSetMarker(const unsigned int& cell0DIndex,
@@ -143,7 +145,7 @@ namespace Gedim
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
 
 
-      void Cell0DInitializeDoubleProperties(const unsigned int numberDoubleProperties);
+      void Cell0DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell0DAddDoubleProperty(const string propertyId);
       void Cell0DInitializeDoublePropertyValues(const unsigned int& cell0DIndex,
                                                 const unsigned int& propertyIndex,
@@ -198,8 +200,8 @@ namespace Gedim
             propertyValueIndex];
       }
 
-      void Cell1DsInitialize(const unsigned int numberCell1Ds);
-      unsigned int Cell1DAppend(const unsigned int numberCell1Ds);
+      void Cell1DsInitialize(const unsigned int& numberCell1Ds);
+      unsigned int Cell1DAppend(const unsigned int& numberCell1Ds);
       inline void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
                                        const unsigned int& originCell0DIndex,
                                        const unsigned int& endCell0DIndex)
@@ -215,8 +217,8 @@ namespace Gedim
       unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
                                 const unsigned int& endCell0DIndex) const
       {
-        const unsigned int cell1DIndex = _mesh.Cell1DAdjacency.coeff(originCell0DIndex,
-                                                                     endCell0DIndex);
+        const unsigned int& cell1DIndex = _mesh.Cell1DAdjacency.coeff(originCell0DIndex,
+                                                                      endCell0DIndex);
         return (cell1DIndex == 0) ? Cell1DTotalNumber() :
                                     cell1DIndex - 1;
       }
@@ -325,7 +327,7 @@ namespace Gedim
                                      const unsigned int& updatedCell1DIdex);
       bool Cell1DUpdatedCell1Ds(const unsigned int& cell1DIndex,
                                 list<unsigned int>& updatedCell1DIds) const;
-      void Cell1DInitializeDoubleProperties(const unsigned int numberDoubleProperties);
+      void Cell1DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
 
       inline void Cell1DSetId(const unsigned int& cell1DIndex,
                               const unsigned int& id) { return; }
@@ -395,8 +397,8 @@ namespace Gedim
       }
 
 
-      void Cell2DsInitialize(const unsigned int numberCell2Ds);
-      unsigned int Cell2DAppend(const unsigned int numberCell2Ds);
+      void Cell2DsInitialize(const unsigned int& numberCell2Ds);
+      unsigned int Cell2DAppend(const unsigned int& numberCell2Ds);
       inline void Cell2DSetMarker(const unsigned int& cell2DIndex,
                                   const unsigned int& marker)
       {
@@ -520,7 +522,7 @@ namespace Gedim
       inline bool Cell2DHasNeighbourCell3D(const unsigned int& cell2DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
 
-      void Cell2DInitializeDoubleProperties(const unsigned int numberDoubleProperties);
+      void Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell2DAddDoubleProperty(const string propertyId);
       void Cell2DInitializeDoublePropertyValues(const unsigned int& cell2DIndex,
                                                 const unsigned int& propertyIndex,
@@ -576,8 +578,8 @@ namespace Gedim
       }
 
 
-      void Cell3DsInitialize(const unsigned int numberCell3Ds);
-      unsigned int Cell3DAppend(const unsigned int numberCell3Ds);
+      void Cell3DsInitialize(const unsigned int& numberCell3Ds);
+      unsigned int Cell3DAppend(const unsigned int& numberCell3Ds);
       inline void Cell3DSetMarker(const unsigned int& cell3DIndex,
                                   const unsigned int& marker)
       {
@@ -719,7 +721,7 @@ namespace Gedim
                               const unsigned int& id) { return; }
       inline unsigned int Cell3DId(const unsigned int& cell3DIndex) const { return cell3DIndex; }
 
-      void Cell3DInitializeDoubleProperties(const unsigned int numberDoubleProperties);
+      void Cell3DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell3DAddDoubleProperty(const string propertyId);
       void Cell3DInitializeDoublePropertyValues(const unsigned int& cell3DIndex,
                                                 const unsigned int& propertyIndex,
