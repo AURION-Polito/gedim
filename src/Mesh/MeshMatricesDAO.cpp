@@ -200,6 +200,16 @@ namespace Gedim
   {
     unsigned int oldNumberCell1Ds = _mesh.NumberCell1D;
     Cell1DsInitialize(oldNumberCell1Ds + numberCell1Ds);
+
+    for (unsigned c = 0; c < numberCell1Ds; c++)
+      _mesh.NumberCell1DNeighbourCell2D[oldNumberCell1Ds + c + 1] = _mesh.NumberCell1DNeighbourCell2D[oldNumberCell1Ds];
+
+    for (unsigned int p = 0; p < Cell1DNumberDoubleProperties(); p++)
+    {
+      for (unsigned c = 0; c < numberCell1Ds; c++)
+        _mesh.Cell1DDoublePropertySizes[p][oldNumberCell1Ds + c + 1] = _mesh.Cell1DDoublePropertySizes[p][oldNumberCell1Ds];
+    }
+
     return oldNumberCell1Ds;
   }
   // ***************************************************************************
@@ -307,6 +317,19 @@ namespace Gedim
   {
     unsigned int oldNumberCell2Ds = _mesh.NumberCell2D;
     Cell2DsInitialize(oldNumberCell2Ds + numberCell2Ds);
+
+    for (unsigned c = 0; c < numberCell2Ds; c++)
+    {
+      _mesh.NumberCell2DVertices[oldNumberCell2Ds + c + 1] = _mesh.NumberCell2DVertices[oldNumberCell2Ds];
+      _mesh.NumberCell2DEdges[oldNumberCell2Ds + c + 1] = _mesh.NumberCell2DEdges[oldNumberCell2Ds];
+    }
+
+    for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
+    {
+      for (unsigned c = 0; c < numberCell2Ds; c++)
+        _mesh.Cell2DDoublePropertySizes[p][oldNumberCell2Ds + c + 1] = _mesh.Cell2DDoublePropertySizes[p][oldNumberCell2Ds];
+    }
+
     return oldNumberCell2Ds;
   }
   // ***************************************************************************
@@ -445,6 +468,20 @@ namespace Gedim
   {
     unsigned int oldNumberCell3Ds = _mesh.NumberCell3D;
     Cell3DsInitialize(oldNumberCell3Ds + numberCell3Ds);
+
+    for (unsigned c = 0; c < numberCell3Ds; c++)
+    {
+      _mesh.NumberCell3DVertices[oldNumberCell3Ds + c + 1] = _mesh.NumberCell3DVertices[oldNumberCell3Ds];
+      _mesh.NumberCell3DEdges[oldNumberCell3Ds + c + 1] = _mesh.NumberCell3DEdges[oldNumberCell3Ds];
+      _mesh.NumberCell3DFaces[oldNumberCell3Ds + c + 1] = _mesh.NumberCell3DFaces[oldNumberCell3Ds];
+    }
+
+    for (unsigned int p = 0; p < Cell3DNumberDoubleProperties(); p++)
+    {
+      for (unsigned c = 0; c < numberCell3Ds; c++)
+        _mesh.Cell3DDoublePropertySizes[p][oldNumberCell3Ds + c + 1] = _mesh.Cell3DDoublePropertySizes[p][oldNumberCell3Ds];
+    }
+
     return oldNumberCell3Ds;
   }
   // ***************************************************************************
