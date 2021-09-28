@@ -213,6 +213,41 @@ namespace Gedim
     return oldNumberCell1Ds;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DRemove(const unsigned int& cell1DIndex)
+  {
+    Output::Assert(cell1DIndex < Cell1DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell1DNumberDoubleProperties(); p++)
+    {
+      ResizeNumberVectorWithNewNumberElements(_mesh.Cell1DDoublePropertySizes[p],
+                                              _mesh.Cell1DDoublePropertyValues[p],
+                                              _mesh.NumberCell1D,
+                                              cell1DIndex,
+                                              0);
+      _mesh.Cell1DDoublePropertySizes[p].erase(std::next(_mesh.Cell1DDoublePropertySizes[p].begin(),
+                                                         cell1DIndex));
+    }
+
+    _mesh.Cell1DAdjacency.coeffRef(Cell1DOrigin(cell1DIndex),
+                                   Cell1DEnd(cell1DIndex)) = 0.0;
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell1DNeighbourCell2D,
+                                            _mesh.Cell1DNeighbourCell2Ds,
+                                            _mesh.NumberCell1D,
+                                            cell1DIndex,
+                                            0);
+    _mesh.NumberCell1DNeighbourCell2D.erase(std::next(_mesh.NumberCell1DNeighbourCell2D.begin(),
+                                                      cell1DIndex));
+
+    _mesh.UpdatedCell1Ds.erase(cell1DIndex);
+
+    _mesh.Cell1DVertices.erase(std::next(_mesh.Cell1DVertices.begin(), 2 * cell1DIndex),
+                               std::next(_mesh.Cell1DVertices.begin(), 2 * cell1DIndex + 2));
+    _mesh.Cell1DMarkers.erase(std::next(_mesh.Cell1DMarkers.begin(), cell1DIndex));
+    _mesh.ActiveCell1D.erase(std::next(_mesh.ActiveCell1D.begin(), cell1DIndex));
+    _mesh.NumberCell1D--;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                                          const unsigned int& numberNeighbourCell2Ds)
   {
@@ -331,6 +366,44 @@ namespace Gedim
     }
 
     return oldNumberCell2Ds;
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell2DRemove(const unsigned int& cell2DIndex)
+  {
+    Output::Assert(cell2DIndex < Cell2DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
+    {
+      ResizeNumberVectorWithNewNumberElements(_mesh.Cell2DDoublePropertySizes[p],
+                                              _mesh.Cell2DDoublePropertyValues[p],
+                                              _mesh.NumberCell2D,
+                                              cell2DIndex,
+                                              0);
+      _mesh.Cell2DDoublePropertySizes[p].erase(std::next(_mesh.Cell2DDoublePropertySizes[p].begin(),
+                                                         cell2DIndex));
+    }
+
+    _mesh.UpdatedCell2Ds.erase(cell2DIndex);
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell2DVertices,
+                                            _mesh.Cell2DVertices,
+                                            _mesh.NumberCell2D,
+                                            cell2DIndex,
+                                            0);
+    _mesh.NumberCell2DVertices.erase(std::next(_mesh.NumberCell2DVertices.begin(),
+                                               cell2DIndex));
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell2DEdges,
+                                            _mesh.Cell2DEdges,
+                                            _mesh.NumberCell2D,
+                                            cell2DIndex,
+                                            0);
+    _mesh.NumberCell2DEdges.erase(std::next(_mesh.NumberCell2DEdges.begin(),
+                                            cell2DIndex));
+
+    _mesh.Cell2DMarkers.erase(std::next(_mesh.Cell2DMarkers.begin(), cell2DIndex));
+    _mesh.ActiveCell2D.erase(std::next(_mesh.ActiveCell2D.begin(), cell2DIndex));
+    _mesh.NumberCell2D--;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeVertices(const unsigned int& cell2DIndex,
@@ -483,6 +556,52 @@ namespace Gedim
     }
 
     return oldNumberCell3Ds;
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell3DRemove(const unsigned int& cell3DIndex)
+  {
+    Output::Assert(cell3DIndex < Cell3DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell3DNumberDoubleProperties(); p++)
+    {
+      ResizeNumberVectorWithNewNumberElements(_mesh.Cell3DDoublePropertySizes[p],
+                                              _mesh.Cell3DDoublePropertyValues[p],
+                                              _mesh.NumberCell3D,
+                                              cell3DIndex,
+                                              0);
+      _mesh.Cell3DDoublePropertySizes[p].erase(std::next(_mesh.Cell3DDoublePropertySizes[p].begin(),
+                                                         cell3DIndex));
+    }
+
+    _mesh.UpdatedCell3Ds.erase(cell3DIndex);
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell3DVertices,
+                                            _mesh.Cell3DVertices,
+                                            _mesh.NumberCell3D,
+                                            cell3DIndex,
+                                            0);
+    _mesh.NumberCell3DVertices.erase(std::next(_mesh.NumberCell3DVertices.begin(),
+                                               cell3DIndex));
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell3DEdges,
+                                            _mesh.Cell3DEdges,
+                                            _mesh.NumberCell3D,
+                                            cell3DIndex,
+                                            0);
+    _mesh.NumberCell3DEdges.erase(std::next(_mesh.NumberCell3DEdges.begin(),
+                                            cell3DIndex));
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell3DFaces,
+                                            _mesh.Cell3DFaces,
+                                            _mesh.NumberCell3D,
+                                            cell3DIndex,
+                                            0);
+    _mesh.NumberCell3DFaces.erase(std::next(_mesh.NumberCell3DFaces.begin(),
+                                            cell3DIndex));
+
+    _mesh.Cell3DMarkers.erase(std::next(_mesh.Cell3DMarkers.begin(), cell3DIndex));
+    _mesh.ActiveCell3D.erase(std::next(_mesh.ActiveCell3D.begin(), cell3DIndex));
+    _mesh.NumberCell3D--;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell3DInitializeVertices(const unsigned int& cell3DIndex,
@@ -684,6 +803,7 @@ namespace Gedim
       _mesh.Cell0DDoublePropertyValues[s].shrink_to_fit();
 
     _mesh.Cell1DVertices.shrink_to_fit();
+    _mesh.Cell1DAdjacency.prune(0.0);
     _mesh.Cell1DAdjacency.makeCompressed();
     _mesh.NumberCell1DNeighbourCell2D.shrink_to_fit();
     _mesh.Cell1DNeighbourCell2Ds.shrink_to_fit();

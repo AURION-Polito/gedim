@@ -202,6 +202,7 @@ namespace Gedim
 
       void Cell1DsInitialize(const unsigned int& numberCell1Ds);
       unsigned int Cell1DAppend(const unsigned int& numberCell1Ds);
+      void Cell1DRemove(const unsigned int& cell1DIndex);
       inline void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
                                        const unsigned int& originCell0DIndex,
                                        const unsigned int& endCell0DIndex)
@@ -399,6 +400,7 @@ namespace Gedim
 
       void Cell2DsInitialize(const unsigned int& numberCell2Ds);
       unsigned int Cell2DAppend(const unsigned int& numberCell2Ds);
+      void Cell2DRemove(const unsigned int& cell2DIndex);
       inline void Cell2DSetMarker(const unsigned int& cell2DIndex,
                                   const unsigned int& marker)
       {
@@ -580,6 +582,7 @@ namespace Gedim
 
       void Cell3DsInitialize(const unsigned int& numberCell3Ds);
       unsigned int Cell3DAppend(const unsigned int& numberCell3Ds);
+      void Cell3DRemove(const unsigned int& cell3DIndex);
       inline void Cell3DSetMarker(const unsigned int& cell3DIndex,
                                   const unsigned int& marker)
       {

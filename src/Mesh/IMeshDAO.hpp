@@ -239,6 +239,10 @@ namespace Gedim
       /// \param numberCell1Ds the number of Cell1Ds to append
       /// \return the previous number of Cell1Ds before the append operation
       virtual unsigned int Cell1DAppend(const unsigned int& numberCell1Ds) = 0;
+      /// \brief Remove the Cell1D from the mesh
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      /// \note the cell1D is removed and no integrity check in the mesh are performed
+      virtual void Cell1DRemove(const unsigned int& cell1DIndex) = 0;
       /// \brief Set the Cell1D Origin
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param originCell0DIndex the Cell0D index of Cell1D origin from 0 to Cell0DTotalNumber()
@@ -428,6 +432,10 @@ namespace Gedim
       /// \param numberCell2Ds the number of Cell2Ds to append
       /// \return the previous number of Cell2Ds before the append operation
       virtual unsigned int Cell2DAppend(const unsigned int& numberCell2Ds) = 0;
+      /// \brief Remove the Cell2D from the mesh
+      /// \param cell2DIndex the index of Cell0D from 0 to Cell2DTotalNumber()
+      /// \note the cell2D is removed and no integrity check in the mesh are performed
+      virtual void Cell2DRemove(const unsigned int& cell2DIndex) = 0;
       /// \brief Initialize the Cell2D vertices  number
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param numberCell2DVertices the number of vertices of Cell2D
@@ -623,6 +631,10 @@ namespace Gedim
       /// \param numberCell3Ds the number of Cell3Ds to append
       /// \return the previous number of Cell3Ds before the append operation
       virtual unsigned int Cell3DAppend(const unsigned int& numberCell3Ds) = 0;
+      /// \brief Remove the Cell3D from the mesh
+      /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
+      /// \note the cell3D is removed and no integrity check in the mesh are performed
+      virtual void Cell3DRemove(const unsigned int& cell3DIndex) = 0;
       /// \brief Initialize the Cell3D vertices  number
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param numberCell3DVertices the number of vertices of Cell3D
