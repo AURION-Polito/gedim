@@ -811,6 +811,24 @@ namespace Gedim
 
       /// \return The mesh converted to string
       virtual string ToString() = 0;
+
+      /// \brief Clean Inactive Cells in the mesh
+      /// \param oldCell0DToNewCell0D each pair is old Cell0D index to new Cell0D index
+      /// \param oldCell1DToNewCell1D each pair is old Cell1D index to new Cell1D index
+      /// \param oldCell2DToNewCell2D each pair is old Cell2D index to new Cell2D index
+      /// \param oldCell3DToNewCell3D each pair is old Cell3D index to new Cell3D index
+      /// \param newCell0DToOldCell0D each pair is new Cell0D index to old Cell0D index
+      /// \param newCell1DToOldCell1D each pair is new Cell1D index to old Cell1D index
+      /// \param newCell2DToOldCell2D each pair is new Cell2D index to old Cell2D index
+      /// \param newCell3DToOldCell3D each pair is new Cell3D index to old Cell3D index
+      virtual void CleanInactiveCells(map<unsigned int, unsigned int>& oldCell0DToNewCell0D,
+                                      map<unsigned int, unsigned int>& oldCell1DToNewCell1D,
+                                      map<unsigned int, unsigned int>& oldCell2DToNewCell2D,
+                                      map<unsigned int, unsigned int>& oldCell3DToNewCell3D,
+                                      map<unsigned int, unsigned int>& newCell0DToOldCell0D,
+                                      map<unsigned int, unsigned int>& newCell1DToOldCell1D,
+                                      map<unsigned int, unsigned int>& newCell2DToOldCell2D,
+                                      map<unsigned int, unsigned int>& newCell3DToOldCell3D) = 0;
   };
 }
 
