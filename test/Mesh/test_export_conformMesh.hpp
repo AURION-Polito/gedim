@@ -93,11 +93,18 @@ namespace GedimUnitTesting
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell1D, 9);
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell2D, 3);
 
-        Gedim::ConformerMeshSegment::ToString(conformMesh);
+        {
+          using namespace Gedim;
+          Gedim::ConformerMeshSegment::ToString(conformMesh);
+          conformMeshSegment.UpdateWithActiveMesh2D(extractionData,
+                                                    conformMesh);
+          Gedim::ConformerMeshSegment::ToString(conformMesh);
+        }
+
         for (const auto& mesh1Dpoint : conformMesh.Points)
           EXPECT_EQ(mesh1Dpoint.second.Vertex2DIds.size(), 1);
         for (const auto& mesh1Dsegment : conformMesh.Segments)
-          EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 2);
+          EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
       }
     }
     catch (const exception& exception)

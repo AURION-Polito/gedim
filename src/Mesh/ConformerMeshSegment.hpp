@@ -7,6 +7,7 @@
 #include "IntersectorMesh2DSegment.hpp"
 #include "UnionMeshSegment.hpp"
 #include "MeshMatrices.hpp"
+#include "MeshUtilities.hpp"
 
 using namespace std;
 
@@ -82,6 +83,12 @@ namespace Gedim
                                const Gedim::IMeshDAO& mesh2D,
                                const double& curvilinearCoordinate,
                                ConformMesh& result);
+
+      /// \brief Update the confermed 1D mesh with active mesh 2D data
+      /// \param activeMesh2DData the active mesh data
+      /// \param conformedMesh the resulting conformed mesh
+      void UpdateWithActiveMesh2D(const Gedim::MeshUtilities::ExtractActiveMeshData& activeMesh2DData,
+                                  ConformMesh& conformedMesh) const;
   };
 }
 

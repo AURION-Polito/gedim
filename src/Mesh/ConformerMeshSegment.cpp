@@ -245,5 +245,59 @@ namespace Gedim
     result.Segments.clear();
     CreateConformSegments(result);
   }
+
+  void ConformerMeshSegment::UpdateWithActiveMesh2D(const MeshUtilities::ExtractActiveMeshData& activeMesh2DData,
+                                                    ConformMesh& conformedMesh) const
+  {
+    for (map<double, ConformerMeshSegment::ConformMesh::ConformMeshPoint>::iterator it = conformedMesh.Points.begin();
+         it != conformedMesh.Points.end();
+         it++)
+    {
+      ConformerMeshSegment::ConformMesh::ConformMeshPoint& point = it->second;
+
+      point.Vertex2DIds.remove_if([activeMesh2DData](unsigned int& cell0DIndex){
+        return activeMesh2DData.OldCell0DToNewCell0D.find(cell0DIndex) == activeMesh2DData.OldCell0DToNewCell0D.end();
+      });
+      for_each(point.Vertex2DIds.begin(), point.Vertex2DIds.end(),
+               [activeMesh2DData](unsigned int& s) {
+        s = activeMesh2DData.OldCell0DToNewCell0D.at(s);
+      });
+
+      point.Edge2DIds.remove_if([activeMesh2DData](unsigned int cell1DIndex){
+        return activeMesh2DData.OldCell1DToNewCell1D.find(cell1DIndex) == activeMesh2DData.OldCell1DToNewCell1D.end();
+      });
+      for_each(point.Edge2DIds.begin(), point.Edge2DIds.end(),
+               [activeMesh2DData](unsigned int& s) {
+        s = activeMesh2DData.OldCell1DToNewCell1D.at(s);
+      });
+
+      point.Cell2DIds.remove_if([activeMesh2DData](unsigned int cell2DIndex){
+        return activeMesh2DData.OldCell2DToNewCell2D.find(cell2DIndex) == activeMesh2DData.OldCell2DToNewCell2D.end();
+      });
+      for_each(point.Cell2DIds.begin(), point.Cell2DIds.end(),
+               [activeMesh2DData](unsigned int& s) {
+        s = activeMesh2DData.OldCell2DToNewCell2D.at(s);
+      });
+    }
+
+    for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
+    {
+      segment.Edge2DIds.remove_if([activeMesh2DData](unsigned int cell0DIndex){
+        return activeMesh2DData.OldCell1DToNewCell1D.find(cell0DIndex) == activeMesh2DData.OldCell1DToNewCell1D.end();
+      });
+      for_each(segment.Edge2DIds.begin(), segment.Edge2DIds.end(),
+               [activeMesh2DData](unsigned int& s) {
+        s = activeMesh2DData.OldCell1DToNewCell1D.at(s);
+      });
+
+      segment.Cell2DIds.remove_if([activeMesh2DData](unsigned int cell1DIndex){
+        return activeMesh2DData.OldCell2DToNewCell2D.find(cell1DIndex) == activeMesh2DData.OldCell2DToNewCell2D.end();
+      });
+      for_each(segment.Cell2DIds.begin(), segment.Cell2DIds.end(),
+               [activeMesh2DData](unsigned int& s) {
+        s = activeMesh2DData.OldCell2DToNewCell2D.at(s);
+      });
+    }
+  }
   // ***************************************************************************
 }
