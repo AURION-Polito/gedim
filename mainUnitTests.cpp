@@ -2,6 +2,8 @@
 #include "test_mesh.hpp"
 #include "test_intersectorMesh2DSegment.hpp"
 #include "test_unionMeshSegment.hpp"
+#include "test_conformMesh.hpp"
+#include "test_export_conformMesh.hpp"
 
 #include <gtest/gtest.h>
 
