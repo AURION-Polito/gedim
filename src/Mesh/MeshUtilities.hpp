@@ -28,9 +28,9 @@ namespace Gedim
       ~MeshUtilities();
 
       /// \brief Extract Active Cells from mesh
-      void ExtractActiveMesh(const IMeshDAO& mesh,
-                             IMeshDAO& extractedMesh,
-                             ExtractActiveMeshData& extractionData);
+      /// \note the data are duplied from mesh to extractedMesh
+      void ExtractActiveMesh(IMeshDAO& mesh,
+                             ExtractActiveMeshData& extractionData) const;
   };
 
 }
