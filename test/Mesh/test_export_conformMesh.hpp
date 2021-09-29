@@ -14,6 +14,7 @@
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
+#include "MeshDAOExporterToCsv.hpp"
 
 using namespace testing;
 using namespace std;
@@ -30,12 +31,13 @@ namespace GedimUnitTesting
       // conform of simple 2 points mesh with one segment
       {
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockOriginalMesh;
-        Gedim::MeshMatricesDAO domainOriginalMesh(mockOriginalMesh.Mesh);
+        Gedim::MeshMatricesDAO domainMesh(mockOriginalMesh.Mesh);
 
         Vector3d segmentOrigin(0.25, 0.25, 0.0);
         Vector3d segmentEnd(0.35, 0.35, 0.0);
 
-        Gedim::IntersectorMesh2DSegment intersectorMeshSegment(domainOriginalMesh,
+        // Intersect mesh 2D with segment
+        Gedim::IntersectorMesh2DSegment intersectorMeshSegment(domainMesh,
                                                                geometryUtilities);
 
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMesh;
@@ -54,6 +56,7 @@ namespace GedimUnitTesting
                                          curvilinearCoordinatesMesh,
                                          unionMesh);
 
+        // Conform the mesh 1D
         Gedim::ConformerMeshSegment conformMeshSegment(geometryUtilities);
 
         Gedim::ConformerMeshSegment::ConformMesh conformMesh;
@@ -62,49 +65,73 @@ namespace GedimUnitTesting
                                                              0,
                                                              conformMesh));
 
+        // Conform the mesh 2D
         Gedim::ConformerMeshPolygon conformMeshPolygon(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh domainConformedMesh;
+        Gedim::ConformerMeshPolygon::ConformMesh domainConformedMeshData;
 
         ASSERT_NO_THROW(conformMeshPolygon.CreateConformMesh(segmentOrigin,
                                                              segmentEnd,
                                                              conformMesh,
-                                                             domainOriginalMesh,
-                                                             domainConformedMesh));
+                                                             domainMesh,
+                                                             domainConformedMeshData));
 
+        // Clean mesh 2D
         Gedim::MeshUtilities meshUtilities;
-
         Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
-        ASSERT_NO_THROW(meshUtilities.ExtractActiveMesh(domainOriginalMesh,
+        ASSERT_NO_THROW(meshUtilities.ExtractActiveMesh(domainMesh,
                                                         extractionData));
 
-        {
-          using namespace Gedim;
-          cerr<< extractionData.NewCell0DToOldCell0D<< endl;
-          cerr<< extractionData.NewCell1DToOldCell1D<< endl;
-          cerr<< extractionData.NewCell2DToOldCell2D<< endl;
-          cerr<< extractionData.NewCell3DToOldCell3D<< endl;
-          cerr<< extractionData.OldCell0DToNewCell0D<< endl;
-          cerr<< extractionData.OldCell1DToNewCell1D<< endl;
-          cerr<< extractionData.OldCell2DToNewCell2D<< endl;
-          cerr<< extractionData.OldCell3DToNewCell3D<< endl;
-        }
+        // Update mesh 1D with cleaned mesh 2D
+        ASSERT_NO_THROW(conformMeshSegment.UpdateWithActiveMesh2D(extractionData,
+                                                                  conformMesh));
 
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell0D, 7);
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell1D, 9);
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell2D, 3);
 
-        {
-          using namespace Gedim;
-          Gedim::ConformerMeshSegment::ToString(conformMesh);
-          conformMeshSegment.UpdateWithActiveMesh2D(extractionData,
-                                                    conformMesh);
-          Gedim::ConformerMeshSegment::ToString(conformMesh);
-        }
-
         for (const auto& mesh1Dpoint : conformMesh.Points)
           EXPECT_EQ(mesh1Dpoint.second.Vertex2DIds.size(), 1);
         for (const auto& mesh1Dsegment : conformMesh.Segments)
           EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
+
+        // Add mesh 2D properties
+        domainMesh.Cell0DInitializeDoubleProperties(1);
+        domainMesh.Cell0DAddDoubleProperty("flag");
+        for (unsigned int p = 0; p < domainMesh.Cell0DTotalNumber(); p++)
+        {
+          domainMesh.Cell0DInitializeDoublePropertyValues(p, 0, 1);
+          domainMesh.Cell0DInsertDoublePropertyValue(p, 0, 0, 0.0);
+        }
+        for (const pair<double, Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint>& point : conformMesh.Points)
+        {
+          for (const unsigned int& v : point.second.Vertex2DIds)
+            domainMesh.Cell0DInsertDoublePropertyValue(v, 0, 0, 1.0);
+        }
+
+        domainMesh.Cell1DInitializeDoubleProperties(1);
+        domainMesh.Cell1DAddDoubleProperty("flag");
+        for (unsigned int e = 0; e < domainMesh.Cell1DTotalNumber(); e++)
+        {
+          domainMesh.Cell1DInitializeDoublePropertyValues(e, 0, 1);
+          domainMesh.Cell1DInsertDoublePropertyValue(e, 0, 0, 0.0);
+        }
+        for (const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformMesh.Segments)
+        {
+          for (const unsigned int& e : segment.Edge2DIds)
+            domainMesh.Cell1DInsertDoublePropertyValue(e, 0, 0, 1.0);
+        }
+
+        // Export the resulting mesh
+        string exportFolder = "./Export";
+        Gedim::Output::CreateFolder(exportFolder);
+        exportFolder = exportFolder + "/TestExportConformedMesh2D";
+        Gedim::Output::CreateFolder(exportFolder);
+
+        Gedim::MeshDAOExporterToCsv::Configuration exportConfiguration;
+        exportConfiguration.ExportFolder = exportFolder;
+        Gedim::MeshDAOExporterToCsv exporter;
+        EXPECT_NO_THROW(exporter.Export(exportConfiguration,
+                                        domainMesh));
       }
     }
     catch (const exception& exception)
