@@ -129,6 +129,12 @@ namespace Gedim
       virtual bool Cell0DHasNeighbourCell1D(const unsigned int& cell0DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
 
+      /// \brief Reset the Cell0D Cell1D neighbour to empty value (Cell0DHasNeighbourCell1D is false)
+      /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
+      /// \param neighbourIndex the number of Cell1D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell1D(cell0DIndex)
+      virtual void Cell0DResetNeighbourCell1D(const unsigned int& cell0DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
+
       /// \brief Initialize the Cell0D Cell2D neighbours number
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param numberNeighbourCell2Ds the number of Cell2D neighbours of the Cell0D
@@ -155,6 +161,11 @@ namespace Gedim
       /// \return true if Neighbour Cell2Ds of Cell0D at position neighbourIndex exists
       virtual bool Cell0DHasNeighbourCell2D(const unsigned int& cell0DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
+      /// \brief Reset the Cell0D Cell2D neighbour to empty value (Cell0DHasNeighbourCell2D is false)
+      /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
+      /// \param neighbourIndex the number of Cell2D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell2D(cell0DIndex)
+      virtual void Cell0DResetNeighbourCell2D(const unsigned int& cell0DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
 
       /// \brief Initialize the Cell0D Cell3D neighbours number
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
@@ -182,6 +193,11 @@ namespace Gedim
       /// \return true if Neighbour Cell3Ds of Cell0D at position neighbourIndex exists
       virtual bool Cell0DHasNeighbourCell3D(const unsigned int& cell0DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
+      /// \brief Reset the Cell0D Cell3D neighbour to empty value (Cell0DHasNeighbourCell3D is false)
+      /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
+      /// \param neighbourIndex the number of Cell3D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell3D(cell0DIndex)
+      virtual void Cell0DResetNeighbourCell3D(const unsigned int& cell0DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
 
       /// \brief Initialize the Cell0Ds double properties
       /// \param numberDoubleProperties the total number of Cell0Ds properties
@@ -348,6 +364,12 @@ namespace Gedim
       /// \return true if Neighbour Cell2Ds of Cell1D at position neighbourIndex exists
       virtual bool Cell1DHasNeighbourCell2D(const unsigned int& cell1DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
+      /// \brief Reset the Cell1D Cell2D neighbour to empty value (Cell1DHasNeighbourCell2D is false)
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      /// \param neighbourIndex the number of Cell2D neighbour of the Cell1D from 0 to Cell1DNumberNeighbourCell2D(cell1DIndex)
+      virtual void Cell1DResetNeighbourCell2D(const unsigned int& cell1DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
+
       /// \brief Initialize the Cell1D Cell3D neighbours number
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param numberNeighbourCell3Ds the number of Cell3D neighbours of the Cell1D
@@ -374,6 +396,11 @@ namespace Gedim
       /// \return true if Neighbour Cell3Ds of Cell1D at position neighbourIndex exists
       virtual bool Cell1DHasNeighbourCell3D(const unsigned int& cell1DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
+      /// \brief Reset the Cell1D Cell3D neighbour to empty value (Cell1DHasNeighbourCell3D is false)
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      /// \param neighbourIndex the number of Cell3D neighbour of the Cell1D from 0 to Cell1DNumberNeighbourCell3D(cell1DIndex)
+      virtual void Cell1DResetNeighbourCell3D(const unsigned int& cell1DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
 
 
       /// \brief Initialize the Cell1Ds double properties
@@ -574,6 +601,11 @@ namespace Gedim
       /// \return true if Neighbour Cell3Ds of Cell2D at position neighbourIndex exists
       virtual bool Cell2DHasNeighbourCell3D(const unsigned int& cell2DIndex,
                                             const unsigned int& neighbourIndex) const = 0;
+      /// \brief Reset the Cell2D Cell3D neighbour to empty value (Cell2DHasNeighbourCell3D is false)
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param neighbourIndex the number of Cell3D neighbour of the Cell2D from 0 to Cell2DNumberNeighbourCell3D(cell2DIndex)
+      virtual void Cell2DResetNeighbourCell3D(const unsigned int& cell2DIndex,
+                                              const unsigned int& neighbourIndex) = 0;
 
       /// \brief Initialize the Cell2Ds double properties
       /// \param numberDoubleProperties the total number of Cell2Ds properties

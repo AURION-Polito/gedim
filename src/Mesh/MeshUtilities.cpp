@@ -40,7 +40,7 @@ namespace Gedim
       removedCell0Ds++;
     }
 
-    // remove inactive Cell1Ds
+    // remove inactive Cell1D
     unsigned int numNewCell1Ds = 0;
     list<unsigned int> cell1DIdToRemove;
     for (unsigned int c = 0; c < mesh.Cell1DTotalNumber(); c++)
@@ -66,6 +66,7 @@ namespace Gedim
     }
 
     // remove inactive Cell2Ds
+    unsigned int oldNumCell2Ds = mesh.Cell2DTotalNumber();
     unsigned int numNewCell2Ds = 0;
     list<unsigned int> cell2DIdToRemove;
     for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)

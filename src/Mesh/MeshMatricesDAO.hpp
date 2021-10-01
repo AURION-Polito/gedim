@@ -16,6 +16,16 @@ namespace Gedim
     private:
       MeshMatrices& _mesh;
 
+      /// \brief for each i element of container v if v[i] > minElement then v[i]--
+      /// if v[i] == minElement the v[i] = newElementInitialization
+      /// \param elements the container v
+      /// \param minElement the minElement
+      /// \param newElementInitialization the new element initialization
+      template<class Container, class T>
+      void AlignVectorHigherElements(Container& elements,
+                                     const T& minElement,
+                                     const T& newElementInitialization);
+
       template<typename T>
       void ResizeNumberVectorWithNewNumberElements(vector<unsigned int>& numberElementVector,
                                                    vector<T>& elementVector,
@@ -123,6 +133,12 @@ namespace Gedim
                                                 const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
       inline bool Cell0DHasNeighbourCell1D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+      inline void Cell0DResetNeighbourCell1D(const unsigned int& cell0DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        throw runtime_error("Not implemented");
+      }
+
       inline void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell2Ds) { return; }
       inline void Cell0DInsertNeighbourCell2D(const unsigned int& cell0DIndex,
@@ -133,6 +149,11 @@ namespace Gedim
                                                 const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
       inline bool Cell0DHasNeighbourCell2D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+      inline void Cell0DResetNeighbourCell2D(const unsigned int& cell0DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        throw runtime_error("Not implemented");
+      }
       inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell3Ds) { return; }
       inline void Cell0DInsertNeighbourCell3D(const unsigned int& cell0DIndex,
@@ -143,7 +164,11 @@ namespace Gedim
                                                 const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
       inline bool Cell0DHasNeighbourCell3D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
-
+      inline void Cell0DResetNeighbourCell3D(const unsigned int& cell0DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        throw runtime_error("Not implemented");
+      }
 
       void Cell0DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell0DAddDoubleProperty(const string propertyId);
@@ -297,6 +322,13 @@ namespace Gedim
         return _mesh.Cell1DNeighbourCell2Ds[_mesh.NumberCell1DNeighbourCell2D[cell1DIndex] +
             neighbourIndex] < _mesh.NumberCell2D;
       }
+      inline void Cell1DResetNeighbourCell2D(const unsigned int& cell1DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        _mesh.Cell1DNeighbourCell2Ds[_mesh.NumberCell1DNeighbourCell2D[cell1DIndex] +
+            neighbourIndex] = _mesh.NumberCell2D;
+      }
+
       inline unsigned int Cell1DMarker(const unsigned int& cell1DIndex) const
       {
         Output::Assert(cell1DIndex < Cell1DTotalNumber());
@@ -342,6 +374,11 @@ namespace Gedim
                                                 const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
       inline bool Cell1DHasNeighbourCell3D(const unsigned int& cell1DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+      inline void Cell1DResetNeighbourCell3D(const unsigned int& cell1DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        throw runtime_error("Not implemented");
+      }
 
       unsigned int Cell1DAddDoubleProperty(const string propertyId);
       void Cell1DInitializeDoublePropertyValues(const unsigned int& cell1DIndex,
@@ -523,7 +560,11 @@ namespace Gedim
                                                 const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
       inline bool Cell2DHasNeighbourCell3D(const unsigned int& cell2DIndex,
                                            const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
-
+      inline void Cell2DResetNeighbourCell3D(const unsigned int& cell2DIndex,
+                                             const unsigned int& neighbourIndex)
+      {
+        throw runtime_error("Not implemented");
+      }
       void Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell2DAddDoubleProperty(const string propertyId);
       void Cell2DInitializeDoublePropertyValues(const unsigned int& cell2DIndex,

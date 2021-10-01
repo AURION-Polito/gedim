@@ -42,6 +42,20 @@ namespace Gedim
                           numOriginalElements);
   }
   // ***************************************************************************
+  template<class Container, class T>
+  void MeshMatricesDAO::AlignVectorHigherElements(Container& elements,
+                                                  const T& minElement,
+                                                  const T& newElementInitialization)
+  {
+    for (auto it = elements.begin(); it != elements.end(); it++)
+    {
+      if (*it > minElement)
+        (*it)--;
+      else if ((*it) == minElement)
+        (*it) = newElementInitialization;
+    }
+  }
+  // ***************************************************************************
   MeshMatricesDAO::MeshMatricesDAO(MeshMatrices& mesh) :
     _mesh(mesh)
   {
@@ -98,6 +112,16 @@ namespace Gedim
     _mesh.Cell0DMarkers.erase(std::next(_mesh.Cell0DMarkers.begin(), cell0DIndex));
     _mesh.ActiveCell0D.erase(std::next(_mesh.ActiveCell0D.begin(), cell0DIndex));
     _mesh.NumberCell0D--;
+
+    AlignVectorHigherElements(_mesh.Cell1DVertices,
+                              cell0DIndex,
+                              _mesh.NumberCell0D);
+    AlignVectorHigherElements(_mesh.Cell2DVertices,
+                              cell0DIndex,
+                              _mesh.NumberCell0D);
+    AlignVectorHigherElements(_mesh.Cell3DVertices,
+                              cell0DIndex,
+                              _mesh.NumberCell0D);
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
@@ -246,6 +270,13 @@ namespace Gedim
     _mesh.Cell1DMarkers.erase(std::next(_mesh.Cell1DMarkers.begin(), cell1DIndex));
     _mesh.ActiveCell1D.erase(std::next(_mesh.ActiveCell1D.begin(), cell1DIndex));
     _mesh.NumberCell1D--;
+
+    AlignVectorHigherElements(_mesh.Cell2DEdges,
+                              cell1DIndex,
+                              _mesh.NumberCell1D);
+    AlignVectorHigherElements(_mesh.Cell3DEdges,
+                              cell1DIndex,
+                              _mesh.NumberCell1D);
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
@@ -341,7 +372,7 @@ namespace Gedim
       _mesh.Cell2DDoublePropertySizes[p].resize(_mesh.NumberCell2D + 1, 0);
 
     // update neighbours
-    for (unsigned int &neigh : _mesh.Cell1DNeighbourCell2Ds)
+    for (unsigned int& neigh : _mesh.Cell1DNeighbourCell2Ds)
     {
       if (neigh == oldNumberCell2D)
         neigh = _mesh.NumberCell2D;
@@ -404,6 +435,13 @@ namespace Gedim
     _mesh.Cell2DMarkers.erase(std::next(_mesh.Cell2DMarkers.begin(), cell2DIndex));
     _mesh.ActiveCell2D.erase(std::next(_mesh.ActiveCell2D.begin(), cell2DIndex));
     _mesh.NumberCell2D--;
+
+    AlignVectorHigherElements(_mesh.Cell1DNeighbourCell2Ds,
+                              cell2DIndex,
+                              _mesh.NumberCell2D);
+    AlignVectorHigherElements(_mesh.Cell3DFaces,
+                              cell2DIndex,
+                              _mesh.NumberCell2D);
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeVertices(const unsigned int& cell2DIndex,
