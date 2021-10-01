@@ -16,15 +16,34 @@ namespace Gedim
     private:
       MeshMatrices& _mesh;
 
+      /// \brief for each i,j element of sparse matrix A if A[i,j] > minElement then A[i, j]--
+      /// if A[i, j] == minElement the A[i, j] = 0
+      /// \param matrix the sparse matrix A
+      /// \param minElement the minElement
+      /// \param newElementInitialization the new element initialization
+      template<typename T>
+      void AlignSparseMatrixHigherElements(Eigen::SparseMatrix<T>& matrix,
+                                           const T& minElement);
+
+      /// \brief for each i element of container on each map key v if v[i] > minElement then v[i]--
+      /// if v[i] == minElement the v[i] = newElementInitialization
+      /// \param elements the container map v
+      /// \param minElement the minElement
+      /// \param newElementInitialization the new element initialization
+      template<class Container, class T>
+      void AlignMapContainerHigherElements(map<unsigned int, Container>& elements,
+                                           const T& minElement,
+                                           const T& newElementInitialization);
+
       /// \brief for each i element of container v if v[i] > minElement then v[i]--
       /// if v[i] == minElement the v[i] = newElementInitialization
       /// \param elements the container v
       /// \param minElement the minElement
       /// \param newElementInitialization the new element initialization
       template<class Container, class T>
-      void AlignVectorHigherElements(Container& elements,
-                                     const T& minElement,
-                                     const T& newElementInitialization);
+      void AlignContainerHigherElements(Container& elements,
+                                        const T& minElement,
+                                        const T& newElementInitialization);
 
       template<typename T>
       void ResizeNumberVectorWithNewNumberElements(vector<unsigned int>& numberElementVector,
