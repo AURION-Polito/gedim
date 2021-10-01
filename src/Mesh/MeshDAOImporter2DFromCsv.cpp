@@ -287,7 +287,10 @@ namespace Gedim
           }
 
           unsigned int pIndex = mesh.Cell0DAddDoubleProperty(cellProperty.Id);
-          FileReader propertyFileReader(cellProperty.FilePath);
+
+          string fileFolder, fileName, fileExtension;
+          Gedim::Output::GetFilePath(csvFileReader.Path(), fileFolder, fileName, fileExtension);
+          FileReader propertyFileReader(fileFolder + cellProperty.FilePath);
           ImportCell0DProperty(pIndex,
                                propertyFileReader,
                                separator,
@@ -393,7 +396,10 @@ namespace Gedim
           }
 
           unsigned int pIndex = mesh.Cell1DAddDoubleProperty(cellProperty.Id);
-          FileReader propertyFileReader(cellProperty.FilePath);
+
+          string fileFolder, fileName, fileExtension;
+          Gedim::Output::GetFilePath(csvFileReader.Path(), fileFolder, fileName, fileExtension);
+          FileReader propertyFileReader(fileFolder + cellProperty.FilePath);
           ImportCell1DProperty(pIndex,
                                propertyFileReader,
                                separator,
@@ -498,8 +504,11 @@ namespace Gedim
             cellProperty.FilePath = result[1];
           }
 
+          string fileFolder, fileName, fileExtension;
+          Gedim::Output::GetFilePath(csvFileReader.Path(), fileFolder, fileName, fileExtension);
+
           unsigned int pIndex = mesh.Cell2DAddDoubleProperty(cellProperty.Id);
-          FileReader propertyFileReader(cellProperty.FilePath);
+          FileReader propertyFileReader(fileFolder + cellProperty.FilePath);
           ImportCell2DProperty(pIndex,
                                propertyFileReader,
                                separator,

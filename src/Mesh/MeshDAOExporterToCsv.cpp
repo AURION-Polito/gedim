@@ -184,8 +184,7 @@ namespace Gedim
     for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
     {
       const string propertyId = mesh.Cell0DDoublePropertyId(p);
-      string propertyFilePath = exportFolder + "/" +
-                                propertyFileName + "_" +
+      string propertyFilePath = propertyFileName + "_" +
                                 propertyId + "." +
                                 propertyFileExtension;
 
@@ -193,7 +192,7 @@ namespace Gedim
       fileCell0DProperties<< scientific<< propertyFilePath<< endl;
 
       ExportCell0DProperty(p,
-                           propertyFilePath,
+                           exportFolder + "/" + propertyFilePath,
                            separator,
                            mesh);
     }
@@ -251,8 +250,7 @@ namespace Gedim
     for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
     {
       const string propertyId = mesh.Cell1DDoublePropertyId(p);
-      string propertyFilePath = exportFolder + "/" +
-                                propertyFileName + "_" +
+      string propertyFilePath = propertyFileName + "_" +
                                 propertyId + "." +
                                 propertyFileExtension;
 
@@ -260,7 +258,7 @@ namespace Gedim
       fileCell1DProperties<< scientific<< propertyFilePath<< endl;
 
       ExportCell1DProperty(p,
-                           propertyFilePath,
+                           exportFolder + "/" + propertyFilePath,
                            separator,
                            mesh);
     }
@@ -318,8 +316,7 @@ namespace Gedim
     for (unsigned int p = 0; p < mesh.Cell2DNumberDoubleProperties(); p++)
     {
       const string propertyId = mesh.Cell2DDoublePropertyId(p);
-      string propertyFilePath = exportFolder + "/" +
-                                propertyFileName + "_" +
+      string propertyFilePath = propertyFileName + "_" +
                                 propertyId + "." +
                                 propertyFileExtension;
 
@@ -327,7 +324,7 @@ namespace Gedim
       fileCell2DProperties<< scientific<< propertyFilePath<< endl;
 
       ExportCell2DProperty(p,
-                           propertyFilePath,
+                           exportFolder + "/" + propertyFilePath,
                            separator,
                            mesh);
     }
@@ -385,8 +382,7 @@ namespace Gedim
     for (unsigned int p = 0; p < mesh.Cell3DNumberDoubleProperties(); p++)
     {
       const string propertyId = mesh.Cell3DDoublePropertyId(p);
-      string propertyFilePath = exportFolder + "/" +
-                                propertyFileName + "_" +
+      string propertyFilePath = propertyFileName + "_" +
                                 propertyId + "." +
                                 propertyFileExtension;
 
@@ -394,7 +390,7 @@ namespace Gedim
       fileCell3DProperties<< scientific<< propertyFilePath<< endl;
 
       ExportCell3DProperty(p,
-                           propertyFilePath,
+                           exportFolder + "/" + propertyFilePath,
                            separator,
                            mesh);
     }
