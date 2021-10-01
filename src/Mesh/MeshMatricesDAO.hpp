@@ -258,6 +258,7 @@ namespace Gedim
         _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
         _mesh.Cell1DAdjacency.insert(originCell0DIndex,
                                      endCell0DIndex) = cell1DIndex + 1;
+        _mesh.Cell1DAdjacency.makeCompressed();
       }
       unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
                                 const unsigned int& endCell0DIndex) const

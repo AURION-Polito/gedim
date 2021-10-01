@@ -131,8 +131,8 @@ namespace Gedim
     _mesh.Cell0DCoordinates.resize(3 * _mesh.NumberCell0D, 0.0);
     _mesh.Cell0DMarkers.resize(_mesh.NumberCell0D, 0);
     _mesh.ActiveCell0D.resize(_mesh.NumberCell0D, false);
-    _mesh.Cell1DAdjacency.resize(_mesh.NumberCell0D,
-                                 _mesh.NumberCell0D);
+    _mesh.Cell1DAdjacency.conservativeResize(_mesh.NumberCell0D,
+                                             _mesh.NumberCell0D);
     for (unsigned int p = 0; p < Cell0DNumberDoubleProperties(); p++)
       _mesh.Cell0DDoublePropertySizes[p].resize(_mesh.NumberCell0D + 1, 0);
   }
@@ -188,8 +188,8 @@ namespace Gedim
                                     cell0DIndex,
                                     _mesh.NumberCell0D);
 
-    _mesh.Cell1DAdjacency.resize(_mesh.NumberCell0D,
-                                 _mesh.NumberCell0D);
+    _mesh.Cell1DAdjacency.conservativeResize(_mesh.NumberCell0D,
+                                             _mesh.NumberCell0D);
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
