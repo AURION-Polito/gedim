@@ -157,7 +157,21 @@ namespace Gedim
           vector<IntersectionPosition> SecondSegmentIntersections; /// intersections of the second segment
       };
 
-      struct PointPolygonPositionResult final {
+      struct IntersectionSegmentPlaneResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            SingleIntersection = 1,
+            NoIntersection = 2,
+            MultipleIntersections = 3
+          };
+
+          Types Type = Types::Unknown;
+      };
+
+      struct PointPolygonPositionResult final
+      {
           enum struct PositionTypes
           {
             Unknown = 0,
@@ -343,6 +357,18 @@ namespace Gedim
                                                                   const Eigen::Vector3d& firstSegmentEnd,
                                                                   const Eigen::Vector3d& secondSegmentOrigin,
                                                                   const Eigen::Vector3d& secondSegmentEnd) const;
+
+      /// \brief Intersection between a Segment, represented by origin and end and a plane
+      /// represented by the normal and a point
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segement end
+      /// \param planeNormal the plane normal
+      /// \param planeOrigin a plane point
+      /// \return the resulting intersection
+      IntersectionSegmentPlaneResult IntersectionSegmentPlane(const Eigen::Vector3d& segmentOrigin,
+                                                              const Eigen::Vector3d& segmentEnd,
+                                                              const Eigen::Vector3d& planeNormal,
+                                                              const Eigen::Vector3d& planeOrigin) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point

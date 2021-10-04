@@ -985,6 +985,68 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, IntersectionSegmentPlane)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check no intersection
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (1.0, 0.0, 3.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection);
+      }
+
+      // check single intersection
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+      }
+
+      // check multiple intersection
+      {
+        Eigen::Vector3d segmentOrigin(-10.0, 1.0, 13.0);
+        Eigen::Vector3d segmentEnd   (-10.0, 2.0, 13.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_H

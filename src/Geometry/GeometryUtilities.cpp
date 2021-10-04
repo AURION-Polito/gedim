@@ -228,6 +228,16 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::IntersectionSegmentPlaneResult GeometryUtilities::IntersectionSegmentPlane(const Eigen::Vector3d& segmentOrigin,
+                                                                                                const Eigen::Vector3d& segmentEnd,
+                                                                                                const Eigen::Vector3d& planeNormal,
+                                                                                                const Eigen::Vector3d& planeOrigin) const
+  {
+    GeometryUtilities::IntersectionSegmentPlaneResult result;
+
+    return result;
+  }
+  // ***************************************************************************
   GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const Vector3d& point,
                                                                                        const Vector3d& segmentOrigin,
                                                                                        const Vector3d& segmentEnd) const
