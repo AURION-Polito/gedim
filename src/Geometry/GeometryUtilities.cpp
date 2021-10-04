@@ -322,9 +322,10 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void GeometryUtilities::SplitPolygon(const GeometryUtilities::SplitPolygonInput& input,
-                                       GeometryUtilities::SplitPolygonResult& result) const
+  GeometryUtilities::SplitPolygonResult GeometryUtilities::SplitPolygon(const GeometryUtilities::SplitPolygonInput& input) const
   {
+    GeometryUtilities::SplitPolygonResult result;
+
     // check if segment is on polygon vertices in contigous edges, no split needed
     if (input.Segment.Origin.Type == GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex &&
         input.Segment.End.Type == GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex)
@@ -337,7 +338,7 @@ namespace Gedim
       {
         // No split needed
         result.Type = SplitPolygonResult::Types::NoAction;
-        return;
+        return result;
       }
 
       // check contigous edges
@@ -348,7 +349,7 @@ namespace Gedim
         {
           // No split needed
           result.Type = SplitPolygonResult::Types::NoAction;
-          return;
+          return result;
         }
       }
     }
@@ -452,7 +453,7 @@ namespace Gedim
           SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
-        return;
+        return result;
       }
     }
 
@@ -557,7 +558,7 @@ namespace Gedim
           SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
-        return;
+        return result;
       }
     }
 
@@ -683,7 +684,7 @@ namespace Gedim
           SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
-        return;
+        return result;
       }
     }
 
@@ -1093,6 +1094,8 @@ namespace Gedim
 
     result.NewPolygons.resize(polygons.size());
     copy(polygons.begin(), polygons.end(), result.NewPolygons.begin());
+
+    return result;
   }
   // ***************************************************************************
   void GeometryUtilities::PolygonNormal(const MatrixXd& polygonVertices,

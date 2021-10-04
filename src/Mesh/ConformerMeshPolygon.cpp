@@ -1202,8 +1202,7 @@ namespace Gedim
                                cell2DMesh2DEdgesMap,
                                splitInput);
 
-      GeometryUtilities::SplitPolygonResult splitResult;
-      _geometryUtilities.SplitPolygon(splitInput, splitResult);
+      GeometryUtilities::SplitPolygonResult splitResult = _geometryUtilities.SplitPolygon(splitInput);
 
       if (splitResult.Type == GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate ||
           splitResult.Type == GeometryUtilities::SplitPolygonResult::Types::PolygonCreation)

@@ -355,8 +355,7 @@ namespace Gedim
       /// \param input the input data
       /// \param result the resulting split
       /// \note only indices are threated in this function, no space points
-      void SplitPolygon(const SplitPolygonInput& input,
-                        SplitPolygonResult& result) const;
+      SplitPolygonResult SplitPolygon(const SplitPolygonInput& input) const;
 
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
