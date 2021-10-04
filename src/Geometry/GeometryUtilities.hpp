@@ -2,6 +2,7 @@
 #define __GEOMETRYUTILITIES_H
 
 #include "Eigen"
+#include <iostream>
 
 using namespace std;
 
@@ -138,7 +139,7 @@ namespace Gedim
 
           struct IntersectionPosition
           {
-              PointSegmentPositionTypes Type;
+              PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
               double CurvilinearCoordinate = -1.0;
           };
 
@@ -167,7 +168,14 @@ namespace Gedim
             MultipleIntersections = 3
           };
 
-          Types Type = Types::Unknown;
+          struct Intersection
+          {
+              PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+              double CurvilinearCoordinate = -1.0;
+          };
+
+          Types Type = Types::Unknown; ///< The intersection type
+          Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
       };
 
       struct PointPolygonPositionResult final

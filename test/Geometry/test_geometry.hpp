@@ -1009,7 +1009,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection);
       }
 
-      // check single intersection
+      // check single intersection before origin
       {
         Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
         Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
@@ -1023,6 +1023,80 @@ namespace GedimUnitTesting {
                                                                                                                    planeOrigin);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
+        ASSERT_DOUBLE_EQ(result.SingleIntersection.CurvilinearCoordinate, -1.1000000000000000e+01);
+      }
+
+      // check single intersection in origin
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(1.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_DOUBLE_EQ(result.SingleIntersection.CurvilinearCoordinate, 0.0000000000000000e+00);
+      }
+
+      // check single intersection inside segment
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(1.5, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_DOUBLE_EQ(result.SingleIntersection.CurvilinearCoordinate, 5.0000000000000000e-01);
+      }
+
+      // check single intersection in end
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(2.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_DOUBLE_EQ(result.SingleIntersection.CurvilinearCoordinate, 1.0000000000000000e+00);
+      }
+
+      // check single intersection after end
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 2.0);
+        Eigen::Vector3d segmentEnd   (2.0, 0.0, 2.0);
+
+        Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
+        Eigen::Vector3d planeOrigin(10.0, 11.0, 13.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
+        ASSERT_DOUBLE_EQ(result.SingleIntersection.CurvilinearCoordinate, 9.0000000000000000e+00);
       }
 
       // check multiple intersection

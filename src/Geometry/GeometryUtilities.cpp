@@ -235,6 +235,33 @@ namespace Gedim
   {
     GeometryUtilities::IntersectionSegmentPlaneResult result;
 
+    const Vector3d t = segmentEnd - segmentOrigin;
+    const Vector3d n = planeNormal.normalized();
+
+    // check if t is not zero
+    Gedim::Output::Assert(IsValue2DPositive(t.squaredNorm()));
+
+    // check if the plane normal n is perpendicular to segment tangent t
+    if (IsValue1DZero(n.dot(t.normalized())))
+    {
+      // compare if n * segmentOrigin = n * planeOrigin
+      if (Compare1DValues(n.dot(segmentOrigin), n.dot(planeOrigin)) == GeometryUtilities::CompareTypes::Coincident)
+      {
+        // multiple intersection, the segment is coplanar to plane
+        result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections;
+      }
+      else
+      {
+        // no intersection, the segment is on a parallel plane
+        result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection;
+      }
+    }
+    else
+    {
+      // plane and segment have a single intersection
+      result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection;
+    }
+
     return result;
   }
   // ***************************************************************************
