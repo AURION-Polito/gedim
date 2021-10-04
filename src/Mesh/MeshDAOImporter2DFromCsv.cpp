@@ -334,9 +334,9 @@ namespace Gedim
           cellProperty.Values.resize(numValues);
           for (unsigned int v = 0; v < numValues; v++)
           {
-            converter >> cellProperty.Values[v];
             if (separator != ' ')
               converter >> temp;
+            converter >> cellProperty.Values[v];
           }
 
           mesh.Cell0DInitializeDoublePropertyValues(cellProperty.CellId,
@@ -443,9 +443,9 @@ namespace Gedim
           cellProperty.Values.resize(numValues);
           for (unsigned int v = 0; v < numValues; v++)
           {
-            converter >> cellProperty.Values[v];
             if (separator != ' ')
               converter >> temp;
+            converter >> cellProperty.Values[v];
           }
 
           mesh.Cell1DInitializeDoublePropertyValues(cellProperty.CellId,
@@ -552,9 +552,9 @@ namespace Gedim
           cellProperty.Values.resize(numValues);
           for (unsigned int v = 0; v < numValues; v++)
           {
-            converter >> cellProperty.Values[v];
             if (separator != ' ')
               converter >> temp;
+            converter >> cellProperty.Values[v];
           }
 
           mesh.Cell2DInitializeDoublePropertyValues(cellProperty.CellId,
