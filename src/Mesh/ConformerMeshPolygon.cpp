@@ -84,7 +84,7 @@ namespace Gedim
                                                       result);
 
         if (result.IntersectionLinesType != GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting ||
-            result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection)
+            result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
           continue;
 
         if (result.FirstSegmentIntersections[0].Type != GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin)
@@ -154,7 +154,7 @@ namespace Gedim
                                                       result);
 
         if (result.IntersectionLinesType != GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting ||
-            result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection)
+            result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
           continue;
 
         if (result.FirstSegmentIntersections[0].Type != GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd)

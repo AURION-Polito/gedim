@@ -199,7 +199,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
       }
 
       // check no coplanarity
@@ -215,7 +215,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
       }
 
       // check MultipleIntersections, no inclusion
@@ -232,7 +232,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
@@ -259,7 +259,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 2.0 / 3.0) < geometryUtilityConfig.Tolerance);
@@ -286,7 +286,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoEnd,
                                                                    result));
 
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 0);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 1);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
@@ -313,7 +313,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
@@ -333,7 +333,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
         ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
         ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
@@ -353,7 +353,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
       }
 
       // check parallel segments
@@ -369,7 +369,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
       }
 
       // check intersection in first segment end and second segment origin
@@ -385,7 +385,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
       }
 
       // check intersection inside segments
@@ -401,7 +401,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoOrigin,
                                                                    segmentTwoEnd,
                                                                    result));
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
       }
 
       // check no intersection
@@ -418,7 +418,7 @@ namespace GedimUnitTesting {
                                                                    segmentTwoEnd,
                                                                    result));
         ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting);
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
       }
     }
     catch (const exception& exception)
@@ -546,7 +546,7 @@ namespace GedimUnitTesting {
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::Outside);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside);
       }
 
       // check border
@@ -561,7 +561,7 @@ namespace GedimUnitTesting {
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
                                                              polygonVertices,
                                                              resultBorderEdge));
-        ASSERT_EQ(resultBorderEdge.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderEdge);
+        ASSERT_EQ(resultBorderEdge.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
 
         // border vertex
@@ -569,7 +569,7 @@ namespace GedimUnitTesting {
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
                                                              polygonVertices,
                                                              resultBorderVertex));
-        ASSERT_EQ(resultBorderVertex.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderVertex);
+        ASSERT_EQ(resultBorderVertex.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
       }
 
@@ -585,7 +585,7 @@ namespace GedimUnitTesting {
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::Inside);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside);
       }
 
       // check on vertex
@@ -600,7 +600,7 @@ namespace GedimUnitTesting {
         ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
                                                              polygonVertices,
                                                              result));
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::BorderVertex);
+        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
       }
     }
     catch (const exception& exception)

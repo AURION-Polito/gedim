@@ -63,7 +63,7 @@ namespace Gedim
     {
       // segments are not on the same plane
       result.IntersectionLinesType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::OnDifferentPlanes;
-      result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection;
+      result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
       return;
     }
 
@@ -113,9 +113,9 @@ namespace Gedim
           (result.SecondSegmentIntersections[0].Type == PointSegmentPositionTypes::OnSegmentOrigin ||
            result.SecondSegmentIntersections[0].Type == PointSegmentPositionTypes::InsideSegment ||
            result.SecondSegmentIntersections[0].Type == PointSegmentPositionTypes::OnSegmentEnd))
-        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::SingleIntersection;
+        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection;
       else
-        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection;
+        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
     }
     else
     {
@@ -127,7 +127,7 @@ namespace Gedim
                         secondSegmentOrigin) > _configuration.Tolerance * secondSegmentOrigin.norm())
       {
         // segments are parallel on different lines
-        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection;
+        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
         return;
       }
       else
@@ -143,12 +143,12 @@ namespace Gedim
         // Check distance of spheres to exclude intersections
         if (IsValue1DPositive((distance - (r1 + r2))))
         {
-          result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::NoIntersection;
+          result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
           return;
         }
 
         // There are multiple intersections
-        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::MultipleIntersections;
+        result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections;
         result.SecondIntersectionRelation.resize(2);
         result.FirstSegmentIntersections.resize(2);
         result.SecondSegmentIntersections.resize(2);
@@ -287,34 +287,34 @@ namespace Gedim
 
       if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
       {
-        result.PositionType = GeometryUtilities::PointPolygonPositionResult::Outside;
+        result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
         return;
       }
       else if (resultSegment != GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment)
       {
         if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::InsideSegment)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::BorderEdge;
+          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge;
           result.BorderIndex = v;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::BorderVertex;
+          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex;
           result.BorderIndex = v;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::BorderVertex;
+          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex;
           result.BorderIndex = (v + 1) % numVertices;
         }
         else
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::Outside;
+          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
 
         return;
       }
     }
 
-    result.PositionType = GeometryUtilities::PointPolygonPositionResult::Inside;
+    result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside;
   }
   // ***************************************************************************
   void GeometryUtilities::SplitPolygon(const GeometryUtilities::SplitPolygonInput& input,

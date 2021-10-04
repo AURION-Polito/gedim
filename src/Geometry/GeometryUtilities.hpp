@@ -128,7 +128,7 @@ namespace Gedim
             CoPlanarIntersecting = 3
           };
 
-          enum IntersectionSegmentTypes
+          enum struct IntersectionSegmentTypes
           {
             Unknown = 0,
             NoIntersection = 1,
@@ -158,7 +158,7 @@ namespace Gedim
       };
 
       struct PointPolygonPositionResult final {
-          enum PositionTypes
+          enum struct PositionTypes
           {
             Unknown = 0,
             Outside = 1,
