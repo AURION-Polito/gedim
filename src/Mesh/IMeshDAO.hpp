@@ -206,7 +206,7 @@ namespace Gedim
       /// \brief Add the Cell0Ds double property identified by id
       /// \param propertyId the id of Cell0Ds property
       /// \return the double property position
-      virtual unsigned int Cell0DAddDoubleProperty(const string propertyId) = 0;
+      virtual unsigned int Cell0DAddDoubleProperty(const string& propertyId) = 0;
       /// \brief Initialize the Cell0Ds double property size
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param propertyIndex the index of Cell0D double property from 0 to Cell0DNumberProperties()
@@ -410,7 +410,7 @@ namespace Gedim
       /// \brief Add the Cell1Ds double property identified by id
       /// \param propertyId the id of Cell1Ds property
       /// \return the double property position
-      virtual unsigned int Cell1DAddDoubleProperty(const string propertyId) = 0;
+      virtual unsigned int Cell1DAddDoubleProperty(const string& propertyId) = 0;
       /// \brief Initialize the Cell1Ds double property size
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param propertyIndex the index of Cell1D double property from 0 to Cell1DNumberProperties()
@@ -614,7 +614,7 @@ namespace Gedim
       /// \brief Add the Cell2Ds double property identified by id
       /// \param propertyId the id of Cell2Ds property
       /// \return the double property position
-      virtual unsigned int Cell2DAddDoubleProperty(const string propertyId) = 0;
+      virtual unsigned int Cell2DAddDoubleProperty(const string& propertyId) = 0;
       /// \brief Initialize the Cell2Ds double property size
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param propertyIndex the index of Cell2D double property from 0 to Cell2DNumberProperties()
@@ -805,7 +805,7 @@ namespace Gedim
       /// \brief Add the Cell3Ds double property identified by id
       /// \param propertyId the id of Cell3Ds property
       /// \return the double property position
-      virtual unsigned int Cell3DAddDoubleProperty(const string propertyId) = 0;
+      virtual unsigned int Cell3DAddDoubleProperty(const string& propertyId) = 0;
       /// \brief Initialize the Cell3Ds double property size
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param propertyIndex the index of Cell3D double property from 0 to Cell3DNumberProperties()

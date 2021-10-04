@@ -190,7 +190,7 @@ namespace Gedim
       }
 
       void Cell0DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
-      unsigned int Cell0DAddDoubleProperty(const string propertyId);
+      unsigned int Cell0DAddDoubleProperty(const string& propertyId);
       void Cell0DInitializeDoublePropertyValues(const unsigned int& cell0DIndex,
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
@@ -400,7 +400,7 @@ namespace Gedim
         throw runtime_error("Not implemented");
       }
 
-      unsigned int Cell1DAddDoubleProperty(const string propertyId);
+      unsigned int Cell1DAddDoubleProperty(const string& propertyId);
       void Cell1DInitializeDoublePropertyValues(const unsigned int& cell1DIndex,
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
@@ -586,7 +586,7 @@ namespace Gedim
         throw runtime_error("Not implemented");
       }
       void Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
-      unsigned int Cell2DAddDoubleProperty(const string propertyId);
+      unsigned int Cell2DAddDoubleProperty(const string& propertyId);
       void Cell2DInitializeDoublePropertyValues(const unsigned int& cell2DIndex,
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);
@@ -786,7 +786,7 @@ namespace Gedim
       inline unsigned int Cell3DId(const unsigned int& cell3DIndex) const { return cell3DIndex; }
 
       void Cell3DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
-      unsigned int Cell3DAddDoubleProperty(const string propertyId);
+      unsigned int Cell3DAddDoubleProperty(const string& propertyId);
       void Cell3DInitializeDoublePropertyValues(const unsigned int& cell3DIndex,
                                                 const unsigned int& propertyIndex,
                                                 const unsigned int& porpertySize);

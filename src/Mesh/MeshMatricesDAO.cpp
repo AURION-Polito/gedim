@@ -249,7 +249,7 @@ namespace Gedim
     _mesh.Cell0DDoublePropertyValues.reserve(numberDoubleProperties);
   }
   // ***************************************************************************
-  unsigned int MeshMatricesDAO::Cell0DAddDoubleProperty(const string propertyId)
+  unsigned int MeshMatricesDAO::Cell0DAddDoubleProperty(const string& propertyId)
   {
     Output::Assert(!Cell0DDoublePropertyExists(propertyId));
     unsigned int propertyIndex = _mesh.Cell0DDoublePropertySizes.size();
@@ -403,7 +403,7 @@ namespace Gedim
     _mesh.Cell1DDoublePropertyValues.reserve(numberDoubleProperties);
   }
   // ***************************************************************************
-  unsigned int MeshMatricesDAO::Cell1DAddDoubleProperty(const string propertyId)
+  unsigned int MeshMatricesDAO::Cell1DAddDoubleProperty(const string& propertyId)
   {
     Output::Assert(!Cell1DDoublePropertyExists(propertyId));
     unsigned int propertyIndex = _mesh.Cell1DDoublePropertySizes.size();
@@ -610,7 +610,7 @@ namespace Gedim
     _mesh.Cell2DDoublePropertyValues.reserve(numberDoubleProperties);
   }
   // ***************************************************************************
-  unsigned int MeshMatricesDAO::Cell2DAddDoubleProperty(const string propertyId)
+  unsigned int MeshMatricesDAO::Cell2DAddDoubleProperty(const string& propertyId)
   {
     Output::Assert(!Cell2DDoublePropertyExists(propertyId));
     unsigned int propertyIndex = _mesh.Cell2DDoublePropertySizes.size();
@@ -826,7 +826,7 @@ namespace Gedim
     _mesh.Cell3DDoublePropertyValues.reserve(numberDoubleProperties);
   }
   // ***************************************************************************
-  unsigned int MeshMatricesDAO::Cell3DAddDoubleProperty(const string propertyId)
+  unsigned int MeshMatricesDAO::Cell3DAddDoubleProperty(const string& propertyId)
   {
     Output::Assert(!Cell3DDoublePropertyExists(propertyId));
     unsigned int propertyIndex = _mesh.Cell3DDoublePropertySizes.size();
