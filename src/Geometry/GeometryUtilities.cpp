@@ -260,6 +260,8 @@ namespace Gedim
     {
       // plane and segment have a single intersection
       result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection;
+      result.SingleIntersection.CurvilinearCoordinate = n.dot(planeOrigin - segmentOrigin) / n.dot(t);
+      result.SingleIntersection.Type = PointSegmentPosition(result.SingleIntersection.CurvilinearCoordinate);
     }
 
     return result;
