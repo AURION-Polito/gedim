@@ -78,10 +78,10 @@ namespace Gedim
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
-        _geometryUtilities.IntersectionSegmentSegment(segmentOrigin, segmentEnd,
-                                                      edgeOrigin, edgeEnd,
-                                                      result);
+        GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   edgeOrigin,
+                                                                                                                   edgeEnd);
 
         if (result.IntersectionLinesType != GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting ||
             result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
@@ -148,10 +148,10 @@ namespace Gedim
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
 
-        GeometryUtilities::IntersectionSegmentSegmentResult result;
-        _geometryUtilities.IntersectionSegmentSegment(segmentOrigin, segmentEnd,
-                                                      edgeOrigin, edgeEnd,
-                                                      result);
+        GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   edgeOrigin,
+                                                                                                                   edgeEnd);
 
         if (result.IntersectionLinesType != GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting ||
             result.IntersectionSegmentsType ==  GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)

@@ -208,13 +208,10 @@ namespace Gedim
       const Vector3d edgeOrigin = _mesh.Cell1DOriginCoordinates(e);
       const Vector3d edgeEnd = _mesh.Cell1DEndCoordinates(e);
 
-      Gedim::GeometryUtilities::IntersectionSegmentSegmentResult intersectionSegmentSegmentResult;
-
-      _geometryUtilities.IntersectionSegmentSegment(edgeOrigin,
-                                                    edgeEnd,
-                                                    segmentOrigin,
-                                                    segmentEnd,
-                                                    intersectionSegmentSegmentResult);
+      Gedim::GeometryUtilities::IntersectionSegmentSegmentResult intersectionSegmentSegmentResult = _geometryUtilities.IntersectionSegmentSegment(edgeOrigin,
+                                                                                                                                                  edgeEnd,
+                                                                                                                                                  segmentOrigin,
+                                                                                                                                                  segmentEnd);
       // no intersection found
       if (intersectionSegmentSegmentResult.IntersectionSegmentsType ==
           Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection)

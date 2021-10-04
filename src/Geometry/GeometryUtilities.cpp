@@ -30,12 +30,13 @@ namespace Gedim
       return CompareTypes::FirstBeforeSecond;
   }
   // ***************************************************************************
-  void GeometryUtilities::IntersectionSegmentSegment(const Vector3d& firstSegmentOrigin,
-                                                     const Vector3d& firstSegmentEnd,
-                                                     const Vector3d& secondSegmentOrigin,
-                                                     const Vector3d& secondSegmentEnd,
-                                                     GeometryUtilities::IntersectionSegmentSegmentResult& result) const
+  GeometryUtilities::IntersectionSegmentSegmentResult GeometryUtilities::IntersectionSegmentSegment(const Vector3d& firstSegmentOrigin,
+                                                                                                    const Vector3d& firstSegmentEnd,
+                                                                                                    const Vector3d& secondSegmentOrigin,
+                                                                                                    const Vector3d& secondSegmentEnd) const
   {
+    GeometryUtilities::IntersectionSegmentSegmentResult result;
+
     // segments are x2->x1 and x4->x3
     // intersect two lines: r1 = s*t1+x1 and r2 = q*t2+x3
     // with t1 = x2 - x1 and t2 = x4 - x3
@@ -64,7 +65,7 @@ namespace Gedim
       // segments are not on the same plane
       result.IntersectionLinesType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::OnDifferentPlanes;
       result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
-      return;
+      return result;
     }
 
     const double l1 = t1.norm();
@@ -128,7 +129,7 @@ namespace Gedim
       {
         // segments are parallel on different lines
         result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
-        return;
+        return result;
       }
       else
       {
@@ -144,7 +145,7 @@ namespace Gedim
         if (IsValue1DPositive((distance - (r1 + r2))))
         {
           result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
-          return;
+          return result;
         }
 
         // There are multiple intersections
@@ -223,6 +224,8 @@ namespace Gedim
         }
       }
     }
+
+    return result;
   }
   // ***************************************************************************
   GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const Vector3d& point,

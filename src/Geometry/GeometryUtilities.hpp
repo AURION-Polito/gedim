@@ -337,13 +337,12 @@ namespace Gedim
       /// \param firstSegmentEnd first segment end
       /// \param secondSegmentOrigin second segment origin
       /// \param secondSegmentEnd second segment end
-      /// \param result the resulting intersection
+      /// \return the resulting intersection
       /// \note no check is performed
-      void IntersectionSegmentSegment(const Eigen::Vector3d& firstSegmentOrigin,
-                                      const Eigen::Vector3d& firstSegmentEnd,
-                                      const Eigen::Vector3d& secondSegmentOrigin,
-                                      const Eigen::Vector3d& secondSegmentEnd,
-                                      IntersectionSegmentSegmentResult& result) const;
+      IntersectionSegmentSegmentResult IntersectionSegmentSegment(const Eigen::Vector3d& firstSegmentOrigin,
+                                                                  const Eigen::Vector3d& firstSegmentEnd,
+                                                                  const Eigen::Vector3d& secondSegmentOrigin,
+                                                                  const Eigen::Vector3d& secondSegmentEnd) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
