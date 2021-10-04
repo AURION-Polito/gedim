@@ -971,16 +971,12 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), 5.7735026918962651e-01);
 
         // export rotated polygons
-        Eigen::MatrixXd rotatedPoints;
-        geometryUtility.RotatePointsFrom3DTo2D(polygonVertices,
-                                               rotationMatrix.transpose(),
-                                               translation,
-                                               rotatedPoints);
-        Eigen::MatrixXd rotatedBackPoints;
-        geometryUtility.RotatePointsFrom2DTo3D(rotatedPoints,
-                                               rotationMatrix,
-                                               translation,
-                                               rotatedBackPoints);
+        Eigen::MatrixXd rotatedPoints = geometryUtility.RotatePointsFrom3DTo2D(polygonVertices,
+                                                                               rotationMatrix.transpose(),
+                                                                               translation);
+        Eigen::MatrixXd rotatedBackPoints = geometryUtility.RotatePointsFrom2DTo3D(rotatedPoints,
+                                                                                   rotationMatrix,
+                                                                                   translation);
       }
     }
     catch (const exception& exception)

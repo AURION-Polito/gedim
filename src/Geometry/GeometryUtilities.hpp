@@ -379,25 +379,24 @@ namespace Gedim
       /// \param rotationMatrix the rotation matrix from 2D to 3D
       /// \param translation the translation vector
       /// \param rotatedPoints the resulting rotated points (size 3 x numPoints) rP = Q * P + t
-      inline void RotatePointsFrom2DTo3D(const Eigen::MatrixXd& points,
-                                         const Eigen::Matrix3d& rotationMatrix,
-                                         const Eigen::Vector3d& translation,
-                                         Eigen::MatrixXd& rotatedPoints) const
+      inline Eigen::MatrixXd RotatePointsFrom2DTo3D(const Eigen::MatrixXd& points,
+                                                    const Eigen::Matrix3d& rotationMatrix,
+                                                    const Eigen::Vector3d& translation) const
       {
-        rotatedPoints = (rotationMatrix * points).colwise() + translation;
+        return (rotationMatrix * points).colwise() + translation;
       }
       /// \brief Rotate Points P From 3D To 2D using rotation matrix Q and translation t: Q * (P - t)
       /// \param points the points (size 3 x numPoints)
       /// \param rotationMatrix the rotation matrix from 3D to 2D
       /// \param translation the translation vector
       /// \param rotatedPoints the resulting rotated points (size 3 x numPoints) rP = Q * (P - t)
-      inline void RotatePointsFrom3DTo2D(const Eigen::MatrixXd& points,
-                                         const Eigen::Matrix3d& rotationMatrix,
-                                         const Eigen::Vector3d& translation,
-                                         Eigen::MatrixXd& rotatedPoints) const
+      inline Eigen::MatrixXd RotatePointsFrom3DTo2D(const Eigen::MatrixXd& points,
+                                                    const Eigen::Matrix3d& rotationMatrix,
+                                                    const Eigen::Vector3d& translation) const
       {
-        rotatedPoints = rotationMatrix * (points.colwise() - translation);
+        Eigen::MatrixXd rotatedPoints = rotationMatrix * (points.colwise() - translation);
         rotatedPoints.row(2).setZero();
+        return rotatedPoints;
       }
   };
 }
