@@ -353,13 +353,13 @@ namespace Gedim
     splitInput.NumberPolygonVertices = mesh2D.Cell2DNumberVertices(cell2DMesh2DId);
     if (origin.Vertex2DIds.size() == 1)
     {
-      splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+      splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
       splitInput.Segment.Origin.Index = cell2DMesh2DVerticesMap.at(origin.Vertex2DIds.front());
     }
     else if (origin.Vertex2DIds.size() == 0)
     {
       Output::Assert(origin.Edge2DIds.size() > 0);
-      splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+      splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
       splitInput.Segment.Origin.Index = cell2DMesh2DEdgesMap.at(origin.Edge2DIds.front());
     }
     else
@@ -367,13 +367,13 @@ namespace Gedim
 
     if (end.Vertex2DIds.size() == 1)
     {
-      splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+      splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
       splitInput.Segment.End.Index = cell2DMesh2DVerticesMap.at(end.Vertex2DIds.front());
     }
     else if (end.Vertex2DIds.size() == 0)
     {
       Output::Assert(end.Edge2DIds.size() > 0);
-      splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+      splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
       splitInput.Segment.End.Index = cell2DMesh2DEdgesMap.at(end.Edge2DIds.front());
     }
     else
@@ -420,7 +420,7 @@ namespace Gedim
     map<unsigned int, unsigned int> newVertexMap;
     for (const GeometryUtilities::SplitPolygonResult::NewVertex& newVertex : splitResult.NewVertices)
     {
-      if (newVertex.Type == GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin)
+      if (newVertex.Type == GeometryUtilities::SplitPolygonResult::NewVertex::Types::SegmentOrigin)
       {
         const Vector3d newCell0DCoordinates = segmentOrigin + originCurvilinearCoordinate * segmentTangent;
         mesh2D.Cell0DInsertCoordinates(v, newCell0DCoordinates);
@@ -429,7 +429,7 @@ namespace Gedim
 
         originCell0DMesh1D.Vertex2DIds.push_back(v);
       }
-      else if (newVertex.Type == GeometryUtilities::SplitPolygonResult::NewVertex::SegmentEnd)
+      else if (newVertex.Type == GeometryUtilities::SplitPolygonResult::NewVertex::Types::SegmentEnd)
       {
         const Vector3d newCell0DCoordinates = segmentOrigin + endCurvilinearCoordinate * segmentTangent;
         mesh2D.Cell0DInsertCoordinates(v, newCell0DCoordinates);
@@ -503,7 +503,7 @@ namespace Gedim
       }
 
       // update mesh2D
-      if (newEdge.Type == GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate)
+      if (newEdge.Type == GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate)
       {
         const unsigned int edgeIdToUpdate = mesh2D.Cell2DEdge(cell2DMesh2DId,
                                                               newEdge.OldEdgeId);
@@ -538,7 +538,7 @@ namespace Gedim
                                                mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, n));
         }
 
-        if (splitResult.Type == GeometryUtilities::SplitPolygonResult::PolygonUpdate)
+        if (splitResult.Type == GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate)
         {
           if ((originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
                originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e)) &&
@@ -550,7 +550,7 @@ namespace Gedim
           }
         }
       }
-      else if (newEdge.Type == GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew)
+      else if (newEdge.Type == GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeNew)
       {
         mesh2D.Cell1DInitializeNeighbourCell2Ds(e,
                                                 2);
@@ -1205,8 +1205,8 @@ namespace Gedim
       GeometryUtilities::SplitPolygonResult splitResult;
       _geometryUtilities.SplitPolygon(splitInput, splitResult);
 
-      if (splitResult.Type == GeometryUtilities::SplitPolygonResult::PolygonUpdate ||
-          splitResult.Type == GeometryUtilities::SplitPolygonResult::PolygonCreation)
+      if (splitResult.Type == GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate ||
+          splitResult.Type == GeometryUtilities::SplitPolygonResult::Types::PolygonCreation)
       {
         // create new cells
         SplitCell2DMesh2D(segmentOrigin,
@@ -1222,8 +1222,8 @@ namespace Gedim
 
       // insert middle edges in new cells
       switch (splitResult.Type) {
-        case GeometryUtilities::SplitPolygonResult::NoAction:
-        case GeometryUtilities::SplitPolygonResult::PolygonCreation:
+        case GeometryUtilities::SplitPolygonResult::Types::NoAction:
+        case GeometryUtilities::SplitPolygonResult::Types::PolygonCreation:
           InsertCell2DMesh2DMiddleEdgesPolygonCreation(segmentOrigin,
                                                        segmentTangent,
                                                        mesh1D,
@@ -1231,7 +1231,7 @@ namespace Gedim
                                                        cell1DMesh1DIds,
                                                        cell2DId);
         break;
-        case GeometryUtilities::SplitPolygonResult::PolygonUpdate:
+        case GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate:
           InsertCell2DMesh2DMiddleEdgesPolygonUpdate(segmentOrigin,
                                                      segmentTangent,
                                                      mesh1D,

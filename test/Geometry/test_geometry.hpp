@@ -621,16 +621,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 1;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::NoAction);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::NoAction);
         ASSERT_EQ(result.NewVertices.size(), 0);
         ASSERT_EQ(result.NewEdges.size(), 0);
         ASSERT_EQ(result.NewPolygons.size(), 0);
@@ -640,16 +640,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.End.Index = 0;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 2);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -661,16 +661,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.End.Index = 0;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -685,16 +685,16 @@ namespace GedimUnitTesting {
         input.AlignedEdges.resize(1);
         input.AlignedEdges[0].OriginVertexIndex = 1;
         input.AlignedEdges[0].EndVertexIndex = 3;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 2;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.End.Index = 1;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonUpdate);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonUpdate);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 4);
         ASSERT_EQ(result.NewPolygons.size(), 1);
@@ -706,16 +706,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 2;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 0);
         ASSERT_EQ(result.NewEdges.size(), 1);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -729,16 +729,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.End.Index = 2;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -752,16 +752,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.End.Index = 2;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 5);
         ASSERT_EQ(result.NewPolygons.size(), 2);
@@ -775,30 +775,30 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 1;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 0;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::Types::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 0);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
         ASSERT_EQ(newEdgeIter->OriginId, 1);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 2);
@@ -818,30 +818,30 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 2;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::Types::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 2);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
         ASSERT_EQ(newEdgeIter->OriginId, 0);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 1);
@@ -861,30 +861,30 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 3;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 2;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 1;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
-        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::SegmentOrigin);
+        ASSERT_EQ(result.NewVertices.front().Type, Gedim::GeometryUtilities::SplitPolygonResult::NewVertex::Types::SegmentOrigin);
         ASSERT_EQ(result.NewEdges.size(), 3);
         auto newEdgeIter = result.NewEdges.begin();
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeNew);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeNew);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 1);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
         ASSERT_EQ(newEdgeIter->OriginId, 2);
         ASSERT_EQ(newEdgeIter->EndId, 3);
         newEdgeIter++;
-        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonResult::NewEdge::Types::EdgeUpdate);
         ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
         ASSERT_EQ(newEdgeIter->OriginId, 3);
         ASSERT_EQ(newEdgeIter->EndId, 0);
@@ -904,16 +904,16 @@ namespace GedimUnitTesting {
       {
         Gedim::GeometryUtilities::SplitPolygonInput input;
         input.NumberPolygonVertices = 4;
-        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Edge;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
         input.Segment.Origin.Index = 0;
-        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::SplitSegmentVertex::Vertex;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
         input.Segment.End.Index = 2;
 
         Gedim::GeometryUtilities::SplitPolygonResult result;
         ASSERT_NO_THROW(geometryUtility.SplitPolygon(input,
                                                      result));
 
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::PolygonCreation);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
         ASSERT_EQ(result.NewPolygons.size(), 2);

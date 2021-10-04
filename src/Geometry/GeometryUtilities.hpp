@@ -47,20 +47,20 @@ namespace Gedim
 
           struct SplitSegment
           {
-              struct SplitSegmentVertex final
+              struct Vertex final
               {
-                  enum Types {
-                    Unknown = -1,
-                    Vertex = 0,
-                    Edge = 1
+                  enum struct Types {
+                    Unknown = 0,
+                    Vertex = 1,
+                    Edge = 2
                   };
 
                   Types Type;
                   unsigned int Index;
               };
 
-              SplitSegmentVertex Origin;
-              SplitSegmentVertex End;
+              Vertex Origin;
+              Vertex End;
           };
 
           unsigned int NumberPolygonVertices;
@@ -70,7 +70,7 @@ namespace Gedim
 
       struct SplitPolygonResult final
       {
-          enum  Types
+          enum struct Types
           {
             Unknown = 0,
             NoAction = 1,
@@ -80,26 +80,26 @@ namespace Gedim
 
           struct NewVertex final
           {
-              enum  Types
+              enum struct Types
               {
                 Unknown = 0,
                 SegmentOrigin = 1,
                 SegmentEnd = 2
               };
 
-              Types Type = Unknown;
+              Types Type = Types::Unknown;
           };
 
           struct NewEdge final
           {
-              enum  Types
+              enum struct Types
               {
                 Unknown = 0,
                 EdgeNew = 1,
                 EdgeUpdate = 2
               };
 
-              Types Type = NewEdge::Unknown;
+              Types Type = Types::Unknown;
               unsigned int OldEdgeId = 0;
               unsigned int OriginId = 0;
               unsigned int EndId = 0;
