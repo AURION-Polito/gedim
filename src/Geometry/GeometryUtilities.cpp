@@ -1194,4 +1194,51 @@ namespace Gedim
     translation = polygonVertices.col(0);
   }
   // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points)
+  {
+    // pseudocode
+    // // S is the set of points
+    // // P will be the set of points which form the convex hull. Final set size is i.
+    // pointOnHull = leftmost point in S // which is guaranteed to be part of the CH(S)
+    // i := 0
+    // repeat
+    //     P[i] := pointOnHull
+    //     endpoint := S[0]      // initial endpoint for a candidate edge on the hull
+    //     for j from 0 to |S| do
+    //         // endpoint == pointOnHull is a rare case and can happen only when j == 1 and a better endpoint has not yet been set for the loop
+    //         if (endpoint == pointOnHull) or (S[j] is on left of line from P[i] to endpoint) then
+    //             endpoint := S[j]   // found greater left turn, update endpoint
+    //     i := i + 1
+    //     pointOnHull = endpoint
+    // until endpoint = P[0]      // wrapped around to first hull point
+
+    Output::Assert(points.rows() == 3 && points.cols() > 0);
+    const unsigned int numPoints = points.cols();
+    unsigned int leftMost = 0;
+    for (unsigned int p = 1; p < numPoints; p++)
+    {
+      if (points(0, p) < points(0, leftMost))
+        leftMost = p;
+    }
+    list<unsigned int> convexHull;
+
+    unsigned int pointOnHull = leftMost;
+    do
+    {
+      convexHull.push_back(pointOnHull);
+      unsigned int endpoint = 0;
+      for (unsigned int j = 0; j < numPoints; j++)
+      {
+        if ((endpoint == pointOnHull) ||
+            PointSegmentPosition(points.col(j),
+                                 points.col(pointOnHull),
+                                 points.col(endpoint)) == GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment)
+          endpoint = j;
+      }
+    }
+    while (pointOnHull == convexHull.front());
+
+    return vector<unsigned int>(convexHull.begin(), convexHull.end());
+  }
+  // ***************************************************************************
 }
