@@ -348,9 +348,8 @@ namespace Gedim
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param result the resulting position
-      void PointPolygonPosition(const Eigen::Vector3d& point,
-                                const Eigen::MatrixXd& polygonVertices,
-                                PointPolygonPositionResult& result) const;
+      PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
+                                                      const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data

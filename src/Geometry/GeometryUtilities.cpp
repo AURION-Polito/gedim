@@ -276,10 +276,11 @@ namespace Gedim
     return PointSegmentPositionTypes::Unknown;
   }
   // ***************************************************************************
-  void GeometryUtilities::PointPolygonPosition(const Vector3d& point,
-                                               const MatrixXd& polygonVertices,
-                                               GeometryUtilities::PointPolygonPositionResult& result) const
+  GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition(const Vector3d& point,
+                                                                                        const MatrixXd& polygonVertices) const
   {
+    GeometryUtilities::PointPolygonPositionResult result;
+
     unsigned int numVertices =  polygonVertices.cols();
     for (unsigned int v = 0; v < numVertices; v++)
     {
@@ -291,7 +292,7 @@ namespace Gedim
       if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
       {
         result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
-        return;
+        return result;
       }
       else if (resultSegment != GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment)
       {
@@ -313,11 +314,12 @@ namespace Gedim
         else
           result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
 
-        return;
+        return result;
       }
     }
 
     result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside;
+    return result;
   }
   // ***************************************************************************
   void GeometryUtilities::SplitPolygon(const GeometryUtilities::SplitPolygonInput& input,

@@ -207,10 +207,8 @@ namespace Gedim
 
       const MatrixXd cell2DVertices = mesh2D.Cell2DVerticesCoordinates(c);
 
-      GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult;
-      _geometryUtilities.PointPolygonPosition(newPoint2D,
-                                              cell2DVertices,
-                                              pointPolygonPositionResult);
+      GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(newPoint2D,
+                                              cell2DVertices);
 
       if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside)
         continue;

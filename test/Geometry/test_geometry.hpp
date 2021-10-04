@@ -518,10 +518,8 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        Gedim::GeometryUtilities::PointPolygonPositionResult result;
-        ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
-                                                             polygonVertices,
-                                                             result));
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+                                                                                                           polygonVertices);
         ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside);
       }
 
@@ -533,18 +531,14 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
         // border edge
-        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge;
-        ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
-                                                             polygonVertices,
-                                                             resultBorderEdge));
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge= geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                                                                                    polygonVertices);
         ASSERT_EQ(resultBorderEdge.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
 
         // border vertex
-        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex;
-        ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
-                                                             polygonVertices,
-                                                             resultBorderVertex));
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex = geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                                                       polygonVertices);
         ASSERT_EQ(resultBorderVertex.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
       }
@@ -557,10 +551,8 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        Gedim::GeometryUtilities::PointPolygonPositionResult result;
-        ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
-                                                             polygonVertices,
-                                                             result));
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+                                                                                                           polygonVertices);
         ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside);
       }
 
@@ -572,10 +564,8 @@ namespace GedimUnitTesting {
         polygonVertices.row(1)<< 2.0000000000000000e+00, 1.9234735079187608e+00, 1.8120621438385331e+00;
         polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        Gedim::GeometryUtilities::PointPolygonPositionResult result;
-        ASSERT_NO_THROW(geometryUtility.PointPolygonPosition(point,
-                                                             polygonVertices,
-                                                             result));
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+                                                                                                           polygonVertices);
         ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
       }
     }

@@ -85,10 +85,8 @@ namespace Gedim
 
       const MatrixXd cell2DVertices = _mesh.Cell2DVerticesCoordinates(c);
 
-      Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult;
-      _geometryUtilities.PointPolygonPosition(segmentOrigin,
-                                              cell2DVertices,
-                                              pointPolygonPositionResult);
+      Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(segmentOrigin,
+                                                                                                                                cell2DVertices);
 
       bool cellFound = false;
       switch (pointPolygonPositionResult.PositionType) {
@@ -144,10 +142,8 @@ namespace Gedim
       const MatrixXd cell2DVertices = _mesh.Cell2DVerticesCoordinates(c);
 
       // check end position
-      Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult;
-      _geometryUtilities.PointPolygonPosition(segmentEnd,
-                                              cell2DVertices,
-                                              pointPolygonPositionResult);
+      Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(segmentEnd,
+                                                                                                                                cell2DVertices);
 
       bool cellFound = false;
       switch (pointPolygonPositionResult.PositionType) {
