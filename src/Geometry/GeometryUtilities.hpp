@@ -360,8 +360,7 @@ namespace Gedim
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param normal the resulting normalized normal
-      void PolygonNormal(const Eigen::MatrixXd& polygonVertices,
-                         Eigen::Vector3d& normal) const;
+      Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the rotation matrix and translation vector of a tridimensional Polygon
       /// \param polygonVertices the vertices of the polygon (size 3 x numVertices)

@@ -892,8 +892,7 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        Eigen::Vector3d normal;
-        ASSERT_NO_THROW(geometryUtility.PolygonNormal(polygonVertices, normal));
+        Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
         ASSERT_DOUBLE_EQ(normal[0], 0.0);
         ASSERT_DOUBLE_EQ(normal[1], 0.0);
         ASSERT_DOUBLE_EQ(normal[2], 1.0);
@@ -906,8 +905,7 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 0.0, 1.0, 0.0;
         polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
-        Eigen::Vector3d normal;
-        ASSERT_NO_THROW(geometryUtility.PolygonNormal(polygonVertices, normal));
+        Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
         ASSERT_DOUBLE_EQ(normal[0], 1.0 / sqrt(3));
         ASSERT_DOUBLE_EQ(normal[1], 1.0 / sqrt(3));
         ASSERT_DOUBLE_EQ(normal[2], 1.0 / sqrt(3));
@@ -934,10 +932,9 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        Eigen::Vector3d normal;
         Eigen::Matrix3d rotationMatrix;
         Eigen::Vector3d translation;
-        ASSERT_NO_THROW(geometryUtility.PolygonNormal(polygonVertices, normal));
+        Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
         ASSERT_NO_THROW(geometryUtility.PolygonRotation(polygonVertices,
                                                         normal,
                                                         rotationMatrix,
@@ -958,10 +955,9 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 0.0, 1.0, 0.0;
         polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
-        Eigen::Vector3d normal;
         Eigen::Matrix3d rotationMatrix;
         Eigen::Vector3d translation;
-        ASSERT_NO_THROW(geometryUtility.PolygonNormal(polygonVertices, normal));
+        Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
         ASSERT_NO_THROW(geometryUtility.PolygonRotation(polygonVertices,
                                                         normal,
                                                         rotationMatrix,

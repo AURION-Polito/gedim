@@ -1098,9 +1098,10 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void GeometryUtilities::PolygonNormal(const MatrixXd& polygonVertices,
-                                        Vector3d& normal) const
+  Eigen::Vector3d GeometryUtilities::PolygonNormal(const MatrixXd& polygonVertices) const
   {
+    Vector3d normal;
+
     normal.setZero();
     unsigned int numVertices =  polygonVertices.cols();
 
@@ -1112,6 +1113,7 @@ namespace Gedim
     }
 
     normal.normalize();
+    return normal;
   }
   // ***************************************************************************
   void GeometryUtilities::PolygonRotation(const MatrixXd& polygonVertices,
