@@ -220,7 +220,7 @@ namespace Gedim
       }
       inline unsigned int Cell0DDoublePropertyIndex(const string& propertyId) const
       {
-        Output::Assert(!Cell0DDoublePropertyExists(propertyId));
+        Output::Assert(Cell0DDoublePropertyExists(propertyId));
         return _mesh.Cell0DDoublePropertyIndices.at(propertyId);
       }
       inline unsigned int Cell0DDoublePropertySize(const unsigned int& cell0DIndex,
@@ -430,7 +430,7 @@ namespace Gedim
       }
       inline unsigned int Cell1DDoublePropertyIndex(const string& propertyId) const
       {
-        Output::Assert(!Cell1DDoublePropertyExists(propertyId));
+        Output::Assert(Cell1DDoublePropertyExists(propertyId));
         return _mesh.Cell1DDoublePropertyIndices.at(propertyId);
       }
       inline unsigned int Cell1DDoublePropertySize(const unsigned int& cell1DIndex,
@@ -616,7 +616,7 @@ namespace Gedim
       }
       inline unsigned int Cell2DDoublePropertyIndex(const string& propertyId) const
       {
-        Output::Assert(!Cell2DDoublePropertyExists(propertyId));
+        Output::Assert(Cell2DDoublePropertyExists(propertyId));
         return _mesh.Cell2DDoublePropertyIndices.at(propertyId);
       }
       inline unsigned int Cell2DDoublePropertySize(const unsigned int& cell2DIndex,
@@ -816,7 +816,7 @@ namespace Gedim
       }
       inline unsigned int Cell3DDoublePropertyIndex(const string& propertyId) const
       {
-        Output::Assert(!Cell3DDoublePropertyExists(propertyId));
+        Output::Assert(Cell3DDoublePropertyExists(propertyId));
         return _mesh.Cell3DDoublePropertyIndices.at(propertyId);
       }
       inline unsigned int Cell3DDoublePropertySize(const unsigned int& cell3DIndex,

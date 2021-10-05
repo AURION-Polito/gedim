@@ -49,6 +49,7 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.Cell0DInsertDoublePropertyValue(1, 0, 1, 17.4));
     EXPECT_EQ(meshDao.Cell0DNumberDoubleProperties(), 1);
     EXPECT_TRUE(meshDao.Cell0DDoublePropertyExists("Test"));
+    EXPECT_EQ(meshDao.Cell0DDoublePropertyIndex("Test"), 0);
     EXPECT_FALSE(meshDao.Cell0DDoublePropertyExists("NoProperty"));
     EXPECT_EQ(meshDao.Cell0DDoublePropertyId(0), "Test");
     EXPECT_EQ(meshDao.Cell0DDoublePropertySize(0, 0), 3);
@@ -87,6 +88,7 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.Cell1DInsertDoublePropertyValue(1, 0, 1, 17.4));
     EXPECT_EQ(meshDao.Cell1DNumberDoubleProperties(), 1);
     EXPECT_TRUE(meshDao.Cell1DDoublePropertyExists("Test"));
+    EXPECT_EQ(meshDao.Cell1DDoublePropertyIndex("Test"), 0);
     EXPECT_FALSE(meshDao.Cell1DDoublePropertyExists("NoProperty"));
     EXPECT_EQ(meshDao.Cell1DDoublePropertyId(0), "Test");
     EXPECT_EQ(meshDao.Cell1DDoublePropertySize(0, 0), 3);
@@ -130,6 +132,7 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.Cell2DInsertDoublePropertyValue(1, 0, 1, 17.4));
     EXPECT_EQ(meshDao.Cell2DNumberDoubleProperties(), 1);
     EXPECT_TRUE(meshDao.Cell2DDoublePropertyExists("Test"));
+    EXPECT_EQ(meshDao.Cell2DDoublePropertyIndex("Test"), 0);
     EXPECT_FALSE(meshDao.Cell2DDoublePropertyExists("NoProperty"));
     EXPECT_EQ(meshDao.Cell2DDoublePropertyId(0), "Test");
     EXPECT_EQ(meshDao.Cell2DDoublePropertySize(0, 0), 3);
@@ -178,6 +181,7 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.Cell3DInsertDoublePropertyValue(1, 0, 1, 17.4));
     EXPECT_EQ(meshDao.Cell3DNumberDoubleProperties(), 1);
     EXPECT_TRUE(meshDao.Cell3DDoublePropertyExists("Test"));
+    EXPECT_EQ(meshDao.Cell3DDoublePropertyIndex("Test"), 0);
     EXPECT_FALSE(meshDao.Cell3DDoublePropertyExists("NoProperty"));
     EXPECT_EQ(meshDao.Cell3DDoublePropertyId(0), "Test");
     EXPECT_EQ(meshDao.Cell3DDoublePropertySize(0, 0), 3);
