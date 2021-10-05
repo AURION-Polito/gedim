@@ -354,6 +354,18 @@ namespace Gedim
       /// \param result the point position on the line
       PointSegmentPositionTypes PointSegmentPosition(const double& curvilinearCoordinate) const;
 
+      /// \brief Project point on a segment line
+      /// \param point the point
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \return the projected point
+      inline Eigen::Vector3d PointSegmentProjection(const Eigen::Vector3d& point,
+                                                    const Eigen::Vector3d& segmentOrigin,
+                                                    const Eigen::Vector3d& segmentEnd) const
+      {
+        return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd) * (segmentEnd - segmentOrigin) + segmentOrigin;
+      }
+
       /// \brief Compute the intersection between the two segments
       /// \param firstSegmentOrigin first segment origin
       /// \param firstSegmentEnd first segment end
