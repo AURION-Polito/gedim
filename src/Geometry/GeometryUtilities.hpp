@@ -436,7 +436,7 @@ namespace Gedim
       ///
       /// \brief Compute the Convex Hull of 2D points
       /// \param points the points, size 3 x numPoints
-      /// \return the convex hull indices, size numConvexHullPoints, numConvexHullPoints <= numPoints
+      /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
       vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points);
   };
