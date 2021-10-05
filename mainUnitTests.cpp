@@ -1,4 +1,4 @@
-#include "test_geometry_compare.hpp"
+#include "test_geometry.hpp"
 #include "test_geometry_intersection.hpp"
 #include "test_geometry_point.hpp"
 #include "test_geometry_polygon.hpp"

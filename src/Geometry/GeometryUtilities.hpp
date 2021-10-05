@@ -397,7 +397,7 @@ namespace Gedim
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the rotation matrix and translation vector of a tridimensional Polygon
-      /// \param polygonVertices the vertices of the polygon (size 3 x numVertices)
+      /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
       /// \param normal the normalized normal of the plane which contains the polygon
       /// \param rotationMatrix the resulting rotation matrix Q which rotates 2D points to 3D points
       /// \param translation the resulting translation vector t which corresponds to the first vertex of the polygon
@@ -407,6 +407,13 @@ namespace Gedim
                            const Eigen::Vector3d& normal,
                            Eigen::Matrix3d& rotationMatrix,
                            Eigen::Vector3d& translation) const;
+
+      /// \brief Compute the rotation matrix of a plane
+      /// \param normal the normalized normal of the plane which contains the polygon
+      /// \retrun the resulting rotation matrix Q which rotates 2D points to 3D points
+      /// \note to rotate some point P from 2D to 3D use Q * P
+      /// \note to rotate some point P from 3D to 2D use Q^T * P
+      Eigen::Matrix3d PlaneRotation(const Eigen::Vector3d& planeNormal) const;
 
       /// \brief Rotate Points P From 2D To 3D using rotation matrix Q and translation t: Q * P + t
       /// \param points the points (size 3 x numPoints)
