@@ -84,6 +84,12 @@ namespace Gedim
                                const double& curvilinearCoordinate,
                                ConformMesh& result);
 
+      /// \brief Update the confermed 1D mesh with updated mesh 2D data
+      /// \param mesh2D the updated mesh data
+      /// \param conformedMesh the resulting conformed mesh
+      void UpdateWithUpdatedMesh2D(const Gedim::IMeshDAO& mesh2D,
+                                   ConformMesh& conformedMesh) const;
+
       /// \brief Update the confermed 1D mesh with active mesh 2D data
       /// \param activeMesh2DData the active mesh data
       /// \param conformedMesh the resulting conformed mesh

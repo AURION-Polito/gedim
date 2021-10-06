@@ -208,7 +208,7 @@ namespace Gedim
       const MatrixXd cell2DVertices = mesh2D.Cell2DVerticesCoordinates(c);
 
       GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(newPoint2D,
-                                              cell2DVertices);
+                                                                                                                         cell2DVertices);
 
       if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside)
         continue;
@@ -243,7 +243,136 @@ namespace Gedim
     result.Segments.clear();
     CreateConformSegments(result);
   }
+  // ***************************************************************************
+  void ConformerMeshSegment::UpdateWithUpdatedMesh2D(const IMeshDAO& mesh2D,
+                                                     ConformMesh& conformedMesh) const
+  {
+    for (map<double, ConformerMeshSegment::ConformMesh::ConformMeshPoint>::iterator it = conformedMesh.Points.begin();
+         it != conformedMesh.Points.end();
+         it++)
+    {
+      ConformerMeshSegment::ConformMesh::ConformMeshPoint& point = it->second;
 
+      {
+        list<unsigned int> newCell0DIndices;
+        for (const unsigned int& v : point.Vertex2DIds)
+        {
+          if (!mesh2D.Cell0DHasUpdatedCell0Ds(v))
+            continue;
+
+          list<unsigned int> updatedCell0Ds;
+          mesh2D.Cell0DUpdatedCell0Ds(v, updatedCell0Ds);
+          for (const unsigned int& nv : updatedCell0Ds)
+            newCell0DIndices.push_back(nv);
+        }
+        for (const unsigned int& nv : newCell0DIndices)
+          point.Vertex2DIds.push_back(nv);
+      }
+
+      Output::Assert(point.Vertex2DIds.size() == 1);
+      const unsigned int mesh2DCell0DIndex = point.Vertex2DIds.front();
+
+      {
+        list<unsigned int> newCell1DIndices;
+        for (const unsigned int& e : point.Edge2DIds)
+        {
+          if (!mesh2D.Cell1DHasUpdatedCell1Ds(e))
+            continue;
+
+          list<unsigned int> updatedCell1Ds;
+          mesh2D.Cell1DUpdatedCell1Ds(e, updatedCell1Ds);
+          for (const unsigned int& ne : updatedCell1Ds)
+          {
+            bool hasCell0D = false;
+            for (unsigned int nv = 0; nv < 2; nv++)
+            {
+              hasCell0D = (mesh2D.Cell1DVertex(ne, nv) == mesh2DCell0DIndex);
+
+              if (hasCell0D)
+                break;
+            }
+
+            if (!hasCell0D)
+              continue;
+
+            newCell1DIndices.push_back(ne);
+          }
+        }
+
+        for (const unsigned int& ne : newCell1DIndices)
+          point.Edge2DIds.push_back(ne);
+      }
+
+      {
+        list<unsigned int> newCell2DIndices;
+        for (const unsigned int& c : point.Cell2DIds)
+        {
+          if (!mesh2D.Cell2DHasUpdatedCell2Ds(c))
+            continue;
+
+          list<unsigned int> updatedCell2Ds;
+          mesh2D.Cell2DUpdatedCell2Ds(c, updatedCell2Ds);
+          for (const unsigned int& nc : updatedCell2Ds)
+          {
+            bool hasCell0D = false;
+            for (unsigned int nv = 0; nv < mesh2D.Cell2DNumberVertices(nc); nv++)
+            {
+              hasCell0D = (mesh2D.Cell2DVertex(nc, nv) == mesh2DCell0DIndex);
+
+              if (hasCell0D)
+                break;
+            }
+
+            if (!hasCell0D)
+              continue;
+
+            newCell2DIndices.push_back(nc);
+          }
+        }
+
+        for (const unsigned int& nc : newCell2DIndices)
+          point.Cell2DIds.push_back(nc);
+      }
+    }
+
+    for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
+    {
+      {
+        list<unsigned int> newCell1DIndices;
+        for (const unsigned int& e : segment.Edge2DIds)
+        {
+          if (!mesh2D.Cell1DHasUpdatedCell1Ds(e))
+            continue;
+
+          list<unsigned int> updatedCell1Ds;
+          mesh2D.Cell1DUpdatedCell1Ds(e, updatedCell1Ds);
+          for (const unsigned int& ne : updatedCell1Ds)
+            newCell1DIndices.push_back(ne);
+        }
+
+        for (const unsigned int& ne : newCell1DIndices)
+          segment.Edge2DIds.push_back(ne);
+      }
+
+      {
+        list<unsigned int> newCell2DIndices;
+        for (const unsigned int& c : segment.Cell2DIds)
+        {
+          if (!mesh2D.Cell2DHasUpdatedCell2Ds(c))
+            continue;
+
+          list<unsigned int> updatedCell2Ds;
+          mesh2D.Cell2DUpdatedCell2Ds(c, updatedCell2Ds);
+          for (const unsigned int& nc : updatedCell2Ds)
+            newCell2DIndices.push_back(nc);
+        }
+
+        for (const unsigned int& nc : newCell2DIndices)
+          segment.Cell2DIds.push_back(nc);
+      }
+    }
+  }
+  // ***************************************************************************
   void ConformerMeshSegment::UpdateWithActiveMesh2D(const MeshUtilities::ExtractActiveMeshData& activeMesh2DData,
                                                     ConformMesh& conformedMesh) const
   {
