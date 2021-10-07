@@ -358,12 +358,12 @@ namespace Gedim
       /// \param point the point
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
-      /// \return the projected point
-      inline Eigen::Vector3d PointSegmentProjection(const Eigen::Vector3d& point,
-                                                    const Eigen::Vector3d& segmentOrigin,
-                                                    const Eigen::Vector3d& segmentEnd) const
+      /// \return the projected point curvilinear coordinate
+      inline double PointSegmentProjection(const Eigen::Vector3d& point,
+                                           const Eigen::Vector3d& segmentOrigin,
+                                           const Eigen::Vector3d& segmentEnd) const
       {
-        return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd) * (segmentEnd - segmentOrigin) + segmentOrigin;
+        return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd);
       }
 
       /// \brief Compute the intersection between the two segments

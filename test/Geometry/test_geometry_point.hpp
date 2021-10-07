@@ -131,10 +131,10 @@ namespace GedimUnitTesting {
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  Eigen::Vector3d(0.5, 0.0, 0.0));
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         0.5);
       }
 
       // check left
@@ -148,10 +148,10 @@ namespace GedimUnitTesting {
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  Eigen::Vector3d(0.5, 0.0, 0.0));
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         0.5);
       }
 
       // check on segment line before origin
@@ -165,10 +165,10 @@ namespace GedimUnitTesting {
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  point);
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         -10.0);
       }
 
       // check on segment line after end
@@ -182,10 +182,10 @@ namespace GedimUnitTesting {
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  point);
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         10.0);
       }
 
       // check on segment origin
@@ -198,10 +198,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  point);
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         0.0);
       }
 
       // check on segment end
@@ -214,10 +214,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  point);
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         1.0);
       }
 
       // check inside segment
@@ -230,10 +230,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_EQ(geometryUtility.PointSegmentProjection(point,
-                                                         segmentOrigin,
-                                                         segmentEnd),
-                  point);
+        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+                                                                segmentOrigin,
+                                                                segmentEnd),
+                         0.5);
       }
     }
     catch (const exception& exception)
