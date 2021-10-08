@@ -143,35 +143,88 @@ namespace Gedim
                               const unsigned int& id) { return; }
       inline unsigned int Cell0DId(const unsigned int& cell0DIndex) const { return cell0DIndex; }
       inline void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
-                                                   const unsigned int& numberNeighbourCell1Ds) { return; }
+                                                   const unsigned int& numberNeighbourCell1Ds);
       inline void Cell0DInsertNeighbourCell1D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex,
-                                              const unsigned int& neigbourCell1DIndex) { throw runtime_error("Not implemented"); }
-      inline unsigned int Cell0DNumberNeighbourCell1D(const unsigned int& cell0DIndex) const { return 0; }
+                                              const unsigned int& neigbourCell1DIndex)
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell1D(cell0DIndex));
+        Output::Assert(neigbourCell1DIndex < Cell1DTotalNumber());
+
+        _mesh.Cell0DNeighbourCell1Ds[_mesh.NumberCell0DNeighbourCell1D[cell0DIndex] +
+            neighbourIndex] = neigbourCell1DIndex;
+      }
+      inline unsigned int Cell0DNumberNeighbourCell1D(const unsigned int& cell0DIndex) const
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        return _mesh.NumberCell0DNeighbourCell1D[cell0DIndex + 1] -
+            _mesh.NumberCell0DNeighbourCell1D[cell0DIndex];
+      }
       inline unsigned int Cell0DNeighbourCell1D(const unsigned int& cell0DIndex,
-                                                const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+                                                const unsigned int& neighbourIndex) const
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell1D(cell0DIndex));
+        return _mesh.Cell0DNeighbourCell1Ds[_mesh.NumberCell0DNeighbourCell1D[cell0DIndex] +
+            neighbourIndex];
+      }
       inline bool Cell0DHasNeighbourCell1D(const unsigned int& cell0DIndex,
-                                           const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+                                           const unsigned int& neighbourIndex) const
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell1D(cell0DIndex));
+        return _mesh.Cell0DNeighbourCell1Ds[_mesh.NumberCell0DNeighbourCell1D[cell0DIndex] +
+            neighbourIndex] < _mesh.NumberCell1D;
+      }
       inline void Cell0DResetNeighbourCell1D(const unsigned int& cell0DIndex,
                                              const unsigned int& neighbourIndex)
       {
-        throw runtime_error("Not implemented");
+        _mesh.Cell0DNeighbourCell1Ds[_mesh.NumberCell0DNeighbourCell1D[cell0DIndex] +
+            neighbourIndex] = _mesh.NumberCell1D;
       }
 
       inline void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
-                                                   const unsigned int& numberNeighbourCell2Ds) { return; }
+                                                   const unsigned int& numberNeighbourCell2Ds);
       inline void Cell0DInsertNeighbourCell2D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex,
-                                              const unsigned int& neigbourCell2DIndex) { throw runtime_error("Not implemented"); }
-      inline unsigned int Cell0DNumberNeighbourCell2D(const unsigned int& cell0DIndex) const { return 0; }
+                                              const unsigned int& neigbourCell2DIndex)
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell2D(cell0DIndex));
+        Output::Assert(neigbourCell2DIndex < Cell2DTotalNumber());
+
+        _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
+            neighbourIndex] = neigbourCell2DIndex;
+      }
+      inline unsigned int Cell0DNumberNeighbourCell2D(const unsigned int& cell0DIndex) const
+      {
+        return 0;
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        return _mesh.NumberCell0DNeighbourCell2D[cell0DIndex + 1] -
+            _mesh.NumberCell0DNeighbourCell2D[cell0DIndex];
+      }
       inline unsigned int Cell0DNeighbourCell2D(const unsigned int& cell0DIndex,
-                                                const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+                                                const unsigned int& neighbourIndex) const
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell2D(cell0DIndex));
+        return _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
+            neighbourIndex];
+      }
       inline bool Cell0DHasNeighbourCell2D(const unsigned int& cell0DIndex,
-                                           const unsigned int& neighbourIndex) const { throw runtime_error("Not implemented"); }
+                                           const unsigned int& neighbourIndex) const
+      {
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
+        Output::Assert(neighbourIndex < Cell0DNumberNeighbourCell2D(cell0DIndex));
+        return _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
+            neighbourIndex] < _mesh.NumberCell2D;
+      }
       inline void Cell0DResetNeighbourCell2D(const unsigned int& cell0DIndex,
                                              const unsigned int& neighbourIndex)
       {
-        throw runtime_error("Not implemented");
+        _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
+            neighbourIndex] = _mesh.NumberCell2D;
       }
       inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell3Ds) { return; }

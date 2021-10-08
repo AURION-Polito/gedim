@@ -14,6 +14,10 @@ namespace Gedim
       unsigned int NumberCell0D = 0; ///< number of Cell0D
       vector<double> Cell0DCoordinates = {}; ///< Cell0D coordinates, size 3 x NumberCell0D (x,y,z)
       vector<unsigned int> Cell0DMarkers = {}; ///< Cell0D markers, size 1 x NumberCell0D (marker)
+      vector<unsigned int> NumberCell0DNeighbourCell1D = {}; ///< Cell0D neighbour Cell1D indices per cell, size  1 x NumberCell0D + 1
+      vector<unsigned int> Cell0DNeighbourCell1Ds = {}; ///< Cell0D neighbour Cell1D indices, size 1 x NumberCell0DNeighbourCell1D[NumberCell0D]
+      vector<unsigned int> NumberCell0DNeighbourCell2D = {}; ///< Cell0D neighbour Cell2D indices per cell, size  1 x NumberCell0D + 1
+      vector<unsigned int> Cell0DNeighbourCell2Ds = {}; ///< Cell0D neighbour Cell2D indices, size 1 x NumberCell0DNeighbourCell2D[NumberCell0D]
       vector<bool> ActiveCell0D = {}; ///< active Cell0D
       map<unsigned int, set<unsigned int>> UpdatedCell0Ds = {}; ///< for each cell0D the list to the new cell0Ds
       vector<string> Cell0DDoublePropertyIds = {}; ///< Cell0D double property id - double property index

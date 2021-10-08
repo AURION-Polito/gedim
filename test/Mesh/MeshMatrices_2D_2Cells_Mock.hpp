@@ -22,6 +22,10 @@ namespace GedimUnitTesting
                                    0.0, 1.0, 0.0 };
         Mesh.Cell0DMarkers = { 1,2,3,4 };
         Mesh.ActiveCell0D = { 1,1,1,1 };
+        Mesh.NumberCell0DNeighbourCell1D = { 0,0,0,0,0 };
+        Mesh.Cell0DNeighbourCell1Ds = { };
+        Mesh.NumberCell0DNeighbourCell2D = { 0,0,0,0,0 };
+        Mesh.Cell0DNeighbourCell2Ds = { };
         Mesh.NumberCell1D = 5;
         Mesh.Cell1DVertices = { 3,0,
                                 0,1,
