@@ -199,7 +199,6 @@ namespace Gedim
       }
       inline unsigned int Cell0DNumberNeighbourCell2D(const unsigned int& cell0DIndex) const
       {
-        return 0;
         Output::Assert(cell0DIndex < Cell0DTotalNumber());
         return _mesh.NumberCell0DNeighbourCell2D[cell0DIndex + 1] -
             _mesh.NumberCell0DNeighbourCell2D[cell0DIndex];
