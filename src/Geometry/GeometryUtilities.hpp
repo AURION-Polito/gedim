@@ -3,6 +3,7 @@
 
 #include "Eigen"
 #include <iostream>
+#include "IOUtilities.hpp"
 
 using namespace std;
 
@@ -420,6 +421,12 @@ namespace Gedim
                            Eigen::Matrix3d& rotationMatrix,
                            Eigen::Vector3d& translation) const;
 
+      /// \brief Check if Polygon is Convex
+      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \return true if polygon is convex, false otherwise
+      /// \note works only in 2D-plane
+      bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices);
+
       /// \brief Compute the rotation matrix of a plane
       /// \param normal the normalized normal of the plane which contains the polygon
       /// \retrun the resulting rotation matrix Q which rotates 2D points to 3D points
@@ -434,8 +441,9 @@ namespace Gedim
       /// \param rotatedPoints the resulting rotated points (size 3 x numPoints) rP = Q * P + t
       inline Eigen::MatrixXd RotatePointsFrom2DTo3D(const Eigen::MatrixXd& points,
                                                     const Eigen::Matrix3d& rotationMatrix,
-                                                    const Eigen::Vector3d& translation) const
+                                                    const Eigen::Vector3d& translation = Eigen::Vector3d::Zero()) const
       {
+        Gedim::Output::Assert(points.row(2).isZero(_configuration.Tolerance));
         return (rotationMatrix * points).colwise() + translation;
       }
       /// \brief Rotate Points P From 3D To 2D using rotation matrix Q and translation t: Q * (P - t)
@@ -445,7 +453,7 @@ namespace Gedim
       /// \param rotatedPoints the resulting rotated points (size 3 x numPoints) rP = Q * (P - t)
       inline Eigen::MatrixXd RotatePointsFrom3DTo2D(const Eigen::MatrixXd& points,
                                                     const Eigen::Matrix3d& rotationMatrix,
-                                                    const Eigen::Vector3d& translation) const
+                                                    const Eigen::Vector3d& translation = Eigen::Vector3d::Zero()) const
       {
         Eigen::MatrixXd rotatedPoints = rotationMatrix * (points.colwise() - translation);
         rotatedPoints.row(2).setZero();

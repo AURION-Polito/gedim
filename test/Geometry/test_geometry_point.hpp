@@ -120,7 +120,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
       Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
-      // check right
+      // check 2D right
       {
         Eigen::Vector3d point(0.5, -1.0, 0.0);
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);

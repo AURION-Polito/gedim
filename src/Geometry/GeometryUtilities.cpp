@@ -285,7 +285,9 @@ namespace Gedim
       return PointSegmentPosition(PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd));
     }
 
-    // check point position out of line
+    // check point position out of line, supported only in 2D plane
+    Output::Assert(IsValue1DZero(segmentTangent.z()) && IsValue1DZero(pointDirection.z()));
+    // rotate the 2D tangent by 90 degrees
     Vector3d normalTangent(segmentTangent.y(), -segmentTangent.x(), 0.0);
 
     if (IsValue1DPositive(pointDirection.dot(normalTangent)))
@@ -1195,6 +1197,26 @@ namespace Gedim
     translation = polygonVertices.col(0);
   }
   // ***************************************************************************
+  bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices)
+  {
+    Output::Assert(polygonVertices.row(2).isZero(_configuration.Tolerance));
+
+    const unsigned int numVertices = polygonVertices.cols();
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const Eigen::Vector3d edgeOrigin = polygonVertices.col(v);
+      const Eigen::Vector3d edgeEnd = polygonVertices.col((v + 1) % numVertices);
+      const Eigen::Vector3d vertexNextEdge = polygonVertices.col((v + 2) % numVertices);
+
+      if (PointSegmentPosition(vertexNextEdge,
+                               edgeOrigin,
+                               edgeEnd) == PointSegmentPositionTypes::RightTheSegment)
+        return false;
+    }
+
+    return true;
+  }
+  // ***************************************************************************
   Matrix3d GeometryUtilities::PlaneRotation(const Eigen::Vector3d& planeNormal) const
   {
     Matrix3d Q;
@@ -1232,7 +1254,7 @@ namespace Gedim
     //     pointOnHull = endpoint
     // until endpoint = P[0]      // wrapped around to first hull point
 
-    Output::Assert(points.rows() == 3 && points.cols() > 0);
+    Output::Assert(points.rows() == 3 && points.cols() > 0 && points.row(2).isZero(_configuration.Tolerance));
     const unsigned int numPoints = points.cols();
     unsigned int leftMost = 0;
     for (unsigned int p = 1; p < numPoints; p++)
