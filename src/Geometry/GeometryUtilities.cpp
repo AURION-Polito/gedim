@@ -320,6 +320,8 @@ namespace Gedim
   GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition(const Vector3d& point,
                                                                                         const MatrixXd& polygonVertices) const
   {
+    Output::Assert(point.rows() == 3 && point.cols() > 0 && point.row(2).isZero(_configuration.Tolerance));
+
     GeometryUtilities::PointPolygonPositionResult result;
 
     unsigned int numVertices =  polygonVertices.cols();

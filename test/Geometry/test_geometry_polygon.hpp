@@ -52,6 +52,41 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonIsConvex)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check convex polygon 2D
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        ASSERT_TRUE(geometryUtility.PolygonIsConvex(polygonVertices));
+      }
+
+      // check concave polygon 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.25, 0.25, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        ASSERT_FALSE(geometryUtility.PolygonIsConvex(polygonVertices));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonRotationMatrix)
   {
     try
