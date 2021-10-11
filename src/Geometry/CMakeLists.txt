@@ -1,4 +1,9 @@
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Intersection.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Point.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Polygon.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Polyhedron.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Split.cpp)
 
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities.hpp)
 

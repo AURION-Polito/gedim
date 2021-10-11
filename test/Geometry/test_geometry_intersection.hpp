@@ -365,6 +365,79 @@ namespace GedimUnitTesting {
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections);
       }
+
+      // check no intersection parallel case
+      {
+        Eigen::Vector3d segmentOrigin(0.0, 0.0, 0.0);
+        Eigen::Vector3d segmentEnd   (0.0, 1.0, 0.0);
+
+        Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
+        Eigen::Vector3d planeOrigin(0.0, 0.0, 2.0);
+
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+                                                                                                                   segmentEnd,
+                                                                                                                   planeNormal,
+                                                                                                                   planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+
+  TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // test no intersection with reference tetrahedron
+      {
+        Eigen::Vector3d v1(+0.0, +0.0, +0.0);
+        Eigen::Vector3d v2(+1.0, +0.0, +0.0);
+        Eigen::Vector3d v3(+0.0, +1.0, +0.0);
+        Eigen::Vector3d v4(+0.0, +0.0, +1.0);
+
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+
+        Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
+        Eigen::Vector3d planeOrigin(0.0, 0.0, 2.0);
+
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+                                                                                                                         polyhedron.Edges,
+                                                                                                                         polyhedron.Faces,
+                                                                                                                         planeNormal,
+                                                                                                                         planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::None);
+      }
+
+      // test single intersection with reference tetrahedron
+      {
+        Eigen::Vector3d v1(+0.0, +0.0, +0.0);
+        Eigen::Vector3d v2(+1.0, +0.0, +0.0);
+        Eigen::Vector3d v3(+0.0, +1.0, +0.0);
+        Eigen::Vector3d v4(+0.0, +0.0, +1.0);
+
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+
+        Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
+        Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
+
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+                                                                                                                         polyhedron.Edges,
+                                                                                                                         polyhedron.Faces,
+                                                                                                                         planeNormal,
+                                                                                                                         planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnVertex);
+      }
     }
     catch (const exception& exception)
     {

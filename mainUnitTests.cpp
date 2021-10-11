@@ -2,6 +2,7 @@
 #include "test_geometry_intersection.hpp"
 #include "test_geometry_point.hpp"
 #include "test_geometry_polygon.hpp"
+#include "test_geometry_polyhedron.hpp"
 #include "test_geometry_split.hpp"
 #include "test_mesh.hpp"
 #include "test_intersectorMesh2DSegment.hpp"

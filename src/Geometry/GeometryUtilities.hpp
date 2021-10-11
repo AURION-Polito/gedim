@@ -141,7 +141,7 @@ namespace Gedim
           struct IntersectionPosition
           {
               PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
-              double CurvilinearCoordinate = -1.0;
+              double CurvilinearCoordinate = 0.0;
           };
 
           IntersectionLineTypes IntersectionLinesType = IntersectionLineTypes::Unknown;
@@ -172,7 +172,7 @@ namespace Gedim
           struct Intersection
           {
               PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
-              double CurvilinearCoordinate = -1.0;
+              double CurvilinearCoordinate = 0.0;
           };
 
           Types Type = Types::Unknown; ///< The intersection type
@@ -191,7 +191,16 @@ namespace Gedim
             NewPolygon = 5 ///< New polygon intersection
           };
 
+          struct Intersection final
+          {
+              PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+              set<unsigned int> Vertices = {};
+              set<unsigned int> Edges = {};
+              double CurvilinearCoordinate = 0.0;
+          };
+
           Types Type = Types::Unknown; ///< The intersection type
+          list<Intersection> Intersections = {};
       };
 
       struct PointPolygonPositionResult final
@@ -207,6 +216,13 @@ namespace Gedim
 
           unsigned int BorderIndex = 0; ///< index of vertex/edge of border
           PositionTypes PositionType = PositionTypes::Unknown;
+      };
+
+      struct Polyhedron final
+      {
+          Eigen::MatrixXd Vertices; ///< vertices, size 3 x numVertices
+          Eigen::MatrixXi Edges; ///< edges, size 2 x numEdges
+          std::vector<Eigen::MatrixXi> Faces; ///< faces vertices and edges˝, size numFaces x 2 x numFaceVertices
       };
 
     private:
@@ -488,12 +504,33 @@ namespace Gedim
         return rotatedPoints;
       }
 
-      ///
       /// \brief Compute the Convex Hull of 2D points
       /// \param points the points, size 3 x numPoints
       /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
       vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points);
+
+      /// \brief Create a Tetrahedron with origin and dimension
+      /// \param origin the origin
+      /// \param lengthVector the length vector
+      /// \param heightVector the heigth vector
+      /// \param widthVector the width vector
+      /// \return the tetrahedron created
+      Polyhedron CreateTetrahedronWithOrigin(const Eigen::Vector3d& origin,
+                                             const Eigen::Vector3d& lengthVector,
+                                             const Eigen::Vector3d& heightVector,
+                                             const Eigen::Vector3d& widthVector);
+
+      /// \brief Create a Tetrahedron with the four vertices
+      /// \param v1 the first vertex
+      /// \param v2 the second vertex
+      /// \param v3 the third vertex
+      /// \param v4 the fourth vertex
+      /// \return the tetrahedron created
+      Polyhedron CreateTetrahedronWithVertices(const Eigen::Vector3d& v1,
+                                               const Eigen::Vector3d& v2,
+                                               const Eigen::Vector3d& v3,
+                                               const Eigen::Vector3d& v4);
   };
 }
 
