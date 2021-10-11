@@ -191,16 +191,20 @@ namespace Gedim
             NewPolygon = 5 ///< New polygon intersection
           };
 
-          struct Intersection final
+          struct EdgeIntersection final
           {
-              PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
-              set<unsigned int> Vertices = {};
-              set<unsigned int> Edges = {};
-              double CurvilinearCoordinate = 0.0;
+              IntersectionSegmentPlaneResult::Intersection Intersection;
+              unsigned int EdgeId = 0;
+          };
+
+          struct VertexIntersection final
+          {
+              unsigned int VertexId = 0;
           };
 
           Types Type = Types::Unknown; ///< The intersection type
-          list<Intersection> Intersections = {};
+          map<unsigned int, VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
+          map<unsigned int, EdgeIntersection> EdgeIntersections = {}; ///< Edge intersections
       };
 
       struct PointPolygonPositionResult final
