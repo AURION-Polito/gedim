@@ -236,16 +236,17 @@ namespace Gedim
     GeometryUtilities::IntersectionSegmentPlaneResult result;
 
     const Vector3d t = segmentEnd - segmentOrigin;
-    const Vector3d n = planeNormal.normalized();
 
-    // check if t is not zero
+    // check if t is not zero and plane normal is normalized
+    Gedim::Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
     Gedim::Output::Assert(IsValue2DPositive(t.squaredNorm()));
 
     // check if the plane normal n is perpendicular to segment tangent t
-    if (IsValue1DZero(n.dot(t.normalized())))
+    if (IsValue1DZero(planeNormal.dot(t.normalized())))
     {
       // compare if n * segmentOrigin = n * planeOrigin
-      if (Compare1DValues(n.dot(segmentOrigin), n.dot(planeOrigin)) == GeometryUtilities::CompareTypes::Coincident)
+      if (Compare1DValues(planeNormal.dot(segmentOrigin),
+                          planeNormal.dot(planeOrigin)) == GeometryUtilities::CompareTypes::Coincident)
       {
         // multiple intersection, the segment is coplanar to plane
         result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections;
@@ -260,8 +261,65 @@ namespace Gedim
     {
       // plane and segment have a single intersection
       result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection;
-      result.SingleIntersection.CurvilinearCoordinate = n.dot(planeOrigin - segmentOrigin) / n.dot(t);
+      result.SingleIntersection.CurvilinearCoordinate = planeNormal.dot(planeOrigin - segmentOrigin) /
+                                                        planeNormal.dot(t);
       result.SingleIntersection.Type = PointSegmentPosition(result.SingleIntersection.CurvilinearCoordinate);
+    }
+
+    return result;
+  }
+  // ***************************************************************************
+  GeometryUtilities::IntersectionPolyhedronPlaneResult GeometryUtilities::IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                                      const Eigen::MatrixXi& polyhedronEdges,
+                                                                                                      const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                                                      const Eigen::Vector3d& planeNormal,
+                                                                                                      const Eigen::Vector3d& planeOrigin) const
+  {
+    GeometryUtilities::IntersectionPolyhedronPlaneResult result;
+
+    // check if plane normal is normalized
+    Gedim::Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
+
+    const unsigned int numberOfIntersections = 0;
+    for (unsigned int e = 0; e < polyhedronEdges.cols(); e++)
+    {
+      const Vector3d edgeOrigin = polyhedronVertices.col(polyhedronEdges(0, e));
+      const Vector3d edgeEnd = polyhedronVertices.col(polyhedronEdges(1, e));
+
+      IntersectionSegmentPlaneResult interectionEdge =  GeometryUtilities::IntersectionSegmentPlane(edgeOrigin,
+                                                                                                    edgeEnd,
+                                                                                                    planeNormal,
+                                                                                                    planeOrigin);
+
+
+    }
+
+    switch (numberOfIntersections)
+    {
+      case 0:
+      {
+        // no intersection found
+        result.Type = IntersectionPolyhedronPlaneResult::Types::None;
+      }
+      break;
+      case 1:
+      {
+        // one intersection found, single vertex intersection
+        result.Type = IntersectionPolyhedronPlaneResult::Types::OnVertex;
+      }
+      break;
+      case 2:
+      {
+        // two intersections found, edge intersection
+        result.Type = IntersectionPolyhedronPlaneResult::Types::OnEdge;
+      }
+      break;
+      default:
+      {
+        // more than two intersections found, of polyhedron face intersection, or new polygon intersection
+
+      }
+      break;
     }
 
     return result;

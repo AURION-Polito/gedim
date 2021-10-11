@@ -179,6 +179,21 @@ namespace Gedim
           Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
       };
 
+      struct IntersectionPolyhedronPlaneResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            None = 1, ///< No intersection found
+            OnVertex = 2, ///< On polyhedron vertex
+            OnEdge = 3, ///< On polyhedron edge
+            OnFace = 4, ///< On polyhedron face
+            NewPolygon = 5 ///< New polygon intersection
+          };
+
+          Types Type = Types::Unknown; ///< The intersection type
+      };
+
       struct PointPolygonPositionResult final
       {
           enum struct PositionTypes
@@ -383,13 +398,26 @@ namespace Gedim
       /// represented by the normal and a point
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segement end
-      /// \param planeNormal the plane normal
+      /// \param planeNormal the plane normal normalized
       /// \param planeOrigin a plane point
       /// \return the resulting intersection
       IntersectionSegmentPlaneResult IntersectionSegmentPlane(const Eigen::Vector3d& segmentOrigin,
                                                               const Eigen::Vector3d& segmentEnd,
                                                               const Eigen::Vector3d& planeNormal,
                                                               const Eigen::Vector3d& planeOrigin) const;
+
+      /// \brief Intersection between a Polyhedron and a Plane
+      /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
+      /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
+      /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
+      /// \param planeNormal the plane normal normalized
+      /// \param planeOrigin the plane origin
+      /// \return the intersection result
+      IntersectionPolyhedronPlaneResult IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
+                                                                    const Eigen::MatrixXi& polyhedronEdges,
+                                                                    const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                    const Eigen::Vector3d& planeNormal,
+                                                                    const Eigen::Vector3d& planeOrigin) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
