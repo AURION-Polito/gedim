@@ -1199,7 +1199,7 @@ namespace Gedim
     translation = polygonVertices.col(0);
   }
   // ***************************************************************************
-  bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices)
+  bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.row(2).isZero(_configuration.Tolerance));
 

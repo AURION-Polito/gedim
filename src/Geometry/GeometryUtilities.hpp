@@ -425,7 +425,7 @@ namespace Gedim
       /// \param polygonVertices the polygon vertices, size 3 x numVertices
       /// \return true if polygon is convex, false otherwise
       /// \note works only in 2D-plane
-      bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices);
+      bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the rotation matrix of a plane
       /// \param normal the normalized normal of the plane which contains the polygon
