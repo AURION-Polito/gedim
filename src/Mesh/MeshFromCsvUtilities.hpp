@@ -157,6 +157,12 @@ namespace Gedim
       void ConvertCell2DNeighbours(const vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
                                    IMeshDAO& mesh) const;
 
+      /// \brief Convert the imported Cell2D subdivision to mesh
+      /// \param cell2DSubDivisions the container of cell2D neighbours
+      /// \param mesh the mesh
+      void ConvertCell2DSubDivisions(const vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions,
+                                     IMeshDAO& mesh) const;
+
       /// \brief Convert the imported Cell0D double properties to mesh
       /// \param cell0DDoubleProperties the container of cell0D double properties
       /// \param mesh the mesh

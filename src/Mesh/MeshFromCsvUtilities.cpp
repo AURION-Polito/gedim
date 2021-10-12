@@ -301,6 +301,26 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const vector<Cell2DSubDivision> cell2DSubDivisions,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numCell2Ds = cell2DSubDivisions.size();
+
+    if (numCell2Ds == 0)
+      return;
+
+    for (unsigned int v = 0; v < numCell2Ds; v++)
+    {
+      const MeshFromCsvUtilities::Cell2DSubDivision& cell2D = cell2DSubDivisions[v];
+
+      const unsigned int numCell2DSubDivision = cell2D.SubDivision.size();
+
+      mesh.Cell2DInitializeSubDivision(v, numCell2DSubDivision);
+      for (unsigned int n = 0; n < numCell2DSubDivision; n++)
+        mesh.Cell2DInsertSubDivision(v, n, cell2D.SubDivision[n]);
+    }
+  }
+  // ***************************************************************************
   void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties,
                                                            IMeshDAO& mesh) const
   {
