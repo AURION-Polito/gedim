@@ -12,6 +12,7 @@
 #include "MeshMatricesDAO.hpp"
 
 #include "MeshDAOExporterToCsv.hpp"
+#include "MeshImporterFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "MeshDAOImporter2DFromCsv.hpp"
 #include "FileTextReader.hpp"
@@ -243,32 +244,13 @@ namespace GedimUnitTesting
     Gedim::MeshMatrices importedMesh;
     Gedim::MeshMatricesDAO importedMeshDao(importedMesh);
 
-    Gedim::FileReader csvCell0DsFile(exportFolder + "/" + exportConfiguration.FileCell0DsName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell1DsFile(exportFolder + "/" + exportConfiguration.FileCell1DsName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell2DsFile(exportFolder + "/" + exportConfiguration.FileCell2DsName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell3DsFile(exportFolder + "/" + exportConfiguration.FileCell3DsName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell0DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell0DPropertiesName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell1DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell1DPropertiesName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell2DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell2DPropertiesName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell3DPropertiesFile(exportFolder + "/" + exportConfiguration.FileCell3DPropertiesName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell0DNeighboursFile(exportFolder + "/" + exportConfiguration.FileCell0DNeighboursName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell1DNeighboursFile(exportFolder + "/" + exportConfiguration.FileCell1DNeighboursName + "." + exportConfiguration.FileExtension);
-    Gedim::FileReader csvCell2DNeighboursFile(exportFolder + "/" + exportConfiguration.FileCell2DNeighboursName + "." + exportConfiguration.FileExtension);
-    Gedim::MeshDAOImporterFromCsv::Configuration importerConfiguration(csvCell0DsFile,
-                                                                       csvCell1DsFile,
-                                                                       csvCell2DsFile,
-                                                                       csvCell3DsFile,
-                                                                       csvCell0DPropertiesFile,
-                                                                       csvCell1DPropertiesFile,
-                                                                       csvCell2DPropertiesFile,
-                                                                       csvCell3DPropertiesFile,
-                                                                       csvCell0DNeighboursFile,
-                                                                       csvCell1DNeighboursFile,
-                                                                       csvCell2DNeighboursFile);
-    importerConfiguration.Separator = exportConfiguration.Separator;
+    Gedim::MeshImporterFromCsvUtilities meshImporterUtilities;
+    Gedim::MeshImporterFromCsvUtilities::Configuration meshImporterConfiguration;
+    meshImporterConfiguration.Folder = exportFolder;
     Gedim::MeshDAOImporterFromCsv importer;
 
-    EXPECT_NO_THROW(importer.Import(importerConfiguration,
+    EXPECT_NO_THROW(importer.Import(meshImporterConfiguration,
+                                    meshImporterUtilities,
                                     importedMeshDao));
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
     ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
