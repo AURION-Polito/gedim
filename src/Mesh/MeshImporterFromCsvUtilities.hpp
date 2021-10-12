@@ -141,6 +141,27 @@ namespace Gedim
       void ConvertCell2DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
                                    IMeshDAO& mesh) const;
 
+      /// \brief Convert the imported Cell0D double properties to mesh
+      /// \param cell0DDoubleProperties the container of cell0D double properties
+      /// \param mesh the mesh
+      void ConvertCell0DDoubleProperties(const vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties,
+                                         IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell1D double properties to mesh
+      /// \param cell1DDoubleProperties the container of cell1D double properties
+      /// \param mesh the mesh
+      void ConvertCell1DDoubleProperties(const vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties,
+                                         IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell2D double properties to mesh
+      /// \param cell2DDoubleProperties the container of cell2D double properties
+      /// \param mesh the mesh
+      void ConvertCell2DDoubleProperties(const vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties,
+                                         IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell3D double properties to mesh
+      /// \param cell3DDoubleProperties the container of cell3D double properties
+      /// \param mesh the mesh
+      void ConvertCell3DDoubleProperties(const vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties,
+                                         IMeshDAO& mesh) const;
+
       /// \brief Import Cell0Ds; format: Id, Marker, Active, X, Y, Z
       /// \param csvFileReader the file reader
       /// \param separator the file separator
