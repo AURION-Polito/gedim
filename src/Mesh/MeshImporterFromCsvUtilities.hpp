@@ -13,6 +13,23 @@ namespace Gedim
   /// \copyright See top level LICENSE file for details
   class MeshImporterFromCsvUtilities final {
     public:
+      struct Configuration {
+          string Folder = "./";
+          string FileCell0DsName = "Cell0Ds";
+          string FileCell1DsName = "Cell1Ds";
+          string FileCell2DsName = "Cell2Ds";
+          string FileCell3DsName = "Cell3Ds";
+          string FileCell0DNeighboursName = "Cell0DNeighbours";
+          string FileCell1DNeighboursName = "Cell1DNeighbours";
+          string FileCell2DNeighboursName = "Cell2DNeighbours";
+          string FileCell0DPropertiesName = "Cell0DProperties";
+          string FileCell1DPropertiesName = "Cell1DProperties";
+          string FileCell2DPropertiesName = "Cell2DProperties";
+          string FileCell3DPropertiesName = "Cell3DProperties";
+          char Separator = ';';
+          string FileExtension = "csv";
+      };
+
       struct CellDoubleProperty {
           struct Value {
               unsigned int CellId;
@@ -86,6 +103,43 @@ namespace Gedim
     public:
       MeshImporterFromCsvUtilities();
       ~MeshImporterFromCsvUtilities();
+
+      /// \brief Convert the imported Cell0Ds to mesh
+      /// \param cell0Ds the container of cell0Ds
+      /// \param mesh the mesh
+      void ConvertCell0Ds(const vector<MeshImporterFromCsvUtilities::Cell0D> cell0Ds,
+                          IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell1Ds to mesh
+      /// \param cell1Ds the container of cell1Ds
+      /// \param mesh the mesh
+      void ConvertCell1Ds(const vector<MeshImporterFromCsvUtilities::Cell1D> cell1Ds,
+                          IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell2Ds to mesh
+      /// \param cell2Ds the container of cell2Ds
+      /// \param mesh the mesh
+      void ConvertCell2Ds(const vector<MeshImporterFromCsvUtilities::Cell2D> cell2Ds,
+                          IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell3Ds to mesh
+      /// \param cell3Ds the container of cell3Ds
+      /// \param mesh the mesh
+      void ConvertCell3Ds(const vector<MeshImporterFromCsvUtilities::Cell3D> cell3Ds,
+                          IMeshDAO& mesh) const;
+
+      /// \brief Convert the imported Cell0D neighbours to mesh
+      /// \param cell0DNeighbours the container of cell0D neighbours
+      /// \param mesh the mesh
+      void ConvertCell0DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours,
+                                   IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell1D neighbours to mesh
+      /// \param cell1DNeighbours the container of cell1D neighbours
+      /// \param mesh the mesh
+      void ConvertCell1DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours,
+                                   IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell2D neighbours to mesh
+      /// \param cell2DNeighbours the container of cell2D neighbours
+      /// \param mesh the mesh
+      void ConvertCell2DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
+                                   IMeshDAO& mesh) const;
 
       /// \brief Import Cell0Ds; format: Id, Marker, Active, X, Y, Z
       /// \param csvFileReader the file reader

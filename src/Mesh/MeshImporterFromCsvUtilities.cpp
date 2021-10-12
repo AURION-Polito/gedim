@@ -13,6 +13,201 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell0Ds(const vector<MeshImporterFromCsvUtilities::Cell0D> cell0Ds,
+                                                    IMeshDAO& mesh) const
+  {
+    const unsigned int numCell0Ds = cell0Ds.size();
+
+    mesh.Cell0DsInitialize(numCell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      const Cell0D& cell0D = cell0Ds[v];
+
+      mesh.Cell0DSetId(v, cell0D.Id);
+      mesh.Cell0DSetMarker(v, cell0D.Marker);
+      mesh.Cell0DSetState(v, cell0D.Active);
+      mesh.Cell0DInsertCoordinates(v, Vector3d(cell0D.X, cell0D.Y, cell0D.Z));
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell1Ds(const vector<MeshImporterFromCsvUtilities::Cell1D> cell1Ds,
+                                                    IMeshDAO& mesh) const
+  {
+    const unsigned int numCell1Ds = cell1Ds.size();
+
+    mesh.Cell1DsInitialize(numCell1Ds);
+    for (unsigned int e = 0; e < numCell1Ds; e++)
+    {
+      const Cell1D& cell1D = cell1Ds[e];
+
+      mesh.Cell1DSetId(e, cell1D.Id);
+      mesh.Cell1DSetMarker(e, cell1D.Marker);
+      mesh.Cell1DSetState(e, cell1D.Active);
+      mesh.Cell1DInsertExtremes(e,
+                                cell1D.Origin,
+                                cell1D.End);
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell2Ds(const vector<MeshImporterFromCsvUtilities::Cell2D> cell2Ds,
+                                                    IMeshDAO& mesh) const
+  {
+    const unsigned int numCell2Ds = cell2Ds.size();
+
+    mesh.Cell2DsInitialize(numCell2Ds);
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const Cell2D& cell2D = cell2Ds[f];
+
+      mesh.Cell2DSetId(f, cell2D.Id);
+      mesh.Cell2DSetMarker(f, cell2D.Marker);
+      mesh.Cell2DSetState(f, cell2D.Active);
+
+      const unsigned int numCellVertices = cell2D.Vertices.size();
+      const unsigned int numCellEdges = cell2D.Edges.size();
+      Output::Assert(numCellVertices == numCellEdges);
+
+      mesh.Cell2DInitializeVertices(f, numCellVertices);
+      for (unsigned int v = 0; v < numCellVertices; v++)
+        mesh.Cell2DInsertVertex(f, v, cell2D.Vertices[v]);
+
+      mesh.Cell2DInitializeEdges(f, numCellEdges);
+      for (unsigned int e = 0; e < numCellEdges; e++)
+        mesh.Cell2DInsertEdge(f, e, cell2D.Edges[e]);
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell3Ds(const vector<MeshImporterFromCsvUtilities::Cell3D> cell3Ds,
+                                                    IMeshDAO& mesh) const
+  {
+    const unsigned int numCell3Ds = cell3Ds.size();
+
+    mesh.Cell3DsInitialize(numCell3Ds);
+    for (unsigned int c = 0; c < numCell3Ds; c++)
+    {
+      const Cell3D& cell3D = cell3Ds[c];
+
+      mesh.Cell3DSetId(c, cell3D.Id);
+      mesh.Cell3DSetMarker(c, cell3D.Marker);
+      mesh.Cell3DSetState(c, cell3D.Active);
+
+      const unsigned int numCellVertices = cell3D.Vertices.size();
+      const unsigned int numCellEdges = cell3D.Edges.size();
+      const unsigned int numCellFaces = cell3D.Faces.size();
+
+      mesh.Cell3DInitializeVertices(c, numCellVertices);
+      for (unsigned int v = 0; v < numCellVertices; v++)
+        mesh.Cell3DInsertVertex(c, v, cell3D.Vertices[v]);
+
+      mesh.Cell3DInitializeEdges(c, numCellEdges);
+      for (unsigned int e = 0; e < numCellEdges; e++)
+        mesh.Cell3DInsertEdge(c, e, cell3D.Edges[e]);
+
+      mesh.Cell3DInitializeFaces(c, numCellFaces);
+      for (unsigned int f = 0; f < numCellFaces; f++)
+        mesh.Cell3DInsertVertex(c, f, cell3D.Faces[f]);
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell0DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours,
+                                                             IMeshDAO& mesh) const
+  {
+    const unsigned int numCell0Ds = cell0DNeighbours.size();
+
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      const MeshImporterFromCsvUtilities::Cell0DNeighbours& cell0D = cell0DNeighbours[v];
+
+      const unsigned int numCell1DNeighbours = cell0D.Cell1DNeighbours.size();
+
+      mesh.Cell0DInitializeNeighbourCell1Ds(v, numCell1DNeighbours);
+      for (unsigned int n = 0; n < numCell1DNeighbours; n++)
+      {
+        if (cell0D.Cell1DNeighbours[n] >= mesh.Cell1DTotalNumber())
+          continue;
+
+        mesh.Cell0DInsertNeighbourCell1D(v, n, cell0D.Cell1DNeighbours[n]);
+      }
+
+      const unsigned int numCell2DNeighbours = cell0D.Cell2DNeighbours.size();
+
+      mesh.Cell0DInitializeNeighbourCell2Ds(v, numCell2DNeighbours);
+      for (unsigned int n = 0; n < numCell2DNeighbours; n++)
+      {
+        if (cell0D.Cell2DNeighbours[n] >= mesh.Cell2DTotalNumber())
+          continue;
+
+        mesh.Cell0DInsertNeighbourCell2D(v, n, cell0D.Cell2DNeighbours[n]);
+      }
+
+      const unsigned int numCell3DNeighbours = cell0D.Cell3DNeighbours.size();
+
+      mesh.Cell0DInitializeNeighbourCell3Ds(v, numCell3DNeighbours);
+      for (unsigned int n = 0; n < numCell3DNeighbours; n++)
+      {
+        if (cell0D.Cell3DNeighbours[n] >= mesh.Cell3DTotalNumber())
+          continue;
+
+        mesh.Cell0DInsertNeighbourCell3D(v, n, cell0D.Cell3DNeighbours[n]);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell1DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours,
+                                                             IMeshDAO& mesh) const
+  {
+    const unsigned int numCell1Ds = cell1DNeighbours.size();
+
+    for (unsigned int v = 0; v < numCell1Ds; v++)
+    {
+      const MeshImporterFromCsvUtilities::Cell1DNeighbours& cell1D = cell1DNeighbours[v];
+
+      const unsigned int numCell2DNeighbours = cell1D.Cell2DNeighbours.size();
+
+      mesh.Cell1DInitializeNeighbourCell2Ds(v, numCell2DNeighbours);
+      for (unsigned int n = 0; n < numCell2DNeighbours; n++)
+      {
+        if (cell1D.Cell2DNeighbours[n] >= mesh.Cell2DTotalNumber())
+          continue;
+
+        mesh.Cell1DInsertNeighbourCell2D(v, n, cell1D.Cell2DNeighbours[n]);
+      }
+
+      const unsigned int numCell3DNeighbours = cell1D.Cell3DNeighbours.size();
+
+      mesh.Cell1DInitializeNeighbourCell3Ds(v, numCell3DNeighbours);
+      for (unsigned int n = 0; n < numCell3DNeighbours; n++)
+      {
+        if (cell1D.Cell3DNeighbours[n] >= mesh.Cell3DTotalNumber())
+          continue;
+
+        mesh.Cell1DInsertNeighbourCell3D(v, n, cell1D.Cell3DNeighbours[n]);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshImporterFromCsvUtilities::ConvertCell2DNeighbours(const vector<MeshImporterFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
+                                                             IMeshDAO& mesh) const
+  {
+    const unsigned int numCell2Ds = cell2DNeighbours.size();
+
+    for (unsigned int v = 0; v < numCell2Ds; v++)
+    {
+      const MeshImporterFromCsvUtilities::Cell2DNeighbours& cell2D = cell2DNeighbours[v];
+
+      const unsigned int numCell3DNeighbours = cell2D.Cell3DNeighbours.size();
+
+      mesh.Cell2DInitializeNeighbourCell3Ds(v, numCell3DNeighbours);
+      for (unsigned int n = 0; n < numCell3DNeighbours; n++)
+      {
+        if (cell2D.Cell3DNeighbours[n] >= mesh.Cell3DTotalNumber())
+          continue;
+
+        mesh.Cell2DInsertNeighbourCell3D(v, n, cell2D.Cell3DNeighbours[n]);
+      }
+    }
+  }
+  // ***************************************************************************
   vector<MeshImporterFromCsvUtilities::Cell0D> MeshImporterFromCsvUtilities::ImportCell0Ds(IFileReader& csvFileReader,
                                                                                            const char& separator) const
   {
