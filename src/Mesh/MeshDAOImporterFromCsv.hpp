@@ -20,6 +20,10 @@ namespace Gedim
       void Import(MeshImporterFromCsvUtilities::Configuration& configuration,
                   MeshImporterFromCsvUtilities& importerUtilities,
                   IMeshDAO& mesh);
+
+      void ImportMesh2D(MeshImporterFromCsvUtilities::Configuration& configuration,
+                        MeshImporterFromCsvUtilities& importerUtilities,
+                        IMeshDAO& mesh);
   };
 
 }
