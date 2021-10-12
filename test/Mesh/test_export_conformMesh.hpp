@@ -127,9 +127,10 @@ namespace GedimUnitTesting
         exportFolder = exportFolder + "/TestExportConformedMesh2D";
         Gedim::Output::CreateFolder(exportFolder);
 
-        Gedim::MeshDAOExporterToCsv::Configuration exportConfiguration;
-        exportConfiguration.ExportFolder = exportFolder;
-        Gedim::MeshDAOExporterToCsv exporter;
+        Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+        Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
+        exportConfiguration.Folder = exportFolder;
+        Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
         EXPECT_NO_THROW(exporter.Export(exportConfiguration,
                                         domainMesh));
       }

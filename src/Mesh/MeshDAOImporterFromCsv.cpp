@@ -6,15 +6,15 @@
 namespace Gedim
 {
   // ***************************************************************************
-  MeshDAOImporterFromCsv::MeshDAOImporterFromCsv()
+  MeshDAOImporterFromCsv::MeshDAOImporterFromCsv(const MeshFromCsvUtilities& utilities) :
+    utilities(utilities)
   {
   }
   MeshDAOImporterFromCsv::~MeshDAOImporterFromCsv()
   {
   }
   // ***************************************************************************
-  void MeshDAOImporterFromCsv::Import(MeshImporterFromCsvUtilities::Configuration& configuration,
-                                      MeshImporterFromCsvUtilities& importerUtilities,
+  void MeshDAOImporterFromCsv::Import(MeshFromCsvUtilities::Configuration& configuration,
                                       IMeshDAO& mesh)
   {
     Gedim::FileReader csvCell0DsFile(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension);
@@ -29,24 +29,24 @@ namespace Gedim
     Gedim::FileReader csvCell1DNeighboursFile(configuration.Folder + "/" + configuration.FileCell1DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell2DNeighboursFile(configuration.Folder + "/" + configuration.FileCell2DNeighboursName + "." + configuration.FileExtension);
 
-    vector<MeshImporterFromCsvUtilities::Cell0D> cell0Ds = importerUtilities.ImportCell0Ds(csvCell0DsFile,
-                                                                                           configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell1D> cell1Ds = importerUtilities.ImportCell1Ds(csvCell1DsFile,
-                                                                                           configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell2D> cell2Ds = importerUtilities.ImportCell2Ds(csvCell2DsFile,
-                                                                                           configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell3D> cell3Ds = importerUtilities.ImportCell3Ds(csvCell3DsFile,
-                                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile,
+                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile,
+                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile,
+                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell3D> cell3Ds = utilities.ImportCell3Ds(csvCell3DsFile,
+                                                                           configuration.Separator);
 
 
-    importerUtilities.ConvertCell0Ds(cell0Ds,
-                                     mesh);
-    importerUtilities.ConvertCell1Ds(cell1Ds,
-                                     mesh);
-    importerUtilities.ConvertCell2Ds(cell2Ds,
-                                     mesh);
-    importerUtilities.ConvertCell3Ds(cell3Ds,
-                                     mesh);
+    utilities.ConvertCell0Ds(cell0Ds,
+                             mesh);
+    utilities.ConvertCell1Ds(cell1Ds,
+                             mesh);
+    utilities.ConvertCell2Ds(cell2Ds,
+                             mesh);
+    utilities.ConvertCell3Ds(cell3Ds,
+                             mesh);
 
     unsigned int meshDimension = 0;
     if (mesh.Cell0DTotalNumber() > 0 &&
@@ -69,46 +69,45 @@ namespace Gedim
 
     mesh.InitializeDimension(meshDimension);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell0DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell0DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell1DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell1DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell2DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell2DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell3DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell3DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    importerUtilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties,
-                                                    mesh);
-    importerUtilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties,
-                                                    mesh);
-    importerUtilities.ConvertCell2DDoubleProperties(cell2DDoubleProperties,
-                                                    mesh);
-    importerUtilities.ConvertCell3DDoubleProperties(cell3DDoubleProperties,
-                                                    mesh);
+    utilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties,
+                                            mesh);
+    utilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties,
+                                            mesh);
+    utilities.ConvertCell2DDoubleProperties(cell2DDoubleProperties,
+                                            mesh);
+    utilities.ConvertCell3DDoubleProperties(cell3DDoubleProperties,
+                                            mesh);
 
-    vector<MeshImporterFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours = importerUtilities.ImportCell0DNeighbours(csvCell0DNeighboursFile,
-                                                                                                                       configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours = importerUtilities.ImportCell1DNeighbours(csvCell1DNeighboursFile,
-                                                                                                                       configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours = importerUtilities.ImportCell2DNeighbours(csvCell2DNeighboursFile,
-                                                                                                                       configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours = utilities.ImportCell0DNeighbours(csvCell0DNeighboursFile,
+                                                                                                       configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours = utilities.ImportCell1DNeighbours(csvCell1DNeighboursFile,
+                                                                                                       configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours = utilities.ImportCell2DNeighbours(csvCell2DNeighboursFile,
+                                                                                                       configuration.Separator);
 
-    importerUtilities.ConvertCell0DNeighbours(cell0DNeighbours,
-                                              mesh);
-    importerUtilities.ConvertCell1DNeighbours(cell1DNeighbours,
-                                              mesh);
-    importerUtilities.ConvertCell2DNeighbours(cell2DNeighbours,
-                                              mesh);
+    utilities.ConvertCell0DNeighbours(cell0DNeighbours,
+                                      mesh);
+    utilities.ConvertCell1DNeighbours(cell1DNeighbours,
+                                      mesh);
+    utilities.ConvertCell2DNeighbours(cell2DNeighbours,
+                                      mesh);
 
     mesh.Compress();
   }
   // ***************************************************************************
-  void MeshDAOImporterFromCsv::ImportMesh2D(MeshImporterFromCsvUtilities::Configuration& configuration,
-                                            MeshImporterFromCsvUtilities& importerUtilities,
+  void MeshDAOImporterFromCsv::ImportMesh2D(MeshFromCsvUtilities::Configuration& configuration,
                                             IMeshDAO& mesh)
   {
     Gedim::FileReader csvCell0DsFile(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension);
@@ -120,48 +119,48 @@ namespace Gedim
     Gedim::FileReader csvCell0DNeighboursFile(configuration.Folder + "/" + configuration.FileCell0DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell1DNeighboursFile(configuration.Folder + "/" + configuration.FileCell1DNeighboursName + "." + configuration.FileExtension);
 
-    vector<MeshImporterFromCsvUtilities::Cell0D> cell0Ds = importerUtilities.ImportCell0Ds(csvCell0DsFile,
-                                                                                           configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell1D> cell1Ds = importerUtilities.ImportCell1Ds(csvCell1DsFile,
-                                                                                           configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell2D> cell2Ds = importerUtilities.ImportCell2Ds(csvCell2DsFile,
-                                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile,
+                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile,
+                                                                           configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile,
+                                                                           configuration.Separator);
 
-    importerUtilities.ConvertMesh2D(cell0Ds,
-                                    cell1Ds,
-                                    cell2Ds,
-                                    mesh);
+    utilities.ConvertMesh2D(cell0Ds,
+                            cell1Ds,
+                            cell2Ds,
+                            mesh);
 
     Output::Assert(mesh.Cell0DTotalNumber() > 0 &&
                    mesh.Cell1DTotalNumber() > 0 &&
                    mesh.Cell2DTotalNumber() > 0 &&
                    mesh.Cell3DTotalNumber() == 0);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell0DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell0DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell1DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell1DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    vector<MeshImporterFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties = importerUtilities.ImportCellDoubleProperties(csvCell2DPropertiesFile,
-                                                                                                                                   configuration.Separator);
+    vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell2DPropertiesFile,
+                                                                                                                   configuration.Separator);
 
-    importerUtilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties,
-                                                    mesh);
-    importerUtilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties,
-                                                    mesh);
-    importerUtilities.ConvertCell2DDoubleProperties(cell2DDoubleProperties,
-                                                    mesh);
+    utilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties,
+                                            mesh);
+    utilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties,
+                                            mesh);
+    utilities.ConvertCell2DDoubleProperties(cell2DDoubleProperties,
+                                            mesh);
 
-    vector<MeshImporterFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours = importerUtilities.ImportCell0DNeighbours(csvCell0DNeighboursFile,
-                                                                                                                       configuration.Separator);
-    vector<MeshImporterFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours = importerUtilities.ImportCell1DNeighbours(csvCell1DNeighboursFile,
-                                                                                                                       configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours = utilities.ImportCell0DNeighbours(csvCell0DNeighboursFile,
+                                                                                                       configuration.Separator);
+    vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours = utilities.ImportCell1DNeighbours(csvCell1DNeighboursFile,
+                                                                                                       configuration.Separator);
 
-    importerUtilities.ConvertCell0DNeighbours(cell0DNeighbours,
-                                              mesh);
-    importerUtilities.ConvertCell1DNeighbours(cell1DNeighbours,
-                                              mesh);
+    utilities.ConvertCell0DNeighbours(cell0DNeighbours,
+                                      mesh);
+    utilities.ConvertCell1DNeighbours(cell1DNeighbours,
+                                      mesh);
 
     mesh.Compress();
   }

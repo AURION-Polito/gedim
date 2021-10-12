@@ -234,22 +234,22 @@ namespace GedimUnitTesting
     exportFolder = exportFolder + "/TestImportExportMesh2D";
     Gedim::Output::CreateFolder(exportFolder);
 
-    Gedim::MeshDAOExporterToCsv::Configuration exportConfiguration;
-    exportConfiguration.ExportFolder = exportFolder;
-    Gedim::MeshDAOExporterToCsv exporter;
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+
+    Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
+    exportConfiguration.Folder = exportFolder;
+    Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
     EXPECT_NO_THROW(exporter.Export(exportConfiguration,
                                     meshDao));
 
     Gedim::MeshMatrices importedMesh;
     Gedim::MeshMatricesDAO importedMeshDao(importedMesh);
 
-    Gedim::MeshImporterFromCsvUtilities meshImporterUtilities;
-    Gedim::MeshImporterFromCsvUtilities::Configuration meshImporterConfiguration;
+    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
     meshImporterConfiguration.Folder = exportFolder;
-    Gedim::MeshDAOImporterFromCsv importer;
+    Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
 
     EXPECT_NO_THROW(importer.Import(meshImporterConfiguration,
-                                    meshImporterUtilities,
                                     importedMeshDao));
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
     ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
@@ -281,22 +281,22 @@ namespace GedimUnitTesting
     exportFolder = exportFolder + "/MeshDAOImporter2DFromCsv";
     Gedim::Output::CreateFolder(exportFolder);
 
-    Gedim::MeshDAOExporterToCsv::Configuration exportConfiguration;
-    exportConfiguration.ExportFolder = exportFolder;
-    Gedim::MeshDAOExporterToCsv exporter;
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+
+    Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
+    exportConfiguration.Folder = exportFolder;
+    Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
     EXPECT_NO_THROW(exporter.Export(exportConfiguration,
                                     meshDao));
 
     Gedim::MeshMatrices importedMesh;
     Gedim::MeshMatricesDAO importedMeshDao(importedMesh);
 
-    Gedim::MeshImporterFromCsvUtilities meshImporterUtilities;
-    Gedim::MeshImporterFromCsvUtilities::Configuration meshImporterConfiguration;
+    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
     meshImporterConfiguration.Folder = exportFolder;
-    Gedim::MeshDAOImporterFromCsv importer;
+    Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
 
     EXPECT_NO_THROW(importer.ImportMesh2D(meshImporterConfiguration,
-                                          meshImporterUtilities,
                                           importedMeshDao));
 
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);

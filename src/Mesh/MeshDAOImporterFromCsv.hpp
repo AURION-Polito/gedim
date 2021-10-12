@@ -12,17 +12,19 @@ namespace Gedim
   /// \brief MeshDAOImporterFromCsv
   /// \note each file could be EmptyFileReader if not necessary
   /// \copyright See top level LICENSE file for details
-  class MeshDAOImporterFromCsv final {
+  class MeshDAOImporterFromCsv final
+  {
+    private:
+      const MeshFromCsvUtilities& utilities;
+
     public:
-      MeshDAOImporterFromCsv();
+      MeshDAOImporterFromCsv(const MeshFromCsvUtilities& utilities);
       ~MeshDAOImporterFromCsv();
 
-      void Import(MeshImporterFromCsvUtilities::Configuration& configuration,
-                  MeshImporterFromCsvUtilities& importerUtilities,
+      void Import(MeshFromCsvUtilities::Configuration& configuration,
                   IMeshDAO& mesh);
 
-      void ImportMesh2D(MeshImporterFromCsvUtilities::Configuration& configuration,
-                        MeshImporterFromCsvUtilities& importerUtilities,
+      void ImportMesh2D(MeshFromCsvUtilities::Configuration& configuration,
                         IMeshDAO& mesh);
   };
 
