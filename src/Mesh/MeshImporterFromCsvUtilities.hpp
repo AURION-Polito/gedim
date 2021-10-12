@@ -104,6 +104,16 @@ namespace Gedim
       MeshImporterFromCsvUtilities();
       ~MeshImporterFromCsvUtilities();
 
+      /// \brief Convert a 2D Mesh
+      /// \param cell0Ds the container of cell0Ds
+      /// \param cell1Ds the container of cell1Ds
+      /// \param cell2Ds the container of cell2Ds
+      /// \param mesh the resulting mesh
+      void ConvertMesh2D(const vector<MeshImporterFromCsvUtilities::Cell0D>& cell0Ds,
+                         const vector<MeshImporterFromCsvUtilities::Cell1D>& cell1Ds,
+                         const vector<MeshImporterFromCsvUtilities::Cell2D>& cell2Ds,
+                         IMeshDAO& mesh);
+
       /// \brief Convert the imported Cell0Ds to mesh
       /// \param cell0Ds the container of cell0Ds
       /// \param mesh the mesh
