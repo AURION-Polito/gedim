@@ -85,6 +85,11 @@ namespace Gedim
           vector<unsigned int> Cell3DNeighbours;
       };
 
+      struct Cell2DSubDivision {
+          unsigned int Id;
+          vector<unsigned int> SubDivision;
+      };
+
       struct Cell3D {
           unsigned int Id;
           vector<unsigned int> Vertices;
@@ -211,6 +216,12 @@ namespace Gedim
       /// \param separator the file separator
       vector<Cell2DNeighbours> ImportCell2DNeighbours(IFileReader& csvFileReader,
                                                       const char& separator) const;
+
+      /// \brief Import Cell2DSubDivision; format: Id, NumSubDivision, SubDivision
+      /// \param csvFileReader the file reader
+      /// \param separator the file separator
+      vector<Cell2DSubDivision> ImportCell2DSubDivision(IFileReader& csvFileReader,
+                                                        const char& separator) const;
 
       /// \brief Import CellProperties; format: Id, FilePath
       /// \param csvFileReader the file reader

@@ -1018,6 +1018,58 @@ namespace Gedim
     return cell2DNeighbours;
   }
   // ***************************************************************************
+  vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell2DSubDivision(IFileReader& csvFileReader,
+                                                                                                const char& separator) const
+  {
+    vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivision;
+
+    /// Import Cell2DSubDivision
+    {
+      vector<string> cell2DSubDivisionLines;
+
+      if (!csvFileReader.Open())
+        return cell2DSubDivision;
+
+      csvFileReader.GetAllLines(cell2DSubDivisionLines);
+      csvFileReader.Close();
+
+      unsigned int numCell2DSubDivision = cell2DSubDivisionLines.size() - 1;
+
+      if (numCell2DSubDivision > 0)
+      {
+        cell2DSubDivision.resize(numCell2DSubDivision);
+
+        for (unsigned int f = 0; f < numCell2DSubDivision; f++)
+        {
+          MeshFromCsvUtilities::Cell2DSubDivision& cell2D = cell2DSubDivision[f];
+
+          istringstream converter(cell2DSubDivisionLines[f + 1]);
+
+          unsigned int cell2Did;
+          char temp;
+          converter >> cell2Did;
+          if (separator != ' ')
+            converter >> temp;
+
+          unsigned int numCell3DNeighbours;
+          converter >> numCell3DNeighbours;
+          if (separator != ' ')
+            converter >> temp;
+
+          cell2D.SubDivision.resize(numCell3DNeighbours);
+          for (unsigned int n = 0; n < numCell3DNeighbours; n++)
+          {
+            converter >> cell2D.SubDivision[n];
+            if (separator != ' ')
+              converter >> temp;
+          }
+        }
+      }
+    }
+
+    return cell2DSubDivision;
+  }
+  // ***************************************************************************
   void MeshFromCsvUtilities::ExportCell0Ds(const string& filePath,
                                            const char& separator,
                                            const IMeshDAO& mesh) const
