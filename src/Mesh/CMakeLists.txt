@@ -6,7 +6,7 @@ list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/UnionMeshSegment.cpp)
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshUtilities.cpp)
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/ConformerMeshSegment.cpp)
 list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/ConformerMeshPolygon.cpp)
-list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshImporterFromCsvUtilities.cpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshFromCsvUtilities.cpp)
 
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IMeshDAO.hpp)
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshDAOExporterToCsv.hpp)
@@ -18,7 +18,7 @@ list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/UnionMeshSegment.hpp)
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshUtilities.hpp)
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ConformerMeshSegment.hpp)
 list(APPEND src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ConformerMeshPolygon.hpp)
-list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshImporterFromCsvUtilities.hpp)
+list(APPEND src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshFromCsvUtilities.hpp)
 
 list(APPEND src_include ${CMAKE_CURRENT_SOURCE_DIR})
 

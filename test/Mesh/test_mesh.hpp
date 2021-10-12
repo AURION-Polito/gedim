@@ -12,7 +12,7 @@
 #include "MeshMatricesDAO.hpp"
 
 #include "MeshDAOExporterToCsv.hpp"
-#include "MeshImporterFromCsvUtilities.hpp"
+#include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "FileTextReader.hpp"
 

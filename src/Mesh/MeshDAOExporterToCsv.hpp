@@ -2,7 +2,7 @@
 #define __MeshDAOExporterToCsv_H
 
 #include "IMeshDAO.hpp"
-#include "MeshImporterFromCsvUtilities.hpp"
+#include "MeshFromCsvUtilities.hpp"
 
 using namespace std;
 using namespace Eigen;
