@@ -223,7 +223,7 @@ namespace Gedim
       vector<Cell2DNeighbours> ImportCell2DNeighbours(IFileReader& csvFileReader,
                                                       const char& separator) const;
 
-      /// \brief Import Cell2DSubDivision; format: Id, NumSubDivision, SubDivision
+      /// \brief Import Cell2DSubDivision; format: Id, NumSubDivision, SubDivisions
       /// \param csvFileReader the file reader
       /// \param separator the file separator
       vector<Cell2DSubDivision> ImportCell2DSubDivision(IFileReader& csvFileReader,
@@ -371,6 +371,13 @@ namespace Gedim
       /// \param separator the file separator
       /// \param mesh the mesh to be exported
       void ExportCell2DNeighbours(const string& filePath,
+                                  const char& separator,
+                                  const IMeshDAO& mesh) const;
+      /// \brief Export Cell2DSubDivisions; format: Id, NumSubDivision, SubDivisions
+      /// \param filePath the path of the file
+      /// \param separator the file separator
+      /// \param mesh the mesh to be exported
+      void ExportCell2DSubDivisions(const string& filePath,
                                   const char& separator,
                                   const IMeshDAO& mesh) const;
   };

@@ -1614,4 +1614,33 @@ namespace Gedim
     fileCell2DNeighbours.close();
   }
   // ***************************************************************************
+  void MeshFromCsvUtilities::ExportCell2DSubDivisions(const string& filePath,
+                                                      const char& separator,
+                                                      const IMeshDAO& mesh) const
+  {
+    /// Export Cell2D Neigbours
+    ofstream fileCell2DSubDivisions;
+
+    fileCell2DSubDivisions.open(filePath);
+    fileCell2DSubDivisions.precision(16);
+
+    if (fileCell2DSubDivisions.fail())
+      throw runtime_error("Error on mesh cell2DSubDivisions file");
+
+    fileCell2DSubDivisions<< "Id"<< separator;
+    fileCell2DSubDivisions<< "NumSubDivision"<< separator;
+    fileCell2DSubDivisions<< "SubDivisions"<< endl;
+    for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
+    {
+      fileCell2DSubDivisions<< scientific<< mesh.Cell2DId(f)<< separator;
+
+      fileCell2DSubDivisions<< scientific<< mesh.Cell2DNumberSubDivision(f);
+      for (unsigned int n = 0; n < mesh.Cell2DNumberSubDivision(f); n++)
+        fileCell2DSubDivisions<< scientific<< separator<< mesh.Cell2DSubDivision(f, n);
+      fileCell2DSubDivisions<< endl;
+    }
+
+    fileCell2DSubDivisions.close();
+  }
+  // ***************************************************************************
 }
