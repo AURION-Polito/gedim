@@ -1030,8 +1030,10 @@ namespace Gedim
 
     _mesh.NumberCell2DVertices.shrink_to_fit();
     _mesh.NumberCell2DEdges.shrink_to_fit();
+    _mesh.NumberCell2DSubdivision.shrink_to_fit();
     _mesh.Cell2DVertices.shrink_to_fit();
     _mesh.Cell2DEdges.shrink_to_fit();
+    _mesh.Cell2DSubdivision.shrink_to_fit();
     _mesh.Cell2DMarkers.shrink_to_fit();
     _mesh.ActiveCell2D.shrink_to_fit();
     _mesh.Cell2DDoublePropertyIds.shrink_to_fit();
@@ -1095,6 +1097,8 @@ namespace Gedim
     converter<< scientific<< "Cell2DVertices = "<< _mesh.Cell2DVertices<< ";"<< endl;
     converter<< scientific<< "NumberCell2DEdges = "<< _mesh.NumberCell2DEdges<< ";"<< endl;
     converter<< scientific<< "Cell2DEdges = "<< _mesh.Cell2DEdges<< ";"<< endl;
+    converter<< scientific<< "NumberCell2DSubdivision = "<< _mesh.NumberCell2DSubdivision<< ";"<< endl;
+    converter<< scientific<< "Cell2DSubdivision = "<< _mesh.Cell2DSubdivision<< ";"<< endl;
     converter<< scientific<< "Cell2DMarkers = "<< _mesh.Cell2DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell2D = "<< _mesh.ActiveCell2D<< ";"<< endl;
     converter<< scientific<< "UpdatedCell2Ds = "<< _mesh.UpdatedCell2Ds<< ";"<< endl;

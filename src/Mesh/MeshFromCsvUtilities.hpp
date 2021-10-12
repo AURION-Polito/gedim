@@ -27,6 +27,7 @@ namespace Gedim
           string FileCell1DPropertiesName = "Cell1DProperties";
           string FileCell2DPropertiesName = "Cell2DProperties";
           string FileCell3DPropertiesName = "Cell3DProperties";
+          string FileCell2DSubDivisionsName = "Cell2DSubDivisions";
           char Separator = ';';
           string FileExtension = "csv";
       };
@@ -378,8 +379,8 @@ namespace Gedim
       /// \param separator the file separator
       /// \param mesh the mesh to be exported
       void ExportCell2DSubDivisions(const string& filePath,
-                                  const char& separator,
-                                  const IMeshDAO& mesh) const;
+                                    const char& separator,
+                                    const IMeshDAO& mesh) const;
   };
 
 }
