@@ -1601,7 +1601,7 @@ namespace Gedim
     fileCell2DNeighbours<< "Id"<< separator;
     fileCell2DNeighbours<< "Num3DNeighbours"<< separator;
     fileCell2DNeighbours<< "3DNeighbours"<< endl;
-    for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
       fileCell2DNeighbours<< scientific<< mesh.Cell2DId(f)<< separator;
 
@@ -1630,7 +1630,7 @@ namespace Gedim
     fileCell2DSubDivisions<< "Id"<< separator;
     fileCell2DSubDivisions<< "NumSubDivision"<< separator;
     fileCell2DSubDivisions<< "SubDivisions"<< endl;
-    for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
       fileCell2DSubDivisions<< scientific<< mesh.Cell2DId(f)<< separator;
 

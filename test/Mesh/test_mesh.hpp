@@ -262,6 +262,12 @@ namespace GedimUnitTesting
     ASSERT_EQ(mesh.Mesh.ActiveCell1D, importedMesh.ActiveCell1D);
     ASSERT_EQ(mesh.Mesh.Cell1DDoublePropertyIds, importedMesh.Cell1DDoublePropertyIds);
     ASSERT_EQ(mesh.Mesh.NumberCell2D, importedMesh.NumberCell2D);
+    ASSERT_EQ(mesh.Mesh.NumberCell2DVertices, importedMesh.NumberCell2DVertices);
+    ASSERT_EQ(mesh.Mesh.Cell2DVertices, importedMesh.Cell2DVertices);
+    ASSERT_EQ(mesh.Mesh.NumberCell2DEdges, importedMesh.NumberCell2DEdges);
+    ASSERT_EQ(mesh.Mesh.Cell2DEdges, importedMesh.Cell2DEdges);
+    ASSERT_EQ(mesh.Mesh.NumberCell2DSubdivision, importedMesh.NumberCell2DSubdivision);
+    ASSERT_EQ(mesh.Mesh.Cell2DSubdivision, importedMesh.Cell2DSubdivision);
     ASSERT_EQ(mesh.Mesh.Cell2DMarkers, importedMesh.Cell2DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell2D, importedMesh.ActiveCell2D);
     ASSERT_EQ(mesh.Mesh.Cell2DDoublePropertyIds, importedMesh.Cell2DDoublePropertyIds);
