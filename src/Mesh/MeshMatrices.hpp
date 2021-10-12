@@ -43,6 +43,8 @@ namespace Gedim
       vector<unsigned int> Cell2DEdges = {}; ///< Cell2D Cell1D indices, size 1 x NumberCell2DEdges[NumberCell2D]
       vector<unsigned int> Cell2DMarkers = {}; ///< Cell2D markers, size 1 x NumberCell2D (marker)
       vector<bool> ActiveCell2D = {}; ///< active Cell2D
+      vector<unsigned int> NumberCell2DSubdivision = {}; ///< number of sub-division per Cell2D, size 1 x NumberCell2D + 1
+      vector<unsigned int> Cell2DSubdivision = {}; ///< Sub-division of Cell2Ds, used for Concave polygons, size 1 x NumberCell2DSubdivision[NumberCell2D]
       map<unsigned int, set<unsigned int>> UpdatedCell2Ds = {}; ///< for each cell2D the list to the new cell2Ds
       vector<string> Cell2DDoublePropertyIds = {}; ///< Cell2D double property id - double property index
       map<string, unsigned int> Cell2DDoublePropertyIndices = {}; ///< Cell2D double property id - double property index

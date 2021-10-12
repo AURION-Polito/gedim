@@ -692,6 +692,32 @@ namespace Gedim
             propertyValueIndex];
       }
 
+      void Cell2DInitializeSubDivision(const unsigned int& cell2DIndex,
+                                       const unsigned int& numberSubDivision);
+      inline void Cell2DInsertSubDivision(const unsigned int& cell2DIndex,
+                                          const unsigned int& subDivisionIndex,
+                                          const unsigned int& cell2DVertexIndex)
+      {
+        Output::Assert(cell2DIndex < Cell2DTotalNumber());
+        Output::Assert(subDivisionIndex < Cell2DNumberSubDivision(cell2DIndex));
+        Output::Assert(cell2DVertexIndex < Cell2DNumberVertices(cell2DIndex));
+        _mesh.Cell2DSubdivision[_mesh.NumberCell2DSubdivision[cell2DIndex] +
+            subDivisionIndex] = cell2DVertexIndex;
+      }
+      inline unsigned int Cell2DNumberSubDivision(const unsigned int& cell2DIndex)
+      {
+        Output::Assert(cell2DIndex < Cell2DTotalNumber());
+        return _mesh.NumberCell2DSubdivision[cell2DIndex + 1] -
+            _mesh.NumberCell2DSubdivision[cell2DIndex];
+      }
+      inline unsigned int Cell2DSubDivision(const unsigned int& cell2DIndex,
+                                            const unsigned int& subDivisionIndex)
+      {
+        Output::Assert(cell2DIndex < Cell2DTotalNumber());
+        Output::Assert(subDivisionIndex < Cell2DNumberSubDivision(cell2DIndex));
+        return _mesh.Cell2DSubdivision[_mesh.NumberCell2DSubdivision[cell2DIndex] + subDivisionIndex];
+      }
+
 
       void Cell3DsInitialize(const unsigned int& numberCell3Ds);
       unsigned int Cell3DAppend(const unsigned int& numberCell3Ds);

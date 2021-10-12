@@ -655,6 +655,29 @@ namespace Gedim
                                                const unsigned int& propertyIndex,
                                                const unsigned int& propertyValueIndex) const = 0;
 
+      /// \brief Initialize the Cell2D subdivision number
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param numberSubDivision the number of sub-polygons of the Cell2D
+      virtual void Cell2DInitializeSubDivision(const unsigned int& cell2DIndex,
+                                               const unsigned int& numberSubDivision) = 0;
+      /// \brief Insert the subDivision vertex index
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param subDivisionIndex the subDivision index, from 0 to Cell2DNumberSubDivision(cell2DIndex)
+      /// \param cell2DVertexIndex the Cell2D vertex index of the subDivision, from 0 to Cell2DNumberVertices(cell2DIndex)
+      virtual void Cell2DInsertSubDivision(const unsigned int& cell2DIndex,
+                                           const unsigned int& subDivisionIndex,
+                                           const unsigned int& cell2DVertexIndex) = 0;
+
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \return the number of sub-polygons contained in the subdivision
+      virtual unsigned int Cell2DNumberSubDivision(const unsigned int& cell2DIndex) = 0;
+
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param subDivisionIndex the subDivision index, from 0 to Cell2DNumberSubDivision(cell2DIndex)
+      /// \return the vertex index of sub-polygons contained in the subdivision
+      virtual unsigned int Cell2DSubDivision(const unsigned int& cell2DIndex,
+                                             const unsigned int& subDivisionIndex) = 0;
+
       /// \brief Initialize the Cell3Ds container
       /// \param numberCell3Ds the total number of Cell3Ds
       /// \note No reset of Cell3Ds is performed
