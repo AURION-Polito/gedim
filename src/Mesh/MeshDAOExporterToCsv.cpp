@@ -76,8 +76,11 @@ namespace Gedim
                                      configuration.FileExtension,
                                      configuration.Separator,
                                      mesh);
-
-
+    utilities.ExportCell2DSubDivisions(configuration.Folder + "/" +
+                                       configuration.FileCell2DSubDivisionsName + "." +
+                                       configuration.FileExtension,
+                                       configuration.Separator,
+                                       mesh);
   }
   // ***************************************************************************
 }
