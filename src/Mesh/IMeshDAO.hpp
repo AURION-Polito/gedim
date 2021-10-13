@@ -677,10 +677,10 @@ namespace Gedim
 
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param subDivisionIndex the subDivision index, from 0 to Cell2DNumberSubDivision(cell2DIndex)
-      /// \return the vertex index of sub-polygons contained in the subdivision, from 0 to Cell0DTotalNumber()
+      /// \return the Cell0D index of sub-polygons contained in the subdivision, from 0 to Cell0DTotalNumber()
       /// \note each sub-division shall be a triangle
-      virtual unsigned int Cell2DSubDivision(const unsigned int& cell2DIndex,
-                                             const unsigned int& subDivisionIndex) const = 0;
+      virtual unsigned int Cell2DSubDivisionCell0D(const unsigned int& cell2DIndex,
+                                                   const unsigned int& subDivisionIndex) const = 0;
 
       /// \brief Initialize the Cell3Ds container
       /// \param numberCell3Ds the total number of Cell3Ds

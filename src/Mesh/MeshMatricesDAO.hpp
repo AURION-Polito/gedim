@@ -710,7 +710,7 @@ namespace Gedim
         return _mesh.NumberCell2DSubdivision[cell2DIndex + 1] -
             _mesh.NumberCell2DSubdivision[cell2DIndex];
       }
-      inline unsigned int Cell2DSubDivision(const unsigned int& cell2DIndex,
+      inline unsigned int Cell2DSubDivisionCell0D(const unsigned int& cell2DIndex,
                                             const unsigned int& subDivisionIndex) const
       {
         Output::Assert(cell2DIndex < Cell2DTotalNumber());

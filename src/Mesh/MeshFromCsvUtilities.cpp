@@ -1636,7 +1636,7 @@ namespace Gedim
 
       fileCell2DSubDivisions<< scientific<< mesh.Cell2DNumberSubDivision(f);
       for (unsigned int n = 0; n < mesh.Cell2DNumberSubDivision(f); n++)
-        fileCell2DSubDivisions<< scientific<< separator<< mesh.Cell2DSubDivision(f, n);
+        fileCell2DSubDivisions<< scientific<< separator<< mesh.Cell2DSubDivisionCell0D(f, n);
       fileCell2DSubDivisions<< endl;
     }
 
