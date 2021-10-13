@@ -437,6 +437,22 @@ namespace GedimUnitTesting {
                                                                                                                          planeOrigin);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnVertex);
+        ASSERT_EQ(result.VertexIntersections.size(), 1);
+        ASSERT_NE(result.VertexIntersections.find(3), result.VertexIntersections.end());
+        ASSERT_EQ(result.VertexIntersections.at(3).VertexId, 3);
+        ASSERT_EQ(result.EdgeIntersections.size(), 3);
+        ASSERT_NE(result.EdgeIntersections.find(3), result.EdgeIntersections.end());
+        ASSERT_NE(result.EdgeIntersections.find(4), result.EdgeIntersections.end());
+        ASSERT_NE(result.EdgeIntersections.find(5), result.EdgeIntersections.end());
+        ASSERT_EQ(result.EdgeIntersections.at(3).EdgeId, 3);
+        ASSERT_EQ(result.EdgeIntersections.at(3).Intersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(3).Intersection.CurvilinearCoordinate, 1.0);
+        ASSERT_EQ(result.EdgeIntersections.at(4).EdgeId, 4);
+        ASSERT_EQ(result.EdgeIntersections.at(4).Intersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(4).Intersection.CurvilinearCoordinate, 1.0);
+        ASSERT_EQ(result.EdgeIntersections.at(5).EdgeId, 5);
+        ASSERT_EQ(result.EdgeIntersections.at(5).Intersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(5).Intersection.CurvilinearCoordinate, 1.0);
       }
     }
     catch (const exception& exception)
