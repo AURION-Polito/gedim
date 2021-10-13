@@ -725,6 +725,7 @@ namespace Gedim
                                                     const unsigned int& numberSubDivision)
   {
     Output::Assert(cell2DIndex < Cell2DTotalNumber());
+    Output::Assert(numberSubDivision % 3 == 0);
     ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell2DSubdivision,
                                             _mesh.Cell2DSubdivision,
                                             _mesh.NumberCell2D,

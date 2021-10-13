@@ -696,13 +696,13 @@ namespace Gedim
                                        const unsigned int& numberSubDivision);
       inline void Cell2DInsertSubDivision(const unsigned int& cell2DIndex,
                                           const unsigned int& subDivisionIndex,
-                                          const unsigned int& cell2DVertexIndex)
+                                          const unsigned int& cell0DIndex)
       {
         Output::Assert(cell2DIndex < Cell2DTotalNumber());
         Output::Assert(subDivisionIndex < Cell2DNumberSubDivision(cell2DIndex));
-        Output::Assert(cell2DVertexIndex < Cell2DNumberVertices(cell2DIndex));
+        Output::Assert(cell0DIndex < Cell0DTotalNumber());
         _mesh.Cell2DSubdivision[_mesh.NumberCell2DSubdivision[cell2DIndex] +
-            subDivisionIndex] = cell2DVertexIndex;
+            subDivisionIndex] = cell0DIndex;
       }
       inline unsigned int Cell2DNumberSubDivision(const unsigned int& cell2DIndex) const
       {

@@ -658,23 +658,27 @@ namespace Gedim
       /// \brief Initialize the Cell2D subdivision number
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param numberSubDivision the number of sub-polygons of the Cell2D
+      /// \note each subdivision is a triangle, thus numberSubDivision shall be a multiple of 3
       virtual void Cell2DInitializeSubDivision(const unsigned int& cell2DIndex,
                                                const unsigned int& numberSubDivision) = 0;
       /// \brief Insert the subDivision vertex index
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param subDivisionIndex the subDivision index, from 0 to Cell2DNumberSubDivision(cell2DIndex)
-      /// \param cell2DVertexIndex the Cell2D vertex index of the subDivision, from 0 to Cell2DNumberVertices(cell2DIndex)
+      /// \param cell2DVertexIndex the Cell2D vertex index of the subDivision, from 0 to Cell0DTotalNumber()
+      /// \note each subdivision is a triangle
       virtual void Cell2DInsertSubDivision(const unsigned int& cell2DIndex,
                                            const unsigned int& subDivisionIndex,
                                            const unsigned int& cell2DVertexIndex) = 0;
 
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
-      /// \return the number of sub-polygons contained in the subdivision
+      /// \return the total number of vertices of sub-polygons contained in the subdivision, a multiple of 3
+      /// \note each subdivision is a triangle
       virtual unsigned int Cell2DNumberSubDivision(const unsigned int& cell2DIndex) const = 0;
 
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param subDivisionIndex the subDivision index, from 0 to Cell2DNumberSubDivision(cell2DIndex)
-      /// \return the vertex index of sub-polygons contained in the subdivision
+      /// \return the vertex index of sub-polygons contained in the subdivision, from 0 to Cell0DTotalNumber()
+      /// \note each sub-division shall be a triangle
       virtual unsigned int Cell2DSubDivision(const unsigned int& cell2DIndex,
                                              const unsigned int& subDivisionIndex) const = 0;
 
