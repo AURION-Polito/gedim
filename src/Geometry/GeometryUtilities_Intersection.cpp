@@ -262,6 +262,9 @@ namespace Gedim
     const unsigned int numPolyhedronEdges = polyhedronEdges.cols();
     const unsigned int numPolyhedronFaces = polyhedronFaces.size();
 
+    list<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersections;
+    list<Eigen::Vector3d> intersectionCoordinates;
+
     result.VertexIntersections.resize(numPolyhedronVertices);
     result.EdgeIntersections.resize(numPolyhedronEdges);
     result.FaceIntersections.resize(numPolyhedronFaces);
@@ -319,6 +322,12 @@ namespace Gedim
               {
                 result.VertexIntersections[edgeOriginId].Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
                 numberOfIntersections++;
+
+                intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+                intersectionCoordinates.push_back(polyhedronVertices.col(edgeOriginId));
+                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+                intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
+                intersection.VertexId = edgeOriginId;
               }
             }
             break;
@@ -326,6 +335,12 @@ namespace Gedim
             {
               // inside edge intersection (TODO)
               numberOfIntersections++;
+
+              intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+              intersectionCoordinates.push_back(edgeOrigin + interectionEdge.SingleIntersection.CurvilinearCoordinate * (edgeEnd - edgeOrigin));
+              GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+              intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge;
+              intersection.EdgeId = e;
             }
             break;
             case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
@@ -335,6 +350,12 @@ namespace Gedim
               {
                 result.VertexIntersections[edgeEndId].Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
                 numberOfIntersections++;
+
+                intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+                intersectionCoordinates.push_back(polyhedronVertices.col(edgeEndId));
+                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+                intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
+                intersection.VertexId = edgeEndId;
               }
             }
             break;
@@ -430,6 +451,13 @@ namespace Gedim
         {
           // inside polyhedron intersection
           result.Type = IntersectionPolyhedronPlaneResult::Types::NewPolygon;
+
+          // create new polygon
+          result.Intersections = vector<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection>(intersections.begin(), intersections.end());
+          result.IntersectionCoordinates.resize(3, result.Intersections.size());
+          unsigned int numIntersection = 0;
+          for (const auto& intersection : intersectionCoordinates)
+            result.IntersectionCoordinates.col(numIntersection++)<< intersection;
         }
       }
       break;
