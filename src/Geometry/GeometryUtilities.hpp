@@ -191,6 +191,19 @@ namespace Gedim
             NewPolygon = 5 ///< New polygon intersection
           };
 
+          struct FaceIntersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Intersection = 1,
+                NoIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
+          };
+
+
           struct EdgeIntersection final
           {
               IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and plane
@@ -198,12 +211,21 @@ namespace Gedim
 
           struct VertexIntersection final
           {
+              enum struct Types
+              {
+                Unknown = 0,
+                Intersection = 1,
+                NoIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
           };
 
           Types Type = Types::Unknown; ///< The intersection type
           unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex, Types::OnEdge and Types::OnFace
-          map<unsigned int, VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
+          vector<VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
           vector<EdgeIntersection> EdgeIntersections = {}; ///< Edge intersections
+          vector<FaceIntersection> FaceIntersections = {}; ///< Face intersections
       };
 
       struct PointPolygonPositionResult final
