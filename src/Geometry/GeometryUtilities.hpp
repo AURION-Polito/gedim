@@ -203,7 +203,6 @@ namespace Gedim
               Types Type = Types::Unknown;
           };
 
-
           struct EdgeIntersection final
           {
               IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and plane
@@ -221,11 +220,27 @@ namespace Gedim
               Types Type = Types::Unknown;
           };
 
+          struct Intersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Vertex = 1,
+                Edge = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int EdgeId = 0; ///<  Edge index of the Polyhedron
+              unsigned int VertexId = 0; ///<  Vertex index of the Polyhedron, available only if Type is Types::Vertex
+          };
+
           Types Type = Types::Unknown; ///< The intersection type
           unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex, Types::OnEdge and Types::OnFace
           vector<VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
           vector<EdgeIntersection> EdgeIntersections = {}; ///< Edge intersections
           vector<FaceIntersection> FaceIntersections = {}; ///< Face intersections
+          vector<Intersection> Intersections = {}; ///< The resulting intersections
+          Eigen::MatrixXd IntersectionCoordinates; ///< The resulting intersection coordinates
       };
 
       struct PointPolygonPositionResult final
@@ -454,6 +469,7 @@ namespace Gedim
       /// \param planeNormal the plane normal normalized
       /// \param planeOrigin the plane origin
       /// \return the intersection result
+      /// \note works only with convex polyhedra
       IntersectionPolyhedronPlaneResult IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
                                                                     const Eigen::MatrixXi& polyhedronEdges,
                                                                     const vector<Eigen::MatrixXi> polyhedronFaces,

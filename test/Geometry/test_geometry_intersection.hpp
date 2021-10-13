@@ -554,6 +554,27 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.FaceIntersections.at(2).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
         ASSERT_EQ(result.FaceIntersections.at(3).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::Intersection);
       }
+
+      // test triangular intersection with reference tetrahedron
+      {
+        Eigen::Vector3d v1(+0.0, +0.0, +0.0);
+        Eigen::Vector3d v2(+1.0, +0.0, +0.0);
+        Eigen::Vector3d v3(+0.0, +1.0, +0.0);
+        Eigen::Vector3d v4(+0.0, +0.0, +1.0);
+
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+
+        Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
+        Eigen::Vector3d planeOrigin(0.0, 0.0, 0.25);
+
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+                                                                                                                         polyhedron.Edges,
+                                                                                                                         polyhedron.Faces,
+                                                                                                                         planeNormal,
+                                                                                                                         planeOrigin);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::NewPolygon);
+      }
     }
     catch (const exception& exception)
     {
