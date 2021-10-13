@@ -10,7 +10,7 @@ namespace Gedim
   GeometryUtilities::Polyhedron GeometryUtilities::CreateTetrahedronWithOrigin(const Eigen::Vector3d& origin,
                                                                                const Eigen::Vector3d& lengthVector,
                                                                                const Eigen::Vector3d& heightVector,
-                                                                               const Eigen::Vector3d& widthVector)
+                                                                               const Eigen::Vector3d& widthVector) const
   {
     GeometryUtilities::Polyhedron tetrahedron;
 
@@ -48,7 +48,7 @@ namespace Gedim
   GeometryUtilities::Polyhedron GeometryUtilities::CreateTetrahedronWithVertices(const Eigen::Vector3d& v1,
                                                                                  const Eigen::Vector3d& v2,
                                                                                  const Eigen::Vector3d& v3,
-                                                                                 const Eigen::Vector3d& v4)
+                                                                                 const Eigen::Vector3d& v4) const
   {
     GeometryUtilities::Polyhedron tetrahedron;
 

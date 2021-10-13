@@ -250,7 +250,8 @@ namespace Gedim
                                                                                                       const Eigen::MatrixXi& polyhedronEdges,
                                                                                                       const vector<Eigen::MatrixXi> polyhedronFaces,
                                                                                                       const Eigen::Vector3d& planeNormal,
-                                                                                                      const Eigen::Vector3d& planeOrigin) const
+                                                                                                      const Eigen::Vector3d& planeOrigin,
+                                                                                                      const Eigen::Matrix3d& planeRotationMatrix) const
   {
     GeometryUtilities::IntersectionPolyhedronPlaneResult result;
 
@@ -262,7 +263,7 @@ namespace Gedim
     const unsigned int numPolyhedronEdges = polyhedronEdges.cols();
     const unsigned int numPolyhedronFaces = polyhedronFaces.size();
 
-    list<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersections;
+    list<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersectionsList;
     list<Eigen::Vector3d> intersectionCoordinates;
 
     result.VertexIntersections.resize(numPolyhedronVertices);
@@ -323,9 +324,9 @@ namespace Gedim
                 result.VertexIntersections[edgeOriginId].Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
                 numberOfIntersections++;
 
-                intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+                intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
                 intersectionCoordinates.push_back(polyhedronVertices.col(edgeOriginId));
-                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersectionsList.back();
                 intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
                 intersection.VertexId = edgeOriginId;
               }
@@ -333,12 +334,12 @@ namespace Gedim
             break;
             case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
             {
-              // inside edge intersection (TODO)
+              // inside edge intersection
               numberOfIntersections++;
 
-              intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+              intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
               intersectionCoordinates.push_back(edgeOrigin + interectionEdge.SingleIntersection.CurvilinearCoordinate * (edgeEnd - edgeOrigin));
-              GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+              GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersectionsList.back();
               intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge;
               intersection.EdgeId = e;
             }
@@ -351,9 +352,9 @@ namespace Gedim
                 result.VertexIntersections[edgeEndId].Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
                 numberOfIntersections++;
 
-                intersections.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+                intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
                 intersectionCoordinates.push_back(polyhedronVertices.col(edgeEndId));
-                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersections.back();
+                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection& intersection = intersectionsList.back();
                 intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
                 intersection.VertexId = edgeEndId;
               }
@@ -453,11 +454,27 @@ namespace Gedim
           result.Type = IntersectionPolyhedronPlaneResult::Types::NewPolygon;
 
           // create new polygon
-          result.Intersections = vector<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection>(intersections.begin(), intersections.end());
-          result.IntersectionCoordinates.resize(3, result.Intersections.size());
+          const unsigned int numIntersions = intersectionCoordinates.size();
+          Eigen::MatrixXd convexHull3DPoints(3, numIntersions);
           unsigned int numIntersection = 0;
           for (const auto& intersection : intersectionCoordinates)
-            result.IntersectionCoordinates.col(numIntersection++)<< intersection;
+            convexHull3DPoints.col(numIntersection++)<< intersection;
+
+          Eigen::MatrixXd convexHull2DPoints = RotatePointsFrom3DTo2D(convexHull3DPoints,
+                                                                      planeRotationMatrix);
+
+          vector<unsigned int> convexHull = ConvexHull(convexHull2DPoints);
+          Output::Assert(convexHull.size() == numIntersions);
+          vector<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersections(intersectionsList.begin(), intersectionsList.end());
+
+          result.Intersections.resize(numIntersions);
+          result.IntersectionCoordinates.resize(3, numIntersions);
+
+          for (unsigned int c = 0; c < numIntersions; c++)
+          {
+            result.Intersections[c] = intersections[convexHull[c]];
+            result.IntersectionCoordinates.col(c) << convexHull3DPoints.col(convexHull[c]);
+          }
         }
       }
       break;

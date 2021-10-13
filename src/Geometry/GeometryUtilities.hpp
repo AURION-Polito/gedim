@@ -468,13 +468,15 @@ namespace Gedim
       /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
       /// \param planeNormal the plane normal normalized
       /// \param planeOrigin the plane origin
+      /// \param planeRotationMatrix the plane rotation from 3D to 2D
       /// \return the intersection result
       /// \note works only with convex polyhedra
       IntersectionPolyhedronPlaneResult IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
                                                                     const Eigen::MatrixXi& polyhedronEdges,
                                                                     const vector<Eigen::MatrixXi> polyhedronFaces,
                                                                     const Eigen::Vector3d& planeNormal,
-                                                                    const Eigen::Vector3d& planeOrigin) const;
+                                                                    const Eigen::Vector3d& planeOrigin,
+                                                                    const Eigen::Matrix3d& planeRotationMatrix) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
@@ -512,12 +514,12 @@ namespace Gedim
       /// \note works only in 2D-plane
       bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \brief Compute the rotation matrix of a plane
+      /// \brief Compute the rotation matrix of a plane from 2D to 3D
       /// \param normal the normalized normal of the plane which contains the polygon
       /// \retrun the resulting rotation matrix Q which rotates 2D points to 3D points
       /// \note to rotate some point P from 2D to 3D use Q * P
       /// \note to rotate some point P from 3D to 2D use Q^T * P
-      Eigen::Matrix3d PlaneRotation(const Eigen::Vector3d& planeNormal) const;
+      Eigen::Matrix3d PlaneRotationMatrix(const Eigen::Vector3d& planeNormal) const;
 
       /// \brief Rotate Points P From 2D To 3D using rotation matrix Q and translation t: Q * P + t
       /// \param points the points (size 3 x numPoints)
@@ -549,7 +551,7 @@ namespace Gedim
       /// \param points the points, size 3 x numPoints
       /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
-      vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points);
+      vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points) const;
 
       /// \brief Create a Tetrahedron with origin and dimension
       /// \param origin the origin
@@ -560,7 +562,7 @@ namespace Gedim
       Polyhedron CreateTetrahedronWithOrigin(const Eigen::Vector3d& origin,
                                              const Eigen::Vector3d& lengthVector,
                                              const Eigen::Vector3d& heightVector,
-                                             const Eigen::Vector3d& widthVector);
+                                             const Eigen::Vector3d& widthVector) const;
 
       /// \brief Create a Tetrahedron with the four vertices
       /// \param v1 the first vertex
@@ -571,7 +573,7 @@ namespace Gedim
       Polyhedron CreateTetrahedronWithVertices(const Eigen::Vector3d& v1,
                                                const Eigen::Vector3d& v2,
                                                const Eigen::Vector3d& v3,
-                                               const Eigen::Vector3d& v4);
+                                               const Eigen::Vector3d& v4) const;
   };
 }
 

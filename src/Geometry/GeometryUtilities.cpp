@@ -30,7 +30,7 @@ namespace Gedim
       return CompareTypes::FirstBeforeSecond;
   }
   // ***************************************************************************
-  Matrix3d GeometryUtilities::PlaneRotation(const Eigen::Vector3d& planeNormal) const
+  Matrix3d GeometryUtilities::PlaneRotationMatrix(const Eigen::Vector3d& planeNormal) const
   {
     Matrix3d Q;
     Q.setIdentity();
@@ -49,7 +49,7 @@ namespace Gedim
     return Q;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points)
+  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points) const
   {
     // pseudocode
     // // S is the set of points

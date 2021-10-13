@@ -408,12 +408,14 @@ namespace GedimUnitTesting {
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 2.0);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
 
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
-                                                                                                                         planeOrigin);
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::None);
       }
@@ -429,12 +431,14 @@ namespace GedimUnitTesting {
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
 
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
-                                                                                                                         planeOrigin);
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnVertex);
         ASSERT_EQ(result.IntersectionId, 3);
@@ -474,12 +478,14 @@ namespace GedimUnitTesting {
 
         Eigen::Vector3d planeNormal(-1.0 / sqrt(2), -1.0 / sqrt(2), 0.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
 
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
-                                                                                                                         planeOrigin);
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnEdge);
         ASSERT_EQ(result.IntersectionId, 3);
@@ -521,12 +527,14 @@ namespace GedimUnitTesting {
 
         Eigen::Vector3d planeNormal(-1.0 / sqrt(3), -1.0 / sqrt(3), -1.0 / sqrt(3));
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
 
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
-                                                                                                                         planeOrigin);
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnFace);
         ASSERT_EQ(result.IntersectionId, 3);
@@ -566,14 +574,28 @@ namespace GedimUnitTesting {
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 0.25);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
 
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
-                                                                                                                         planeOrigin);
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::NewPolygon);
+        ASSERT_EQ(result.Intersections.size(), 3);
+        ASSERT_EQ(result.IntersectionCoordinates.rows(), 3);
+        ASSERT_EQ(result.IntersectionCoordinates.cols(), 3);
+        ASSERT_EQ(result.Intersections.at(0).EdgeId, 3);
+        ASSERT_EQ(result.Intersections.at(0).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
+        ASSERT_EQ(result.Intersections.at(1).EdgeId, 4);
+        ASSERT_EQ(result.Intersections.at(1).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
+        ASSERT_EQ(result.Intersections.at(2).EdgeId, 5);
+        ASSERT_EQ(result.Intersections.at(2).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
+        ASSERT_EQ(result.IntersectionCoordinates.col(0), Eigen::Vector3d(0.0, 0.0, 0.25));
+        ASSERT_EQ(result.IntersectionCoordinates.col(1), Eigen::Vector3d(0.75, 0.0, 0.25));
+        ASSERT_EQ(result.IntersectionCoordinates.col(2), Eigen::Vector3d(0.0, 0.75, 0.25));
       }
     }
     catch (const exception& exception)

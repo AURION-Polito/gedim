@@ -87,7 +87,7 @@ namespace GedimUnitTesting {
       // check rotation matrix of plane 2D
       {
         Eigen::Vector3d normal(0.0, 0.0, 1.0);
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotation(normal);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
 
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), 1.0);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), 1.0);
@@ -98,7 +98,7 @@ namespace GedimUnitTesting {
       {
         Eigen::Vector3d normal(1.0, 1.0, 1.0);
         normal.normalize();
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotation(normal);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
 
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), -7.0710678118654757e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386307e-01);
@@ -109,7 +109,7 @@ namespace GedimUnitTesting {
       {
         Eigen::Vector3d normal(-1.0, -1.0, -1.0);
         normal.normalize();
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotation(normal);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
 
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), 7.0710678118654757e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386307e-01);
