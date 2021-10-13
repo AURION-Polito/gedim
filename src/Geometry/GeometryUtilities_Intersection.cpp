@@ -371,12 +371,22 @@ namespace Gedim
       {
         // one intersection found, single vertex intersection
         result.Type = IntersectionPolyhedronPlaneResult::Types::OnVertex;
+        Output::Assert(result.VertexIntersections.size() == 1);
+        for (const auto& vertexIntersection : result.VertexIntersections)
+          result.IntersectionId = vertexIntersection.first;
       }
       break;
       case 2:
       {
         // two intersections found, edge intersection
         result.Type = IntersectionPolyhedronPlaneResult::Types::OnEdge;
+        for (unsigned int e = 0; e < numPolyhedronEdges; e++)
+        {
+          if (result.EdgeIntersections[e].Intersection.Type != IntersectionSegmentPlaneResult::Types::MultipleIntersections)
+            continue;
+
+          result.IntersectionId = e;
+        }
       }
       break;
       default:

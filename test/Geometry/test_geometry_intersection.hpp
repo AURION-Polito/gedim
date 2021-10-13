@@ -437,6 +437,7 @@ namespace GedimUnitTesting {
                                                                                                                          planeOrigin);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnVertex);
+        ASSERT_EQ(result.IntersectionId, 3);
         ASSERT_EQ(result.VertexIntersections.size(), 1);
         ASSERT_NE(result.VertexIntersections.find(3), result.VertexIntersections.end());
         ASSERT_EQ(result.EdgeIntersections.size(), 6);
@@ -473,6 +474,7 @@ namespace GedimUnitTesting {
                                                                                                                          planeOrigin);
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::OnEdge);
+        ASSERT_EQ(result.IntersectionId, 3);
         ASSERT_EQ(result.VertexIntersections.size(), 2);
         ASSERT_NE(result.VertexIntersections.find(0), result.VertexIntersections.end());
         ASSERT_NE(result.VertexIntersections.find(3), result.VertexIntersections.end());

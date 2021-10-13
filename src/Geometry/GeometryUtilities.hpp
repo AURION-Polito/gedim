@@ -193,7 +193,7 @@ namespace Gedim
 
           struct EdgeIntersection final
           {
-              IntersectionSegmentPlaneResult Intersection;
+              IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and plane
           };
 
           struct VertexIntersection final
@@ -201,6 +201,7 @@ namespace Gedim
           };
 
           Types Type = Types::Unknown; ///< The intersection type
+          unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex, Types::OnEdge and Types::OnFace
           map<unsigned int, VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
           vector<EdgeIntersection> EdgeIntersections = {}; ///< Edge intersections
       };
