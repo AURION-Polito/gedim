@@ -4,6 +4,7 @@ list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_point.hpp)
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_polygon.hpp)
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_polyhedron.hpp)
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_split.hpp)
+list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_map.hpp)
 
 list(APPEND test_include ${CMAKE_CURRENT_SOURCE_DIR})
 
