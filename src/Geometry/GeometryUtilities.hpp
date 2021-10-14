@@ -536,7 +536,7 @@ namespace Gedim
                                                     const Eigen::Matrix3d& rotationMatrix,
                                                     const Eigen::Vector3d& translation = Eigen::Vector3d::Zero()) const
       {
-        Gedim::Output::Assert(points.row(2).isZero(_configuration.Tolerance));
+        Gedim::Output::Assert(points.rows() == 3 && points.cols() > 0 && points.row(2).isZero(_configuration.Tolerance));
         return (rotationMatrix * points).colwise() + translation;
       }
       /// \brief Rotate Points P From 3D To 2D using rotation matrix Q and translation t: Q * (P - t)
@@ -548,6 +548,7 @@ namespace Gedim
                                                     const Eigen::Matrix3d& rotationMatrix,
                                                     const Eigen::Vector3d& translation = Eigen::Vector3d::Zero()) const
       {
+        Gedim::Output::Assert(points.rows() == 3 && points.cols() > 0);
         Eigen::MatrixXd rotatedPoints = rotationMatrix * (points.colwise() - translation);
         rotatedPoints.row(2).setZero();
         return rotatedPoints;
