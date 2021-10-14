@@ -85,4 +85,28 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::PolygonTriangulation(const Eigen::MatrixXd& polygonVertices)
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
+    list<unsigned int> triangleList;
+
+    const unsigned int numPolygonVertices = polygonVertices.cols();
+
+    for (unsigned int v = 0; v < numPolygonVertices; v++)
+    {
+      const unsigned int nextVertex = (v + 1) % numPolygonVertices;
+      const unsigned int nextNextVertex = (v + 2) % numPolygonVertices;
+
+      if (nextNextVertex == 0)
+        break;
+
+      triangleList.push_back(0);
+      triangleList.push_back(nextVertex);
+      triangleList.push_back(nextNextVertex);
+    }
+
+    return vector<unsigned int>(triangleList.begin(), triangleList.end());
+  }
+  // ***************************************************************************
 }

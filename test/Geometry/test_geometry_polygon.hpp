@@ -170,6 +170,41 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestPolygonTriangulation)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check triangle triangulation
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.PolygonTriangulation(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
+      }
+
+      // check square triangulation
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.PolygonTriangulation(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POLYGON_H
