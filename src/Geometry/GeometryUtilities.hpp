@@ -489,7 +489,7 @@ namespace Gedim
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the sub-division triangulation, size 1 x 3 * numTriangles
       /// \note works only for convex polygon
-      vector<unsigned int> PolygonTriangulation(const Eigen::MatrixXd& polygonVertices);
+      vector<unsigned int> PolygonTriangulation(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data

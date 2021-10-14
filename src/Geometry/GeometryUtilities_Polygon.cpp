@@ -85,7 +85,7 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::PolygonTriangulation(const Eigen::MatrixXd& polygonVertices)
+  vector<unsigned int> GeometryUtilities::PolygonTriangulation(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
 
@@ -105,6 +105,8 @@ namespace Gedim
       triangleList.push_back(nextVertex);
       triangleList.push_back(nextNextVertex);
     }
+
+    Output::Assert(triangleList.size() % 3 == 0);
 
     return vector<unsigned int>(triangleList.begin(), triangleList.end());
   }
