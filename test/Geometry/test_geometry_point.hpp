@@ -34,7 +34,7 @@ namespace GedimUnitTesting {
         points.setZero(3,2);
         points.row(0).setConstant(1.0);
         points.row(1).setConstant(2.0);
-        points.row(1).setConstant(3.0);
+        points.row(2).setConstant(3.0);
         ASSERT_FALSE(geometryUtility.PointsAre2D(points));
       }
     }
