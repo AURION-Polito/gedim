@@ -67,7 +67,7 @@ namespace Gedim
     //     pointOnHull = endpoint
     // until endpoint = P[0]      // wrapped around to first hull point
 
-    Output::Assert(points.rows() == 3 && points.cols() > 0 && points.row(2).isZero(_configuration.Tolerance));
+    Output::Assert(points.rows() == 3 && points.cols() > 0 && PointsAre2D(points));
     const unsigned int numPoints = points.cols();
     unsigned int leftMost = 0;
     for (unsigned int p = 1; p < numPoints; p++)

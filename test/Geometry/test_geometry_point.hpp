@@ -12,6 +12,39 @@ using namespace std;
 
 namespace GedimUnitTesting {
 
+  TEST(TestGeometryUtilities, TestPointsAre2D)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check 2D points
+      {
+        Eigen::MatrixXd points;
+        points.setZero(3,2);
+        points.row(0).setConstant(1.0);
+        points.row(1).setConstant(2.0);
+        ASSERT_TRUE(geometryUtility.PointsAre2D(points));
+      }
+
+      // check 2D points
+      {
+        Eigen::MatrixXd points;
+        points.setZero(3,2);
+        points.row(0).setConstant(1.0);
+        points.row(1).setConstant(2.0);
+        points.row(1).setConstant(3.0);
+        ASSERT_FALSE(geometryUtility.PointsAre2D(points));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPointPointLinePosition)
   {
     try

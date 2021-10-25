@@ -67,7 +67,7 @@ namespace Gedim
   // ***************************************************************************
   bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const
   {
-    Output::Assert(polygonVertices.row(2).isZero(_configuration.Tolerance));
+    Output::Assert(PointsAre2D(polygonVertices));
 
     const unsigned int numVertices = polygonVertices.cols();
     for (unsigned int v = 0; v < numVertices; v++)

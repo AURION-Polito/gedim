@@ -399,6 +399,14 @@ namespace Gedim
         return (secondPoint - firstPoint).norm();
       }
 
+
+      /// \param points the points to test, size 3 x numPoints
+      /// \return true if the points are 2D (z == 0)
+      inline bool PointsAre2D(const Eigen::MatrixXd& points) const
+      {
+        return points.row(2).isZero(_configuration.Tolerance);
+      }
+
       /// \brief compute the Point Curvilinear Coordinate of segment
       /// \param point the point
       /// \param segmentOrigin the segment origin
@@ -536,7 +544,7 @@ namespace Gedim
                                                     const Eigen::Matrix3d& rotationMatrix,
                                                     const Eigen::Vector3d& translation = Eigen::Vector3d::Zero()) const
       {
-        Gedim::Output::Assert(points.rows() == 3 && points.cols() > 0 && points.row(2).isZero(_configuration.Tolerance));
+        Gedim::Output::Assert(points.rows() == 3 && points.cols() > 0 && PointsAre2D(points));
         return (rotationMatrix * points).colwise() + translation;
       }
       /// \brief Rotate Points P From 3D To 2D using rotation matrix Q and translation t: Q * (P - t)
