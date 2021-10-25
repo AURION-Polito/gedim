@@ -266,11 +266,16 @@ namespace Gedim
       virtual void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
                                         const unsigned int& originCell0DIndex,
                                         const unsigned int& endCell0DIndex) = 0;
-      /// \return the Cell1D Index if Cell1D (origin->end) exists, Cell1DTotalNumber() otherwise
+      /// \return true if Cell1D (origin->end) exists, false otherwise
       /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
-      virtual unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
-                                        const unsigned int& endCell0DIndex) const = 0;
+      virtual bool Cell1DExists(const unsigned int& originCell0DIndex,
+                                const unsigned int& endCell0DIndex) const = 0;
+      /// \return the Cell1D Index if Cell1D (origin->end) exists, exception otherwise
+      /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      virtual unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
+                                            const unsigned int& endCell0DIndex) const = 0;
       /// \brief Set the Cell1D Id
       /// \param cell1DIndex the index of Cell0D from 0 to Cell1DTotalNumber()
       /// \param id the id of the Cell1D

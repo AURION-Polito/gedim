@@ -312,14 +312,21 @@ namespace Gedim
                                      endCell0DIndex) = cell1DIndex + 1;
         _mesh.Cell1DAdjacency.makeCompressed();
       }
-      unsigned int ExistsCell1D(const unsigned int& originCell0DIndex,
-                                const unsigned int& endCell0DIndex) const
+      inline bool Cell1DExists(const unsigned int& originCell0DIndex,
+                               const unsigned int& endCell0DIndex) const
       {
-        const unsigned int& cell1DIndex = _mesh.Cell1DAdjacency.coeff(originCell0DIndex,
-                                                                      endCell0DIndex);
-        return (cell1DIndex == 0) ? Cell1DTotalNumber() :
-                                    cell1DIndex - 1;
+        Output::Assert(originCell0DIndex < Cell0DTotalNumber());
+        Output::Assert(endCell0DIndex < Cell0DTotalNumber());
+        return _mesh.Cell1DAdjacency.coeff(originCell0DIndex, endCell0DIndex) > 0;
       }
+
+      inline unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
+                                           const unsigned int& endCell0DIndex) const
+      {
+        Output::Assert(Cell1DExists(originCell0DIndex, endCell0DIndex));
+        return _mesh.Cell1DAdjacency.coeff(originCell0DIndex, endCell0DIndex) - 1;
+      }
+
       inline void Cell1DSetMarker(const unsigned int& cell1DIndex,
                                   const unsigned int& marker)
       {
@@ -711,7 +718,7 @@ namespace Gedim
             _mesh.NumberCell2DSubdivision[cell2DIndex];
       }
       inline unsigned int Cell2DSubDivisionCell0D(const unsigned int& cell2DIndex,
-                                            const unsigned int& subDivisionIndex) const
+                                                  const unsigned int& subDivisionIndex) const
       {
         Output::Assert(cell2DIndex < Cell2DTotalNumber());
         Output::Assert(subDivisionIndex < Cell2DNumberSubDivision(cell2DIndex));
