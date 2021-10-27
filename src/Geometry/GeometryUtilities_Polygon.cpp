@@ -111,4 +111,54 @@ namespace Gedim
     return vector<unsigned int>(triangleList.begin(), triangleList.end());
   }
   // ***************************************************************************
+  GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
+                                                                                         const Eigen::Vector3d& circleCenter,
+                                                                                         const double& circleRadius) const
+  {
+    GeometryUtilities::PointPolygonPositionResult centerPosition = PointPolygonPosition(circleCenter,
+                                                                                        polygonVertices);
+    const unsigned int numVertices = polygonVertices.cols();
+    vector<double> centerPolygonDistances(numVertices, 0.0);
+    for (unsigned int v = 0; v < numVertices; v++)
+      centerPolygonDistances[v] = PointDistance(circleCenter,
+                                                polygonVertices.col(v));
+
+    Output::Assert(centerPosition.Type != Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown);
+    switch (centerPosition.Type) {
+      case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside:
+      {
+        bool circleTouch = false;
+        for (unsigned int v = 0; v < numVertices; v++)
+        {
+          CompareTypes comparison = Compare1DValues(centerPolygonDistances[v], circleRadius);
+          if (comparison ==
+              CompareTypes::FirstBeforeSecond ||
+              comparison ==
+              CompareTypes::Coincident)
+          {
+            circleTouch = true;
+            break;
+          }
+        }
+
+        if (!circleTouch)
+          return PolygonCirclePositionTypes::CircleNotIntersectPolygon;
+      }
+      break;
+      case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
+      break;
+      case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
+      break;
+      case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
+      break;
+      default:
+      break;
+    }
+
+    cerr.precision(16);
+    cerr<< scientific<< centerPolygonDistances<< endl;
+
+    return PolygonCirclePositionTypes::Unknown;
+  }
+  // ***************************************************************************
 }

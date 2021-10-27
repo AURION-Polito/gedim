@@ -210,20 +210,20 @@ namespace Gedim
       GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(newPoint2D,
                                                                                                                          cell2DVertices);
 
-      if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside)
+      if (pointPolygonPositionResult.Type == GeometryUtilities::PointPolygonPositionResult::Types::Outside)
         continue;
 
       newPoint.Cell2DIds.push_back(c);
-      if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside)
+      if (pointPolygonPositionResult.Type == GeometryUtilities::PointPolygonPositionResult::Types::Inside)
         break;
 
-      else if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge)
+      else if (pointPolygonPositionResult.Type == GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge)
       {
         const unsigned int edgeToInsert = mesh2D.Cell2DEdge(c, pointPolygonPositionResult.BorderIndex);
         if (find(newPoint.Edge2DIds.begin(), newPoint.Edge2DIds.end(), edgeToInsert) == newPoint.Edge2DIds.end())
           newPoint.Edge2DIds.push_back(edgeToInsert);
       }
-      else if (pointPolygonPositionResult.PositionType == GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex)
+      else if (pointPolygonPositionResult.Type == GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex)
       {
         const unsigned int vertexToInsert = mesh2D.Cell2DVertex(c, pointPolygonPositionResult.BorderIndex);
         int previousVertex = pointPolygonPositionResult.BorderIndex - 1;

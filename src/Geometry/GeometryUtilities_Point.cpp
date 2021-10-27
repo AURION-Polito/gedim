@@ -74,34 +74,34 @@ namespace Gedim
 
       if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
       {
-        result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
+        result.Type = GeometryUtilities::PointPolygonPositionResult::Types::Outside;
         return result;
       }
       else if (resultSegment != GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment)
       {
         if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::InsideSegment)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge;
+          result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
           result.BorderIndex = v;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex;
+          result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
           result.BorderIndex = v;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd)
         {
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex;
+          result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
           result.BorderIndex = (v + 1) % numVertices;
         }
         else
-          result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside;
+          result.Type = GeometryUtilities::PointPolygonPositionResult::Types::Outside;
 
         return result;
       }
     }
 
-    result.PositionType = GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside;
+    result.Type = GeometryUtilities::PointPolygonPositionResult::Types::Inside;
     return result;
   }
   // ***************************************************************************

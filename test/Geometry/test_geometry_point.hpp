@@ -293,7 +293,7 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
                                                                                                            polygonVertices);
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Outside);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
       }
 
       // check border
@@ -306,13 +306,13 @@ namespace GedimUnitTesting {
         // border edge
         Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge= geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
                                                                                                                     polygonVertices);
-        ASSERT_EQ(resultBorderEdge.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge);
+        ASSERT_EQ(resultBorderEdge.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
 
         // border vertex
         Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex = geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                                        polygonVertices);
-        ASSERT_EQ(resultBorderVertex.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
+        ASSERT_EQ(resultBorderVertex.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
       }
 
@@ -326,7 +326,7 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
                                                                                                            polygonVertices);
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside);
       }
 
       // check on vertex
@@ -339,7 +339,7 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
                                                                                                            polygonVertices);
-        ASSERT_EQ(result.PositionType, Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
       }
     }
     catch (const exception& exception)

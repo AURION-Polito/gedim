@@ -89,8 +89,8 @@ namespace Gedim
                                                                                                                                 cell2DVertices);
 
       bool cellFound = false;
-      switch (pointPolygonPositionResult.PositionType) {
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside:
+      switch (pointPolygonPositionResult.Type) {
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(0.0,
@@ -100,7 +100,7 @@ namespace Gedim
           cellFound = true;
           break;
         }
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(0.0,
@@ -113,7 +113,7 @@ namespace Gedim
           cellFound = true;
           break;
         }
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(0.0,
@@ -146,8 +146,8 @@ namespace Gedim
                                                                                                                                 cell2DVertices);
 
       bool cellFound = false;
-      switch (pointPolygonPositionResult.PositionType) {
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::Inside:
+      switch (pointPolygonPositionResult.Type) {
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(1.0,
@@ -157,7 +157,7 @@ namespace Gedim
           cellFound = true;
           break;
         }
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderEdge:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(1.0,
@@ -169,7 +169,7 @@ namespace Gedim
           cellFound = true;
           break;
         }
-        case Gedim::GeometryUtilities::PointPolygonPositionResult::PositionTypes::BorderVertex:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
         {
           bool found;
           IntersectionMesh::IntersectionMeshPoint& intersection = InsertNewIntersection(1.0,
