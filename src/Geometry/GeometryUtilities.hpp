@@ -159,6 +159,27 @@ namespace Gedim
           vector<IntersectionPosition> SecondSegmentIntersections; /// intersections of the second segment
       };
 
+      struct IntersectionSegmentCircleResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            NoIntersection = 1,
+            SingleIntersection = 2,
+            TwoIntersections = 3
+          };
+
+          struct IntersectionPosition
+          {
+              PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+              double CurvilinearCoordinate = 0.0;
+          };
+
+          Types Type = Types::Unknown;
+          /// \brief intersections of the segment,
+          vector<IntersectionPosition> SegmentIntersections = {};
+      };
+
       struct IntersectionSegmentPlaneResult final
       {
           enum struct Types
@@ -457,6 +478,17 @@ namespace Gedim
                                                                   const Eigen::Vector3d& firstSegmentEnd,
                                                                   const Eigen::Vector3d& secondSegmentOrigin,
                                                                   const Eigen::Vector3d& secondSegmentEnd) const;
+
+      /// \brief Compute the intersection between the a segment and a circle
+      /// \param segmentOrigin first segment origin
+      /// \param segmentEnd first segment end
+      /// \param circleCenter circle center
+      /// \param circleRadius circle radius
+      /// \return the resulting intersection
+      IntersectionSegmentCircleResult IntersectionSegmentCircle(const Eigen::Vector3d& segmentOrigin,
+                                                                const Eigen::Vector3d& segmentEnd,
+                                                                const Eigen::Vector3d& circleCenter,
+                                                                const double& circleRadius) const;
 
       /// \brief Intersection between a Segment, represented by origin and end and a plane
       /// represented by the normal and a point

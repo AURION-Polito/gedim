@@ -389,7 +389,6 @@ namespace GedimUnitTesting {
     }
   }
 
-
   TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
   {
     try
@@ -596,6 +595,35 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionCoordinates.col(0), Eigen::Vector3d(0.0, 0.0, 0.25));
         ASSERT_EQ(result.IntersectionCoordinates.col(1), Eigen::Vector3d(0.75, 0.0, 0.25));
         ASSERT_EQ(result.IntersectionCoordinates.col(2), Eigen::Vector3d(0.0, 0.75, 0.25));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestIntersectionSegmentCircle)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check simply no intersection
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 0.0, 0.0);
+        Eigen::Vector3d segmentEnd(   2.0, 0.0, 0.0);
+        Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
+        double circleRadius = 2.0;
+
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+                                                                                                                     segmentEnd,
+                                                                                                                     circleCenter,
+                                                                                                                     circleRadius);
+        ASSERT_EQ(result.Type,
+                  Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::NoIntersection);
       }
     }
     catch (const exception& exception)

@@ -483,4 +483,53 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::IntersectionSegmentCircleResult GeometryUtilities::IntersectionSegmentCircle(const Eigen::Vector3d& segmentOrigin,
+                                                                                                  const Eigen::Vector3d& segmentEnd,
+                                                                                                  const Eigen::Vector3d& circleCenter,
+                                                                                                  const double& circleRadius) const
+  {
+    GeometryUtilities::IntersectionSegmentCircleResult result;
+
+    Vector3d d = segmentEnd - segmentOrigin;
+    Vector3d f = segmentOrigin - circleCenter;
+
+    float a = d.dot(d);
+    float b = 2.0 * f.dot(d) ;
+    float c = f.dot(f) - circleRadius*circleRadius;
+
+    float discriminant = b * b - 4.0 * a * c;
+    if (IsValue1DNegative(discriminant))
+    {
+      // no intersection found
+      result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::NoIntersection;
+    }
+    else if (IsValue1DZero(discriminant))
+    {
+      // one intersection found
+      float intersection = -b / (2.0 * a);
+      result.SegmentIntersections.resize(1);
+      result.SegmentIntersections[0].CurvilinearCoordinate = intersection;
+      result.SegmentIntersections[0].Type = PointSegmentPosition(intersection);
+    }
+    else
+    {
+      // two intersections found
+      discriminant = sqrt(discriminant);
+
+      // either solution may be on or off the ray so need to test both
+      // t1 is always the smaller value, because BOTH discriminant and
+      // a are nonnegative.
+      float t1 = (-b - discriminant)/(2.0 * a);
+      float t2 = (-b + discriminant)/(2.0 * a);
+
+      result.SegmentIntersections.resize(2);
+      result.SegmentIntersections[0].CurvilinearCoordinate = t1;
+      result.SegmentIntersections[0].Type = PointSegmentPosition(t1);
+      result.SegmentIntersections[1].CurvilinearCoordinate = t2;
+      result.SegmentIntersections[1].Type = PointSegmentPosition(t2);
+    }
+
+    return result;
+  }
+  // ***************************************************************************
 }
