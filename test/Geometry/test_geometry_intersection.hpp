@@ -625,6 +625,44 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type,
                   Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::NoIntersection);
       }
+
+      // check simply one intersection
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 5.0, 0.0);
+        Eigen::Vector3d segmentEnd(   2.0, 5.0, 0.0);
+        Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
+        double circleRadius = 2.0;
+
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+                                                                                                                     segmentEnd,
+                                                                                                                     circleCenter,
+                                                                                                                     circleRadius);
+        ASSERT_EQ(result.Type,
+                  Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::SingleIntersection);
+        ASSERT_EQ(result.SegmentIntersections.size(), 1);
+        ASSERT_DOUBLE_EQ(result.SegmentIntersections[0].CurvilinearCoordinate, -1.0);
+        ASSERT_EQ(result.SegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
+      }
+
+      // check simply two intersections
+      {
+        Eigen::Vector3d segmentOrigin(1.0, 3.0, 0.0);
+        Eigen::Vector3d segmentEnd(   2.0, 3.0, 0.0);
+        Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
+        double circleRadius = 2.0;
+
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+                                                                                                                     segmentEnd,
+                                                                                                                     circleCenter,
+                                                                                                                     circleRadius);
+        ASSERT_EQ(result.Type,
+                  Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::TwoIntersections);
+        ASSERT_EQ(result.SegmentIntersections.size(), 2);
+        ASSERT_DOUBLE_EQ(result.SegmentIntersections[0].CurvilinearCoordinate, -3.0);
+        ASSERT_EQ(result.SegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
+        ASSERT_DOUBLE_EQ(result.SegmentIntersections[1].CurvilinearCoordinate, 1.0);
+        ASSERT_EQ(result.SegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+      }
     }
     catch (const exception& exception)
     {

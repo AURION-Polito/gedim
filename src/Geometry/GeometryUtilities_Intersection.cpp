@@ -507,6 +507,7 @@ namespace Gedim
     {
       // one intersection found
       float intersection = -b / (2.0 * a);
+      result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::SingleIntersection;
       result.SegmentIntersections.resize(1);
       result.SegmentIntersections[0].CurvilinearCoordinate = intersection;
       result.SegmentIntersections[0].Type = PointSegmentPosition(intersection);
@@ -522,6 +523,7 @@ namespace Gedim
       float t1 = (-b - discriminant)/(2.0 * a);
       float t2 = (-b + discriminant)/(2.0 * a);
 
+      result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::TwoIntersections;
       result.SegmentIntersections.resize(2);
       result.SegmentIntersections[0].CurvilinearCoordinate = t1;
       result.SegmentIntersections[0].Type = PointSegmentPosition(t1);
