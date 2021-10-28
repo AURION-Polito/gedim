@@ -145,6 +145,8 @@ namespace Gedim
         else if (!oneVertexOutsideCircle &&
                  polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::PolygonInsideCircle;
+        else if (polygonCircleIntersections.Intersections.size() == 1)
+          return PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint;
       }
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
@@ -157,6 +159,9 @@ namespace Gedim
         else if (!oneVertexOutsideCircle &&
                  polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::PolygonInsideCircle;
+        else if (oneVertexOnCircleBorder &&
+                 polygonCircleIntersections.Intersections.size() > 0)
+          return PolygonCirclePositionTypes::PolygonIntersectsCircleOnBorder;
       }
       break;
       default:

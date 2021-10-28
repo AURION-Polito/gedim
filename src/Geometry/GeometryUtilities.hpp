@@ -55,11 +55,18 @@ namespace Gedim
           {
               enum struct Types {
                 Unknown = 0,
+                Secant = 1,
+                Tangent = 2
+              };
+
+              enum struct IndexTypes {
+                Unknown = 0,
                 Vertex = 1,
                 Edge = 2
               };
 
               Types Type;
+              IndexTypes IndexType;
               unsigned int Index;
           };
 
@@ -192,7 +199,7 @@ namespace Gedim
           {
             Unknown = 0,
             NoIntersection = 1,
-            SingleIntersection = 2,
+            TangentIntersection = 2,
             TwoIntersections = 3
           };
 

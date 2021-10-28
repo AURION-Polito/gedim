@@ -507,7 +507,7 @@ namespace Gedim
     {
       // one intersection found
       float intersection = -b / (2.0 * a);
-      result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::SingleIntersection;
+      result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::TangentIntersection;
       result.SegmentIntersections.resize(1);
       result.SegmentIntersections[0].CurvilinearCoordinate = intersection;
       result.SegmentIntersections[0].Type = PointSegmentPosition(intersection);
@@ -563,7 +563,8 @@ namespace Gedim
       {
         IntersectionSegmentCircleResult::IntersectionPosition& position = intersection.SegmentIntersections[i];
         Output::Assert(position.Type != PointSegmentPositionTypes::Unknown);
-        switch (position.Type) {
+        switch (position.Type)
+        {
           case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
           {
             if (vertexIntersections.find(vertexOrigin) == vertexIntersections.end())
@@ -571,8 +572,11 @@ namespace Gedim
               vertexIntersections.insert(vertexOrigin);
               intersections.push_back(IntersectionPolygonCircleResult::Intersection());
               IntersectionPolygonCircleResult::Intersection& vertexIntersection = intersections.back();
+              vertexIntersection.Type = (intersection.Type == IntersectionSegmentCircleResult::Types::TangentIntersection) ?
+                                          IntersectionPolygonCircleResult::Intersection::Types::Tangent :
+                                          IntersectionPolygonCircleResult::Intersection::Types::Secant;
               vertexIntersection.Index = vertexOrigin;
-              vertexIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Vertex;
+              vertexIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex;
             }
           }
           break;
@@ -583,8 +587,11 @@ namespace Gedim
               edgeIntersections.insert(e);
               intersections.push_back(IntersectionPolygonCircleResult::Intersection());
               IntersectionPolygonCircleResult::Intersection& edgeIntersection = intersections.back();
+              edgeIntersection.Type = (intersection.Type == IntersectionSegmentCircleResult::Types::TangentIntersection) ?
+                                        IntersectionPolygonCircleResult::Intersection::Types::Tangent :
+                                        IntersectionPolygonCircleResult::Intersection::Types::Secant;
               edgeIntersection.Index = e;
-              edgeIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Edge;
+              edgeIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge;
             }
           }
           break;
@@ -595,8 +602,11 @@ namespace Gedim
               vertexIntersections.insert(vertexEnd);
               intersections.push_back(IntersectionPolygonCircleResult::Intersection());
               IntersectionPolygonCircleResult::Intersection& vertexIntersection = intersections.back();
+              vertexIntersection.Type = (intersection.Type == IntersectionSegmentCircleResult::Types::TangentIntersection) ?
+                                          IntersectionPolygonCircleResult::Intersection::Types::Tangent :
+                                          IntersectionPolygonCircleResult::Intersection::Types::Secant;
               vertexIntersection.Index = vertexEnd;
-              vertexIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Vertex;
+              vertexIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex;
             }
           }
           break;
