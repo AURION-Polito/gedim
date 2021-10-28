@@ -148,9 +148,7 @@ namespace Gedim
       }
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
-      break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
-      break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
       {
         if (oneVertexOutsideCircle &&

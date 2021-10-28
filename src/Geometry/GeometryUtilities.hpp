@@ -43,7 +43,7 @@ namespace Gedim
         Unknown = 0,
         CircleNotIntersectPolygon = 1,
         CircleInsidePolygon = 2,
-        CircleIntersectsPolygonWithOneSubPolygon = 3,
+        PolygonIntersectsCircleOnBorder = 3,
         CircleIntersectsPolygonWithMultipleSubPolygons = 4,
         CircleIntersectsPolygonWithOnePoint = 5,
         PolygonInsideCircle = 6

@@ -296,6 +296,27 @@ namespace GedimUnitTesting {
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircle);
       }
+
+      // check Polygon Intersects Circle on border
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
+        double circleRadius = 0.5;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 3);
+
+        Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+                                                                                                              circleCenter,
+                                                                                                              circleRadius,
+                                                                                                              polygonCircleIntersections);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonIntersectsCircleOnBorder);
+      }
     }
     catch (const exception& exception)
     {
