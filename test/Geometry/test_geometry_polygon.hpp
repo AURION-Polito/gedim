@@ -213,7 +213,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
       Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
-      // check no intersection
+      // check circle outside and no intersection
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -229,7 +229,7 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleNotIntersectPolygon);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonNoIntersection);
       }
 
       // check Polygon Inside Circle with center outside
@@ -248,7 +248,7 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircle);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
 
       // check circle inside polygon
@@ -267,7 +267,7 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygon);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection);
       }
 
       // check Polygon Inside Circle with center inside
@@ -286,10 +286,10 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircle);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
 
-      // check Polygon Intersects Circle on border
+      // check Polygon Intersects Circle only vertices
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -305,10 +305,10 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonIntersectsCircleOnBorder);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleIntersectionOnlyOnVertices);
       }
 
-      // check Circle Intersect Polygon in one vertex
+      // check Circle Outside Polygon one intersection
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -324,10 +324,10 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersection);
       }
 
-      // check Circle outside Intersect Polygon tangent to edge
+      // check Circle outside Polygon tangent to edge
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -343,17 +343,17 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersection);
       }
 
-      // check Circle inside Intersect Polygon tangent to edge
+      // check Circle inside Polygon tangent to edge
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
-        Eigen::Vector3d circleCenter(0.5, 0.25, 0.0);
-        double circleRadius = 0.25;
+        Eigen::Vector3d circleCenter(0.5, 0.125, 0.0);
+        double circleRadius = 0.125;
 
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
@@ -362,7 +362,7 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygonOneIntersection);
       }
 
       // check Circle Intersects Polygon With Multiple SubPolygons
@@ -382,7 +382,7 @@ namespace GedimUnitTesting {
                                                                                                               circleCenter,
                                                                                                               circleRadius,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithMultipleSubPolygons);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
       }
     }
     catch (const exception& exception)
