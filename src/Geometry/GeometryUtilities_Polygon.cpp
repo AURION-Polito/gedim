@@ -127,7 +127,6 @@ namespace Gedim
     // compute polygon vertices position respect the circle
     vector<PointCirclePositionResult> vertexPositions(numVertices);
     bool oneVertexOutsideCircle = false;
-    bool oneVertexOnCircleBorder = false;
     for (unsigned int v = 0; v < numVertices; v++)
     {
       vertexPositions[v] = PointCirclePosition(polygonVertices.col(v),
@@ -135,8 +134,6 @@ namespace Gedim
                                                circleRadius);
       if (vertexPositions[v] == PointCirclePositionResult::Outside)
         oneVertexOutsideCircle = true;
-      if (vertexPositions[v] == PointCirclePositionResult::OnBorder)
-        oneVertexOnCircleBorder = true;
     }
 
     switch (centerPosition.Type)
