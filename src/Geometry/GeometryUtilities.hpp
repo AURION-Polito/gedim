@@ -521,6 +521,7 @@ namespace Gedim
       /// \param circleCenter circle center
       /// \param circleRadius circle radius
       /// \return the resulting intersection
+      /// \note tested only in 2D
       IntersectionSegmentCircleResult IntersectionSegmentCircle(const Eigen::Vector3d& segmentOrigin,
                                                                 const Eigen::Vector3d& segmentEnd,
                                                                 const Eigen::Vector3d& circleCenter,
@@ -566,6 +567,7 @@ namespace Gedim
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
       /// \param result the resulting position
+      /// \note tested only in 2D
       PointCirclePositionResult PointCirclePosition(const Eigen::Vector3d& point,
                                                     const Eigen::Vector3d& circleCenter,
                                                     const double& circleRadius) const;
@@ -575,6 +577,7 @@ namespace Gedim
       /// \param circleRadius the circle radius
       /// \param polygonCircleIntersections the polygon center intersections
       /// \return the Polygon Circle reciprocal position
+      /// \note tested only in 2D
       PolygonCirclePositionTypes PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                        const Eigen::Vector3d& circleCenter,
                                                        const double& circleRadius,
@@ -584,6 +587,7 @@ namespace Gedim
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
       /// \return the Polygon Circle reciprocal intersections
+      /// \note tested only in 2D
       IntersectionPolygonCircleResult IntersectionPolygonCircle(const Eigen::MatrixXd& polygonVertices,
                                                                 const Eigen::Vector3d& circleCenter,
                                                                 const double& circleRadius) const;
