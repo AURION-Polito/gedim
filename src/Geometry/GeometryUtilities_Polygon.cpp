@@ -156,6 +156,8 @@ namespace Gedim
         else if (!oneVertexOutsideCircle &&
                  numIntersections == 1) // all vertices are inside the circle and one intersection found
           return PolygonCirclePositionTypes::PolygonInsideCircleOneIntersection;
+        else if (numIntersections > 1)
+          return PolygonCirclePositionTypes::GenericCirclePolygonIntersection;
       }
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
@@ -171,7 +173,7 @@ namespace Gedim
           return PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection;
         else if (numIntersections == 1) // only one intersection found, the circle touch the polygon tangent in one edge
           return PolygonCirclePositionTypes::CircleInsidePolygonOneIntersection;
-        else if (numIntersections > 0)
+        else if (numIntersections > 1)
         {
           // check if the circle intersects only the vertices (a sort of circumscribed circle)
           bool onlyVerticesIntersections = true;
@@ -187,6 +189,8 @@ namespace Gedim
 
           if (onlyVerticesIntersections)
             return PolygonCirclePositionTypes::PolygonInsideCircleIntersectionOnlyOnVertices;
+
+          return PolygonCirclePositionTypes::GenericCirclePolygonIntersection;
         }
       }
       break;
