@@ -113,36 +113,45 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                                                          const Eigen::Vector3d& circleCenter,
-                                                                                         const double& circleRadius) const
+                                                                                         const double& circleRadius,
+                                                                                         const IntersectionPolygonCircleResult& polygonCircleIntersections) const
   {
     GeometryUtilities::PointPolygonPositionResult centerPosition = PointPolygonPosition(circleCenter,
                                                                                         polygonVertices);
+    Output::Assert(centerPosition.Type != Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown);
+
     const unsigned int numVertices = polygonVertices.cols();
     vector<double> centerPolygonDistances(numVertices, 0.0);
+    vector<bool> distanceGreaterThanRadius(numVertices, false);
+    vector<bool> distanceEqualRadius(numVertices, false);
+    bool oneDistanceGreaterThanRadius = false;
+    bool oneDistanceEqualRadius = false;
     for (unsigned int v = 0; v < numVertices; v++)
+    {
       centerPolygonDistances[v] = PointDistance(circleCenter,
                                                 polygonVertices.col(v));
+      CompareTypes comparison = Compare1DValues(circleRadius, centerPolygonDistances[v]);
+      if (comparison == CompareTypes::FirstBeforeSecond)
+      {
+        distanceGreaterThanRadius[v] = true;
+        oneDistanceGreaterThanRadius = true;
+      }
+      if (comparison == CompareTypes::Coincident)
+      {
+        distanceEqualRadius[v] = true;
+        oneDistanceEqualRadius = true;
+      }
+    }
 
-    Output::Assert(centerPosition.Type != Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown);
     switch (centerPosition.Type) {
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside:
       {
-        bool circleTouch = false;
-        for (unsigned int v = 0; v < numVertices; v++)
-        {
-          CompareTypes comparison = Compare1DValues(centerPolygonDistances[v], circleRadius);
-          if (comparison ==
-              CompareTypes::FirstBeforeSecond ||
-              comparison ==
-              CompareTypes::Coincident)
-          {
-            circleTouch = true;
-            break;
-          }
-        }
-
-        if (!circleTouch)
+        if (oneDistanceGreaterThanRadius &&
+            polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::CircleNotIntersectPolygon;
+        else if (!oneDistanceGreaterThanRadius &&
+                 polygonCircleIntersections.Intersections.size() == 0)
+          return PolygonCirclePositionTypes::PolygonInsideCircle;
       }
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
@@ -150,6 +159,14 @@ namespace Gedim
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
+      {
+        if (oneDistanceGreaterThanRadius &&
+            polygonCircleIntersections.Intersections.size() == 0)
+          return PolygonCirclePositionTypes::CircleInsidePolygon;
+        else if (!oneDistanceGreaterThanRadius &&
+                 polygonCircleIntersections.Intersections.size() == 0)
+          return PolygonCirclePositionTypes::PolygonInsideCircle;
+      }
       break;
       default:
       break;

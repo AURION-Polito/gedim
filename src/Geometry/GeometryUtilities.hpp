@@ -49,6 +49,23 @@ namespace Gedim
         PolygonInsideCircle = 6
       };
 
+      struct IntersectionPolygonCircleResult final
+      {
+          struct Intersection final
+          {
+              enum struct Types {
+                Unknown = 0,
+                Vertex = 1,
+                Edge = 2
+              };
+
+              Types Type;
+              unsigned int Index;
+          };
+
+          vector<Intersection> Intersections = {};
+      };
+
       struct SplitPolygonInput final
       {
           struct AlignedEdge
@@ -538,10 +555,20 @@ namespace Gedim
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
+      /// \return the Polygon Circle reciprocal intersections
+      IntersectionPolygonCircleResult IntersectionPolygonCircle(const Eigen::MatrixXd& polygonVertices,
+                                                                const Eigen::Vector3d& circleCenter,
+                                                                const double& circleRadius) const;
+
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \param circleCenter the circle center
+      /// \param circleRadius the circle radius
+      /// \param polygonCircleIntersections the polygon center intersections
       /// \return the Polygon Circle reciprocal position
       PolygonCirclePositionTypes PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                        const Eigen::Vector3d& circleCenter,
-                                                       const double& circleRadius) const;
+                                                       const double& circleRadius,
+                                                       const IntersectionPolygonCircleResult& polygonCircleIntersections) const;
 
       /// \brief Convex Polygon simple Triangulation
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices

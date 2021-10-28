@@ -534,4 +534,81 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::IntersectionPolygonCircleResult GeometryUtilities::IntersectionPolygonCircle(const Eigen::MatrixXd& polygonVertices,
+                                                                                                  const Eigen::Vector3d& circleCenter,
+                                                                                                  const double& circleRadius) const
+  {
+    GeometryUtilities::IntersectionPolygonCircleResult result;
+
+    list<IntersectionPolygonCircleResult::Intersection> intersections;
+    set<unsigned int> edgeIntersections;
+    set<unsigned int> vertexIntersections;
+    const unsigned int numEdges = polygonVertices.cols();
+    for (unsigned int e = 0; e < numEdges; e++)
+    {
+      const unsigned int vertexOrigin = e;
+      const unsigned int vertexEnd = (e + 1) % numEdges;
+      const Vector3d& edgeOrigin = polygonVertices.col(vertexOrigin);
+      const Vector3d& edgeEnd = polygonVertices.col(vertexEnd);
+
+      IntersectionSegmentCircleResult intersection = IntersectionSegmentCircle(edgeOrigin,
+                                                                               edgeEnd,
+                                                                               circleCenter,
+                                                                               circleRadius);
+
+      if (intersection.Type == IntersectionSegmentCircleResult::Types::NoIntersection)
+        continue;
+
+      for (unsigned int i = 0; i < intersection.SegmentIntersections.size(); i++)
+      {
+        IntersectionSegmentCircleResult::IntersectionPosition& position = intersection.SegmentIntersections[i];
+        Output::Assert(position.Type != PointSegmentPositionTypes::Unknown);
+        switch (position.Type) {
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+          {
+            if (vertexIntersections.find(vertexOrigin) == vertexIntersections.end())
+            {
+              vertexIntersections.insert(vertexOrigin);
+              intersections.push_back(IntersectionPolygonCircleResult::Intersection());
+              IntersectionPolygonCircleResult::Intersection& vertexIntersection = intersections.back();
+              vertexIntersection.Index = vertexOrigin;
+              vertexIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Vertex;
+            }
+          }
+          break;
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+          {
+            if (edgeIntersections.find(e) == edgeIntersections.end())
+            {
+              edgeIntersections.insert(e);
+              intersections.push_back(IntersectionPolygonCircleResult::Intersection());
+              IntersectionPolygonCircleResult::Intersection& edgeIntersection = intersections.back();
+              edgeIntersection.Index = e;
+              edgeIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Edge;
+            }
+          }
+          break;
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+          {
+            if (vertexIntersections.find(vertexEnd) == vertexIntersections.end())
+            {
+              vertexIntersections.insert(vertexEnd);
+              intersections.push_back(IntersectionPolygonCircleResult::Intersection());
+              IntersectionPolygonCircleResult::Intersection& vertexIntersection = intersections.back();
+              vertexIntersection.Index = vertexEnd;
+              vertexIntersection.Type = IntersectionPolygonCircleResult::Intersection::Types::Vertex;
+            }
+          }
+          break;
+          default:
+          continue;
+        }
+      }
+    }
+
+    result.Intersections = vector<IntersectionPolygonCircleResult::Intersection>(intersections.begin(),
+                                                                                 intersections.end());
+    return result;
+  }
+  // ***************************************************************************
 }
