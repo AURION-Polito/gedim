@@ -296,7 +296,7 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
-        double circleRadius = 0.5;
+        double circleRadius = sqrt(2) / 2;
 
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
