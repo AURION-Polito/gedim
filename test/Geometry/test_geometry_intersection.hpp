@@ -768,6 +768,47 @@ namespace GedimUnitTesting {
         ASSERT_EQ(polygonCircleIntersections.Intersections[2].Index, 2);
       }
 
+      // check Circle Intersect Polygon in one vertex
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        Eigen::Vector3d circleCenter(0.0, 2.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Index, 2);
+      }
+
+      // check Circle Intersect Polygon tangent to edge
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        Eigen::Vector3d circleCenter(0.5, -1.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Tangent);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Index, 0);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[0].CurvilinearCoordinate, 0.5);
+      }
+
       // check Polygon generic intersections
       {
         Eigen::Matrix3d polygonVertices;
