@@ -291,6 +291,15 @@ namespace Gedim
           Eigen::MatrixXd IntersectionCoordinates; ///< The resulting intersection coordinates
       };
 
+      enum struct PointCirclePositionResult
+      {
+        Unknown = 0,
+        Outside = 1,
+        OnBorder = 2,
+        Inside = 3
+      };
+
+
       struct PointPolygonPositionResult final
       {
           enum struct Types
@@ -552,13 +561,14 @@ namespace Gedim
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \brief Check if point is inside a circle
+      /// \param point the point
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
-      /// \return the Polygon Circle reciprocal intersections
-      IntersectionPolygonCircleResult IntersectionPolygonCircle(const Eigen::MatrixXd& polygonVertices,
-                                                                const Eigen::Vector3d& circleCenter,
-                                                                const double& circleRadius) const;
+      /// \param result the resulting position
+      PointCirclePositionResult PointCirclePosition(const Eigen::Vector3d& point,
+                                                    const Eigen::Vector3d& circleCenter,
+                                                    const double& circleRadius) const;
 
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param circleCenter the circle center
@@ -569,6 +579,14 @@ namespace Gedim
                                                        const Eigen::Vector3d& circleCenter,
                                                        const double& circleRadius,
                                                        const IntersectionPolygonCircleResult& polygonCircleIntersections) const;
+
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \param circleCenter the circle center
+      /// \param circleRadius the circle radius
+      /// \return the Polygon Circle reciprocal intersections
+      IntersectionPolygonCircleResult IntersectionPolygonCircle(const Eigen::MatrixXd& polygonVertices,
+                                                                const Eigen::Vector3d& circleCenter,
+                                                                const double& circleRadius) const;
 
       /// \brief Convex Polygon simple Triangulation
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices

@@ -348,6 +348,56 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestPointCirclePosition)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check point outside
+      {
+        Eigen::Vector3d point(6.0, 4.0, 0.0);
+        Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+                                                                                                         circleCenter,
+                                                                                                         circleRadius);
+        ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::Outside);
+      }
+
+      // check point on border
+      {
+        Eigen::Vector3d point(0.0, 4.0, 0.0);
+        Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+                                                                                                         circleCenter,
+                                                                                                         circleRadius);
+        ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::OnBorder);
+      }
+
+      // check point inside
+      {
+        Eigen::Vector3d point(0.1, 2.5, 0.0);
+        Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+                                                                                                         circleCenter,
+                                                                                                         circleRadius);
+        ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::Inside);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POINT_H

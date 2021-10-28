@@ -121,35 +121,28 @@ namespace Gedim
     Output::Assert(centerPosition.Type != Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown);
 
     const unsigned int numVertices = polygonVertices.cols();
-    vector<double> centerPolygonDistances(numVertices, 0.0);
-    vector<bool> distanceGreaterThanRadius(numVertices, false);
-    vector<bool> distanceEqualRadius(numVertices, false);
-    bool oneDistanceGreaterThanRadius = false;
-    bool oneDistanceEqualRadius = false;
+    vector<PointCirclePositionResult> vertexPositions(numVertices);
+    bool oneVertexOutsideCircle = false;
+    bool oneVertexOnCircleBorder = false;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      centerPolygonDistances[v] = PointDistance(circleCenter,
-                                                polygonVertices.col(v));
-      CompareTypes comparison = Compare1DValues(circleRadius, centerPolygonDistances[v]);
-      if (comparison == CompareTypes::FirstBeforeSecond)
-      {
-        distanceGreaterThanRadius[v] = true;
-        oneDistanceGreaterThanRadius = true;
-      }
-      if (comparison == CompareTypes::Coincident)
-      {
-        distanceEqualRadius[v] = true;
-        oneDistanceEqualRadius = true;
-      }
+      vertexPositions[v] = PointCirclePosition(polygonVertices.col(v),
+                                               circleCenter,
+                                               circleRadius);
+      if (vertexPositions[v] == PointCirclePositionResult::Outside)
+        oneVertexOutsideCircle = true;
+      if (vertexPositions[v] == PointCirclePositionResult::OnBorder)
+        oneVertexOnCircleBorder = true;
     }
 
-    switch (centerPosition.Type) {
+    switch (centerPosition.Type)
+    {
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside:
       {
-        if (oneDistanceGreaterThanRadius &&
+        if (oneVertexOutsideCircle &&
             polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::CircleNotIntersectPolygon;
-        else if (!oneDistanceGreaterThanRadius &&
+        else if (!oneVertexOutsideCircle &&
                  polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::PolygonInsideCircle;
       }
@@ -160,10 +153,10 @@ namespace Gedim
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside:
       {
-        if (oneDistanceGreaterThanRadius &&
+        if (oneVertexOutsideCircle &&
             polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::CircleInsidePolygon;
-        else if (!oneDistanceGreaterThanRadius &&
+        else if (!oneVertexOutsideCircle &&
                  polygonCircleIntersections.Intersections.size() == 0)
           return PolygonCirclePositionTypes::PolygonInsideCircle;
       }
@@ -171,9 +164,6 @@ namespace Gedim
       default:
       break;
     }
-
-    cerr.precision(16);
-    cerr<< scientific<< centerPolygonDistances<< endl;
 
     return PolygonCirclePositionTypes::Unknown;
   }

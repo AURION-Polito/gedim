@@ -105,4 +105,18 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::PointCirclePositionResult GeometryUtilities::PointCirclePosition(const Eigen::Vector3d& point,
+                                                                                      const Eigen::Vector3d& circleCenter,
+                                                                                      const double& circleRadius) const
+  {
+    CompareTypes comparison = Compare1DValues(circleRadius, PointDistance(circleCenter,
+                                                                          point));
+    if (comparison == CompareTypes::FirstBeforeSecond)
+      return PointCirclePositionResult::Outside;
+    else if (comparison == CompareTypes::Coincident)
+      return PointCirclePositionResult::OnBorder;
+    else
+      return PointCirclePositionResult::Inside;
+  }
+  // ***************************************************************************
 }
