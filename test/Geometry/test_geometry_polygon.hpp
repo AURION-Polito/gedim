@@ -327,7 +327,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint);
       }
 
-      // check Circle Intersect Polygon tangent to edge
+      // check Circle outside Intersect Polygon tangent to edge
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -335,6 +335,25 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         Eigen::Vector3d circleCenter(0.5, -1.0, 0.0);
         double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+                                                                                                              circleCenter,
+                                                                                                              circleRadius,
+                                                                                                              polygonCircleIntersections);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleIntersectsPolygonWithOnePoint);
+      }
+
+      // check Circle inside Intersect Polygon tangent to edge
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        Eigen::Vector3d circleCenter(0.5, 0.25, 0.0);
+        double circleRadius = 0.25;
 
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
