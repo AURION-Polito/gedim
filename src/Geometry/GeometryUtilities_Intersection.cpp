@@ -493,11 +493,11 @@ namespace Gedim
     Vector3d d = segmentEnd - segmentOrigin;
     Vector3d f = segmentOrigin - circleCenter;
 
-    float a = d.dot(d);
-    float b = 2.0 * f.dot(d) ;
-    float c = f.dot(f) - circleRadius*circleRadius;
+    double a = d.dot(d);
+    double b = 2.0 * f.dot(d) ;
+    double c = f.dot(f) - circleRadius*circleRadius;
 
-    float discriminant = b * b - 4.0 * a * c;
+    double discriminant = b * b - 4.0 * a * c;
     if (IsValue1DNegative(discriminant))
     {
       // no intersection found
@@ -506,7 +506,7 @@ namespace Gedim
     else if (IsValue1DZero(discriminant))
     {
       // one intersection found
-      float intersection = -b / (2.0 * a);
+      double intersection = -b / (2.0 * a);
       result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::TangentIntersection;
       result.SegmentIntersections.resize(1);
       result.SegmentIntersections[0].CurvilinearCoordinate = intersection;
@@ -520,8 +520,8 @@ namespace Gedim
       // either solution may be on or off the ray so need to test both
       // t1 is always the smaller value, because BOTH discriminant and
       // a are nonnegative.
-      float t1 = (-b - discriminant)/(2.0 * a);
-      float t2 = (-b + discriminant)/(2.0 * a);
+      double t1 = (-b - discriminant)/(2.0 * a);
+      double t2 = (-b + discriminant)/(2.0 * a);
 
       result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::TwoIntersections;
       result.SegmentIntersections.resize(2);
@@ -541,7 +541,6 @@ namespace Gedim
     GeometryUtilities::IntersectionPolygonCircleResult result;
 
     list<IntersectionPolygonCircleResult::Intersection> intersections;
-    set<unsigned int> edgeIntersections;
     set<unsigned int> vertexIntersections;
     const unsigned int numEdges = polygonVertices.cols();
     for (unsigned int e = 0; e < numEdges; e++)
@@ -582,17 +581,14 @@ namespace Gedim
           break;
           case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
           {
-            if (edgeIntersections.find(e) == edgeIntersections.end())
-            {
-              edgeIntersections.insert(e);
-              intersections.push_back(IntersectionPolygonCircleResult::Intersection());
-              IntersectionPolygonCircleResult::Intersection& edgeIntersection = intersections.back();
-              edgeIntersection.Type = (intersection.Type == IntersectionSegmentCircleResult::Types::TangentIntersection) ?
-                                        IntersectionPolygonCircleResult::Intersection::Types::Tangent :
-                                        IntersectionPolygonCircleResult::Intersection::Types::Secant;
-              edgeIntersection.Index = e;
-              edgeIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge;
-            }
+            intersections.push_back(IntersectionPolygonCircleResult::Intersection());
+            IntersectionPolygonCircleResult::Intersection& edgeIntersection = intersections.back();
+            edgeIntersection.Type = (intersection.Type == IntersectionSegmentCircleResult::Types::TangentIntersection) ?
+                                      IntersectionPolygonCircleResult::Intersection::Types::Tangent :
+                                      IntersectionPolygonCircleResult::Intersection::Types::Secant;
+            edgeIntersection.Index = e;
+            edgeIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge;
+            edgeIntersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
           }
           break;
           case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:

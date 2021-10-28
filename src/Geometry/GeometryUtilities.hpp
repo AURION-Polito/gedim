@@ -65,9 +65,10 @@ namespace Gedim
                 Edge = 2
               };
 
-              Types Type;
-              IndexTypes IndexType;
+              Types Type = Types::Unknown;
+              IndexTypes IndexType = IndexTypes::Unknown;
               unsigned int Index;
+              double CurvilinearCoordinate; ///< Valid only in IndexType Edge
           };
 
           vector<Intersection> Intersections = {};
