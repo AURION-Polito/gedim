@@ -174,11 +174,13 @@ namespace Gedim
               {
                 Unknown = 0,
                 PolygonVertex = 1,
-                CircleIntersection = 2
+                CircleIntersection = 2,
+                Both = 3
               };
 
               Types Type = Types::Unknown;
-              unsigned int Index; ///< Index in polygon or in circle intersections
+              unsigned int PolygonIndex; ///< Index in polygon vertices
+              unsigned int IntersectionIndex; ///< Index in circle intersections
           };
 
           struct NewEdge final
