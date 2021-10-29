@@ -185,7 +185,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.PolygonTriangulation(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
+        Eigen::Vector3d internalPoint(0.25, 0.25, 0.0);
+
+        ASSERT_EQ(geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
+        ASSERT_EQ(geometryUtility.PolygonTriangulationByInternalPoint(polygonVertices,
+                                                                      internalPoint), vector<unsigned int>({ 3, 0, 1, 3, 1, 2, 3, 2, 0 }));
       }
 
       // check square triangulation
@@ -196,7 +200,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 1.0, 1.0, 0.0;
         polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.PolygonTriangulation(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
+        Eigen::Vector3d internalPoint(0.25, 0.25, 0.0);
+
+        ASSERT_EQ(geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
+        ASSERT_EQ(geometryUtility.PolygonTriangulationByInternalPoint(polygonVertices,
+                                                                      internalPoint), vector<unsigned int>({ 4, 0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0 }));
       }
     }
     catch (const exception& exception)

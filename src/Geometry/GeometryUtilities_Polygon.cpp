@@ -85,7 +85,7 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::PolygonTriangulation(const Eigen::MatrixXd& polygonVertices) const
+  vector<unsigned int> GeometryUtilities::PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
 
@@ -109,6 +109,27 @@ namespace Gedim
     Output::Assert(triangleList.size() % 3 == 0);
 
     return vector<unsigned int>(triangleList.begin(), triangleList.end());
+  }
+  // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
+                                                                              const Eigen::Vector3d& point) const
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+    Output::Assert(PointPolygonPosition(point, polygonVertices).Type == PointPolygonPositionResult::Types::Inside);
+
+    const unsigned int numPolygonVertices = polygonVertices.cols();
+    vector<unsigned int> triangles(3 * numPolygonVertices);
+
+    for (unsigned int v = 0; v < numPolygonVertices; v++)
+    {
+      triangles[3 * v] = numPolygonVertices;
+      triangles[3 * v + 1] = v;
+      triangles[3 * v + 2] = (v + 1) % numPolygonVertices;
+    }
+
+    Output::Assert(triangles.size() % 3 == 0);
+
+    return triangles;
   }
   // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,

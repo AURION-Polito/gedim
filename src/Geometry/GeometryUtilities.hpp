@@ -676,11 +676,18 @@ namespace Gedim
                                                                 const Eigen::Vector3d& circleCenter,
                                                                 const double& circleRadius) const;
 
-      /// \brief Convex Polygon simple Triangulation
+      /// \brief Convex Polygon simple Triangulation from the first vertex
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the sub-division triangulation, size 1 x 3 * numTriangles
       /// \note works only for convex polygon
-      vector<unsigned int> PolygonTriangulation(const Eigen::MatrixXd& polygonVertices) const;
+      vector<unsigned int> PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \brief Convex Polygon simple Triangulation from the first vertex
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param point internal polygon point
+      /// \return the sub-division triangulation, size 1 x 3 * numPolygonVertices, the point index is numPolygonVertices
+      vector<unsigned int> PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
+                                                               const Eigen::Vector3d& point) const;
 
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data

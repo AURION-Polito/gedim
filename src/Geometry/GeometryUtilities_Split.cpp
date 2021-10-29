@@ -965,53 +965,53 @@ namespace Gedim
         result.NewPolygons[numCircleIntersections].Type = SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon;
 
         // print
-        cerr<< "RESULTS"<< endl;
-        cerr<< "PolygonVerticesNewVerticesPosition: "<< result.PolygonVerticesNewVerticesPosition<< endl;
-        cerr<< "CircleIntersectionsNewVerticesPosition: "<< result.CircleIntersectionsNewVerticesPosition<< endl;
-        cerr<< "NewVertices: "<< endl;
-        for (const auto& newVertex : result.NewVertices)
-        {
-          switch (newVertex.Type) {
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex:
-              cerr<< "\t"<< "Type: "<< "PolygonVertex"<< endl;
-            break;
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
-              cerr<< "\t"<< "Type: "<< "CircleIntersection"<< endl;
-            break;
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::Both:
-              cerr<< "\t"<< "Type: "<< "Both"<< endl;
-            break;
-            default:
-              cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
-            break;
-          }
-
-          cerr<< "\t"<< "PolygonIndex: "<< newVertex.PolygonIndex<< endl;
-          cerr<< "\t"<< "IntersectionIndex: "<< newVertex.IntersectionIndex<< endl;
-        }
-
-        cerr<< "NewPolygons: "<< endl;
-        for (const auto& newPolygon : result.NewPolygons)
-        {
-          switch (newPolygon.Type)
-          {
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle:
-              cerr<< "\t"<< "Type: "<< "InsideOnlyCircle"<< endl;
-            break;
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon:
-              cerr<< "\t"<< "Type: "<< "InsideOnlyPolygon"<< endl;
-            break;
-            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon:
-              cerr<< "\t"<< "Type: "<< "InsideCircleAndPolygon"<< endl;
-            break;
-            default:
-              cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
-            break;
-
-          }
-          cerr<< "\t"<< "Vertices: "<< newPolygon.Vertices<< endl;
-          cerr<< "\t"<< "Edges: "<< newPolygon.Edges<< endl;
-        }
+        // cerr<< "RESULTS"<< endl;
+        // cerr<< "PolygonVerticesNewVerticesPosition: "<< result.PolygonVerticesNewVerticesPosition<< endl;
+        // cerr<< "CircleIntersectionsNewVerticesPosition: "<< result.CircleIntersectionsNewVerticesPosition<< endl;
+        // cerr<< "NewVertices: "<< endl;
+        // for (const auto& newVertex : result.NewVertices)
+        // {
+        //   switch (newVertex.Type) {
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex:
+        //       cerr<< "\t"<< "Type: "<< "PolygonVertex"<< endl;
+        //     break;
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
+        //       cerr<< "\t"<< "Type: "<< "CircleIntersection"<< endl;
+        //     break;
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::Both:
+        //       cerr<< "\t"<< "Type: "<< "Both"<< endl;
+        //     break;
+        //     default:
+        //       cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
+        //     break;
+        //   }
+        //
+        //   cerr<< "\t"<< "PolygonIndex: "<< newVertex.PolygonIndex<< endl;
+        //   cerr<< "\t"<< "IntersectionIndex: "<< newVertex.IntersectionIndex<< endl;
+        // }
+        //
+        // cerr<< "NewPolygons: "<< endl;
+        // for (const auto& newPolygon : result.NewPolygons)
+        // {
+        //   switch (newPolygon.Type)
+        //   {
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle:
+        //       cerr<< "\t"<< "Type: "<< "InsideOnlyCircle"<< endl;
+        //     break;
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon:
+        //       cerr<< "\t"<< "Type: "<< "InsideOnlyPolygon"<< endl;
+        //     break;
+        //     case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon:
+        //       cerr<< "\t"<< "Type: "<< "InsideCircleAndPolygon"<< endl;
+        //     break;
+        //     default:
+        //       cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
+        //     break;
+        //
+        //   }
+        //   cerr<< "\t"<< "Vertices: "<< newPolygon.Vertices<< endl;
+        //   cerr<< "\t"<< "Edges: "<< newPolygon.Edges<< endl;
+        // }
 
         return result;
       }
