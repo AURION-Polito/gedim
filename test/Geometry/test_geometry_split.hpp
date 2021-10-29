@@ -610,6 +610,8 @@ namespace GedimUnitTesting {
                                                                                                                polygonCircleIntersections,
                                                                                                                polygonPosition);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::PolygonCreation);
+        ASSERT_EQ(result.PolygonVerticesNewVerticesPosition, vector<unsigned int>({ 0, 1, 4 }));
+        ASSERT_EQ(result.CircleIntersectionsNewVerticesPosition, vector<unsigned int>({ 2, 3, 5 }));
         ASSERT_EQ(result.NewVertices.size(), 6);
         ASSERT_EQ(result.NewVertices[0].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
         ASSERT_EQ(result.NewVertices[0].PolygonIndex, 0);
@@ -666,6 +668,39 @@ namespace GedimUnitTesting {
                                                                                                                polygonCircleIntersections,
                                                                                                                polygonPosition);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::PolygonCreation);
+        ASSERT_EQ(result.PolygonVerticesNewVerticesPosition, vector<unsigned int>({ 0, 2, 5 }));
+        ASSERT_EQ(result.CircleIntersectionsNewVerticesPosition, vector<unsigned int>({ 1, 3, 4, 6 }));
+        ASSERT_EQ(result.NewVertices.size(), 7);
+        ASSERT_EQ(result.NewVertices[0].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
+        ASSERT_EQ(result.NewVertices[0].PolygonIndex, 0);
+        ASSERT_EQ(result.NewVertices[1].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection);
+        ASSERT_EQ(result.NewVertices[1].IntersectionIndex, 0);
+        ASSERT_EQ(result.NewVertices[2].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
+        ASSERT_EQ(result.NewVertices[2].PolygonIndex, 1);
+        ASSERT_EQ(result.NewVertices[3].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection);
+        ASSERT_EQ(result.NewVertices[3].IntersectionIndex, 1);
+        ASSERT_EQ(result.NewVertices[4].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection);
+        ASSERT_EQ(result.NewVertices[4].IntersectionIndex, 2);
+        ASSERT_EQ(result.NewVertices[5].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
+        ASSERT_EQ(result.NewVertices[5].PolygonIndex, 2);
+        ASSERT_EQ(result.NewVertices[6].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection);
+        ASSERT_EQ(result.NewVertices[6].IntersectionIndex, 3);
+        ASSERT_EQ(result.NewPolygons.size(), 5);
+        ASSERT_EQ(result.NewPolygons[0].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
+        ASSERT_EQ(result.NewPolygons[0].Vertices, vector<unsigned int>({ 1, 2, 3 }));
+        ASSERT_EQ(result.NewPolygons[0].Edges, vector<unsigned int>({ 0, 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[1].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle);
+        ASSERT_EQ(result.NewPolygons[1].Vertices, vector<unsigned int>({ 3, 4 }));
+        ASSERT_EQ(result.NewPolygons[1].Edges, vector<unsigned int>({ 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[2].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
+        ASSERT_EQ(result.NewPolygons[2].Vertices, vector<unsigned int>({ 4, 5, 6 }));
+        ASSERT_EQ(result.NewPolygons[2].Edges, vector<unsigned int>({ 0, 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[3].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
+        ASSERT_EQ(result.NewPolygons[3].Vertices, vector<unsigned int>({ 6, 0, 1 }));
+        ASSERT_EQ(result.NewPolygons[3].Edges, vector<unsigned int>({ 0, 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[4].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon);
+        ASSERT_EQ(result.NewPolygons[4].Vertices, vector<unsigned int>({ 1, 3, 4, 6 }));
+        ASSERT_EQ(result.NewPolygons[4].Edges, vector<unsigned int>({ 0, 0, 0, 0 }));
       }
 
       // Generic intersections with quadrilateral
