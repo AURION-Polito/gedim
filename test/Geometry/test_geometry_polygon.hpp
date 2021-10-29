@@ -444,6 +444,30 @@ namespace GedimUnitTesting {
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
       }
+
+      // check generic intersections with quadrilateral
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 1.0, 3.0, 0.0;
+        polygonVertices.col(1)<< 3.0, 3.0 - 2.0 / sqrt(3.0), 0.0;
+        polygonVertices.col(2)<< 4.0 + 1.0 / 10.0, 3.0, 0.0;
+        polygonVertices.col(3)<< 3.0, 4.0, 0.0;
+        Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
+        Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+                                                                                                              circleCenter,
+                                                                                                              circleRadius,
+                                                                                                              vertexPositions,
+                                                                                                              polygonCircleIntersections);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);}
     }
     catch (const exception& exception)
     {

@@ -391,6 +391,26 @@ namespace GedimUnitTesting {
                                                                                                          circleRadius);
         ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::Inside);
       }
+
+      // check generic points
+      {
+        Eigen::MatrixXd points(3, 4);
+        points.col(0)<< 1.0, 3.0, 0.0;
+        points.col(1)<< 3.0, 3.0 - 2.0 / sqrt(3.0), 0.0;
+        points.col(2)<< 4.0 + 1.0 / 10.0, 3.0, 0.0;
+        points.col(3)<< 3.0, 4.0, 0.0;
+        Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> result = geometryUtility.PointCirclePositions(points,
+                                                                                                                  circleCenter,
+                                                                                                                  circleRadius);
+        ASSERT_EQ(result.size(), 4);
+        ASSERT_EQ(result[0], Gedim::GeometryUtilities::PointCirclePositionResult::Outside);
+        ASSERT_EQ(result[1], Gedim::GeometryUtilities::PointCirclePositionResult::Outside);
+        ASSERT_EQ(result[2], Gedim::GeometryUtilities::PointCirclePositionResult::Outside);
+        ASSERT_EQ(result[3], Gedim::GeometryUtilities::PointCirclePositionResult::OnBorder);
+      }
     }
     catch (const exception& exception)
     {

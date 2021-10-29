@@ -600,7 +600,7 @@ namespace Gedim
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
-      /// \param vertexPositions position of the polygon vertices respect the circle
+      /// \param vertexPositions the polygon vertices positions respect the circle
       /// \param polygonCircleIntersections the polygon center intersections
       /// \return the Polygon Circle reciprocal position
       /// \note tested only in 2D
@@ -632,11 +632,19 @@ namespace Gedim
       SplitPolygonWithSegmentResult SplitPolygonWithSegment(const SplitPolygonInput& input) const;
 
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a cirle
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \param circleCenter the circle center
+      /// \param circleRadius the circle radius
+      /// \param vertexPositions the polygon vertices positions respect the circle
+      /// \param polygonCircleIntersections the polygon center intersections
+      /// \param polygonCirclePosition the polygon position respect the circle
+      /// \note tested only in 2D
       /// \return the split result
       /// \note only indices are threated in this function, no space points
       SplitPolygonWithCircleResult SplitPolygonWithCircle(const Eigen::MatrixXd& polygonVertices,
                                                           const Eigen::Vector3d& circleCenter,
                                                           const double& circleRadius,
+                                                          const vector<PointCirclePositionResult>& vertexPositions,
                                                           const IntersectionPolygonCircleResult& polygonCircleIntersections,
                                                           const PolygonCirclePositionTypes& polygonCirclePosition) const;
 
