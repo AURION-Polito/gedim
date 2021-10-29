@@ -193,7 +193,7 @@ namespace Gedim
               };
 
               Types Type = Types::Unknown;
-              unsigned int Index; ///< Index in polygon or in circle intersections
+              unsigned int PolygonIndex; ///< Index in polygon or in circle intersections
           };
 
           struct NewPolygon final
