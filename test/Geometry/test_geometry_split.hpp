@@ -764,12 +764,18 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NewPolygons[2].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
         ASSERT_EQ(result.NewPolygons[2].Vertices, vector<unsigned int>({ 4, 5, 6 }));
         ASSERT_EQ(result.NewPolygons[2].Edges, vector<unsigned int>({ 0, 0, 0 }));
-        ASSERT_EQ(result.NewPolygons[3].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
-        ASSERT_EQ(result.NewPolygons[3].Vertices, vector<unsigned int>({ 6, 0, 1 }));
-        ASSERT_EQ(result.NewPolygons[3].Edges, vector<unsigned int>({ 0, 0, 0 }));
-        ASSERT_EQ(result.NewPolygons[4].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon);
-        ASSERT_EQ(result.NewPolygons[4].Vertices, vector<unsigned int>({ 1, 3, 4, 6 }));
-        ASSERT_EQ(result.NewPolygons[4].Edges, vector<unsigned int>({ 0, 0, 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[3].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle);
+        ASSERT_EQ(result.NewPolygons[3].Vertices, vector<unsigned int>({ 6, 7 }));
+        ASSERT_EQ(result.NewPolygons[3].Edges, vector<unsigned int>({ 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[4].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle);
+        ASSERT_EQ(result.NewPolygons[4].Vertices, vector<unsigned int>({ 7, 8 }));
+        ASSERT_EQ(result.NewPolygons[4].Edges, vector<unsigned int>({ 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[5].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon);
+        ASSERT_EQ(result.NewPolygons[5].Vertices, vector<unsigned int>({ 8, 0, 1 }));
+        ASSERT_EQ(result.NewPolygons[5].Edges, vector<unsigned int>({ 0, 0, 0 }));
+        ASSERT_EQ(result.NewPolygons[6].Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon);
+        ASSERT_EQ(result.NewPolygons[6].Vertices, vector<unsigned int>({ 1, 3, 4, 6, 7, 8 }));
+        ASSERT_EQ(result.NewPolygons[6].Edges, vector<unsigned int>({ 0, 0, 0, 0, 0, 0 }));
       }
     }
     catch (const exception& exception)
