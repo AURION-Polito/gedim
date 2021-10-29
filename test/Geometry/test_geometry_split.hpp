@@ -430,13 +430,13 @@ namespace GedimUnitTesting {
                                                                                                                      circleRadius,
                                                                                                                      vertexPositions,
                                                                                                                      polygonCircleIntersections);
-        Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
-                                                                                                               circleCenter,
-                                                                                                               circleRadius,
-                                                                                                               vertexPositions,
-                                                                                                               polygonCircleIntersections,
-                                                                                                               polygonPosition);
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::PolygonCreation);
+
+        ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+                                                                circleCenter,
+                                                                circleRadius,
+                                                                vertexPositions,
+                                                                polygonCircleIntersections,
+                                                                polygonPosition));
       }
 
       // Polygon Inside Circle with center inside no intersection
@@ -546,13 +546,12 @@ namespace GedimUnitTesting {
                                                                                                                      circleRadius,
                                                                                                                      vertexPositions,
                                                                                                                      polygonCircleIntersections);
-        Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
-                                                                                                               circleCenter,
-                                                                                                               circleRadius,
-                                                                                                               vertexPositions,
-                                                                                                               polygonCircleIntersections,
-                                                                                                               polygonPosition);
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::PolygonUpdate);
+        ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+                                                                circleCenter,
+                                                                circleRadius,
+                                                                vertexPositions,
+                                                                polygonCircleIntersections,
+                                                                polygonPosition));
       }
 
       // Circle inside Polygon tangent to edge
@@ -575,13 +574,12 @@ namespace GedimUnitTesting {
                                                                                                                      circleRadius,
                                                                                                                      vertexPositions,
                                                                                                                      polygonCircleIntersections);
-        Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
-                                                                                                               circleCenter,
-                                                                                                               circleRadius,
-                                                                                                               vertexPositions,
-                                                                                                               polygonCircleIntersections,
-                                                                                                               polygonPosition);
-        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::PolygonCreation);
+        ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+                                                                circleCenter,
+                                                                circleRadius,
+                                                                vertexPositions,
+                                                                polygonCircleIntersections,
+                                                                polygonPosition));
       }
 
       // Circle Outside Polygon Intersects With Multiple SubPolygons

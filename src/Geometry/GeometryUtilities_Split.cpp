@@ -806,19 +806,14 @@ namespace Gedim
       case PolygonCirclePositionTypes::PolygonOutsideCircleOneIntersectionTangentOnEdge:
       {
         result.Type = SplitPolygonWithCircleResult::Types::PolygonUpdate;
-        return result;
-      }
-      break;
-      case PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection:
-      {
-        result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
-        return result;
+        throw runtime_error("Case not managed yet. TODO: update the polygon adding the new vertex tangent to the circle");
       }
       break;
       case PolygonCirclePositionTypes::CircleInsidePolygonOneIntersectionTangentOnEdge:
+      case PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection:
       {
         result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
-        return result;
+        throw runtime_error("Case not managed yet. TODO: split the polygon in sub-triangles with the center of the circle and call this function with sub-triangles generated, then unify the results");
       }
       break;
       case PolygonCirclePositionTypes::CirclePolygonMultipleIntersections:
