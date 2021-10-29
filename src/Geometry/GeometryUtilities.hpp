@@ -74,7 +74,7 @@ namespace Gedim
               double CurvilinearCoordinate; ///< Valid only in IndexType Edge
           };
 
-          vector<Intersection> Intersections = {};
+          vector<Intersection> Intersections = {}; ///< ordered by edge order
       };
 
       struct SplitPolygonInput final
@@ -170,14 +170,33 @@ namespace Gedim
 
           struct NewVertex final
           {
+              enum struct Types
+              {
+                Unknown = 0,
+                PolygonVertex = 1,
+                CircleIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int Index; ///< Index in polygon or in circle intersections
           };
 
           struct NewPolygon final
           {
+              enum struct Types
+              {
+                Unknown = 0,
+                InsideCircle = 1,
+                OutsideCircle = 2
+              };
+
+              Types Type = Types::Unknown;
               list<unsigned int> Vertices = {};
           };
 
           Types Type = Types::Unknown;
+          vector<unsigned int> PolygonVerticesNewVerticesPosition = {};
+          vector<unsigned int> CircleIntersectionsNewVerticesPosition = {};
           vector<NewVertex> NewVertices = {};
           vector<NewPolygon> NewPolygons = {};
       };

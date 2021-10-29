@@ -54,7 +54,7 @@ namespace Gedim
     if (Compare1DValues(curvilinearCoordinate, 1.0) == CompareTypes::SecondBeforeFirst)
       return PointSegmentPositionTypes::OnSegmentLineAfterEnd;
 
-    return PointSegmentPositionTypes::Unknown;
+    throw runtime_error("PointSegmentPosition failed");
   }
   // ***************************************************************************
   GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition(const Vector3d& point,

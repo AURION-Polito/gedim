@@ -792,7 +792,6 @@ namespace Gedim
   {
     SplitPolygonWithCircleResult result;
 
-    Output::Assert(polygonCirclePosition != PolygonCirclePositionTypes::Unknown);
     switch (polygonCirclePosition)
     {
       case PolygonCirclePositionTypes::PolygonOutsideCircleNoIntersection:
@@ -824,7 +823,89 @@ namespace Gedim
       break;
       case PolygonCirclePositionTypes::CirclePolygonMultipleIntersections:
       {
+        const unsigned int numVertices = polygonVertices.cols();
+        const unsigned int numCircleIntersections = polygonCircleIntersections.Intersections.size();
+        Output::Assert(numVertices > 0 && numCircleIntersections > 0);
+
+        list<SplitPolygonWithCircleResult::NewVertex> newVertices;
+        list<SplitPolygonWithCircleResult::NewPolygon> newPolygons;
+        result.PolygonVerticesNewVerticesPosition.resize(numVertices);
+        result.CircleIntersectionsNewVerticesPosition.resize(numCircleIntersections);
+
+        // order vertices with circle intersections and create new vertices
+        unsigned int checkIntersection = 0;
+        for (unsigned int v = 0; v < numVertices; v++)
+        {
+          result.PolygonVerticesNewVerticesPosition[v] = newVertices.size();
+          newVertices.push_back(SplitPolygonWithCircleResult::NewVertex());
+          SplitPolygonWithCircleResult::NewVertex& vertex = newVertices.back();
+          vertex.Type = SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex;
+          vertex.Index = v;
+
+          // add circle intersection if in the same edge
+          while (checkIntersection < numCircleIntersections &&
+                 polygonCircleIntersections.Intersections[checkIntersection].Index == v)
+          {
+            const IntersectionPolygonCircleResult::Intersection::IndexTypes& intersectionIndexType =
+                polygonCircleIntersections.Intersections[checkIntersection].IndexType;
+
+            Output::Assert(intersectionIndexType !=
+                IntersectionPolygonCircleResult::Intersection::IndexTypes::Unknown);
+
+            if (intersectionIndexType ==
+                IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex)
+            {
+              // vertex intersection, nothing to do
+              result.CircleIntersectionsNewVerticesPosition[checkIntersection] =
+                  result.PolygonVerticesNewVerticesPosition[v];
+              checkIntersection++;
+            }
+            else if (intersectionIndexType ==
+                     IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge)
+            {
+              // edge intersection, add it in the list
+              result.CircleIntersectionsNewVerticesPosition[checkIntersection] = newVertices.size();
+              newVertices.push_back(SplitPolygonWithCircleResult::NewVertex());
+              SplitPolygonWithCircleResult::NewVertex& vertex = newVertices.back();
+              vertex.Type = SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection;
+              vertex.Index = checkIntersection;
+              checkIntersection++;
+            }
+          }
+        }
+
+        // at first create polygon inside circle
+        vector<bool> verticesVisited(numVertices, false);
+        list<unsigned int> vertexInsideCircle;
+
+        for (unsigned int v = 0; v < numVertices; v++)
+        {
+          if (vertexPositions[v] == PointCirclePositionResult::Outside)
+            continue;
+
+          verticesVisited[v] = true;
+          vertexInsideCircle.push_back(v);
+        }
+
         result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
+        result.NewVertices = vector<SplitPolygonWithCircleResult::NewVertex>(newVertices.begin(),
+                                                                             newVertices.end());
+        result.NewPolygons = vector<SplitPolygonWithCircleResult::NewPolygon>(newPolygons.begin(),
+                                                                              newPolygons.end());
+
+        cerr<< "PolygonVerticesNewVerticesPosition: "<< result.PolygonVerticesNewVerticesPosition<< endl;
+        cerr<< "CircleIntersectionsNewVerticesPosition: "<< result.CircleIntersectionsNewVerticesPosition<< endl;
+        cerr<< "NewVertices: "<< "[";
+        for (const auto& newVertex : result.NewVertices)
+        {
+          cerr<< (newVertex.Type ==
+                  SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection ?
+                    "Circle" :
+                    "Polygon")<< " ";
+          cerr<< newVertex.Index<< ",";
+        }
+        cerr<< "]"<< endl;
+
         return result;
       }
       break;
@@ -832,7 +913,7 @@ namespace Gedim
       break;
     }
 
-    return result;
+    throw runtime_error("SplitPolygonWithCircle failed");
   }
   // ***************************************************************************
 }

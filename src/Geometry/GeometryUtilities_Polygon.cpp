@@ -198,7 +198,7 @@ namespace Gedim
       break;
     }
 
-    return PolygonCirclePositionTypes::Unknown;
+    throw runtime_error("PolygonCirclePosition failed");
   }
   // ***************************************************************************
 }
