@@ -114,6 +114,7 @@ namespace Gedim
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                                                          const Eigen::Vector3d& circleCenter,
                                                                                          const double& circleRadius,
+                                                                                         const vector<PointCirclePositionResult>& vertexPositions,
                                                                                          const IntersectionPolygonCircleResult& polygonCircleIntersections) const
   {
     // check circle center position respect the polygon
@@ -125,13 +126,9 @@ namespace Gedim
     const unsigned int numIntersections = polygonCircleIntersections.Intersections.size();
 
     // compute polygon vertices position respect the circle
-    vector<PointCirclePositionResult> vertexPositions(numVertices);
     bool oneVertexOutsideCircle = false;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      vertexPositions[v] = PointCirclePosition(polygonVertices.col(v),
-                                               circleCenter,
-                                               circleRadius);
       if (vertexPositions[v] == PointCirclePositionResult::Outside)
         oneVertexOutsideCircle = true;
     }

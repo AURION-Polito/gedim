@@ -587,15 +587,27 @@ namespace Gedim
                                                     const Eigen::Vector3d& circleCenter,
                                                     const double& circleRadius) const;
 
+      /// \brief Check if points are inside a circle
+      /// \param points the matrix of points (size 3 x numVertices)
+      /// \param circleCenter the circle center
+      /// \param circleRadius the circle radius
+      /// \param result the resulting positions
+      /// \note tested only in 2D
+      vector<PointCirclePositionResult> PointCirclePositions(const Eigen::MatrixXd& points,
+                                                             const Eigen::Vector3d& circleCenter,
+                                                             const double& circleRadius) const;
+
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
+      /// \param vertexPositions position of the polygon vertices respect the circle
       /// \param polygonCircleIntersections the polygon center intersections
       /// \return the Polygon Circle reciprocal position
       /// \note tested only in 2D
       PolygonCirclePositionTypes PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                        const Eigen::Vector3d& circleCenter,
                                                        const double& circleRadius,
+                                                       const vector<PointCirclePositionResult>& vertexPositions,
                                                        const IntersectionPolygonCircleResult& polygonCircleIntersections) const;
 
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)

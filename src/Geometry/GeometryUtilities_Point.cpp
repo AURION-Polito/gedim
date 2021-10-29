@@ -119,4 +119,21 @@ namespace Gedim
       return PointCirclePositionResult::Inside;
   }
   // ***************************************************************************
+  vector<GeometryUtilities::PointCirclePositionResult> GeometryUtilities::PointCirclePositions(const Eigen::MatrixXd& points,
+                                                                                               const Eigen::Vector3d& circleCenter,
+                                                                                               const double& circleRadius) const
+  {
+    const unsigned int numVertices = points.cols();
+    vector<PointCirclePositionResult> positions(numVertices);
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      positions[v] = PointCirclePosition(points.col(v),
+                                         circleCenter,
+                                         circleRadius);
+    }
+
+    return positions;
+  }
+  // ***************************************************************************
 }

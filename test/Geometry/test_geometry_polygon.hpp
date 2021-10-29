@@ -225,9 +225,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonNoIntersection);
       }
@@ -244,9 +248,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
@@ -263,9 +271,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection);
       }
@@ -282,9 +294,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
@@ -301,9 +317,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleIntersectionOnlyOnVertices);
       }
@@ -320,9 +340,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersection);
       }
@@ -339,9 +363,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersection);
       }
@@ -358,9 +386,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygonOneIntersection);
       }
@@ -378,9 +410,13 @@ namespace GedimUnitTesting {
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
 
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
       }
@@ -398,9 +434,13 @@ namespace GedimUnitTesting {
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
 
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+                                                                                                                           circleCenter,
+                                                                                                                           circleRadius);
         Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
                                                                                                               circleCenter,
                                                                                                               circleRadius,
+                                                                                                              vertexPositions,
                                                                                                               polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
       }
