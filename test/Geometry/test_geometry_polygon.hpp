@@ -259,7 +259,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
 
-      // check circle inside polygon
+      // check circle inside polygon no intersection
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -282,7 +282,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection);
       }
 
-      // check Polygon Inside Circle with center inside
+      // check Polygon Inside Circle with center inside no intersection
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -305,7 +305,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection);
       }
 
-      // check Polygon Intersects Circle only vertices
+      // check Polygon inside Circle intersects only vertices
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;

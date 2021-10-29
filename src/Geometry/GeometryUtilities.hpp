@@ -159,7 +159,26 @@ namespace Gedim
 
       struct SplitPolygonWithCircleResult final
       {
+          enum struct Types
+          {
+            Unknown = 0,
+            NoAction = 1,
+            PolygonUpdate = 2,
+            PolygonCreation = 3
+          };
 
+          struct NewVertex final
+          {
+          };
+
+          struct NewPolygon final
+          {
+              list<unsigned int> Vertices = {};
+          };
+
+          Types Type = Types::Unknown;
+          vector<NewVertex> NewVertices = {};
+          vector<NewPolygon> NewPolygons = {};
       };
 
       struct IntersectionSegmentSegmentResult final
