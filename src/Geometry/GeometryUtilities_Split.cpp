@@ -910,10 +910,28 @@ namespace Gedim
           result.NewPolygons[c].Vertices.resize(numNewPolygonVertices[c]);
           result.NewPolygons[c].Edges.resize(numNewPolygonVertices[c]);
 
-          // create vertices
+          // create vertices and newPolygon Type
           unsigned int startVertexIndex = result.CircleIntersectionsNewVerticesPosition[c];
+
+          bool isInsideOnlyPolygon = false;
           for (unsigned int v = 0; v < numNewPolygonVertices[c]; v++)
-            result.NewPolygons[c].Vertices[v] = (startVertexIndex + v) % numNewVertices;
+          {
+            const unsigned int newVertexIndex = (startVertexIndex + v) % numNewVertices;
+            result.NewPolygons[c].Vertices[v] = newVertexIndex;
+
+            if (result.NewVertices[newVertexIndex].Type !=
+                SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex)
+              continue;
+
+            const unsigned int polygonVertexIndex = result.NewVertices[newVertexIndex].PolygonIndex;
+            if (vertexPositions[polygonVertexIndex] == PointCirclePositionResult::Outside)
+              isInsideOnlyPolygon = true;
+          }
+
+          // check newPolygonType
+          result.NewPolygons[c].Type = isInsideOnlyPolygon ?
+                                         SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon :
+                                         SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle;
         }
 
         // then create new polygon inside the circle polygon intersection
