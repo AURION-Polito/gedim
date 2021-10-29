@@ -42,13 +42,14 @@ namespace Gedim
       enum struct PolygonCirclePositionTypes {
         Unknown = 0,
         CircleOutsidePolygonNoIntersection = 1,
-        CircleOutsidePolygonOneIntersection = 2,
-        CircleInsidePolygonNoIntersection = 3,
-        CircleInsidePolygonOneIntersection = 4,
-        PolygonInsideCircleNoIntersection = 5,
-        PolygonInsideCircleOneIntersection = 6,
-        PolygonInsideCircleIntersectionOnlyOnVertices = 7,
-        GenericCirclePolygonIntersection = 8
+        CircleOutsidePolygonOneIntersectionOnVertex = 2,
+        CircleOutsidePolygonOneIntersectionTangentOnEdge = 3,
+        CircleInsidePolygonNoIntersection = 4,
+        CircleInsidePolygonOneIntersectionTangentOnEdge = 5,
+        PolygonInsideCircleNoIntersection = 6,
+        PolygonInsideCircleOneVertexIntersection = 7,
+        PolygonInsideCircleIntersectionOnlyOnVertices = 8,
+        GenericCirclePolygonIntersection = 9
       };
 
       struct IntersectionPolygonCircleResult final

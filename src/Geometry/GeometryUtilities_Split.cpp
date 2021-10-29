@@ -792,6 +792,46 @@ namespace Gedim
   {
     SplitPolygonWithCircleResult result;
 
+    Output::Assert(polygonCirclePosition != PolygonCirclePositionTypes::Unknown);
+    switch (polygonCirclePosition)
+    {
+      case PolygonCirclePositionTypes::CircleOutsidePolygonNoIntersection:
+      case PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionOnVertex:
+      case PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection:
+      case PolygonCirclePositionTypes::PolygonInsideCircleOneVertexIntersection:
+      case PolygonCirclePositionTypes::PolygonInsideCircleIntersectionOnlyOnVertices:
+      {
+        result.Type = SplitPolygonWithCircleResult::Types::NoAction;
+        return result;
+      }
+      case PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionTangentOnEdge:
+      {
+        result.Type = SplitPolygonWithCircleResult::Types::PolygonUpdate;
+        return result;
+      }
+      break;
+      case PolygonCirclePositionTypes::CircleInsidePolygonNoIntersection:
+      {
+        result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
+        return result;
+      }
+      break;
+      case PolygonCirclePositionTypes::CircleInsidePolygonOneIntersectionTangentOnEdge:
+      {
+        result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
+        return result;
+      }
+      break;
+      case PolygonCirclePositionTypes::GenericCirclePolygonIntersection:
+      {
+        result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
+        return result;
+      }
+      break;
+      default:
+      break;
+    }
+
     return result;
   }
   // ***************************************************************************

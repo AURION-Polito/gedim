@@ -146,10 +146,16 @@ namespace Gedim
           return PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection;
         else if (oneVertexOutsideCircle &&
                  numIntersections == 1) // at least one vertex is outside the circle and only one intersection found, the circle is outside and touches the polygon in one vertex
-          return PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersection;
+        {
+          if (polygonCircleIntersections.Intersections[0].IndexType == IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex)
+            return PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionOnVertex;
+          else if (polygonCircleIntersections.Intersections[0].IndexType == IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
+                   polygonCircleIntersections.Intersections[0].Type == IntersectionPolygonCircleResult::Intersection::Types::Tangent)
+            return PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionTangentOnEdge;
+        }
         else if (!oneVertexOutsideCircle &&
                  numIntersections == 1) // all vertices are inside the circle and one intersection found
-          return PolygonCirclePositionTypes::PolygonInsideCircleOneIntersection;
+          return PolygonCirclePositionTypes::PolygonInsideCircleOneVertexIntersection;
         else if (numIntersections > 1)
           return PolygonCirclePositionTypes::GenericCirclePolygonIntersection;
       }
@@ -166,7 +172,7 @@ namespace Gedim
                  numIntersections == 0) // if at least a vertex is not outside the circle and there are no intersections then the polygon is inside the circle
           return PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection;
         else if (numIntersections == 1) // only one intersection found, the circle touch the polygon tangent in one edge
-          return PolygonCirclePositionTypes::CircleInsidePolygonOneIntersection;
+          return PolygonCirclePositionTypes::CircleInsidePolygonOneIntersectionTangentOnEdge;
         else if (numIntersections > 1)
         {
           // check if the circle intersects only the vertices (a sort of circumscribed circle)

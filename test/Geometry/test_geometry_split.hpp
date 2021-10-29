@@ -351,7 +351,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::NoAction);
       }
 
-      // Polygon Inside Circle with center outside
+      // Polygon Inside Circle with center outside no intersections
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
