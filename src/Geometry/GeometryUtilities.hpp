@@ -181,23 +181,39 @@ namespace Gedim
               unsigned int Index; ///< Index in polygon or in circle intersections
           };
 
+          struct NewEdge final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Segment = 1,
+                Arc = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int Index; ///< Index in polygon or in circle intersections
+          };
+
           struct NewPolygon final
           {
               enum struct Types
               {
                 Unknown = 0,
-                InsideCircle = 1,
-                OutsideCircle = 2
+                InsideOnlyCircle = 1,
+                InsideOnlyPolygon = 2,
+                InsideCircleAndPolygon = 3
               };
 
               Types Type = Types::Unknown;
-              list<unsigned int> Vertices = {};
+              vector<unsigned int> Vertices = {};
+              vector<unsigned int> Edges = {};
           };
 
           Types Type = Types::Unknown;
           vector<unsigned int> PolygonVerticesNewVerticesPosition = {};
           vector<unsigned int> CircleIntersectionsNewVerticesPosition = {};
           vector<NewVertex> NewVertices = {};
+          vector<NewVertex> NewEdges = {};
           vector<NewPolygon> NewPolygons = {};
       };
 

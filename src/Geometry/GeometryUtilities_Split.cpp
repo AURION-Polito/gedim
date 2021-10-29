@@ -828,7 +828,6 @@ namespace Gedim
         Output::Assert(numVertices > 0 && numCircleIntersections > 0);
 
         list<SplitPolygonWithCircleResult::NewVertex> newVertices;
-        list<SplitPolygonWithCircleResult::NewPolygon> newPolygons;
         result.PolygonVerticesNewVerticesPosition.resize(numVertices);
         result.CircleIntersectionsNewVerticesPosition.resize(numCircleIntersections);
 
@@ -874,7 +873,32 @@ namespace Gedim
           }
         }
 
-        // at first create polygon inside circle
+        // compute new polygons number vertices
+        unsigned int numNewPolygons = numCircleIntersections + 1;
+        result.NewPolygons.resize(numNewPolygons);
+        vector<unsigned int> numNewPolygonVertices(numNewPolygons, 0);
+        for (unsigned int c = 0; c < numCircleIntersections - 1; c++)
+        {
+          numNewPolygonVertices[c] = result.CircleIntersectionsNewVerticesPosition[c + 1] -
+                                     result.CircleIntersectionsNewVerticesPosition[c] + 1;
+          result.NewPolygons[c].Vertices.resize(numNewPolygonVertices[c]);
+          result.NewPolygons[c].Edges.resize(numNewPolygonVertices[c]);
+        }
+
+        numNewPolygonVertices[numCircleIntersections - 1] =
+            (newVertices.size() - result.CircleIntersectionsNewVerticesPosition[numCircleIntersections - 1]) +
+            result.CircleIntersectionsNewVerticesPosition[0] + 1;
+        result.NewPolygons[numCircleIntersections - 1].Vertices.resize(numNewPolygonVertices[numCircleIntersections - 1]);
+        result.NewPolygons[numCircleIntersections - 1].Edges.resize(numNewPolygonVertices[numCircleIntersections - 1]);
+
+        numNewPolygonVertices[numCircleIntersections] = numCircleIntersections;
+        result.NewPolygons[numCircleIntersections].Vertices.resize(numNewPolygonVertices[numCircleIntersections]);
+        result.NewPolygons[numCircleIntersections].Edges.resize(numNewPolygonVertices[numCircleIntersections]);
+        result.NewPolygons[numCircleIntersections].Type = SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon;
+
+        // create new polygons outside the circle polygon intersection
+
+        // then create new polygon inside the circle polygon intersection
         vector<bool> verticesVisited(numVertices, false);
         list<unsigned int> vertexInsideCircle;
 
@@ -887,24 +911,54 @@ namespace Gedim
           vertexInsideCircle.push_back(v);
         }
 
+        // building the result
         result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
         result.NewVertices = vector<SplitPolygonWithCircleResult::NewVertex>(newVertices.begin(),
                                                                              newVertices.end());
-        result.NewPolygons = vector<SplitPolygonWithCircleResult::NewPolygon>(newPolygons.begin(),
-                                                                              newPolygons.end());
 
+        cerr<< "RESULTS"<< endl;
         cerr<< "PolygonVerticesNewVerticesPosition: "<< result.PolygonVerticesNewVerticesPosition<< endl;
         cerr<< "CircleIntersectionsNewVerticesPosition: "<< result.CircleIntersectionsNewVerticesPosition<< endl;
-        cerr<< "NewVertices: "<< "[";
+        cerr<< "NewVertices: "<< endl;
         for (const auto& newVertex : result.NewVertices)
         {
-          cerr<< (newVertex.Type ==
-                  SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection ?
-                    "Circle" :
-                    "Polygon")<< " ";
-          cerr<< newVertex.Index<< ",";
+          switch (newVertex.Type) {
+            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex:
+              cerr<< "\t"<< "Type: "<< "PolygonVertex"<< endl;
+            break;
+            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
+              cerr<< "\t"<< "Type: "<< "CircleIntersection"<< endl;
+            break;
+            default:
+              cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
+            break;
+          }
+
+          cerr<< "\t"<< "Index: "<< newVertex.Index<< endl;
         }
-        cerr<< "]"<< endl;
+
+        cerr<< "NewPolygons: "<< endl;
+        for (const auto& newPolygon : result.NewPolygons)
+        {
+          switch (newPolygon.Type)
+          {
+            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle:
+              cerr<< "\t"<< "Type: "<< "InsideOnlyCircle"<< endl;
+            break;
+            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon:
+              cerr<< "\t"<< "Type: "<< "InsideOnlyPolygon"<< endl;
+            break;
+            case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon:
+              cerr<< "\t"<< "Type: "<< "InsideCircleAndPolygon"<< endl;
+            break;
+            default:
+               cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
+            break;
+
+          }
+          cerr<< "\t"<< "Vertices: "<< newPolygon.Vertices<< endl;
+          cerr<< "\t"<< "Edges: "<< newPolygon.Edges<< endl;
+        }
 
         return result;
       }
