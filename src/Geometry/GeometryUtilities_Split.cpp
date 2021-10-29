@@ -7,9 +7,9 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
-  GeometryUtilities::SplitPolygonResult GeometryUtilities::SplitPolygon(const GeometryUtilities::SplitPolygonInput& input) const
+  GeometryUtilities::SplitPolygonWithSegmentResult GeometryUtilities::SplitPolygonWithSegment(const GeometryUtilities::SplitPolygonInput& input) const
   {
-    GeometryUtilities::SplitPolygonResult result;
+    GeometryUtilities::SplitPolygonWithSegmentResult result;
 
     // check if segment is on polygon vertices in contigous edges, no split needed
     if (input.Segment.Origin.Type == GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex &&
@@ -22,7 +22,7 @@ namespace Gedim
           (endIndex + 1) % input.NumberPolygonVertices == originIndex)
       {
         // No split needed
-        result.Type = SplitPolygonResult::Types::NoAction;
+        result.Type = SplitPolygonWithSegmentResult::Types::NoAction;
         return result;
       }
 
@@ -33,7 +33,7 @@ namespace Gedim
         if (originIndex >= alignedEdge.OriginVertexIndex && endIndex <= alignedEdge.EndVertexIndex)
         {
           // No split needed
-          result.Type = SplitPolygonResult::Types::NoAction;
+          result.Type = SplitPolygonWithSegmentResult::Types::NoAction;
           return result;
         }
       }
@@ -49,7 +49,7 @@ namespace Gedim
       if (originIndex == endIndex)
       {
         // Only update needed
-        result.Type = SplitPolygonResult::Types::PolygonUpdate;
+        result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
       }
 
       // check contigous edges
@@ -59,16 +59,16 @@ namespace Gedim
         if (originIndex >= alignedEdge.OriginVertexIndex && endIndex <= alignedEdge.EndVertexIndex)
         {
           // Only update needed
-          result.Type = SplitPolygonResult::Types::PolygonUpdate;
+          result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
           break;
         }
       }
 
-      if (result.Type == SplitPolygonResult::Types::PolygonUpdate)
+      if (result.Type == SplitPolygonWithSegmentResult::Types::PolygonUpdate)
       {
         // Update polygon
         result.NewPolygons.resize(1);
-        SplitPolygonResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
+        SplitPolygonWithSegmentResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
 
         for (unsigned int v = 0; v < input.NumberPolygonVertices; v++)
         {
@@ -79,7 +79,7 @@ namespace Gedim
         }
 
         unsigned int newEdgeNumber = input.NumberPolygonVertices;
-        map<unsigned int, SplitPolygonResult::NewVertex> newVertexTypes;
+        map<unsigned int, SplitPolygonWithSegmentResult::NewVertex> newVertexTypes;
         vector<unsigned int> newVertices(updatedPolygon.Vertices.begin(), updatedPolygon.Vertices.end());
         for (unsigned int v = 0; v < newVertices.size(); v++)
         {
@@ -97,9 +97,9 @@ namespace Gedim
           {
             // new edge
             updatedPolygon.Edges.push_back(newEdgeNumber++);
-            result.NewEdges.push_back(SplitPolygonResult::NewEdge());
-            SplitPolygonResult::NewEdge& newEdge = result.NewEdges.back();
-            newEdge.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            result.NewEdges.push_back(SplitPolygonWithSegmentResult::NewEdge());
+            SplitPolygonWithSegmentResult::NewEdge& newEdge = result.NewEdges.back();
+            newEdge.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdge.OriginId = origin;
             newEdge.EndId = end;
             newEdge.Cell2DNeighbours = { 0 };
@@ -108,22 +108,22 @@ namespace Gedim
             {
               // old origin new end
               newEdge.OldEdgeId = origin;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(end,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(end,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[end];
-              newVertex.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[end];
+              newVertex.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
               continue;
             }
             else if (end < input.NumberPolygonVertices)
             {
               // old end new origin
               newEdge.OldEdgeId = (end == 0) ? input.NumberPolygonVertices - 1 : end - 1;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(origin,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(origin,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[origin];
-              newVertex.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[origin];
+              newVertex.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
               continue;
             }
             else
@@ -131,11 +131,11 @@ namespace Gedim
           }
         }
 
-        for (map<unsigned int, SplitPolygonResult::NewVertex>::const_iterator it = newVertexTypes.begin();
+        for (map<unsigned int, SplitPolygonWithSegmentResult::NewVertex>::const_iterator it = newVertexTypes.begin();
              it != newVertexTypes.end(); it++)
         {
-          result.NewVertices.push_back(SplitPolygonResult::NewVertex());
-          SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
+          result.NewVertices.push_back(SplitPolygonWithSegmentResult::NewVertex());
+          SplitPolygonWithSegmentResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
         return result;
@@ -152,7 +152,7 @@ namespace Gedim
       if (originIndex == endIndex)
       {
         // Only update needed
-        result.Type = SplitPolygonResult::Types::PolygonUpdate;
+        result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
       }
 
       // check contigous edges
@@ -162,16 +162,16 @@ namespace Gedim
         if (originIndex >= alignedEdge.OriginVertexIndex && endIndex <= alignedEdge.EndVertexIndex)
         {
           // Only update needed
-          result.Type = SplitPolygonResult::Types::PolygonUpdate;
+          result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
           break;
         }
       }
 
-      if (result.Type == SplitPolygonResult::Types::PolygonUpdate)
+      if (result.Type == SplitPolygonWithSegmentResult::Types::PolygonUpdate)
       {
         // Update polygon
         result.NewPolygons.resize(1);
-        SplitPolygonResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
+        SplitPolygonWithSegmentResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
 
         for (unsigned int v = 0; v < input.NumberPolygonVertices; v++)
         {
@@ -182,7 +182,7 @@ namespace Gedim
         }
 
         unsigned int newEdgeNumber = input.NumberPolygonVertices;
-        map<unsigned int, SplitPolygonResult::NewVertex> newVertexTypes;
+        map<unsigned int, SplitPolygonWithSegmentResult::NewVertex> newVertexTypes;
         vector<unsigned int> newVertices(updatedPolygon.Vertices.begin(), updatedPolygon.Vertices.end());
         for (unsigned int v = 0; v < newVertices.size(); v++)
         {
@@ -200,22 +200,22 @@ namespace Gedim
           {
             // new edge
             updatedPolygon.Edges.push_back(newEdgeNumber++);
-            result.NewEdges.push_back(SplitPolygonResult::NewEdge());
-            SplitPolygonResult::NewEdge& newEdge = result.NewEdges.back();
+            result.NewEdges.push_back(SplitPolygonWithSegmentResult::NewEdge());
+            SplitPolygonWithSegmentResult::NewEdge& newEdge = result.NewEdges.back();
             newEdge.OriginId = origin;
             newEdge.EndId = end;
-            newEdge.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdge.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdge.Cell2DNeighbours = { 0 };
 
             if (origin < input.NumberPolygonVertices)
             {
               // old origin
               newEdge.OldEdgeId = origin;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(end,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(end,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[end];
-              newVertex.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[end];
+              newVertex.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
               continue;
 
               continue;
@@ -224,11 +224,11 @@ namespace Gedim
             {
               // old end
               newEdge.OldEdgeId = (end == 0) ? input.NumberPolygonVertices - 1 : end - 1;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(origin,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(origin,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[origin];
-              newVertex.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[origin];
+              newVertex.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
               continue;
             }
             else
@@ -236,11 +236,11 @@ namespace Gedim
           }
         }
 
-        for (map<unsigned int, SplitPolygonResult::NewVertex>::const_iterator it = newVertexTypes.begin();
+        for (map<unsigned int, SplitPolygonWithSegmentResult::NewVertex>::const_iterator it = newVertexTypes.begin();
              it != newVertexTypes.end(); it++)
         {
-          result.NewVertices.push_back(SplitPolygonResult::NewVertex());
-          SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
+          result.NewVertices.push_back(SplitPolygonWithSegmentResult::NewVertex());
+          SplitPolygonWithSegmentResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
         return result;
@@ -257,7 +257,7 @@ namespace Gedim
       if (originIndex == endIndex)
       {
         // Only update needed
-        result.Type = SplitPolygonResult::Types::PolygonUpdate;
+        result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
       }
 
       // check contigous edges
@@ -268,16 +268,16 @@ namespace Gedim
         if (originIndex >= alignedEdge.OriginVertexIndex && endIndex <= alignedEdge.EndVertexIndex)
         {
           // Only update needed
-          result.Type = SplitPolygonResult::Types::PolygonUpdate;
+          result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
           break;
         }
       }
 
-      if (result.Type == SplitPolygonResult::Types::PolygonUpdate)
+      if (result.Type == SplitPolygonWithSegmentResult::Types::PolygonUpdate)
       {
         // Update polygon
         result.NewPolygons.resize(1);
-        SplitPolygonResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
+        SplitPolygonWithSegmentResult::NewPolygon& updatedPolygon = result.NewPolygons[0];
 
         for (unsigned int v = 0; v < input.NumberPolygonVertices; v++)
         {
@@ -291,7 +291,7 @@ namespace Gedim
         }
 
         unsigned int newEdgeNumber = input.NumberPolygonVertices;
-        map<unsigned int, SplitPolygonResult::NewVertex> newVertexTypes;
+        map<unsigned int, SplitPolygonWithSegmentResult::NewVertex> newVertexTypes;
         vector<unsigned int> newVertices(updatedPolygon.Vertices.begin(), updatedPolygon.Vertices.end());
         for (unsigned int v = 0; v < newVertices.size(); v++)
         {
@@ -309,64 +309,64 @@ namespace Gedim
           {
             // new edge
             updatedPolygon.Edges.push_back(newEdgeNumber++);
-            result.NewEdges.push_back(SplitPolygonResult::NewEdge());
-            SplitPolygonResult::NewEdge& newEdge = result.NewEdges.back();
+            result.NewEdges.push_back(SplitPolygonWithSegmentResult::NewEdge());
+            SplitPolygonWithSegmentResult::NewEdge& newEdge = result.NewEdges.back();
             newEdge.OriginId = origin;
             newEdge.EndId = end;
-            newEdge.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdge.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdge.Cell2DNeighbours = { 0 };
 
             if (origin < input.NumberPolygonVertices)
             {
               // old origin
               newEdge.OldEdgeId = origin;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(end,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(end,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[end];
-              newVertex.Type = (end == 4) ? SplitPolygonResult::NewVertex::Types::SegmentOrigin :
-                                            SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[end];
+              newVertex.Type = (end == 4) ? SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin :
+                                            SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
               continue;
             }
             else if (end < input.NumberPolygonVertices)
             {
               // old end
               newEdge.OldEdgeId = (end == 0) ? input.NumberPolygonVertices - 1 : end - 1;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(origin,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(origin,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newVertex = newVertexTypes[origin];
-              newVertex.Type = (origin == 4) ? SplitPolygonResult::NewVertex::Types::SegmentOrigin :
-                                               SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newVertex = newVertexTypes[origin];
+              newVertex.Type = (origin == 4) ? SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin :
+                                               SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
               continue;
             }
             else
             {
               // new origin and new end
               newEdge.OldEdgeId = input.Segment.Origin.Index;
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(origin,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(origin,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newOrigin = newVertexTypes[origin];
-              newOrigin.Type = (origin == 4) ? SplitPolygonResult::NewVertex::Types::SegmentOrigin :
-                                               SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newOrigin = newVertexTypes[origin];
+              newOrigin.Type = (origin == 4) ? SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin :
+                                               SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
 
-              newVertexTypes.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(end,
-                                                                                     SplitPolygonResult::NewVertex()));
+              newVertexTypes.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(end,
+                                                                                     SplitPolygonWithSegmentResult::NewVertex()));
 
-              SplitPolygonResult::NewVertex& newEnd = newVertexTypes[end];
-              newEnd.Type = (end == 4) ? SplitPolygonResult::NewVertex::Types::SegmentOrigin :
-                                         SplitPolygonResult::NewVertex::Types::SegmentEnd;
+              SplitPolygonWithSegmentResult::NewVertex& newEnd = newVertexTypes[end];
+              newEnd.Type = (end == 4) ? SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin :
+                                         SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
               continue;
             }
           }
         }
 
-        for (map<unsigned int, SplitPolygonResult::NewVertex>::const_iterator it = newVertexTypes.begin();
+        for (map<unsigned int, SplitPolygonWithSegmentResult::NewVertex>::const_iterator it = newVertexTypes.begin();
              it != newVertexTypes.end(); it++)
         {
-          result.NewVertices.push_back(SplitPolygonResult::NewVertex());
-          SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
+          result.NewVertices.push_back(SplitPolygonWithSegmentResult::NewVertex());
+          SplitPolygonWithSegmentResult::NewVertex& newVertex = result.NewVertices.back();
           newVertex = it->second;
         }
         return result;
@@ -374,10 +374,10 @@ namespace Gedim
     }
 
     // segment is on not contigous edges and generates two new polygons
-    list<SplitPolygonResult::NewPolygon> polygons;
+    list<SplitPolygonWithSegmentResult::NewPolygon> polygons;
 
-    map<unsigned int, SplitPolygonResult::NewVertex> newVertices;
-    map<unsigned int, SplitPolygonResult::NewEdge> newEdges;
+    map<unsigned int, SplitPolygonWithSegmentResult::NewVertex> newVertices;
+    map<unsigned int, SplitPolygonWithSegmentResult::NewEdge> newEdges;
     vector<bool> visited(input.NumberPolygonVertices, false);
     bool allVerticesVisited = false;
     unsigned int v = 0;
@@ -385,8 +385,8 @@ namespace Gedim
     {
       // starting new polygon creation
       unsigned int startingVertex = v;
-      polygons.push_back(SplitPolygonResult::NewPolygon());
-      SplitPolygonResult::NewPolygon& newPolygon = polygons.back();
+      polygons.push_back(SplitPolygonWithSegmentResult::NewPolygon());
+      SplitPolygonWithSegmentResult::NewPolygon& newPolygon = polygons.back();
 
       do
       {
@@ -405,12 +405,12 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.Segment.End.Index);
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdge = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdge = newEdges[input.NumberPolygonVertices];
             newEdge.OriginId = input.Segment.Origin.Index;
             newEdge.EndId = input.Segment.End.Index;
-            newEdge.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdge.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdge.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1, 0 } : vector<unsigned int>{ 0, 1 };
           }
           else
@@ -420,34 +420,34 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.NumberPolygonVertices + 1);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices];
-            newEnd.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+            SplitPolygonWithSegmentResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices];
+            newEnd.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
 
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.Segment.Origin.Index;
             newEdgeOne.EndId = input.NumberPolygonVertices;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1, 0 } : vector<unsigned int>{ 0, 1 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.NumberPolygonVertices;
             newEdgeTwo.EndId = (input.Segment.End.Index + 1) % input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.End.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.Segment.End.Index;
             newEdgeThree.EndId = input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.End.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
           }
@@ -468,12 +468,12 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.Segment.Origin.Index);
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdge = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdge = newEdges[input.NumberPolygonVertices];
             newEdge.OriginId = input.Segment.Origin.Index;
             newEdge.EndId = input.Segment.End.Index;
-            newEdge.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdge.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdge.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0, 1 } : vector<unsigned int>{ 1, 0 };
           }
           else
@@ -483,33 +483,33 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.NumberPolygonVertices + 2);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
-            newOrigin.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
+            SplitPolygonWithSegmentResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
+            newOrigin.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.NumberPolygonVertices;
             newEdgeOne.EndId = input.Segment.End.Index;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0, 1 } : vector<unsigned int>{ 1, 0 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.Segment.Origin.Index;
             newEdgeTwo.EndId = input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.Origin.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.NumberPolygonVertices;
             newEdgeThree.EndId = (input.Segment.Origin.Index + 1) % input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.Origin.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
           }
@@ -535,55 +535,55 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.NumberPolygonVertices + 4);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
-            newOrigin.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices + 1,
-                                                                                SplitPolygonResult::NewVertex()));
+            SplitPolygonWithSegmentResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
+            newOrigin.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices + 1,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices + 1];
-            newEnd.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+            SplitPolygonWithSegmentResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices + 1];
+            newEnd.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
 
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 3,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 4,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 3,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 4,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.NumberPolygonVertices;
             newEdgeOne.EndId = input.NumberPolygonVertices + 1;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1, 0 } : vector<unsigned int>{ 0, 1 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.Segment.Origin.Index;
             newEdgeTwo.EndId = input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.Origin.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.NumberPolygonVertices;
             newEdgeThree.EndId = (input.Segment.Origin.Index + 1) % input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.Origin.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
-            SplitPolygonResult::NewEdge& newEdgeFour = newEdges[input.NumberPolygonVertices + 3];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeFour = newEdges[input.NumberPolygonVertices + 3];
             newEdgeFour.OriginId = input.Segment.End.Index;
             newEdgeFour.EndId = input.NumberPolygonVertices + 1;
-            newEdgeFour.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeFour.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeFour.OldEdgeId = input.Segment.End.Index;
             newEdgeFour.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
-            SplitPolygonResult::NewEdge& newEdgeFive = newEdges[input.NumberPolygonVertices + 4];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeFive = newEdges[input.NumberPolygonVertices + 4];
             newEdgeFive.OriginId = input.NumberPolygonVertices + 1;
             newEdgeFive.EndId = (input.Segment.End.Index + 1) % input.NumberPolygonVertices;
-            newEdgeFive.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeFive.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeFive.OldEdgeId = input.Segment.End.Index;
             newEdgeFive.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
           }
@@ -596,34 +596,34 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.Segment.End.Index);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
-            newOrigin.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
+            SplitPolygonWithSegmentResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
+            newOrigin.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
 
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.NumberPolygonVertices;
             newEdgeOne.EndId = input.Segment.End.Index;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1, 0 } : vector<unsigned int>{ 0, 1 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.Segment.Origin.Index;
             newEdgeTwo.EndId = input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.Origin.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.NumberPolygonVertices;
             newEdgeThree.EndId = (input.Segment.Origin.Index + 1) % input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.Origin.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
           }
@@ -645,54 +645,54 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.NumberPolygonVertices + 2);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
-            newOrigin.Type = SplitPolygonResult::NewVertex::Types::SegmentOrigin;
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices + 1,
-                                                                                SplitPolygonResult::NewVertex()));
+            SplitPolygonWithSegmentResult::NewVertex& newOrigin = newVertices[input.NumberPolygonVertices];
+            newOrigin.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentOrigin;
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices + 1,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices + 1];
-            newEnd.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+            SplitPolygonWithSegmentResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices + 1];
+            newEnd.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 3,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 4,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 3,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 4,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.NumberPolygonVertices;
             newEdgeOne.EndId = input.NumberPolygonVertices + 1;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0, 1 } : vector<unsigned int>{ 1, 0 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.Segment.Origin.Index;
             newEdgeTwo.EndId = input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.Origin.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.NumberPolygonVertices;
             newEdgeThree.EndId = (input.Segment.Origin.Index + 1) % input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.Origin.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeFour = newEdges[input.NumberPolygonVertices + 3];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeFour = newEdges[input.NumberPolygonVertices + 3];
             newEdgeFour.OriginId = input.Segment.End.Index;
             newEdgeFour.EndId = input.NumberPolygonVertices + 1;
-            newEdgeFour.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeFour.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeFour.OldEdgeId = input.Segment.End.Index;
             newEdgeFour.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
-            SplitPolygonResult::NewEdge& newEdgeFive = newEdges[input.NumberPolygonVertices + 4];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeFive = newEdges[input.NumberPolygonVertices + 4];
             newEdgeFive.OriginId = input.NumberPolygonVertices + 1;
             newEdgeFive.EndId = (input.Segment.End.Index + 1) % input.NumberPolygonVertices;
-            newEdgeFive.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeFive.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeFive.OldEdgeId = input.Segment.End.Index;
             newEdgeFive.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
           }
@@ -705,33 +705,33 @@ namespace Gedim
             newPolygon.Edges.push_back(input.NumberPolygonVertices);
             newPolygon.Edges.push_back(input.Segment.Origin.Index);
 
-            newVertices.insert(pair<unsigned int,SplitPolygonResult::NewVertex>(input.NumberPolygonVertices,
-                                                                                SplitPolygonResult::NewVertex()));
+            newVertices.insert(pair<unsigned int,SplitPolygonWithSegmentResult::NewVertex>(input.NumberPolygonVertices,
+                                                                                SplitPolygonWithSegmentResult::NewVertex()));
 
-            SplitPolygonResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices];
-            newEnd.Type = SplitPolygonResult::NewVertex::Types::SegmentEnd;
+            SplitPolygonWithSegmentResult::NewVertex& newEnd = newVertices[input.NumberPolygonVertices];
+            newEnd.Type = SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd;
 
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 1,
-                                                                            SplitPolygonResult::NewEdge()));
-            newEdges.insert(pair<unsigned int, SplitPolygonResult::NewEdge>(input.NumberPolygonVertices + 2,
-                                                                            SplitPolygonResult::NewEdge()));
-            SplitPolygonResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 1,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            newEdges.insert(pair<unsigned int, SplitPolygonWithSegmentResult::NewEdge>(input.NumberPolygonVertices + 2,
+                                                                            SplitPolygonWithSegmentResult::NewEdge()));
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeOne = newEdges[input.NumberPolygonVertices];
             newEdgeOne.OriginId = input.Segment.Origin.Index;
             newEdgeOne.EndId = input.NumberPolygonVertices;
-            newEdgeOne.Type = SplitPolygonResult::NewEdge::Types::EdgeNew;
+            newEdgeOne.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew;
             newEdgeOne.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0, 1 } : vector<unsigned int>{ 1, 0 };
-            SplitPolygonResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeTwo = newEdges[input.NumberPolygonVertices + 1];
             newEdgeTwo.OriginId = input.NumberPolygonVertices;
             newEdgeTwo.EndId = (input.Segment.End.Index + 1) % input.NumberPolygonVertices;
-            newEdgeTwo.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeTwo.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeTwo.OldEdgeId = input.Segment.End.Index;
             newEdgeTwo.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 1 } : vector<unsigned int>{ 0 };
-            SplitPolygonResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
+            SplitPolygonWithSegmentResult::NewEdge& newEdgeThree = newEdges[input.NumberPolygonVertices + 2];
             newEdgeThree.OriginId = input.Segment.End.Index;
             newEdgeThree.EndId = input.NumberPolygonVertices;
-            newEdgeThree.Type = SplitPolygonResult::NewEdge::Types::EdgeUpdate;
+            newEdgeThree.Type = SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate;
             newEdgeThree.OldEdgeId = input.Segment.End.Index;
             newEdgeThree.Cell2DNeighbours = polygons.size() == 0 ? vector<unsigned int>{ 0 } : vector<unsigned int>{ 1 };
           }
@@ -761,24 +761,35 @@ namespace Gedim
     }
     while (!allVerticesVisited);
 
-    result.Type = SplitPolygonResult::Types::PolygonCreation;
-    for (map<unsigned int, SplitPolygonResult::NewVertex>::const_iterator it = newVertices.begin();
+    result.Type = SplitPolygonWithSegmentResult::Types::PolygonCreation;
+    for (map<unsigned int, SplitPolygonWithSegmentResult::NewVertex>::const_iterator it = newVertices.begin();
          it != newVertices.end(); it++)
     {
-      result.NewVertices.push_back(SplitPolygonResult::NewVertex());
-      SplitPolygonResult::NewVertex& newVertex = result.NewVertices.back();
+      result.NewVertices.push_back(SplitPolygonWithSegmentResult::NewVertex());
+      SplitPolygonWithSegmentResult::NewVertex& newVertex = result.NewVertices.back();
       newVertex = it->second;
     }
-    for (map<unsigned int, SplitPolygonResult::NewEdge>::const_iterator it = newEdges.begin();
+    for (map<unsigned int, SplitPolygonWithSegmentResult::NewEdge>::const_iterator it = newEdges.begin();
          it != newEdges.end(); it++)
     {
-      result.NewEdges.push_back(SplitPolygonResult::NewEdge());
-      SplitPolygonResult::NewEdge& newEdge = result.NewEdges.back();
+      result.NewEdges.push_back(SplitPolygonWithSegmentResult::NewEdge());
+      SplitPolygonWithSegmentResult::NewEdge& newEdge = result.NewEdges.back();
       newEdge = it->second;
     }
 
     result.NewPolygons.resize(polygons.size());
     copy(polygons.begin(), polygons.end(), result.NewPolygons.begin());
+
+    return result;
+  }
+  // ***************************************************************************
+  GeometryUtilities::SplitPolygonWithCircleResult GeometryUtilities::SplitPolygonWithCircle(const Eigen::MatrixXd& polygonVertices,
+                                                                                            const Eigen::Vector3d& circleCenter,
+                                                                                            const double& circleRadius,
+                                                                                            const IntersectionPolygonCircleResult& polygonCircleIntersections,
+                                                                                            const PolygonCirclePositionTypes& polygonCirclePosition) const
+  {
+    SplitPolygonWithCircleResult result;
 
     return result;
   }

@@ -107,7 +107,7 @@ namespace Gedim
           SplitSegment Segment;
       };
 
-      struct SplitPolygonResult final
+      struct SplitPolygonWithSegmentResult final
       {
           enum struct Types
           {
@@ -155,6 +155,11 @@ namespace Gedim
           list<NewVertex> NewVertices = {};
           list<NewEdge> NewEdges = {};
           vector<NewPolygon> NewPolygons = {};
+      };
+
+      struct SplitPolygonWithCircleResult final
+      {
+
       };
 
       struct IntersectionSegmentSegmentResult final
@@ -612,7 +617,16 @@ namespace Gedim
       /// \param input the input data
       /// \param result the resulting split
       /// \note only indices are threated in this function, no space points
-      SplitPolygonResult SplitPolygon(const SplitPolygonInput& input) const;
+      SplitPolygonWithSegmentResult SplitPolygonWithSegment(const SplitPolygonInput& input) const;
+
+      /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a cirle
+      /// \return the split result
+      /// \note only indices are threated in this function, no space points
+      SplitPolygonWithCircleResult SplitPolygonWithCircle(const Eigen::MatrixXd& polygonVertices,
+                                                          const Eigen::Vector3d& circleCenter,
+                                                          const double& circleRadius,
+                                                          const IntersectionPolygonCircleResult& polygonCircleIntersections,
+                                                          const PolygonCirclePositionTypes& polygonCirclePosition) const;
 
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)

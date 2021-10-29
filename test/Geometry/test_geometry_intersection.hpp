@@ -809,7 +809,7 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[0].CurvilinearCoordinate, 0.5);
       }
 
-      // check Polygon generic intersections
+      // check generic intersections with triangle
       {
         Eigen::Matrix3d polygonVertices;
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
@@ -846,6 +846,57 @@ namespace GedimUnitTesting {
             Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
         ASSERT_EQ(polygonCircleIntersections.Intersections[3].Index, 2);
         ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[3].CurvilinearCoordinate, 0.5);
+      }
+
+      // check generic intersections with quadrilateral
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 1.0, 3.0, 0.0;
+        polygonVertices.col(1)<< 3.0, 3.0 - 2.0 / sqrt(3.0), 0.0;
+        polygonVertices.col(2)<< 4.0 + 1.0 / 10.0, 3.0, 0.0;
+        polygonVertices.col(3)<< 3.0, 4.0, 0.0;
+        Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
+        double circleRadius = 1.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 6);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Tangent);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Index, 0);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[0].CurvilinearCoordinate, 0.74999999999999989);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[1].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[1].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[1].Index, 1);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[1].CurvilinearCoordinate, 0.14507270926633217);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[2].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[2].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[2].Index, 1);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[2].CurvilinearCoordinate, 0.90342008234572591);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[3].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[3].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[3].Index, 2);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[3].CurvilinearCoordinate, 0.095022624434388858);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[4].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[4].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[4].Index, 3);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[5].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[5].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[5].Index, 3);
+        ASSERT_DOUBLE_EQ(polygonCircleIntersections.Intersections[5].CurvilinearCoordinate, 0.40000000000000002);
       }
     }
     catch (const exception& exception)

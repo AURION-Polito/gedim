@@ -66,7 +66,7 @@ namespace Gedim
                              const unsigned int& cell2DMesh2DId,
                              map<unsigned int, unsigned int>& cell2DMesh2DVerticesMap,
                              map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
-                             const Gedim::GeometryUtilities::SplitPolygonResult& splitResult);
+                             const Gedim::GeometryUtilities::SplitPolygonWithSegmentResult& splitResult);
 
       void InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Vector3d& segmentOrigin,
                                                       const Vector3d& segmentTangent,
