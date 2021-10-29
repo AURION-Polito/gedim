@@ -140,7 +140,7 @@ namespace Gedim
         // the circle is outside the polygon
         if (oneVertexOutsideCircle &&
             numIntersections == 0) // vertices are far from the circle, no intersection found
-          return PolygonCirclePositionTypes::CircleOutsidePolygonNoIntersection;
+          return PolygonCirclePositionTypes::PolygonOutsideCircleNoIntersection;
         else if (!oneVertexOutsideCircle &&
                  numIntersections == 0) // all vertices are inside the circle and there are no intersections then the polygon is inside the circle
           return PolygonCirclePositionTypes::PolygonInsideCircleNoIntersection;
@@ -148,16 +148,16 @@ namespace Gedim
                  numIntersections == 1) // at least one vertex is outside the circle and only one intersection found, the circle is outside and touches the polygon in one vertex
         {
           if (polygonCircleIntersections.Intersections[0].IndexType == IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex)
-            return PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionOnVertex;
+            return PolygonCirclePositionTypes::PolygonOutsideCircleOneIntersectionOnVertex;
           else if (polygonCircleIntersections.Intersections[0].IndexType == IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
                    polygonCircleIntersections.Intersections[0].Type == IntersectionPolygonCircleResult::Intersection::Types::Tangent)
-            return PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionTangentOnEdge;
+            return PolygonCirclePositionTypes::PolygonOutsideCircleOneIntersectionTangentOnEdge;
         }
         else if (!oneVertexOutsideCircle &&
                  numIntersections == 1) // all vertices are inside the circle and one intersection found
           return PolygonCirclePositionTypes::PolygonInsideCircleOneVertexIntersection;
         else if (numIntersections > 1)
-          return PolygonCirclePositionTypes::GenericCirclePolygonIntersection;
+          return PolygonCirclePositionTypes::CirclePolygonMultipleIntersections;
       }
       break;
       case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
@@ -190,7 +190,7 @@ namespace Gedim
           if (onlyVerticesIntersections)
             return PolygonCirclePositionTypes::PolygonInsideCircleIntersectionOnlyOnVertices;
 
-          return PolygonCirclePositionTypes::GenericCirclePolygonIntersection;
+          return PolygonCirclePositionTypes::CirclePolygonMultipleIntersections;
         }
       }
       break;

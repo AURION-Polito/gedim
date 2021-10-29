@@ -233,7 +233,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonNoIntersection);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonOutsideCircleNoIntersection);
       }
 
       // check Polygon Inside Circle with center outside no intersections
@@ -372,7 +372,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionOnVertex);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonOutsideCircleOneIntersectionOnVertex);
       }
 
       // check Circle outside Polygon tangent to edge
@@ -395,7 +395,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CircleOutsidePolygonOneIntersectionTangentOnEdge);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::PolygonOutsideCircleOneIntersectionTangentOnEdge);
       }
 
       // check Circle inside Polygon tangent to edge
@@ -442,7 +442,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CirclePolygonMultipleIntersections);
       }
 
       // check Circle Inside Polygon Intersects With Multiple SubPolygons
@@ -466,7 +466,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CirclePolygonMultipleIntersections);
       }
 
       // check generic intersections with quadrilateral
@@ -491,7 +491,7 @@ namespace GedimUnitTesting {
                                                                                                               circleRadius,
                                                                                                               vertexPositions,
                                                                                                               polygonCircleIntersections);
-        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::GenericCirclePolygonIntersection);}
+        ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CirclePolygonMultipleIntersections);}
     }
     catch (const exception& exception)
     {
