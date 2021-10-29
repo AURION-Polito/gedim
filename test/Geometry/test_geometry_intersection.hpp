@@ -708,6 +708,26 @@ namespace GedimUnitTesting {
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 0);
       }
 
+      // Polygon Inside Circle with center outside one intersection
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        Eigen::Vector3d circleCenter(sqrt(2.0), sqrt(2.0), 0.0);
+        double circleRadius = 2.0;
+
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+                                                                                                                                         circleCenter,
+                                                                                                                                         circleRadius);
+        ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Type,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Secant);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].IndexType,
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex);
+        ASSERT_EQ(polygonCircleIntersections.Intersections[0].Index, 0);
+      }
+
       // check circle inside polygon
       {
         Eigen::Matrix3d polygonVertices;

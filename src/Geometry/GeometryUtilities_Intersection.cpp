@@ -497,6 +497,8 @@ namespace Gedim
     double b = 2.0 * f.dot(d) ;
     double c = f.dot(f) - circleRadius*circleRadius;
 
+    Output::Assert(IsValue1DPositive(a));
+
     double discriminant = b * b - 4.0 * a * c;
     if (IsValue1DNegative(discriminant))
     {
