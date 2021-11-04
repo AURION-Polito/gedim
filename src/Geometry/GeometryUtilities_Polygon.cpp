@@ -132,6 +132,21 @@ namespace Gedim
     return triangles;
   }
   // ***************************************************************************
+  double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices)
+  {
+    Output::Assert(PointsAre2D(polygonVertices));
+
+    const unsigned int numVertices = polygonVertices.cols();
+    double area = 0.0;
+    Eigen::VectorXd xPoints(numVertices + 1);
+    Eigen::VectorXd yPoints(numVertices + 1);
+    xPoints<< polygonVertices.row(0).transpose(), polygonVertices(0, 0);
+    yPoints<< polygonVertices.row(1).transpose(), polygonVertices(1, 0);
+
+    return 0.5 * (xPoints.segment(0, numVertices).dot(yPoints.segment(1, numVertices)) -
+                  xPoints.segment(1, numVertices).dot(yPoints.segment(0, numVertices)));
+  }
+  // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                                                          const Eigen::Vector3d& circleCenter,
                                                                                          const double& circleRadius,

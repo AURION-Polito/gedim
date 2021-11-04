@@ -689,6 +689,11 @@ namespace Gedim
       vector<unsigned int> PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
                                                                const Eigen::Vector3d& point) const;
 
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \return the polygon area
+      /// \note the polygon shall be 2D
+      double PolygonArea(const Eigen::MatrixXd& polygonVertices);
+
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data
       /// \param result the resulting split
