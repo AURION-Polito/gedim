@@ -692,7 +692,8 @@ namespace Gedim
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the polygon area
       /// \note the polygon shall be 2D
-      double PolygonArea(const Eigen::MatrixXd& polygonVertices);
+      /// \warning works only for convex polygons
+      double PolygonArea(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data

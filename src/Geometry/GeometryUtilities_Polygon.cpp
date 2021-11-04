@@ -132,7 +132,7 @@ namespace Gedim
     return triangles;
   }
   // ***************************************************************************
-  double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices)
+  double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(PointsAre2D(polygonVertices));
 
