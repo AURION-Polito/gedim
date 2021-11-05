@@ -241,6 +241,10 @@ namespace Gedim
       result.SingleIntersection.CurvilinearCoordinate = planeNormal.dot(planeOrigin - segmentOrigin) /
                                                         planeNormal.dot(t);
       result.SingleIntersection.Type = PointSegmentPosition(result.SingleIntersection.CurvilinearCoordinate);
+      if (result.SingleIntersection.Type == PointSegmentPositionTypes::OnSegmentOrigin)
+        result.SingleIntersection.CurvilinearCoordinate = 0.0;
+      else if (result.SingleIntersection.Type == PointSegmentPositionTypes::OnSegmentEnd)
+        result.SingleIntersection.CurvilinearCoordinate = 1.0;
     }
 
     return result;
@@ -464,16 +468,6 @@ namespace Gedim
                                                                       planeRotationMatrix);
 
           vector<unsigned int> convexHull = ConvexHull(convexHull2DPoints);
-          if (convexHull.size() != numIntersions)
-          {
-            cerr.precision(16);
-            cerr<< scientific<< " Polyhedron: "<< polyhedronVertices<< endl;
-            cerr<< scientific<< " PlaneOrigin "<< planeOrigin<< endl;
-            cerr<< scientific<< " PlaneNormal "<< planeNormal<< endl;
-            cerr<< scientific<< " Intersections: "<< convexHull3DPoints<< endl;
-            cerr<< scientific<< " ConvexHull: "<< convexHull2DPoints<< endl;
-          }
-
           Output::Assert(convexHull.size() == numIntersions);
           vector<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersections(intersectionsList.begin(), intersectionsList.end());
 

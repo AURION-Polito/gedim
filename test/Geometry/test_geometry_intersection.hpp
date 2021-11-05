@@ -394,6 +394,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      geometryUtilityConfig.Tolerance = 1.0e-15;
       Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // test no intersection with reference tetrahedron
@@ -632,14 +633,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(1).Intersection.SingleIntersection.CurvilinearCoordinate, 0.0);
         ASSERT_EQ(result.EdgeIntersections.at(2).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
         ASSERT_EQ(result.EdgeIntersections.at(2).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(2).Intersection.SingleIntersection.CurvilinearCoordinate, 0.5);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(2).Intersection.SingleIntersection.CurvilinearCoordinate, 0.40000000000000013);
         ASSERT_EQ(result.EdgeIntersections.at(3).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
         ASSERT_EQ(result.EdgeIntersections.at(3).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(3).Intersection.SingleIntersection.CurvilinearCoordinate, 0.0);
         ASSERT_EQ(result.EdgeIntersections.at(4).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
         ASSERT_EQ(result.EdgeIntersections.at(4).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(4).Intersection.SingleIntersection.CurvilinearCoordinate, 0.5);
-        ASSERT_EQ(result.EdgeIntersections.at(5).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(4).Intersection.SingleIntersection.CurvilinearCoordinate, 0.54545454545454564);
+        ASSERT_EQ(result.EdgeIntersections.at(5).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(5).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(5).Intersection.SingleIntersection.CurvilinearCoordinate, 2.2499999999999996);
         ASSERT_EQ(result.FaceIntersections.size(), 4);
         ASSERT_EQ(result.FaceIntersections.at(0).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
         ASSERT_EQ(result.FaceIntersections.at(1).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
