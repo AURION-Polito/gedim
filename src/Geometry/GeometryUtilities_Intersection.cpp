@@ -464,6 +464,16 @@ namespace Gedim
                                                                       planeRotationMatrix);
 
           vector<unsigned int> convexHull = ConvexHull(convexHull2DPoints);
+          if (convexHull.size() != numIntersions)
+          {
+            cerr.precision(16);
+            cerr<< scientific<< " Polyhedron: "<< polyhedronVertices<< endl;
+            cerr<< scientific<< " PlaneOrigin "<< planeOrigin<< endl;
+            cerr<< scientific<< " PlaneNormal "<< planeNormal<< endl;
+            cerr<< scientific<< " Intersections: "<< convexHull3DPoints<< endl;
+            cerr<< scientific<< " ConvexHull: "<< convexHull2DPoints<< endl;
+          }
+
           Output::Assert(convexHull.size() == numIntersions);
           vector<GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> intersections(intersectionsList.begin(), intersectionsList.end());
 

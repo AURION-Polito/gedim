@@ -596,6 +596,56 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionCoordinates.col(1), Eigen::Vector3d(0.75, 0.0, 0.25));
         ASSERT_EQ(result.IntersectionCoordinates.col(2), Eigen::Vector3d(0.0, 0.75, 0.25));
       }
+
+      // test intersection with generic tetrahedron and generic plane
+      {
+        Eigen::Vector3d v1(+1.0, +1.0, +1.0);
+        Eigen::Vector3d v2(-1.0, -1.0, +1.0);
+        Eigen::Vector3d v3(-1.0, +1.0, -1.0);
+        Eigen::Vector3d v4(+1.0, -1.0, -1.0);
+
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+
+        Eigen::Vector3d planeNormal(-8.9087080637474766e-02, -4.4543540318737396e-01, 8.9087080637474791e-01);
+        Eigen::Vector3d planeOrigin(1.4761904761904763e+00, 1.3809523809523809e+00, 1.2380952380952377e+00);
+        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
+
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+                                                                                                                         polyhedron.Edges,
+                                                                                                                         polyhedron.Faces,
+                                                                                                                         planeNormal,
+                                                                                                                         planeOrigin,
+                                                                                                                         planeRotationMatrix);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::NewPolygon);
+        ASSERT_EQ(result.VertexIntersections.size(), 4);
+        ASSERT_EQ(result.VertexIntersections.at(0).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection);
+        ASSERT_EQ(result.VertexIntersections.at(1).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.VertexIntersections.at(2).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.VertexIntersections.at(3).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.EdgeIntersections.size(), 6);
+        ASSERT_EQ(result.EdgeIntersections.at(0).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(0).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(0).Intersection.SingleIntersection.CurvilinearCoordinate, 0.0);
+        ASSERT_EQ(result.EdgeIntersections.at(1).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(1).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(1).Intersection.SingleIntersection.CurvilinearCoordinate, 0.0);
+        ASSERT_EQ(result.EdgeIntersections.at(2).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(2).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(2).Intersection.SingleIntersection.CurvilinearCoordinate, 0.5);
+        ASSERT_EQ(result.EdgeIntersections.at(3).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(3).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(3).Intersection.SingleIntersection.CurvilinearCoordinate, 0.0);
+        ASSERT_EQ(result.EdgeIntersections.at(4).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection);
+        ASSERT_EQ(result.EdgeIntersections.at(4).Intersection.SingleIntersection.Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_DOUBLE_EQ(result.EdgeIntersections.at(4).Intersection.SingleIntersection.CurvilinearCoordinate, 0.5);
+        ASSERT_EQ(result.EdgeIntersections.at(5).Intersection.Type, Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection);
+        ASSERT_EQ(result.FaceIntersections.size(), 4);
+        ASSERT_EQ(result.FaceIntersections.at(0).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.FaceIntersections.at(1).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.FaceIntersections.at(2).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
+        ASSERT_EQ(result.FaceIntersections.at(3).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection);
+      }
     }
     catch (const exception& exception)
     {
