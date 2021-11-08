@@ -618,6 +618,7 @@ namespace Gedim
       /// \param planeNormal the plane normal normalized
       /// \param planeOrigin the plane origin
       /// \param planeRotationMatrix the plane rotation from 3D to 2D
+      /// \param planeTranslation the plane translation vector
       /// \return the intersection result
       /// \note works only with convex polyhedra
       IntersectionPolyhedronPlaneResult IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
@@ -625,7 +626,8 @@ namespace Gedim
                                                                     const vector<Eigen::MatrixXi> polyhedronFaces,
                                                                     const Eigen::Vector3d& planeNormal,
                                                                     const Eigen::Vector3d& planeOrigin,
-                                                                    const Eigen::Matrix3d& planeRotationMatrix) const;
+                                                                    const Eigen::Matrix3d& planeRotationMatrix,
+                                                                    const Eigen::Vector3d& planeTranslation) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
@@ -742,11 +744,22 @@ namespace Gedim
       bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the rotation matrix of a plane from 2D to 3D
-      /// \param normal the normalized normal of the plane which contains the polygon
-      /// \retrun the resulting rotation matrix Q which rotates 2D points to 3D points
-      /// \note to rotate some point P from 2D to 3D use Q * P
-      /// \note to rotate some point P from 3D to 2D use Q^T * P
+      /// \param planeNormal the normalized normal of the plane
+      /// \return the resulting rotation matrix Q which rotates 2D points to 3D points
+      /// \note to rotate some point P from 2D to 3D use Q * P + t
+      /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
       Eigen::Matrix3d PlaneRotationMatrix(const Eigen::Vector3d& planeNormal) const;
+
+      /// \brief Compute the translation vector of a plane from 2D to 3D
+      /// \param planeNormal the normalized normal of the plane
+      /// \param planeOrigin the 3D plane origin
+      /// \param planeRotationMatrix the plane rotation matrix from 2D to 3D
+      /// \return the resulting translation vector t which translates 2D points to 3D points
+      /// \note to rotate some point P from 2D to 3D use Q * P + t
+      /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
+      Eigen::Vector3d PlaneTranslation(const Eigen::Vector3d& planeNormal,
+                                       const Eigen::Vector3d& planeOrigin,
+                                       const Eigen::Matrix3d& planeRotationMatrix) const;
 
       /// \brief Rotate Points P From 2D To 3D using rotation matrix Q and translation t: Q * P + t
       /// \param points the points (size 3 x numPoints)

@@ -255,7 +255,8 @@ namespace Gedim
                                                                                                       const vector<Eigen::MatrixXi> polyhedronFaces,
                                                                                                       const Eigen::Vector3d& planeNormal,
                                                                                                       const Eigen::Vector3d& planeOrigin,
-                                                                                                      const Eigen::Matrix3d& planeRotationMatrix) const
+                                                                                                      const Eigen::Matrix3d& planeRotationMatrix,
+                                                                                                      const Eigen::Vector3d& planeTranslation) const
   {
     GeometryUtilities::IntersectionPolyhedronPlaneResult result;
 
@@ -465,7 +466,8 @@ namespace Gedim
             convexHull3DPoints.col(numIntersection++)<< intersection;
 
           Eigen::MatrixXd convexHull2DPoints = RotatePointsFrom3DTo2D(convexHull3DPoints,
-                                                                      planeRotationMatrix);
+                                                                      planeRotationMatrix,
+                                                                      planeTranslation);
 
           vector<unsigned int> convexHull = ConvexHull(convexHull2DPoints);
           Output::Assert(convexHull.size() == numIntersions);
