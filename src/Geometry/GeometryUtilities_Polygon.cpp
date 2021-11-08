@@ -24,24 +24,23 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
-  void GeometryUtilities::PolygonRotation(const MatrixXd& polygonVertices,
-                                          const Vector3d& normal,
-                                          Matrix3d& rotationMatrix,
-                                          Vector3d& translation) const
+  Matrix3d GeometryUtilities::PolygonRotationMatrix(const Eigen::MatrixXd& polygonVertices,
+                                                    const Eigen::Vector3d& polygonNormal,
+                                                    const Eigen::Vector3d& polygonTranslation) const
   {
-    Output::Assert(Compare1DValues(normal.norm(), 1.0) == CompareTypes::Coincident);
+    Output::Assert(Compare1DValues(polygonNormal.norm(), 1.0) == CompareTypes::Coincident);
 
     unsigned int numVertices = polygonVertices.cols();
     MatrixXd Z(3, numVertices);
     MatrixXd W(3, numVertices);
     Matrix3d H;
-    Vector3d V1mV0 = polygonVertices.col(1) -  polygonVertices.col(0);
+    Vector3d V1mV0 = polygonVertices.col(1) - polygonTranslation;
     double normVectorOne = V1mV0.norm();
     Z.col(0) = V1mV0;
     W.col(0) << normVectorOne, 0.0, 0.0;
     for (unsigned int i = 2; i < numVertices; i++)
     {
-      Vector3d VimV0 = polygonVertices.col(i) - polygonVertices.col(0);
+      Vector3d VimV0 = polygonVertices.col(i) - polygonTranslation;
       Z.col(i - 1) = VimV0;
 
       double normVectorI = VimV0.norm();
@@ -56,13 +55,12 @@ namespace Gedim
       else
         W.col(i - 1) << normVectorI * cosTheta, normVectorI * sqrt(1.0 - cosTheta*cosTheta), 0;
     }
-    Z.col(numVertices - 1) = normal;
+    Z.col(numVertices - 1) = polygonNormal;
     W.col(numVertices - 1)<< 0.0, 0.0, 1.0;
     H = W * Z.transpose();
     JacobiSVD<MatrixXd> svd(H, ComputeThinU | ComputeThinV);
 
-    rotationMatrix =  svd.matrixV() * (svd.matrixU()).transpose();
-    translation = polygonVertices.col(0);
+    return svd.matrixV() * (svd.matrixU()).transpose();
   }
   // ***************************************************************************
   bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const

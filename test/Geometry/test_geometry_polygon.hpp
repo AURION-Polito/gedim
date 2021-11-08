@@ -171,14 +171,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        Eigen::Matrix3d rotationMatrix;
-        Eigen::Vector3d translation;
         Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-        ASSERT_NO_THROW(geometryUtility.PolygonRotation(polygonVertices,
-                                                        normal,
-                                                        rotationMatrix,
-                                                        translation));
-
+        Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+                                                                               normal,
+                                                                               translation);
         ASSERT_DOUBLE_EQ(translation[0], polygonVertices(0, 0));
         ASSERT_DOUBLE_EQ(translation[1], polygonVertices(1, 0));
         ASSERT_DOUBLE_EQ(translation[2], polygonVertices(2, 0));
@@ -194,13 +191,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 0.0, 1.0, 0.0;
         polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
-        Eigen::Matrix3d rotationMatrix;
-        Eigen::Vector3d translation;
         Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-        ASSERT_NO_THROW(geometryUtility.PolygonRotation(polygonVertices,
-                                                        normal,
-                                                        rotationMatrix,
-                                                        translation));
+        Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+                                                                               normal,
+                                                                               translation);
 
 
         ASSERT_DOUBLE_EQ(translation[0], polygonVertices(0, 0));
@@ -218,13 +213,11 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 0.0, 1.0, 0.0;
         polygonVertices.col(2)<< 1.0, 0.0, 0.0;
 
-        Eigen::Matrix3d rotationMatrix;
-        Eigen::Vector3d translation;
         Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-        ASSERT_NO_THROW(geometryUtility.PolygonRotation(polygonVertices,
-                                                        normal,
-                                                        rotationMatrix,
-                                                        translation));
+        Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
+        Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+                                                                               normal,
+                                                                               translation);
 
         ASSERT_DOUBLE_EQ(translation[0], polygonVertices(0, 0));
         ASSERT_DOUBLE_EQ(translation[1], polygonVertices(1, 0));

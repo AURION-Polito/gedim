@@ -725,17 +725,26 @@ namespace Gedim
       /// \param normal the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \brief Compute the rotation matrix and translation vector of a tridimensional Polygon
+      /// \brief Compute the translation vector of a tridimensional Polygon
       /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
-      /// \param normal the normalized normal of the plane which contains the polygon
-      /// \param rotationMatrix the resulting rotation matrix Q which rotates 2D points to 3D points
-      /// \param translation the resulting translation vector t which corresponds to the first vertex of the polygon
+      /// \return the resulting translation vector t which corresponds to the first vertex of the polygon
       /// \note to rotate some point P from 2D to 3D use Q * P + t
       /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
-      void PolygonRotation(const Eigen::MatrixXd& polygonVertices,
-                           const Eigen::Vector3d& normal,
-                           Eigen::Matrix3d& rotationMatrix,
-                           Eigen::Vector3d& translation) const;
+      inline Eigen::Vector3d PolygonTranslation(const Eigen::MatrixXd& polygonVertices) const
+      {
+        return polygonVertices.col(0);
+      }
+
+      /// \brief Compute the rotation matrix and translation vector of a tridimensional Polygon
+      /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
+      /// \param polygonNormal the normalized normal of the plane which contains the polygon
+      /// \param polygonTranslation the translation vector t
+      /// \return the resulting rotation matrix Q which rotates 2D points to 3D points
+      /// \note to rotate some point P from 2D to 3D use Q * P + t
+      /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
+      Eigen::Matrix3d PolygonRotationMatrix(const Eigen::MatrixXd& polygonVertices,
+                                            const Eigen::Vector3d& polygonNormal,
+                                            const Eigen::Vector3d& polygonTranslation) const;
 
       /// \brief Check if Polygon is Convex
       /// \param polygonVertices the polygon vertices, size 3 x numVertices
