@@ -528,6 +528,29 @@ namespace Gedim
         return (secondPoint - firstPoint).norm();
       }
 
+      /// \brief compute the distance between a point and a list of points
+      /// \param points the point collection, size 3 x numPoints
+      /// \param point the point
+      /// \return the collection of distances, size 1 x numPoints
+      Eigen::VectorXd PointDistances(const Eigen::MatrixXd& points,
+                                     const Eigen::Vector3d& point) const;
+
+      /// \param firstPoint the first point
+      /// \param secondPoint the second point
+      /// \return true if the points are coincident
+      inline bool PointsAreCoincident(const Eigen::Vector3d& firstPoint,
+                                      const Eigen::Vector3d& secondPoint) const
+      {
+        return IsValue1DZero(PointDistance(firstPoint, secondPoint));
+      }
+
+      /// \brief Find a point in point list
+      /// \param points the point list, size 3 x numPoints
+      /// \param point the point to find
+      /// \return the collection of point found
+      vector<unsigned int> FindPointInPoints(const Eigen::MatrixXd& points,
+                                             const Eigen::Vector3d& point) const;
+
 
       /// \param points the points to test, size 3 x numPoints
       /// \return true if the points are 2D (z == 0)

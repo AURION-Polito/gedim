@@ -12,6 +12,62 @@ using namespace std;
 
 namespace GedimUnitTesting {
 
+  TEST(TestGeometryUtilities, TestPointsAreCoincident)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check coincident points
+      {
+        Eigen::Vector3d firstPoint(1.0, 2.0, 3.0);
+        Eigen::Vector3d secondPoint(1.0, 2.0, 3.0);
+        ASSERT_TRUE(geometryUtility.PointsAreCoincident(firstPoint,
+                                                        secondPoint));
+      }
+
+      // check not coincident points
+      {
+        Eigen::Vector3d firstPoint(1.0, 2.0, 3.0);
+        Eigen::Vector3d secondPoint(2.0, 2.0, 3.0);
+        ASSERT_FALSE(geometryUtility.PointsAreCoincident(firstPoint,
+                                                        secondPoint));
+      }
+
+      // check Find Point In Points
+      {
+        Eigen::MatrixXd points(3, 5);
+        points.col(0)<< 0.0, 0.0, 0.0;
+        points.col(1)<< 1.0, 2.0, 3.0;
+        points.col(2)<< 4.0, 5.0, 6.0;
+        points.col(3)<< 1.0, 2.0, 3.0;
+        points.col(4)<< 1.1, 1.2, 1.3;
+
+        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+                                                    Eigen::Vector3d(6.0, 6.0, 6.0)),
+                  vector<unsigned int>({ }));
+        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+                                                    Eigen::Vector3d(0.0, 0.0, 0.0)),
+                  vector<unsigned int>({ 0 }));
+        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+                                                    Eigen::Vector3d(1.0, 2.0, 3.0)),
+                  vector<unsigned int>({ 1, 3 }));
+        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+                                                    Eigen::Vector3d(4.0, 5.0, 6.0)),
+                  vector<unsigned int>({ 2 }));
+        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+                                                    Eigen::Vector3d(1.1, 1.2, 1.3)),
+                  vector<unsigned int>({ 4 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPointsAre2D)
   {
     try
