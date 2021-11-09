@@ -451,8 +451,10 @@ namespace Gedim
     unsigned int e = mesh2D.Cell1DAppend(splitResult.NewEdges.size());
     unsigned int c = mesh2D.Cell2DAppend(splitResult.NewPolygons.size());
 
-    // if (cell2DMesh2DId == 10)
+    // if (cell2DMesh2DId == 15)
     // {
+    //   cerr<< "Cell "<< cell2DMesh2DId<< endl;
+    //   cerr<< "Num Original Vertices "<< mesh2D.Cell2DNumberVertices(cell2DMesh2DId)<< endl;
     //   cerr<< "Splitted in "<< splitResult.NewPolygons.size()<< " polygons: "<< endl;
     //   for (unsigned int pt = 0; pt < splitResult.NewPolygons.size(); pt++)
     //   {
@@ -461,15 +463,15 @@ namespace Gedim
     //   }
     //
     //   cerr<< "New edges: "<< splitResult.NewEdges.size()<< endl;
-    //   for (const GeometryUtilities::SplitPolygonResult::NewEdge& edget : splitResult.NewEdges)
+    //   for (const GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge& edget : splitResult.NewEdges)
     //   {
-    //     cerr<< " Type: "<< edget.Type<< " OldEdge: "<< edget.OldEdgeId<< " edge: "<< edget.OriginId<< "-"<< edget.EndId<< endl;
+    //     cerr<< " Type: "<< (unsigned int)edget.Type<< " OldEdge: "<< edget.OldEdgeId<< " edge: "<< edget.OriginId<< "-"<< edget.EndId<< endl;
     //   }
     //
     //   cerr<< "New vertices: "<< splitResult.NewVertices.size()<< endl;
-    //   for (const GeometryUtilities::SplitPolygonResult::NewVertex& vertext : splitResult.NewVertices)
+    //   for (const GeometryUtilities::SplitPolygonWithSegmentResult::NewVertex& vertext : splitResult.NewVertices)
     //   {
-    //     cerr<< "Type: "<< vertext.Type<< endl;
+    //     cerr<< "Type: "<< (unsigned int)vertext.Type<< endl;
     //   }
     // }
 
@@ -484,6 +486,8 @@ namespace Gedim
                                                                                                              newEdge.EndId) :
                                                                                          newVertexMap.at(newEdge.EndId);
 
+      // cerr<< "Cell1DInsertExtremes 1 - "<< e<< " "<<  cell1DOrigin<< "-"<< cell1DEnd<< endl;
+      // cerr<< "cell2DMesh2DId - "<< cell2DMesh2DId<< endl;
       mesh2D.Cell1DInsertExtremes(e, cell1DOrigin, cell1DEnd);
 
       mesh2D.Cell1DSetMarker(e, 0);

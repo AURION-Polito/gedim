@@ -45,8 +45,9 @@ namespace Gedim
     {
       const unsigned int& originIndex = input.Segment.Origin.Index;
       const unsigned int& endIndex = input.Segment.End.Index;
+      const unsigned int previousIndex = (originIndex == 0) ? input.NumberPolygonVertices - 1 : originIndex - 1;
 
-      if (originIndex == endIndex)
+      if (originIndex == endIndex || previousIndex == endIndex)
       {
         // Only update needed
         result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
@@ -148,8 +149,9 @@ namespace Gedim
     {
       const unsigned int& originIndex = input.Segment.Origin.Index;
       const unsigned int& endIndex = input.Segment.End.Index;
+      const unsigned int previousIndex = (endIndex == 0) ? input.NumberPolygonVertices - 1 : endIndex - 1;
 
-      if (originIndex == endIndex)
+      if (originIndex == endIndex || previousIndex == originIndex)
       {
         // Only update needed
         result.Type = SplitPolygonWithSegmentResult::Types::PolygonUpdate;
