@@ -241,8 +241,18 @@ namespace GedimUnitTesting {
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
-        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting);
+        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarParallel);
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
+        ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
+        ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.75) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
     }
     catch (const exception& exception)
