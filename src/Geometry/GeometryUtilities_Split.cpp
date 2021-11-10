@@ -1010,6 +1010,8 @@ namespace Gedim
                                 to_string((unsigned int)edgeArcType);
 
             Output::Assert(newEdgesMap.find(newEdgeKey) == newEdgesMap.end());
+
+            newPolygon.Edges[v] = newEdges.size();
             newEdges.push_back(SplitPolygonWithCircleResult::NewEdge());
 
             SplitPolygonWithCircleResult::NewEdge& newEdge = newEdges.back();
