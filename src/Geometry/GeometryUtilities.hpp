@@ -192,8 +192,17 @@ namespace Gedim
                 Arc = 2
               };
 
+              enum struct ArcTypes
+              {
+                Unknown = 0,
+                InsidePolygon = 1,
+                OutsidePolygon = 2
+              };
+
               Types Type = Types::Unknown;
-              unsigned int PolygonIndex; ///< Index in polygon or in circle intersections
+              ArcTypes ArcType = ArcTypes::Unknown; ///< Valid only if Type is Arc
+              vector<unsigned int> VertexIndices; ///< Index of vertices in NewVertices
+              unsigned int PolygonIndex; ///< Index of Edge in polygon intersections
           };
 
           struct NewPolygon final
@@ -215,7 +224,7 @@ namespace Gedim
           vector<unsigned int> PolygonVerticesNewVerticesPosition = {};
           vector<unsigned int> CircleIntersectionsNewVerticesPosition = {};
           vector<NewVertex> NewVertices = {};
-          vector<NewVertex> NewEdges = {};
+          vector<NewEdge> NewEdges = {};
           vector<NewPolygon> NewPolygons = {};
       };
 
