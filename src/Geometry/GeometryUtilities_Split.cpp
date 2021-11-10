@@ -825,6 +825,8 @@ namespace Gedim
         result.Type = SplitPolygonWithCircleResult::Types::PolygonCreation;
 
         list<SplitPolygonWithCircleResult::NewVertex> newVertices;
+        list<SplitPolygonWithCircleResult::NewEdge> newEdges;
+        map<string, const SplitPolygonWithCircleResult::NewEdge*> newEdgesMap;
         unsigned int numInternalVertices = 0;
         vector<bool> vertexInternalCircle(numVertices, false);
         result.PolygonVerticesNewVerticesPosition.resize(numVertices);
@@ -902,8 +904,10 @@ namespace Gedim
         // create new polygons outside the circle polygon intersection
         for (unsigned int c = 0; c < numCircleIntersections; c++)
         {
-          result.NewPolygons[c].Vertices.resize(numNewPolygonVertices[c]);
-          result.NewPolygons[c].Edges.resize(numNewPolygonVertices[c]);
+          SplitPolygonWithCircleResult::NewPolygon& newPolygon = result.NewPolygons[c];
+
+          newPolygon.Vertices.resize(numNewPolygonVertices[c]);
+          newPolygon.Edges.resize(numNewPolygonVertices[c]);
 
           // create vertices and newPolygon Type
           unsigned int startVertexIndex = result.CircleIntersectionsNewVerticesPosition[c];
@@ -912,7 +916,7 @@ namespace Gedim
           for (unsigned int v = 0; v < numNewPolygonVertices[c]; v++)
           {
             const unsigned int newVertexIndex = (startVertexIndex + v) % numNewVertices;
-            result.NewPolygons[c].Vertices[v] = newVertexIndex;
+            newPolygon.Vertices[v] = newVertexIndex;
 
             if (result.NewVertices[newVertexIndex].Type !=
                 SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex)
@@ -923,11 +927,106 @@ namespace Gedim
               isInsideOnlyPolygon = true;
           }
 
+          // create new edges
+          for (unsigned int v = 0; v < numNewPolygonVertices[c]; v++)
+          {
+            const unsigned int origin = newPolygon.Vertices[v];
+            const unsigned int end = newPolygon.Vertices[(v + 1) % numNewPolygonVertices[c]];
+            SplitPolygonWithCircleResult::NewEdge::Types edgeType =
+                SplitPolygonWithCircleResult::NewEdge::Types::Unknown;
+            SplitPolygonWithCircleResult::NewEdge::ArcTypes edgeArcType =
+                SplitPolygonWithCircleResult::NewEdge::ArcTypes::Unknown;
+            int edgeIndex = -1;
+
+            if (v == numNewPolygonVertices[c] - 1)
+            {
+              edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Arc;
+
+              if (numNewPolygonVertices[c] == 2)
+                edgeArcType = SplitPolygonWithCircleResult::NewEdge::ArcTypes::OutsidePolygon;
+              else
+              {
+                unsigned int previousIndex = origin - 1;
+                Output::Assert(result.NewVertices[previousIndex].Type ==
+                               SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
+                edgeArcType = vertexInternalCircle[result.NewVertices[previousIndex].PolygonIndex] ?
+                                SplitPolygonWithCircleResult::NewEdge::ArcTypes::OutsidePolygon :
+                                SplitPolygonWithCircleResult::NewEdge::ArcTypes::InsidePolygon;
+              }
+            }
+            else
+            {
+              if (result.NewVertices[origin].Type ==
+                  SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection &&
+                  result.NewVertices[end].Type ==
+                  SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection)
+              {
+                const unsigned int originIntersectionIndex = result.NewVertices[origin].IntersectionIndex;
+                const unsigned int endIntersectionIndex = result.NewVertices[end].IntersectionIndex;
+
+                if (polygonCircleIntersections.Intersections[originIntersectionIndex].IndexType ==
+                    IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
+                    polygonCircleIntersections.Intersections[endIntersectionIndex].IndexType ==
+                    IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
+                    polygonCircleIntersections.Intersections[originIntersectionIndex].Index ==
+                    polygonCircleIntersections.Intersections[endIntersectionIndex].Index)
+                {
+                  edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Segment;
+                  edgeIndex = polygonCircleIntersections.Intersections[endIntersectionIndex].Index;
+                }
+                else
+                {
+                  edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Arc;
+
+                  Output::Assert(origin > 0);
+                  unsigned int previousIndex = origin - 1;
+                  Output::Assert(result.NewVertices[previousIndex].Type ==
+                                 SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex);
+                  edgeArcType = vertexInternalCircle[result.NewVertices[previousIndex].PolygonIndex] ?
+                                  SplitPolygonWithCircleResult::NewEdge::ArcTypes::OutsidePolygon :
+                                  SplitPolygonWithCircleResult::NewEdge::ArcTypes::InsidePolygon;
+                }
+              }
+              else
+              {
+                if (result.NewVertices[origin].Type ==
+                    SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection)
+                {
+                  edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Segment;
+                  const unsigned int originIntersectionIndex = result.NewVertices[origin].IntersectionIndex;
+                  edgeIndex = polygonCircleIntersections.Intersections[originIntersectionIndex].Index;
+                }
+                else
+                {
+                  edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Segment;
+                  edgeIndex = result.NewVertices[origin].PolygonIndex;
+                }
+              }
+            }
+
+            string newEdgeKey = to_string(min(origin, end)) + "-" +
+                                to_string(max(origin, end)) + "-" +
+                                to_string((unsigned int)edgeType) + "-" +
+                                to_string((unsigned int)edgeArcType);
+
+            Output::Assert(newEdgesMap.find(newEdgeKey) == newEdgesMap.end());
+            newEdges.push_back(SplitPolygonWithCircleResult::NewEdge());
+
+            SplitPolygonWithCircleResult::NewEdge& newEdge = newEdges.back();
+            newEdge.VertexIndices = vector<unsigned int>{ min(origin, end), max(origin, end) };
+            newEdge.Type = edgeType;
+            newEdge.ArcType = edgeArcType;
+            newEdge.PolygonIndex = edgeIndex;
+            newEdgesMap.insert(pair<string, const SplitPolygonWithCircleResult::NewEdge*>(newEdgeKey, &newEdge));
+          }
+
           // check newPolygonType
           result.NewPolygons[c].Type = isInsideOnlyPolygon ?
                                          SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon :
                                          SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle;
         }
+
+        result.NewEdges = vector<SplitPolygonWithCircleResult::NewEdge>(newEdges.begin(), newEdges.end());
 
         // then create new polygon inside the circle polygon intersection
         result.NewPolygons[numCircleIntersections].Vertices.resize(numNewPolygonVertices[numCircleIntersections]);
