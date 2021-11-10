@@ -826,7 +826,7 @@ namespace Gedim
 
         list<SplitPolygonWithCircleResult::NewVertex> newVertices;
         list<SplitPolygonWithCircleResult::NewEdge> newEdges;
-        map<string, const SplitPolygonWithCircleResult::NewEdge*> newEdgesMap;
+        map<string, unsigned int> newEdgesMap;
         unsigned int numInternalVertices = 0;
         vector<bool> vertexInternalCircle(numVertices, false);
         result.PolygonVerticesNewVerticesPosition.resize(numVertices);
@@ -1019,7 +1019,7 @@ namespace Gedim
             newEdge.Type = edgeType;
             newEdge.ArcType = edgeArcType;
             newEdge.PolygonIndex = edgeIndex;
-            newEdgesMap.insert(pair<string, const SplitPolygonWithCircleResult::NewEdge*>(newEdgeKey, &newEdge));
+            newEdgesMap.insert(pair<string, unsigned int>(newEdgeKey, newPolygon.Edges[v]));
           }
 
           // check newPolygonType
@@ -1031,8 +1031,10 @@ namespace Gedim
         result.NewEdges = vector<SplitPolygonWithCircleResult::NewEdge>(newEdges.begin(), newEdges.end());
 
         // then create new polygon inside the circle polygon intersection
-        result.NewPolygons[numCircleIntersections].Vertices.resize(numNewPolygonVertices[numCircleIntersections]);
-        result.NewPolygons[numCircleIntersections].Edges.resize(numNewPolygonVertices[numCircleIntersections]);
+        SplitPolygonWithCircleResult::NewPolygon& lastPolygon = result.NewPolygons[numCircleIntersections];
+        const unsigned int lastPolygonNumVertices = numNewPolygonVertices[numCircleIntersections];
+        lastPolygon.Vertices.resize(lastPolygonNumVertices);
+        lastPolygon.Edges.resize(lastPolygonNumVertices);
 
         unsigned int numIntersectionPolygonVertex = 0;
         for (unsigned int nv = 0; nv < numNewVertices; nv++)
@@ -1046,7 +1048,7 @@ namespace Gedim
             {
               if (vertexInternalCircle[result.NewVertices[nv].PolygonIndex])
               {
-                result.NewPolygons[numCircleIntersections].Vertices[numIntersectionPolygonVertex] = nv;
+                lastPolygon.Vertices[numIntersectionPolygonVertex] = nv;
                 numIntersectionPolygonVertex++;
               }
             }
@@ -1054,7 +1056,7 @@ namespace Gedim
             case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
             case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::Both:
             {
-              result.NewPolygons[numCircleIntersections].Vertices[numIntersectionPolygonVertex] = nv;
+              lastPolygon.Vertices[numIntersectionPolygonVertex] = nv;
               numIntersectionPolygonVertex++;
             }
             break;
@@ -1063,7 +1065,52 @@ namespace Gedim
           }
         }
 
-        result.NewPolygons[numCircleIntersections].Type = SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon;
+        for (unsigned int v = 0; v < lastPolygonNumVertices; v++)
+        {
+          const unsigned int origin = lastPolygon.Vertices[v];
+          const unsigned int end = lastPolygon.Vertices[(v + 1) % lastPolygonNumVertices];
+          SplitPolygonWithCircleResult::NewEdge::Types edgeType =
+              SplitPolygonWithCircleResult::NewEdge::Types::Unknown;
+          SplitPolygonWithCircleResult::NewEdge::ArcTypes edgeArcType =
+              SplitPolygonWithCircleResult::NewEdge::ArcTypes::Unknown;
+
+          if (result.NewVertices[origin].Type ==
+              SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection &&
+              result.NewVertices[end].Type ==
+              SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection)
+          {
+            const unsigned int originIntersectionIndex = result.NewVertices[origin].IntersectionIndex;
+            const unsigned int endIntersectionIndex = result.NewVertices[end].IntersectionIndex;
+
+            if (polygonCircleIntersections.Intersections[originIntersectionIndex].IndexType ==
+                IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
+                polygonCircleIntersections.Intersections[endIntersectionIndex].IndexType ==
+                IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
+                polygonCircleIntersections.Intersections[originIntersectionIndex].Index ==
+                polygonCircleIntersections.Intersections[endIntersectionIndex].Index)
+            {
+              edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Segment;
+            }
+            else
+            {
+              edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Arc;
+              edgeArcType = SplitPolygonWithCircleResult::NewEdge::ArcTypes::InsidePolygon;
+            }
+          }
+          else
+            edgeType = SplitPolygonWithCircleResult::NewEdge::Types::Segment;
+
+          string newEdgeKey = to_string(min(origin, end)) + "-" +
+                              to_string(max(origin, end)) + "-" +
+                              to_string((unsigned int)edgeType) + "-" +
+                              to_string((unsigned int)edgeArcType);
+
+          map<string, unsigned int>::const_iterator it = newEdgesMap.find(newEdgeKey);
+          Output::Assert(it != newEdgesMap.end());
+          lastPolygon.Edges[v] = it->second;
+        }
+
+        lastPolygon.Type = SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon;
 
         // print
         // cerr<< "RESULTS"<< endl;
