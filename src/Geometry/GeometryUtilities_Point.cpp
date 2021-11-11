@@ -136,4 +136,49 @@ namespace Gedim
     return positions;
   }
   // ***************************************************************************
+  vector<bool> GeometryUtilities::PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
+                                                   const Eigen::Vector3d& segmentEnd,
+                                                   const Eigen::MatrixXd& points) const
+  {
+    Output::Assert(points.rows() == 3 && points.cols() > 0);
+    const unsigned int numPoints = points.cols();
+
+    const Eigen::Vector3d t = (segmentEnd - segmentOrigin).normalized();
+
+    vector<bool> aligned(numPoints, false);
+    for (unsigned int p = 0; p < numPoints; p++)
+    {
+      const Eigen::Vector3d s = (points.col(p) - segmentOrigin).normalized();
+      aligned[p] = IsValue1DZero(t.cross(s).norm());
+    }
+    return aligned;
+  }
+  // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd& points) const
+  {
+    Output::Assert(points.rows() == 3 && points.cols() > 1);
+    const unsigned int& numPoints = points.cols();
+
+    list<unsigned int> unalignedPoints;
+
+    unalignedPoints.push_back(0);
+    unalignedPoints.push_back(1);
+    for (unsigned int p = 0; p < numPoints - 2; p++)
+    {
+      const unsigned int pointIndexToTest = (p + 2) % numPoints;
+      const Eigen::Vector3d& segmentOrigin = points.col(p);
+      const Eigen::Vector3d& segmentEnd = points.col((p + 1) % numPoints);
+      const Eigen::Vector3d& nextPoint = points.col((p + 2) % numPoints);
+
+      if (PointsAreAligned(segmentOrigin,
+                           segmentEnd,
+                           nextPoint)[0])
+        unalignedPoints.pop_back();
+
+      unalignedPoints.push_back(pointIndexToTest);
+    }
+
+    return vector<unsigned int>(unalignedPoints.begin(), unalignedPoints.end());
+  }
+  // ***************************************************************************
 }

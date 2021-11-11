@@ -848,16 +848,25 @@ namespace Gedim
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
       vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points) const;
 
-      /// \brief Extract the unaligned points in a set of points
+      /// \brief Check if a set of points are aligned to a line identified by a segment
+      /// \param segmentOrigin segment origin of the line
+      /// \param segmentEnd segment end of the line
       /// \param points the points, size 3 x numPoints
-      /// \return the unaligned points indices unclockwise, size numUnalignedPoints, numUnalignedPoints <= numPoints
+      /// \return true if the i-th point is aligned, size 1 x numPoints
+      vector<bool> PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
+                                    const Eigen::Vector3d& segmentEnd,
+                                    const Eigen::MatrixXd& points) const;
+
+      /// \brief Extract the circumscribed unaligned points (minimum 2) in a set of points
+      /// \param points the points, size 3 x numPoints
+      /// \return the unaligned points indices unclockwise, size numUnalignedPoints, 2 <= numUnalignedPoints <= numPoints
       vector<unsigned int> UnalignedPoints(const Eigen::MatrixXd& points) const;
 
       /// \param points the points, size 3 x numPoints
-      /// \param convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
-      /// \return the points coordinates in the Convex Hull, size 3 x numConvexHullPoints
-      Eigen::MatrixXd ExtractConvexHull(const Eigen::MatrixXd& points,
-                                        const vector<unsigned int>& convexHull) const;
+      /// \param filter indices unclockwise, size numFilterPoints, numFilterPoints <= numPoints
+      /// \return the points coordinates filtered, size 3 x numFilterPoints
+      Eigen::MatrixXd ExtractPoints(const Eigen::MatrixXd& points,
+                                    const vector<unsigned int>& filter) const;
 
       /// \brief Create a Tetrahedron with origin and dimension
       /// \param origin the origin

@@ -160,10 +160,10 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.5, 0.5, 0.0;
         polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-        vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
+        vector<unsigned int> unalignedPoint = geometryUtility.UnalignedPoints(polygonVertices);
 
-        Eigen::MatrixXd extraction = geometryUtility.ExtractConvexHull(polygonVertices,
-                                                                       convexHull);
+        Eigen::MatrixXd extraction = geometryUtility.ExtractPoints(polygonVertices,
+                                                                   unalignedPoint);
 
         ASSERT_EQ(geometryUtility.PolygonType(extraction),
                   Gedim::GeometryUtilities::PolygonTypes::Triangle);

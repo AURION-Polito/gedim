@@ -16,7 +16,7 @@ namespace Gedim
   }
 
   Eigen::VectorXd GeometryUtilities::PointDistances(const Eigen::MatrixXd& points,
-                                                   const Eigen::Vector3d& point) const
+                                                    const Eigen::Vector3d& point) const
   {
     return (points.colwise() - point).colwise().norm();
   }
@@ -129,28 +129,12 @@ namespace Gedim
     return vector<unsigned int>(convexHull.begin(), convexHull.end());
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd& points) const
+  MatrixXd GeometryUtilities::ExtractPoints(const Eigen::MatrixXd& points,
+                                            const vector<unsigned int>& filter) const
   {
-    Output::Assert(points.rows() == 3 && points.cols() > 0);
-    const unsigned int numPoints = points.cols();
-
-    list<unsigned int> unalignedPoints;
-
-    unalignedPoints.push_back(0);
-    for (unsigned int p = 0; p < numPoints; p++)
-    {
-
-    }
-
-    return vector<unsigned int>(unalignedPoints.begin(), unalignedPoints.end());
-  }
-  // ***************************************************************************
-  MatrixXd GeometryUtilities::ExtractConvexHull(const Eigen::MatrixXd& points,
-                                                const vector<unsigned int>& convexHull) const
-  {
-    Eigen::MatrixXd extraction(3, convexHull.size());
-    for (unsigned int c = 0; c < convexHull.size(); c++)
-      extraction.col(c) = points.col(convexHull[c]);
+    Eigen::MatrixXd extraction(3, filter.size());
+    for (unsigned int c = 0; c < filter.size(); c++)
+      extraction.col(c) = points.col(filter[c]);
 
     return extraction;
   }

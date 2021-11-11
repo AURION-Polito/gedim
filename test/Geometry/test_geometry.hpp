@@ -147,8 +147,8 @@ namespace GedimUnitTesting {
         result.col(2)<< 1.0, 1.0, 0.0;
         result.col(3)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractConvexHull(points,
-                                                    convexHull), result);
+        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+                                                convexHull), result);
       }
 
       // check complex convex hull
@@ -173,8 +173,78 @@ namespace GedimUnitTesting {
         result.col(3)<< 70.0, 30.0, 0.0;
         result.col(4)<< 30.0, 60.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractConvexHull(points,
-                                                    convexHull), result);
+        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+                                                convexHull), result);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestUnalignedPoints)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check two aligned points
+      {
+        Eigen::MatrixXd points(3, 2);
+        points.col(0)<< 0.0, 0.0, 0.0;
+        points.col(1)<< 1.0, 1.0, 0.0;
+
+        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1 }));
+
+        Eigen::MatrixXd result(3, 2);
+        result.col(0)<< 0.0, 0.0, 0.0;
+        result.col(1)<< 1.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+                                                unalignedPoints), result);
+      }
+
+      // check triangle points
+      {
+        Eigen::MatrixXd points(3, 3);
+        points.col(0)<< 0.0, 0.0, 0.0;
+        points.col(1)<< 1.0, 0.0, 0.0;
+        points.col(2)<< 0.0, 1.0, 0.0;
+
+        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 2 }));
+
+        Eigen::MatrixXd result(3, 3);
+        result.col(0)<< 0.0, 0.0, 0.0;
+        result.col(1)<< 1.0, 0.0, 0.0;
+        result.col(2)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+                                                unalignedPoints), result);
+      }
+
+      // check triangle with aligned points
+      {
+        Eigen::MatrixXd points(3, 4);
+        points.col(0)<< 0.0, 0.0, 0.0;
+        points.col(1)<< 1.0, 0.0, 0.0;
+        points.col(2)<< 0.5, 0.5, 0.0;
+        points.col(3)<< 0.0, 1.0, 0.0;
+
+        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 3 }));
+
+        Eigen::MatrixXd result(3, 3);
+        result.col(0)<< 0.0, 0.0, 0.0;
+        result.col(1)<< 1.0, 0.0, 0.0;
+        result.col(2)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+                                                unalignedPoints), result);
       }
     }
     catch (const exception& exception)
