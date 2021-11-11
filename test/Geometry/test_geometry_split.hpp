@@ -306,6 +306,27 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NewPolygons[1].Edges.size(), 3);
         ASSERT_EQ(result.NewPolygons[1].Edges, list<unsigned int>({ 1, 4, 6 }));
       }
+
+      // update a triangle with a quadrilateral with aligned edges
+      {
+        Gedim::GeometryUtilities::SplitPolygonInput input;
+        input.NumberPolygonVertices = 3;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
+        input.Segment.Origin.Index = 1;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
+        input.Segment.End.Index = 2;
+
+        Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate);
+        ASSERT_EQ(result.NewVertices.size(), 1);
+        ASSERT_EQ(result.NewEdges.size(), 2);
+        ASSERT_EQ(result.NewPolygons.size(), 1);
+        ASSERT_EQ(result.NewPolygons[0].Vertices.size(), 4);
+        ASSERT_EQ(result.NewPolygons[0].Vertices, list<unsigned int>({ 0, 1, 3, 2 }));
+        ASSERT_EQ(result.NewPolygons[0].Edges.size(), 4);
+        ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 0, 3, 4, 2 }));
+      }
     }
     catch (const exception& exception)
     {

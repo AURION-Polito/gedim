@@ -94,9 +94,6 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& conformPoint = InsertNewIntersection(unionCurvilinearCoordinate,
                                                                                                 result,
                                                                                                 found);
-      // Point already added, not possible
-      Output::Assert(!found);
-
       // check if union point is in intersection mesh
       if (unionPoint.Type != otherIntersectionMeshUnionType)
       {
