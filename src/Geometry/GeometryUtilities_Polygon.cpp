@@ -83,6 +83,17 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
+  GeometryUtilities::PolygonTypes GeometryUtilities::PolygonType(const Eigen::MatrixXd& polygonVertices) const
+  {
+    const unsigned int numVertices = polygonVertices.cols();
+    if (numVertices == 3)
+      return PolygonTypes::Triangle;
+    else if (numVertices == 4)
+      return PolygonTypes::Quadrilateral;
+    else
+      return PolygonTypes::Generic;
+  }
+  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);

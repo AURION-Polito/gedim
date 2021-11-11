@@ -122,6 +122,60 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonType)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check triangle
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.PolygonType(polygonVertices),
+                  Gedim::GeometryUtilities::PolygonTypes::Triangle);
+      }
+
+      // check quadrilateral polygon 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.25, 0.25, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtility.PolygonType(polygonVertices),
+                  Gedim::GeometryUtilities::PolygonTypes::Quadrilateral);
+      }
+
+      // check triangle with aligned edges polygon 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.5, 0.5, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
+
+        Eigen::MatrixXd extraction = geometryUtility.ExtractConvexHull(polygonVertices,
+                                                                       convexHull);
+
+        ASSERT_EQ(geometryUtility.PolygonType(extraction),
+                  Gedim::GeometryUtilities::PolygonTypes::Triangle);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonIsConvex)
   {
     try

@@ -40,14 +40,14 @@ namespace Gedim
       /// \return the mapped points, size 3 x numPoints
       Eigen::MatrixXd F(const Eigen::Matrix3d& vertices,
                         const Eigen::MatrixXd& x) const;
-      /// Compute the jacobian matrix of the transformation
+      /// Compute the jacobian matrix of the transformation F
       /// x matrix of points between 0.0 and 1.0, size 2 x numPoints
-      /// \return the Jacobian matrix for each points, size 2 x (2 x numPoints)
+      /// \return the Q matrix for each points, size 2 x (2 * numPoints)
       Eigen::MatrixXd J(const Eigen::Matrix3d& vertices,
                         const Eigen::MatrixXd& x) const;
       /// Compute the determinant of the jacobian matrix of the trasformation
       /// x matrix of points between 0.0 and 1.0, size 2 x numPoints
-      /// \return the Jacobian matrix for each points, size 2 x (2 x numPoints)
+      /// \return the determinant of Jacobian matrix for each points, size 1 x numPoints
       Eigen::VectorXd DetJ(const Eigen::Matrix3d& vertices,
                            const Eigen::MatrixXd& x) const;
   };

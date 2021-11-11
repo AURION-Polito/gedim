@@ -21,14 +21,24 @@ namespace Gedim
       const GeometryUtilitiesConfig& _configuration;
 
     public:
-      enum struct CompareTypes {
+      enum struct CompareTypes
+      {
         Unknown = 0,
         FirstBeforeSecond = 1,
         Coincident = 2,
         SecondBeforeFirst = 3
       };
 
-      enum struct PointSegmentPositionTypes {
+      enum struct PolygonTypes
+      {
+        Unknown = 0,
+        Triangle = 1,
+        Quadrilateral = 2,
+        Generic = 3
+      };
+
+      enum struct PointSegmentPositionTypes
+      {
         Unknown = 0,
         OnSegmentLineBeforeOrigin = 1,
         OnSegmentOrigin = 2,
@@ -39,7 +49,8 @@ namespace Gedim
         RightTheSegment = 7
       };
 
-      enum struct PolygonCirclePositionTypes {
+      enum struct PolygonCirclePositionTypes
+      {
         Unknown = 0,
         PolygonOutsideCircleNoIntersection = 1,
         PolygonOutsideCircleOneIntersectionOnVertex = 2,
@@ -761,6 +772,8 @@ namespace Gedim
       /// \note works only in 2D-plane
       bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const;
 
+      PolygonTypes PolygonType(const Eigen::MatrixXd& polygonVertices) const;
+
       /// \brief Compute the rotation matrix of a plane from 2D to 3D
       /// \param planeNormal the normalized normal of the plane
       /// \return the resulting rotation matrix Q which rotates 2D points to 3D points
@@ -811,6 +824,17 @@ namespace Gedim
       /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
       vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points) const;
+
+      /// \brief Extract the unaligned points in a set of points
+      /// \param points the points, size 3 x numPoints
+      /// \return the unaligned points indices unclockwise, size numUnalignedPoints, numUnalignedPoints <= numPoints
+      vector<unsigned int> UnalignedPoints(const Eigen::MatrixXd& points) const;
+
+      /// \param points the points, size 3 x numPoints
+      /// \param convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
+      /// \return the points coordinates in the Convex Hull, size 3 x numConvexHullPoints
+      Eigen::MatrixXd ExtractConvexHull(const Eigen::MatrixXd& points,
+                                        const vector<unsigned int>& convexHull) const;
 
       /// \brief Create a Tetrahedron with origin and dimension
       /// \param origin the origin
