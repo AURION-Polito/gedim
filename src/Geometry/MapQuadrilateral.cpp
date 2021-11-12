@@ -6,7 +6,7 @@ namespace Gedim
 {
   // ***************************************************************************
   MatrixXd MapQuadrilateral::F(const MatrixXd& vertices,
-                                   const MatrixXd& x) const
+                               const MatrixXd& x) const
   {
     MatrixXd shiftedPoints;
     ShiftSquareQuadraturePoints(x,
@@ -22,7 +22,7 @@ namespace Gedim
   }
   // ***************************************************************************
   MatrixXd MapQuadrilateral::J(const MatrixXd& vertices,
-                                   const MatrixXd& x) const
+                               const MatrixXd& x) const
   {
     MatrixXd shiftedPoints;
     ShiftSquareQuadraturePoints(x,
@@ -57,7 +57,7 @@ namespace Gedim
   }
   // ***************************************************************************
   VectorXd MapQuadrilateral::DetJ(const MatrixXd& vertices,
-                                      const MatrixXd& x) const
+                                  const MatrixXd& x) const
   {
     MatrixXd jacb = J(vertices,
                       x);

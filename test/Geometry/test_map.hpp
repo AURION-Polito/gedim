@@ -79,6 +79,33 @@ namespace GedimUnitTesting
       ASSERT_TRUE((expectedWeights - mappedWeights).norm() < 1e-14);
       ASSERT_DOUBLE_EQ(mappedWeights.sum(), 3.908677988570559e-01);
     }
+
+    {
+      Eigen::MatrixXd vertices;
+      vertices.setZero(3, 4);
+      vertices.row(0) << -1.0630237354616701e+00,  1.1148026974627239e+00,  1.1494634009478966e+00, -2.2942118276715412e-01;
+      vertices.row(1) <<  1.5565368774740850e-03, -1.1354686296150518e+00, -9.6872630175294960e-01,  8.5220794112921472e-01;
+
+      Gedim::MapQuadrilateral mapping;
+      Eigen::MatrixXd mappedPoints = mapping.F(vertices,
+                                               referencePoints);
+
+      Eigen::MatrixXd expectedPoints;
+      expectedPoints.setZero(3, 9);
+      expectedPoints.row(0)<< -7.337785656371913e-01, 7.481683848006121e-02, 8.834122425973138e-01, -4.457988316904019e-01, 2.429552950454490e-01, 9.317094217813001e-01, -1.578190977436126e-01, 4.110937516108370e-01, 9.800066009652866e-01;
+      expectedPoints.row(1)<< -3.940504728612496e-02, -5.096250623909643e-01, -9.798450774958036e-01, 2.601987632229570e-01, -3.126076133403282e-01, -8.854139899036132e-01, 5.598025737320390e-01, -1.155901642896920e-01, -7.909829023114229e-01;
+
+      ASSERT_TRUE((expectedPoints - mappedPoints).norm() < 1e-14);
+
+      Eigen::VectorXd mappedWeights = referenceWeights.array() * mapping.DetJ(vertices,
+                                                                              referencePoints).array().abs();
+
+      Eigen::VectorXd expectedWeights(9);
+      expectedWeights<< 1.942757711316908e-01, 1.961888653655394e-01, 5.096031057523357e-02, 3.056049290531979e-01, 3.055240969728514e-01, 7.630019216286643e-02, 1.877303901848067e-01, 1.857162558505248e-01, 4.441492962834947e-02;
+
+      ASSERT_TRUE((expectedWeights - mappedWeights).norm() < 1e-14);
+      ASSERT_DOUBLE_EQ(mappedWeights.sum(), 1.546715740925060e+00);
+    }
   }
 
   TEST(TestQuadratureMap, TestMapTriangle)
