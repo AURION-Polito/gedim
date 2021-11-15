@@ -181,7 +181,7 @@ namespace GedimUnitTesting
         EXPECT_EQ(result.Segments.size(), 4);
         EXPECT_EQ(result.Segments[0].Points, vector<double>({ 0.0000000000000000e+00, 2.5000000000000000e-01 }));
         EXPECT_EQ(result.Segments[0].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::Second);
-        EXPECT_EQ(result.Segments[0].MeshIndices, vector<unsigned int>({ -1, 0 }));
+        EXPECT_EQ(result.Segments[0].MeshIndices, vector<unsigned int>({ 0, 0 }));
         EXPECT_EQ(result.Segments[1].Points, vector<double>({ 2.5000000000000000e-01, 5.0000000000000000e-01 }));
         EXPECT_EQ(result.Segments[1].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::Both);
         EXPECT_EQ(result.Segments[1].MeshIndices, vector<unsigned int>({ 0, 0 }));
@@ -190,7 +190,7 @@ namespace GedimUnitTesting
         EXPECT_EQ(result.Segments[2].MeshIndices, vector<unsigned int>({ 0, 1 }));
         EXPECT_EQ(result.Segments[3].Points, vector<double>({ 7.5000000000000000e-01, 1.0000000000000000e+00 }));
         EXPECT_EQ(result.Segments[3].Type, Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::First);
-        EXPECT_EQ(result.Segments[3].MeshIndices, vector<unsigned int>({ 1, -1 }));
+        EXPECT_EQ(result.Segments[3].MeshIndices, vector<unsigned int>({ 1, 0 }));
       }
     }
     catch (const exception& exception)

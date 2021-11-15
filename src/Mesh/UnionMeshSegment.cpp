@@ -161,7 +161,7 @@ namespace Gedim
       meshSegment.MeshIndices[0] = meshIndices[p][0] >= 0 ? meshIndices[p][0] : 0;
       meshSegment.MeshIndices[1] = meshIndices[p][1] >= 0 ? meshIndices[p][1] : 0;
 
-      Output::Assert(meshIndices[p][0] != -1 && meshIndices[p][1] != -1);
+      Output::Assert(meshIndices[p][0] != -1 || meshIndices[p][1] != -1);
 
       if (meshIndices[p][0] >= 0 && meshIndices[p][1] >= 0)
         meshSegment.Type = Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::Both;
