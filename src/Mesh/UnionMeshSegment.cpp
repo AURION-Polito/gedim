@@ -35,7 +35,7 @@ namespace Gedim
     cerr<< "Segments:"<< endl;
     for_each(unionMesh.Segments.begin(), unionMesh.Segments.end(), [](
              const UnionMeshSegment::UnionMesh::UnionMeshSegment& p)
-    { cerr<< scientific << "{ P: "<< p.Points<< " I: "<< p.MeshIndices<< " }\n"; });
+    { cerr<< scientific << "{ P: "<< p.Points<< " T: "<< (unsigned int)p.Type<< " I: "<< p.MeshIndices<< " }\n"; });
   }
   // ***************************************************************************
   UnionMeshSegment::UnionMesh::UnionMeshPoint& UnionMeshSegment::InsertNewIntersection(const double& curvilinearCoordinate,
@@ -114,6 +114,8 @@ namespace Gedim
                                              UnionMesh& result)
   {
     result.Segments.resize(result.Points.size() - 1);
+    vector<vector<int>> meshIndices(result.Points.size() - 1);
+
     map<double, UnionMesh::UnionMeshPoint>::const_iterator itPoint = result.Points.begin();
     map<double, UnionMesh::UnionMeshPoint>::const_iterator itPointNext = result.Points.begin();
     itPointNext++;
@@ -130,30 +132,43 @@ namespace Gedim
       meshSegment.Points[0] = curvilinearCoordinatePoint;
       meshSegment.Points[1] = curvilinearCoordinatePointNext;
 
-      meshSegment.MeshIndices.resize(2);
-      meshSegment.MeshIndices[0] = p == 0 ? -1 : result.Segments[p - 1].MeshIndices[0];
-      meshSegment.MeshIndices[1] = p == 0 ? -1 : result.Segments[p - 1].MeshIndices[1];
+      meshIndices[p].resize(2);
+      meshIndices[p][0] = p == 0 ? -1 : meshIndices[p - 1][0];
+      meshIndices[p][1] = p == 0 ? -1 : meshIndices[p - 1][1];
 
       switch (intersectionPoint.Type)
       {
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::First:
-          meshSegment.MeshIndices[0]++;
+          meshIndices[p][0]++;
         break;
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::Second:
-          meshSegment.MeshIndices[1]++;
+          meshIndices[p][1]++;
         break;
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::Both:
-          meshSegment.MeshIndices[0]++;
-          meshSegment.MeshIndices[1]++;
+          meshIndices[p][0]++;
+          meshIndices[p][1]++;
         break;
         default:
           throw runtime_error("Unmanaged intersectionPoint.Type");
       }
 
-      if ((meshSegment.MeshIndices[0] + 1) >= curvilinearCoordinatesMeshOne.size())
-        meshSegment.MeshIndices[0] = -1;
-      if ((meshSegment.MeshIndices[1] + 1) >= curvilinearCoordinatesMeshTwo.size())
-        meshSegment.MeshIndices[1] = -1;
+      if ((meshIndices[p][0] + 1) >= curvilinearCoordinatesMeshOne.size())
+        meshIndices[p][0] = -1;
+      if ((meshIndices[p][1] + 1) >= curvilinearCoordinatesMeshTwo.size())
+        meshIndices[p][1] = -1;
+
+      meshSegment.MeshIndices.resize(2);
+      meshSegment.MeshIndices[0] = meshIndices[p][0] >= 0 ? meshIndices[p][0] : 0;
+      meshSegment.MeshIndices[1] = meshIndices[p][1] >= 0 ? meshIndices[p][1] : 0;
+
+      Output::Assert(meshIndices[p][0] != -1 && meshIndices[p][1] != -1);
+
+      if (meshIndices[p][0] >= 0 && meshIndices[p][1] >= 0)
+        meshSegment.Type = Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::Both;
+      else if (meshIndices[p][0] >= 0 && meshIndices[p][1] == -1)
+        meshSegment.Type = Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::First;
+      else if (meshIndices[p][0] == -1 && meshIndices[p][1] >= 0)
+        meshSegment.Type = Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types::Second;
 
       itPoint++;
       itPointNext++;

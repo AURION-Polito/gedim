@@ -11,7 +11,8 @@ namespace Gedim
   {
     public:
       struct UnionMesh final {
-          struct UnionMeshPoint final {
+          struct UnionMeshPoint final
+          {
               enum struct Types
               {
                 Unknown = 0,
@@ -26,8 +27,17 @@ namespace Gedim
 
           struct UnionMeshSegment final
           {
+              enum struct Types
+              {
+                Unknown = 0,
+                First = 1,
+                Second = 2,
+                Both = 3
+              };
+
+              Types Type = Types::Unknown;
               vector<double> Points = {};
-              vector<int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
+              vector<unsigned int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
           };
 
           map<double, UnionMeshPoint> Points = {};
