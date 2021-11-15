@@ -12,18 +12,26 @@ namespace Gedim
     public:
       struct UnionMesh final {
           struct UnionMeshPoint final {
-              enum Types {
+              enum struct Types
+              {
                 Unknown = 0,
                 First = 1,
                 Second = 2,
                 Both = 3
               };
 
-              Types Type;
-              vector<unsigned int> MeshIndices; ///< vector of size 2 containing in each i the indices in mesh_i
+              Types Type = Types::Unknown;
+              vector<unsigned int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
           };
 
-          map<double, UnionMeshPoint> Points;
+          struct UnionMeshSegment final
+          {
+              vector<double> Points = {};
+              vector<int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
+          };
+
+          map<double, UnionMeshPoint> Points = {};
+          vector<UnionMeshSegment> Segments = {};
       };
 
       /// \brief convert UnionMesh to Curvilinear Coordinates vector
@@ -38,6 +46,13 @@ namespace Gedim
       UnionMesh::UnionMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
                                                        UnionMesh& result,
                                                        bool& found);
+
+      void CreateUnionPoints(const vector<double>& curvilinearCoordinatesMeshOne,
+                             const vector<double>& curvilinearCoordinatesMeshTwo,
+                             UnionMesh& result);
+      void CreateUnionSegments(const vector<double>& curvilinearCoordinatesMeshOne,
+                               const vector<double>& curvilinearCoordinatesMeshTwo,
+                               UnionMesh& result);
 
     public:
       UnionMeshSegment(const Gedim::GeometryUtilities& geometryUtilities);

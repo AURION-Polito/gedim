@@ -82,8 +82,8 @@ namespace Gedim
         UnionMeshSegment::UnionMesh::UnionMeshPoint>::const_iterator itUnionPoint = meshUnion.Points.begin();
 
     UnionMeshSegment::UnionMesh::UnionMeshPoint::Types otherIntersectionMeshUnionType = (meshIntersectionPosition == 0) ?
-                                                                                          UnionMeshSegment::UnionMesh::UnionMeshPoint::Second :
-                                                                                          UnionMeshSegment::UnionMesh::UnionMeshPoint::First;
+                                                                                          UnionMeshSegment::UnionMesh::UnionMeshPoint::UnionMeshPoint::Types::Second :
+                                                                                          UnionMeshSegment::UnionMesh::UnionMeshPoint::UnionMeshPoint::Types::First;
     for (unsigned int p = 0; p < meshUnion.Points.size(); p++)
     {
       const double& unionCurvilinearCoordinate = itUnionPoint->first;
