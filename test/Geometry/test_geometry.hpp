@@ -12,6 +12,25 @@ using namespace std;
 
 namespace GedimUnitTesting {
 
+  TEST(TestGeometryUtilities, TestEquispaceCoordinates)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      ASSERT_EQ(geometryUtility.EquispaceCoordinates(1.0, true), vector<double>({ 0.0, 1.0 }));
+      ASSERT_EQ(geometryUtility.EquispaceCoordinates(1.0, false), vector<double>({ }));
+      ASSERT_EQ(geometryUtility.EquispaceCoordinates(0.5, true), vector<double>({ 0.0, 0.5, 1.0 }));
+      ASSERT_EQ(geometryUtility.EquispaceCoordinates(0.5, false), vector<double>({ 0.5 }));
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestCompareValues)
   {
     try

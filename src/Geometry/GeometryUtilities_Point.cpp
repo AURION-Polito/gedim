@@ -7,6 +7,27 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
+  Eigen::VectorXd GeometryUtilities::PointDistances(const Eigen::MatrixXd& points,
+                                                    const Eigen::Vector3d& point) const
+  {
+    return (points.colwise() - point).colwise().norm();
+  }
+  // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::FindPointInPoints(const Eigen::MatrixXd& points,
+                                                            const Eigen::Vector3d& point) const
+  {
+    VectorXd pointDistances = PointDistances(points,
+                                             point);
+    list<unsigned int> indices;
+    for (unsigned int p = 0; p < pointDistances.size(); p++)
+    {
+      if (IsValue1DZero(pointDistances[p]))
+        indices.push_back(p);
+    }
+
+    return vector<unsigned int>(indices.begin(), indices.end());
+  }
+  // ***************************************************************************
   GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const Vector3d& point,
                                                                                        const Vector3d& segmentOrigin,
                                                                                        const Vector3d& segmentEnd) const

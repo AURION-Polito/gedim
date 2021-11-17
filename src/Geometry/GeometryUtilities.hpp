@@ -538,6 +538,12 @@ namespace Gedim
                                0.0) == CompareTypes::Coincident;
       }
 
+      /// \param step the distance between each coordinate
+      /// \param insertExtremes if true keeps the extremes
+      /// \return the equispace coordinates between [0.0, 1.0], size 1 x numCoordinates
+      vector<double> EquispaceCoordinates(const double& step,
+                                          const bool& insertExtremes) const;
+
       /// \brief compute the Point distance
       /// \param firstPoint the first point
       /// \param secondPoint the second point
@@ -617,6 +623,13 @@ namespace Gedim
       {
         return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd);
       }
+
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \return the segment tangent
+      inline Eigen::Vector3d SegmentTangent(const Eigen::Vector3d& segmentOrigin,
+                                            const Eigen::Vector3d& segmentEnd) const
+      { return segmentEnd - segmentOrigin; }
 
       /// \brief Compute the intersection between the two segments
       /// \param firstSegmentOrigin first segment origin

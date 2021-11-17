@@ -119,4 +119,79 @@ namespace Gedim
     mesh.Compress();
   }
   // ***************************************************************************
+  void MeshUtilities::FillMesh1D(const GeometryUtilities& geometryUtilities,
+                                 const Vector3d& segmentOrigin,
+                                 const Vector3d& segmentTangent,
+                                 const vector<double>& coordinates,
+                                 IMeshDAO& mesh) const
+  {
+    if (coordinates.size() == 0)
+      return;
+
+    const unsigned int& numCoordinates = coordinates.size();
+
+    mesh.InitializeDimension(1);
+
+    mesh.Cell0DsInitialize(numCoordinates);
+    for (unsigned int c = 0; c < numCoordinates; c++)
+    {
+      mesh.Cell0DSetId(c, c);
+      mesh.Cell0DSetState(c, true);
+      mesh.Cell0DInsertCoordinates(c, segmentOrigin + coordinates[c] * segmentTangent);
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::FillMesh2D(const MatrixXd& cell0Ds,
+                                 const MatrixXi& cell1Ds,
+                                 const vector<MatrixXi>& cell2Ds,
+                                 IMeshDAO& mesh) const
+  {
+    mesh.InitializeDimension(2);
+
+    // Create Cell0Ds
+    Output::Assert(cell0Ds.rows() == 3);
+    const unsigned int& numCell0Ds = cell0Ds.cols();
+    mesh.Cell0DsInitialize(numCell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      mesh.Cell0DSetId(v, v);
+      mesh.Cell0DSetState(v, true);
+      mesh.Cell0DInsertCoordinates(v, cell0Ds.col(v));
+    }
+
+    // Create Cell1Ds
+    Output::Assert(cell1Ds.rows() == 2);
+    unsigned int numCell1Ds = cell1Ds.cols();
+    mesh.Cell1DsInitialize(numCell1Ds);
+    for (int e = 0; e < cell1Ds.cols(); e++)
+    {
+      mesh.Cell1DSetId(e, e);
+      mesh.Cell1DInsertExtremes(e,
+                                cell1Ds(0, e),
+                                cell1Ds(1, e));
+      mesh.Cell1DSetState(e, true);
+    }
+
+    // Create Cell2Ds
+    const unsigned int& numCell2Ds = cell2Ds.size();
+    mesh.Cell2DsInitialize(numCell2Ds);
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const MatrixXi& polygon = cell2Ds[f];
+      Output::Assert(polygon.rows() == 2);
+      const unsigned int& numVertices = polygon.cols();
+
+      mesh.Cell2DInitializeVertices(f, numVertices);
+      mesh.Cell2DInitializeEdges(f, numVertices);
+
+      for (unsigned int v = 0; v < numVertices; v++)
+        mesh.Cell2DInsertVertex(f, v, polygon(0, v));
+      for (unsigned int e = 0; e < numVertices; e++)
+        mesh.Cell2DInsertEdge(f, e, polygon(1, e));
+
+      mesh.Cell2DSetId(f, f);
+      mesh.Cell2DSetState(f, true);
+    }
+  }
+  // ***************************************************************************
 }

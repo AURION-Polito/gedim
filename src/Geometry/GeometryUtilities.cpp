@@ -14,26 +14,24 @@ namespace Gedim
   GeometryUtilities::~GeometryUtilities()
   {
   }
-
-  Eigen::VectorXd GeometryUtilities::PointDistances(const Eigen::MatrixXd& points,
-                                                    const Eigen::Vector3d& point) const
-  {
-    return (points.colwise() - point).colwise().norm();
-  }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::FindPointInPoints(const Eigen::MatrixXd& points,
-                                                            const Eigen::Vector3d& point) const
+  vector<double> GeometryUtilities::EquispaceCoordinates(const double& step,
+                                                         const bool& insertExtremes) const
   {
-    VectorXd pointDistances = PointDistances(points,
-                                             point);
-    list<unsigned int> indices;
-    for (unsigned int p = 0; p < pointDistances.size(); p++)
-    {
-      if (IsValue1DZero(pointDistances[p]))
-        indices.push_back(p);
-    }
+    Output::Assert(IsValue1DPositive(step) &&
+                   Compare1DValues(step, 1.0) != CompareTypes::SecondBeforeFirst);
 
-    return vector<unsigned int>(indices.begin(), indices.end());
+    VectorXd generated = VectorXd::LinSpaced(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0);
+    vector<double> coordinates;
+    if (insertExtremes)
+      coordinates.resize(generated.size());
+    else
+      coordinates.resize(generated.size() - 2);
+
+    for (unsigned int c = 0; c < coordinates.size(); c++)
+      coordinates[c] = insertExtremes ? generated[c] : generated[c + 1];
+
+    return coordinates;
   }
   // ***************************************************************************
   GeometryUtilities::CompareTypes GeometryUtilities::CompareValues(const double& first,

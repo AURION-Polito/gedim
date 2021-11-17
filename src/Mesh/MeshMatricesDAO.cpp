@@ -949,58 +949,6 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
-  void MeshMatricesDAO::FillMesh2D(const MatrixXd& cell0Ds,
-                                   const MatrixXi& cell1Ds,
-                                   const vector<MatrixXi>& cell2Ds)
-  {
-    InitializeDimension(2);
-
-    // Create Cell0Ds
-    Output::Assert(cell0Ds.rows() == 3);
-    const unsigned int& numCell0Ds = cell0Ds.cols();
-    Cell0DsInitialize(numCell0Ds);
-    for (unsigned int v = 0; v < numCell0Ds; v++)
-    {
-      Cell0DSetId(v, v);
-      Cell0DSetState(v, true);
-      Cell0DInsertCoordinates(v, cell0Ds.col(v));
-    }
-
-    // Create Cell1Ds
-    Output::Assert(cell1Ds.rows() == 2);
-    unsigned int numCell1Ds = cell1Ds.cols();
-    Cell1DsInitialize(numCell1Ds);
-    for (int e = 0; e < cell1Ds.cols(); e++)
-    {
-      Cell1DSetId(e, e);
-      Cell1DInsertExtremes(e,
-                           cell1Ds(0, e),
-                           cell1Ds(1, e));
-      Cell1DSetState(e, true);
-    }
-
-    // Create Cell2Ds
-    unsigned int numCell2Ds = cell2Ds.size();
-    Cell2DsInitialize(numCell2Ds);
-    for (unsigned int f = 0; f < numCell2Ds; f++)
-    {
-      const MatrixXi& polygon = cell2Ds[f];
-      Output::Assert(polygon.rows() == 2);
-      const unsigned int& numVertices = polygon.cols();
-
-      Cell2DInitializeVertices(f, numVertices);
-      Cell2DInitializeEdges(f, numVertices);
-
-      for (unsigned int v = 0; v < numVertices; v++)
-        Cell2DInsertVertex(f, v, polygon(0, v));
-      for (unsigned int e = 0; e < numVertices; e++)
-        Cell2DInsertEdge(f, e, polygon(1, e));
-
-      Cell2DSetId(f, f);
-      Cell2DSetState(f, true);
-    }
-  }
-  // ***************************************************************************
   void MeshMatricesDAO::Compress()
   {
     _mesh.Cell0DCoordinates.shrink_to_fit();

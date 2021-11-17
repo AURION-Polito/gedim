@@ -879,14 +879,6 @@ namespace Gedim
                                                const unsigned int& propertyValueIndex) const = 0;
 
 
-      /// \brief Fill a Mesh 2D with vertices and polygons
-      /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
-      /// \param cell1Ds the origin and end as Eigen MatrixXd of cell1Ds, size 2xCell1DTotalNumber()
-      /// \param cell2Ds the vertices and edges indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()x2xCell2DNumberVertices()
-      virtual void FillMesh2D(const Eigen::MatrixXd& cell0Ds,
-                              const Eigen::MatrixXi& cell1Ds,
-                              const vector<Eigen::MatrixXi>& cell2Ds) = 0;
-
       /// \brief Compact the mesh to save memory
       virtual void Compress() = 0;
 
