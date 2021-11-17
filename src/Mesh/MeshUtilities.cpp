@@ -128,16 +128,26 @@ namespace Gedim
     if (coordinates.size() == 0)
       return;
 
-    const unsigned int& numCoordinates = coordinates.size();
-
     mesh.InitializeDimension(1);
 
-    mesh.Cell0DsInitialize(numCoordinates);
-    for (unsigned int c = 0; c < numCoordinates; c++)
+    const unsigned int& numCell0Ds = coordinates.size();
+    mesh.Cell0DsInitialize(numCell0Ds);
+    for (unsigned int c = 0; c < numCell0Ds; c++)
     {
       mesh.Cell0DSetId(c, c);
       mesh.Cell0DSetState(c, true);
       mesh.Cell0DInsertCoordinates(c, segmentOrigin + coordinates[c] * segmentTangent);
+    }
+
+    const unsigned int numCell1Ds = numCell0Ds - 1;
+    mesh.Cell1DsInitialize(numCell1Ds);
+    for (unsigned int e = 0; e < numCell1Ds; e++)
+    {
+      mesh.Cell1DSetId(e, e);
+      mesh.Cell1DInsertExtremes(e,
+                                e,
+                                e + 1);
+      mesh.Cell1DSetState(e, true);
     }
   }
   // ***************************************************************************
