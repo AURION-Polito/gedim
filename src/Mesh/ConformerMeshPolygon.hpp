@@ -27,8 +27,8 @@ namespace Gedim
                                                                                  ConformerMeshSegment::ConformMesh& result,
                                                                                  bool& found);
 
-      void CheckSegmentOriginAndEndIntersections(const Vector3d& segmentOrigin,
-                                                 const Vector3d& segmentEnd,
+      void CheckSegmentOriginAndEndIntersections(const Eigen::Vector3d& segmentOrigin,
+                                                 const Eigen::Vector3d& segmentEnd,
                                                  ConformerMeshSegment::ConformMesh& mesh1D,
                                                  const Gedim::IMeshDAO& mesh2DReader);
 
@@ -58,8 +58,8 @@ namespace Gedim
                                     const map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
                                     Gedim::GeometryUtilities::SplitPolygonInput& splitInput);
 
-      void SplitCell2DMesh2D(const Vector3d& segmentOrigin,
-                             const Vector3d& segmentTangent,
+      void SplitCell2DMesh2D(const Eigen::Vector3d& segmentOrigin,
+                             const Eigen::Vector3d& segmentTangent,
                              const list<unsigned int> cell1DMesh1DIds,
                              ConformerMeshSegment::ConformMesh& mesh1D,
                              Gedim::IMeshDAO& mesh2D,
@@ -68,15 +68,15 @@ namespace Gedim
                              map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
                              const Gedim::GeometryUtilities::SplitPolygonWithSegmentResult& splitResult);
 
-      void InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Vector3d& segmentOrigin,
-                                                      const Vector3d& segmentTangent,
+      void InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Eigen::Vector3d& segmentOrigin,
+                                                      const Eigen::Vector3d& segmentTangent,
                                                       ConformerMeshSegment::ConformMesh& mesh1D,
                                                       Gedim::IMeshDAO& mesh2D,
                                                       const list<unsigned int> cell1DMesh1DIds,
                                                       const unsigned int& cell2DMesh2DId);
 
-      void InsertCell2DMesh2DMiddleEdgesPolygonCreation(const Vector3d& segmentOrigin,
-                                                        const Vector3d& segmentTangent,
+      void InsertCell2DMesh2DMiddleEdgesPolygonCreation(const Eigen::Vector3d& segmentOrigin,
+                                                        const Eigen::Vector3d& segmentTangent,
                                                         ConformerMeshSegment::ConformMesh& mesh1D,
                                                         Gedim::IMeshDAO& mesh2D,
                                                         const list<unsigned int> cell1DMesh1DIds,
@@ -103,8 +103,8 @@ namespace Gedim
       /// \brief Conformer the input Mesh2D with a linear mesh1D
       /// \param mesh1D the 1D mesh
       /// \param mesh2DConformed the resulting conformed mesh
-      void CreateConformMesh(const Vector3d& segmentOrigin,
-                             const Vector3d& segmentEnd,
+      void CreateConformMesh(const Eigen::Vector3d& segmentOrigin,
+                             const Eigen::Vector3d& segmentEnd,
                              ConformerMeshSegment::ConformMesh& mesh1D,
                              Gedim::IMeshDAO& mesh2D,
                              ConformerMeshPolygon::ConformMesh& meshConformedInformation);

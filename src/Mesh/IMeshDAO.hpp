@@ -5,7 +5,6 @@
 #include "Eigen"
 
 using namespace std;
-using namespace Eigen;
 
 namespace Gedim
 {
@@ -38,7 +37,10 @@ namespace Gedim
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param coordinates the coordinates of the Cell0D
       virtual void Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
-                                           const Vector3d& coordinates) = 0;
+                                           const Eigen::Vector3d& coordinates) = 0;
+      /// \brief Add the Cell0Ds Coordinates
+      /// \param coordinates the coordinates of the Cell0Ds, size 3 x Cell0DTotalNumber()
+      virtual void Cell0DsInsertCoordinates(const Eigen::MatrixXd& coordinates) = 0;
       /// \brief Set the Cell0D Id
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param id the id of the Cell0D
@@ -67,9 +69,9 @@ namespace Gedim
       virtual double Cell0DCoordinateZ(const unsigned int& cell0DIndex) const = 0;
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return the coordinates as Eigen Vector3d of cell0D, size 3x1
-      virtual Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const = 0;
+      virtual Eigen::Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const = 0;
       /// \return the coordinates as Eigen MatrixXd of cell0D, size 3xCell0DTotalNumber()
-      virtual MatrixXd Cell0DCoordinates() const = 0;
+      virtual Eigen::MatrixXd Cell0DCoordinates() const = 0;
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return if the cell0D is active
       virtual bool Cell0DIsActive(const unsigned int& cell0DIndex) const = 0;
@@ -300,10 +302,10 @@ namespace Gedim
                                         const unsigned int& vertexIndex) const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return the origin coordinates of Cell1D
-      virtual Vector3d Cell1DOriginCoordinates(const unsigned int& cell1DIndex) const = 0;
+      virtual Eigen::Vector3d Cell1DOriginCoordinates(const unsigned int& cell1DIndex) const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return the end coordinates of Cell1D
-      virtual Vector3d Cell1DEndCoordinates(const unsigned int& cell1DIndex) const = 0;
+      virtual Eigen::Vector3d Cell1DEndCoordinates(const unsigned int& cell1DIndex) const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return the origin Cell0D index of Cell1D from 0 to Cell0DTotalNumber()
       virtual unsigned int Cell1DOrigin(const unsigned int& cell1DIndex) const = 0;
@@ -537,11 +539,11 @@ namespace Gedim
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \param vertexIndex the index of cell0D vertex from 0 to NumberCell2DVertices(cell2DIndex)
       /// \return the Cell0D coordinates of vertex of Cell2D, size 3 x 1
-      virtual Vector3d Cell2DVertexCoordinates(const unsigned int& cell2DIndex,
-                                               const unsigned int& vertexIndex) const = 0;
+      virtual Eigen::Vector3d Cell2DVertexCoordinates(const unsigned int& cell2DIndex,
+                                                      const unsigned int& vertexIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the Cell0D coordinates of all the vertices of Cell2D, size 3 x NumberCell2DVertices(cell2DIndex)
-      virtual MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const = 0;
+      virtual Eigen::MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \param edgeIndex the index of cell1D edge from 0 to NumberCell2DEdges(cell2DIndex)
       /// \return the Cell1D index of edge of Cell2D from 0 to Cell1DTotalNumber()

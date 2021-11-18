@@ -4,6 +4,8 @@
 #include "FileTextReader.hpp"
 #include "MeshUtilities.hpp"
 
+using namespace Eigen;
+
 namespace Gedim
 {
   // ***************************************************************************

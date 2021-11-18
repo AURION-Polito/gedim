@@ -6,7 +6,6 @@
 #include "MeshMatrices.hpp"
 #include "IMeshDAO.hpp"
 
-using namespace Eigen;
 using namespace std;
 
 namespace Gedim
@@ -67,7 +66,8 @@ namespace Gedim
       void Cell0DRemove(const unsigned int& cell0DIndex);
 
       void Cell0DInsertCoordinates(const unsigned int& cell0DIndex,
-                                   const Vector3d& coordinates);
+                                   const Eigen::Vector3d& coordinates);
+      void Cell0DsInsertCoordinates(const Eigen::MatrixXd& coordinates);
       inline void Cell0DSetMarker(const unsigned int& cell0DIndex,
                                   const unsigned int& marker)
       {
@@ -98,14 +98,14 @@ namespace Gedim
         Output::Assert(cell0DIndex < Cell0DTotalNumber());
         return _mesh.Cell0DCoordinates[3 * cell0DIndex + 2];
       }
-      inline Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const
+      inline Eigen::Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const
       {
         Output::Assert(cell0DIndex < Cell0DTotalNumber());
-        return Vector3d(Cell0DCoordinateX(cell0DIndex),
-                        Cell0DCoordinateY(cell0DIndex),
-                        Cell0DCoordinateZ(cell0DIndex));
+        return Eigen::Vector3d(Cell0DCoordinateX(cell0DIndex),
+                               Cell0DCoordinateY(cell0DIndex),
+                               Cell0DCoordinateZ(cell0DIndex));
       }
-      MatrixXd Cell0DCoordinates() const;
+      Eigen::MatrixXd Cell0DCoordinates() const;
       inline unsigned int Cell0DMarker(const unsigned int& cell0DIndex) const
       {
         Output::Assert(cell0DIndex < Cell0DTotalNumber());
@@ -371,11 +371,11 @@ namespace Gedim
         Output::Assert(cell1DIndex < Cell1DTotalNumber());
         return _mesh.Cell1DVertices[2 * cell1DIndex + 1];
       }
-      inline Vector3d Cell1DOriginCoordinates(const unsigned int& cell1DIndex) const
+      inline Eigen::Vector3d Cell1DOriginCoordinates(const unsigned int& cell1DIndex) const
       {
         return Cell0DCoordinates(Cell1DOrigin(cell1DIndex));
       }
-      inline Vector3d Cell1DEndCoordinates(const unsigned int& cell1DIndex) const
+      inline Eigen::Vector3d Cell1DEndCoordinates(const unsigned int& cell1DIndex) const
       {
         return Cell0DCoordinates(Cell1DEnd(cell1DIndex));
       }
@@ -578,14 +578,14 @@ namespace Gedim
         Output::Assert(vertexIndex < Cell2DNumberVertices(cell2DIndex));
         return _mesh.Cell2DVertices[_mesh.NumberCell2DVertices[cell2DIndex] + vertexIndex];
       }
-      inline Vector3d Cell2DVertexCoordinates(const unsigned int& cell2DIndex,
-                                              const unsigned int& vertexIndex) const
+      inline Eigen::Vector3d Cell2DVertexCoordinates(const unsigned int& cell2DIndex,
+                                                     const unsigned int& vertexIndex) const
       {
         Output::Assert(cell2DIndex < Cell2DTotalNumber());
         Output::Assert(vertexIndex < Cell2DNumberVertices(cell2DIndex));
         return Cell0DCoordinates(Cell2DVertex(cell2DIndex, vertexIndex));
       }
-      MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const;
+      Eigen::MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const;
       inline unsigned int Cell2DEdge(const unsigned int& cell2DIndex,
                                      const unsigned int& edgeIndex) const
       {

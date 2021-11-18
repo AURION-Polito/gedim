@@ -1,6 +1,7 @@
 #include "MeshMatricesDAO.hpp"
 
 using namespace std;
+using namespace Eigen;
 
 namespace Gedim
 {
@@ -227,6 +228,14 @@ namespace Gedim
     _mesh.Cell0DCoordinates[3 * cell0DIndex] = coordinates.x();
     _mesh.Cell0DCoordinates[3 * cell0DIndex + 1] = coordinates.y();
     _mesh.Cell0DCoordinates[3 * cell0DIndex + 2] = coordinates.z();
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell0DsInsertCoordinates(const MatrixXd& coordinates)
+  {
+    Output::Assert(coordinates.rows() == 3 && coordinates.cols() == Cell0DTotalNumber());
+
+    for (unsigned int c = 0; c < Cell0DTotalNumber(); c++)
+      Cell0DInsertCoordinates(c, coordinates.col(c));
   }
   // ***************************************************************************
   MatrixXd MeshMatricesDAO::Cell0DCoordinates() const

@@ -1,6 +1,7 @@
 #include "ConformerMeshPolygon.hpp"
 
 using namespace std;
+using namespace Eigen;
 
 namespace Gedim
 {

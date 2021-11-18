@@ -78,8 +78,8 @@ namespace Gedim
       /// \param mesh2D the bidimensional mesh where to add the new point
       /// \param curvilinearCoordinate the curvilinear coordinate of the new point
       /// \param result the resulting conform mesh
-      void InsertExternalPoint(const Vector3d& segmentOrigin,
-                               const Vector3d& segmentEnd,
+      void InsertExternalPoint(const Eigen::Vector3d& segmentOrigin,
+                               const Eigen::Vector3d& segmentEnd,
                                const Gedim::IMeshDAO& mesh2D,
                                const double& curvilinearCoordinate,
                                ConformMesh& result);

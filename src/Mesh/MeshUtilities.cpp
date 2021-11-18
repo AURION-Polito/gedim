@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 
+using namespace Eigen;
+
 namespace Gedim
 {
   // ***************************************************************************

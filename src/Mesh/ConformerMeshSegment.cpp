@@ -1,6 +1,7 @@
 #include "ConformerMeshSegment.hpp"
 
 using namespace std;
+using namespace Eigen;
 
 namespace Gedim
 {

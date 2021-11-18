@@ -29,7 +29,7 @@ namespace Gedim
       ~MeshUtilities();
 
       /// \brief Extract Active Cells from mesh
-      /// \note the data are duplied from mesh to extractedMesh
+      /// \note the resulting mesh has no inactive elements
       void ExtractActiveMesh(IMeshDAO& mesh,
                              ExtractActiveMeshData& extractionData) const;
 
@@ -39,8 +39,8 @@ namespace Gedim
       /// \param coordinates relative coordinates between [0.0, 1.0]
       /// \param mesh the resulting mesh
       void FillMesh1D(const GeometryUtilities& geometryUtilities,
-                      const Vector3d& segmentOrigin,
-                      const Vector3d& segmentTangent,
+                      const Eigen::Vector3d& segmentOrigin,
+                      const Eigen::Vector3d& segmentTangent,
                       const vector<double>& coordinates,
                       IMeshDAO& mesh) const;
 

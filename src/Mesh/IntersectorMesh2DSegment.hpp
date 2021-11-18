@@ -42,18 +42,18 @@ namespace Gedim
       IntersectionMesh::IntersectionMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
                                                                      IntersectionMesh& result,
                                                                      bool& found);
-      void CheckOriginAndEndSegmentPosition(const Vector3d& segmentOrigin,
-                                            const Vector3d& segmentEnd,
+      void CheckOriginAndEndSegmentPosition(const Eigen::Vector3d& segmentOrigin,
+                                            const Eigen::Vector3d& segmentEnd,
                                             IntersectionMesh& result);
-      void CreateIntersectionPoints(const Vector3d& segmentOrigin,
-                                    const Vector3d& segmentEnd,
+      void CreateIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
+                                    const Eigen::Vector3d& segmentEnd,
                                     IntersectionMesh& result);
       void CreateIntersectionSegments(IntersectionMesh& result);
 
       void CheckOriginAndEndPointExistence(IntersectionMesh& result);
 
-      void SmoothIntersections(const Vector3d& segmentOrigin,
-                               const Vector3d& segmentEnd,
+      void SmoothIntersections(const Eigen::Vector3d& segmentOrigin,
+                               const Eigen::Vector3d& segmentEnd,
                                IntersectionMesh& result);
 
     public:
@@ -61,8 +61,8 @@ namespace Gedim
                                const Gedim::GeometryUtilities& geometryUtilities);
       ~IntersectorMesh2DSegment();
 
-      void CreateIntersectionMesh(const Vector3d& segmentOrigin,
-                                  const Vector3d& segmentEnd,
+      void CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
+                                  const Eigen::Vector3d& segmentEnd,
                                   IntersectionMesh& result);
   };
 }
