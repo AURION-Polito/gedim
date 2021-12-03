@@ -68,17 +68,6 @@ namespace Gedim
     return Q;
   }
   // ***************************************************************************
-  Vector3d GeometryUtilities::PlaneTranslation(const Eigen::Vector3d& planeNormal,
-                                               const Eigen::Vector3d& planeOrigin,
-                                               const Eigen::Matrix3d& planeRotationMatrix) const
-  {
-    Vector3d planeOrigin2D = RotatePointsFrom3DTo2D(planeOrigin,
-                                                    planeRotationMatrix.transpose());
-
-    return (planeOrigin - RotatePointsFrom2DTo3D(planeOrigin2D,
-                                                 planeRotationMatrix));
-  }
-  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points) const
   {
     // pseudocode

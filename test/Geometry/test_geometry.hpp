@@ -105,23 +105,61 @@ namespace GedimUnitTesting {
 
       // check rotation matrix of plane 2D
       {
-        Eigen::Vector3d normal(0.0, 0.0, 1.0);
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
+        const Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
+        const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
+        const Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+                                                                                  planeOrigin);
+        const Eigen::Vector3d planeOrigin2D = geometryUtility.RotatePointsFrom3DTo2D(planeOrigin,
+                                                                                     planeRotationMatrix.transpose(),
+                                                                                     planeTranslation);
 
-        ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), 1.0);
-        ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), 1.0);
-        ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), 1.0);
+        const Eigen::Vector3d point2D = geometryUtility.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 3.0),
+                                                                               planeRotationMatrix.transpose(),
+                                                                               planeTranslation);
+
+
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(0, 0), 1.0);
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(1, 1), 1.0);
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(2, 2), 1.0);
+        ASSERT_DOUBLE_EQ(planeTranslation[0], 1.0);
+        ASSERT_DOUBLE_EQ(planeTranslation[1], 2.0);
+        ASSERT_DOUBLE_EQ(planeTranslation[2], 3.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[0], 0.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[1], 0.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[2], 0.0);
+        ASSERT_DOUBLE_EQ(point2D[0], -1.0);
+        ASSERT_DOUBLE_EQ(point2D[1], -2.0);
+        ASSERT_DOUBLE_EQ(point2D[2], 0.0);
       }
 
       // check rotation matrix of polygon 3D
       {
-        Eigen::Vector3d normal(1.0, 1.0, 1.0);
-        normal.normalize();
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
+        Eigen::Vector3d planeNormal(1.0, 1.0, 1.0);
+        planeNormal.normalize();
+        const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
+        const Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+                                                                                  planeOrigin);
+        const Eigen::Vector3d planeOrigin2D = geometryUtility.RotatePointsFrom3DTo2D(planeOrigin,
+                                                                                     planeRotationMatrix.transpose(),
+                                                                                     planeTranslation);
+        const Eigen::Vector3d point2D = geometryUtility.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 6.0),
+                                                                               planeRotationMatrix.transpose(),
+                                                                               planeTranslation);
 
-        ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), -7.0710678118654757e-01);
-        ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386307e-01);
-        ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), 5.7735026918962584e-01);
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(0, 0), -7.0710678118654757e-01);
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(1, 1), -4.0824829046386307e-01);
+        ASSERT_DOUBLE_EQ(planeRotationMatrix(2, 2), 5.7735026918962584e-01);
+        ASSERT_DOUBLE_EQ(planeTranslation[0], 1.0);
+        ASSERT_DOUBLE_EQ(planeTranslation[1], 2.0);
+        ASSERT_DOUBLE_EQ(planeTranslation[2], 3.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[0], 0.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[1], 0.0);
+        ASSERT_DOUBLE_EQ(planeOrigin2D[2], 0.0);
+        ASSERT_DOUBLE_EQ(point2D[0], -7.071067811865476e-01);
+        ASSERT_DOUBLE_EQ(point2D[1], 3.674234614174768e+00);
+        ASSERT_DOUBLE_EQ(point2D[2], 0.0);
       }
 
       // check rotation matrix of other polygon 3D
