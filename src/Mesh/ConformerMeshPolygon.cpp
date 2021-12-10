@@ -132,7 +132,7 @@ namespace Gedim
       }
     }
 
-    // check if origin is inside cell
+    // check if end is inside cell
     if (end.Vertex2DIds.size() == 0 && end.Edge2DIds.size() == 0)
     {
       if (end.Cell2DIds.size() != 1)

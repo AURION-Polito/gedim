@@ -257,6 +257,13 @@ namespace Gedim
     mesh.Cell2DSetId(0, 0);
     mesh.Cell2DSetState(0, true);
     mesh.Cell2DSetMarker(0, 0);
+
+    // Create Cell1D neighbours
+    for (int e = 0; e < numPolygonVertices; e++)
+    {
+      mesh.Cell1DInitializeNeighbourCell2Ds(e, 2);
+      mesh.Cell1DInsertNeighbourCell2D(e, 1, 0);
+    }
   }
   // ***************************************************************************
 }
