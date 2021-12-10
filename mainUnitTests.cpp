@@ -6,6 +6,7 @@
 #include "test_geometry_split.hpp"
 #include "test_map.hpp"
 #include "test_mesh.hpp"
+#include "test_meshUtilities.hpp"
 #include "test_intersectorMesh2DSegment.hpp"
 #include "test_unionMeshSegment.hpp"
 #include "test_conformMesh.hpp"

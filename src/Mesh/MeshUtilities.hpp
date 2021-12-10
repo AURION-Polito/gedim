@@ -52,6 +52,15 @@ namespace Gedim
                       const Eigen::MatrixXi& cell1Ds,
                       const vector<Eigen::MatrixXi>& cell2Ds,
                       IMeshDAO& mesh) const;
+
+      /// \brief Create a Mesh 2D with a polygon
+      /// \param polygonVertices the polygon coordinates, size 3xNumPolygonVertices()
+      /// \param vertexMarkers mesh markers of vertices, size 1xNumPolygonVertices()
+      /// \param edgeMarkers mesh markers of edges, size 1xNumPolygonVertices()
+      void Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,
+                             const vector<unsigned int> vertexMarkers,
+                             const vector<unsigned int> edgeMarkers,
+                             IMeshDAO& mesh) const;
   };
 
 }

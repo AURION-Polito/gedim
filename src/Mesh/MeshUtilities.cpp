@@ -206,4 +206,57 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,
+                                        const vector<unsigned int> vertexMarkers,
+                                        const vector<unsigned int> edgeMarkers,
+                                        IMeshDAO& mesh) const
+  {
+    mesh.InitializeDimension(2);
+
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+    const unsigned int numPolygonVertices = polygonVertices.cols();
+    Output::Assert(vertexMarkers.size() == numPolygonVertices);
+    Output::Assert(edgeMarkers.size() == numPolygonVertices);
+
+    // Create Cell0Ds
+    const unsigned int& numCell0Ds = numPolygonVertices;
+    mesh.Cell0DsInitialize(numCell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      mesh.Cell0DSetId(v, v);
+      mesh.Cell0DSetState(v, true);
+      mesh.Cell0DInsertCoordinates(v, polygonVertices.col(v));
+      mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+    }
+
+    // Create Cell1Ds
+    unsigned int numCell1Ds = numPolygonVertices;
+    mesh.Cell1DsInitialize(numCell1Ds);
+    for (int e = 0; e < numPolygonVertices; e++)
+    {
+      mesh.Cell1DSetId(e, e);
+      mesh.Cell1DInsertExtremes(e,
+                                e,
+                                (e + 1) % numPolygonVertices);
+      mesh.Cell1DSetState(e, true);
+      mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+    }
+
+    // Create Cell2Ds
+    const unsigned int& numCell2Ds = 1;
+    mesh.Cell2DsInitialize(numCell2Ds);
+
+    mesh.Cell2DInitializeVertices(0, numPolygonVertices);
+    mesh.Cell2DInitializeEdges(0, numPolygonVertices);
+
+    for (unsigned int v = 0; v < numPolygonVertices; v++)
+      mesh.Cell2DInsertVertex(0, v, v);
+    for (unsigned int e = 0; e < numPolygonVertices; e++)
+      mesh.Cell2DInsertEdge(0, e, e);
+
+    mesh.Cell2DSetId(0, 0);
+    mesh.Cell2DSetState(0, true);
+    mesh.Cell2DSetMarker(0, 0);
+  }
+  // ***************************************************************************
 }
