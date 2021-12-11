@@ -472,17 +472,27 @@ namespace Gedim
       const double& curvilinearCoordinatePoint = itPoint->first;
       IntersectionMesh::IntersectionMeshPoint& intersectionPoint = itPoint->second;
 
+      // Extract active edges in the mesh
+      list<unsigned int> activeEdges;
+      for (unsigned int edgeId : intersectionPoint.Edge2DIds)
+      {
+        if (!_mesh.Cell1DIsActive(edgeId))
+          continue;
+
+        activeEdges.push_back(edgeId);
+      }
+
       // if an intersection has more then one edge and no vertices then the intersection shall be
       // near the vertex in common of the edges
       // error: the program should be started with greater tolerance
       if (intersectionPoint.Vertex2DIds.size() == 0 &&
-          intersectionPoint.Edge2DIds.size() > 1 &&
+          activeEdges.size() > 1 &&
           intersectionPoint.Cell2DIds.size() > 1)
       {
         unsigned int vertexInCommon = _mesh.Cell0DTotalNumber();
-        unsigned int numEdges = intersectionPoint.Edge2DIds.size();
-        set<unsigned int>::const_iterator itEdge = intersectionPoint.Edge2DIds.begin();
-        set<unsigned int>::const_iterator itEdgeNext = intersectionPoint.Edge2DIds.begin();
+        unsigned int numEdges = activeEdges.size();
+        list<unsigned int>::const_iterator itEdge = activeEdges.begin();
+        list<unsigned int>::const_iterator itEdgeNext = activeEdges.begin();
         itEdgeNext++;
 
         for (unsigned int e = 0; e < numEdges - 1; e++)
