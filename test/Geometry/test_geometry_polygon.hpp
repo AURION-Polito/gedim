@@ -67,16 +67,16 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         double polygonArea = 1.0 / 2.0;
 
-        Eigen::Vector3d centroidOne = geometryUtility.PolygonCentroid(polygonVertices);
-        ASSERT_DOUBLE_EQ(centroidOne[0], 1.0 / 3.0);
-        ASSERT_DOUBLE_EQ(centroidOne[1], 1.0 / 3.0);
-        ASSERT_DOUBLE_EQ(centroidOne[2], 0.0);
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(barycenter[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-        Eigen::Vector3d centroidTwo = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                      polygonArea);
-        ASSERT_DOUBLE_EQ(centroidTwo[0], 1.0 / 3.0);
-        ASSERT_DOUBLE_EQ(centroidTwo[1], 1.0 / 3.0);
-        ASSERT_DOUBLE_EQ(centroidTwo[2], 0.0);
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
       }
 
       // check area of reference quadrilateral 2D
@@ -88,16 +88,96 @@ namespace GedimUnitTesting {
         polygonVertices.col(3)<< 0.0, 1.0, 0.0;
         double polygonArea = 1.0;
 
-        Eigen::Vector3d centroidOne = geometryUtility.PolygonCentroid(polygonVertices);
-        ASSERT_DOUBLE_EQ(centroidOne[0], 1.0 / 2.0);
-        ASSERT_DOUBLE_EQ(centroidOne[1], 1.0 / 2.0);
-        ASSERT_DOUBLE_EQ(centroidOne[2], 0.0);
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(barycenter[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-        Eigen::Vector3d centroidTwo = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                      polygonArea);
-        ASSERT_DOUBLE_EQ(centroidTwo[0], 1.0 / 2.0);
-        ASSERT_DOUBLE_EQ(centroidTwo[1], 1.0 / 2.0);
-        ASSERT_DOUBLE_EQ(centroidTwo[2], 0.0);
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+      }
+
+      // check area of generic triangle 2D
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 3);
+        polygonVertices.row(0) << -1.0, +5.0, +4.0;
+        polygonVertices.row(1) << -2.0, -1.0, +5.0;
+        double polygonArea = 1.850000000000000e+01;
+
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 2.666666666666667e+00);
+        ASSERT_DOUBLE_EQ(barycenter[1], 6.666666666666665e-01);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
+
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 2.666666666666667e+00);
+        ASSERT_DOUBLE_EQ(centroid[1], 6.666666666666665e-01);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+      }
+
+      // check area of generic quadrilateral 2D
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 4);
+        polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
+        polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
+        double polygonArea = 1.511000000000000e+01;
+
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 3.100000000000000e+00);
+        ASSERT_DOUBLE_EQ(barycenter[1], 2.850000000000000e+00);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
+
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+      }
+
+      // check area of generic quadrilateral 2D with aligned points
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 6);
+        polygonVertices.row(0) << 1.000000000000000e+00, 3.000000000000000e+00, 5.700000000000000e+00, 5.000000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
+        polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
+        double polygonArea = 1.511000000000000e+01;
+
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 3.400000000000000e+00);
+        ASSERT_DOUBLE_EQ(barycenter[1], 2.401773049645390e+00);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
+
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+      }
+
+      // check area of generic concave 2D polygon
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 6);
+        polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 2.500000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00, 2.000000000000000e+00;
+        polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 3.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00, 3.000000000000000e+00;
+        double polygonArea = 7.210000000000001e+00;
+
+        Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+        ASSERT_DOUBLE_EQ(barycenter[0], 2.816666666666666e+00);
+        ASSERT_DOUBLE_EQ(barycenter[1], 2.900000000000000e+00);
+        ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
+
+        Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                   polygonArea);
+        ASSERT_DOUBLE_EQ(centroid[0], 2.842903374942210e+00);
+        ASSERT_DOUBLE_EQ(centroid[1], 2.754923717059639e+00);
+        ASSERT_DOUBLE_EQ(centroid[2], 0.0);
       }
 
     }

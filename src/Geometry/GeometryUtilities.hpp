@@ -781,10 +781,9 @@ namespace Gedim
       /// \param normal the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \brief Compute the Polygon centroid as a mean of all vertices
+      /// \brief Compute the Polygon barycenter as a mean of all vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
-      /// \note works only for convex polygons
-      inline Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices) const
+      inline Eigen::Vector3d PolygonBarycenter(const Eigen::MatrixXd& polygonVertices) const
       {
         Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
         return polygonVertices.rowwise().mean();
