@@ -12,7 +12,7 @@ namespace Gedim
     Vector3d normal;
 
     normal.setZero();
-    unsigned int numVertices =  polygonVertices.cols();
+    const unsigned int& numVertices =  polygonVertices.cols();
 
     for (unsigned int i = 0; i < numVertices; i++)
     {
@@ -24,13 +24,39 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
+  Vector3d GeometryUtilities::PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
+                                              const double& polygonArea) const
+  {
+    Output::Assert(PointsAre2D(polygonVertices));
+
+    Eigen::Vector3d centroid;
+    centroid.setZero();
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const Eigen::Vector3d& vertex = polygonVertices.col(v);
+      const Eigen::Vector3d& nextVertex = polygonVertices.col((v + 1) % numVertices);
+      centroid.x() += (vertex.x() + nextVertex.x()) *
+                      (vertex.x() * nextVertex.y() - nextVertex.x() * vertex.y());
+
+      centroid.y() += (vertex.y() + nextVertex.y()) *
+                      (vertex.x() * nextVertex.y() - nextVertex.x() * vertex.y());
+    }
+
+    centroid /= 6.0 * polygonArea;
+
+    return centroid;
+  }
+  // ***************************************************************************
   Matrix3d GeometryUtilities::PolygonRotationMatrix(const Eigen::MatrixXd& polygonVertices,
                                                     const Eigen::Vector3d& polygonNormal,
                                                     const Eigen::Vector3d& polygonTranslation) const
   {
     Output::Assert(Compare1DValues(polygonNormal.norm(), 1.0) == CompareTypes::Coincident);
 
-    unsigned int numVertices = polygonVertices.cols();
+    const unsigned int& numVertices = polygonVertices.cols();
     MatrixXd Z(3, numVertices);
     MatrixXd W(3, numVertices);
     Matrix3d H;
@@ -67,7 +93,7 @@ namespace Gedim
   {
     Output::Assert(PointsAre2D(polygonVertices));
 
-    const unsigned int numVertices = polygonVertices.cols();
+    const unsigned int& numVertices = polygonVertices.cols();
     for (unsigned int v = 0; v < numVertices; v++)
     {
       const Eigen::Vector3d edgeOrigin = polygonVertices.col(v);
@@ -85,7 +111,7 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PolygonTypes GeometryUtilities::PolygonType(const Eigen::MatrixXd& polygonVertices) const
   {
-    const unsigned int numVertices = polygonVertices.cols();
+    const unsigned int& numVertices = polygonVertices.cols();
     if (numVertices == 3)
       return PolygonTypes::Triangle;
     else if (numVertices == 4)
@@ -145,7 +171,7 @@ namespace Gedim
   {
     Output::Assert(PointsAre2D(polygonVertices));
 
-    const unsigned int numVertices = polygonVertices.cols();
+    const unsigned int& numVertices = polygonVertices.cols();
     double area = 0.0;
     Eigen::VectorXd xPoints(numVertices + 1);
     Eigen::VectorXd yPoints(numVertices + 1);
@@ -167,8 +193,8 @@ namespace Gedim
                                                                                         polygonVertices);
     Output::Assert(centerPosition.Type != Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown);
 
-    const unsigned int numVertices = polygonVertices.cols();
-    const unsigned int numIntersections = polygonCircleIntersections.Intersections.size();
+    const unsigned int& numVertices = polygonVertices.cols();
+    const unsigned int& numIntersections = polygonCircleIntersections.Intersections.size();
 
     // compute polygon vertices position respect the circle
     bool oneVertexOutsideCircle = false;

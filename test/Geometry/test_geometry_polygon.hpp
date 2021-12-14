@@ -52,6 +52,62 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonCentroid)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check centroid of reference triangle 2D
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        double polygonArea = 1.0 / 2.0;
+
+        Eigen::Vector3d centroidOne = geometryUtility.PolygonCentroid(polygonVertices);
+        ASSERT_DOUBLE_EQ(centroidOne[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidOne[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidOne[2], 0.0);
+
+        Eigen::Vector3d centroidTwo = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                      polygonArea);
+        ASSERT_DOUBLE_EQ(centroidTwo[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidTwo[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidTwo[2], 0.0);
+      }
+
+      // check area of reference quadrilateral 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+        double polygonArea = 1.0;
+
+        Eigen::Vector3d centroidOne = geometryUtility.PolygonCentroid(polygonVertices);
+        ASSERT_DOUBLE_EQ(centroidOne[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidOne[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidOne[2], 0.0);
+
+        Eigen::Vector3d centroidTwo = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                      polygonArea);
+        ASSERT_DOUBLE_EQ(centroidTwo[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidTwo[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidTwo[2], 0.0);
+      }
+
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonArea)
   {
     try

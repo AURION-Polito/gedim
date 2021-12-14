@@ -781,6 +781,22 @@ namespace Gedim
       /// \param normal the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
+      /// \brief Compute the Polygon centroid as a mean of all vertices
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \note works only for convex polygons
+      inline Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices) const
+      {
+        Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+        return polygonVertices.rowwise().mean();
+      }
+
+      /// \brief Compute the Polygon centroid as described in https://en.wikipedia.org/wiki/Centroid
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \param polygonArea the area of the polygon
+      /// \note the polygon shall be 2D
+      Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
+                                      const double& polygonArea) const;
+
       /// \brief Compute the translation vector of a tridimensional Polygon
       /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
       /// \return the resulting translation vector t which corresponds to the first vertex of the polygon
