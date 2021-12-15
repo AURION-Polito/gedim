@@ -9,10 +9,12 @@ namespace Gedim
   // ***************************************************************************
   Eigen::Vector3d GeometryUtilities::PolygonNormal(const MatrixXd& polygonVertices) const
   {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
     Vector3d normal;
 
     normal.setZero();
-    const unsigned int& numVertices =  polygonVertices.cols();
+    const unsigned int& numVertices = polygonVertices.cols();
 
     for (unsigned int i = 0; i < numVertices; i++)
     {
@@ -22,6 +24,38 @@ namespace Gedim
     }
 
     return normal.normalized();
+  }
+  // ***************************************************************************
+  MatrixXd GeometryUtilities::PolygonEdgeTangents(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    MatrixXd edgeTangents(3, numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      edgeTangents.col(v) = SegmentTangent(polygonVertices.col(v),
+                                           polygonVertices.col((v + 1) % numVertices));
+    }
+
+    return edgeTangents;
+  }
+  // ***************************************************************************
+  MatrixXd GeometryUtilities::PolygonEdgeNormals(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    MatrixXd edgeNormals(3, numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      edgeNormals.col(v) = SegmentNormal(polygonVertices.col(v),
+                                         polygonVertices.col((v + 1) % numVertices));
+    }
+
+    return edgeNormals;
   }
   // ***************************************************************************
   Vector3d GeometryUtilities::PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
@@ -91,7 +125,7 @@ namespace Gedim
   // ***************************************************************************
   bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const
   {
-    Output::Assert(PointsAre2D(polygonVertices));
+    Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
 
     const unsigned int& numVertices = polygonVertices.cols();
     for (unsigned int v = 0; v < numVertices; v++)
@@ -111,6 +145,8 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PolygonTypes GeometryUtilities::PolygonType(const Eigen::MatrixXd& polygonVertices) const
   {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
     const unsigned int& numVertices = polygonVertices.cols();
     if (numVertices == 3)
       return PolygonTypes::Triangle;
@@ -169,7 +205,7 @@ namespace Gedim
   // ***************************************************************************
   double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices) const
   {
-    Output::Assert(PointsAre2D(polygonVertices));
+    Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
 
     const unsigned int& numVertices = polygonVertices.cols();
     double area = 0.0;

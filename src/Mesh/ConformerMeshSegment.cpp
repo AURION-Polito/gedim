@@ -195,7 +195,7 @@ namespace Gedim
       return;
 
     newPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::External;
-    const Vector3d newPoint2D = segmentOrigin + curvilinearCoordinate * (segmentEnd - segmentOrigin);
+    const Vector3d newPoint2D = segmentOrigin + curvilinearCoordinate * _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     // look for 2D cell which contains the new point
     for (unsigned int c = 0; c < mesh2D.Cell2DTotalNumber(); c++)

@@ -214,7 +214,7 @@ namespace Gedim
   {
     GeometryUtilities::IntersectionSegmentPlaneResult result;
 
-    const Vector3d t = segmentEnd - segmentOrigin;
+    const Vector3d t = SegmentTangent(segmentOrigin, segmentEnd);
 
     // check if t is not zero and plane normal is normalized
     Gedim::Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
@@ -498,7 +498,7 @@ namespace Gedim
   {
     GeometryUtilities::IntersectionSegmentCircleResult result;
 
-    Vector3d d = segmentEnd - segmentOrigin;
+    const Vector3d d = SegmentTangent(segmentOrigin, segmentEnd);
     Vector3d f = segmentOrigin - circleCenter;
 
     double a = d.dot(d);

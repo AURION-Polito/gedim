@@ -1243,7 +1243,7 @@ namespace Gedim
                                                Gedim::IMeshDAO& mesh2D,
                                                ConformerMeshPolygon::ConformMesh& meshConformedInformation)
   {
-    const Vector3d segmentTangent = segmentEnd - segmentOrigin;
+    const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     // check starting and end of segment if inside Cell2DMesh2D
     CheckSegmentOriginAndEndIntersections(segmentOrigin,

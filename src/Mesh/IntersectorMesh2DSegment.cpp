@@ -463,7 +463,7 @@ namespace Gedim
                                                      const Vector3d& segmentEnd,
                                                      IntersectorMesh2DSegment::IntersectionMesh& result)
   {
-    const Vector3d segmentTangent = segmentEnd - segmentOrigin;
+    const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     for (map<double, IntersectionMesh::IntersectionMeshPoint>::iterator itPoint = result.Points.begin();
          itPoint != result.Points.end();

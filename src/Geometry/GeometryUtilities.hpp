@@ -582,6 +582,7 @@ namespace Gedim
       /// \return true if the points are 2D (z == 0)
       inline bool PointsAre2D(const Eigen::MatrixXd& points) const
       {
+        Output::Assert(points.rows() == 3 && points.cols() > 0);
         return points.row(2).isZero(_configuration.Tolerance);
       }
 
@@ -630,6 +631,18 @@ namespace Gedim
       inline Eigen::Vector3d SegmentTangent(const Eigen::Vector3d& segmentOrigin,
                                             const Eigen::Vector3d& segmentEnd) const
       { return segmentEnd - segmentOrigin; }
+
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \return the segment normal, rotation of tangent (x,y) with 90° clockwise (y, -x)
+      /// \note the segment shall be 2D
+      inline Eigen::Vector3d SegmentNormal(const Eigen::Vector3d& segmentOrigin,
+                                           const Eigen::Vector3d& segmentEnd) const
+      {
+        Output::Assert(PointsAre2D(segmentOrigin) && PointsAre2D(segmentEnd));
+        Eigen::Vector3d tangent = SegmentTangent(segmentOrigin, segmentEnd);
+        return Eigen::Vector3d(tangent.y(), -tangent.x(), 0.0);
+      }
 
       /// \brief Compute the intersection between the two segments
       /// \param firstSegmentOrigin first segment origin
@@ -778,8 +791,18 @@ namespace Gedim
 
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
-      /// \param normal the resulting normalized normal
+      /// \return the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \brief Compute the Polygon edge tangents
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return the resulting edge tangents, size 3 x numVertices
+      Eigen::MatrixXd PolygonEdgeTangents(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \brief Compute the Polygon edge normals outgoing the polygon
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return the resulting edge normals outgoing the polygon, size 3 x numVertices
+      Eigen::MatrixXd PolygonEdgeNormals(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the Polygon barycenter as a mean of all vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)

@@ -30,6 +30,12 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(normal[0], 0.0);
         ASSERT_DOUBLE_EQ(normal[1], 0.0);
         ASSERT_DOUBLE_EQ(normal[2], 1.0);
+
+        Eigen::MatrixXd edgeTangents = geometryUtility.PolygonEdgeTangents(polygonVertices);
+        ASSERT_EQ(edgeTangents, (Eigen::MatrixXd(3, 3) << 1.0,-1.0,0.0, 0.0,1.0,-1.0, 0.0,0.0,0.0).finished());
+
+        Eigen::MatrixXd edgeNormals = geometryUtility.PolygonEdgeNormals(polygonVertices);
+        ASSERT_EQ(edgeNormals, (Eigen::MatrixXd(3, 3) << 0.0,1.0,-1.0, -1.0,1.0,0.0, 0.0,0.0,0.0).finished());
       }
 
       // check normal of polygon 3D

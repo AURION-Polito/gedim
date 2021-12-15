@@ -32,7 +32,7 @@ namespace Gedim
                                                                                        const Vector3d& segmentOrigin,
                                                                                        const Vector3d& segmentEnd) const
   {
-    Vector3d segmentTangent = (segmentEnd - segmentOrigin).normalized();
+    const Vector3d segmentTangent = SegmentTangent(segmentOrigin, segmentEnd).normalized();
     Vector3d pointDirection = (point - segmentOrigin).normalized();
     double pointDirectionSquaredNorm = (point - segmentOrigin).squaredNorm();
 
@@ -164,7 +164,7 @@ namespace Gedim
     Output::Assert(points.rows() == 3 && points.cols() > 0);
     const unsigned int numPoints = points.cols();
 
-    const Eigen::Vector3d t = (segmentEnd - segmentOrigin).normalized();
+    const Eigen::Vector3d t = SegmentTangent(segmentOrigin, segmentEnd).normalized();
 
     vector<bool> aligned(numPoints, false);
     for (unsigned int p = 0; p < numPoints; p++)
