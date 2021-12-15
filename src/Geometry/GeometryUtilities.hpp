@@ -641,13 +641,13 @@ namespace Gedim
 
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
-      /// \return the segment normal, rotation of tangent (x,y,0) with 90° clockwise (y, -x,0)
+      /// \return the segment normal normalized, rotation of the normalized tangent (x,y,0) with 90° clockwise (y, -x,0)
       /// \note the segment shall be 2D
       inline Eigen::Vector3d SegmentNormal(const Eigen::Vector3d& segmentOrigin,
                                            const Eigen::Vector3d& segmentEnd) const
       {
         Output::Assert(PointsAre2D(segmentOrigin) && PointsAre2D(segmentEnd));
-        Eigen::Vector3d tangent = SegmentTangent(segmentOrigin, segmentEnd);
+        Eigen::Vector3d tangent = SegmentTangent(segmentOrigin, segmentEnd).normalized();
         return Eigen::Vector3d(tangent.y(), -tangent.x(), 0.0);
       }
 
