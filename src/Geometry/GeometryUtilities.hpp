@@ -634,7 +634,7 @@ namespace Gedim
 
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
-      /// \return the segment normal, rotation of tangent (x,y) with 90° clockwise (y, -x)
+      /// \return the segment normal, rotation of tangent (x,y,0) with 90° clockwise (y, -x,0)
       /// \note the segment shall be 2D
       inline Eigen::Vector3d SegmentNormal(const Eigen::Vector3d& segmentOrigin,
                                            const Eigen::Vector3d& segmentEnd) const
@@ -818,6 +818,10 @@ namespace Gedim
       /// \note the polygon shall be 2D
       Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
                                       const double& polygonArea) const;
+
+      /// \brief Compute the Polygon diameter defined as the maximum distance between the vertices
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      double PolygonDiameter(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the translation vector of a tridimensional Polygon
       /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)

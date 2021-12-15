@@ -194,6 +194,76 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonDiameter)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check area of reference triangle 2D
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+        ASSERT_DOUBLE_EQ(diameter, sqrt(2.0));
+      }
+
+      // check area of reference quadrilateral 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+        ASSERT_DOUBLE_EQ(diameter, sqrt(2.0));
+      }
+
+      // check area of generic triangle 2D
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 3);
+        polygonVertices.row(0) << -1.0, +5.0, +4.0;
+        polygonVertices.row(1) << -2.0, -1.0, +5.0;
+
+        double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+        ASSERT_DOUBLE_EQ(diameter, 8.602325267042627e+00);
+      }
+
+      // check area of generic quadrilateral 2D
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 4);
+        polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
+        polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
+
+        double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+        ASSERT_DOUBLE_EQ(diameter, 7.300684899377592e+00);
+      }
+
+      // check area of generic quadrilateral 2D with aligned points
+      {
+        Eigen::MatrixXd polygonVertices;
+        polygonVertices.setZero(3, 6);
+        polygonVertices.row(0) << 1.000000000000000e+00, 3.000000000000000e+00, 5.700000000000000e+00, 5.000000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
+        polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
+
+        double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+        ASSERT_DOUBLE_EQ(diameter, 7.300684899377592e+00);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonArea)
   {
     try
