@@ -31,6 +31,9 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(normal[1], 0.0);
         ASSERT_DOUBLE_EQ(normal[2], 1.0);
 
+        Eigen::VectorXd edgeLengths = geometryUtility.PolygonEdgeLengths(polygonVertices);
+        ASSERT_EQ(edgeLengths, (Eigen::VectorXd(3) << 1.0,sqrt(2.0),1.0).finished());
+
         Eigen::MatrixXd edgeTangents = geometryUtility.PolygonEdgeTangents(polygonVertices);
         ASSERT_EQ(edgeTangents, (Eigen::MatrixXd(3, 3) << 1.0,-1.0,0.0, 0.0,1.0,-1.0, 0.0,0.0,0.0).finished());
 

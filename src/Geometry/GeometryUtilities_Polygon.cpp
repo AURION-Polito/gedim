@@ -26,6 +26,22 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
+  VectorXd GeometryUtilities::PolygonEdgeLengths(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    VectorXd edgeLengths(numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      edgeLengths[v] = SegmentLength(polygonVertices.col(v),
+                                     polygonVertices.col((v + 1) % numVertices));
+    }
+
+    return edgeLengths;
+  }
+  // ***************************************************************************
   MatrixXd GeometryUtilities::PolygonEdgeTangents(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);

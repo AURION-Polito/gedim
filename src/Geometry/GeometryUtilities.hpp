@@ -627,6 +627,13 @@ namespace Gedim
 
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
+      /// \return the segment length
+      inline double SegmentLength(const Eigen::Vector3d& segmentOrigin,
+                                  const Eigen::Vector3d& segmentEnd) const
+      { return (segmentEnd - segmentOrigin).norm(); }
+
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
       /// \return the segment tangent
       inline Eigen::Vector3d SegmentTangent(const Eigen::Vector3d& segmentOrigin,
                                             const Eigen::Vector3d& segmentEnd) const
@@ -793,6 +800,11 @@ namespace Gedim
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \return the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \brief Compute the Polygon edge lengths
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return the resulting edge lengths, size 1 x numVertices
+      Eigen::VectorXd PolygonEdgeLengths(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Compute the Polygon edge tangents
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
