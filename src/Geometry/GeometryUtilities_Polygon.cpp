@@ -262,6 +262,7 @@ namespace Gedim
   {
     Output::Assert(PointsAre2D(polygonVertices) &&
                    polygonVertices.cols() > 2 &&
+                   polygonTriangulation.size() > 0 &&
                    polygonTriangulation.size() % 3 == 0);
 
     const unsigned int numTriangles = polygonTriangulation.size() / 3;
