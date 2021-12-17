@@ -38,7 +38,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(edgeTangents, (Eigen::MatrixXd(3, 3) << 1.0,-1.0,0.0, 0.0,1.0,-1.0, 0.0,0.0,0.0).finished());
 
         Eigen::MatrixXd edgeNormals = geometryUtility.PolygonEdgeNormals(polygonVertices);
-        ASSERT_EQ(edgeNormals, (Eigen::MatrixXd(3, 3) << 0.0,1.0,-1.0, -1.0,1.0,0.0, 0.0,0.0,0.0).finished());
+        ASSERT_EQ(edgeNormals, (Eigen::MatrixXd(3, 3) << 0.0,1.0/sqrt(2),-1.0, -1.0,1.0/sqrt(2),0.0, 0.0,0.0,0.0).finished());
       }
 
       // check normal of polygon 3D
