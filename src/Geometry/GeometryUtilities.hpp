@@ -773,6 +773,14 @@ namespace Gedim
       /// \warning works only for convex polygons
       double PolygonArea(const Eigen::MatrixXd& polygonVertices) const;
 
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param polygonTriangulation the polygon sub-division triangulation, size 1 x 3 * numTriangles
+      /// \return the polygon area
+      /// \note the polygon shall be 2D
+      /// \note works for convex and concave polygons
+      double PolygonArea(const Eigen::MatrixXd& polygonVertices,
+                         const vector<unsigned int>& polygonTriangulation) const;
+
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data
       /// \param result the resulting split

@@ -257,6 +257,27 @@ namespace Gedim
                   xPoints.segment(1, numVertices).dot(yPoints.segment(0, numVertices)));
   }
   // ***************************************************************************
+  double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices,
+                                        const vector<unsigned int>& polygonTriangulation) const
+  {
+    Output::Assert(PointsAre2D(polygonVertices) &&
+                   polygonVertices.cols() > 2 &&
+                   polygonTriangulation.size() % 3 == 0);
+
+    const unsigned int numTriangles = polygonTriangulation.size() / 3;
+    double area = 0.0;
+    for (unsigned int t = 0; t < numTriangles; t++)
+    {
+      Eigen::Matrix3d triangleVertices;
+      triangleVertices.col(0)<< polygonVertices.col(polygonTriangulation[3 * t]);
+      triangleVertices.col(1)<< polygonVertices.col(polygonTriangulation[3 * t + 1]);
+      triangleVertices.col(2)<< polygonVertices.col(polygonTriangulation[3 * t + 2]);
+      area += PolygonArea(triangleVertices);
+    }
+
+    return area;
+  }
+  // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                                                          const Eigen::Vector3d& circleCenter,
                                                                                          const double& circleRadius,
