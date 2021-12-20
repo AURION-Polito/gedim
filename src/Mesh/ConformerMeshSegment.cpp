@@ -26,17 +26,27 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void ConformerMeshSegment::ToString(const ConformerMeshSegment::ConformMesh& conformMesh)
+  string ConformerMeshSegment::ToString(const ConformerMeshSegment::ConformMesh& conformMesh)
   {
-    cerr.precision(16);
-    cerr<< "Points:"<< endl;
-    for_each(conformMesh.Points.begin(), conformMesh.Points.end(), [](const std::pair<double,
+    ostringstream converter;
+
+    converter.precision(16);
+    converter<< "Points:"<< endl;
+    for_each(conformMesh.Points.begin(), conformMesh.Points.end(), [&converter](const std::pair<double,
              ConformerMeshSegment::ConformMesh::ConformMeshPoint>& p)
-    { cerr<< scientific << "{ Key: " << p.first<< "; Value: V: "<< p.second.Vertex2DIds<< " E: "<< p.second.Edge2DIds<< " C: "<< p.second.Cell2DIds<< " }\n"; });
-    cerr<< "Segments:"<< endl;
-    for_each(conformMesh.Segments.begin(), conformMesh.Segments.end(), [](
+    { converter<< scientific << "{ Key: " << p.first;
+      converter<< "; Value:";
+      converter<< " Type: "<< (unsigned int)p.second.Type;
+      converter<< " V: "<< p.second.Vertex2DIds;
+      converter<< " E: "<< p.second.Edge2DIds;
+      converter<< " C: "<< p.second.Cell2DIds;
+      converter<< " }\n"; });
+    converter<< "Segments:"<< endl;
+    for_each(conformMesh.Segments.begin(), conformMesh.Segments.end(), [&converter](
              const ConformerMeshSegment::ConformMesh::ConformMeshSegment& p)
-    { cerr<< scientific << "{ Key: "<< p.Points[0]<< "->"<< p.Points[1] << "; Value: E: "<< p.Edge2DIds<< " C: "<< p.Cell2DIds<< " }\n"; });
+    { converter<< scientific << "{ Key: "<< p.Points[0]<< "->"<< p.Points[1] << "; Value: E: "<< p.Edge2DIds<< " C: "<< p.Cell2DIds<< " }\n"; });
+
+    return converter.str();
   }
   // ***************************************************************************
   ConformerMeshSegment::ConformMesh::ConformMeshPoint& ConformerMeshSegment::InsertNewIntersection(const double& curvilinearCoordinate,

@@ -7,6 +7,7 @@ list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_export_conformMesh.hpp
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_2Cells_Mock.hpp)
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_4Cells_Mock.hpp)
 list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_26Cells_Mock.hpp)
+list(APPEND test_headers ${CMAKE_CURRENT_SOURCE_DIR}/MashMatrices_2D_CleanTest_Mock.hpp)
 
 list(APPEND test_include ${CMAKE_CURRENT_SOURCE_DIR})
 

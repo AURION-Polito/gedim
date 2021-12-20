@@ -45,7 +45,7 @@ namespace Gedim
       static void ToCurvilinearCoordinates(const ConformMesh& conformMesh,
                                            vector<double>& curvilinearCoordinates);
 
-      static void ToString(const ConformMesh& conformMesh);
+      static string ToString(const ConformMesh& conformMesh);
 
       static void CreateConformSegments(ConformMesh& result);
 

@@ -1040,7 +1040,32 @@ namespace Gedim
     converter<< scientific<< "Cell0DDoublePropertyValues = "<< _mesh.Cell0DDoublePropertyValues<< ";"<< endl;
     converter<< scientific<< "NumberCell1D = "<< _mesh.NumberCell1D<< ";"<< endl;
     converter<< scientific<< "Cell1DVertices = "<< _mesh.Cell1DVertices<< ";"<< endl;
-    converter<< scientific<< "Cell1DAdjacency = "<< _mesh.Cell1DAdjacency<< ";"<< endl;
+
+    converter<< scientific<< "Cell1DAdjacency.resize("<< _mesh.Cell1DAdjacency.rows()<< ", "<< _mesh.Cell1DAdjacency.rows()<< ");"<< endl;
+    vector<unsigned int> tripletI(_mesh.Cell1DAdjacency.nonZeros());
+    vector<unsigned int> tripletJ(_mesh.Cell1DAdjacency.nonZeros());
+    vector<unsigned int> tripletValue(_mesh.Cell1DAdjacency.nonZeros());
+    unsigned int element = 0;
+    for (int k=0; k< _mesh.Cell1DAdjacency.outerSize(); ++k)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(_mesh.Cell1DAdjacency, k); it; ++it)
+      {
+        tripletValue[element] = it.value();
+        tripletI[element] = it.row();
+        tripletJ[element] = it.col();
+        element++;
+      }
+    }
+
+    converter<< scientific<< "Cell1DAdjacency.reserve("<< _mesh.Cell1DAdjacency.nonZeros()<< ");"<< endl;
+    for (unsigned int e = 0; e < _mesh.Cell1DAdjacency.nonZeros(); e++)
+    {
+      converter<< scientific<< "Cell1DAdjacency.insert("<< tripletI[e];
+      converter<< scientific<< ", "<<tripletJ[e]<< ") = ";
+      converter<< scientific<< tripletValue[e]<< ";"<< endl;
+    }
+    converter<< scientific<< "Cell1DAdjacency.makeCompressed();"<< endl;
+
     converter<< scientific<< "Cell1DMarkers = "<< _mesh.Cell1DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell1D = "<< _mesh.ActiveCell1D<< ";"<< endl;
     converter<< scientific<< "UpdatedCell1Ds = "<< _mesh.UpdatedCell1Ds<< ";"<< endl;
