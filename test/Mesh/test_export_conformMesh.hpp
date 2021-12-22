@@ -206,20 +206,6 @@ namespace GedimUnitTesting
         segmentMesh.Points.at(1.0000000000000000e+00).Edge2DIds.push_back(21);
         segmentMesh.Points.at(1.0000000000000000e+00).Cell2DIds.push_back(4);
 
-        // Segments:
-        // { Key: 0.0000000000000000e+00->2.7221089123105585e-02; Value: E: {} C: {3,3} }
-        // { Key: 2.7221089123105585e-02->1.5081657587860950e-01; Value: E: {} C: {3,3} }
-        // { Key: 1.5081657587860950e-01->2.0636899211510995e-01; Value: E: {} C: {3,3} }
-        // { Key: 2.0636899211510995e-01->2.2032877240731363e-01; Value: E: {} C: {3,3} }
-        // { Key: 2.2032877240731363e-01->2.7084084009418125e-01; Value: E: {} C: {3,3} }
-        // { Key: 2.7084084009418125e-01->2.8618524662562461e-01; Value: E: {} C: {3,3} }
-        // { Key: 2.8618524662562461e-01->2.9736416870129134e-01; Value: E: {} C: {3} }
-        // { Key: 2.9736416870129134e-01->3.5907750767017105e-01; Value: E: {} C: {3} }
-        // { Key: 3.5907750767017105e-01->4.0661516876623027e-01; Value: E: {} C: {4,4} }
-        // { Key: 4.0661516876623027e-01->4.3798874569320156e-01; Value: E: {} C: {4,4} }
-        // { Key: 4.3798874569320156e-01->6.6913757867999368e-01; Value: E: {} C: {4} }
-        // { Key: 6.6913757867999368e-01->1.0000000000000000e+00; Value: E: {} C: {4} }
-
         segmentMesh.Segments.resize(12);
         segmentMesh.Segments[0].Points = vector<double> { 0.0000000000000000e+00, 2.7221089123105585e-02 };
         segmentMesh.Segments[1].Points = vector<double> { 2.7221089123105585e-02, 1.5081657587860950e-01 };
@@ -269,6 +255,8 @@ namespace GedimUnitTesting
         Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
         meshUtilities.ExtractActiveMesh(domainMesh,
                                         extractionData);
+
+        EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell2D, 9);
 
         // Export the resulting mesh
         string exportFolder = "./Export";
