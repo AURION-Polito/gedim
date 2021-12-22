@@ -327,6 +327,44 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NewPolygons[0].Edges.size(), 4);
         ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 0, 3, 4, 2 }));
       }
+
+      // split exagon in two parts
+      {
+        Gedim::GeometryUtilities::SplitPolygonInput input;
+        input.NumberPolygonVertices = 6;
+        input.Segment.Origin.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
+        input.Segment.Origin.Index = 1;
+        input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
+        input.Segment.End.Index = 4;
+
+        Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
+        ASSERT_EQ(result.NewVertices.size(), 1);
+        ASSERT_EQ(result.NewEdges.size(), 3);
+
+        { using namespace Gedim;
+          list<Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge>::const_iterator it = result.NewEdges.begin();
+          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
+          cerr<< it->Cell2DNeighbours<< endl;
+          it++;
+          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
+          cerr<< it->Cell2DNeighbours<< endl;
+          it++;
+          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
+          cerr<< it->Cell2DNeighbours<< endl;
+          it++;
+        }
+        ASSERT_EQ(result.NewPolygons.size(), 2);
+        ASSERT_EQ(result.NewPolygons[0].Vertices.size(), 5);
+        ASSERT_EQ(result.NewPolygons[0].Vertices, list<unsigned int>({ 0, 1, 6, 4, 5 }));
+        ASSERT_EQ(result.NewPolygons[1].Vertices.size(), 4);
+        ASSERT_EQ(result.NewPolygons[1].Vertices, list<unsigned int>({ 2, 3, 4, 6 }));
+        ASSERT_EQ(result.NewPolygons[0].Edges.size(), 5);
+        ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 0, 7, 6, 4, 5 }));
+        ASSERT_EQ(result.NewPolygons[1].Edges.size(), 4);
+        ASSERT_EQ(result.NewPolygons[1].Edges, list<unsigned int>({ 2, 3, 6, 8 }));
+      }
     }
     catch (const exception& exception)
     {

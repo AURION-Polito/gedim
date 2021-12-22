@@ -143,7 +143,7 @@ namespace GedimUnitTesting
     }
   }
 
-  TEST(TestExportConformedMesh, TestCleanMesh2D)
+  TEST(TestExportConformedMesh, TestConformComplexMesh2D)
   {
     try
     {
@@ -263,7 +263,6 @@ namespace GedimUnitTesting
                                               segmentMesh,
                                               domainMesh,
                                               segmentConformMeshInfos);
-
 
         // Export the resulting mesh
         string exportFolder = "./Export";
