@@ -264,6 +264,12 @@ namespace GedimUnitTesting
                                               domainMesh,
                                               segmentConformMeshInfos);
 
+        // Clean mesh 2D
+        Gedim::MeshUtilities meshUtilities;
+        Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+        meshUtilities.ExtractActiveMesh(domainMesh,
+                                        extractionData);
+
         // Export the resulting mesh
         string exportFolder = "./Export";
         Gedim::Output::CreateFolder(exportFolder);
