@@ -192,11 +192,29 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
+        auto newEdgeIter = result.NewEdges.begin();
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
+        ASSERT_EQ(newEdgeIter->OriginId, 0);
+        ASSERT_EQ(newEdgeIter->EndId, 4);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1, 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
+        ASSERT_EQ(newEdgeIter->OriginId, 4);
+        ASSERT_EQ(newEdgeIter->EndId, 3);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
+        ASSERT_EQ(newEdgeIter->OriginId, 2);
+        ASSERT_EQ(newEdgeIter->EndId, 4);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1 }));
         ASSERT_EQ(result.NewPolygons.size(), 2);
-        ASSERT_EQ(result.NewPolygons[0].Vertices.size(), 3);
-        ASSERT_EQ(result.NewPolygons[0].Edges.size(), 3);
-        ASSERT_EQ(result.NewPolygons[1].Vertices.size(), 4);
-        ASSERT_EQ(result.NewPolygons[1].Edges.size(), 4);
+        ASSERT_EQ(result.NewPolygons[0].Vertices, list<unsigned int>({ 0, 4, 3 }));
+        ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 4, 5, 3 }));
+        ASSERT_EQ(result.NewPolygons[1].Vertices, list<unsigned int>({ 1, 2, 4, 0 }));
+        ASSERT_EQ(result.NewPolygons[1].Edges, list<unsigned int>({ 1, 6, 4, 0 }));
       }
 
       // split square in a two trapezioids
@@ -213,11 +231,41 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 2);
         ASSERT_EQ(result.NewEdges.size(), 5);
+        auto newEdgeIter = result.NewEdges.begin();
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
+        ASSERT_EQ(newEdgeIter->OriginId, 4);
+        ASSERT_EQ(newEdgeIter->EndId, 5);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1, 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
+        ASSERT_EQ(newEdgeIter->OriginId, 0);
+        ASSERT_EQ(newEdgeIter->EndId, 4);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
+        ASSERT_EQ(newEdgeIter->OriginId, 4);
+        ASSERT_EQ(newEdgeIter->EndId, 1);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
+        ASSERT_EQ(newEdgeIter->OriginId, 2);
+        ASSERT_EQ(newEdgeIter->EndId, 5);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 2);
+        ASSERT_EQ(newEdgeIter->OriginId, 5);
+        ASSERT_EQ(newEdgeIter->EndId, 3);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 0 }));
         ASSERT_EQ(result.NewPolygons.size(), 2);
-        ASSERT_EQ(result.NewPolygons[0].Vertices.size(), 4);
-        ASSERT_EQ(result.NewPolygons[0].Edges.size(), 4);
-        ASSERT_EQ(result.NewPolygons[1].Vertices.size(), 4);
-        ASSERT_EQ(result.NewPolygons[1].Edges.size(), 4);
+        ASSERT_EQ(result.NewPolygons[0].Vertices, list<unsigned int>({ 0, 4, 5, 3 }));
+        ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 5, 4, 8, 3 }));
+        ASSERT_EQ(result.NewPolygons[1].Vertices, list<unsigned int>({ 1, 2, 5, 4 }));
+        ASSERT_EQ(result.NewPolygons[1].Edges, list<unsigned int>({ 1, 7, 4, 6 }));
       }
 
       // split triangle in a two triangles
