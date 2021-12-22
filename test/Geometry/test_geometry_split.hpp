@@ -473,27 +473,28 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
         ASSERT_EQ(result.NewVertices.size(), 1);
         ASSERT_EQ(result.NewEdges.size(), 3);
-
-        { using namespace Gedim;
-          list<Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge>::const_iterator it = result.NewEdges.begin();
-          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
-          cerr<< it->Cell2DNeighbours<< endl;
-          it++;
-          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
-          cerr<< it->Cell2DNeighbours<< endl;
-          it++;
-          cerr<< it->OldEdgeId<< ": "<< it->OriginId<< " - "<< it->EndId<< endl;
-          cerr<< it->Cell2DNeighbours<< endl;
-          it++;
-        }
+        auto newEdgeIter = result.NewEdges.begin();
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeNew);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 0);
+        ASSERT_EQ(newEdgeIter->OriginId, 6);
+        ASSERT_EQ(newEdgeIter->EndId, 4);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1, 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
+        ASSERT_EQ(newEdgeIter->OriginId, 1);
+        ASSERT_EQ(newEdgeIter->EndId, 6);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 0 }));
+        newEdgeIter++;
+        ASSERT_EQ(newEdgeIter->Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::EdgeUpdate);
+        ASSERT_EQ(newEdgeIter->OldEdgeId, 1);
+        ASSERT_EQ(newEdgeIter->OriginId, 6);
+        ASSERT_EQ(newEdgeIter->EndId, 2);
+        ASSERT_EQ(newEdgeIter->Cell2DNeighbours, vector<unsigned int>({ 1 }));
         ASSERT_EQ(result.NewPolygons.size(), 2);
-        ASSERT_EQ(result.NewPolygons[0].Vertices.size(), 5);
         ASSERT_EQ(result.NewPolygons[0].Vertices, list<unsigned int>({ 0, 1, 6, 4, 5 }));
-        ASSERT_EQ(result.NewPolygons[1].Vertices.size(), 4);
-        ASSERT_EQ(result.NewPolygons[1].Vertices, list<unsigned int>({ 2, 3, 4, 6 }));
-        ASSERT_EQ(result.NewPolygons[0].Edges.size(), 5);
         ASSERT_EQ(result.NewPolygons[0].Edges, list<unsigned int>({ 0, 7, 6, 4, 5 }));
-        ASSERT_EQ(result.NewPolygons[1].Edges.size(), 4);
+        ASSERT_EQ(result.NewPolygons[1].Vertices, list<unsigned int>({ 2, 3, 4, 6 }));
         ASSERT_EQ(result.NewPolygons[1].Edges, list<unsigned int>({ 2, 3, 6, 8 }));
       }
     }
