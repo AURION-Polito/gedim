@@ -472,10 +472,6 @@ namespace Gedim
         const unsigned int edgeIdToUpdate = mesh2D.Cell2DEdge(cell2DMesh2DId,
                                                               newEdge.OldEdgeId);
 
-        cerr<< "Cell "<< c<< " Updating "<< edgeIdToUpdate;
-        cerr<< " Origin "<< mesh2D.Cell1DOrigin(edgeIdToUpdate)<< " End "<< mesh2D.Cell1DEnd(edgeIdToUpdate);
-        cerr<< " neighs { "<< mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, 0)<< ", "<< mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, 1)<< " }"<< endl;
-
         mesh2D.Cell1DInsertUpdatedCell1D(edgeIdToUpdate, e);
         mesh2D.Cell1DSetState(edgeIdToUpdate, 0);
 
@@ -505,11 +501,6 @@ namespace Gedim
                                                n,
                                                mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, n));
         }
-
-        cerr<< "Cell "<< c<< " New Edge "<< e;
-        cerr<< " Origin "<< mesh2D.Cell1DOrigin(e)<< " End "<< mesh2D.Cell1DEnd(e);
-        cerr<< " neighs { "<< mesh2D.Cell1DNeighbourCell2D(e, 0)<< ", "<< mesh2D.Cell1DNeighbourCell2D(e, 1)<< " }"<< endl;
-
 
         if (splitResult.Type == GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate)
         {
@@ -843,8 +834,6 @@ namespace Gedim
     mesh2D.Cell2DUpdatedCell2Ds(cell2DMesh2DId,
                                 cell2DMesh2DsToUpdate);
 
-    cerr<< "cell2DMesh2DsToUpdate "<< cell2DMesh2DsToUpdate<< endl;
-
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& originSegment = mesh1D.Segments[cell1DMesh1DIds.front()];
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& endSegment = mesh1D.Segments[cell1DMesh1DIds.back()];
     const unsigned int originSegmentMesh2DCell0D = mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.back();
@@ -982,12 +971,6 @@ namespace Gedim
                                         newCell2DVertices,
                                         newCell2DEdges);
 
-      cerr<< "Split cell "<< cell2DMesh2DToUpdate << " on edge "<< cell1DMesh2DToUpdate<< endl;
-      cerr<< "Origin "<< mesh2D.Cell1DOrigin(cell1DMesh2DToUpdate)<< " end "<< mesh2D.Cell1DEnd(cell1DMesh2DToUpdate)<< endl;
-      cerr<< "neighs = {"<< mesh2D.Cell1DNeighbourCell2D(cell1DMesh2DToUpdate, 0)<< ", "<< mesh2D.Cell1DNeighbourCell2D(cell1DMesh2DToUpdate, 1)<< "}"<< endl;
-      cerr<< "newCell0DMesh2Ds "<< newCell0DMesh2Ds<< endl;
-      cerr<< "newCell1DMesh2Ds "<< newCell1DMesh2Ds<< endl;
-
       mesh2D.Cell2DAddVertices(c, newCell2DVertices);
       mesh2D.Cell2DAddEdges(c, newCell2DEdges);
 
@@ -996,23 +979,6 @@ namespace Gedim
       mesh2D.Cell2DSetState(cell2DMesh2DToUpdate, false);
 
       mesh2D.Cell2DInsertUpdatedCell2D(cell2DMesh2DToUpdate, c);
-      cerr<< "Update cell "<< cell2DMesh2DToUpdate<< " with "<< c<< endl;
-      cerr<< "Old cell "<< cell2DMesh2DToUpdate<< " has "<< mesh2D.Cell2DNumberEdges(cell2DMesh2DToUpdate)<< " edges"<< endl;
-      cerr<< "New cell "<< c<< " has "<< mesh2D.Cell2DNumberEdges(c)<< " edges"<< endl;
-
-      for (unsigned int cv = 0; cv < mesh2D.Cell2DNumberVertices(cell2DMesh2DToUpdate); cv++)
-      {
-        const unsigned int vertexId = mesh2D.Cell2DVertex(cell2DMesh2DToUpdate, cv);
-        cerr<< "Old cell "<< cell2DMesh2DToUpdate<< " vertex "<< vertexId<< endl;
-      }
-
-      for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(cell2DMesh2DToUpdate); e++)
-      {
-        const unsigned int edgeId = mesh2D.Cell2DEdge(cell2DMesh2DToUpdate, e);
-        cerr<< "Old cell "<< cell2DMesh2DToUpdate<< " edge "<< edgeId;
-        cerr<< " Origin "<< mesh2D.Cell1DOrigin(edgeId)<< " end "<< mesh2D.Cell1DEnd(edgeId);
-        cerr<< " neighs = {"<< mesh2D.Cell1DNeighbourCell2D(edgeId, 0)<< ", "<< mesh2D.Cell1DNeighbourCell2D(edgeId, 1)<< "}"<< endl;
-      }
 
       // update all edges neighbours
       for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(c); e++)
@@ -1028,14 +994,6 @@ namespace Gedim
                                                n,
                                                c);
         }
-      }
-
-      for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(c); e++)
-      {
-        const unsigned int edgeId = mesh2D.Cell2DEdge(c, e);
-        cerr<< "New cell "<< c<< " edge "<< edgeId;
-        cerr<< " Origin "<< mesh2D.Cell1DOrigin(edgeId)<< " end "<< mesh2D.Cell1DEnd(edgeId);
-        cerr<< " neighs = {"<< mesh2D.Cell1DNeighbourCell2D(edgeId, 0)<< ", "<< mesh2D.Cell1DNeighbourCell2D(edgeId, 1)<< "}"<< endl;
       }
 
       // update conform mesh 1D
@@ -1189,9 +1147,6 @@ namespace Gedim
                   cell2DId) !=
              mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
 
-      cerr<< "Cell2D "<< cell2DId<< endl;
-      cerr<< cell1DMesh1DIds<< endl;
-
       // generate cell2D mesh2D maps
       map<unsigned int, unsigned int> cell2DMesh2DVerticesMap, cell2DMesh2DEdgesMap;
       Cell2DMesh2DToMaps(mesh2D,
@@ -1225,8 +1180,6 @@ namespace Gedim
                           cell2DMesh2DEdgesMap,
                           splitResult);
       }
-
-      cerr<< (unsigned int)splitResult.Type<< endl;
 
       // insert middle edges in new cells
       switch (splitResult.Type)
