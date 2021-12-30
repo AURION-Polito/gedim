@@ -130,34 +130,42 @@ namespace Gedim
     Output::Assert(Compare1DValues(polygonNormal.norm(), 1.0) == CompareTypes::Coincident);
 
     const unsigned int& numVertices = polygonVertices.cols();
-    MatrixXd Z(3, numVertices);
-    MatrixXd W(3, numVertices);
-    Matrix3d H;
-    Vector3d V1mV0 = polygonVertices.col(1) - polygonTranslation;
+    MatrixXd Z, W;
+    Z.setZero(3, numVertices);
+    W.setZero(3, numVertices);
+
+    const Vector3d V1mV0 = polygonVertices.col(1) - polygonTranslation;
     double normVectorOne = V1mV0.norm();
-    Z.col(0) = V1mV0;
-    W.col(0) << normVectorOne, 0.0, 0.0;
+    Z.col(0)<< V1mV0;
+    W.col(0)<< normVectorOne, 0.0, 0.0;
     for (unsigned int i = 2; i < numVertices; i++)
     {
-      Vector3d VimV0 = polygonVertices.col(i) - polygonTranslation;
-      Z.col(i - 1) = VimV0;
+      const Vector3d VimV0 = polygonVertices.col(i) - polygonTranslation;
+      Z.col(i - 1)<< VimV0;
 
-      double normVectorI = VimV0.norm();
-      double cosTheta = VimV0.dot(V1mV0) / (normVectorOne * normVectorI);
+      const double normVectorI = VimV0.norm();
+      const double cosTheta = VimV0.dot(V1mV0) / (normVectorOne * normVectorI);
+
+      cerr<< scientific<< cosTheta<< endl;
 
       if (Compare1DValues(cosTheta, 1.0) == CompareTypes::Coincident)
-        W.col(i - 1) << normVectorI, 0.0, 0.0;
+        W.col(i - 1)<< normVectorI, 0.0, 0.0;
       else if (Compare1DValues(cosTheta, -1.0) == CompareTypes::Coincident)
-        W.col(i - 1) << -normVectorI, 0.0, 0.0;
+        W.col(i - 1)<< -normVectorI, 0.0, 0.0;
       else if (Compare1DValues(cosTheta, 0.0) == CompareTypes::Coincident)
-        W.col(i - 1) << 0.0, normVectorI, 0.0;
+        W.col(i - 1)<< 0.0, normVectorI, 0.0;
       else
         W.col(i - 1) << normVectorI * cosTheta, normVectorI * sqrt(1.0 - cosTheta*cosTheta), 0;
     }
     Z.col(numVertices - 1) = polygonNormal;
     W.col(numVertices - 1)<< 0.0, 0.0, 1.0;
-    H = W * Z.transpose();
+    MatrixXd H = W * Z.transpose();
     JacobiSVD<MatrixXd> svd(H, ComputeThinU | ComputeThinV);
+
+    cerr.precision(16);
+    cerr<< scientific<< "Z\n"<< Z<< endl;
+    cerr<< scientific<< "W\n"<< W<< endl;
+    cerr<< scientific<< "H\n"<< H<< endl;
 
     return svd.matrixV() * (svd.matrixU()).transpose();
   }
