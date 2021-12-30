@@ -146,8 +146,6 @@ namespace Gedim
       const double normVectorI = VimV0.norm();
       const double cosTheta = VimV0.dot(V1mV0) / (normVectorOne * normVectorI);
 
-      cerr<< scientific<< cosTheta<< endl;
-
       if (Compare1DValues(cosTheta, 1.0) == CompareTypes::Coincident)
         W.col(i - 1)<< normVectorI, 0.0, 0.0;
       else if (Compare1DValues(cosTheta, -1.0) == CompareTypes::Coincident)
@@ -161,11 +159,6 @@ namespace Gedim
     W.col(numVertices - 1)<< 0.0, 0.0, 1.0;
     MatrixXd H = W * Z.transpose();
     JacobiSVD<MatrixXd> svd(H, ComputeThinU | ComputeThinV);
-
-    cerr.precision(16);
-    cerr<< scientific<< "Z\n"<< Z<< endl;
-    cerr<< scientific<< "W\n"<< W<< endl;
-    cerr<< scientific<< "H\n"<< H<< endl;
 
     return svd.matrixV() * (svd.matrixU()).transpose();
   }
