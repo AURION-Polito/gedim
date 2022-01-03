@@ -100,6 +100,32 @@ namespace Gedim
     return centroid;
   }
   // ***************************************************************************
+  Vector3d GeometryUtilities::PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
+                                              const vector<unsigned int>& polygonTriangulation,
+                                              const double& polygonArea) const
+  {
+    Output::Assert(PointsAre2D(polygonVertices) &&
+                   polygonVertices.cols() > 2 &&
+                   polygonTriangulation.size() > 0 &&
+                   polygonTriangulation.size() % 3 == 0);
+
+    Eigen::Vector3d centroid;
+    centroid.setZero();
+
+    const unsigned int numTriangles = polygonTriangulation.size() / 3;
+    for (unsigned int t = 0; t < numTriangles; t++)
+    {
+      Eigen::Matrix3d triangleVertices;
+      triangleVertices.col(0)<< polygonVertices.col(polygonTriangulation[3 * t]);
+      triangleVertices.col(1)<< polygonVertices.col(polygonTriangulation[3 * t + 1]);
+      triangleVertices.col(2)<< polygonVertices.col(polygonTriangulation[3 * t + 2]);
+
+      centroid += PolygonBarycenter(triangleVertices) * PolygonArea(triangleVertices);
+    }
+
+    return centroid / polygonArea;
+  }
+  // ***************************************************************************
   double GeometryUtilities::PolygonDiameter(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);

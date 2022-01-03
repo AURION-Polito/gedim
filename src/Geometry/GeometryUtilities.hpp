@@ -839,6 +839,15 @@ namespace Gedim
       Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
                                       const double& polygonArea) const;
 
+      /// \brief Compute the Polygon centroid using subtriangulation
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \param polygonTriangulation the polygon sub-division triangulation, size 1 x 3 * numTriangles
+      /// \param polygonArea the area of the polygon
+      /// \note the polygon shall be 2D
+      Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
+                                      const vector<unsigned int>& polygonTriangulation,
+                                      const double& polygonArea) const;
+
       /// \brief Compute the Polygon diameter defined as the maximum distance between the vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       double PolygonDiameter(const Eigen::MatrixXd& polygonVertices) const;

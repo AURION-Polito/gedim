@@ -86,6 +86,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
       // check area of reference quadrilateral 2D
@@ -107,6 +117,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 2.0);
         ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 2.0);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
       // check area of generic triangle 2D
@@ -127,6 +147,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 2.666666666666667e+00);
         ASSERT_DOUBLE_EQ(centroid[1], 6.666666666666665e-01);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 2.666666666666667e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 6.666666666666665e-01);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
       // check area of generic quadrilateral 2D
@@ -147,6 +177,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
         ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
       // check area of generic quadrilateral 2D with aligned points
@@ -167,6 +207,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
         ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 2, 3, 0, 3, 4, 0, 4, 5 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
       // check area of generic concave 2D polygon
@@ -187,6 +237,16 @@ namespace GedimUnitTesting {
         ASSERT_DOUBLE_EQ(centroid[0], 2.842903374942210e+00);
         ASSERT_DOUBLE_EQ(centroid[1], 2.754923717059639e+00);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
+
+        vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 5, 2, 3, 4, 2, 4, 5 };
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
+                                                                                polygonTriangulation,
+                                                                                polygonArea);
+
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 2.842903374942210e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.754923717059639e+00);
+        ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
 
     }
