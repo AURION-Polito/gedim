@@ -20,6 +20,58 @@ using namespace std;
 namespace GedimUnitTesting
 {
 
+  TEST(TestConformMesh, TestSerialization)
+  {
+    try
+    {
+      Gedim::ConformerMeshSegment::ConformMesh mesh;
+
+      mesh.Points.insert(pair<double,
+                         Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint>(0.0,
+                                                                                     Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint()));
+      mesh.Points.at(0.0).Type = Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint::Types::Inherited;
+      mesh.Points.at(0.0).Vertex2DIds = { 2, 3 };
+      mesh.Points.at(0.0).Edge2DIds = { 5, 6 };
+      mesh.Points.at(0.0).Cell2DIds = { 8, 9 };
+      mesh.Points.insert(pair<double,
+                         Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint>(1.0,
+                                                                                     Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint()));
+      mesh.Points.at(1.0).Type = Gedim::ConformerMeshSegment::ConformMesh::ConformMeshPoint::Types::Original;
+      mesh.Points.at(1.0).Vertex2DIds = { 2, 3 };
+      mesh.Points.at(1.0).Edge2DIds = { 5, 6 };
+      mesh.Points.at(1.0).Cell2DIds = { 8, 9 };
+      mesh.Segments.resize(1);
+      mesh.Segments.at(0).Points = { 0.0, 1.0 };
+      mesh.Segments.at(0).Edge2DIds = { 5, 6 };
+      mesh.Segments.at(0).Cell2DIds = { 8, 9 };
+
+      std::stringstream buffer;
+      ASSERT_NO_THROW(Gedim::ConformerMeshSegment::Serialize(buffer,
+                                                             mesh));
+      Gedim::ConformerMeshSegment::ConformMesh result;
+      ASSERT_NO_THROW(Gedim::ConformerMeshSegment::Deserialize(buffer,
+                                                               result));
+
+      ASSERT_EQ(mesh.Points.size(), result.Points.size());
+      ASSERT_EQ(mesh.Points.at(0.0).Type, result.Points.at(0.0).Type);
+      ASSERT_EQ(mesh.Points.at(0.0).Vertex2DIds, result.Points.at(0.0).Vertex2DIds);
+      ASSERT_EQ(mesh.Points.at(0.0).Edge2DIds, result.Points.at(0.0).Edge2DIds);
+      ASSERT_EQ(mesh.Points.at(0.0).Cell2DIds, result.Points.at(0.0).Cell2DIds);
+      ASSERT_EQ(mesh.Points.at(1.0).Type, result.Points.at(1.0).Type);
+      ASSERT_EQ(mesh.Points.at(1.0).Vertex2DIds, result.Points.at(1.0).Vertex2DIds);
+      ASSERT_EQ(mesh.Points.at(1.0).Edge2DIds, result.Points.at(1.0).Edge2DIds);
+      ASSERT_EQ(mesh.Points.at(1.0).Cell2DIds, result.Points.at(1.0).Cell2DIds);
+      ASSERT_EQ(mesh.Segments.size(), result.Segments.size());
+      ASSERT_EQ(mesh.Segments.at(0).Edge2DIds, result.Segments.at(0).Edge2DIds);
+      ASSERT_EQ(mesh.Segments.at(0).Cell2DIds, result.Segments.at(0).Cell2DIds);
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestConformMesh, TestConformMesh1D)
   {
     try
