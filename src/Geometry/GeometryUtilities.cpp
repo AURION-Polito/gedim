@@ -126,4 +126,21 @@ namespace Gedim
     return extraction;
   }
   // ***************************************************************************
+  vector<Matrix3d> GeometryUtilities::ExtractTriangulationPoints(const Eigen::MatrixXd& points,
+                                                                 const vector<unsigned int>& pointsTriangulation) const
+  {
+    const unsigned int numTriangles = pointsTriangulation.size() / 3;
+    vector<Matrix3d> triangulations(numTriangles);
+
+    for (unsigned int t = 0; t < numTriangles; t++)
+    {
+      Eigen::Matrix3d& triangleVertices = triangulations[t];
+      triangleVertices.col(0)<< points.col(pointsTriangulation[3 * t]);
+      triangleVertices.col(1)<< points.col(pointsTriangulation[3 * t + 1]);
+      triangleVertices.col(2)<< points.col(pointsTriangulation[3 * t + 2]);
+    }
+
+    return triangulations;
+  }
+  // ***************************************************************************
 }

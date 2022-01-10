@@ -953,6 +953,12 @@ namespace Gedim
       Eigen::MatrixXd ExtractPoints(const Eigen::MatrixXd& points,
                                     const vector<unsigned int>& filter) const;
 
+      /// \param points the points, size 3 x numPoints
+      /// \param pointsTriangulation the polygon sub-division triangulation, size 1 x 3 * numTriangles
+      /// \return the triangles coordinates, size 1 x numTriangles
+      vector<Eigen::Matrix3d> ExtractTriangulationPoints(const Eigen::MatrixXd& points,
+                                                         const vector<unsigned int>& pointsTriangulation) const;
+
       /// \brief Create a Tetrahedron with origin and dimension
       /// \param origin the origin
       /// \param lengthVector the length vector

@@ -346,8 +346,15 @@ namespace GedimUnitTesting {
         double area = geometryUtility.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 0.5);
 
-        double areaWithTriangles = geometryUtility.PolygonArea(polygonVertices,
-                                                               polygonTriangulation);
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+
+        double areaWithTriangles = polygonTriangulationAreas.sum();
+
         ASSERT_DOUBLE_EQ(areaWithTriangles, 0.5);
       }
 
@@ -364,8 +371,15 @@ namespace GedimUnitTesting {
         double area = geometryUtility.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.0);
 
-        double areaWithTriangles = geometryUtility.PolygonArea(polygonVertices,
-                                                               polygonTriangulation);
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+
+        double areaWithTriangles = polygonTriangulationAreas.sum();
+
         ASSERT_DOUBLE_EQ(areaWithTriangles, 1.0);
       }
 
@@ -381,8 +395,15 @@ namespace GedimUnitTesting {
         double area = geometryUtility.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.850000000000000e+01);
 
-        double areaWithTriangles = geometryUtility.PolygonArea(polygonVertices,
-                                                               polygonTriangulation);
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+
+        double areaWithTriangles = polygonTriangulationAreas.sum();
+
         ASSERT_DOUBLE_EQ(areaWithTriangles, 1.850000000000000e+01);
       }
 
@@ -398,8 +419,15 @@ namespace GedimUnitTesting {
         double area = geometryUtility.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
 
-        double areaWithTriangles = geometryUtility.PolygonArea(polygonVertices,
-                                                               polygonTriangulation);
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+
+        double areaWithTriangles = polygonTriangulationAreas.sum();
+
         ASSERT_DOUBLE_EQ(areaWithTriangles, 1.511000000000000e+01);
       }
 
@@ -415,8 +443,15 @@ namespace GedimUnitTesting {
         double area = geometryUtility.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
 
-        double areaWithTriangles = geometryUtility.PolygonArea(polygonVertices,
-                                                               polygonTriangulation);
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+
+        double areaWithTriangles = polygonTriangulationAreas.sum();
+
         ASSERT_DOUBLE_EQ(areaWithTriangles, 1.511000000000000e+01);
       }
     }
