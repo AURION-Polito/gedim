@@ -178,6 +178,157 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void ConformerMeshSegment::Serialize(ostream& os,
+                                       const ConformMesh& mesh)
+
+  {
+    char separator = ' ';
+    os.precision(16);
+
+    os<< scientific<< mesh.Points.size()<< separator;
+    for_each(mesh.Points.begin(), mesh.Points.end(), [&os, &separator](
+             const std::pair<double, ConformerMeshSegment::ConformMesh::ConformMeshPoint>& p)
+    {
+      os<< scientific << p.first<< separator;
+      os<< scientific<< (unsigned int)p.second.Type<< separator;
+
+      os<< scientific<< p.second.Vertex2DIds.size()<< separator;
+      for_each(p.second.Vertex2DIds.begin(), p.second.Vertex2DIds.end(), [&os, &separator](
+               const unsigned int& id)
+      {
+        os<< scientific<< id<< separator;
+      });
+
+      os<< scientific<< p.second.Edge2DIds.size()<< separator;
+      for_each(p.second.Edge2DIds.begin(), p.second.Edge2DIds.end(), [&os, &separator](
+               const unsigned int& id)
+      {
+        os<< scientific<< id<< separator;
+      });
+
+      os<< scientific<< p.second.Cell2DIds.size()<< separator;
+      for_each(p.second.Cell2DIds.begin(), p.second.Cell2DIds.end(), [&os, &separator](
+               const unsigned int& id)
+      {
+        os<< scientific<< id<< separator;
+      });
+    });
+
+    os<< scientific<< mesh.Segments.size()<< separator;
+    for_each(mesh.Segments.begin(), mesh.Segments.end(), [&os, &separator](
+             const ConformerMeshSegment::ConformMesh::ConformMeshSegment& s)
+    {
+      os<< scientific<< s.Points[0]<< separator;
+      os<< scientific<< s.Points[1]<< separator;
+
+      os<< scientific<< s.Edge2DIds.size()<< separator;
+      for_each(s.Edge2DIds.begin(), s.Edge2DIds.end(), [&os, &separator](
+               const unsigned int& id)
+      {
+        os<< scientific<< id<< separator;
+      });
+
+      os<< scientific<< s.Cell2DIds.size()<< separator;
+      for_each(s.Cell2DIds.begin(), s.Cell2DIds.end(), [&os, &separator](
+               const unsigned int& id)
+      {
+        os<< scientific<< id<< separator;
+      });
+    });
+  }
+  // ***************************************************************************
+  void ConformerMeshSegment::Deserialize(istream& is,
+                                         ConformMesh& mesh)
+  {
+    unsigned int numMeshPoints = 0;
+    is >>numMeshPoints;
+
+    for (unsigned int p = 0; p < numMeshPoints; p++)
+    {
+      double pointCurvilinearCoordinate;
+      is >>pointCurvilinearCoordinate;
+
+      mesh.Points.insert(pair<double, ConformMesh::ConformMeshPoint>(pointCurvilinearCoordinate,
+                                                                     ConformMesh::ConformMeshPoint()));
+      ConformMesh::ConformMeshPoint& point = mesh.Points.at(pointCurvilinearCoordinate);
+
+      unsigned int pointType;
+      is >>pointType;
+
+      switch (pointType)
+      {
+        case 1:
+          point.Type = ConformMesh::ConformMeshPoint::Types::Original;
+        break;
+        case 2:
+          point.Type = ConformMesh::ConformMeshPoint::Types::Inherited;
+        break;
+        case 3:
+          point.Type = ConformMesh::ConformMeshPoint::Types::External;
+        break;
+        default:
+          throw runtime_error("Unknown point type");
+      }
+
+      unsigned int pointVerticesSize = 0;
+      is >>pointVerticesSize;
+      for (unsigned int pv = 0; pv < pointVerticesSize; pv++)
+      {
+        unsigned int pointVertex;
+        is >>pointVertex;
+        point.Vertex2DIds.push_back(pointVertex);
+      }
+
+      unsigned int pointEdgesSize = 0;
+      is >>pointEdgesSize;
+      for (unsigned int pe = 0; pe < pointEdgesSize; pe++)
+      {
+        unsigned int pointEdge;
+        is >>pointEdge;
+        point.Edge2DIds.push_back(pointEdge);
+      }
+
+      unsigned int pointCell2DSize = 0;
+      is >>pointCell2DSize;
+      for (unsigned int pc = 0; pc < pointCell2DSize; pc++)
+      {
+        unsigned int pointCell2D;
+        is >>pointCell2D;
+        point.Cell2DIds.push_back(pointCell2D);
+      }
+    }
+
+    unsigned int numMeshSegments = 0;
+    is >>numMeshSegments;
+
+    mesh.Segments.resize(numMeshSegments);
+    for (unsigned int s = 0; s < numMeshSegments; s++)
+    {
+      ConformMesh::ConformMeshSegment& segment = mesh.Segments.at(s);
+      segment.Points.resize(2);
+      is >> segment.Points[0];
+      is >> segment.Points[1];
+
+      unsigned int segmentEdgesSize = 0;
+      is >>segmentEdgesSize;
+      for (unsigned int se = 0; se < segmentEdgesSize; se++)
+      {
+        unsigned int segmentEdge;
+        is >>segmentEdge;
+        segment.Edge2DIds.push_back(segmentEdge);
+      }
+
+      unsigned int segmentCell2DSize = 0;
+      is >>segmentCell2DSize;
+      for (unsigned int sc = 0; sc < segmentCell2DSize; sc++)
+      {
+        unsigned int segmentCell2D;
+        is >>segmentCell2D;
+        segment.Cell2DIds.push_back(segmentCell2D);
+      }
+    }
+  }
+  // ***************************************************************************
   void ConformerMeshSegment::CreateConformMesh(const Gedim::IntersectorMesh2DSegment::IntersectionMesh& meshIntersection,
                                                const UnionMeshSegment::UnionMesh& meshUnion,
                                                const unsigned int& meshIntersectionPosition,

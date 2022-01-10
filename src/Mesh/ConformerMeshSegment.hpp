@@ -49,6 +49,12 @@ namespace Gedim
 
       static void CreateConformSegments(ConformMesh& result);
 
+      static void Serialize(std::ostream &os,
+                            const ConformMesh& mesh);
+
+      static void Deserialize(std::istream &is,
+                              ConformMesh& mesh);
+
     private:
       const Gedim::GeometryUtilities& _geometryUtilities;
 
