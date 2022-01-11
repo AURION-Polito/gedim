@@ -89,8 +89,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 3.0);
@@ -120,8 +131,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 2.0);
@@ -150,8 +172,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 2.666666666666667e+00);
@@ -180,8 +213,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
@@ -210,8 +254,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 2, 3, 0, 3, 4, 0, 4, 5 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
@@ -240,8 +295,19 @@ namespace GedimUnitTesting {
 
         vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 5, 2, 3, 4, 2, 4, 5 };
 
-        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonVertices,
-                                                                                polygonTriangulation,
+        vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+                                                                                                        polygonTriangulation);
+
+        Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
+        Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
+        for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
+        {
+          polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+          polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+        }
+
+        Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+                                                                                polygonTriangulationAreas,
                                                                                 polygonArea);
 
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 2.842903374942210e+00);

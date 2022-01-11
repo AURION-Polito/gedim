@@ -773,14 +773,6 @@ namespace Gedim
       /// \warning works only for convex polygons
       double PolygonArea(const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
-      /// \param polygonTriangulation the polygon sub-division triangulation, size 1 x 3 * numTriangles
-      /// \return the polygon area
-      /// \note the polygon shall be 2D
-      /// \note works for convex and concave polygons
-      double PolygonArea(const Eigen::MatrixXd& polygonVertices,
-                         const vector<unsigned int>& polygonTriangulation) const;
-
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data
       /// \param result the resulting split
@@ -839,14 +831,20 @@ namespace Gedim
       Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
                                       const double& polygonArea) const;
 
-      /// \brief Compute the Polygon centroid using subtriangulation
-      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
-      /// \param polygonTriangulation the polygon sub-division triangulation, size 1 x 3 * numTriangles
-      /// \param polygonArea the area of the polygon
-      /// \note the polygon shall be 2D
-      Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& polygonVertices,
-                                      const vector<unsigned int>& polygonTriangulation,
-                                      const double& polygonArea) const;
+      /// \brief Compute the Polygon centroid using polygon sub-division
+      /// \param subPolygonCentroids the centroid of each subPolygon (size 3 x numSubPolygons)
+      /// \param subPolygonAreas the areas of each subPolygon, size 1 x numSubPolygons
+      /// \param polygonArea the total area of the polygon
+      inline Eigen::Vector3d PolygonCentroid(const Eigen::MatrixXd& subPolygonCentroids,
+                                             const Eigen::VectorXd& subPolygonAreas,
+                                             const double& polygonArea) const
+      {
+        Output::Assert(subPolygonCentroids.rows() == 3 &&
+                       subPolygonCentroids.cols() > 0 &&
+                       subPolygonCentroids.cols() == subPolygonAreas.size());
+
+        return subPolygonCentroids * subPolygonAreas / polygonArea;
+      }
 
       /// \brief Compute the Polygon diameter defined as the maximum distance between the vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
