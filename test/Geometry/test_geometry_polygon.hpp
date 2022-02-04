@@ -811,6 +811,52 @@ namespace GedimUnitTesting {
 
         ASSERT_EQ(result.Points, expectedResult.Points);
       }
+
+      // check exagon sub-division
+      {
+        Eigen::MatrixXd polygonVertices(3, 6);
+        polygonVertices.col(0)<< 0.1, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 2.0 / 3.0, 1.0 / 3.0, 0.0;
+        polygonVertices.col(3)<< 1.0 / 3.0, 2.0 / 3.0, 0.0;
+        polygonVertices.col(4)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(5)<< 0.0, 0.1, 0.0;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 6);
+        polygonEdgeTangents.col(0)<<   9.0000000000000002e-01,  0.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(1)<<  -3.3333333333333337e-01,  3.3333333333333331e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(2)<<  -3.3333333333333331e-01,  3.3333333333333331e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(3)<<  -3.3333333333333331e-01,  3.3333333333333337e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(4)<<   0.0000000000000000e+00, -9.0000000000000002e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(5)<<   1.0000000000000001e-01, -1.0000000000000001e-01, 0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 0.1;
+        const unsigned int curvedEdgeIndex = 5;
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
+            geometryUtility.PolygonDivisionByCircle(polygonVertices,
+                                                    polygonEdgeTangents,
+                                                    circleCenter,
+                                                    circleRadius,
+                                                    curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult expectedResult;
+        expectedResult.Points.setZero(3, 9);
+        expectedResult.Points.block(0, 0, 3, 6)<< polygonVertices;
+        expectedResult.Points.col(6)<< circleCenter;
+        expectedResult.Points.col(7)<< Eigen::Vector3d(8.9442719099991908e-02,
+                                                       4.4721359549995954e-02,
+                                                       0.0);
+        expectedResult.Points.col(8)<< Eigen::Vector3d(4.4721359549995954e-02,
+                                                       8.9442719099991908e-02,
+                                                       0.0);
+
+        cerr.precision(16);
+        cerr<< scientific<< result.Points<< endl;
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+      }
     }
     catch (const exception& exception)
     {
