@@ -468,13 +468,16 @@ namespace Gedim
       const unsigned int endEdgeIndex = (edgeNumber + 1) % numPolygonVertices;
 
       subPolygonIndices.push_back(originEdgeIndex);
-      subPolygonIndices.push_back(endEdgeIndex);
 
-      if (newVerticesIndicesPerEdge[edgeNumber] == curvedEdgeIndex)
+      if (endEdgeIndex == curvedEdgeIndex)
+      {
+        subPolygonIndices.push_back(endEdgeIndex);
         break;
+      }
 
       if (newVerticesIndicesPerEdge[edgeNumber] != -1)
       {
+        subPolygonIndices.push_back(endEdgeIndex);
         subPolygonIndices.push_back(newVerticesIndicesPerEdge[edgeNumber]);
         subPolygonsIndices.push_back(list<unsigned int> { (unsigned int)newVerticesIndicesPerEdge[edgeNumber] });
       }
@@ -552,10 +555,6 @@ namespace Gedim
       lastSubTriangle[1] = lastSubPolygon[1];
       lastSubTriangle[2] = lastSubPolygon[lastSubPolygon.size() - 2];
     }
-
-    cerr<< newVerticesIndicesPerEdge<< endl;
-    cerr<< result.SubPolygons<< endl;
-    cerr<< result.SubTriangles<< endl;
 
     return result;
   }

@@ -861,7 +861,7 @@ namespace GedimUnitTesting {
                                                        8.9442719099991908e-02,
                                                        0.0);
 
-        expectedResult.SubTriangles = { {6, 1, 2}, {6, 2, 3}, {6, 3, 5} };
+        expectedResult.SubTriangles = { {6, 1, 2}, {6, 2, 3}, {6, 3, 4} };
         expectedResult.SubPolygons = { {0, 1, 2, 7}, {7, 2, 3, 8}, {8, 3, 4, 5} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
