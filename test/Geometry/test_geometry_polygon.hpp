@@ -752,12 +752,18 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
+        Eigen::Matrix3d polygonEdgeTangents;
+        polygonEdgeTangents.col(0)<<  1.0, 0.0, 0.0;
+        polygonEdgeTangents.col(1)<<  -1.0, 1.0, 0.0;
+        polygonEdgeTangents.col(2)<<  0.0, -1.0, 0.0;
+
         const Eigen::Vector3d circleCenter(0.5, -0.5, 0.0);
         const double circleRadius = sqrt(2.0) / 2.0;
         const unsigned int curvedEdgeIndex = 0;
 
         Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
             geometryUtility.PolygonDivisionByCircle(polygonVertices,
+                                                    polygonEdgeTangents,
                                                     circleCenter,
                                                     circleRadius,
                                                     curvedEdgeIndex);
@@ -770,8 +776,38 @@ namespace GedimUnitTesting {
                                                        1.7082039324993703e-01,
                                                        0.0000000000000000e+00);
 
-        cerr<< result.Points<< endl;
-        cerr<< expectedResult.Points<< endl;
+        ASSERT_EQ(result.Points, expectedResult.Points);
+      }
+
+      // check trapezioid sub-division
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.1, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 0.1, 0.0;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 4);
+        polygonEdgeTangents.col(0)<<   9.0000000000000002e-01,  0.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(1)<<  -1.0000000000000000e+00,  1.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(2)<<   0.0000000000000000e+00, -9.0000000000000002e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(3)<<   1.0000000000000001e-01, -1.0000000000000001e-01, 0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 0.1;
+        const unsigned int curvedEdgeIndex = 3;
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
+            geometryUtility.PolygonDivisionByCircle(polygonVertices,
+                                                    polygonEdgeTangents,
+                                                    circleCenter,
+                                                    circleRadius,
+                                                    curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult expectedResult;
+        expectedResult.Points.setZero(3, 5);
+        expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
+        expectedResult.Points.col(4)<< circleCenter;
 
         ASSERT_EQ(result.Points, expectedResult.Points);
       }

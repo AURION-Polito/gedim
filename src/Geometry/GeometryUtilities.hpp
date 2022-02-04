@@ -88,6 +88,11 @@ namespace Gedim
           vector<Intersection> Intersections = {}; ///< ordered by edge order
       };
 
+      struct PolygonDivisionByAngleQuadrantResult final
+      {
+          Eigen::MatrixXd Points; ///< Coordinates of generated points
+      };
+
       struct PolygonDivisionByCircleResult final
       {
           Eigen::MatrixXd Points; ///< Coordinates of generated points
@@ -773,13 +778,27 @@ namespace Gedim
       vector<unsigned int> PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
                                                                const Eigen::Vector3d& point) const;
 
-      /// \brief Convex Polygon sub division from a circle which intersect a polygon in a curved edge
+      /// \brief Convex Polygon sub division by angle quadrant which intersects a polygon in a curved edge
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \param circleCenter the circle center from which the curved edge derives
       /// \param circleRadius the radius of the circle from which the curved edge derives
       /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
       /// \return the sub-division polygons result
+      PolygonDivisionByAngleQuadrantResult PolygonDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
+                                                                          const Eigen::Vector3d& circleCenter,
+                                                                          const double& circleRadius,
+                                                                          const unsigned int& curvedEdgeIndex) const;
+
+      /// \brief Convex Polygon sub division from a circle which intersects a polygon in a curved edge
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param circleCenter the circle center from which the curved edge derives
+      /// \param circleRadius the radius of the circle from which the curved edge derives
+      /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
+      /// \return the sub-division polygons result
+      /// \note the polygon should be inside the angle quadrant formed by the curved edge
+      /// \note otherwise use PolygonDivisionByAngleQuadrant function to split the polygon
       PolygonDivisionByCircleResult PolygonDivisionByCircle(const Eigen::MatrixXd& polygonVertices,
+                                                            const Eigen::MatrixXd& polygonEdgeTangents,
                                                             const Eigen::Vector3d& circleCenter,
                                                             const double& circleRadius,
                                                             const unsigned int& curvedEdgeIndex) const;
