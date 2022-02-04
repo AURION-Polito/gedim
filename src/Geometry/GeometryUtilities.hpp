@@ -97,7 +97,7 @@ namespace Gedim
       {
           Eigen::MatrixXd Points; ///< Coordinates of generated points
           vector<vector<unsigned int>> SubTriangles; ///< Triangle formed with sub-polygons and circle Center
-
+          vector<vector<unsigned int>> SubPolygons; ///< Subpolygon formed
       };
 
       struct SplitPolygonInput final

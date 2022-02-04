@@ -775,8 +775,12 @@ namespace GedimUnitTesting {
         expectedResult.Points.col(4)<< Eigen::Vector3d(2.7639320225002101e-01,
                                                        1.7082039324993703e-01,
                                                        0.0000000000000000e+00);
+        expectedResult.SubTriangles = { {3, 1, 2}, {3, 2, 0} };
+        expectedResult.SubPolygons = { {1, 2, 4}, {4, 2, 0} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
       // check trapezioid sub-division
@@ -809,7 +813,12 @@ namespace GedimUnitTesting {
         expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
         expectedResult.Points.col(4)<< circleCenter;
 
+        expectedResult.SubTriangles = { {4, 1, 2} };
+        expectedResult.SubPolygons = { {0, 1, 2, 3} };
+
         ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
       // check exagon sub-division
@@ -852,10 +861,12 @@ namespace GedimUnitTesting {
                                                        8.9442719099991908e-02,
                                                        0.0);
 
-        cerr.precision(16);
-        cerr<< scientific<< result.Points<< endl;
+        expectedResult.SubTriangles = { {6, 1, 2}, {6, 2, 3}, {6, 3, 5} };
+        expectedResult.SubPolygons = { {0, 1, 2, 7}, {7, 2, 3, 8}, {8, 3, 4, 5} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
     }
     catch (const exception& exception)
