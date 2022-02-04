@@ -737,6 +737,52 @@ namespace GedimUnitTesting {
     }
   }
 
+
+  TEST(TestGeometryUtilities, TestPolygonDivisionByExternalPointAndEdge)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check triangle sub-division
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        const Eigen::Vector3d circleCenter(0.5, -0.5, 0.0);
+        const double circleRadius = sqrt(2.0) / 2.0;
+        const unsigned int curvedEdgeIndex = 0;
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
+            geometryUtility.PolygonDivisionByCircle(polygonVertices,
+                                                    circleCenter,
+                                                    circleRadius,
+                                                    curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult expectedResult;
+        expectedResult.Points.setZero(3, 5);
+        expectedResult.Points.block(0, 0, 3, 3)<< polygonVertices;
+        expectedResult.Points.col(3)<< circleCenter;
+        expectedResult.Points.col(4)<< Eigen::Vector3d(2.7639320225002101e-01,
+                                                       1.7082039324993703e-01,
+                                                       0.0000000000000000e+00);
+
+        cerr<< result.Points<< endl;
+        cerr<< expectedResult.Points<< endl;
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonCirclePosition)
   {
     try

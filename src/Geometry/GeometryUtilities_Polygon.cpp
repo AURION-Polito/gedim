@@ -242,6 +242,119 @@ namespace Gedim
 
     return triangles;
   }
+
+  GeometryUtilities::PolygonDivisionByCircleResult GeometryUtilities::PolygonDivisionByCircle(const Eigen::MatrixXd& polygonVertices,
+                                                                                              const Eigen::Vector3d& circleCenter,
+                                                                                              const double& circleRadius,
+                                                                                              const unsigned int& curvedEdgeIndex) const
+  {
+    PolygonDivisionByCircleResult result;
+
+    list<Vector3d> newCoordinates;
+
+    // insert polygon and circle center in output
+    const unsigned int& numPolygonVertices = polygonVertices.cols();
+    const unsigned int cirlceCenterIndex = numPolygonVertices;
+
+    for (unsigned int p = 0; p < numPolygonVertices; p++)
+      newCoordinates.push_back(polygonVertices.col(p));
+    newCoordinates.push_back(circleCenter);
+
+    const unsigned int curvedEdgeOriginIndex = curvedEdgeIndex;
+    const unsigned int curvedEdgeEndIndex = (curvedEdgeIndex + 1) % numPolygonVertices;
+    const Vector3d& curvedEdgeOrigin = polygonVertices.col(curvedEdgeOriginIndex);
+    const Vector3d& curvedEdgeEnd = polygonVertices.col(curvedEdgeEndIndex);
+
+    // check if the polygon is contained in the circular arc
+    int curvedEdgeOriginEdgeIntersectionIndex = -1;
+    int curvedEdgeEndEdgeIntersectionIndex = -1;
+    Eigen::Vector3d curvedEdgeOriginEdgeIntersection;
+    Eigen::Vector3d curvedEdgeEndEdgeIntersection;
+
+    for (unsigned int e = 0; e < numPolygonVertices; e++)
+    {
+      if (e == curvedEdgeIndex)
+        continue;
+
+      const unsigned int edgeOriginIndex = e;
+      const unsigned int edgeEndIndex = (e + 1) % numPolygonVertices;
+      const Vector3d& edgeOrigin = polygonVertices.col(edgeOriginIndex);
+      const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
+      const Eigen::Vector3d edgeTangent = SegmentTangent(edgeOrigin,
+                                                         edgeEnd);
+
+      // Intersect with curved edge origin
+      IntersectionSegmentSegmentResult resultOrigin = IntersectionSegmentSegment(circleCenter,
+                                                                                 curvedEdgeOrigin,
+                                                                                 edgeOrigin,
+                                                                                 edgeEnd);
+      if (resultOrigin.IntersectionLinesType !=
+          IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting)
+        continue;
+
+      if (resultOrigin.IntersectionSegmentsType !=
+          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+        continue;
+
+      if (resultOrigin.SecondSegmentIntersections[0].Type !=
+          PointSegmentPositionTypes::InsideSegment)
+        continue;
+
+      curvedEdgeOriginEdgeIntersectionIndex = e;
+      curvedEdgeOriginEdgeIntersection = edgeOrigin +
+                                         resultOrigin.SecondSegmentIntersections[0].CurvilinearCoordinate *
+                                         edgeTangent;
+
+      // Intersect with curved edge end
+      IntersectionSegmentSegmentResult resultEnd = IntersectionSegmentSegment(circleCenter,
+                                                                              curvedEdgeEnd,
+                                                                              edgeOrigin,
+                                                                              edgeEnd);
+      if (resultEnd.IntersectionLinesType !=
+          IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting)
+        continue;
+
+      if (resultEnd.IntersectionSegmentsType !=
+          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+        continue;
+
+      if (resultEnd.SecondSegmentIntersections[0].Type !=
+          PointSegmentPositionTypes::InsideSegment)
+        continue;
+
+      curvedEdgeEndEdgeIntersectionIndex = e;
+      curvedEdgeEndEdgeIntersection = edgeOrigin +
+                                      resultEnd.SecondSegmentIntersections[0].CurvilinearCoordinate *
+                                      edgeTangent;
+    }
+
+    int curvedEdgeOriginVertexIntersectionIndex = -1;
+    int curvedEdgeEndVertexIntersectionIndex = -1;
+
+    if (curvedEdgeOriginEdgeIntersectionIndex != -1)
+    {
+      curvedEdgeOriginVertexIntersectionIndex = newCoordinates.size();
+      newCoordinates.push_back(curvedEdgeOriginEdgeIntersection);
+
+      // insert sub-Polygon before the curved edge
+    }
+
+    if (curvedEdgeEndEdgeIntersectionIndex != -1)
+    {
+      curvedEdgeEndVertexIntersectionIndex = newCoordinates.size();
+      newCoordinates.push_back(curvedEdgeEndEdgeIntersection);
+
+      // insert sub-Polygon after the curved edge
+    }
+
+    // convert output
+    result.Points.setZero(3, newCoordinates.size());
+    unsigned int counter = 0;
+    for (const Vector3d& point : newCoordinates)
+      result.Points.col(counter++)<< point;
+
+    return result;
+  }
   // ***************************************************************************
   double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices) const
   {
