@@ -379,7 +379,9 @@ namespace Gedim
     // intersects all the lines from circleCenter to each vertex not belonging to curved edge
     unsigned int edgeNumber = curvedEdgeEndIndex;
     unsigned int lastCheck = (curvedEdgeIndex == 0) ?  numPolygonVertices - 1 : curvedEdgeIndex - 1;
-    Vector3d previousIntersectionPoint = curvedEdgeEnd;
+    vector<int> newVerticesIndicesPerEdge(numPolygonVertices, -1);
+    newVerticesIndicesPerEdge[curvedEdgeIndex] = curvedEdgeIndex;
+
     while (edgeNumber != lastCheck)
     {
       const unsigned int originEdgeIndex = edgeNumber;
@@ -439,12 +441,51 @@ namespace Gedim
       Output::Assert(IsValue1DPositive(intersectionCoordinate));
 
       const Eigen::Vector3d intersectionPoint = edgeEnd + intersectionCoordinate * endEdgeCenterTangent;
+      newVerticesIndicesPerEdge[edgeNumber] = newCoordinates.size();
       newCoordinates.push_back(intersectionPoint);
 
       edgeNumber++;
       if (edgeNumber == numPolygonVertices)
         edgeNumber = 0;
     }
+
+    // create sub-polygons
+    list<list<unsigned int>> subPolygonsIndices;
+
+    subPolygonsIndices.push_back(list<unsigned int>());
+
+    edgeNumber = curvedEdgeEndIndex;
+    while (edgeNumber != curvedEdgeIndex)
+    {
+      list<unsigned int>& subPolygonIndices = subPolygonsIndices.back();
+
+      const unsigned int originEdgeIndex = edgeNumber;
+      const unsigned int endEdgeIndex = (edgeNumber + 1) % numPolygonVertices;
+
+      subPolygonIndices.push_back(originEdgeIndex);
+      subPolygonIndices.push_back(endEdgeIndex);
+
+      if (newVerticesIndicesPerEdge[edgeNumber] == curvedEdgeIndex)
+        break;
+
+      if (newVerticesIndicesPerEdge[edgeNumber] != -1)
+      {
+        subPolygonIndices.push_back(newVerticesIndicesPerEdge[edgeNumber]);
+        subPolygonsIndices.push_back(list<unsigned int> { (unsigned int)newVerticesIndicesPerEdge[edgeNumber] });
+      }
+
+      edgeNumber++;
+      if (edgeNumber == numPolygonVertices)
+        edgeNumber = 0;
+    }
+
+    cerr<< newVerticesIndicesPerEdge<< endl;
+    cerr<< subPolygonsIndices<< endl;
+
+    // create sub triangles
+    list<list<unsigned int>> subTrianglesIndices;
+
+    subTrianglesIndices.push_back(list<unsigned int>());
 
     // convert output
     result.Points.setZero(3, newCoordinates.size());
