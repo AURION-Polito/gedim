@@ -928,10 +928,7 @@ namespace GedimUnitTesting {
         expectedResult.Points.col(7)<< Eigen::Vector3d(7.6457513110645903e-01,
                                                        2.3542486889354097e-01,
                                                        0.0000000000000000e+00);
-        expectedResult.SubPolygons = { {1, 2, 4}, {4, 2, 0} };
-
-        cerr.precision(16);
-        cerr<< scientific<< result.Points.transpose()<< endl;
+        expectedResult.SubPolygons = { {4, 6, 2, 3}, {5, 0, 1, 7}, {4, 5, 7, 6} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);

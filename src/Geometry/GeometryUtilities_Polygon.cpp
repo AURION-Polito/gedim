@@ -326,6 +326,7 @@ namespace Gedim
                                       edgeTangent;
     }
 
+    unsigned int numSubPolygons = 1;
     int curvedEdgeOriginVertexIntersectionIndex = -1;
     int curvedEdgeEndVertexIntersectionIndex = -1;
 
@@ -333,17 +334,19 @@ namespace Gedim
     {
       curvedEdgeOriginVertexIntersectionIndex = newCoordinates.size();
       newCoordinates.push_back(curvedEdgeOriginEdgeIntersection);
-
-      // insert sub-Polygon before the curved edge
+      numSubPolygons++;
     }
 
     if (curvedEdgeEndEdgeIntersectionIndex != -1)
     {
       curvedEdgeEndVertexIntersectionIndex = newCoordinates.size();
       newCoordinates.push_back(curvedEdgeEndEdgeIntersection);
-
-      // insert sub-Polygon after the curved edge
+      numSubPolygons++;
     }
+
+    vector<list<unsigned int>> subPolygons(numSubPolygons);
+
+    // create first subpolygon
 
     // convert output
     result.Points.setZero(3, newCoordinates.size());
