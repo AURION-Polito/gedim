@@ -243,7 +243,11 @@ namespace Gedim
     return triangles;
   }
   // ***************************************************************************
-  GeometryUtilities::PolygonDivisionByAngleQuadrantResult GeometryUtilities::PolygonDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices, const Eigen::Vector3d& circleCenter, const double& circleRadius, const unsigned int& curvedEdgeIndex) const
+  GeometryUtilities::PolygonDivisionByAngleQuadrantResult GeometryUtilities::PolygonDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
+                                                                                                            const Eigen::MatrixXd& polygonEdgeTangents,
+                                                                                                            const Eigen::Vector3d& circleCenter,
+                                                                                                            const double& circleRadius,
+                                                                                                            const unsigned int& curvedEdgeIndex) const
   {
     PolygonDivisionByAngleQuadrantResult result;
 
@@ -251,11 +255,9 @@ namespace Gedim
 
     // insert polygon and circle center in output
     const unsigned int& numPolygonVertices = polygonVertices.cols();
-    const unsigned int cirlceCenterIndex = numPolygonVertices;
 
     for (unsigned int p = 0; p < numPolygonVertices; p++)
       newCoordinates.push_back(polygonVertices.col(p));
-    newCoordinates.push_back(circleCenter);
 
     const unsigned int curvedEdgeOriginIndex = curvedEdgeIndex;
     const unsigned int curvedEdgeEndIndex = (curvedEdgeIndex + 1) % numPolygonVertices;
@@ -277,8 +279,7 @@ namespace Gedim
       const unsigned int edgeEndIndex = (e + 1) % numPolygonVertices;
       const Vector3d& edgeOrigin = polygonVertices.col(edgeOriginIndex);
       const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
-      const Eigen::Vector3d edgeTangent = SegmentTangent(edgeOrigin,
-                                                         edgeEnd);
+      const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(e);
 
       // Intersect with curved edge origin
       IntersectionSegmentSegmentResult resultOrigin = IntersectionSegmentSegment(circleCenter,
@@ -290,7 +291,7 @@ namespace Gedim
         continue;
 
       if (resultOrigin.IntersectionSegmentsType !=
-          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection)
         continue;
 
       if (resultOrigin.SecondSegmentIntersections[0].Type !=
@@ -312,7 +313,7 @@ namespace Gedim
         continue;
 
       if (resultEnd.IntersectionSegmentsType !=
-          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection)
         continue;
 
       if (resultEnd.SecondSegmentIntersections[0].Type !=

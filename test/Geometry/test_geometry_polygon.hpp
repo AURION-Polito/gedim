@@ -882,6 +882,68 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonDivisionByAngleQuadrant)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      geometryUtilityConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check triangle sub-division
+      {
+        Eigen::MatrixXd polygonVertices(3, 6);
+        polygonVertices.col(0)<< 0.1, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 0.1, 0.0;
+        polygonVertices.col(4)<< 2.3542486889354099e-02, 7.6457513110645914e-02, 0.0;
+        polygonVertices.col(5)<< 7.6457513110645914e-02, 2.3542486889354099e-02, 0.0;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 6);
+        polygonEdgeTangents.col(0)<<  9.0000000000000002e-01,  0.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(1)<< -1.0000000000000000e+00,  1.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(2)<<  0.0000000000000000e+00, -9.0000000000000002e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(3)<<  2.3542486889354099e-02, -2.3542486889354092e-02, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(4)<<  5.2915026221291815e-02, -5.2915026221291815e-02, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(5)<<  2.3542486889354092e-02, -2.3542486889354099e-02, 0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 0.08;
+        const unsigned int curvedEdgeIndex = 4;
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
+            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+                                                           polygonEdgeTangents,
+                                                           circleCenter,
+                                                           circleRadius,
+                                                           curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
+        expectedResult.Points.setZero(3, 8);
+        expectedResult.Points.block(0, 0, 3, 6)<< polygonVertices;
+        expectedResult.Points.col(6)<< Eigen::Vector3d(2.3542486889354097e-01,
+                                                       7.6457513110645903e-01,
+                                                       0.0000000000000000e+00);
+        expectedResult.Points.col(7)<< Eigen::Vector3d(7.6457513110645903e-01,
+                                                       2.3542486889354097e-01,
+                                                       0.0000000000000000e+00);
+        expectedResult.SubPolygons = { {1, 2, 4}, {4, 2, 0} };
+
+        cerr.precision(16);
+        cerr<< scientific<< result.Points.transpose()<< endl;
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonCirclePosition)
   {
     try

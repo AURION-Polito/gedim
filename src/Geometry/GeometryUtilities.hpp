@@ -91,6 +91,7 @@ namespace Gedim
       struct PolygonDivisionByAngleQuadrantResult final
       {
           Eigen::MatrixXd Points; ///< Coordinates of generated points
+          vector<vector<unsigned int>> SubPolygons; ///< Subpolygon formed
       };
 
       struct PolygonDivisionByCircleResult final
@@ -787,6 +788,7 @@ namespace Gedim
       /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
       /// \return the sub-division polygons result
       PolygonDivisionByAngleQuadrantResult PolygonDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
+                                                                          const Eigen::MatrixXd& polygonEdgeTangents,
                                                                           const Eigen::Vector3d& circleCenter,
                                                                           const double& circleRadius,
                                                                           const unsigned int& curvedEdgeIndex) const;
