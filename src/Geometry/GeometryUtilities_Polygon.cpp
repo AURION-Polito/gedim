@@ -499,7 +499,7 @@ namespace Gedim
                                                       (unsigned int)newCoordinates.size(),
                                                       (unsigned int)newCoordinates.size() });
 
-    // first subPolygon if more then one
+    // first sub triangle if more then one
     if (result.SubPolygons.size() > 1)
     {
       const vector<unsigned int>& subPolygon = result.SubPolygons[0];
@@ -517,7 +517,7 @@ namespace Gedim
       }
     }
 
-    // internal subPolygons
+    // internal sub triangles
     for (unsigned int sp = 1; sp < result.SubPolygons.size() - 1; sp++)
     {
       const vector<unsigned int>& subPolygon = result.SubPolygons[sp];
@@ -542,7 +542,7 @@ namespace Gedim
       }
     }
 
-    // last subPolygon
+    // last sub triangle
     const vector<unsigned int>& lastSubPolygon = result.SubPolygons[result.SubPolygons.size() - 1];
     vector<unsigned int>& lastSubTriangle = result.SubTriangles[result.SubPolygons.size() - 1];
     if (lastSubPolygon.size() == 3)
@@ -554,6 +554,21 @@ namespace Gedim
     {
       lastSubTriangle[1] = lastSubPolygon[1];
       lastSubTriangle[2] = lastSubPolygon[lastSubPolygon.size() - 2];
+    }
+
+    // Internal triangles
+    result.InternalTriangles.resize(result.SubPolygons.size(),
+                                    vector<unsigned int> { cirlceCenterIndex,
+                                                           (unsigned int)newCoordinates.size(),
+                                                           (unsigned int)newCoordinates.size() });
+
+    for (unsigned int sp = 0; sp < result.SubPolygons.size(); sp++)
+    {
+      const vector<unsigned int>& subPolygon = result.SubPolygons[sp];
+      vector<unsigned int>& internalTriangle = result.InternalTriangles[sp];
+
+      internalTriangle[1] = subPolygon[0];
+      internalTriangle[2] = subPolygon[subPolygon.size() - 1];
     }
 
     return result;

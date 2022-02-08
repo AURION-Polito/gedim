@@ -776,10 +776,12 @@ namespace GedimUnitTesting {
                                                        1.7082039324993703e-01,
                                                        0.0000000000000000e+00);
         expectedResult.SubTriangles = { {3, 1, 2}, {3, 2, 0} };
+        expectedResult.InternalTriangles = { {3, 1, 4}, {3, 4, 0} };
         expectedResult.SubPolygons = { {1, 2, 4}, {4, 2, 0} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
@@ -814,10 +816,12 @@ namespace GedimUnitTesting {
         expectedResult.Points.col(4)<< circleCenter;
 
         expectedResult.SubTriangles = { {4, 1, 2} };
+        expectedResult.InternalTriangles = { {4, 0, 3} };
         expectedResult.SubPolygons = { {0, 1, 2, 3} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
@@ -862,10 +866,12 @@ namespace GedimUnitTesting {
                                                        0.0);
 
         expectedResult.SubTriangles = { {6, 1, 2}, {6, 2, 3}, {6, 3, 4} };
+        expectedResult.InternalTriangles = { {6, 0, 7}, {6, 7, 8}, {6, 8, 5} };
         expectedResult.SubPolygons = { {0, 1, 2, 7}, {7, 2, 3, 8}, {8, 3, 4, 5} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
     }
