@@ -890,6 +890,40 @@ namespace GedimUnitTesting {
       geometryUtilityConfig.Tolerance = 1.0e-12;
       Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
+      // check triangle no sub-division
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.1, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 0.1, 0.0;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 4);
+        polygonEdgeTangents.col(0)<<   9.0000000000000002e-01,  0.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(1)<<  -1.0000000000000000e+00,  1.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(2)<<   0.0000000000000000e+00, -9.0000000000000002e-01, 0.0000000000000000e+00;
+        polygonEdgeTangents.col(3)<<   1.0000000000000001e-01, -1.0000000000000001e-01, 0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 0.01;
+        const unsigned int curvedEdgeIndex = 3;
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
+            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+                                                           polygonEdgeTangents,
+                                                           circleCenter,
+                                                           circleRadius,
+                                                           curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
+        expectedResult.Points.setZero(3, 4);
+        expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
+        expectedResult.SubPolygons = { {3, 0, 1, 2} };
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+      }
+
       // check triangle sub-division
       {
         Eigen::MatrixXd polygonVertices(3, 6);
