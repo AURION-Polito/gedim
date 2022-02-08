@@ -270,6 +270,7 @@ namespace Gedim
     Eigen::Vector3d curvedEdgeOriginEdgeIntersection;
     Eigen::Vector3d curvedEdgeEndEdgeIntersection;
 
+    // Intersect with curved edge origin
     for (unsigned int e = 0; e < numPolygonVertices; e++)
     {
       if (e == curvedEdgeIndex)
@@ -281,7 +282,6 @@ namespace Gedim
       const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
       const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(e);
 
-      // Intersect with curved edge origin
       IntersectionSegmentSegmentResult resultOrigin = IntersectionSegmentSegment(circleCenter,
                                                                                  curvedEdgeOrigin,
                                                                                  edgeOrigin,
@@ -304,8 +304,20 @@ namespace Gedim
       curvedEdgeOriginEdgeIntersection = edgeOrigin +
                                          resultOrigin.SecondSegmentIntersections[0].CurvilinearCoordinate *
                                          edgeTangent;
+    }
 
-      // Intersect with curved edge end
+    // Intersect with curved edge end
+    for (unsigned int e = 0; e < numPolygonVertices; e++)
+    {
+      if (e == curvedEdgeIndex)
+        continue;
+
+      const unsigned int edgeOriginIndex = e;
+      const unsigned int edgeEndIndex = (e + 1) % numPolygonVertices;
+      const Vector3d& edgeOrigin = polygonVertices.col(edgeOriginIndex);
+      const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
+      const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(e);
+
       IntersectionSegmentSegmentResult resultEnd = IntersectionSegmentSegment(circleCenter,
                                                                               curvedEdgeEnd,
                                                                               edgeOrigin,
