@@ -295,6 +295,8 @@ namespace Gedim
         continue;
 
       if (resultOrigin.SecondSegmentIntersections[0].Type !=
+          PointSegmentPositionTypes::OnSegmentOrigin &&
+          resultOrigin.SecondSegmentIntersections[0].Type !=
           PointSegmentPositionTypes::InsideSegment)
         continue;
 
@@ -317,6 +319,8 @@ namespace Gedim
         continue;
 
       if (resultEnd.SecondSegmentIntersections[0].Type !=
+          PointSegmentPositionTypes::OnSegmentEnd &&
+          resultEnd.SecondSegmentIntersections[0].Type !=
           PointSegmentPositionTypes::InsideSegment)
         continue;
 
@@ -345,8 +349,44 @@ namespace Gedim
     }
 
     vector<list<unsigned int>> subPolygons(numSubPolygons);
+    unsigned int subPolygonCounter = 0;
 
-    // create first subpolygon
+    // create origin subpolygon
+    if (curvedEdgeOriginVertexIntersectionIndex != -1)
+    {
+      list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
+      subPolygon.push_back(curvedEdgeOriginIndex);
+      subPolygon.push_back(curvedEdgeOriginVertexIntersectionIndex);
+      unsigned int vertexIndex = (curvedEdgeOriginEdgeIntersectionIndex + 1) % numPolygonVertices;
+      while (vertexIndex < curvedEdgeOriginIndex)
+      {
+        subPolygon.push_back(vertexIndex);
+        vertexIndex = (vertexIndex + 1) % numPolygonVertices;
+      }
+      subPolygonCounter++;
+    }
+
+    // create end subpolygon
+    if (curvedEdgeEndVertexIntersectionIndex != -1)
+    {
+      list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
+      subPolygon.push_back(curvedEdgeEndIndex);
+      unsigned int vertexIndex = (curvedEdgeEndIndex + 1) % numPolygonVertices;
+      while (vertexIndex <= curvedEdgeEndEdgeIntersectionIndex)
+      {
+        subPolygon.push_back(vertexIndex);
+        vertexIndex = (vertexIndex + 1) % numPolygonVertices;
+      }
+      subPolygon.push_back(curvedEdgeEndVertexIntersectionIndex);
+
+      subPolygonCounter++;
+    }
+
+    // create central subPolygon
+    list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
+
+
+    cerr<< subPolygons<< endl;
 
     // convert output
     result.Points.setZero(3, newCoordinates.size());
