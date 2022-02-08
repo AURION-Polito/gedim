@@ -384,15 +384,35 @@ namespace Gedim
 
     // create central subPolygon
     list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
+    subPolygon.push_back(curvedEdgeOriginIndex);
+    subPolygon.push_back(curvedEdgeEndIndex);
+    if (curvedEdgeEndVertexIntersectionIndex != -1)
+      subPolygon.push_back(curvedEdgeEndVertexIntersectionIndex);
+    const unsigned int middleVerticesStart = (curvedEdgeEndVertexIntersectionIndex != -1) ?  (curvedEdgeEndEdgeIntersectionIndex + 1) % numPolygonVertices :
+                                                                                             (curvedEdgeEndIndex + 1) % numPolygonVertices;
+    const unsigned int middleVerticesEnd = (curvedEdgeOriginVertexIntersectionIndex != -1) ?  (curvedEdgeOriginEdgeIntersectionIndex + 1) % numPolygonVertices :
+                                                                                              curvedEdgeOriginIndex;
 
+    unsigned int middleVertexIndex = middleVerticesStart;
+    while (middleVertexIndex != middleVerticesEnd)
+    {
+      subPolygon.push_back(middleVertexIndex);
+      middleVertexIndex = (middleVertexIndex + 1) % numPolygonVertices;
+    }
 
-    cerr<< subPolygons<< endl;
+    if (curvedEdgeOriginVertexIntersectionIndex != -1)
+      subPolygon.push_back(curvedEdgeOriginVertexIntersectionIndex);
 
     // convert output
     result.Points.setZero(3, newCoordinates.size());
     unsigned int counter = 0;
     for (const Vector3d& point : newCoordinates)
       result.Points.col(counter++)<< point;
+
+    result.SubPolygons.resize(subPolygons.size());
+    for (unsigned int s = 0; s < subPolygons.size(); s++)
+      result.SubPolygons[s] = vector<unsigned int>(subPolygons[s].begin(),
+                                                   subPolygons[s].end());
 
     return result;
   }
