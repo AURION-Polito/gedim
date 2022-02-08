@@ -836,6 +836,17 @@ namespace Gedim
                                                           const IntersectionPolygonCircleResult& polygonCircleIntersections,
                                                           const PolygonCirclePositionTypes& polygonCirclePosition) const;
 
+      /// \brief Build the subpolygon coordinates from split result
+      /// \param splitResult the split result
+      /// \param subPolygonIndex the subpolygon index, from 0 to SplitPolygonWithCircleResult::NewPolygons.size()
+      /// \param polygonVertices the original polygon vertices
+      /// \param polygonCircleIntersections the polygon circle intersection
+      /// \return the resulting subpolygon coordinates
+      Eigen::MatrixXd SplitPolygonWithCircleBuildSubPolygon(const SplitPolygonWithCircleResult& splitResult,
+                                                            const unsigned int& subPolygonIndex,
+                                                            const Eigen::MatrixXd& polygonVertices,
+                                                            const Gedim::GeometryUtilities::IntersectionPolygonCircleResult& polygonCircleIntersections);
+
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \return the resulting normalized normal

@@ -1173,4 +1173,44 @@ namespace Gedim
     throw runtime_error("SplitPolygonWithCircle failed");
   }
   // ***************************************************************************
+  MatrixXd GeometryUtilities::SplitPolygonWithCircleBuildSubPolygon(const SplitPolygonWithCircleResult& splitResult,
+                                                                    const unsigned int& subPolygonIndex,
+                                                                    const Eigen::MatrixXd& polygonVertices,
+                                                                    const IntersectionPolygonCircleResult& polygonCircleIntersections)
+  {
+    Output::Assert(subPolygonIndex < splitResult.NewPolygons.size());
+
+    const SplitPolygonWithCircleResult::NewPolygon& newPolygon = splitResult.NewPolygons[subPolygonIndex];
+    const unsigned int numNewVertices = newPolygon.Vertices.size();
+
+    Eigen::MatrixXd subPolygonVertices(3, numNewVertices);
+
+    for (unsigned int nv = 0; nv < numNewVertices; nv++)
+    {
+      const unsigned int nvIndex = newPolygon.Vertices[nv];
+      switch (splitResult.NewVertices[nvIndex].Type)
+      {
+        case SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex:
+          subPolygonVertices.col(nv)<< polygonVertices.col(splitResult.NewVertices[nvIndex].PolygonIndex);
+        break;
+        case SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
+        {
+          const IntersectionPolygonCircleResult::Intersection& intersection = polygonCircleIntersections.Intersections[splitResult.NewVertices[nvIndex].IntersectionIndex];
+          Output::Assert(intersection.IndexType == Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge);
+          const Eigen::VectorXd& edgeOrigin = polygonVertices.col(intersection.Index);
+          const Eigen::VectorXd& edgeEnd = polygonVertices.col((intersection.Index + 1) % polygonVertices.cols());
+          subPolygonVertices.col(nv)<< intersection.CurvilinearCoordinate * (edgeEnd - edgeOrigin) + edgeOrigin;
+        }
+        break;
+        case SplitPolygonWithCircleResult::NewVertex::Types::Both:
+          subPolygonVertices.col(nv)<< polygonVertices.col(splitResult.NewVertices[nvIndex].PolygonIndex);
+        break;
+        default:
+          throw runtime_error("New Vertex not supported");
+      }
+    }
+
+    return subPolygonVertices;
+  }
+  // ***************************************************************************
 }
