@@ -1176,7 +1176,7 @@ namespace Gedim
   MatrixXd GeometryUtilities::SplitPolygonWithCircleBuildSubPolygon(const SplitPolygonWithCircleResult& splitResult,
                                                                     const unsigned int& subPolygonIndex,
                                                                     const Eigen::MatrixXd& polygonVertices,
-                                                                    const IntersectionPolygonCircleResult& polygonCircleIntersections)
+                                                                    const IntersectionPolygonCircleResult& polygonCircleIntersections) const
   {
     Output::Assert(subPolygonIndex < splitResult.NewPolygons.size());
 

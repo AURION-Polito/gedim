@@ -845,7 +845,7 @@ namespace Gedim
       Eigen::MatrixXd SplitPolygonWithCircleBuildSubPolygon(const SplitPolygonWithCircleResult& splitResult,
                                                             const unsigned int& subPolygonIndex,
                                                             const Eigen::MatrixXd& polygonVertices,
-                                                            const Gedim::GeometryUtilities::IntersectionPolygonCircleResult& polygonCircleIntersections);
+                                                            const Gedim::GeometryUtilities::IntersectionPolygonCircleResult& polygonCircleIntersections) const;
 
       /// \brief Compute the Polygon tridimensional normalized Normal
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
