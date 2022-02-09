@@ -361,11 +361,14 @@ namespace Gedim
     }
 
     vector<list<unsigned int>> subPolygons(numSubPolygons);
+    result.SubPolygonTypes.resize(numSubPolygons);
     unsigned int subPolygonCounter = 0;
 
     // create origin subpolygon
     if (curvedEdgeOriginVertexIntersectionIndex != -1)
     {
+      result.SubPolygonTypes[subPolygonCounter] = PolygonDivisionByAngleQuadrantResult::Types::ExternalOrigin;
+
       list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
       subPolygon.push_back(curvedEdgeOriginIndex);
       subPolygon.push_back(curvedEdgeOriginVertexIntersectionIndex);
@@ -381,6 +384,8 @@ namespace Gedim
     // create end subpolygon
     if (curvedEdgeEndVertexIntersectionIndex != -1)
     {
+      result.SubPolygonTypes[subPolygonCounter] = PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd;
+
       list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
       subPolygon.push_back(curvedEdgeEndIndex);
       unsigned int vertexIndex = (curvedEdgeEndIndex + 1) % numPolygonVertices;
@@ -395,6 +400,8 @@ namespace Gedim
     }
 
     // create central subPolygon
+    result.SubPolygonTypes[subPolygonCounter] = PolygonDivisionByAngleQuadrantResult::Types::Internal;
+
     list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
     subPolygon.push_back(curvedEdgeOriginIndex);
     subPolygon.push_back(curvedEdgeEndIndex);

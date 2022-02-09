@@ -90,8 +90,17 @@ namespace Gedim
 
       struct PolygonDivisionByAngleQuadrantResult final
       {
+          enum struct Types
+          {
+            Unknown = 0,
+            ExternalOrigin = 1,
+            Internal = 2,
+            ExternalEnd = 3
+          };
+
           Eigen::MatrixXd Points; ///< Coordinates of generated points
           vector<vector<unsigned int>> SubPolygons; ///< Subpolygon formed
+          vector<Types> SubPolygonTypes; ///< SubPolygon types
       };
 
       struct PolygonDivisionByCircleResult final

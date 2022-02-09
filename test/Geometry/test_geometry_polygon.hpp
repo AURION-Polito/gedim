@@ -919,9 +919,12 @@ namespace GedimUnitTesting {
         expectedResult.Points.setZero(3, 4);
         expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
         expectedResult.SubPolygons = { {3, 0, 1, 2} };
+        expectedResult.SubPolygonTypes =
+        { Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
       }
 
       // check triangle sub-division
@@ -963,9 +966,15 @@ namespace GedimUnitTesting {
                                                        2.3542486889354097e-01,
                                                        0.0000000000000000e+00);
         expectedResult.SubPolygons = { {4, 6, 2, 3}, {5, 0, 1, 7}, {4, 5, 7, 6} };
+        expectedResult.SubPolygonTypes =
+        { Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalOrigin,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
+        };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
       }
 
       // check triangle other sub-division
@@ -1005,9 +1014,15 @@ namespace GedimUnitTesting {
                                                        3.5968565782229700e-01,
                                                        0.0000000000000000e+00);
         expectedResult.SubPolygons = { {1, 5, 0}, {2, 3, 6}, {1, 2, 6, 4, 5} };
+        expectedResult.SubPolygonTypes =
+        { Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalOrigin,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
+        };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
       }
 
       // check triangle sub-division with only origin
@@ -1042,9 +1057,14 @@ namespace GedimUnitTesting {
                                                        3.5968565782229545e-01,
                                                        0.0000000000000000e+00);
         expectedResult.SubPolygons = { {1, 4, 0}, {1, 2, 3, 4} };
+        expectedResult.SubPolygonTypes =
+        { Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalOrigin,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal,
+        };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
       }
 
       // check triangle sub-division with only end
@@ -1079,9 +1099,15 @@ namespace GedimUnitTesting {
                                                        3.5968565782229700e-01,
                                                        0.0000000000000000e+00);
         expectedResult.SubPolygons = { {1, 2, 4}, {0, 1, 4, 3} };
+        expectedResult.SubPolygonTypes =
+        {
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
+        };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
       }
     }
     catch (const exception& exception)
