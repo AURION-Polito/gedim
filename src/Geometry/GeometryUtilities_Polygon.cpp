@@ -582,9 +582,10 @@ namespace Gedim
                                                       (unsigned int)newCoordinates.size(),
                                                       (unsigned int)newCoordinates.size() });
 
-    // first sub triangle if more then one
+    // if more then one sub-polygon
     if (result.SubPolygons.size() > 1)
     {
+      // first sub triangle
       const vector<unsigned int>& subPolygon = result.SubPolygons[0];
       vector<unsigned int>& subTriangle = result.SubTriangles[0];
 
@@ -598,45 +599,73 @@ namespace Gedim
         subTriangle[1] = subPolygon[1];
         subTriangle[2] = subPolygon[subPolygon.size() - 2];
       }
-    }
 
-    // internal sub triangles
-    for (unsigned int sp = 1; sp < result.SubPolygons.size() - 1; sp++)
-    {
-      const vector<unsigned int>& subPolygon = result.SubPolygons[sp];
-      vector<unsigned int>& subTriangle = result.SubTriangles[sp];
-
-      if (subPolygon.size() == 3 &&
-          sp == 0 &&
-          result.SubPolygons.size() > 1) // first subPolygon
+      // internal sub triangles
+      for (unsigned int sp = 1; sp < result.SubPolygons.size() - 1; sp++)
       {
-        subTriangle[1] = subPolygon[0];
-        subTriangle[2] = subPolygon[1];
+        const vector<unsigned int>& subPolygon = result.SubPolygons[sp];
+        vector<unsigned int>& subTriangle = result.SubTriangles[sp];
+
+        if (subPolygon.size() == 3 &&
+            sp == 0 &&
+            result.SubPolygons.size() > 1) // first subPolygon
+        {
+          subTriangle[1] = subPolygon[0];
+          subTriangle[2] = subPolygon[1];
+        }
+        else if (subPolygon.size() == 3) // last subPolygon
+        {
+          subTriangle[1] = subPolygon[1];
+          subTriangle[2] = subPolygon[2];
+        }
+        else
+        {
+          subTriangle[1] = subPolygon[1];
+          subTriangle[2] = subPolygon[subPolygon.size() - 2];
+        }
       }
-      else if (subPolygon.size() == 3) // last subPolygon
+
+      // last sub triangle
+      const vector<unsigned int>& lastSubPolygon = result.SubPolygons[result.SubPolygons.size() - 1];
+      vector<unsigned int>& lastSubTriangle = result.SubTriangles[result.SubPolygons.size() - 1];
+      if (lastSubPolygon.size() == 3)
       {
-        subTriangle[1] = subPolygon[1];
-        subTriangle[2] = subPolygon[2];
+        lastSubTriangle[1] = lastSubPolygon[1];
+        lastSubTriangle[2] = lastSubPolygon[2];
+      }
+      else
+      {
+        lastSubTriangle[1] = lastSubPolygon[1];
+        lastSubTriangle[2] = lastSubPolygon[lastSubPolygon.size() - 2];
+      }
+    }
+    else
+    {
+      // just one sub-triangle
+      const vector<unsigned int>& subPolygon = result.SubPolygons[0];
+      vector<unsigned int>& subTriangle = result.SubTriangles[0];
+
+      if (subPolygon.size() == 3)
+      {
+        // check which point index is aligned
+        if (PointIsAligned(circleCenter,
+                           curvedEdgeEnd,
+                           polygonVertices.col(subPolygon[1])))
+        {
+          subTriangle[1] = subPolygon[1];
+          subTriangle[2] = subPolygon[2];
+        }
+        else
+        {
+          subTriangle[1] = subPolygon[0];
+          subTriangle[2] = subPolygon[1];
+        }
       }
       else
       {
         subTriangle[1] = subPolygon[1];
         subTriangle[2] = subPolygon[subPolygon.size() - 2];
       }
-    }
-
-    // last sub triangle
-    const vector<unsigned int>& lastSubPolygon = result.SubPolygons[result.SubPolygons.size() - 1];
-    vector<unsigned int>& lastSubTriangle = result.SubTriangles[result.SubPolygons.size() - 1];
-    if (lastSubPolygon.size() == 3)
-    {
-      lastSubTriangle[1] = lastSubPolygon[1];
-      lastSubTriangle[2] = lastSubPolygon[2];
-    }
-    else
-    {
-      lastSubTriangle[1] = lastSubPolygon[1];
-      lastSubTriangle[2] = lastSubPolygon[lastSubPolygon.size() - 2];
     }
 
     // Internal triangles

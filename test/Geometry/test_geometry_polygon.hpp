@@ -874,6 +874,44 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
         ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
+
+      // check single aligned triangle
+      {
+        Eigen::MatrixXd polygonVertices(3, 3);
+        polygonVertices.row(0)<< 0.0000000000000000e+00, 1.6808892342696363e-03, 0.0000000000000000e+00;
+        polygonVertices.row(1)<< 1.0000000000000001e-01, 9.9985872058917000e-02, 1.0166676129318664e-01;
+        polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 3);
+        polygonEdgeTangents.col(0)<<  1.6808892342696363e-03, -1.6808892342696363e-03,  0.0000000000000000e+00;
+        polygonEdgeTangents.col(1)<< -1.4127941083005857e-05,  1.6808892342696363e-03, -1.6667612931866305e-03;
+        polygonEdgeTangents.col(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 0.1;
+        const unsigned int curvedEdgeIndex = 0;
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
+            geometryUtility.PolygonDivisionByCircle(polygonVertices,
+                                                    polygonEdgeTangents,
+                                                    circleCenter,
+                                                    circleRadius,
+                                                    curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByCircleResult expectedResult;
+        expectedResult.Points.setZero(3, 4);
+        expectedResult.Points.block(0, 0, 3, 3)<< polygonVertices;
+        expectedResult.Points.col(3)<< circleCenter;
+
+        expectedResult.SubTriangles = { {3, 1, 2} };
+        expectedResult.InternalTriangles = { {3, 1, 0} };
+        expectedResult.SubPolygons = { {1, 2, 0} };
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+      }
     }
     catch (const exception& exception)
     {
