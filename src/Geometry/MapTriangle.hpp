@@ -9,7 +9,7 @@ namespace Gedim
 {
   class MapTriangle
   {
-    private:
+    public:
       /// Matrix Q for linear map x = Q * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
       /// vertices the triangle to map vertices, size 3 x 3
       /// return the resulting value, size 3 x 3
