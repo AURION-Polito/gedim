@@ -1031,8 +1031,6 @@ namespace Gedim
       subPolygon.push_back((edgeNumber + 1) % numPolygonVertices);
     subPolygon.push_back(curvedEdgeOriginIndex);
 
-    cerr<< "SubPolygon "<< subPolygons<< endl;
-
     // convert newCoordinates
     result.Points.setZero(3, newCoordinates.size());
     unsigned int counter = 0;
@@ -1051,7 +1049,7 @@ namespace Gedim
     result.SubPolygons.resize(subPolygons.size());
     unsigned int sp = 0;
     for (list<unsigned int> subPolygon : subPolygons)
-      result.SubPolygons[sp] = vector<unsigned int>(subPolygon.begin(), subPolygon.end());
+      result.SubPolygons[sp++] = vector<unsigned int>(subPolygon.begin(), subPolygon.end());
 
     return result;
   }

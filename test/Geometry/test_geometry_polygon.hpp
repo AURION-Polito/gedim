@@ -814,10 +814,12 @@ namespace GedimUnitTesting {
 
         expectedResult.SubTriangles = { {4, 3, 0} };
         expectedResult.InternalTriangles = { {4, 2, 1} };
+        expectedResult.SubPolygons = { {0, 1, 2, 3} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
         ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
       // check pentagon sub-division
@@ -854,10 +856,12 @@ namespace GedimUnitTesting {
 
         expectedResult.SubTriangles = { {5, 6, 0}, {5, 7, 6}, {5, 4, 7} };
         expectedResult.InternalTriangles = { {5, 1, 0}, {5, 2, 1}, {5, 3, 2} };
+        expectedResult.SubPolygons = { {0, 1, 6}, {6, 1, 2, 7}, {7, 2, 3, 4} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
         ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
       // check exagon sub-division
@@ -895,10 +899,12 @@ namespace GedimUnitTesting {
 
         expectedResult.SubTriangles = { {6, 7, 0}, {6, 8, 7}, {6, 5, 8} };
         expectedResult.InternalTriangles = { {6, 2, 1}, {6, 3, 2}, {6, 4, 3} };
+        expectedResult.SubPolygons = { {0, 1, 2, 7}, {7, 2, 3, 8}, {8, 3, 4, 5} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
         ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
     }
     catch (const exception& exception)
