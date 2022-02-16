@@ -737,8 +737,62 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestCircleDivisionByPolygon)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
-  TEST(TestGeometryUtilities, TestPolygonDivisionByExternalPointAndEdge)
+      // check triangle sub-division
+      {
+        Eigen::Matrix3d polygonVertices;
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        Eigen::Matrix3d polygonEdgeTangents;
+        polygonEdgeTangents.col(0)<<  1.0, 0.0, 0.0;
+        polygonEdgeTangents.col(1)<<  -1.0, 1.0, 0.0;
+        polygonEdgeTangents.col(2)<<  0.0, -1.0, 0.0;
+
+        const Eigen::Vector3d circleCenter(-0.5, -0.5, 0.0);
+        const double circleRadius = sqrt(10.0) / 2.0;
+        const unsigned int curvedEdgeIndex = 1;
+
+        Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
+            geometryUtility.CircleDivisionByPolygon(polygonVertices,
+                                                    polygonEdgeTangents,
+                                                    circleCenter,
+                                                    circleRadius,
+                                                    curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::CircleDivisionByPolygonResult expectedResult;
+        expectedResult.Points.setZero(3, 5);
+        expectedResult.Points.block(0, 0, 3, 3)<< polygonVertices;
+        expectedResult.Points.col(3)<< circleCenter;
+        expectedResult.Points.col(4)<< Eigen::Vector3d(6.1803398874989490e-01, 6.1803398874989490e-01, 0.0);
+
+        cerr.precision(16);
+        cerr<< scientific<< result.Points<< endl;
+        cerr<< scientific<< expectedResult.Points<< endl;
+
+        expectedResult.SubTriangles = { {3, 4, 2}, {3, 1, 4} };
+        expectedResult.InternalTriangles = { {3, 1, 0}, {3, 0, 2} };
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
+        ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonDivisionByCircle)
   {
     try
     {

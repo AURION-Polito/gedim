@@ -719,9 +719,11 @@ namespace Gedim
 
     // intersects all the lines from circleCenter to each vertex not belonging to curved edge
     unsigned int edgeNumber = curvedEdgeEndIndex;
-    unsigned int lastCheck = (curvedEdgeIndex == 0) ?  numPolygonVertices - 1 : curvedEdgeIndex - 1;
-    vector<int> newVerticesIndicesPerEdge(numPolygonVertices, -1);
-    newVerticesIndicesPerEdge[curvedEdgeIndex] = curvedEdgeIndex;
+    unsigned int triangleVertexNumber = curvedEdgeEndIndex;
+    const unsigned int lastCheck = (curvedEdgeIndex == 0) ?  numPolygonVertices - 1 : curvedEdgeIndex - 1;
+
+    list<vector<unsigned int>> subTriangles;
+    list<vector<unsigned int>> internalTriangles;
 
     while (edgeNumber != lastCheck)
     {
@@ -750,13 +752,7 @@ namespace Gedim
       if (PointIsAligned(edgeEnd,
                          polygonVertices.col(nextEdgeEndIndex),
                          circleCenter))
-      {
-        edgeNumber++;
-        if (edgeNumber == numPolygonVertices)
-          edgeNumber = 0;
-
-        continue;
-      }
+        break;
 
       // intersecting the line with the circle
       const Eigen::Vector3d endEdgeCenterTangent = SegmentTangent(edgeEnd,
@@ -781,20 +777,59 @@ namespace Gedim
 
       Output::Assert(IsValue1DNegative(intersectionCoordinate));
 
+      // create new coordinate
       const Eigen::Vector3d intersectionPoint = edgeEnd + intersectionCoordinate * endEdgeCenterTangent;
-      newVerticesIndicesPerEdge[edgeNumber] = newCoordinates.size();
       newCoordinates.push_back(intersectionPoint);
+
+      // create new sub-triangle
+      subTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+      internalTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+
+      vector<unsigned int>& subTriangle = subTriangles.back();
+      vector<unsigned int>& internalTriangle = internalTriangles.back();
+
+      subTriangle[1] = newCoordinates.size() - 1;
+      subTriangle[2] = triangleVertexNumber;
+
+      internalTriangle[1] = endEdgeIndex;
+      internalTriangle[2] = originEdgeIndex;
+
+      triangleVertexNumber = newCoordinates.size() - 1;
 
       edgeNumber++;
       if (edgeNumber == numPolygonVertices)
         edgeNumber = 0;
     }
 
+    // insert last sub-triangle
+    subTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+    internalTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+
+    vector<unsigned int>& subTriangle = subTriangles.back();
+    vector<unsigned int>& internalTriangle = internalTriangles.back();
+
+    subTriangle[1] = curvedEdgeOriginIndex;
+    subTriangle[2] = triangleVertexNumber;
+
+    internalTriangle[1] = (edgeNumber + 1) % numPolygonVertices;
+    internalTriangle[2] = edgeNumber;
+
+    cerr<< subTriangles<< endl;
+    cerr<< internalTriangles<< endl;
+
     // convert newCoordinates
     result.Points.setZero(3, newCoordinates.size());
     unsigned int counter = 0;
     for (const Vector3d& point : newCoordinates)
       result.Points.col(counter++)<< point;
+
+    // convert sub-triangles
+    result.SubTriangles = vector<vector<unsigned int>>(subTriangles.begin(),
+                                                       subTriangles.end());
+
+    // convert sub-triangles
+    result.InternalTriangles = vector<vector<unsigned int>>(internalTriangles.begin(),
+                                                            internalTriangles.end());
 
     return result;
   }
