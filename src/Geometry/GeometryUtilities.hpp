@@ -111,6 +111,13 @@ namespace Gedim
           vector<vector<unsigned int>> SubPolygons; ///< Subpolygon formed
       };
 
+      struct CircleDivisionByPolygonResult final
+      {
+          Eigen::MatrixXd Points; ///< Coordinates of generated points
+          vector<vector<unsigned int>> SubTriangles; ///< Triangle formed with sub-polygons and circle Center
+          vector<vector<unsigned int>> InternalTriangles; ///< Triangle formed with circle Center and new points
+      };
+
       struct SplitPolygonInput final
       {
           struct AlignedEdge
@@ -848,6 +855,19 @@ namespace Gedim
       /// \note the polygon should be inside the angle quadrant formed by the curved edge
       /// \note otherwise use PolygonDivisionByAngleQuadrant function to split the polygon
       PolygonDivisionByCircleResult PolygonDivisionByCircle(const Eigen::MatrixXd& polygonVertices,
+                                                            const Eigen::MatrixXd& polygonEdgeTangents,
+                                                            const Eigen::Vector3d& circleCenter,
+                                                            const double& circleRadius,
+                                                            const unsigned int& curvedEdgeIndex) const;
+
+      /// \brief Circle division from Convex Polygon sub division which intersects a polygon in a curved edge
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param circleCenter the circle center from which the curved edge derives
+      /// \param circleRadius the radius of the circle from which the curved edge derives
+      /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
+      /// \return the sub-division circle result
+      /// \note the polygon should be inside the angle quadrant formed by the curved edge
+      CircleDivisionByPolygonResult CircleDivisionByPolygon(const Eigen::MatrixXd& polygonVertices,
                                                             const Eigen::MatrixXd& polygonEdgeTangents,
                                                             const Eigen::Vector3d& circleCenter,
                                                             const double& circleRadius,

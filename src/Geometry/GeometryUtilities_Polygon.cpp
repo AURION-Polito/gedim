@@ -694,6 +694,111 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::CircleDivisionByPolygonResult GeometryUtilities::CircleDivisionByPolygon(const Eigen::MatrixXd& polygonVertices,
+                                                                                              const Eigen::MatrixXd& polygonEdgeTangents,
+                                                                                              const Eigen::Vector3d& circleCenter,
+                                                                                              const double& circleRadius,
+                                                                                              const unsigned int& curvedEdgeIndex) const
+  {
+    CircleDivisionByPolygonResult result;
+
+    list<Vector3d> newCoordinates;
+
+    // insert polygon and circle center in output
+    const unsigned int& numPolygonVertices = polygonVertices.cols();
+    const unsigned int cirlceCenterIndex = numPolygonVertices;
+
+    for (unsigned int p = 0; p < numPolygonVertices; p++)
+      newCoordinates.push_back(polygonVertices.col(p));
+    newCoordinates.push_back(circleCenter);
+
+    const unsigned int curvedEdgeOriginIndex = curvedEdgeIndex;
+    const unsigned int curvedEdgeEndIndex = (curvedEdgeIndex + 1) % numPolygonVertices;
+    const Vector3d& curvedEdgeOrigin = polygonVertices.col(curvedEdgeOriginIndex);
+    const Vector3d& curvedEdgeEnd = polygonVertices.col(curvedEdgeEndIndex);
+
+    // intersects all the lines from circleCenter to each vertex not belonging to curved edge
+    unsigned int edgeNumber = curvedEdgeEndIndex;
+    unsigned int lastCheck = (curvedEdgeIndex == 0) ?  numPolygonVertices - 1 : curvedEdgeIndex - 1;
+    vector<int> newVerticesIndicesPerEdge(numPolygonVertices, -1);
+    newVerticesIndicesPerEdge[curvedEdgeIndex] = curvedEdgeIndex;
+
+    while (edgeNumber != lastCheck)
+    {
+      const unsigned int originEdgeIndex = edgeNumber;
+      const unsigned int endEdgeIndex = (edgeNumber + 1) % numPolygonVertices;
+
+      const Eigen::Vector3d& edgeOrigin = polygonVertices.col(originEdgeIndex);
+      const Eigen::Vector3d& edgeEnd = polygonVertices.col(endEdgeIndex);
+      const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(edgeNumber);
+
+      // check if the edge is aligned to the angle quadrant
+      if (PointIsAligned(edgeOrigin,
+                         edgeEnd,
+                         circleCenter))
+      {
+        edgeNumber++;
+        if (edgeNumber == numPolygonVertices)
+          edgeNumber = 0;
+
+        continue;
+      }
+
+      // check if the next edge is aligned to the angle quadrant
+      const unsigned int nextEdgeEndIndex = (endEdgeIndex + 1) % numPolygonVertices;
+
+      if (PointIsAligned(edgeEnd,
+                         polygonVertices.col(nextEdgeEndIndex),
+                         circleCenter))
+      {
+        edgeNumber++;
+        if (edgeNumber == numPolygonVertices)
+          edgeNumber = 0;
+
+        continue;
+      }
+
+      // intersecting the line with the circle
+      const Eigen::Vector3d endEdgeCenterTangent = SegmentTangent(edgeEnd,
+                                                                  circleCenter);
+
+      const IntersectionSegmentCircleResult intersection = IntersectionSegmentCircle(edgeEnd,
+                                                                                     circleCenter,
+                                                                                     circleCenter,
+                                                                                     circleRadius);
+
+      Output::Assert(intersection.Type == IntersectionSegmentCircleResult::Types::TwoIntersections);
+
+      double intersectionCoordinate = 0.0;
+      for (unsigned int i = 0; i < 2; i++)
+      {
+        if (intersection.SegmentIntersections[i].Type != PointSegmentPositionTypes::OnSegmentLineBeforeOrigin)
+          continue;
+
+        intersectionCoordinate = intersection.SegmentIntersections[i].CurvilinearCoordinate;
+        break;
+      }
+
+      Output::Assert(IsValue1DNegative(intersectionCoordinate));
+
+      const Eigen::Vector3d intersectionPoint = edgeEnd + intersectionCoordinate * endEdgeCenterTangent;
+      newVerticesIndicesPerEdge[edgeNumber] = newCoordinates.size();
+      newCoordinates.push_back(intersectionPoint);
+
+      edgeNumber++;
+      if (edgeNumber == numPolygonVertices)
+        edgeNumber = 0;
+    }
+
+    // convert newCoordinates
+    result.Points.setZero(3, newCoordinates.size());
+    unsigned int counter = 0;
+    for (const Vector3d& point : newCoordinates)
+      result.Points.col(counter++)<< point;
+
+    return result;
+  }
+  // ***************************************************************************
   double GeometryUtilities::PolygonArea(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
