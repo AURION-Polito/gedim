@@ -850,10 +850,6 @@ namespace GedimUnitTesting {
         expectedResult.Points.col(6)<< Eigen::Vector3d(4.1901827761725985e-01, 7.8662558866416377e-01, 0.0);
         expectedResult.Points.col(7)<< Eigen::Vector3d(7.8662558866416377e-01, 4.1901827761725985e-01, 0.0);
 
-        cerr.precision(16);
-        cerr<< scientific<< result.Points<< endl;
-        cerr<< scientific<< expectedResult.Points<< endl;
-
         expectedResult.SubTriangles = { {5, 6, 0}, {5, 7, 6}, {5, 4, 7} };
         expectedResult.InternalTriangles = { {5, 1, 0}, {5, 2, 1}, {5, 3, 2} };
 

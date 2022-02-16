@@ -814,9 +814,6 @@ namespace Gedim
     internalTriangle[1] = (edgeNumber + 1) % numPolygonVertices;
     internalTriangle[2] = edgeNumber;
 
-    cerr<< subTriangles<< endl;
-    cerr<< internalTriangles<< endl;
-
     // convert newCoordinates
     result.Points.setZero(3, newCoordinates.size());
     unsigned int counter = 0;
