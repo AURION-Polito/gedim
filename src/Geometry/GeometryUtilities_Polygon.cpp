@@ -226,7 +226,6 @@ namespace Gedim
                                                                               const Eigen::Vector3d& point) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
-    Output::Assert(PointPolygonPosition(point, polygonVertices).Type == PointPolygonPositionResult::Types::Inside);
 
     const unsigned int numPolygonVertices = polygonVertices.cols();
     vector<unsigned int> triangles(3 * numPolygonVertices);
