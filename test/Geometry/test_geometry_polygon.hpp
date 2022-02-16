@@ -827,18 +827,14 @@ namespace GedimUnitTesting {
         polygonVertices.col(3)<< 0.0, -1.0 / 3.0, 0.0;
         polygonVertices.col(4)<< 1.0, 0.0, 0.0;
 
-        cerr.precision(16);
-        cerr<< "Tangentz"<< endl;
-        cerr<< scientific<< geometryUtility.PolygonEdgeTangents(polygonVertices)<< endl;
-
         Eigen::MatrixXd polygonEdgeTangents(3, 5);
-        polygonEdgeTangents.row(0)<< -3.3333333333333331e-01,  1.1111111111111110e-01,  1.1111111111111110e-01,  1.1111111111111110e-01, 1.0000000000000000e+00, -1.0000000000000000e+00;
-        polygonEdgeTangents.row(1)<< -1.0000000000000000e+00, -1.1111111111111110e-01, -1.1111111111111110e-01, -1.1111111111111110e-01, 3.3333333333333331e-01,  1.0000000000000000e+00;
-        polygonEdgeTangents.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00;
+        polygonEdgeTangents.row(0)<< -2.2222222222222221e-01,  1.1111111111111110e-01,  1.1111111111111110e-01, 1.0000000000000000e+00, -1.0000000000000000e+00;
+        polygonEdgeTangents.row(1)<< -1.1111111111111112e+00, -1.1111111111111110e-01, -1.1111111111111110e-01, 3.3333333333333331e-01,  1.0000000000000000e+00;
+        polygonEdgeTangents.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00;
 
         const Eigen::Vector3d circleCenter(-0.5, -0.5, 0.0);
         const double circleRadius = sqrt(10.0) / 2.0;
-        const unsigned int curvedEdgeIndex = 5;
+        const unsigned int curvedEdgeIndex = 4;
 
         Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
             geometryUtility.CircleDivisionByPolygon(polygonVertices,
@@ -848,18 +844,18 @@ namespace GedimUnitTesting {
                                                     curvedEdgeIndex);
 
         Gedim::GeometryUtilities::CircleDivisionByPolygonResult expectedResult;
-        expectedResult.Points.setZero(3, 9);
-        expectedResult.Points.block(0, 0, 3, 6)<< polygonVertices;
-        expectedResult.Points.col(6)<< circleCenter;
-        expectedResult.Points.col(7)<< Eigen::Vector3d(4.1901827761725985e-01, 7.8662558866416377e-01, 0.0);
-        expectedResult.Points.col(8)<< Eigen::Vector3d( 7.8662558866416377e-01, 4.1901827761725985e-01, 0.0);
+        expectedResult.Points.setZero(3, 8);
+        expectedResult.Points.block(0, 0, 3, 5)<< polygonVertices;
+        expectedResult.Points.col(5)<< circleCenter;
+        expectedResult.Points.col(6)<< Eigen::Vector3d(4.1901827761725985e-01, 7.8662558866416377e-01, 0.0);
+        expectedResult.Points.col(7)<< Eigen::Vector3d(7.8662558866416377e-01, 4.1901827761725985e-01, 0.0);
 
         cerr.precision(16);
         cerr<< scientific<< result.Points<< endl;
         cerr<< scientific<< expectedResult.Points<< endl;
 
-        expectedResult.SubTriangles = { {6, 7, 0}, {6, 8, 7}, {6, 5, 8} };
-        expectedResult.InternalTriangles = { {6, 2, 1}, {6, 3, 2}, {6, 4, 3} };
+        expectedResult.SubTriangles = { {5, 6, 0}, {5, 7, 6}, {5, 4, 7} };
+        expectedResult.InternalTriangles = { {5, 1, 0}, {5, 2, 1}, {5, 3, 2} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
@@ -897,7 +893,7 @@ namespace GedimUnitTesting {
         expectedResult.Points.block(0, 0, 3, 6)<< polygonVertices;
         expectedResult.Points.col(6)<< circleCenter;
         expectedResult.Points.col(7)<< Eigen::Vector3d(4.1901827761725985e-01, 7.8662558866416377e-01, 0.0);
-        expectedResult.Points.col(8)<< Eigen::Vector3d( 7.8662558866416377e-01, 4.1901827761725985e-01, 0.0);
+        expectedResult.Points.col(8)<< Eigen::Vector3d(7.8662558866416377e-01, 4.1901827761725985e-01, 0.0);
 
         expectedResult.SubTriangles = { {6, 7, 0}, {6, 8, 7}, {6, 5, 8} };
         expectedResult.InternalTriangles = { {6, 2, 1}, {6, 3, 2}, {6, 4, 3} };
