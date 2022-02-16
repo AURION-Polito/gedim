@@ -462,6 +462,18 @@ namespace Gedim
                              _configuration.Tolerance);
       }
 
+      /// \brief Check if two 1D values are equal according to tolerance
+      /// \param first the first value
+      /// \param second the second value
+      /// \return the result
+      inline bool Are1DValuesEqual(const double& first,
+                                   const double& second) const
+      {
+        return CompareValues(first,
+                             second,
+                             _configuration.Tolerance) == CompareTypes::Coincident;
+      }
+
       /// \param value the value
       /// \return true if value is positive
       inline bool IsValue1DPositive(const double& value) const
@@ -672,6 +684,31 @@ namespace Gedim
         Output::Assert(PointsAre2D(segmentOrigin) && PointsAre2D(segmentEnd));
         Eigen::Vector3d tangent = SegmentTangent(segmentOrigin, segmentEnd).normalized();
         return Eigen::Vector3d(tangent.y(), -tangent.x(), 0.0);
+      }
+
+      /// \brief Compute the segment slope m of line y = m * x + q
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \return the segment slope
+      /// \note the segment shall be 2D
+      inline double SegmentSlope(const Eigen::Vector3d& segmentOrigin,
+                                 const Eigen::Vector3d& segmentEnd)
+      {
+        Output::Assert(!Are1DValuesEqual(segmentEnd.x(), segmentOrigin.x()));
+        return (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
+      }
+
+      /// \brief Compute the segment intercept q of line y = m * x + q
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \return the segment intercept
+      /// \note the segment shall be 2D
+      inline double SegmentIntercept(const Eigen::Vector3d& segmentOrigin,
+                                     const Eigen::Vector3d& segmentEnd)
+      {
+        Output::Assert(!Are1DValuesEqual(segmentEnd.x(), segmentOrigin.x()));
+        return segmentOrigin.y() -
+            segmentOrigin.x() * (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
       }
 
       /// \brief Compute the intersection between the two segments
