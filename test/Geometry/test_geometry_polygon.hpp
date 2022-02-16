@@ -1113,7 +1113,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 3;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,
@@ -1152,7 +1152,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 3;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,
@@ -1193,7 +1193,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 4;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,
@@ -1241,7 +1241,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 1;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,
@@ -1287,7 +1287,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 1;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,
@@ -1329,7 +1329,7 @@ namespace GedimUnitTesting {
         const unsigned int curvedEdgeIndex = 0;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+            geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
                                                            polygonEdgeTangents,
                                                            circleCenter,
                                                            circleRadius,

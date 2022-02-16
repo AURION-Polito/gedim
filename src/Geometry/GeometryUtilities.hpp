@@ -840,11 +840,23 @@ namespace Gedim
       /// \param circleRadius the radius of the circle from which the curved edge derives
       /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
       /// \return the sub-division polygons result
-      PolygonDivisionByAngleQuadrantResult PolygonDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
-                                                                          const Eigen::MatrixXd& polygonEdgeTangents,
-                                                                          const Eigen::Vector3d& circleCenter,
-                                                                          const double& circleRadius,
-                                                                          const unsigned int& curvedEdgeIndex) const;
+      PolygonDivisionByAngleQuadrantResult PolygonOutsideCircleDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
+                                                                                       const Eigen::MatrixXd& polygonEdgeTangents,
+                                                                                       const Eigen::Vector3d& circleCenter,
+                                                                                       const double& circleRadius,
+                                                                                       const unsigned int& curvedEdgeIndex) const;
+
+      /// \brief Convex Polygon sub division by angle quadrant which intersects a polygon in a curved edge
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param circleCenter the circle center from which the curved edge derives
+      /// \param circleRadius the radius of the circle from which the curved edge derives
+      /// \param curvedEdgeIndex curved edge index, from 0 to numPolygonVertices
+      /// \return the sub-division polygons result
+      PolygonDivisionByAngleQuadrantResult PolygonInsideCircleDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
+                                                                                      const Eigen::MatrixXd& polygonEdgeTangents,
+                                                                                      const Eigen::Vector3d& circleCenter,
+                                                                                      const double& circleRadius,
+                                                                                      const unsigned int& curvedEdgeIndex) const;
 
       /// \brief Convex Polygon sub division from a circle which intersects a polygon in a curved edge
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
