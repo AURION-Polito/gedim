@@ -778,7 +778,7 @@ namespace GedimUnitTesting {
         cerr<< scientific<< expectedResult.Points<< endl;
 
         expectedResult.SubTriangles = { {3, 4, 2}, {3, 1, 4} };
-        expectedResult.InternalTriangles = { {3, 1, 0}, {3, 0, 2} };
+        expectedResult.InternalTriangles = { {3, 0, 2}, {3, 1, 0} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
