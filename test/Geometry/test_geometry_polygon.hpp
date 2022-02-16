@@ -775,10 +775,12 @@ namespace GedimUnitTesting {
 
         expectedResult.SubTriangles = { {3, 4, 2}, {3, 1, 4} };
         expectedResult.InternalTriangles = { {3, 0, 2}, {3, 1, 0} };
+        expectedResult.SubPolygons = { {2, 0, 4}, {4, 0, 1} };
 
         ASSERT_EQ(result.Points, expectedResult.Points);
         ASSERT_EQ(result.SubTriangles, expectedResult.SubTriangles);
         ASSERT_EQ(result.InternalTriangles, expectedResult.InternalTriangles);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
       }
 
       // check trapezioid sub-division
@@ -1114,10 +1116,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 4);
@@ -1153,10 +1155,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 4);
@@ -1194,10 +1196,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 8);
@@ -1242,10 +1244,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 7);
@@ -1288,10 +1290,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 5);
@@ -1330,10 +1332,10 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
             geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
-                                                           polygonEdgeTangents,
-                                                           circleCenter,
-                                                           circleRadius,
-                                                           curvedEdgeIndex);
+                                                                        polygonEdgeTangents,
+                                                                        circleCenter,
+                                                                        circleRadius,
+                                                                        curvedEdgeIndex);
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 5);

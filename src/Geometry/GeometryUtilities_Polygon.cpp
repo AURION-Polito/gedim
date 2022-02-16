@@ -924,6 +924,7 @@ namespace Gedim
 
     list<vector<unsigned int>> subTriangles;
     list<vector<unsigned int>> internalTriangles;
+    list<list<unsigned int>> subPolygons;
 
     while (edgeNumber != lastCheck)
     {
@@ -984,15 +985,23 @@ namespace Gedim
       // create new sub-triangle
       subTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
       internalTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+      subPolygons.push_back(list<unsigned int>());
 
       vector<unsigned int>& subTriangle = subTriangles.back();
       vector<unsigned int>& internalTriangle = internalTriangles.back();
+      list<unsigned int>& subPolygon = subPolygons.back();
 
       subTriangle[1] = newCoordinates.size() - 1;
       subTriangle[2] = triangleVertexNumber;
 
       internalTriangle[1] = endEdgeIndex;
       internalTriangle[2] = originEdgeIndex;
+
+      subPolygon.push_back(triangleVertexNumber);
+      if (originEdgeIndex != triangleVertexNumber)
+        subPolygon.push_back(originEdgeIndex);
+      subPolygon.push_back(endEdgeIndex);
+      subPolygon.push_back(newCoordinates.size() - 1);
 
       triangleVertexNumber = newCoordinates.size() - 1;
 
@@ -1004,15 +1013,25 @@ namespace Gedim
     // insert last sub-triangle
     subTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
     internalTriangles.push_back(vector<unsigned int>({ cirlceCenterIndex, 0, 0 }));
+    subPolygons.push_back(list<unsigned int>());
 
     vector<unsigned int>& subTriangle = subTriangles.back();
     vector<unsigned int>& internalTriangle = internalTriangles.back();
+    list<unsigned int>& subPolygon = subPolygons.back();
 
     subTriangle[1] = curvedEdgeOriginIndex;
     subTriangle[2] = triangleVertexNumber;
 
     internalTriangle[1] = (edgeNumber + 1) % numPolygonVertices;
     internalTriangle[2] = edgeNumber;
+
+    subPolygon.push_back(triangleVertexNumber);
+    subPolygon.push_back(edgeNumber);
+    if ((edgeNumber + 1) % numPolygonVertices != curvedEdgeOriginIndex)
+      subPolygon.push_back((edgeNumber + 1) % numPolygonVertices);
+    subPolygon.push_back(curvedEdgeOriginIndex);
+
+    cerr<< "SubPolygon "<< subPolygons<< endl;
 
     // convert newCoordinates
     result.Points.setZero(3, newCoordinates.size());
@@ -1027,6 +1046,12 @@ namespace Gedim
     // convert sub-triangles
     result.InternalTriangles = vector<vector<unsigned int>>(internalTriangles.begin(),
                                                             internalTriangles.end());
+
+    // convert sub-polygons
+    result.SubPolygons.resize(subPolygons.size());
+    unsigned int sp = 0;
+    for (list<unsigned int> subPolygon : subPolygons)
+      result.SubPolygons[sp] = vector<unsigned int>(subPolygon.begin(), subPolygon.end());
 
     return result;
   }
