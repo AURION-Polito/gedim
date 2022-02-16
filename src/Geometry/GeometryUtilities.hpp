@@ -699,7 +699,7 @@ namespace Gedim
       /// \return the segment slope
       /// \note the segment shall be 2D
       inline double SegmentSlope(const Eigen::Vector3d& segmentOrigin,
-                                 const Eigen::Vector3d& segmentEnd)
+                                 const Eigen::Vector3d& segmentEnd) const
       {
         Output::Assert(!Are1DValuesEqual(segmentEnd.x(), segmentOrigin.x()));
         return (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
@@ -711,7 +711,7 @@ namespace Gedim
       /// \return the segment intercept
       /// \note the segment shall be 2D
       inline double SegmentIntercept(const Eigen::Vector3d& segmentOrigin,
-                                     const Eigen::Vector3d& segmentEnd)
+                                     const Eigen::Vector3d& segmentEnd) const
       {
         Output::Assert(!Are1DValuesEqual(segmentEnd.x(), segmentOrigin.x()));
         return segmentOrigin.y() -
