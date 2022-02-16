@@ -278,6 +278,10 @@ namespace Gedim
 
       const unsigned int edgeOriginIndex = e;
       const unsigned int edgeEndIndex = (e + 1) % numPolygonVertices;
+
+      if (edgeEndIndex == curvedEdgeIndex)
+        continue;
+
       const Vector3d& edgeOrigin = polygonVertices.col(edgeOriginIndex);
       const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
       const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(e);
@@ -314,6 +318,10 @@ namespace Gedim
 
       const unsigned int edgeOriginIndex = e;
       const unsigned int edgeEndIndex = (e + 1) % numPolygonVertices;
+
+      if (edgeOriginIndex == curvedEdgeIndex)
+        continue;
+
       const Vector3d& edgeOrigin = polygonVertices.col(edgeOriginIndex);
       const Vector3d& edgeEnd = polygonVertices.col(edgeEndIndex);
       const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(e);

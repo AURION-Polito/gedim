@@ -928,6 +928,43 @@ namespace GedimUnitTesting {
       geometryUtilityConfig.Tolerance = 1.0e-12;
       Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
+      // check square sub-division
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.row(0)<<  6.3425787364898834e-01,  8.6113631159405246e-01,  1.0000000000000000e+00,  7.7312156205493587e-01 ;
+        polygonVertices.row(1)<< -7.7312156205493587e-01, -1.0000000000000000e+00, -8.6113631159405246e-01, -6.3425787364898834e-01;
+        polygonVertices.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 4);
+        polygonEdgeTangents.row(0)<<  2.2687843794506413e-01,  1.3886368840594754e-01, -2.2687843794506413e-01, -1.3886368840594754e-01 ;
+        polygonEdgeTangents.row(1)<< -2.2687843794506413e-01,  1.3886368840594754e-01,  2.2687843794506413e-01, -1.3886368840594754e-01;
+        polygonEdgeTangents.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 1.0;
+        const unsigned int curvedEdgeIndex = 3;
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
+            geometryUtility.PolygonDivisionByAngleQuadrant(polygonVertices,
+                                                           polygonEdgeTangents,
+                                                           circleCenter,
+                                                           circleRadius,
+                                                           curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
+        expectedResult.Points.setZero(3, 4);
+        expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
+        expectedResult.SubPolygons = { {3, 0, 1, 2} };
+        expectedResult.SubPolygonTypes =
+        {
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
+        };
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
+      }
+
       // check triangle no sub-division
       {
         Eigen::MatrixXd polygonVertices(3, 4);
