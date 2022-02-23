@@ -1099,7 +1099,6 @@ namespace GedimUnitTesting {
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
 
-				cerr<< "ERRORE!!!"<< endl;
 				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
