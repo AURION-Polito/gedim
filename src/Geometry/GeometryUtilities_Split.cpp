@@ -888,30 +888,6 @@ namespace Gedim
 				result.NewVertices = vector<SplitPolygonWithCircleResult::NewVertex>(newVertices.begin(),
 																																						 newVertices.end());
 
-				cerr<< "RESULTS"<< endl;
-				cerr<< "PolygonVerticesNewVerticesPosition: "<< result.PolygonVerticesNewVerticesPosition<< endl;
-				cerr<< "CircleIntersectionsNewVerticesPosition: "<< result.CircleIntersectionsNewVerticesPosition<< endl;
-				cerr<< "NewVertices: "<< endl;
-				for (const auto& newVertex : result.NewVertices)
-				{
-					switch (newVertex.Type) {
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::PolygonVertex:
-							cerr<< "\t"<< "Type: "<< "PolygonVertex"<< endl;
-							break;
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::CircleIntersection:
-							cerr<< "\t"<< "Type: "<< "CircleIntersection"<< endl;
-							break;
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::Both:
-							cerr<< "\t"<< "Type: "<< "Both"<< endl;
-							break;
-						default:
-							cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
-							break;
-					}
-					cerr<< "\t"<< "PolygonIndex: "<< newVertex.PolygonIndex<< endl;
-					cerr<< "\t"<< "IntersectionIndex: "<< newVertex.IntersectionIndex<< endl;
-				}
-
 				// compute new polygons number vertices
 				const unsigned int numNewPolygons = numCircleIntersections + 1;
 				result.NewPolygons.resize(numNewPolygons);
@@ -926,9 +902,6 @@ namespace Gedim
 						(newVertices.size() - result.CircleIntersectionsNewVerticesPosition[numNewPolygons - 2]) +
 						result.CircleIntersectionsNewVerticesPosition[0] + 1;
 				numNewPolygonVertices[numNewPolygons - 1] = numCircleIntersections + numInternalVertices;
-
-				cerr<< "numNewPolygons "<< numNewPolygons<< endl;
-				cerr<< "numNewPolygonVertices "<< numNewPolygonVertices<< endl;
 
 				// create new polygons outside the circle polygon intersection
 				for (unsigned int c = 0; c < numNewPolygons - 1; c++)
@@ -1038,8 +1011,6 @@ namespace Gedim
 																to_string((unsigned int)edgeType) + "-" +
 																to_string((unsigned int)edgeArcType);
 
-						cerr<< "Create "<< newEdgeKey<< endl;
-
 						Output::Assert(newEdgesMap.find(newEdgeKey) == newEdgesMap.end());
 
 						newPolygon.Edges[v] = newEdges.size();
@@ -1096,28 +1067,6 @@ namespace Gedim
 					}
 				}
 
-				cerr<< "NewPolygons: "<< endl;
-				for (const auto& newPolygon : result.NewPolygons)
-				{
-					switch (newPolygon.Type)
-					{
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyCircle:
-							cerr<< "\t"<< "Type: "<< "InsideOnlyCircle"<< endl;
-							break;
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideOnlyPolygon:
-							cerr<< "\t"<< "Type: "<< "InsideOnlyPolygon"<< endl;
-							break;
-						case Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::InsideCircleAndPolygon:
-							cerr<< "\t"<< "Type: "<< "InsideCircleAndPolygon"<< endl;
-							break;
-						default:
-							cerr<< "\t"<< "Type: "<< "Unknown"<< endl;
-							break;
-					}
-					cerr<< "\t"<< "Vertices: "<< newPolygon.Vertices<< endl;
-					cerr<< "\t"<< "Edges: "<< newPolygon.Edges<< endl;
-				}
-
 				for (unsigned int v = 0; v < lastPolygonNumVertices; v++)
 				{
 					const unsigned int origin = lastPolygon.Vertices[v];
@@ -1139,11 +1088,6 @@ namespace Gedim
 					{
 						const unsigned int originIntersectionIndex = result.NewVertices[origin].IntersectionIndex;
 						const unsigned int endIntersectionIndex = result.NewVertices[end].IntersectionIndex;
-
-						cerr<< "polygonCircleIntersections.Intersections[originIntersectionIndex].IndexType "<< (unsigned int)polygonCircleIntersections.Intersections[originIntersectionIndex].IndexType<< endl;
-						cerr<< "polygonCircleIntersections.Intersections[endIntersectionIndex].IndexType "<< (unsigned int)polygonCircleIntersections.Intersections[endIntersectionIndex].IndexType<< endl;
-						cerr<< "polygonCircleIntersections.Intersections[originIntersectionIndex].Index "<< (unsigned int)polygonCircleIntersections.Intersections[originIntersectionIndex].Index<< endl;
-						cerr<< "polygonCircleIntersections.Intersections[endIntersectionIndex].Index "<< (unsigned int)polygonCircleIntersections.Intersections[endIntersectionIndex].Index<< endl;
 
 						if (polygonCircleIntersections.Intersections[originIntersectionIndex].IndexType ==
 								IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge &&
@@ -1200,13 +1144,6 @@ namespace Gedim
 															to_string((unsigned int)edgeArcType);
 
 					map<string, unsigned int>::const_iterator it = newEdgesMap.find(newEdgeKey);
-
-					if (it == newEdgesMap.end())
-					{
-						cerr<< "result.NewVertices[origin].Type "<< (unsigned int)result.NewVertices[origin].Type<< endl;
-						cerr<< "result.NewVertices[end].Type "<< (unsigned int)result.NewVertices[end].Type<< endl;
-						cerr<< newEdgeKey<< " not found"<< endl;
-					}
 
 					Output::Assert(it != newEdgesMap.end());
 					lastPolygon.Edges[v] = it->second;
