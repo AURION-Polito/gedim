@@ -65,7 +65,7 @@ namespace GedimUnitTesting {
       // check IsLenghtPositive
       {
         ASSERT_FALSE(geometryUtility.IsValue1DPositive(0.0));
-        ASSERT_FALSE(geometryUtility.IsValue1DPositive(geometryUtilityConfig.Tolerance));
+				ASSERT_FALSE(geometryUtility.IsValue1DPositive(geometryUtilityConfig.Tolerance));
         ASSERT_FALSE(geometryUtility.IsValue1DPositive(-1.0));
         ASSERT_TRUE(geometryUtility.IsValue1DPositive(2 * geometryUtilityConfig.Tolerance));
         ASSERT_TRUE(geometryUtility.IsValue1DPositive(10.0));
@@ -74,8 +74,8 @@ namespace GedimUnitTesting {
       // check IsAreaPositive
       {
         ASSERT_FALSE(geometryUtility.IsValue2DPositive(0.0));
-        ASSERT_TRUE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance));
-        ASSERT_FALSE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
+				ASSERT_TRUE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance));
+				ASSERT_FALSE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
         ASSERT_FALSE(geometryUtility.IsValue2DPositive(-1.0));
         ASSERT_TRUE(geometryUtility.IsValue2DPositive(10.0));
       }
@@ -83,8 +83,9 @@ namespace GedimUnitTesting {
       // check IsLenghtPositive
       {
         ASSERT_FALSE(geometryUtility.IsValue3DPositive(0.0));
-        ASSERT_TRUE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance));
-        ASSERT_FALSE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
+				ASSERT_TRUE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance));
+				ASSERT_TRUE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
+				ASSERT_FALSE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
         ASSERT_FALSE(geometryUtility.IsValue3DPositive(-1.0));
         ASSERT_TRUE(geometryUtility.IsValue3DPositive(10.0));
       }

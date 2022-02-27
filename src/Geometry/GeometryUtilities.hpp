@@ -450,6 +450,7 @@ namespace Gedim
 			/// \param first the first value
 			/// \param second the second value
 			/// \return the result
+			/// \note the interval [-tolerance, tolerance] is considered 0.0
 			CompareTypes CompareValues(const double& first,
 																 const double& second,
 																 const double& tolerance) const;
@@ -457,6 +458,16 @@ namespace Gedim
 
 			GeometryUtilities(const GeometryUtilitiesConfig& configuration);
 			~GeometryUtilities();
+
+			/// \param first the first value
+			/// \param second the second value
+			/// \return the relative difference between the two values according the first
+			inline double RelativeDifference(const double& first,
+																			 const double& second)
+			{
+				double relativeValue = (first == 0.0) ? 1.0 : abs(first);
+				return abs(second - first) /  relativeValue;
+			}
 
 			/// \brief Compare two 1D values according to tolerance
 			/// \param first the first value
@@ -509,24 +520,24 @@ namespace Gedim
 			/// \return true if value is positive
 			inline bool IsValue1DPositive(const double& value) const
 			{
-				return Compare1DValues(value,
-															 0.0) == CompareTypes::SecondBeforeFirst;
+				return Compare1DValues(0.0,
+															 value) == CompareTypes::FirstBeforeSecond;
 			}
 
 			/// \param value the value
 			/// \return true if value is negative
 			inline bool IsValue1DNegative(const double& value) const
 			{
-				return Compare1DValues(value,
-															 0.0) == CompareTypes::FirstBeforeSecond;
+				return Compare1DValues(0.0,
+															 value) == CompareTypes::SecondBeforeFirst;
 			}
 
 			/// \param value the value
 			/// \return true if value is zero
 			inline bool IsValue1DZero(const double& value) const
 			{
-				return Compare1DValues(value,
-															 0.0) == CompareTypes::Coincident;
+				return Compare1DValues(0.0,
+															 value) == CompareTypes::Coincident;
 			}
 
 			/// \brief Compare two 2D values according to squared tolerance
@@ -546,24 +557,24 @@ namespace Gedim
 			/// \return true if value is positive
 			inline bool IsValue2DPositive(const double& value) const
 			{
-				return Compare2DValues(value,
-															 0.0) == CompareTypes::SecondBeforeFirst;
+				return Compare2DValues(0.0,
+															 value) == CompareTypes::FirstBeforeSecond;
 			}
 
 			/// \param value the value
 			/// \return true if value is negative
 			inline bool IsValue2DNegative(const double& value) const
 			{
-				return Compare2DValues(value,
-															 0.0) == CompareTypes::FirstBeforeSecond;
+				return Compare2DValues(0.0,
+															 value) == CompareTypes::SecondBeforeFirst;
 			}
 
 			/// \param value the value
 			/// \return true if value is zero
 			inline bool IsValue2DZero(const double& value) const
 			{
-				return Compare2DValues(value,
-															 0.0) == CompareTypes::Coincident;
+				return Compare2DValues(0.0,
+															 value) == CompareTypes::Coincident;
 			}
 
 			/// \brief Compare two 3D values according to cube tolerance
@@ -584,24 +595,24 @@ namespace Gedim
 			/// \return true if value is positive
 			inline bool IsValue3DPositive(const double& value) const
 			{
-				return Compare3DValues(value,
-															 0.0) == CompareTypes::SecondBeforeFirst;
+				return Compare3DValues(0.0,
+															 value) == CompareTypes::FirstBeforeSecond;
 			}
 
 			/// \param value the value
 			/// \return true if value is negative
 			inline bool IsValue3DNegative(const double& value) const
 			{
-				return Compare3DValues(value,
-															 0.0) == CompareTypes::FirstBeforeSecond;
+				return Compare3DValues(0.0,
+															 value) == CompareTypes::SecondBeforeFirst;
 			}
 
 			/// \param value the value
 			/// \return true if value is zero
 			inline bool IsValue3DZero(const double& value) const
 			{
-				return Compare3DValues(value,
-															 0.0) == CompareTypes::Coincident;
+				return Compare3DValues(0.0,
+															 value) == CompareTypes::Coincident;
 			}
 
 			/// \param step the distance between each coordinate
