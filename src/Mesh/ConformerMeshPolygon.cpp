@@ -1254,12 +1254,6 @@ namespace Gedim
 	{
 		const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
-		// check starting and end of segment if inside Cell2DMesh2D
-		CheckSegmentOriginAndEndIntersections(segmentOrigin,
-																					segmentEnd,
-																					mesh1D,
-																					mesh2D);
-
 		unsigned int numVisitedCell1DMesh1D = 0;
 		while (numVisitedCell1DMesh1D < mesh1D.Segments.size())
 		{
