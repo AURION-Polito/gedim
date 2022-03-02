@@ -1272,63 +1272,14 @@ namespace Gedim
 									cell2DId) !=
 						 mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
 
-			// generate cell2D mesh2D maps
-			map<unsigned int, unsigned int> cell2DMesh2DVerticesMap, cell2DMesh2DEdgesMap;
-			Cell2DMesh2DToMaps(mesh2D,
-												 cell2DId,
-												 cell2DMesh2DVerticesMap,
-												 cell2DMesh2DEdgesMap);
-
-			// update cell2d of mesh2d
-			GeometryUtilities::SplitPolygonInput splitInput;
-			Cell2DMesh2DToSplitInput(cell1DMesh1DIds,
-															 mesh1D,
-															 mesh2D,
-															 cell2DId,
-															 cell2DMesh2DVerticesMap,
-															 cell2DMesh2DEdgesMap,
-															 splitInput);
-
-			GeometryUtilities::SplitPolygonWithSegmentResult splitResult = _geometryUtilities.SplitPolygonWithSegment(splitInput);
-
-			if (splitResult.Type == GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate ||
-					splitResult.Type == GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation)
-			{
-				// create new cells
-				SplitCell2DMesh2D(segmentOrigin,
-													segmentTangent,
-													cell1DMesh1DIds,
-													mesh1D,
-													mesh2D,
-													cell2DId,
-													cell2DMesh2DVerticesMap,
-													cell2DMesh2DEdgesMap,
-													splitResult);
-			}
-
 			// insert middle edges in new cells
-			switch (splitResult.Type)
-			{
-				case GeometryUtilities::SplitPolygonWithSegmentResult::Types::NoAction:
-				case GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation:
-					InsertCell2DMesh2DMiddleEdgesPolygonCreation(segmentOrigin,
-																											 segmentTangent,
-																											 mesh1D,
-																											 mesh2D,
-																											 cell1DMesh1DIds,
-																											 cell2DId);
-					break;
-				case GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate:
-					InsertCell2DMesh2DMiddleEdgesPolygonUpdate(segmentOrigin,
-																										 segmentTangent,
-																										 mesh1D,
-																										 mesh2D,
-																										 cell1DMesh1DIds,
-																										 cell2DId);
-					break;
-				default:
-					throw runtime_error("splitResult.Type not supported");
-			}
+			InsertCell2DMesh2DMiddleEdgesPolygonUpdate(segmentOrigin,
+																								 segmentTangent,
+																								 mesh1D,
+																								 mesh2D,
+																								 cell1DMesh1DIds,
+																								 cell2DId);
+
 
 			// update neighbour cells
 			UpdateCell2DNeighbours(mesh1D,
