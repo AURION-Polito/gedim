@@ -654,12 +654,7 @@ namespace Gedim
 		Output::Assert(mesh1D.Points[firstCell1DMesh1D.Points[0]].Vertex2DIds.size() == 1 &&
 				mesh1D.Points[lastCell1DMesh1D.Points[1]].Vertex2DIds.size() == 1);
 
-		// create cell2DMesh2D to update list
-		map<unsigned int, unsigned int> cell2DMesh2DVerticesMap, cell2DMesh2DEdgesMap;
-		Cell2DMesh2DToMaps(mesh2D,
-											 cell2DMesh2DId,
-											 cell2DMesh2DVerticesMap,
-											 cell2DMesh2DEdgesMap);
+		bool isCell2DMesh2DToUpdate = false;
 
 		// for each segment 1D after the first create new vertices if not in mesh2D
 		map<unsigned int, list<unsigned int>> cell1DMesh2DsCell1DMesh1Ds;
@@ -689,6 +684,7 @@ namespace Gedim
 			list<unsigned int>& cell1DMesh2DCell1DMesh1Ds = cell1DMesh2DsCell1DMesh1Ds[cell1DMesh2DToUpdate];
 			cell1DMesh2DCell1DMesh1Ds.push_back(cell1DMesh1DId);
 
+			// check if new cell0DMesh2D is to be created
 			if (originCell0DMesh1D.Vertex2DIds.size() == 0)
 			{
 				Output::Assert(originCell0DMesh1D.Edge2DIds.size() == 1 &&
@@ -704,12 +700,19 @@ namespace Gedim
 
 				// update mesh1D
 				originCell0DMesh1D.Vertex2DIds.push_back(v);
+
+				isCell2DMesh2DToUpdate = true;
 			}
 		}
+
+		// check if cell2DMesh2D is to be updated
+		if (!isCell2DMesh2DToUpdate)
+			return;
 
 		cerr<< "cell1DMesh2DsCell1DMesh1Ds "<< cell1DMesh2DsCell1DMesh1Ds<< endl;
 
 		// create new cell1DMesh2Ds
+		map<unsigned int, vector<unsigned int>> cell1DMesh2DsNewCell1Ds;
 		for (map<unsigned int, list<unsigned int>>::const_iterator it = cell1DMesh2DsCell1DMesh1Ds.begin();
 				 it != cell1DMesh2DsCell1DMesh1Ds.end();
 				 it++)
@@ -751,7 +754,10 @@ namespace Gedim
 																																										 cell1DMesh2DCell1DMesh1Ds.rend());
 
 			mesh2D.Cell1DSetState(cell1DMesh2DToUpdate, false);
-			unsigned int newEdgeId = mesh2D.Cell1DAppend(cell1DMesh2DOrderedCell1DMesh1Ds.size());
+			unsigned int newCell1DMesh2DId = mesh2D.Cell1DAppend(cell1DMesh2DOrderedCell1DMesh1Ds.size());
+
+			cell1DMesh2DsNewCell1Ds.insert(make_pair(cell1DMesh2DToUpdate,
+																							 vector<unsigned int>(cell1DMesh2DOrderedCell1DMesh1Ds.size())));
 
 			for (unsigned int ci = 0; ci < cell1DMesh2DOrderedCell1DMesh1Ds.size(); ci++)
 			{
@@ -765,25 +771,27 @@ namespace Gedim
 				ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
 				ConformerMeshSegment::ConformMesh::ConformMeshPoint& end = mesh1D.Points[endCurvilinearCoordinate];
 
-				origin.Edge2DIds.push_back(newEdgeId);
-				end.Edge2DIds.push_back(newEdgeId);
-				cell1DMesh1D.Edge2DIds.push_back(newEdgeId);
+				cell1DMesh2DsNewCell1Ds[cell1DMesh2DToUpdate][ci] = newCell1DMesh2DId;
+
+				origin.Edge2DIds.push_back(newCell1DMesh2DId);
+				end.Edge2DIds.push_back(newCell1DMesh2DId);
+				cell1DMesh1D.Edge2DIds.push_back(newCell1DMesh2DId);
 
 				const unsigned int originCell1D = origin.Vertex2DIds.back();
 				const unsigned int endCell1D = end.Vertex2DIds.back();
 
 				// add new Cell1Ds on Mesh2D
-				mesh2D.Cell1DInsertExtremes(newEdgeId,
+				mesh2D.Cell1DInsertExtremes(newCell1DMesh2DId,
 																		originCell1D,
 																		endCell1D);
-				mesh2D.Cell1DSetState(newEdgeId, true);
+				mesh2D.Cell1DSetState(newCell1DMesh2DId, true);
 
 				// update mesh2D
-				mesh2D.Cell1DInsertUpdatedCell1D(cell1DMesh2DToUpdate, newEdgeId);
+				mesh2D.Cell1DInsertUpdatedCell1D(cell1DMesh2DToUpdate, newCell1DMesh2DId);
 
-				mesh2D.Cell1DSetMarker(newEdgeId, mesh2D.Cell1DMarker(cell1DMesh2DToUpdate));
+				mesh2D.Cell1DSetMarker(newCell1DMesh2DId, mesh2D.Cell1DMarker(cell1DMesh2DToUpdate));
 
-				mesh2D.Cell1DInitializeNeighbourCell2Ds(newEdgeId,
+				mesh2D.Cell1DInitializeNeighbourCell2Ds(newCell1DMesh2DId,
 																								mesh2D.Cell1DNumberNeighbourCell2D(cell1DMesh2DToUpdate));
 
 				for (unsigned int n = 0; n < mesh2D.Cell1DNumberNeighbourCell2D(cell1DMesh2DToUpdate); n++)
@@ -791,18 +799,96 @@ namespace Gedim
 					if (!mesh2D.Cell1DHasNeighbourCell2D(cell1DMesh2DToUpdate, n))
 						continue;
 
-					mesh2D.Cell1DInsertNeighbourCell2D(newEdgeId,
+					mesh2D.Cell1DInsertNeighbourCell2D(newCell1DMesh2DId,
 																						 n,
 																						 mesh2D.Cell1DNeighbourCell2D(cell1DMesh2DToUpdate, n));
 				}
 
 				// add intermediate cell1Ds
-				newEdgeId++;
+				newCell1DMesh2DId++;
 			}
 		}
 
-		// create new cell2Dmesh2D
+		cerr<< "cell1DMesh2DsNewCell1Ds "<< cell1DMesh2DsNewCell1Ds<< endl;
 
+		// create new cell2Dmesh2D
+		unsigned int nc = 0;
+		list<unsigned int> newCell2DMesh2DVertices, newCell2DMesh2DEdges;
+		for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(cell2DMesh2DId); e++)
+		{
+			const unsigned int cell0DMesh2D = mesh2D.Cell2DVertex(cell2DMesh2DId, e);
+			const unsigned int cell1DMesh2D = mesh2D.Cell2DEdge(cell2DMesh2DId, e);
+
+			if (cell1DMesh2DsNewCell1Ds.find(cell1DMesh2D) == cell1DMesh2DsNewCell1Ds.end())
+			{
+				newCell2DMesh2DVertices.push_back(cell0DMesh2D);
+				newCell2DMesh2DEdges.push_back(cell1DMesh2D);
+			}
+			else
+			{
+				const vector<unsigned int>& newEdgeIds = cell1DMesh2DsNewCell1Ds.at(cell1DMesh2D);
+				const bool edgeVertexOrientation = (mesh2D.Cell1DOrigin(cell1DMesh2D) == cell0DMesh2D);
+				const vector<unsigned int> newEdgeIdsOrdered = edgeVertexOrientation ? newEdgeIds :
+																																							 vector<unsigned int>(newEdgeIds.rbegin(),
+																																																		newEdgeIds.rend());
+
+				for (const unsigned int& newCell1DMesh2D : newEdgeIdsOrdered)
+				{
+					newCell2DMesh2DVertices.push_back(edgeVertexOrientation ? mesh2D.Cell1DOrigin(newCell1DMesh2D) :
+																																		mesh2D.Cell1DEnd(newCell1DMesh2D));
+					newCell2DMesh2DEdges.push_back(newCell1DMesh2D);
+				}
+			}
+		}
+
+		cerr<< "newCell2DMesh2DVertices "<< newCell2DMesh2DVertices<< endl;
+		cerr<< "newCell2DMesh2DEdges "<< newCell2DMesh2DEdges<< endl;
+
+		const unsigned int newCell2DMesh2DId = mesh2D.Cell2DAppend(1);
+		mesh2D.Cell2DAddVertices(newCell2DMesh2DId, vector<unsigned int>(newCell2DMesh2DVertices.begin(),
+																																		 newCell2DMesh2DVertices.end()));
+		mesh2D.Cell2DAddEdges(newCell2DMesh2DId, vector<unsigned int>(newCell2DMesh2DEdges.begin(),
+																																	newCell2DMesh2DEdges.end()));
+
+		mesh2D.Cell2DSetMarker(newCell2DMesh2DId, mesh2D.Cell2DMarker(cell2DMesh2DId));
+		mesh2D.Cell2DSetState(newCell2DMesh2DId, true);
+		mesh2D.Cell2DSetState(cell2DMesh2DId, false);
+
+		mesh2D.Cell2DInsertUpdatedCell2D(cell2DMesh2DId, newCell2DMesh2DId);
+
+		// update all edges neighbours
+		for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(newCell2DMesh2DId); e++)
+		{
+			const unsigned int edgeId = mesh2D.Cell2DEdge(newCell2DMesh2DId, e);
+			for (unsigned int n = 0; n < mesh2D.Cell1DNumberNeighbourCell2D(edgeId); n++)
+			{
+				if (!mesh2D.Cell1DHasNeighbourCell2D(edgeId, n))
+					continue;
+
+				if (mesh2D.Cell1DNeighbourCell2D(edgeId, n) == cell2DMesh2DId)
+					mesh2D.Cell1DInsertNeighbourCell2D(edgeId,
+																						 n,
+																						 newCell2DMesh2DId);
+			}
+		}
+
+		// update mesh1D
+		for (unsigned int i = 0; i < cell1DMesh1DIds.size(); i++)
+		{
+			const unsigned int& cell1DMesh1DId = cell1DMesh1DIds[i];
+			ConformerMeshSegment::ConformMesh::ConformMeshSegment& cell1DMesh1D = mesh1D.Segments[cell1DMesh1DId];
+
+			const double originCurvilinearCoordinate = cell1DMesh1D.Points[0];
+			const double endCurvilinearCoordinate = cell1DMesh1D.Points[1];
+
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
+
+			cell1DMesh1D.Cell2DIds.push_back(newCell2DMesh2DId);
+			originCell0DMesh1D.Cell2DIds.push_back(newCell2DMesh2DId);
+			if (i == cell1DMesh1DIds.size() - 1)
+				endCell0DMesh1D.Cell2DIds.push_back(newCell2DMesh2DId);
+		}
 	}
 	// ***************************************************************************
 	void ConformerMeshPolygon::InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Vector3d& segmentOrigin,

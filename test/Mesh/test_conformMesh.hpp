@@ -1134,7 +1134,7 @@ namespace GedimUnitTesting
 				for (const auto& mesh1Dpoint : conformMeshOne.Points)
 					EXPECT_EQ(mesh1Dpoint.second.Vertex2DIds.size(), 1);
 				for (const auto& mesh1Dsegment : conformMeshOne.Segments)
-					EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
+					EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 2);
 
 				// Create second conform mesh
 				Gedim::ConformerMeshSegment conformMeshSegmentTwo(geometryUtilities);
