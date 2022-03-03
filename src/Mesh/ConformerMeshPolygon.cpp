@@ -640,11 +640,60 @@ namespace Gedim
 		}
 	}
 	// ***************************************************************************
+	void ConformerMeshPolygon::UpdateCell2DMesh2DWithSegmentOnEdges(const Eigen::Vector3d& segmentOrigin,
+																																	const Eigen::Vector3d& segmentTangent,
+																																	ConformerMeshSegment::ConformMesh& mesh1D,
+																																	IMeshDAO& mesh2D,
+																																	const vector<unsigned int>& cell1DMesh1DIds,
+																																	const unsigned int& cell2DMesh2DId)
+	{
+		ConformerMeshSegment::ConformMesh::ConformMeshSegment& firstCell1DMesh1D = mesh1D.Segments[cell1DMesh1DIds.front()];
+		ConformerMeshSegment::ConformMesh::ConformMeshSegment& lastCell1DMesh1D = mesh1D.Segments[cell1DMesh1DIds.back()];
+
+		// check if first and last mesh1D cell0D has already a vertex associated, otherwise the algorithm does not work
+		Output::Assert(mesh1D.Points[firstCell1DMesh1D.Points[0]].Vertex2DIds.size() == 1 &&
+				mesh1D.Points[lastCell1DMesh1D.Points[1]].Vertex2DIds.size() == 1);
+
+		// for each segment 1D after the first create new vertices if not in mesh2D
+		for (unsigned int i = 1; i < cell1DMesh1DIds.size(); i++)
+		{
+			const unsigned int& cell1DMesh1DId = cell1DMesh1DIds[i];
+			ConformerMeshSegment::ConformMesh::ConformMeshSegment& cell1DMesh1D = mesh1D.Segments[cell1DMesh1DId];
+
+			Output::Assert(cell1DMesh1D.Edge2DIds.size() == 1);
+			const unsigned int cell1DMesh2DToUpdate = cell1DMesh1D.Edge2DIds.back();
+
+			const double originCurvilinearCoordinate = cell1DMesh1D.Points[0];
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
+
+			Output::Assert(originCell0DMesh1D.Vertex2DIds.size() <= 1);
+
+			if (originCell0DMesh1D.Vertex2DIds.size() == 0)
+			{
+				Output::Assert(originCell0DMesh1D.Edge2DIds.size() == 1 &&
+											 originCell0DMesh1D.Edge2DIds.back() == cell1DMesh2DToUpdate);
+
+				// add new cell0D in mesh2D
+				const Vector3d newCell0DCoordinates = segmentOrigin + originCurvilinearCoordinate * segmentTangent;
+
+				unsigned int v = mesh2D.Cell0DAppend(1);
+				mesh2D.Cell0DInsertCoordinates(v, newCell0DCoordinates);
+				mesh2D.Cell0DSetMarker(v, mesh2D.Cell1DMarker(cell1DMesh2DToUpdate));
+				mesh2D.Cell0DSetState(v, true);
+
+				// update mesh1D
+				originCell0DMesh1D.Vertex2DIds.push_back(v);
+
+
+			}
+		}
+	}
+	// ***************************************************************************
 	void ConformerMeshPolygon::InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Vector3d& segmentOrigin,
 																																				const Vector3d& segmentTangent,
 																																				ConformerMeshSegment::ConformMesh& mesh1D,
 																																				Gedim::IMeshDAO& mesh2D,
-																																				const list<unsigned int> cell1DMesh1DIds,
+																																				const list<unsigned int>& cell1DMesh1DIds,
 																																				const unsigned int& cell2DMesh2DId)
 	{
 		// nothing to do
@@ -1273,12 +1322,13 @@ namespace Gedim
 						 mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
 
 			// insert middle edges in new cells
-			InsertCell2DMesh2DMiddleEdgesPolygonUpdate(segmentOrigin,
-																								 segmentTangent,
-																								 mesh1D,
-																								 mesh2D,
-																								 cell1DMesh1DIds,
-																								 cell2DId);
+			UpdateCell2DMesh2DWithSegmentOnEdges(segmentOrigin,
+																					 segmentTangent,
+																					 mesh1D,
+																					 mesh2D,
+																					 vector<unsigned int>(cell1DMesh1DIds.begin(),
+																																cell1DMesh1DIds.end()),
+																					 cell2DId);
 
 
 			// update neighbour cells

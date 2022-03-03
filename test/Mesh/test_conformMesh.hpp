@@ -1043,6 +1043,21 @@ namespace GedimUnitTesting
 				for (const auto& mesh1Dsegment : conformMeshTwo.Segments)
 					EXPECT_GE(mesh1Dsegment.Edge2DIds.size(), 1);
 			}
+		}
+		catch (const exception& exception)
+		{
+			cerr<< exception.what()<< endl;
+			FAIL();
+		}
+	}
+
+	TEST(TestConformMesh, TestConformMesh2DOnlyOnEdges)
+	{
+		try
+		{
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			geometryUtilitiesConfig.Tolerance = 1e-12;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// conform of simple 2 points mesh only on edges
 			{
@@ -1050,8 +1065,8 @@ namespace GedimUnitTesting
 				GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
 				Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-				Eigen::Vector3d segmentOneOrigin(0.25, 0.75, 0.0);
-				Eigen::Vector3d segmentOneEnd(   0.75, 0.25, 0.0);
+				Eigen::Vector3d segmentOneOrigin(1.0, 0.0, 0.0);
+				Eigen::Vector3d segmentOneEnd(   0.0, 1.0, 0.0);
 
 				Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
 																																	geometryUtilities);
@@ -1062,11 +1077,11 @@ namespace GedimUnitTesting
 																												 intersectionMeshOne);
 
 				// Create mesh fracture two and corresponding intersection meshes
-				GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshTwo;
+				GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshTwo;
 				Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-				Eigen::Vector3d segmentTwoOrigin(0.25, 0.75, 0.0);
-				Eigen::Vector3d segmentTwoEnd(   0.75, 0.25, 0.0);
+				Eigen::Vector3d segmentTwoOrigin(1.0, 0.0, 0.0);
+				Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0);
 
 				Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
 																																	geometryUtilities);
@@ -1108,9 +1123,11 @@ namespace GedimUnitTesting
 																																	conformMeshOne,
 																																	fractureMeshOne,
 																																	fractureConformedMeshOne));
+				cerr<< "F1"<< endl;
+				cerr<< fractureMeshOne.ToString()<< endl;
 
-				EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 6);
-				EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 10);
+				EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 5);
+				EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 7);
 				EXPECT_EQ(mockMeshOne.Mesh.NumberCell2D, 4);
 				for (const auto& mesh1Dpoint : conformMeshOne.Points)
 					EXPECT_EQ(mesh1Dpoint.second.Vertex2DIds.size(), 1);
@@ -1138,8 +1155,11 @@ namespace GedimUnitTesting
 																																	fractureMeshTwo,
 																																	fractureConformedMeshTwo));
 
-				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 6);
-				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 10);
+				cerr<< "F2"<< endl;
+				cerr<< fractureMeshTwo.ToString()<< endl;
+
+				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 5);
+				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 8);
 				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell2D, 4);
 				for (const auto& mesh1Dpoint : conformMeshTwo.Points)
 					EXPECT_EQ(mesh1Dpoint.second.Vertex2DIds.size(), 1);

@@ -78,11 +78,18 @@ namespace Gedim
 														 map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
 														 const Gedim::GeometryUtilities::SplitPolygonWithSegmentResult& splitResult);
 
+			void UpdateCell2DMesh2DWithSegmentOnEdges(const Eigen::Vector3d& segmentOrigin,
+																								const Eigen::Vector3d& segmentTangent,
+																								ConformerMeshSegment::ConformMesh& mesh1D,
+																								Gedim::IMeshDAO& mesh2D,
+																								const vector<unsigned int>& cell1DMesh1DIds,
+																								const unsigned int& cell2DMesh2DId);
+
 			void InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Eigen::Vector3d& segmentOrigin,
 																											const Eigen::Vector3d& segmentTangent,
 																											ConformerMeshSegment::ConformMesh& mesh1D,
 																											Gedim::IMeshDAO& mesh2D,
-																											const list<unsigned int> cell1DMesh1DIds,
+																											const list<unsigned int>& cell1DMesh1DIds,
 																											const unsigned int& cell2DMesh2DId);
 
 			void InsertCell2DMesh2DMiddleEdgesPolygonCreation(const Eigen::Vector3d& segmentOrigin,
