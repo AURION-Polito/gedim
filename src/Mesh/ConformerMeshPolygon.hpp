@@ -17,7 +17,6 @@ namespace Gedim
 	{
 		public:
 			struct ConformMesh final {
-					vector<list<unsigned int>> Mesh2DCell2DMesh1DCell1DIds; ///< for each cell2D of mesh2D the list of cell1D of mesh1D
 			};
 
 			struct ConformerMeshPolygonConfiguration final {
