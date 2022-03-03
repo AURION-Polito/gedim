@@ -709,8 +709,6 @@ namespace Gedim
 		if (!isCell2DMesh2DToUpdate)
 			return;
 
-		cerr<< "cell1DMesh2DsCell1DMesh1Ds "<< cell1DMesh2DsCell1DMesh1Ds<< endl;
-
 		// create new cell1DMesh2Ds
 		map<unsigned int, vector<unsigned int>> cell1DMesh2DsNewCell1Ds;
 		for (map<unsigned int, list<unsigned int>>::const_iterator it = cell1DMesh2DsCell1DMesh1Ds.begin();
@@ -809,8 +807,6 @@ namespace Gedim
 			}
 		}
 
-		cerr<< "cell1DMesh2DsNewCell1Ds "<< cell1DMesh2DsNewCell1Ds<< endl;
-
 		// create new cell2Dmesh2D
 		unsigned int nc = 0;
 		list<unsigned int> newCell2DMesh2DVertices, newCell2DMesh2DEdges;
@@ -840,9 +836,6 @@ namespace Gedim
 				}
 			}
 		}
-
-		cerr<< "newCell2DMesh2DVertices "<< newCell2DMesh2DVertices<< endl;
-		cerr<< "newCell2DMesh2DEdges "<< newCell2DMesh2DEdges<< endl;
 
 		const unsigned int newCell2DMesh2DId = mesh2D.Cell2DAppend(1);
 		mesh2D.Cell2DAddVertices(newCell2DMesh2DId, vector<unsigned int>(newCell2DMesh2DVertices.begin(),
