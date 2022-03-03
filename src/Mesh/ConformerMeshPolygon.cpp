@@ -655,7 +655,9 @@ namespace Gedim
 				mesh1D.Points[lastCell1DMesh1D.Points[1]].Vertex2DIds.size() == 1);
 
 		// for each segment 1D after the first create new vertices if not in mesh2D
-		for (unsigned int i = 1; i < cell1DMesh1DIds.size(); i++)
+		map<unsigned int, list<unsigned int>> cell1DMesh2DsNewVertices;
+		map<unsigned int, list<unsigned int>> cell1DMesh2DsCell1DMesh1Ds;
+		for (unsigned int i = 0; i < cell1DMesh1DIds.size(); i++)
 		{
 			const unsigned int& cell1DMesh1DId = cell1DMesh1DIds[i];
 			ConformerMeshSegment::ConformMesh::ConformMeshSegment& cell1DMesh1D = mesh1D.Segments[cell1DMesh1DId];
@@ -664,9 +666,22 @@ namespace Gedim
 			const unsigned int cell1DMesh2DToUpdate = cell1DMesh1D.Edge2DIds.back();
 
 			const double originCurvilinearCoordinate = cell1DMesh1D.Points[0];
-			ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
+			const double endCurvilinearCoordinate = cell1DMesh1D.Points[1];
 
-			Output::Assert(originCell0DMesh1D.Vertex2DIds.size() <= 1);
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
+
+			Output::Assert(originCell0DMesh1D.Vertex2DIds.size() <= 1 &&
+										 endCell0DMesh1D.Vertex2DIds.size() <= 1);
+
+			// relate cell1DMesh2D to cell1DMesh1D
+			if (cell1DMesh2DsCell1DMesh1Ds.find(cell1DMesh2DToUpdate) == cell1DMesh2DsCell1DMesh1Ds.end())
+			{
+				cell1DMesh2DsCell1DMesh1Ds.insert(make_pair(cell1DMesh2DToUpdate,
+																										list<unsigned int>()));
+			}
+			list<unsigned int>& cell1DMesh2DCell1DMesh1Ds = cell1DMesh2DsCell1DMesh1Ds[cell1DMesh2DToUpdate];
+			cell1DMesh2DCell1DMesh1Ds.push_back(i);
 
 			if (originCell0DMesh1D.Vertex2DIds.size() == 0)
 			{
@@ -684,7 +699,111 @@ namespace Gedim
 				// update mesh1D
 				originCell0DMesh1D.Vertex2DIds.push_back(v);
 
+				// add cell1DMesh2D in list of new Edges
+				if (cell1DMesh2DsNewVertices.find(cell1DMesh2DToUpdate) == cell1DMesh2DsNewVertices.end())
+				{
+					cell1DMesh2DsNewVertices.insert(make_pair(cell1DMesh2DToUpdate,
+																										list<unsigned int>()));
+				}
+				list<unsigned int>& cell1DMesh2DNewVertices = cell1DMesh2DsNewVertices[cell1DMesh2DToUpdate];
+				cell1DMesh2DNewVertices.push_back(v);
+			}
+		}
 
+		cerr<< "cell1DMesh2DsCell1DMesh1Ds "<< cell1DMesh2DsCell1DMesh1Ds<< endl;
+		cerr<< "cell1DMesh2DNewEdgeVertices "<< cell1DMesh2DsNewVertices<< endl;
+
+		// create new cell1DMesh2Ds
+		for (map<unsigned int, list<unsigned int>>::const_iterator it = cell1DMesh2DsNewVertices.begin();
+				 it != cell1DMesh2DsNewVertices.end();
+				 it++)
+		{
+			const unsigned int& cell1DMesh2DToUpdate = it->first;
+			const list<unsigned int>& cell1DMesh2DNewVertices = it->second;
+			const list<unsigned int>& cell1DMesh2DCell1DMesh1Ds = cell1DMesh2DsCell1DMesh1Ds.at(cell1DMesh2DToUpdate);
+
+			ConformerMeshSegment::ConformMesh::ConformMeshSegment& firstCell1DMesh1D = mesh1D.Segments[cell1DMesh2DCell1DMesh1Ds.front()];
+			ConformerMeshSegment::ConformMesh::ConformMeshSegment& lastCell1DMesh1D = mesh1D.Segments[cell1DMesh2DCell1DMesh1Ds.back()];
+
+			const double originCurvilinearCoordinate = firstCell1DMesh1D.Points[0];
+			const double endCurvilinearCoordinate = lastCell1DMesh1D.Points[1];
+
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
+			ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
+
+			const unsigned int originSegmentMesh2DCell0D = originCell0DMesh1D.Vertex2DIds.back();
+			const unsigned int endSegmentMesh2DCell0D = endCell0DMesh1D.Vertex2DIds.back();
+
+			// check order of edge and segment
+			bool edgeListDirection = true;
+			if (originSegmentMesh2DCell0D == mesh2D.Cell1DOrigin(cell1DMesh2DToUpdate) &&
+					endSegmentMesh2DCell0D == mesh2D.Cell1DEnd(cell1DMesh2DToUpdate))
+				edgeListDirection = true;
+			else if (originSegmentMesh2DCell0D == mesh2D.Cell1DEnd(cell1DMesh2DToUpdate) &&
+							 endSegmentMesh2DCell0D == mesh2D.Cell1DOrigin(cell1DMesh2DToUpdate))
+				edgeListDirection = false;
+			else
+				throw runtime_error("Segment origin/end and edge origin/end are not correct");
+
+			vector<unsigned int> cell1DMesh2DOrderedCell0Ds = edgeListDirection ?
+																													vector<unsigned int>(cell1DMesh2DNewVertices.begin(),
+																																							 cell1DMesh2DNewVertices.end()) :
+																													vector<unsigned int>(cell1DMesh2DNewVertices.rbegin(),
+																																							 cell1DMesh2DNewVertices.rend());
+			vector<unsigned int> cell1DMesh2DOrderedCell1DMesh1Ds = edgeListDirection ?
+																																vector<unsigned int>(cell1DMesh2DCell1DMesh1Ds.begin(),
+																																										 cell1DMesh2DCell1DMesh1Ds.end()) :
+																																vector<unsigned int>(cell1DMesh2DCell1DMesh1Ds.rbegin(),
+																																										 cell1DMesh2DCell1DMesh1Ds.rend());
+
+			mesh2D.Cell1DSetState(cell1DMesh2DToUpdate, false);
+			unsigned int newEdgeId = mesh2D.Cell1DAppend(cell1DMesh2DOrderedCell0Ds.size() + 1);
+
+			unsigned int originCell1D = mesh2D.Cell1DOrigin(cell1DMesh2DToUpdate);
+			for (unsigned int ci = 0; ci < cell1DMesh2DOrderedCell0Ds.size(); ci++)
+			{
+				const unsigned int& endCell1D = cell1DMesh2DOrderedCell0Ds[ci];
+				const unsigned int& cell1DMesh1DId = cell1DMesh2DOrderedCell1DMesh1Ds[ci];
+
+				ConformerMeshSegment::ConformMesh::ConformMeshSegment& cell1DMesh1D = mesh1D.Segments[cell1DMesh1DId];
+
+				// add new Cell1Ds on Mesh2D
+				mesh2D.Cell1DInsertExtremes(newEdgeId,
+																		originCell1D,
+																		endCell1D);
+				mesh2D.Cell1DSetState(newEdgeId, true);
+
+				// update conform mesh 1D
+				const double& originCurvilinearCoordinate = edgeListDirection ? cell1DMesh1D.Points[0] : cell1DMesh1D.Points[1];
+				const double& endCurvilinearCoordinate = edgeListDirection ? cell1DMesh1D.Points[1] : cell1DMesh1D.Points[0];
+				ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
+				ConformerMeshSegment::ConformMesh::ConformMeshPoint& end = mesh1D.Points[endCurvilinearCoordinate];
+
+				origin.Edge2DIds.push_back(newEdgeId);
+				end.Edge2DIds.push_back(newEdgeId);
+				cell1DMesh1D.Edge2DIds.push_back(newEdgeId);
+
+				// update mesh2D
+				mesh2D.Cell1DInsertUpdatedCell1D(cell1DMesh2DToUpdate, newEdgeId);
+
+				mesh2D.Cell1DSetMarker(newEdgeId, mesh2D.Cell1DMarker(cell1DMesh2DToUpdate));
+
+				mesh2D.Cell1DInitializeNeighbourCell2Ds(newEdgeId,
+																								mesh2D.Cell1DNumberNeighbourCell2D(cell1DMesh2DToUpdate));
+
+				for (unsigned int n = 0; n < mesh2D.Cell1DNumberNeighbourCell2D(cell1DMesh2DToUpdate); n++)
+				{
+					if (!mesh2D.Cell1DHasNeighbourCell2D(cell1DMesh2DToUpdate, n))
+						continue;
+
+					mesh2D.Cell1DInsertNeighbourCell2D(newEdgeId,
+																						 n,
+																						 mesh2D.Cell1DNeighbourCell2D(cell1DMesh2DToUpdate, n));
+				}
+
+				// add intermediate cell1Ds
+				newEdgeId++;
+				originCell1D = endCell1D;
 			}
 		}
 	}
