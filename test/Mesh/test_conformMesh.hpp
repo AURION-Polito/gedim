@@ -1065,8 +1065,8 @@ namespace GedimUnitTesting
 				GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
 				Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-				Eigen::Vector3d segmentOneOrigin(1.0, 0.0, 0.0);
-				Eigen::Vector3d segmentOneEnd(   0.0, 1.0, 0.0);
+				Eigen::Vector3d segmentOneOrigin(0.0, 1.0, 0.0);
+				Eigen::Vector3d segmentOneEnd(   1.0, 0.0, 0.0);
 
 				Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
 																																	geometryUtilities);
@@ -1123,6 +1123,8 @@ namespace GedimUnitTesting
 																																	conformMeshOne,
 																																	fractureMeshOne,
 																																	fractureConformedMeshOne));
+				cerr<< "M1"<< endl;
+				cerr<< Gedim::ConformerMeshSegment::ToString(conformMeshOne)<< endl;
 				cerr<< "F1"<< endl;
 				cerr<< fractureMeshOne.ToString()<< endl;
 
@@ -1155,6 +1157,8 @@ namespace GedimUnitTesting
 																																	fractureMeshTwo,
 																																	fractureConformedMeshTwo));
 
+				cerr<< "M2"<< endl;
+				cerr<< Gedim::ConformerMeshSegment::ToString(conformMeshTwo)<< endl;
 				cerr<< "F2"<< endl;
 				cerr<< fractureMeshTwo.ToString()<< endl;
 
