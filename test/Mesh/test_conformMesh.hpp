@@ -1123,10 +1123,6 @@ namespace GedimUnitTesting
 																																	conformMeshOne,
 																																	fractureMeshOne,
 																																	fractureConformedMeshOne));
-				cerr<< "M1"<< endl;
-				cerr<< Gedim::ConformerMeshSegment::ToString(conformMeshOne)<< endl;
-				cerr<< "F1"<< endl;
-				cerr<< fractureMeshOne.ToString()<< endl;
 
 				EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 5);
 				EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 7);
@@ -1156,11 +1152,6 @@ namespace GedimUnitTesting
 																																	conformMeshTwo,
 																																	fractureMeshTwo,
 																																	fractureConformedMeshTwo));
-
-				cerr<< "M2"<< endl;
-				cerr<< Gedim::ConformerMeshSegment::ToString(conformMeshTwo)<< endl;
-				cerr<< "F2"<< endl;
-				cerr<< fractureMeshTwo.ToString()<< endl;
 
 				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 5);
 				EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 8);
