@@ -61,6 +61,11 @@ namespace Gedim
 														 const vector<unsigned int> vertexMarkers,
 														 const vector<unsigned int> edgeMarkers,
 														 IMeshDAO& mesh) const;
+
+			/// \brief Extract the mesh Cell2D Roots
+			/// \param mesh the mesh
+			/// \return the root cell for each cell2D, size 1xCell2DTotalNumber()
+			vector<unsigned int> MeshCell2DRoots(const IMeshDAO& mesh) const;
 	};
 
 }

@@ -1347,7 +1347,6 @@ namespace Gedim
 					mesh2D.Cell2DSetMarker(c, mesh2D.Cell2DMarker(cell2DNeigh));
 					mesh2D.Cell2DSetState(c, true);
 					mesh2D.Cell2DSetState(cell2DNeigh, false);
-
 					mesh2D.Cell2DInsertUpdatedCell2D(cell2DNeigh, c);
 
 					// update all edges neighbours
@@ -1524,7 +1523,6 @@ namespace Gedim
 																					 vector<unsigned int>(cell1DMesh1DIds.begin(),
 																																cell1DMesh1DIds.end()),
 																					 cell2DId);
-
 
 			// update neighbour cells
 			UpdateCell2DNeighbours(mesh1D,
