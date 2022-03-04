@@ -566,15 +566,22 @@ namespace Gedim
       /// \return the number of new cell2Ds associated to cell2DIndex
       virtual unsigned int Cell2DNumberUpdatedCell2Ds(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
-      /// \param updatedCell2DIdex the index of the new Cell2D from 0 to Cell2DTotalNumber()
+			/// \param updatedCell2DIndex the index of the new Cell2D from 0 to Cell2DTotalNumber()
       /// \return if the Cell2D has the updatedCell2DIdex associated
       virtual bool Cell2DHasUpdatedCell2D(const unsigned int& cell2DIndex,
-                                          const unsigned int& updatedCell2DIdex) const = 0;
+																					const unsigned int& updatedCell2DIndex) const = 0;
       /// \brief Add the new Cell2D to an existing Cell2D
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param updatedCell2DIdex the index of the new Cell2D from 0 to Cell2DTotalNumber()
       virtual void Cell2DInsertUpdatedCell2D(const unsigned int& cell2DIndex,
                                              const unsigned int& updatedCell2DIdex) = 0;
+
+			/// \param updatedCell2DIndex the updated cell2D index, from 0 to Cell2DTotalNumber()
+			/// \return true if has an original cell, false otherwise (the original cell is itself)
+			virtual bool Cell2DHasOriginalCell2D(const unsigned int& updatedCell2DIndex) const = 0;
+			/// \param updatedCell2DIndex the updated cell2D index, from 0 to Cell2DTotalNumber()
+			/// \return the original cell2D index, from 0 to Cell2DTotalNumber()
+			virtual unsigned int Cell2DOriginalCell2D(const unsigned int& updatedCell2DIndex) const = 0;
       /// \brief return the updated Cell2D Ids for cell2DIndex
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param updatedCell2DIds the list of the new Cell2D Ids associated to cell2DIndex

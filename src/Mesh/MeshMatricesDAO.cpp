@@ -514,6 +514,7 @@ namespace Gedim
     _mesh.NumberCell2DSubdivision.resize(_mesh.NumberCell2D + 1, 0);
     _mesh.Cell2DMarkers.resize(_mesh.NumberCell2D, 0);
     _mesh.ActiveCell2D.resize(_mesh.NumberCell2D, false);
+		_mesh.Cell2DOriginalCell2Ds.resize(_mesh.NumberCell2D, 0);
     for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
       _mesh.Cell2DDoublePropertySizes[p].resize(_mesh.NumberCell2D + 1, 0);
 
@@ -593,6 +594,7 @@ namespace Gedim
     _mesh.NumberCell2DSubdivision.erase(std::next(_mesh.NumberCell2DSubdivision.begin(),
                                                   cell2DIndex));
 
+		_mesh.Cell2DOriginalCell2Ds.erase(std::next(_mesh.Cell2DOriginalCell2Ds.begin(), cell2DIndex));
     _mesh.Cell2DMarkers.erase(std::next(_mesh.Cell2DMarkers.begin(), cell2DIndex));
     _mesh.ActiveCell2D.erase(std::next(_mesh.ActiveCell2D.begin(), cell2DIndex));
     _mesh.NumberCell2D--;
@@ -672,6 +674,7 @@ namespace Gedim
     if (!Cell2DHasUpdatedCell2Ds(cell2DIndex))
       _mesh.UpdatedCell2Ds.insert(pair<unsigned int, set<unsigned int>>(cell2DIndex, {}));
     _mesh.UpdatedCell2Ds.at(cell2DIndex).insert(updatedCell2DIdex);
+		_mesh.Cell2DOriginalCell2Ds[updatedCell2DIdex] = cell2DIndex + 1;
   }
   // ***************************************************************************
   bool MeshMatricesDAO::Cell2DUpdatedCell2Ds(const unsigned int& cell2DIndex,
@@ -993,6 +996,7 @@ namespace Gedim
     _mesh.Cell2DEdges.shrink_to_fit();
     _mesh.Cell2DSubdivision.shrink_to_fit();
     _mesh.Cell2DMarkers.shrink_to_fit();
+		_mesh.Cell2DOriginalCell2Ds.shrink_to_fit();
     _mesh.ActiveCell2D.shrink_to_fit();
     _mesh.Cell2DDoublePropertyIds.shrink_to_fit();
     _mesh.Cell2DDoublePropertySizes.shrink_to_fit();
@@ -1084,6 +1088,7 @@ namespace Gedim
     converter<< scientific<< "Cell2DSubdivision = "<< _mesh.Cell2DSubdivision<< ";"<< endl;
     converter<< scientific<< "Cell2DMarkers = "<< _mesh.Cell2DMarkers<< ";"<< endl;
     converter<< scientific<< "ActiveCell2D = "<< _mesh.ActiveCell2D<< ";"<< endl;
+		converter<< scientific<< "Cell2DOriginalCell2Ds = "<< _mesh.Cell2DOriginalCell2Ds<< ";"<< endl;
     converter<< scientific<< "UpdatedCell2Ds = "<< _mesh.UpdatedCell2Ds<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyIds = "<< _mesh.Cell2DDoublePropertyIds<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyIndices = "<< _mesh.Cell2DDoublePropertyIndices<< ";"<< endl;
