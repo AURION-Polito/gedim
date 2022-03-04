@@ -142,18 +142,18 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DDoublePropertySize(1, 0), 2);
     EXPECT_EQ(meshDao.Cell2DDoublePropertyValue(1, 0, 0), 15.2);
     EXPECT_EQ(meshDao.Cell2DDoublePropertyValue(1, 0, 1), 17.4);
-		EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(1));
+    EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(1));
     EXPECT_NO_THROW(meshDao.Cell2DAppend(2));
-		EXPECT_EQ(meshDao.Cell2DTotalNumber(), 4);
-		EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(1));
-		EXPECT_NO_THROW(meshDao.Cell2DInsertUpdatedCell2D(1, 2));
-		EXPECT_NO_THROW(meshDao.Cell2DInsertUpdatedCell2D(1, 3));
-		EXPECT_TRUE(meshDao.Cell2DHasOriginalCell2D(3));
-		EXPECT_EQ(meshDao.Cell2DOriginalCell2D(3), 1);
+    EXPECT_EQ(meshDao.Cell2DTotalNumber(), 4);
+    EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(1));
+    EXPECT_NO_THROW(meshDao.Cell2DInsertUpdatedCell2D(1, 2));
+    EXPECT_NO_THROW(meshDao.Cell2DInsertUpdatedCell2D(1, 3));
+    EXPECT_TRUE(meshDao.Cell2DHasOriginalCell2D(3));
+    EXPECT_EQ(meshDao.Cell2DOriginalCell2D(3), 1);
     EXPECT_NO_THROW(meshDao.Cell2DInitializeDoublePropertyValues(2, 0, 1));
     EXPECT_NO_THROW(meshDao.Cell2DInsertDoublePropertyValue(2, 0, 0, 75.2));
     EXPECT_NO_THROW(meshDao.Cell2DRemove(1));
-		EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(2));
+    EXPECT_FALSE(meshDao.Cell2DHasOriginalCell2D(2));
 
     EXPECT_NO_THROW(meshDao.Cell3DsInitialize(2));
     EXPECT_EQ(meshDao.Cell3DTotalNumber(), 2);
