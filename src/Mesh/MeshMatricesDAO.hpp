@@ -580,6 +580,9 @@ namespace Gedim
         Output::Assert(cell2DIndex < Cell2DTotalNumber());
         return _mesh.NumberCell2DEdges[cell2DIndex + 1] - _mesh.NumberCell2DEdges[cell2DIndex];
       }
+
+      vector<unsigned int> Cell2DVertices(const unsigned int& cell2DIndex) const;
+
       inline unsigned int Cell2DVertex(const unsigned int& cell2DIndex,
                                        const unsigned int& vertexIndex) const
       {
@@ -595,6 +598,9 @@ namespace Gedim
         return Cell0DCoordinates(Cell2DVertex(cell2DIndex, vertexIndex));
       }
       Eigen::MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const;
+
+      vector<unsigned int> Cell2DEdges(const unsigned int& cell2DIndex) const;
+
       inline unsigned int Cell2DEdge(const unsigned int& cell2DIndex,
                                      const unsigned int& edgeIndex) const
       {

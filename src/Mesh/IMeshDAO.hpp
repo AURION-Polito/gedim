@@ -532,6 +532,9 @@ namespace Gedim
       /// \return the number of edges of Cell2D
       virtual unsigned int Cell2DNumberEdges(const unsigned int& cell2DIndex ) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
+      /// \return the Cell0D index collections of Cell2D from 0 to Cell0DTotalNumber(), size Cell2DNumberVertices(cell2DIndex)
+      virtual vector<unsigned int> Cell2DVertices(const unsigned int& cell2DIndex) const = 0;
+      /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \param vertexIndex the index of cell0D vertex from 0 to NumberCell2DVertices(cell2DIndex)
       /// \return the Cell0D index of vertex of Cell2D from 0 to Cell0DTotalNumber()
       virtual unsigned int Cell2DVertex(const unsigned int& cell2DIndex,
@@ -544,6 +547,9 @@ namespace Gedim
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the Cell0D coordinates of all the vertices of Cell2D, size 3 x NumberCell2DVertices(cell2DIndex)
       virtual Eigen::MatrixXd Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const = 0;
+      /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
+      /// \return the Cell1D index collections of Cell2D from 0 to Cell1DTotalNumber(), size Cell2DNumberEdges(cell2DIndex)
+      virtual vector<unsigned int> Cell2DEdges(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \param edgeIndex the index of cell1D edge from 0 to NumberCell2DEdges(cell2DIndex)
       /// \return the Cell1D index of edge of Cell2D from 0 to Cell1DTotalNumber()

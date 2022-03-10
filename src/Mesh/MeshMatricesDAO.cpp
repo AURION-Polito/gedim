@@ -670,12 +670,34 @@ namespace Gedim
                        edgesCell0DIndices[e]);
   }
   // ***************************************************************************
+  vector<unsigned int> MeshMatricesDAO::Cell2DVertices(const unsigned int& cell2DIndex) const
+  {
+    const unsigned int numVertices = Cell2DNumberVertices(cell2DIndex);
+
+    vector<unsigned int> vertices(numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+      vertices[v] = _mesh.Cell2DVertices[_mesh.NumberCell2DVertices[cell2DIndex] + v];
+
+    return vertices;
+  }
+  // ***************************************************************************
   MatrixXd MeshMatricesDAO::Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const
   {
     MatrixXd coordinates(3, Cell2DNumberVertices(cell2DIndex));
     for (unsigned int v = 0; v < Cell2DNumberVertices(cell2DIndex); v++)
       coordinates.col(v) << Cell2DVertexCoordinates(cell2DIndex, v);
     return coordinates;
+  }
+  // ***************************************************************************
+  vector<unsigned int> MeshMatricesDAO::Cell2DEdges(const unsigned int& cell2DIndex) const
+  {
+    const unsigned int numEdges = Cell2DNumberEdges(cell2DIndex);
+
+    vector<unsigned int> edges(numEdges);
+    for (unsigned int e = 0; e < numEdges; e++)
+      edges[e] = _mesh.Cell2DEdges[_mesh.NumberCell2DEdges[cell2DIndex] + e];;
+
+    return edges;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInsertUpdatedCell2D(const unsigned int& cell2DIndex,
