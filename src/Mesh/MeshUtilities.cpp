@@ -273,7 +273,7 @@ namespace Gedim
     {
       unsigned int rootCell = cc;
       while (mesh.Cell2DHasOriginalCell2D(rootCell))
-        rootCell = mesh.Cell2DOriginalCell2D(cc);
+        rootCell = mesh.Cell2DOriginalCell2D(rootCell);
 
       rootCell2Ds[cc] = rootCell;
     }
