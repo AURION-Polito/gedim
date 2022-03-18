@@ -338,7 +338,7 @@ namespace Gedim
                 intersection.VertexId = edgeOriginId;
               }
             }
-            break;
+              break;
             case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
             {
               // inside edge intersection
@@ -350,7 +350,7 @@ namespace Gedim
               intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge;
               intersection.EdgeId = e;
             }
-            break;
+              break;
             case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
             {
               // edge end intersection (vertex)
@@ -366,12 +366,12 @@ namespace Gedim
                 intersection.VertexId = edgeEndId;
               }
             }
-            break;
+              break;
             default:
-            continue;
+              continue;
           }
         }
-        break;
+          break;
         default:
           throw runtime_error("Unknwon intersection edge type");
       }
@@ -384,7 +384,7 @@ namespace Gedim
         // no intersection found
         result.Type = IntersectionPolyhedronPlaneResult::Types::None;
       }
-      break;
+        break;
       case 1:
       {
         // one intersection found, single vertex intersection
@@ -397,7 +397,7 @@ namespace Gedim
           result.IntersectionId = v;
         }
       }
-      break;
+        break;
       case 2:
       {
         // two intersections found, edge intersection
@@ -410,7 +410,7 @@ namespace Gedim
           result.IntersectionId = e;
         }
       }
-      break;
+        break;
       default:
       {
         // more than two intersections found, of polyhedron face intersection, or new polygon intersection
@@ -485,8 +485,19 @@ namespace Gedim
           }
         }
       }
-      break;
+        break;
     }
+
+    return result;
+  }
+  // ***************************************************************************
+  GeometryUtilities::IntersectionPolyhedronLineResult GeometryUtilities::IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                                    const Eigen::MatrixXi& polyhedronEdges,
+                                                                                                    const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                                                    const Eigen::Vector3d& lineTangent,
+                                                                                                    const Eigen::Vector3d& lineOrigin) const
+  {
+    IntersectionPolyhedronLineResult result;
 
     return result;
   }
@@ -588,7 +599,7 @@ namespace Gedim
               vertexIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex;
             }
           }
-          break;
+            break;
           case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
           {
             intersections.push_back(IntersectionPolygonCircleResult::Intersection());
@@ -600,7 +611,7 @@ namespace Gedim
             edgeIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Edge;
             edgeIntersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
           }
-          break;
+            break;
           case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
           {
             if (vertexIntersections.find(vertexEnd) == vertexIntersections.end())
@@ -615,9 +626,9 @@ namespace Gedim
               vertexIntersection.IndexType = IntersectionPolygonCircleResult::Intersection::IndexTypes::Vertex;
             }
           }
-          break;
+            break;
           default:
-          continue;
+            continue;
         }
       }
     }
