@@ -1042,7 +1042,7 @@ namespace GedimUnitTesting {
                                                                                              width,
                                                                                              height);
 
-      Eigen::Vector3d lineTangent(0.0, 0.0, 1.0);
+      Eigen::Vector3d lineTangent(1.0, 0.0, 0.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 2.0);
 
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
@@ -1101,6 +1101,8 @@ namespace GedimUnitTesting {
           4);
       ASSERT_EQ(result.PolyhedronVertexIntersections[4].Type,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Intersection);
+      ASSERT_EQ(result.PolyhedronVertexIntersections[4].LineIntersectionIndex,
+          0);
     }
     catch (const exception& exception)
     {

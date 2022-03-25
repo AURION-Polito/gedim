@@ -371,6 +371,7 @@ namespace Gedim
               };
 
               Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
           };
 
           struct PolyhedronEdgeIntersection final
@@ -383,6 +384,7 @@ namespace Gedim
               };
 
               Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
           };
 
           struct PolyhedronVertexIntersection final
@@ -395,6 +397,7 @@ namespace Gedim
               };
 
               Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
           };
 
           struct LineIntersection
@@ -407,7 +410,7 @@ namespace Gedim
                 OnFace = 3, ///< On polyhedron face
               };
 
-              Types PolyhedronType = Types::Unknown;
+              Types PolyhedronType = Types::Unknown; ///< Type of intersection
               unsigned int PolyhedronIndex = 0; ///<  Index of the intersecting element of the Polyhedron (face, edge or vertex index)
               double CurvilinearCoordinate = 0.0; ///< Curvilinear coordinate in the line
           };
