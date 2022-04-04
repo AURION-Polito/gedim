@@ -8,6 +8,8 @@
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
+#include "MeshMatrices_2D_1Cells_Mock.hpp"
+#include "MeshMatrices_2D_2Cells_Mock.hpp"
 
 using namespace testing;
 using namespace std;
@@ -42,6 +44,32 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 1);
+  }
+
+  TEST(TestMeshUtilities, TestFillMesh2DGeometricData)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    GedimUnitTesting::MeshMatrices_2D_2Cells_Mock convexMesh;
+    Gedim::MeshMatricesDAO convexMeshDao(convexMesh.Mesh);
+
+    vector<vector<unsigned int>> meshCell2DToConvexCell2DIndices = { { 0, 1 } };
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::MeshUtilities::MeshGeometricData result = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                                                 meshDao,
+                                                                                                 convexMeshDao,
+                                                                                                 meshCell2DToConvexCell2DIndices);
+    Gedim::MeshUtilities::MeshGeometricData expectedResult;
+    expectedResult.Cell2DsAreas = { 1.0 };
+
+    EXPECT_EQ(result.Cell2DsAreas,
+              expectedResult.Cell2DsAreas);
   }
 }
 
