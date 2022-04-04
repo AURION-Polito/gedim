@@ -80,8 +80,13 @@ namespace Gedim
       /// \return the root cell for each cell2D, size 1xCell2DTotalNumber()
       vector<unsigned int> MeshCell2DRoots(const IMeshDAO& mesh) const;
 
+      /// \brief Fill Mesh2D Geometric Data given a mesh with convex mesh cells
+      /// \param convexMesh the convex mesh
+      /// \return the MeshGeometricData computed
+      MeshGeometricData FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                const IMeshDAO& convexMesh) const;
 
-      /// \brief Fill Mesh2D Geometric Data starting given a mesh and its convex mesh cells
+      /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
       /// \param mesh the mesh
       /// \param convexMesh the convex mesh cells of mesh
       /// \param meshCell2DToConvexCell2DIndices the collection of convex cell2Ds for each mesh cell2D
