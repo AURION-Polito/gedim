@@ -1039,8 +1039,8 @@ namespace GedimUnitTesting {
 
       Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateCubeWithOrigin(origin,
                                                                                              length,
-                                                                                             width,
-                                                                                             height);
+                                                                                             height,
+                                                                                             width);
 
       Eigen::Vector3d lineTangent(1.0, 0.0, 0.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 2.0);
@@ -1077,10 +1077,10 @@ namespace GedimUnitTesting {
 
       Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateCubeWithOrigin(origin,
                                                                                              length,
-                                                                                             width,
-                                                                                             height);
+                                                                                             height,
+                                                                                             width);
 
-      Eigen::Vector3d lineTangent(1.0, 1.0, 0.0);
+      Eigen::Vector3d lineTangent(1.0, 1.0, 1.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 1.0);
 
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
@@ -1103,6 +1103,66 @@ namespace GedimUnitTesting {
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Intersection);
       ASSERT_EQ(result.PolyhedronVertexIntersections[4].LineIntersectionIndex,
           0);
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestIntersectionPolyhedronLine_Cube_TwoIntersections)
+  {
+    // test two intersections with reference cube
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      geometryUtilityConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      Eigen::Vector3d origin(+0.0, +0.0, +0.0);
+      Eigen::Vector3d length(+1.0, +0.0, +0.0);
+      Eigen::Vector3d width(+0.0, +1.0, +0.0);
+      Eigen::Vector3d height(+0.0, +0.0, +1.0);
+
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateCubeWithOrigin(origin,
+                                                                                             length,
+                                                                                             height,
+                                                                                             width);
+
+      Eigen::Vector3d lineTangent(0.0, 0.0, 1.0);
+      Eigen::Vector3d lineOrigin(0.5, 0.5, 0.0);
+
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+                                                                                                                     polyhedron.Edges,
+                                                                                                                     polyhedron.Faces,
+                                                                                                                     lineTangent,
+                                                                                                                     lineOrigin);
+
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections);
+      ASSERT_EQ(result.LineIntersections.size(),
+                2);
+      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+                  0.0));
+      ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
+          Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace);
+      ASSERT_EQ(result.LineIntersections[0].PolyhedronIndex,
+          0);
+      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[1].CurvilinearCoordinate,
+                  0.816496580928));
+      ASSERT_EQ(result.LineIntersections[1].PolyhedronType,
+          Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace);
+      ASSERT_EQ(result.LineIntersections[1].PolyhedronIndex,
+          1);
+      ASSERT_EQ(result.PolyhedronFaceIntersections[0].Type,
+          Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::Intersection);
+      ASSERT_EQ(result.PolyhedronFaceIntersections[0].LineIntersectionIndex,
+          0);
+      ASSERT_EQ(result.PolyhedronFaceIntersections[1].Type,
+          Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::Intersection);
+      ASSERT_EQ(result.PolyhedronFaceIntersections[1].LineIntersectionIndex,
+          1);
     }
     catch (const exception& exception)
     {

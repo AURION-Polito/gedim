@@ -105,8 +105,8 @@ namespace Gedim
 			{
 				if ((endpoint == pointOnHull) ||
 						PointSegmentPosition(points.col(j),
-																 points.col(pointOnHull),
-																 points.col(endpoint)) == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
+                        points.col(pointOnHull),
+                        points.col(endpoint)) == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
 					endpoint = j;
 			}
 			pointOnHull = endpoint;
@@ -117,7 +117,7 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	MatrixXd GeometryUtilities::ExtractPoints(const Eigen::MatrixXd& points,
-																						const vector<unsigned int>& filter) const
+                                              const vector<unsigned int>& filter) const
 	{
 		Eigen::MatrixXd extraction(3, filter.size());
 		for (unsigned int c = 0; c < filter.size(); c++)
@@ -127,7 +127,7 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	vector<Matrix3d> GeometryUtilities::ExtractTriangulationPoints(const Eigen::MatrixXd& points,
-																																 const vector<unsigned int>& pointsTriangulation) const
+                                                                   const vector<unsigned int>& pointsTriangulation) const
 	{
 		const unsigned int numTriangles = pointsTriangulation.size() / 3;
 		vector<Matrix3d> triangulations(numTriangles);
@@ -144,8 +144,8 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	vector<Matrix3d> GeometryUtilities::ExtractTriangulationPointsByExternalPoint(const Eigen::MatrixXd& points,
-																																								const Eigen::Vector3d& externalPoint,
-																																								const vector<unsigned int>& pointsTriangulation) const
+                                                                                  const Eigen::Vector3d& externalPoint,
+                                                                                  const vector<unsigned int>& pointsTriangulation) const
 	{
 		const unsigned int numTriangles = pointsTriangulation.size() / 3;
 		vector<Matrix3d> triangulations(numTriangles);

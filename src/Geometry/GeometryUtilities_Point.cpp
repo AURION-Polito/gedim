@@ -8,16 +8,16 @@ namespace Gedim
 {
 	// ***************************************************************************
 	Eigen::VectorXd GeometryUtilities::PointDistances(const Eigen::MatrixXd& points,
-																										const Eigen::Vector3d& point) const
+                                                      const Eigen::Vector3d& point) const
 	{
 		return (points.colwise() - point).colwise().norm();
 	}
 	// ***************************************************************************
 	vector<unsigned int> GeometryUtilities::FindPointInPoints(const Eigen::MatrixXd& points,
-																														const Eigen::Vector3d& point) const
+                                                              const Eigen::Vector3d& point) const
 	{
 		VectorXd pointDistances = PointDistances(points,
-																						 point);
+                                  point);
 		list<unsigned int> indices;
 		for (unsigned int p = 0; p < pointDistances.size(); p++)
 		{
@@ -29,8 +29,8 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const Vector3d& point,
-																																											 const Vector3d& segmentOrigin,
-																																											 const Vector3d& segmentEnd) const
+                                                                                         const Vector3d& segmentOrigin,
+                                                                                         const Vector3d& segmentEnd) const
 	{
 		const Vector3d segmentTangent = SegmentTangent(segmentOrigin, segmentEnd).normalized();
 		Vector3d pointDirection = (point - segmentOrigin).normalized();
@@ -79,7 +79,7 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition(const Vector3d& point,
-																																												const MatrixXd& polygonVertices) const
+                                                                                          const MatrixXd& polygonVertices) const
 	{
 		Output::Assert(point.rows() == 3 && point.cols() > 0 && PointsAre2D(point));
 
@@ -127,11 +127,10 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	GeometryUtilities::PointCirclePositionResult GeometryUtilities::PointCirclePosition(const Eigen::Vector3d& point,
-																																											const Eigen::Vector3d& circleCenter,
-																																											const double& circleRadius) const
+                                                                                        const Eigen::Vector3d& circleCenter,
+                                                                                        const double& circleRadius) const
 	{
-		CompareTypes comparison = Compare1DValues(circleRadius, PointDistance(circleCenter,
-																																					point));
+        CompareTypes comparison = Compare1DValues(circleRadius, PointDistance(circleCenter, point));
 		if (comparison == CompareTypes::FirstBeforeSecond)
 			return PointCirclePositionResult::Outside;
 		else if (comparison == CompareTypes::Coincident)
@@ -141,8 +140,8 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	vector<GeometryUtilities::PointCirclePositionResult> GeometryUtilities::PointCirclePositions(const Eigen::MatrixXd& points,
-																																															 const Eigen::Vector3d& circleCenter,
-																																															 const double& circleRadius) const
+                                                                                                 const Eigen::Vector3d& circleCenter,
+                                                                                                 const double& circleRadius) const
 	{
 		const unsigned int numVertices = points.cols();
 		vector<PointCirclePositionResult> positions(numVertices);
@@ -150,16 +149,16 @@ namespace Gedim
 		for (unsigned int v = 0; v < numVertices; v++)
 		{
 			positions[v] = PointCirclePosition(points.col(v),
-																				 circleCenter,
-																				 circleRadius);
+            circleCenter,
+            circleRadius);
 		}
 
 		return positions;
 	}
 	// ***************************************************************************
 	vector<bool> GeometryUtilities::PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
-																									 const Eigen::Vector3d& segmentEnd,
-																									 const Eigen::MatrixXd& points) const
+                                                     const Eigen::Vector3d& segmentEnd,
+                                                     const Eigen::MatrixXd& points) const
 	{
 		Output::Assert(points.rows() == 3 && points.cols() > 0);
 		const unsigned int numPoints = points.cols();
