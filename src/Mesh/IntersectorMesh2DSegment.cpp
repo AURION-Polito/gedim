@@ -126,7 +126,7 @@ namespace Gedim
           break;
         }
         default:
-        continue;
+          continue;
       }
 
       if (cellFound)
@@ -182,7 +182,7 @@ namespace Gedim
           break;
         }
         default:
-        continue;
+          continue;
       }
 
       if (cellFound)

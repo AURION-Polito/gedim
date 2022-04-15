@@ -40,6 +40,8 @@ namespace GedimUnitTesting {
 
       // check Compare1DValues
       {
+        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, -7.6547685574189633e-17), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtility.Compare1DValues(-7.6547685574189633e-17, 0.0), Gedim::GeometryUtilities::CompareTypes::Coincident);
         ASSERT_EQ(geometryUtility.Compare1DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
         ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
         ASSERT_EQ(geometryUtility.Compare1DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);

@@ -254,6 +254,34 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
+
+      // check parallel intersection
+      {
+        Eigen::Vector3d segmentOneOrigin(2.3409475899275122e+02, 2.1032887616417568e+02, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentOneEnd(   2.5749609565741929e+02, 1.8464458777130039e+02, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentTwoOrigin(2.5749609556478464e+02, 1.8464458790048394e+02, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentTwoEnd(   1.9112000445373033e+02, 2.5749609588054147e+02, 0.0000000000000000e+00);
+
+        Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+        geometryUtilityConfig.Tolerance = 1.0e-6;
+        Gedim::GeometryUtilities geometryUtilityLocal(geometryUtilityConfig);
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilityLocal.IntersectionSegmentSegment(segmentOneOrigin,
+                                                                                                                            segmentOneEnd,
+                                                                                                                            segmentTwoOrigin,
+                                                                                                                            segmentTwoEnd);
+        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarParallel);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
+        ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
+        ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.35255671401423067) < geometryUtilityConfig.Tolerance);
+        ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
+        ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
+        ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
+      }
     }
     catch (const exception& exception)
     {
