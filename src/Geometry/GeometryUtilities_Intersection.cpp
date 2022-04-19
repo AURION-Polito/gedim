@@ -105,12 +105,12 @@ namespace Gedim
       double checkTwo = t1.cross(secondSegmentEnd - firstSegmentOrigin).norm();
 
 
-      if (!(PointIsAligned(firstSegmentOrigin,
-                           firstSegmentEnd,
-                           secondSegmentOrigin) &&
-            PointIsAligned(firstSegmentOrigin,
-                           firstSegmentEnd,
-                           secondSegmentEnd)))
+      if (!PointIsAligned(firstSegmentOrigin,
+                          firstSegmentEnd,
+                          secondSegmentOrigin) &&
+          !PointIsAligned(firstSegmentOrigin,
+                          firstSegmentEnd,
+                          secondSegmentEnd))
       {
         // segments are parallel on different lines
         result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
