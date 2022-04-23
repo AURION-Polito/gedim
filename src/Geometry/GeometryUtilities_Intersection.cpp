@@ -755,6 +755,16 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::IntersectionPolyhedronsSegmentResult GeometryUtilities::IntersectionPolyhedronsSegment(const vector<GeometryUtilities::Polyhedron>& polyhedrons,
+                                                                                                            const Eigen::Vector3d& segmentOrigin,
+                                                                                                            const Eigen::Vector3d& segmentEnd,
+                                                                                                            const Eigen::Vector3d& segmentTangent) const
+  {
+    GeometryUtilities::IntersectionPolyhedronsSegmentResult result;
+
+    return result;
+  }
+  // ***************************************************************************
   GeometryUtilities::IntersectionSegmentCircleResult GeometryUtilities::IntersectionSegmentCircle(const Eigen::Vector3d& segmentOrigin,
                                                                                                   const Eigen::Vector3d& segmentEnd,
                                                                                                   const Eigen::Vector3d& circleCenter,

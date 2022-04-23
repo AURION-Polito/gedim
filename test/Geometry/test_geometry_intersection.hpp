@@ -1308,6 +1308,107 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestIntersectionPolyhedronSegment_SimpleHexahedronMesh)
+  {
+    // test no intersection with simple hexahedron mesh
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      geometryUtilityConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // create cell3Ds
+      const unsigned int numCell3Ds = 4;
+      vector<Gedim::GeometryUtilities::Polyhedron> cell3Ds(numCell3Ds);
+
+      cell3Ds[0] = geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                        Eigen::Vector3d(0.0, 5.0, 0.0));
+      cell3Ds[1] = geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                        Eigen::Vector3d(0.0, 5.0, 0.0));
+      cell3Ds[2] = geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.5, 0.0),
+                                                        Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                        Eigen::Vector3d(0.0, 5.0, 0.0));
+      cell3Ds[3] = geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                        Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                        Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                        Eigen::Vector3d(0.0, 5.0, 0.0));
+
+      // create segments
+      const unsigned int numSegments = 3;
+      Eigen::MatrixXd segmentOrigins(3, numSegments);
+      Eigen::MatrixXd segmentEnds(3, numSegments);
+      Eigen::MatrixXd segmentTagents(3, numSegments);
+
+      segmentOrigins.col(0)<< 0.25, 0.25, 1.0;
+      segmentEnds.col(0)<< 0.75, 0.75, 0.0;
+
+      segmentOrigins.col(1)<< 0.1, 0.1, 0.5;
+      segmentEnds.col(1)<< 0.0, 0.5, 0.0;
+
+      segmentOrigins.col(2)<< 0.9, 0.9, 0.95;
+      segmentEnds.col(2)<< 0.95, 0.95, 0.65;
+
+      for (unsigned int s = 0; s < numSegments; s++)
+      {
+        segmentTagents.col(s) = geometryUtility.SegmentTangent(segmentOrigins.col(s),
+                                                               segmentEnds.col(s));
+      }
+
+      // intersects
+      vector<Gedim::GeometryUtilities::IntersectionPolyhedronsSegmentResult> result(numSegments);
+      for (unsigned int s = 0; s < numSegments; s++)
+      {
+        result[s] = geometryUtility.IntersectionPolyhedronsSegment(cell3Ds,
+                                                                   segmentOrigins.col(s),
+                                                                   segmentEnds.col(s),
+                                                                   segmentTagents.col(s));
+      }
+
+      // check result
+      ASSERT_EQ(result.size(), numSegments);
+      ASSERT_EQ(result[0].Points.size(), 3);
+      ASSERT_EQ(result[0].Segments.size(), 2);
+      ASSERT_NE(result[0].Points.find(0.0), result[0].Points.end());
+      ASSERT_NE(result[0].Points.find(0.5), result[0].Points.end());
+      ASSERT_NE(result[0].Points.find(1.0), result[0].Points.end());
+      ASSERT_EQ(result[0].Points.at(0.0).Cell3DIndices, vector<unsigned int>({ 0 }));
+      ASSERT_EQ(result[0].Points.at(0.5).Cell3DIndices, vector<unsigned int>({ 0, 1, 2, 3 }));
+      ASSERT_EQ(result[0].Points.at(1.0).Cell3DIndices, vector<unsigned int>({ 3 }));
+      ASSERT_EQ(result[0].Segments[0].Cell3DIndices, vector<unsigned int>({ 0 }));
+      ASSERT_EQ(result[0].Segments[0].Points, vector<double>({ 0.0, 0.5 }));
+      ASSERT_EQ(result[0].Segments[1].Cell3DIndices, vector<unsigned int>({ 3 }));
+      ASSERT_EQ(result[0].Segments[1].Points, vector<double>({ 0.5, 1.0 }));
+
+      ASSERT_EQ(result[1].Points.size(), 2);
+      ASSERT_EQ(result[1].Segments.size(), 1);
+      ASSERT_NE(result[1].Points.find(0.0), result[0].Points.end());
+      ASSERT_NE(result[1].Points.find(1.0), result[0].Points.end());
+      ASSERT_EQ(result[1].Points.at(0.0).Cell3DIndices, vector<unsigned int>({ 0 }));
+      ASSERT_EQ(result[1].Points.at(1.0).Cell3DIndices, vector<unsigned int>({ 0, 2 }));
+      ASSERT_EQ(result[1].Segments[0].Cell3DIndices, vector<unsigned int>({ 0 }));
+      ASSERT_EQ(result[1].Segments[0].Points, vector<double>({ 0.0, 1.0 }));
+
+      ASSERT_EQ(result[2].Points.size(), 2);
+      ASSERT_EQ(result[2].Segments.size(), 1);
+      ASSERT_NE(result[2].Points.find(0.0), result[0].Points.end());
+      ASSERT_NE(result[2].Points.find(1.0), result[0].Points.end());
+      ASSERT_EQ(result[2].Points.at(0.0).Cell3DIndices, vector<unsigned int>({ 3 }));
+      ASSERT_EQ(result[2].Points.at(1.0).Cell3DIndices, vector<unsigned int>({ 3 }));
+      ASSERT_EQ(result[2].Segments[0].Cell3DIndices, vector<unsigned int>({ 3 }));
+      ASSERT_EQ(result[2].Segments[0].Points, vector<double>({ 0.0, 1.0 }));
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_INTERSECTION_H

@@ -422,6 +422,23 @@ namespace Gedim
           vector<PolyhedronFaceIntersection> PolyhedronFaceIntersections = {}; ///< Polyhedron Face intersections, size polyhedron num faces
       };
 
+      struct IntersectionPolyhedronsSegmentResult final
+      {
+          struct IntersectionPoint final
+          {
+              vector<unsigned int> Cell3DIndices = {};
+          };
+
+          struct IntersectionSegment final
+          {
+              vector<double> Points = {};
+              vector<unsigned int> Cell3DIndices = {};
+          };
+
+          map<double, IntersectionPoint> Points;
+          vector<IntersectionSegment> Segments;
+      };
+
       struct IntersectionPolyhedronPlaneResult final
       {
           enum struct Types
@@ -907,6 +924,17 @@ namespace Gedim
                                                                      const Eigen::Vector3d& segmentEnd,
                                                                      const Eigen::Vector3d& segmentTangent,
                                                                      const IntersectionPolyhedronLineResult& polyhedronLineIntersections) const;
+
+      /// \brief Intersection between a collectio of Polyhedrons and a segment
+      /// \param polyhedrons the polyhedron collection
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \param segmentTangent the segment tangent
+      /// \return the intersection result
+      IntersectionPolyhedronsSegmentResult IntersectionPolyhedronsSegment(const vector<Polyhedron>& polyhedrons,
+                                                                          const Eigen::Vector3d& segmentOrigin,
+                                                                          const Eigen::Vector3d& segmentEnd,
+                                                                          const Eigen::Vector3d& segmentTangent) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
