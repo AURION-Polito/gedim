@@ -527,7 +527,6 @@ namespace Gedim
                                  const double& second,
                                  const double& tolerance) const;
     public:
-
       GeometryUtilities(const GeometryUtilitiesConfig& configuration);
       ~GeometryUtilities();
 

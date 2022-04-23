@@ -24,6 +24,19 @@ namespace Gedim
           map<unsigned int, unsigned int> NewCell3DToOldCell3D; ///< each pair is {new Cell3D index, old Cell3D index}
       };
 
+      struct MeshGeometricData final
+      {
+          vector<Eigen::MatrixXd> Cell2DsVertices; ///< cell2D vertices coordinates
+          vector<vector<Eigen::Matrix3d>> Cell2DsTriangulations; ///< cell2D triangulations
+          vector<double> Cell2DsAreas; ///< cell2D areas
+          vector<Eigen::Vector3d> Cell2DsCentroids; ///< cell2D centroids
+          vector<double> Cell2DsDiameters; ///< cell2D diameters
+          vector<vector<bool>> Cell2DsEdgeDirections; ///< cell2D edge directions
+          vector<Eigen::VectorXd> Cell2DsEdgeLengths; ///< cell2D edge lenghts
+          vector<Eigen::MatrixXd> Cell2DsEdgeTangents; ///< cell2D edge tangents
+          vector<Eigen::MatrixXd> Cell2DsEdgeNormals; ///< cell2D edge normals
+      };
+
     public:
       MeshUtilities();
       ~MeshUtilities();
@@ -66,6 +79,22 @@ namespace Gedim
       /// \param mesh the mesh
       /// \return the root cell for each cell2D, size 1xCell2DTotalNumber()
       vector<unsigned int> MeshCell2DRoots(const IMeshDAO& mesh) const;
+
+      /// \brief Fill Mesh2D Geometric Data given a mesh with convex mesh cells
+      /// \param convexMesh the convex mesh
+      /// \return the MeshGeometricData computed
+      MeshGeometricData FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                const IMeshDAO& convexMesh) const;
+
+      /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
+      /// \param mesh the mesh
+      /// \param convexMesh the convex mesh cells of mesh
+      /// \param meshCell2DToConvexCell2DIndices the collection of convex cell2Ds for each mesh cell2D
+      /// \return the MeshGeometricData computed
+      MeshGeometricData FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                const IMeshDAO& mesh,
+                                                const IMeshDAO& convexMesh,
+                                                const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
   };
 
 }

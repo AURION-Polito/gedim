@@ -100,11 +100,13 @@ namespace Gedim
       // segments are parallel
       result.IntersectionLinesType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarParallel;
 
-      // check if are on the same line checking if (x2->x1)x(x3->x1)=(x2->x1)x(x4->x1)=0.0
-      double checkOne = t1.cross(secondSegmentOrigin - firstSegmentOrigin).norm();
-      double checkTwo = t1.cross(secondSegmentEnd - firstSegmentOrigin).norm();
-
-      if (!(IsValue1DZero(checkOne) && IsValue1DZero(checkTwo)))
+      // check if are on the same line
+      if (!PointIsAligned(firstSegmentOrigin,
+                          firstSegmentEnd,
+                          secondSegmentOrigin) &&
+          !PointIsAligned(firstSegmentOrigin,
+                          firstSegmentEnd,
+                          secondSegmentEnd))
       {
         // segments are parallel on different lines
         result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;

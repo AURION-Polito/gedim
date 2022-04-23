@@ -281,4 +281,201 @@ namespace Gedim
     return rootCell2Ds;
   }
   // ***************************************************************************
+  MeshUtilities::MeshGeometricData MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                                          const IMeshDAO& convexMesh) const
+  {
+    MeshGeometricData result;
+
+    result.Cell2DsVertices.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsTriangulations.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsAreas.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsCentroids.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsDiameters.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeDirections.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeLengths.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeTangents.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeNormals.resize(convexMesh.Cell2DTotalNumber());
+
+    for (unsigned int c = 0; c < convexMesh.Cell2DTotalNumber(); c++)
+    {
+      const unsigned int& domainCell2DIndex = c;
+
+      // Extract original cell2D geometric information
+      vector<Eigen::Matrix3d> convexCell2DTriangulationPoints;
+      double convexCell2DArea;
+      Eigen::Vector3d convexCell2DCentroid;
+
+      const Eigen::MatrixXd convexCell2DVertices = convexMesh.Cell2DVerticesCoordinates(domainCell2DIndex);
+
+      // compute original cell2D triangulation
+      const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+      const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
+                                                                                            convexCell2DUnalignedVerticesFilter);
+
+      const vector<unsigned int> convexCell2DTriangulationFiltered = geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
+      vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+      for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
+        convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
+
+      convexCell2DTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(convexCell2DVertices,
+                                                                                     convexCell2DTriangulation);
+
+      const unsigned int& numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
+      unsigned int cell2DTriangulationSize = numConvexCell2DTriangulation;
+
+      // compute original cell2D area and centroids
+      Eigen::VectorXd convexCell2DTriangulationAreas(numConvexCell2DTriangulation);
+      Eigen::MatrixXd convexCell2DTriangulationCentroids(3, numConvexCell2DTriangulation);
+      for (unsigned int cct = 0; cct < numConvexCell2DTriangulation; cct++)
+      {
+        convexCell2DTriangulationAreas[cct] = geometryUtilities.PolygonArea(convexCell2DTriangulationPoints[cct]);
+        convexCell2DTriangulationCentroids.col(cct) = geometryUtilities.PolygonCentroid(convexCell2DTriangulationPoints[cct],
+                                                                                        convexCell2DTriangulationAreas[cct]);
+      }
+
+      convexCell2DArea = convexCell2DTriangulationAreas.sum();
+      convexCell2DCentroid = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
+                                                               convexCell2DTriangulationAreas,
+                                                               convexCell2DArea);
+
+      result.Cell2DsVertices[c] = convexCell2DVertices;
+
+      // Compute cell2D triangulation from original cell2Ds
+      result.Cell2DsTriangulations[c].resize(cell2DTriangulationSize);
+      unsigned int triangulationCounter = 0;
+      for (unsigned int cct = 0; cct < convexCell2DTriangulationPoints.size(); cct++)
+        result.Cell2DsTriangulations[c][triangulationCounter++] = convexCell2DTriangulationPoints[cct];
+
+      result.Cell2DsAreas[c] = convexCell2DArea;
+      result.Cell2DsCentroids[c] = convexCell2DCentroid;
+      result.Cell2DsDiameters[c] = geometryUtilities.PolygonDiameter(result.Cell2DsVertices[c]);
+
+      result.Cell2DsEdgeDirections[c].resize(convexMesh.Cell2DNumberEdges(domainCell2DIndex));
+      for (unsigned int e = 0; e < convexMesh.Cell2DNumberEdges(domainCell2DIndex); e++)
+      {
+        const unsigned int origin = convexMesh.Cell2DVertex(domainCell2DIndex, e);
+        const unsigned int end = convexMesh.Cell2DVertex(domainCell2DIndex,
+                                                         (e + 1) % convexMesh.Cell2DNumberEdges(domainCell2DIndex));
+
+        result.Cell2DsEdgeDirections[c][e] = convexMesh.Cell1DExists(origin,
+                                                                     end);
+      }
+
+      result.Cell2DsEdgeLengths[c] = geometryUtilities.PolygonEdgeLengths(result.Cell2DsVertices[c]);
+      result.Cell2DsEdgeTangents[c] = geometryUtilities.PolygonEdgeTangents(result.Cell2DsVertices[c]);
+      result.Cell2DsEdgeNormals[c] = geometryUtilities.PolygonEdgeNormals(result.Cell2DsVertices[c]);
+    }
+
+    return result;
+  }
+  // ***************************************************************************
+  MeshUtilities::MeshGeometricData MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                                          const IMeshDAO& mesh,
+                                                                          const IMeshDAO& convexMesh,
+                                                                          const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const
+  {
+    MeshGeometricData result;
+
+    result.Cell2DsVertices.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsTriangulations.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsAreas.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsCentroids.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsDiameters.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeDirections.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeLengths.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeTangents.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgeNormals.resize(mesh.Cell2DTotalNumber());
+
+    for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)
+    {
+      const unsigned int& domainCell2DIndex = c;
+      const vector<unsigned int>& domainConvexCell2DIndices = meshCell2DToConvexCell2DIndices[domainCell2DIndex];
+      const unsigned int& numConvexCells = domainConvexCell2DIndices.size();
+
+      // Get domain cell2D geometry information
+      map<unsigned int, unsigned int> cell2DVerticesToPosition;
+      for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(domainCell2DIndex); v++)
+        cell2DVerticesToPosition.insert(pair<unsigned int, unsigned int>(mesh.Cell2DVertex(domainCell2DIndex,
+                                                                                           v),
+                                                                         v));
+
+      // Extract original cell2D geometric information
+      unsigned int cell2DTriangulationSize = 0;
+      vector<vector<Eigen::Matrix3d>> convexCell2DTriangulationPoints(numConvexCells);
+      Eigen::VectorXd convexCell2DAreas(numConvexCells);
+      Eigen::MatrixXd convexCell2DCentroids(3, numConvexCells);
+
+      for (unsigned int cc = 0; cc < numConvexCells; cc++)
+      {
+        const unsigned int& domainConvexCell2DIndex = domainConvexCell2DIndices[cc];
+        const Eigen::MatrixXd convexCell2DVertices = convexMesh.Cell2DVerticesCoordinates(domainConvexCell2DIndex);
+
+        // compute original cell2D triangulation
+        const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+        const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
+                                                                                              convexCell2DUnalignedVerticesFilter);
+
+        const vector<unsigned int> convexCell2DTriangulationFiltered = geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
+        vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+        for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
+          convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
+
+        convexCell2DTriangulationPoints[cc] = geometryUtilities.ExtractTriangulationPoints(convexCell2DVertices,
+                                                                                           convexCell2DTriangulation);
+
+        const unsigned int& numConvexCell2DTriangulation = convexCell2DTriangulationPoints[cc].size();
+        cell2DTriangulationSize += numConvexCell2DTriangulation;
+
+        // compute original cell2D area and centroids
+        Eigen::VectorXd convexCell2DTriangulationAreas(numConvexCell2DTriangulation);
+        Eigen::MatrixXd convexCell2DTriangulationCentroids(3, numConvexCell2DTriangulation);
+        for (unsigned int cct = 0; cct < numConvexCell2DTriangulation; cct++)
+        {
+          convexCell2DTriangulationAreas[cct] = geometryUtilities.PolygonArea(convexCell2DTriangulationPoints[cc][cct]);
+          convexCell2DTriangulationCentroids.col(cct) = geometryUtilities.PolygonCentroid(convexCell2DTriangulationPoints[cc][cct],
+                                                                                          convexCell2DTriangulationAreas[cct]);
+        }
+
+        convexCell2DAreas[cc] = convexCell2DTriangulationAreas.sum();
+        convexCell2DCentroids.col(cc) = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
+                                                                          convexCell2DTriangulationAreas,
+                                                                          convexCell2DAreas[cc]);
+      }
+
+      result.Cell2DsVertices[c] = mesh.Cell2DVerticesCoordinates(domainCell2DIndex);
+
+      // Compute cell2D triangulation from original cell2Ds
+      result.Cell2DsTriangulations[c].resize(cell2DTriangulationSize);
+      unsigned int triangulationCounter = 0;
+      for (unsigned int cc = 0; cc < numConvexCells; cc++)
+      {
+        for (unsigned int cct = 0; cct < convexCell2DTriangulationPoints[cc].size(); cct++)
+          result.Cell2DsTriangulations[c][triangulationCounter++] = convexCell2DTriangulationPoints[cc][cct];
+      }
+
+      result.Cell2DsAreas[c] = convexCell2DAreas.sum();
+      result.Cell2DsCentroids[c] = geometryUtilities.PolygonCentroid(convexCell2DCentroids,
+                                                                     convexCell2DAreas,
+                                                                     result.Cell2DsAreas[c]);
+      result.Cell2DsDiameters[c] = geometryUtilities.PolygonDiameter(result.Cell2DsVertices[c]);
+
+      result.Cell2DsEdgeDirections[c].resize(mesh.Cell2DNumberEdges(domainCell2DIndex));
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(domainCell2DIndex); e++)
+      {
+        const unsigned int origin = mesh.Cell2DVertex(domainCell2DIndex, e);
+        const unsigned int end = mesh.Cell2DVertex(domainCell2DIndex,
+                                                   (e + 1) % mesh.Cell2DNumberEdges(domainCell2DIndex));
+
+        result.Cell2DsEdgeDirections[c][e] = mesh.Cell1DExists(origin,
+                                                               end);
+      }
+
+      result.Cell2DsEdgeLengths[c] = geometryUtilities.PolygonEdgeLengths(result.Cell2DsVertices[c]);
+      result.Cell2DsEdgeTangents[c] = geometryUtilities.PolygonEdgeTangents(result.Cell2DsVertices[c]);
+      result.Cell2DsEdgeNormals[c] = geometryUtilities.PolygonEdgeNormals(result.Cell2DsVertices[c]);
+    }
+
+    return result;
+  }
+  // ***************************************************************************
 }
