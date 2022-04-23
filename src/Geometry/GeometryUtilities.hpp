@@ -882,17 +882,31 @@ namespace Gedim
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
       /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
-      /// \param planeNormal the plane normal normalized
-      /// \param planeOrigin the plane origin
-      /// \param planeRotationMatrix the plane rotation from 3D to 2D
-      /// \param planeTranslation the plane translation vector
+      /// \param lineTangent the line tangent
+      /// \param lineOrigin the line origin
       /// \return the intersection result
-      /// \note works only with convex polyhedra
       IntersectionPolyhedronLineResult IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
                                                                   const Eigen::MatrixXi& polyhedronEdges,
                                                                   const vector<Eigen::MatrixXi> polyhedronFaces,
                                                                   const Eigen::Vector3d& lineTangent,
                                                                   const Eigen::Vector3d& lineOrigin) const;
+
+      /// \brief Intersection between a Polyhedron and a segment
+      /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
+      /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
+      /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \param segmentTangent the segment tangent
+      /// \param polyhedronLineIntersections the intersection between the polyhedron and the line of the segment
+      /// \return the intersection result
+      IntersectionPolyhedronLineResult IntersectionPolyhedronSegment(const Eigen::MatrixXd& polyhedronVertices,
+                                                                     const Eigen::MatrixXi& polyhedronEdges,
+                                                                     const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                     const Eigen::Vector3d& segmentOrigin,
+                                                                     const Eigen::Vector3d& segmentEnd,
+                                                                     const Eigen::Vector3d& segmentTangent,
+                                                                     const IntersectionPolyhedronLineResult& polyhedronLineIntersections) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point

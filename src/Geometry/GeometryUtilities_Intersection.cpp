@@ -521,72 +521,72 @@ namespace Gedim
     bool flag = false;
 
     for (auto& vertexIntersection : result.PolyhedronVertexIntersections)
-          vertexIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::NoIntersection;
+      vertexIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::NoIntersection;
     for (auto& faceIntersection : result.PolyhedronFaceIntersections)
-          faceIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::NoIntersection;
+      faceIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::NoIntersection;
 
     //scorro i vertici e controllo se ci sono intersezioni
     for (unsigned int i=0; i<numPolyhedronVertices; i++)
     {
-        //controllo se il vertice sta nella retta e metto flag = true
-        //casi due componenti della tangente nulle
-        if (lineTangent(1)==0 && lineTangent(2)==0 &&
-            polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(2,i)==lineOrigin(2))
+      //controllo se il vertice sta nella retta e metto flag = true
+      //casi due componenti della tangente nulle
+      if (lineTangent(1)==0 && lineTangent(2)==0 &&
+          polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(2,i)==lineOrigin(2))
+      {
+        flag = true;
+      }
+      else if (lineTangent(0)==0 && lineTangent(1)==0 &&
+               polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(0,i)==lineOrigin(0))
+      {
+        flag = true;
+      }
+      else if (lineTangent(0)==0 && lineTangent(2)==0 &&
+               polyhedronVertices(0,i)==lineOrigin(0) && polyhedronVertices(2,i)==lineOrigin(2))
+      {
+        flag = true;
+      }
+      // una componente nulla
+      else if (lineTangent(0)==0 && polyhedronVertices(0,i)==lineOrigin(0) &&
+               lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2)))
+      {
+        flag = true;
+      }
+      else if (lineTangent(1)==0 && polyhedronVertices(1,i)==lineOrigin(1) &&
+               lineTangent(2)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(2,i)-lineOrigin(2)))
+      {
+        flag = true;
+      }
+      else if (lineTangent(2)==0 && polyhedronVertices(2,i)==lineOrigin(2) &&
+               lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1)))
+      {
+        flag = true;
+      }
+      // se sono in uno dei casi precedenti oppure caso nessuna componente nulla
+      if (flag == true || (lineTangent(0)!=0 && lineTangent(1)!=0 && lineTangent(2)!=0))
+      {
+        if (flag == true || (lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1))
+                             && lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2))))
         {
-            flag = true;
-        }
-        else if (lineTangent(0)==0 && lineTangent(1)==0 &&
-            polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(0,i)==lineOrigin(0))
-        {
-            flag = true;
-        }
-        else if (lineTangent(0)==0 && lineTangent(2)==0 &&
-            polyhedronVertices(0,i)==lineOrigin(0) && polyhedronVertices(2,i)==lineOrigin(2))
-        {
-            flag = true;
-        }
-        // una componente nulla
-        else if (lineTangent(0)==0 && polyhedronVertices(0,i)==lineOrigin(0) &&
-                 lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2)))
-        {
-            flag = true;
-        }
-        else if (lineTangent(1)==0 && polyhedronVertices(1,i)==lineOrigin(1) &&
-                 lineTangent(2)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(2,i)-lineOrigin(2)))
-        {
-            flag = true;
-        }
-        else if (lineTangent(2)==0 && polyhedronVertices(2,i)==lineOrigin(2) &&
-                 lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1)))
-        {
-            flag = true;
-        }
-        // se sono in uno dei casi precedenti oppure caso nessuna componente nulla
-        if (flag == true || (lineTangent(0)!=0 && lineTangent(1)!=0 && lineTangent(2)!=0))
-        {
-            if (flag == true || (lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1))
-                 && lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2))))
-             {
-                 // aggiorno la lista dei vertici segnando che nel vertice che sto considerando c'è intersezione e scrivo il numero dell'intersezione
-                 result.PolyhedronVertexIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Intersection;
-                 result.PolyhedronVertexIntersections[i].LineIntersectionIndex = numberOfIntersections;
+          // aggiorno la lista dei vertici segnando che nel vertice che sto considerando c'è intersezione e scrivo il numero dell'intersezione
+          result.PolyhedronVertexIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Intersection;
+          result.PolyhedronVertexIntersections[i].LineIntersectionIndex = numberOfIntersections;
 
-                 // aggiorno le informazioni dal punto di vista della retta
-                 result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = 0.0;
-                 result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnVertex;
-                 result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
+          // aggiorno le informazioni dal punto di vista della retta
+          result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = 0.0;
+          result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnVertex;
+          result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
 
-                 vertIntersection.push_back(i);
+          vertIntersection.push_back(i);
 
-                 numberOfIntersections++;
-                 flag = false;
-             }
-             else
-             {
-                 result.PolyhedronVertexIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::NoIntersection;
-                 result.PolyhedronVertexIntersections[i].LineIntersectionIndex = 0;
-             }
+          numberOfIntersections++;
+          flag = false;
         }
+        else
+        {
+          result.PolyhedronVertexIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::NoIntersection;
+          result.PolyhedronVertexIntersections[i].LineIntersectionIndex = 0;
+        }
+      }
     }
 
     //scorro i lati e controllo se ci sono intersezioni
@@ -595,8 +595,8 @@ namespace Gedim
     double max = distance(0);
     for (unsigned int i=1; i<numPolyhedronVertices; i++)
     {
-         if (distance(i)>max)
-             max = distance(i);
+      if (distance(i)>max)
+        max = distance(i);
     }
 
     //calcolo l'estremo della retta, essendo sicura che è fuori dal poliedro
@@ -604,144 +604,153 @@ namespace Gedim
     // per ogni lato salvo origine e fine
     for (unsigned int i=0; i<numPolyhedronEdges; i++)
     {
-         const Eigen::Vector3d& edgeOrigin = polyhedronVertices.col(polyhedronEdges(0,i));
-         const Eigen::Vector3d& edgeEnd = polyhedronVertices.col(polyhedronEdges(1,i));
+      const Eigen::Vector3d& edgeOrigin = polyhedronVertices.col(polyhedronEdges(0,i));
+      const Eigen::Vector3d& edgeEnd = polyhedronVertices.col(polyhedronEdges(1,i));
 
-         GeometryUtilitiesConfig geometryUtilityConfig;
-         GeometryUtilities geometryUtility(geometryUtilityConfig);
-         GeometryUtilities::IntersectionSegmentSegmentResult r = geometryUtility.IntersectionSegmentSegment(edgeOrigin, edgeEnd,
-                                                                                                            lineOrigin, s2);
-         // se ho un'intersezione
-         if (r.IntersectionSegmentsType == GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
-         {
-             // se l'intersezione è interna al segmento (se è sui vertici l'ho già considerata)
-             if (r.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::InsideSegment)
-             {
-                 double c = r.SecondSegmentIntersections[0].CurvilinearCoordinate;
-                 result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = c;
-                 result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnEdge;
-                 result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
+      GeometryUtilitiesConfig geometryUtilityConfig;
+      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      GeometryUtilities::IntersectionSegmentSegmentResult r = geometryUtility.IntersectionSegmentSegment(edgeOrigin, edgeEnd,
+                                                                                                         lineOrigin, s2);
+      // se ho un'intersezione
+      if (r.IntersectionSegmentsType == GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+      {
+        // se l'intersezione è interna al segmento (se è sui vertici l'ho già considerata)
+        if (r.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::InsideSegment)
+        {
+          double c = r.SecondSegmentIntersections[0].CurvilinearCoordinate;
+          result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = c;
+          result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnEdge;
+          result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
 
-                 result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::Intersection;
-                 result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = numberOfIntersections;
+          result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::Intersection;
+          result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = numberOfIntersections;
 
-                 edgeIntersection.push_back(i);
-                 numberOfIntersections++;
-             }
-             // se non è all'interno del segmento
-             else
-             {
-                 result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::NoIntersection;
-                 result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = 0;
-             }
-         }
-         // se non è intersezione singola
-         else
-         {
-             result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::NoIntersection;
-             result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = 0;
-         }
+          edgeIntersection.push_back(i);
+          numberOfIntersections++;
+        }
+        // se non è all'interno del segmento
+        else
+        {
+          result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::NoIntersection;
+          result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = 0;
+        }
+      }
+      // se non è intersezione singola
+      else
+      {
+        result.PolyhedronEdgeIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::NoIntersection;
+        result.PolyhedronEdgeIntersections[i].LineIntersectionIndex = 0;
+      }
     }
 
     //scorro le facce e controllo se ci sono intersezioni
     for (unsigned int i=0; i<numPolyhedronFaces; i++)
     {
-         //prendo il primo vertice della faccia come origine del piano e salvo gli altri indici
-         const int a = polyhedronFaces[i](0,0); //contiene indice 0
-         const int b = polyhedronFaces[i](0,1); //1
-         const int c = polyhedronFaces[i](0,2);
-         const int d = polyhedronFaces[i](0,3);
-         const Eigen::Vector3d& planeOrigin = polyhedronVertices.col(a);
-         Eigen::Vector3d x(+1.0, +0.0, +0.0);
-         Eigen::Vector3d y(+0.0, +1.0, +0.0);
-         Eigen::Vector3d z(+0.0, +0.0, +1.0);
-         Eigen::Vector3d planeNormal;
+      //prendo il primo vertice della faccia come origine del piano e salvo gli altri indici
+      const int a = polyhedronFaces[i](0,0); //contiene indice 0
+      const int b = polyhedronFaces[i](0,1); //1
+      const int c = polyhedronFaces[i](0,2);
+      const int d = polyhedronFaces[i](0,3);
+      const Eigen::Vector3d& planeOrigin = polyhedronVertices.col(a);
+      Eigen::Vector3d x(+1.0, +0.0, +0.0);
+      Eigen::Vector3d y(+0.0, +1.0, +0.0);
+      Eigen::Vector3d z(+0.0, +0.0, +1.0);
+      Eigen::Vector3d planeNormal;
 
-         //calcolo la normale alla faccia
-         //se i vertici della faccia hanno stessa coordinata x
-         if (polyhedronVertices(0,a) == polyhedronVertices(0,b) && polyhedronVertices(0,a) == polyhedronVertices(0,c) && polyhedronVertices(0,a) == polyhedronVertices(0,d))
-             planeNormal = x;
-         //se i vertici della faccia hanno stessa coordinata y
-         else if (polyhedronVertices(1,a) == polyhedronVertices(1,b) && polyhedronVertices(1,a) == polyhedronVertices(1,c) && polyhedronVertices(1,a) == polyhedronVertices(1,d))
-                  planeNormal = y;
-         //se i vertici della faccia hanno stessa coordinata z
-         else if (polyhedronVertices(2,a) == polyhedronVertices(2,b) && polyhedronVertices(2,a) == polyhedronVertices(2,c) && polyhedronVertices(2,a) == polyhedronVertices(2,d))
-                  planeNormal = z;
+      //calcolo la normale alla faccia
+      //se i vertici della faccia hanno stessa coordinata x
+      if (polyhedronVertices(0,a) == polyhedronVertices(0,b) && polyhedronVertices(0,a) == polyhedronVertices(0,c) && polyhedronVertices(0,a) == polyhedronVertices(0,d))
+        planeNormal = x;
+      //se i vertici della faccia hanno stessa coordinata y
+      else if (polyhedronVertices(1,a) == polyhedronVertices(1,b) && polyhedronVertices(1,a) == polyhedronVertices(1,c) && polyhedronVertices(1,a) == polyhedronVertices(1,d))
+        planeNormal = y;
+      //se i vertici della faccia hanno stessa coordinata z
+      else if (polyhedronVertices(2,a) == polyhedronVertices(2,b) && polyhedronVertices(2,a) == polyhedronVertices(2,c) && polyhedronVertices(2,a) == polyhedronVertices(2,d))
+        planeNormal = z;
 
-         GeometryUtilitiesConfig geometryUtilityConfig;
-         GeometryUtilities geometryUtility(geometryUtilityConfig);
-         GeometryUtilities::IntersectionSegmentPlaneResult r = geometryUtility.IntersectionSegmentPlane(lineOrigin, s2,
-                                                                                                        planeNormal, planeOrigin);
-         // se c'è intersezione con il piano contenente la faccia
-         if (r.Type == GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection)
-         {
-             // salvo la coord curvilinea
-             double coord_curv = r.SingleIntersection.CurvilinearCoordinate;
-             // calcolo le coordinate di intersezione
-             Eigen::Vector3d inters;
-             inters = lineOrigin + coord_curv*(s2-lineOrigin);
-             //Eigen::MatrixXd polygonVertices(3,4);
-             //polygonVertices.col(0) = polyhedronVertices.col(a);
-             //polygonVertices.col(1) = polyhedronVertices.col(b);
-             //polygonVertices.col(2) = polyhedronVertices.col(c);
-             //polygonVertices.col(3) = polyhedronVertices.col(d);
+      GeometryUtilitiesConfig geometryUtilityConfig;
+      GeometryUtilities geometryUtility(geometryUtilityConfig);
+      GeometryUtilities::IntersectionSegmentPlaneResult r = geometryUtility.IntersectionSegmentPlane(lineOrigin, s2,
+                                                                                                     planeNormal, planeOrigin);
+      // se c'è intersezione con il piano contenente la faccia
+      if (r.Type == GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection)
+      {
+        // salvo la coord curvilinea
+        double coord_curv = r.SingleIntersection.CurvilinearCoordinate;
+        // calcolo le coordinate di intersezione
+        Eigen::Vector3d inters;
+        inters = lineOrigin + coord_curv*(s2-lineOrigin);
+        //Eigen::MatrixXd polygonVertices(3,4);
+        //polygonVertices.col(0) = polyhedronVertices.col(a);
+        //polygonVertices.col(1) = polyhedronVertices.col(b);
+        //polygonVertices.col(2) = polyhedronVertices.col(c);
+        //polygonVertices.col(3) = polyhedronVertices.col(d);
 
-             //GeometryUtilities::PointPolygonPositionResult s = geometryUtility.PointPolygonPosition(inters,
-             //                                                                                       polygonVertices);
+        //GeometryUtilities::PointPolygonPositionResult s = geometryUtility.PointPolygonPosition(inters,
+        //                                                                                       polygonVertices);
 
-             //if (s.Type == GeometryUtilities::PointPolygonPositionResult::Types::Inside)
+        //if (s.Type == GeometryUtilities::PointPolygonPositionResult::Types::Inside)
 
 
-             // controllo se l'intersezione è interna alla faccia in base alla posizione della faccia (in base alla normale)
-             flag = false; //se è interna diventa true
-             if (planeNormal==x)
-             {
-                 if (inters(1)>polyhedronVertices(1,0)&&inters(1)<polyhedronVertices(1,3) &&
-                     inters(2)>polyhedronVertices(2,0)&&inters(2)<polyhedronVertices(2,4))
-                     flag = true;
-             }
-             else if (planeNormal==y)
-             {
-                 if (inters(0)>polyhedronVertices(0,0)&&inters(0)<polyhedronVertices(0,1) &&
-                     inters(2)>polyhedronVertices(2,0)&&inters(2)<polyhedronVertices(2,4))
-                     flag = true;
-             }
-             else if (planeNormal==z)
-             {
-                 if (inters(0)>polyhedronVertices(0,0)&&inters(0)<polyhedronVertices(0,1) &&
-                     inters(1)>polyhedronVertices(1,0)&&inters(1)<polyhedronVertices(1,3))
-                     flag = true;
-             }
-             // se è interna alla faccia, aggiungo le informazioni relative all'intersezione
-             if (flag==true)
-             {
-                 result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = coord_curv;
-                 result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace;
-                 result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
+        // controllo se l'intersezione è interna alla faccia in base alla posizione della faccia (in base alla normale)
+        flag = false; //se è interna diventa true
+        if (planeNormal==x)
+        {
+          if (inters(1)>polyhedronVertices(1,0)&&inters(1)<polyhedronVertices(1,3) &&
+              inters(2)>polyhedronVertices(2,0)&&inters(2)<polyhedronVertices(2,4))
+            flag = true;
+        }
+        else if (planeNormal==y)
+        {
+          if (inters(0)>polyhedronVertices(0,0)&&inters(0)<polyhedronVertices(0,1) &&
+              inters(2)>polyhedronVertices(2,0)&&inters(2)<polyhedronVertices(2,4))
+            flag = true;
+        }
+        else if (planeNormal==z)
+        {
+          if (inters(0)>polyhedronVertices(0,0)&&inters(0)<polyhedronVertices(0,1) &&
+              inters(1)>polyhedronVertices(1,0)&&inters(1)<polyhedronVertices(1,3))
+            flag = true;
+        }
+        // se è interna alla faccia, aggiungo le informazioni relative all'intersezione
+        if (flag==true)
+        {
+          result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = coord_curv;
+          result.LineIntersections[numberOfIntersections].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace;
+          result.LineIntersections[numberOfIntersections].PolyhedronIndex = i;
 
-                 result.PolyhedronFaceIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::Intersection;
-                 result.PolyhedronFaceIntersections[i].LineIntersectionIndex = numberOfIntersections;
+          result.PolyhedronFaceIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::Intersection;
+          result.PolyhedronFaceIntersections[i].LineIntersectionIndex = numberOfIntersections;
 
-                 faceIntersection.push_back(i);
-                 numberOfIntersections++;
-             }
-             else
-             {
-                 result.PolyhedronFaceIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::NoIntersection;
-                 result.PolyhedronFaceIntersections[i].LineIntersectionIndex = 0;
-             }
-         }
-     }
+          faceIntersection.push_back(i);
+          numberOfIntersections++;
+        }
+        else
+        {
+          result.PolyhedronFaceIntersections[i].Type = GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::NoIntersection;
+          result.PolyhedronFaceIntersections[i].LineIntersectionIndex = 0;
+        }
+      }
+    }
 
     // in base al numero di intersezioni trovate, aggiorno il tipo
     if (numberOfIntersections==0)
-        result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::None;
+      result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::None;
     else if (numberOfIntersections==1)
-        result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection;
+      result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection;
     else if (numberOfIntersections==2)
-        result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections;
+      result.Type = GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections;
 
     result.LineIntersections.resize(numberOfIntersections);
+
+    return result;
+  }
+  // ***************************************************************************
+  GeometryUtilities::IntersectionPolyhedronLineResult GeometryUtilities::IntersectionPolyhedronSegment(const Eigen::MatrixXd& polyhedronVertices, const Eigen::MatrixXi& polyhedronEdges, const vector<Eigen::MatrixXi> polyhedronFaces, const Eigen::Vector3d& segmentOrigin, const Eigen::Vector3d& segmentEnd, const Eigen::Vector3d& segmentTangent, const IntersectionPolyhedronLineResult& polyhedronLineIntersections) const
+  {
+    IntersectionPolyhedronLineResult result;
+
+    // TODO: add implementation
 
     return result;
   }
