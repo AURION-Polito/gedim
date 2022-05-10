@@ -52,7 +52,7 @@ namespace Gedim
 		Vector3d normalTangent(segmentTangent.y(), -segmentTangent.x(), 0.0);
 
 		if (IsValue1DPositive(pointDirection.dot(normalTangent)))
-			return PointSegmentPositionTypes::RightTheSegment;
+            return PointSegmentPositionTypes::RightTheSegment;
 		else
 			return PointSegmentPositionTypes::LeftTheSegment;
 	}
