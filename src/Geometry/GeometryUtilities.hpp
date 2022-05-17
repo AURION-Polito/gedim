@@ -408,6 +408,7 @@ namespace Gedim
                 OnVertex = 1, ///< On polyhedron vertex
                 OnEdge = 2, ///< On polyhedron edge
                 OnFace = 3, ///< On polyhedron face
+                Inside = 4, ///< Inside polyhedron
               };
 
               Types PolyhedronType = Types::Unknown; ///< Type of intersection

@@ -780,6 +780,27 @@ namespace Gedim
 
             numIntersSegm++;
         }
+        if (numIntersLine > numIntersSegm)
+        {
+            if (segmentOrigin(0)<polyhedronVertices(0,1) && segmentOrigin[0]>polyhedronVertices(0,0) &&
+                segmentOrigin(1)<polyhedronVertices(1,3) && segmentOrigin[1]>polyhedronVertices(1,0) &&
+                segmentOrigin(2)<polyhedronVertices(2,4) && segmentOrigin[2]>polyhedronVertices(2,0))
+            {
+                result.LineIntersections[numIntersSegm].CurvilinearCoordinate = 0.0;
+                result.LineIntersections[numIntersSegm].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::Inside;
+                result.LineIntersections[numIntersSegm].PolyhedronIndex = 0;
+                numIntersSegm++;
+            }
+            if (segmentEnd(0)<polyhedronVertices(0,1) && segmentEnd[0]>polyhedronVertices(0,0) &&
+                segmentEnd(1)<polyhedronVertices(1,3) && segmentEnd[1]>polyhedronVertices(1,0) &&
+                segmentEnd(2)<polyhedronVertices(2,4) && segmentEnd[2]>polyhedronVertices(2,0))
+            {
+                result.LineIntersections[numIntersSegm].CurvilinearCoordinate = 1.0;
+                result.LineIntersections[numIntersSegm].PolyhedronType = GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::Inside;
+                result.LineIntersections[numIntersSegm].PolyhedronIndex = 0;
+                numIntersSegm++;
+            }
+        }
     }
 
     if (numIntersSegm==0)
@@ -811,7 +832,6 @@ namespace Gedim
     flag[0] = false;
     flag[1] = false;
     int inters = 0;
-    //result.IntersPoints.resize(numCelle);
     intersPoints.resize(numCelle);
     vector<vector<double>> estremiSegm;
     vector<vector<unsigned int>> celleInComune; //prima riga celle in comune per il primo segmento, seconda riga per il secondo segmento
@@ -861,9 +881,10 @@ namespace Gedim
                     else
                         coordCurv.push_back(rs.LineIntersections[k].CurvilinearCoordinate);
                     cells[n].push_back(i);
-                    n++; 
+                    n++;
                 }
             }
+
         }
         flag[0] = false;
         flag[1] = false;
@@ -871,7 +892,6 @@ namespace Gedim
 
     for (unsigned int i=0; i<coordCurv.size(); i++)
     {
-        //result.IntersPoints[i].Cell3DIndices=cells[i];
         intersPoints[i].Cell3DIndices = cells[i];
         result.Points.insert({ coordCurv[i], intersPoints[i]});
 
