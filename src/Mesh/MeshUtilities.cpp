@@ -521,16 +521,9 @@ namespace Gedim
     const unsigned int& numBasePoints = baseMeshCurvilinearCoordinates.size();
     const unsigned int& numHeightPoints = heightMeshCurvilinearCoordinates.size();
 
-    cerr<< "baseMeshCurvilinearCoordinates " << baseMeshCurvilinearCoordinates<< endl;
-    cerr<< "heightMeshCurvilinearCoordinates "<< heightMeshCurvilinearCoordinates<< endl;
-
     const unsigned int numCell0Ds = numBasePoints * numHeightPoints;
     const unsigned int numCell1Ds = numHeightPoints * (numBasePoints - 1) + numBasePoints * (numHeightPoints - 1);
     const unsigned int numCell2Ds = (numBasePoints - 1) * (numHeightPoints - 1);
-
-    cerr<< "numCell0Ds "<< numCell0Ds<< endl;
-    cerr<< "numCell1Ds "<< numCell1Ds<< endl;
-    cerr<< "numCell2Ds "<< numCell2Ds<< endl;
 
     mesh.InitializeDimension(2);
 
@@ -594,6 +587,36 @@ namespace Gedim
         mesh.Cell1DSetState(cell1DIndex, true);
 
         cell1DIndex++;
+      }
+    }
+
+    // create cell2Ds
+    unsigned int cell2DIndex = 0;
+    for (unsigned int h = 0; h < numHeightPoints - 1; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints - 1; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DHorizontalIndex = b + h * (numBasePoints - 1);
+        const unsigned int cell1DVerticalIndex = cell0DIndex + numHeightPoints * (numBasePoints - 1);
+
+        vector<unsigned int> cell2DVertices = { cell0DIndex,
+                                                cell0DIndex + 1,
+                                                cell0DIndex + numBasePoints + 1,
+                                                cell0DIndex + numBasePoints };
+        vector<unsigned int> cell2DEdges = { cell1DHorizontalIndex,
+                                             cell1DVerticalIndex + 1,
+                                             cell1DHorizontalIndex + (numBasePoints - 1),
+                                             cell1DVerticalIndex
+                                           };
+
+        mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
+        mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
+
+        mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
+        mesh.Cell2DSetState(cell2DIndex, true);
+
+        cell2DIndex++;
       }
     }
   }
