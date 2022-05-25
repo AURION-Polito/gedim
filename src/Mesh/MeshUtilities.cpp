@@ -538,7 +538,7 @@ namespace Gedim
     mesh.Cell1DsInitialize(numCell1Ds);
     mesh.Cell2DsInitialize(numCell2Ds);
 
-    // create points
+    // create cell0Ds
     unsigned int cell0DIndex = 0;
     for (unsigned int h = 0; h < numHeightPoints; h++)
     {
@@ -548,11 +548,52 @@ namespace Gedim
                                            baseMeshCurvilinearCoordinates[b] * rectangleBaseTangent +
                                            heightMeshCurvilinearCoordinates[h] * rectangleHeightTangent;
 
+        mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
+        mesh.Cell0DSetState(cell0DIndex, true);
         mesh.Cell0DInsertCoordinates(cell0DIndex,
                                      coordinate);
-
-        cerr<< "p "<< cell0DIndex<< " coordinate "<< coordinate.transpose()<< endl;
         cell0DIndex++;
+      }
+    }
+
+    // create cell1Ds
+    unsigned int cell1DIndex = 0;
+
+    // create horizontal cell1Ds
+    for (unsigned int h = 0; h < numHeightPoints; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints - 1; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DOrigin = cell0DIndex;
+        const unsigned int cell1DEnd = cell0DIndex + 1;
+
+        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
+        mesh.Cell1DInsertExtremes(cell1DIndex,
+                                  cell1DOrigin,
+                                  cell1DEnd);
+        mesh.Cell1DSetState(cell1DIndex, true);
+
+        cell1DIndex++;
+      }
+    }
+
+    // create vertical cell1Ds
+    for (unsigned int h = 0; h < numHeightPoints - 1; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DOrigin = cell0DIndex;
+        const unsigned int cell1DEnd = cell0DIndex + numBasePoints;
+
+        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
+        mesh.Cell1DInsertExtremes(cell1DIndex,
+                                  cell1DOrigin,
+                                  cell1DEnd);
+        mesh.Cell1DSetState(cell1DIndex, true);
+
+        cell1DIndex++;
       }
     }
   }

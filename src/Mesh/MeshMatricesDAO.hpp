@@ -321,6 +321,7 @@ namespace Gedim
                                      endCell0DIndex) = cell1DIndex + 1;
         _mesh.Cell1DAdjacency.makeCompressed();
       }
+      Eigen::MatrixXi Cell1DExtremes() const;
       inline bool Cell1DExists(const unsigned int& originCell0DIndex,
                                const unsigned int& endCell0DIndex) const
       {

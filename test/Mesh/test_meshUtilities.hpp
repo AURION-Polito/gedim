@@ -86,12 +86,38 @@ namespace GedimUnitTesting
     cell0DCoordinates.col(13)<< 0.75, 1.0, 0.0;
     cell0DCoordinates.col(14)<< 1.0, 1.0, 0.0;
 
+    Eigen::MatrixXi cell1DExtremes(2, 22);
+    cell1DExtremes.col(0)<< 0, 1;
+    cell1DExtremes.col(1)<< 1, 2;
+    cell1DExtremes.col(2)<< 2, 3;
+    cell1DExtremes.col(3)<< 3, 4;
+    cell1DExtremes.col(4)<< 5, 6;
+    cell1DExtremes.col(5)<< 6, 7;
+    cell1DExtremes.col(6)<< 7, 8;
+    cell1DExtremes.col(7)<< 8, 9;
+    cell1DExtremes.col(8)<< 10, 11;
+    cell1DExtremes.col(9)<< 11, 12;
+    cell1DExtremes.col(10)<< 12, 13;
+    cell1DExtremes.col(11)<< 13, 14;
+    cell1DExtremes.col(12)<< 0, 5;
+    cell1DExtremes.col(13)<< 1, 6;
+    cell1DExtremes.col(14)<< 2, 7;
+    cell1DExtremes.col(15)<< 3, 8;
+    cell1DExtremes.col(16)<< 4, 9;
+    cell1DExtremes.col(17)<< 5, 10;
+    cell1DExtremes.col(18)<< 6, 11;
+    cell1DExtremes.col(19)<< 7, 12;
+    cell1DExtremes.col(20)<< 8, 13;
+    cell1DExtremes.col(21)<< 9, 14;
+
     EXPECT_EQ(meshDao.Dimension(), 2);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 15);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 22);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
     EXPECT_EQ(meshDao.Cell0DCoordinates(),
               cell0DCoordinates);
+    EXPECT_EQ(meshDao.Cell1DExtremes(),
+              cell1DExtremes);
   }
 
   TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
