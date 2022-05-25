@@ -540,11 +540,17 @@ namespace Gedim
         const Eigen::Vector3d coordinate = rectangleOrigin +
                                            baseMeshCurvilinearCoordinates[b] * rectangleBaseTangent +
                                            heightMeshCurvilinearCoordinates[h] * rectangleHeightTangent;
+        const unsigned int marker = 1 * (b == 0 && h == 0) +
+                                    2 * (b == (numBasePoints - 1) && h == 0) +
+                                    3 * (b == 0 && h == (numHeightPoints - 1)) +
+                                    4 * (b == (numBasePoints - 1) && h == (numHeightPoints - 1));
 
         mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
         mesh.Cell0DSetState(cell0DIndex, true);
         mesh.Cell0DInsertCoordinates(cell0DIndex,
                                      coordinate);
+        mesh.Cell0DSetMarker(cell0DIndex, marker);
+
         cell0DIndex++;
       }
     }
@@ -561,11 +567,15 @@ namespace Gedim
         const unsigned int cell1DOrigin = cell0DIndex;
         const unsigned int cell1DEnd = cell0DIndex + 1;
 
+        const unsigned int marker = 5 * (h == 0) +
+                                    6 * (h == (numHeightPoints - 1));
+
         mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
         mesh.Cell1DInsertExtremes(cell1DIndex,
                                   cell1DOrigin,
                                   cell1DEnd);
         mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DSetMarker(cell1DIndex, marker);
 
         cell1DIndex++;
       }
@@ -580,11 +590,15 @@ namespace Gedim
         const unsigned int cell1DOrigin = cell0DIndex;
         const unsigned int cell1DEnd = cell0DIndex + numBasePoints;
 
+        const unsigned int marker = 7 * (b == 0) +
+                                    8 * (b == (numBasePoints - 1));
+
         mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
         mesh.Cell1DInsertExtremes(cell1DIndex,
                                   cell1DOrigin,
                                   cell1DEnd);
         mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DSetMarker(cell1DIndex, marker);
 
         cell1DIndex++;
       }
