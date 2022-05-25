@@ -543,7 +543,11 @@ namespace Gedim
         const unsigned int marker = 1 * (b == 0 && h == 0) +
                                     2 * (b == (numBasePoints - 1) && h == 0) +
                                     4 * (b == 0 && h == (numHeightPoints - 1)) +
-                                    3 * (b == (numBasePoints - 1) && h == (numHeightPoints - 1));
+                                    3 * (b == (numBasePoints - 1) && h == (numHeightPoints - 1)) +
+                                    5 * (h == 0 && b != 0 && b != (numBasePoints - 1)) +
+                                    7 * (h == (numHeightPoints - 1) && b != 0 && b != (numBasePoints - 1)) +
+                                    8 * (b == 0 && h != 0 && h != (numHeightPoints - 1)) +
+                                    6 * (b == (numBasePoints - 1) && h != 0 && h != (numHeightPoints - 1));
 
         mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
         mesh.Cell0DSetState(cell0DIndex, true);
@@ -551,7 +555,6 @@ namespace Gedim
                                      coordinate);
 
         mesh.Cell0DSetMarker(cell0DIndex, marker);
-
         cell0DIndex++;
       }
     }
@@ -591,8 +594,8 @@ namespace Gedim
         const unsigned int cell1DOrigin = cell0DIndex;
         const unsigned int cell1DEnd = cell0DIndex + numBasePoints;
 
-        const unsigned int marker = 6 * (b == 0) +
-                                    8 * (b == (numBasePoints - 1));
+        const unsigned int marker = 8 * (b == 0) +
+                                    6 * (b == (numBasePoints - 1));
 
         mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
         mesh.Cell1DInsertExtremes(cell1DIndex,
