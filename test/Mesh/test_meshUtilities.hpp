@@ -17,7 +17,7 @@ using namespace std;
 namespace GedimUnitTesting
 {
 
-  TEST(TestMeshUtilities, TestMeshMatricesDAO)
+  TEST(TestMeshUtilities, TestMesh2DFromPolygon)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -44,6 +44,55 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 1);
+  }
+
+  TEST(TestMeshUtilities, TestCreateRectangleMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Eigen::Vector3d rectangleOrigin = Eigen::Vector3d(0.0, 0.0, 0.0);
+    const Eigen::Vector3d rectangleBaseTangent = Eigen::Vector3d(1.0, 0.0, 0.0);
+    const Eigen::Vector3d rectangleHeightTangent = Eigen::Vector3d(0.0, 1.0, 0.0);
+    const vector<double> baseCoordinates = geometryUtilities.EquispaceCoordinates(0.25, true);
+    const vector<double> heightCoordinates = geometryUtilities.EquispaceCoordinates(0.5, true);
+
+    meshUtilities.CreateRectangleMesh(rectangleOrigin,
+                                      rectangleBaseTangent,
+                                      rectangleHeightTangent,
+                                      baseCoordinates,
+                                      heightCoordinates,
+                                      meshDao);
+
+    EXPECT_EQ(meshDao.Dimension(), 2);
+    EXPECT_EQ(meshDao.Cell0DTotalNumber(), 15);
+    EXPECT_EQ(meshDao.Cell1DTotalNumber(), 22);
+    EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
+  }
+
+  TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    mesh.Mesh.NumberCell1DNeighbourCell2D.clear();
+    mesh.Mesh.Cell1DNeighbourCell2Ds.clear();
+    mesh.Mesh.NumberCell1DNeighbourCell2D.resize(mesh.Mesh.NumberCell1D + 1, 0);
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    EXPECT_EQ(mesh.Mesh.NumberCell1DNeighbourCell2D,
+              vector<unsigned int>({ 0,2,4,6,8 }));
+    EXPECT_EQ(mesh.Mesh.Cell1DNeighbourCell2Ds,
+              vector<unsigned int>({ 1,0,1,0,1,0,1,0 }));
   }
 
   TEST(TestMeshUtilities, TestFillMesh2DGeometricData_Convex)
