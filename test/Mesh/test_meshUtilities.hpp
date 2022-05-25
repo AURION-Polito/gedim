@@ -69,10 +69,29 @@ namespace GedimUnitTesting
                                       heightCoordinates,
                                       meshDao);
 
+    Eigen::MatrixXd cell0DCoordinates(3, 15);
+    cell0DCoordinates.col(0)<< 0.0, 0.0, 0.0;
+    cell0DCoordinates.col(1)<< 0.25, 0.0, 0.0;
+    cell0DCoordinates.col(2)<< 0.5, 0.0, 0.0;
+    cell0DCoordinates.col(3)<< 0.75, 0.0, 0.0;
+    cell0DCoordinates.col(4)<< 1.0, 0.0, 0.0;
+    cell0DCoordinates.col(5)<< 0.0, 0.5, 0.0;
+    cell0DCoordinates.col(6)<< 0.25, 0.5, 0.0;
+    cell0DCoordinates.col(7)<< 0.5, 0.5, 0.0;
+    cell0DCoordinates.col(8)<< 0.75, 0.5, 0.0;
+    cell0DCoordinates.col(9)<< 1.0, 0.5, 0.0;
+    cell0DCoordinates.col(10)<< 0.0, 1.0, 0.0;
+    cell0DCoordinates.col(11)<< 0.25, 1.0, 0.0;
+    cell0DCoordinates.col(12)<< 0.5, 1.0, 0.0;
+    cell0DCoordinates.col(13)<< 0.75, 1.0, 0.0;
+    cell0DCoordinates.col(14)<< 1.0, 1.0, 0.0;
+
     EXPECT_EQ(meshDao.Dimension(), 2);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 15);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 22);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
+    EXPECT_EQ(meshDao.Cell0DCoordinates(),
+              cell0DCoordinates);
   }
 
   TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)

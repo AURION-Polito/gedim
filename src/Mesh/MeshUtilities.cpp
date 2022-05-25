@@ -539,9 +539,21 @@ namespace Gedim
     mesh.Cell2DsInitialize(numCell2Ds);
 
     // create points
-    for (unsigned int b = 0; b < numBasePoints; b++)
+    unsigned int cell0DIndex = 0;
+    for (unsigned int h = 0; h < numHeightPoints; h++)
     {
-      for (unsigned int h = 0; h < numHeightPoints; h++)
+      for (unsigned int b = 0; b < numBasePoints; b++)
+      {
+        const Eigen::Vector3d coordinate = rectangleOrigin +
+                                           baseMeshCurvilinearCoordinates[b] * rectangleBaseTangent +
+                                           heightMeshCurvilinearCoordinates[h] * rectangleHeightTangent;
+
+        mesh.Cell0DInsertCoordinates(cell0DIndex,
+                                     coordinate);
+
+        cerr<< "p "<< cell0DIndex<< " coordinate "<< coordinate.transpose()<< endl;
+        cell0DIndex++;
+      }
     }
   }
   // ***************************************************************************
