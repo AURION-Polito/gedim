@@ -95,6 +95,24 @@ namespace Gedim
                                                 const IMeshDAO& mesh,
                                                 const IMeshDAO& convexMesh,
                                                 const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
+
+      /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
+      /// \param mesh the resulting mesh
+      void ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const;
+
+      /// \brief Crete rectange Mesh on rectangle base x height
+      /// \param rectangleOrigin the rectangle origin point
+      /// \param rectangleBaseTangent the rectangle base tangent vector
+      /// \param rectangleHeightTangent the rectangle height tangent vector
+      /// \param baseMeshCurvilinearCoordinates the base mesh 1D curvilinear coordinates
+      /// \param heightMeshCurvilinearCoordinates the height mesh 1D curvilinear coordinates
+      /// \note markers on border are set as { 1, 2, 3, 4 } for cell0Ds and { 5, 6, 7, 8 } for cell1Ds
+      void CreateRectangleMesh(const Eigen::Vector3d& rectangleOrigin,
+                               const Eigen::Vector3d& rectangleBaseTangent,
+                               const Eigen::Vector3d& rectangleHeightTangent,
+                               const vector<double>& baseMeshCurvilinearCoordinates,
+                               const vector<double>& heightMeshCurvilinearCoordinates,
+                               IMeshDAO& mesh) const;
   };
 
 }

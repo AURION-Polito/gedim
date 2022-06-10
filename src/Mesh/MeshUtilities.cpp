@@ -478,4 +478,167 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  void MeshUtilities::ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const
+  {
+    // Initialize cell1D neighbours
+    for (int c1D = 0; c1D < mesh.Cell1DTotalNumber(); c1D++)
+      mesh.Cell1DInitializeNeighbourCell2Ds(c1D, 2);
+
+    // Compute Cell1D neighbours starting from cell2Ds
+    for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
+    {
+      const unsigned int numCell2DEdges = mesh.Cell2DNumberEdges(c2D);
+      for (unsigned int e = 0; e < numCell2DEdges; e++)
+      {
+        const unsigned int cell1D = mesh.Cell2DEdge(c2D, e);
+        const unsigned int edgeOrigin =  mesh.Cell2DVertex(c2D, e);
+        const unsigned int edgeEnd =  mesh.Cell2DVertex(c2D, (e + 1) % numCell2DEdges);
+
+        if (mesh.Cell1DExists(edgeOrigin,
+                              edgeEnd)) // left cell
+        {
+          mesh.Cell1DInsertNeighbourCell2D(cell1D,
+                                           1,
+                                           c2D);
+        }
+        else // right cell
+        {
+          mesh.Cell1DInsertNeighbourCell2D(cell1D,
+                                           0,
+                                           c2D);
+        }
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::CreateRectangleMesh(const Eigen::Vector3d& rectangleOrigin,
+                                          const Eigen::Vector3d& rectangleBaseTangent,
+                                          const Eigen::Vector3d& rectangleHeightTangent,
+                                          const vector<double>& baseMeshCurvilinearCoordinates,
+                                          const vector<double>& heightMeshCurvilinearCoordinates,
+                                          IMeshDAO& mesh) const
+  {
+    const unsigned int& numBasePoints = baseMeshCurvilinearCoordinates.size();
+    const unsigned int& numHeightPoints = heightMeshCurvilinearCoordinates.size();
+
+    const unsigned int numCell0Ds = numBasePoints * numHeightPoints;
+    const unsigned int numCell1Ds = numHeightPoints * (numBasePoints - 1) + numBasePoints * (numHeightPoints - 1);
+    const unsigned int numCell2Ds = (numBasePoints - 1) * (numHeightPoints - 1);
+
+    mesh.InitializeDimension(2);
+
+    mesh.Cell0DsInitialize(numCell0Ds);
+    mesh.Cell1DsInitialize(numCell1Ds);
+    mesh.Cell2DsInitialize(numCell2Ds);
+
+    // create cell0Ds
+    unsigned int cell0DIndex = 0;
+    for (unsigned int h = 0; h < numHeightPoints; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints; b++)
+      {
+        const Eigen::Vector3d coordinate = rectangleOrigin +
+                                           baseMeshCurvilinearCoordinates[b] * rectangleBaseTangent +
+                                           heightMeshCurvilinearCoordinates[h] * rectangleHeightTangent;
+        const unsigned int marker = 1 * (b == 0 && h == 0) +
+                                    2 * (b == (numBasePoints - 1) && h == 0) +
+                                    4 * (b == 0 && h == (numHeightPoints - 1)) +
+                                    3 * (b == (numBasePoints - 1) && h == (numHeightPoints - 1)) +
+                                    5 * (h == 0 && b != 0 && b != (numBasePoints - 1)) +
+                                    7 * (h == (numHeightPoints - 1) && b != 0 && b != (numBasePoints - 1)) +
+                                    8 * (b == 0 && h != 0 && h != (numHeightPoints - 1)) +
+                                    6 * (b == (numBasePoints - 1) && h != 0 && h != (numHeightPoints - 1));
+
+        mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
+        mesh.Cell0DSetState(cell0DIndex, true);
+        mesh.Cell0DInsertCoordinates(cell0DIndex,
+                                     coordinate);
+
+        mesh.Cell0DSetMarker(cell0DIndex, marker);
+        cell0DIndex++;
+      }
+    }
+
+    // create cell1Ds
+    unsigned int cell1DIndex = 0;
+
+    // create horizontal cell1Ds
+    for (unsigned int h = 0; h < numHeightPoints; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints - 1; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DOrigin = cell0DIndex;
+        const unsigned int cell1DEnd = cell0DIndex + 1;
+
+        const unsigned int marker = 5 * (h == 0) +
+                                    7 * (h == (numHeightPoints - 1));
+
+        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
+        mesh.Cell1DInsertExtremes(cell1DIndex,
+                                  cell1DOrigin,
+                                  cell1DEnd);
+        mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DSetMarker(cell1DIndex, marker);
+
+        cell1DIndex++;
+      }
+    }
+
+    // create vertical cell1Ds
+    for (unsigned int h = 0; h < numHeightPoints - 1; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DOrigin = cell0DIndex;
+        const unsigned int cell1DEnd = cell0DIndex + numBasePoints;
+
+        const unsigned int marker = 8 * (b == 0) +
+                                    6 * (b == (numBasePoints - 1));
+
+        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
+        mesh.Cell1DInsertExtremes(cell1DIndex,
+                                  cell1DOrigin,
+                                  cell1DEnd);
+        mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DSetMarker(cell1DIndex, marker);
+
+        cell1DIndex++;
+      }
+    }
+
+    // create cell2Ds
+    unsigned int cell2DIndex = 0;
+    for (unsigned int h = 0; h < numHeightPoints - 1; h++)
+    {
+      for (unsigned int b = 0; b < numBasePoints - 1; b++)
+      {
+        const unsigned int cell0DIndex = b + h * numBasePoints;
+        const unsigned int cell1DHorizontalIndex = b + h * (numBasePoints - 1);
+        const unsigned int cell1DVerticalIndex = cell0DIndex + numHeightPoints * (numBasePoints - 1);
+
+        vector<unsigned int> cell2DVertices = { cell0DIndex,
+                                                cell0DIndex + 1,
+                                                cell0DIndex + numBasePoints + 1,
+                                                cell0DIndex + numBasePoints };
+        vector<unsigned int> cell2DEdges = { cell1DHorizontalIndex,
+                                             cell1DVerticalIndex + 1,
+                                             cell1DHorizontalIndex + (numBasePoints - 1),
+                                             cell1DVerticalIndex
+                                           };
+
+        mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
+        mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
+
+        mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
+        mesh.Cell2DSetState(cell2DIndex, true);
+
+        mesh.Cell2DSetMarker(cell2DIndex, 0);
+
+        cell2DIndex++;
+      }
+    }
+  }
+  // ***************************************************************************
 }

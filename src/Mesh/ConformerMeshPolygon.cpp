@@ -1504,6 +1504,7 @@ namespace Gedim
       Output::Assert(segment1D.Cell2DIds.size() > 0);
 
       unsigned int cell2DId = segment1D.Cell2DIds.back();
+
       list<unsigned int> cell1DMesh1DIds;
       do
       {
@@ -1514,6 +1515,15 @@ namespace Gedim
                   mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end(),
                   cell2DId) !=
              mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
+
+      if (mesh2D.Cell2DHasUpdatedCell2Ds(cell2DId))
+      {
+        list<unsigned int> cell2DMesh2DsToUpdate;
+        mesh2D.Cell2DUpdatedCell2Ds(cell2DId,
+                                    cell2DMesh2DsToUpdate);
+        Output::Assert(cell2DMesh2DsToUpdate.size() == 1);
+        cell2DId = cell2DMesh2DsToUpdate.back();
+      }
 
       // insert middle edges in new cells
       UpdateCell2DMesh2DWithSegmentOnEdges(segmentOrigin,

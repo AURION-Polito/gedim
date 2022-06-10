@@ -434,6 +434,16 @@ namespace Gedim
                                     cell1DIndex + 1);
   }
   // ***************************************************************************
+  Eigen::MatrixXi MeshMatricesDAO::Cell1DExtremes() const
+  {
+    Eigen::MatrixXi extremes(2, _mesh.NumberCell1D);
+
+    for (unsigned int e = 0; e < _mesh.NumberCell1D; e++)
+      extremes.col(e)<< Cell1DOrigin(e), Cell1DEnd(e);
+
+    return extremes;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                                          const unsigned int& numberNeighbourCell2Ds)
   {
