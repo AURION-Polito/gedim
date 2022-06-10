@@ -1,5 +1,0 @@
-if(EXISTS "D:/Nuova cartella/Intersection/gedim/Debug/Gedim_unitTests[1]_tests.cmake")
-  include("D:/Nuova cartella/Intersection/gedim/Debug/Gedim_unitTests[1]_tests.cmake")
-else()
-  add_test(Gedim_unitTests_NOT_BUILT Gedim_unitTests_NOT_BUILT)
-endif()
