@@ -256,7 +256,7 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::IntersectionPolyhedronPlaneResult GeometryUtilities::IntersectionPolyhedronPlane(const Eigen::MatrixXd& polyhedronVertices,
                                                                                                       const Eigen::MatrixXi& polyhedronEdges,
-                                                                                                      const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                                                      const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                                       const Eigen::Vector3d& planeNormal,
                                                                                                       const Eigen::Vector3d& planeOrigin,
                                                                                                       const Eigen::Matrix3d& planeRotationMatrix,
