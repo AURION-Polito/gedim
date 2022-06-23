@@ -1301,6 +1301,34 @@ namespace Gedim
                                       const Eigen::Vector3d& lengthVector,
                                       const Eigen::Vector3d& heightVector,
                                       const Eigen::Vector3d& widthVector) const;
+
+      /// \brief Compute Polyhedron Faces Vertices
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronEdges the polyhedron edges
+      /// \param polyhedronFaces the polyhedron faces
+      /// \return for each face the vertices, size 1xnumFaces
+      vector<Eigen::MatrixXd> PolyhedronFaceVertices(const Eigen::MatrixXd& polyhedronVertices,
+                                                     const Eigen::MatrixXi& polyhedronEdges,
+                                                     const vector<Eigen::MatrixXi> polyhedronFaces) const;
+
+      /// \brief Compute Polyhedron Faces Rotation matrix
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \return for each polyhedron face the rotation matrix
+      vector<Eigen::Matrix3d> PolyhedronFaceRotationMatrices(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                             const vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                             const vector<Eigen::Vector3d>& polyhedronFaceTranslations) const;
+
+      /// \brief Compute Polyhedron Faces translation vectors
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \return for each polyhedron face the translation vector
+      vector<Eigen::Vector3d> PolyhedronFaceTranslations(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
+
+      /// \brief Compute Polyhedron Faces Normals
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \param polyhedronFaceRotationMatrices the polyhedron faces rotation matrices
+      /// \param polyhedronFaceTranslations the polyhedron faces translation
+      /// \return for each polyhedron face the outgoing normal
+      vector<Eigen::Vector3d> PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
   };
 }
 

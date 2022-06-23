@@ -141,4 +141,60 @@ namespace Gedim
     return cube;
   }
   // ***************************************************************************
+  vector<MatrixXd> GeometryUtilities::PolyhedronFaceVertices(const Eigen::MatrixXd& polyhedronVertices,
+                                                             const Eigen::MatrixXi& polyhedronEdges,
+                                                             const vector<Eigen::MatrixXi> polyhedronFaces) const
+  {
+    vector<Eigen::MatrixXd> facesVertices(polyhedronFaces.size());
+
+    for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
+    {
+      const Eigen::VectorXi& faceVerticesIndices = polyhedronFaces[f].row(0);
+      Eigen::MatrixXd& faceVertices = facesVertices[f];
+      faceVertices.setZero(3, faceVerticesIndices.size());
+      for (unsigned int v = 0; v < faceVerticesIndices.size(); v++)
+        faceVertices.col(v)<< polyhedronVertices.col(faceVerticesIndices[v]);
+    }
+
+    return facesVertices;
+  }
+  // ***************************************************************************
+  vector<Matrix3d> GeometryUtilities::PolyhedronFaceRotationMatrices(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                     const vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                                     const vector<Eigen::Vector3d>& polyhedronFaceTranslations) const
+  {
+    vector<Matrix3d> rotationMatrices;
+    rotationMatrices.reserve(polyhedronFaceVertices.size());
+
+    for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
+    {
+      rotationMatrices.push_back(PolygonRotationMatrix(polyhedronFaceVertices[f],
+                                                       polyhedronFaceNormals[f],
+                                                       polyhedronFaceTranslations[f]));
+    }
+
+    return rotationMatrices;
+  }
+  // ***************************************************************************
+  vector<Vector3d> GeometryUtilities::PolyhedronFaceTranslations(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
+  {
+    vector<Vector3d> translations;
+    translations.reserve(polyhedronFaceVertices.size());
+    for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
+      translations.push_back(PolygonTranslation(polyhedronFaceVertices[f]));
+
+    return translations;
+  }
+  // ***************************************************************************
+  vector<Vector3d> GeometryUtilities::PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
+  {
+    vector<Vector3d> faceNormals;
+    faceNormals.reserve(polyhedronFaceVertices.size());
+
+    for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
+      faceNormals.push_back(PolygonNormal(polyhedronFaceVertices[f]));
+
+    return faceNormals;
+  }
+  // ***************************************************************************
 }
