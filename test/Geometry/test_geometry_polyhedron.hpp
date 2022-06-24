@@ -142,6 +142,18 @@ namespace GedimUnitTesting
                                                                                             cube.Edges,
                                                                                             cube.Faces);
 
+        vector<Eigen::Vector3d> expectedFaceNormals(6);
+        expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, -1.0000000000000000e+00;
+        expectedFaceNormals[1]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
+        expectedFaceNormals[2]<< -1.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[3]<< +1.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[4]<< +0.0000000000000000e+00, -1.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[5]<< +0.0000000000000000e+00, +1.0000000000000000e+00, +0.0000000000000000e+00;
+
+        ASSERT_EQ(geometryUtility.PolyhedronFaceNormals(faceVertices,
+                                                        barycenter),
+                  expectedFaceNormals);
+
       }
 
       // check tetrahedron face normals
@@ -155,6 +167,15 @@ namespace GedimUnitTesting
                                                                                             tetrahedron.Edges,
                                                                                             tetrahedron.Faces);
 
+        vector<Eigen::Vector3d> expectedFaceNormals(4);
+        expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, -1.0000000000000000e+00;
+        expectedFaceNormals[1]<< +0.0000000000000000e+00, -1.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[2]<< -1.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[3]<< +5.7735026918962584e-01, +5.7735026918962584e-01, +5.7735026918962584e-01;
+
+        ASSERT_EQ(geometryUtility.PolyhedronFaceNormals(faceVertices,
+                                                        barycenter),
+                  expectedFaceNormals);
       }
     }
     catch (const exception& exception)

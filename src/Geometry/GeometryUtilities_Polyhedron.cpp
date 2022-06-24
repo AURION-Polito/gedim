@@ -201,7 +201,7 @@ namespace Gedim
       Output::Assert(pointFacePosition == PointPlanePositionTypes::Negative ||
                      pointFacePosition == PointPlanePositionTypes::Positive);
 
-      const double normalOutgoingDirection = (pointFacePosition == PointPlanePositionTypes::Negative) ? -1.0 :
+      const double normalOutgoingDirection = (pointFacePosition == PointPlanePositionTypes::Positive) ? -1.0 :
                                                                                                         1.0;
 
       faceNormals.push_back(normalOutgoingDirection * normal);
