@@ -923,6 +923,7 @@ namespace Gedim
       IntersectionPolyhedronLineResult IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
                                                                   const Eigen::MatrixXi& polyhedronEdges,
                                                                   const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                  const vector<Eigen::Vector3d> polyhedronFaceNormals,
                                                                   const Eigen::Vector3d& lineTangent,
                                                                   const Eigen::Vector3d& lineOrigin) const;
 
@@ -945,11 +946,13 @@ namespace Gedim
 
       /// \brief Intersection between a collectio of Polyhedrons and a segment
       /// \param polyhedrons the polyhedron collection
+      /// \param polyhedronFaceNormals polyhedron face normals
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
       /// \param segmentTangent the segment tangent
       /// \return the intersection result
       IntersectionPolyhedronsSegmentResult IntersectionPolyhedronsSegment(const vector<Polyhedron>& polyhedrons,
+                                                                          const vector<vector<Eigen::Vector3d>> polyhedronFaceNormals,
                                                                           const Eigen::Vector3d& segmentOrigin,
                                                                           const Eigen::Vector3d& segmentEnd,
                                                                           const Eigen::Vector3d& segmentTangent) const;
