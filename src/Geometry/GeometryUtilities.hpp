@@ -1358,10 +1358,10 @@ namespace Gedim
 
       /// \brief Compute Polyhedron Faces Normals
       /// \param polyhedronFaceVertices the polyhedron faces vertices
-      /// \param polyhedronInsidePoint a point inside polyhedron
+      /// \param pointInsidePolyhedron a point inside polyhedron
       /// \return for each polyhedron face the outgoing normal
       vector<Eigen::Vector3d> PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
-                                                    const Eigen::Vector3d& polyhedronInsidePoint) const;
+                                                    const Eigen::Vector3d& pointInsidePolyhedron) const;
   };
 }
 
