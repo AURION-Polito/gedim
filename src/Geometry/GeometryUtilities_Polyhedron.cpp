@@ -186,7 +186,8 @@ namespace Gedim
     return translations;
   }
   // ***************************************************************************
-  vector<Vector3d> GeometryUtilities::PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
+  vector<Vector3d> GeometryUtilities::PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                            const Eigen::Vector3d& polyhedronInsidePoint) const
   {
     vector<Vector3d> faceNormals;
     faceNormals.reserve(polyhedronFaceVertices.size());

@@ -49,6 +49,14 @@ namespace Gedim
         RightTheSegment = 7
       };
 
+      enum struct PointPlanePositionTypes
+      {
+        Unknown = 0,
+        Negative = 1,
+        OnPlane = 2,
+        Positive = 3
+      };
+
       enum struct PolygonCirclePositionTypes
       {
         Unknown = 0,
@@ -791,6 +799,15 @@ namespace Gedim
         return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd);
       }
 
+      /// \brief Compute point position respect to a plane
+      /// \param point the point
+      /// \param planeNormal the plane normal
+      /// \param planeOrigin the plane origin
+      /// \return result the point position
+      PointPlanePositionTypes PointPlanePosition(const Eigen::Vector3d& point,
+                                                 const Eigen::Vector3d& planeNormal,
+                                                 const Eigen::Vector3d& planeOrigin) const;
+
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
       /// \return the segment length
@@ -1110,12 +1127,28 @@ namespace Gedim
       /// \return the resulting edge normals outgoing the polygon, size 3 x numVertices
       Eigen::MatrixXd PolygonEdgeNormals(const Eigen::MatrixXd& polygonVertices) const;
 
+      /// \brief Compute the simplex barycenter as a mean of all vertices
+      /// \param vertices the matrix of vertices of the simplex (size 3 x numVertices)
+      inline Eigen::Vector3d SimplexBarycenter(const Eigen::MatrixXd& vertices) const
+      {
+        Output::Assert(vertices.rows() == 3);
+        return vertices.rowwise().mean();
+      }
+
       /// \brief Compute the Polygon barycenter as a mean of all vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       inline Eigen::Vector3d PolygonBarycenter(const Eigen::MatrixXd& polygonVertices) const
       {
         Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
-        return polygonVertices.rowwise().mean();
+        return SimplexBarycenter(polygonVertices);
+      }
+
+      /// \brief Compute the polyhedron barycenter as a mean of all vertices
+      /// \param polyhedronVertices the matrix of vertices of the polyhedron (size 3 x numVertices)
+      inline Eigen::Vector3d PolyhedronBarycenter(const Eigen::MatrixXd& polyhedronVertices) const
+      {
+        Output::Assert(polyhedronVertices.rows() == 3 && polyhedronVertices.cols() > 2);
+        return SimplexBarycenter(polyhedronVertices);
       }
 
       /// \brief Compute the Polygon centroid as described in https://en.wikipedia.org/wiki/Centroid
@@ -1325,10 +1358,10 @@ namespace Gedim
 
       /// \brief Compute Polyhedron Faces Normals
       /// \param polyhedronFaceVertices the polyhedron faces vertices
-      /// \param polyhedronFaceRotationMatrices the polyhedron faces rotation matrices
-      /// \param polyhedronFaceTranslations the polyhedron faces translation
+      /// \param polyhedronInsidePoint a point inside polyhedron
       /// \return for each polyhedron face the outgoing normal
-      vector<Eigen::Vector3d> PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
+      vector<Eigen::Vector3d> PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                    const Eigen::Vector3d& polyhedronInsidePoint) const;
   };
 }
 
