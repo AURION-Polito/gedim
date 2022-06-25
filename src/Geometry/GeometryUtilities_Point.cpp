@@ -54,7 +54,7 @@ namespace Gedim
 		if (IsValue1DPositive(pointDirection.dot(normalTangent)))
             return PointSegmentPositionTypes::RightTheSegment;
 		else
-			return PointSegmentPositionTypes::LeftTheSegment;
+            return PointSegmentPositionTypes::LeftTheSegment;
 	}
 	// ***************************************************************************
 	GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const double& curvilinearCoordinate) const
