@@ -769,18 +769,36 @@ namespace Gedim
                                                const Eigen::Vector3d& segmentOrigin,
                                                const Eigen::Vector3d& segmentEnd) const
       {
-        return (point - segmentOrigin).dot(segmentEnd - segmentOrigin) / (segmentEnd - segmentOrigin).squaredNorm();
+        const Eigen::Vector3d segmentTangent = (segmentEnd - segmentOrigin);
+        return PointLineCurvilinearCoordinate(point,
+                                              segmentOrigin,
+                                              segmentTangent,
+                                              segmentTangent.squaredNorm());
+      }
+
+      /// \brief compute the Point Curvilinear Coordinate of line
+      /// \param point the point
+      /// \param lineOrigin the line origin
+      /// \param lineTangent the line tangent
+      /// \param lineTangentSquaredLength the line tangent length squared
+      /// \return the curvilinear coordinate computed
+      inline double PointLineCurvilinearCoordinate(const Eigen::Vector3d& point,
+                                                   const Eigen::Vector3d& lineOrigin,
+                                                   const Eigen::Vector3d& lineTangent,
+                                                   const double& lineTangentSquaredLength) const
+      {
+        return (point - lineOrigin).dot(lineTangent) / lineTangentSquaredLength;
       }
 
       /// \param point the point
       /// \param lineOrigin the line origin
       /// \param lineTangent the line tangent
-      /// \param lineTangentLength the line tangent lenght
+      /// \param lineTangentSquaredLength the line tangent length squared
       /// \return true if the point belongs on line
       bool IsPointOnLine(const Eigen::Vector3d& point,
                          const Eigen::Vector3d& lineOrigin,
                          const Eigen::Vector3d& lineTangent,
-                         const double& lineTangentLength) const;
+                         const double& lineTangentSquaredLength) const;
 
       /// \brief Compute point position respect to a segment
       /// \param point the point

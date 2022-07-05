@@ -216,13 +216,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
-                                                   lineTangentLength));
+                                                   lineTangentSquaredLength));
       }
 
       // check not in line
@@ -232,13 +232,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
-                                                   lineTangentLength));
+                                                   lineTangentSquaredLength));
       }
 
       // check on segment line before origin
@@ -248,13 +248,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
       }
 
       // check on segment line after end
@@ -264,13 +264,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
       }
 
       // check on segment origin
@@ -280,13 +280,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
       }
 
       // check on segment end
@@ -296,13 +296,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
       }
 
       // check inside segment
@@ -312,13 +312,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
       }
 
       // check not in line 3D
@@ -328,13 +328,13 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
-                                                   lineTangentLength));
+                                                   lineTangentSquaredLength));
       }
 
       // check in line 3D
@@ -344,13 +344,18 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
         const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
                                                                            lineEnd);
-        const double lineTangentLength = lineTangent.norm();
+        const double lineTangentSquaredLength = lineTangent.squaredNorm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
-                                                  lineTangentLength));
+                                                  lineTangentSquaredLength));
+        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.PointLineCurvilinearCoordinate(point,
+                                                                                                    lineOrigin,
+                                                                                                    lineTangent,
+                                                                                                    lineTangentSquaredLength),
+                                                     0.5));
       }
     }
     catch (const exception& exception)

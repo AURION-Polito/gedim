@@ -31,12 +31,12 @@ namespace Gedim
   bool GeometryUtilities::IsPointOnLine(const Eigen::Vector3d& point,
                                         const Eigen::Vector3d& lineOrigin,
                                         const Eigen::Vector3d& lineTangent,
-                                        const double& lineTangentLength) const
+                                        const double& lineTangentSquaredLength) const
   {
     const Eigen::Vector3d pointDirection = (point - lineOrigin);
 
     if (IsValue2DZero(pointDirection.squaredNorm()) ||
-        IsValue2DZero(pointDirection.cross(lineTangent).squaredNorm() / (lineTangentLength * lineTangentLength)))
+        IsValue2DZero(pointDirection.cross(lineTangent).squaredNorm() / lineTangentSquaredLength))
       return true;
 
     return false;
