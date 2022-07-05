@@ -537,60 +537,11 @@ namespace Gedim
     for (unsigned int i=0; i<numPolyhedronVertices; i++)
     {
 
-      int k = 1; //tolgo
-
       //controllo se il vertice è nella retta
-      Vector3d e = lineOrigin+lineTangent;
       const Vector3d& f = polyhedronVertices.col(i);
 
-      // OLD CODE
-      // PointSegmentPositionTypes t = PointSegmentPosition(f, lineOrigin, e);
-      // if (t == PointSegmentPositionTypes::InsideSegment || t == PointSegmentPositionTypes::OnSegmentEnd || t == PointSegmentPositionTypes::OnSegmentLineAfterEnd
-      //     || t == PointSegmentPositionTypes::OnSegmentLineBeforeOrigin || t == PointSegmentPositionTypes::OnSegmentOrigin)
-      // {
-      //     k=2; //tolgo fino a ..
-      // }
-
-      if (IsPointOnLine(f,
-                        lineOrigin,
-                        lineTangent,
-                        lineTangent.norm()))
+      if (IsPointOnLine(f, lineOrigin, lineTangent, lineTangent.norm()))
       {
-        k=2; //tolgo fino a ..
-      }
-
-      //casi due componenti della tangente nulle
-      if (lineTangent(1)==0 && lineTangent(2)==0 &&
-          polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(2,i)==lineOrigin(2))
-        flag = true;
-      else if (lineTangent(0)==0 && lineTangent(1)==0 &&
-               polyhedronVertices(1,i)==lineOrigin(1) && polyhedronVertices(0,i)==lineOrigin(0))
-        flag = true;
-      else if (lineTangent(0)==0 && lineTangent(2)==0 &&
-               polyhedronVertices(0,i)==lineOrigin(0) && polyhedronVertices(2,i)==lineOrigin(2))
-        flag = true;
-      // una componente nulla
-      else if (lineTangent(0)==0 && polyhedronVertices(0,i)==lineOrigin(0) &&
-               lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2)))
-        flag = true;
-      else if (lineTangent(1)==0 && polyhedronVertices(1,i)==lineOrigin(1) &&
-               lineTangent(2)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(2,i)-lineOrigin(2)))
-        flag = true;
-      else if (lineTangent(2)==0 && polyhedronVertices(2,i)==lineOrigin(2) &&
-               lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1)))
-        flag = true;
-
-      // se sono in uno dei casi precedenti oppure caso nessuna componente nulla
-
-      if (flag == true || (lineTangent(0)!=0 && lineTangent(1)!=0 && lineTangent(2)!=0))
-      {
-        if (flag == true || (lineTangent(1)*(polyhedronVertices(0,i)-lineOrigin(0))==lineTangent(0)*(polyhedronVertices(1,i)-lineOrigin(1))
-                             && lineTangent(2)*(polyhedronVertices(1,i)-lineOrigin(1))==lineTangent(1)*(polyhedronVertices(2,i)-lineOrigin(2))))
-        {
-          // aggiorno la lista dei vertici segnando che nel vertice che sto considerando c'è intersezione e scrivo il numero dell'intersezione
-
-          //.. qui
-
           result.PolyhedronVertexIntersections[i].Type = IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Intersection;
           result.PolyhedronVertexIntersections[i].LineIntersectionIndex = numberOfIntersections;
 
@@ -609,7 +560,6 @@ namespace Gedim
 
           numberOfIntersections++;
           flag = false;
-        }
       }
     }
 
