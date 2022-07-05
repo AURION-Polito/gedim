@@ -1070,12 +1070,20 @@ namespace GedimUnitTesting {
                                                                                              height,
                                                                                              width);
 
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
+
       Eigen::Vector3d lineTangent(1.0, 0.0, 0.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 2.0);
 
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
+                                                                                                                     polyhedronFaceNormals,
                                                                                                                      lineTangent,
                                                                                                                      lineOrigin);
 
@@ -1107,6 +1115,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineTangent(1.0, 1.0, 1.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 1.0);
@@ -1114,6 +1128,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
+                                                                                                                     polyhedronFaceNormals,
                                                                                                                      lineTangent,
                                                                                                                      lineOrigin);
 
@@ -1157,6 +1172,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineTangent(0.0, 0.0, 1.0);
       Eigen::Vector3d lineOrigin(0.5, 0.5, 0.0);
@@ -1164,6 +1185,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
+                                                                                                                     polyhedronFaceNormals,
                                                                                                                      lineTangent,
                                                                                                                      lineOrigin);
 
@@ -1216,6 +1238,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineTangent(1.0, 0.5, 0.0);
       Eigen::Vector3d lineOrigin(-1.0, -0.5, 0.5);
@@ -1223,6 +1251,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
+                                                                                                                     polyhedronFaceNormals,
                                                                                                                      lineTangent,
                                                                                                                      lineOrigin);
 
@@ -1277,6 +1306,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineOrigin(0.0, 0.0, 2.0);
       Eigen::Vector3d lineTangent(1.0, 0.0, 0.0);
@@ -1288,6 +1323,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
+                                                                                                                                          polyhedronFaceNormals,
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
@@ -1327,6 +1363,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineOrigin(0.0, 0.0, 1.0);
       Eigen::Vector3d lineTangent(1.0, 1.0, 1.0);
@@ -1338,6 +1380,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
+                                                                                                                                          polyhedronFaceNormals,
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
@@ -1373,7 +1416,7 @@ namespace GedimUnitTesting {
 
   TEST(TestGeometryUtilities, TestIntersectionPolyhedronSegment_Cube_OneIntersection_Edge)
   {
-      // corrisponde al test "twointersections_edgeFace" ma solo un'intersezione è dentro il segmento considerato
+    // corrisponde al test "twointersections_edgeFace" ma solo un'intersezione è dentro il segmento considerato
 
     try
     {
@@ -1391,6 +1434,12 @@ namespace GedimUnitTesting {
                                                                                              length,
                                                                                              height,
                                                                                              width);
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                    polyhedron.Edges,
+                                                                                                    polyhedron.Faces);
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices,
+                                                                                                  polyhedronBarycenter);
 
       Eigen::Vector3d lineOrigin(-1.0, -0.5, 0.5);
       Eigen::Vector3d lineTangent(1.0, 0.5, 0.0);
@@ -1402,6 +1451,7 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
+                                                                                                                                          polyhedronFaceNormals,
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
@@ -1465,6 +1515,20 @@ namespace GedimUnitTesting {
                                                         Eigen::Vector3d(0.0, 0.0, 1.0),
                                                         Eigen::Vector3d(0.0, 0.5, 0.0));
 
+      vector<vector<Eigen::MatrixXd>> cell3DsFaceVertices(numCell3Ds);
+      vector<Eigen::Vector3d> cell3DsBarycenters(numCell3Ds);
+      vector<vector<Eigen::Vector3d>> cell3DsFaceNormals(numCell3Ds);
+
+      for (unsigned int c = 0; c < numCell3Ds; c++)
+      {
+        cell3DsFaceVertices[c] = geometryUtility.PolyhedronFaceVertices(cell3Ds[c].Vertices,
+                                                                        cell3Ds[c].Edges,
+                                                                        cell3Ds[c].Faces);
+        cell3DsBarycenters[c] = geometryUtility.PolyhedronBarycenter(cell3Ds[c].Vertices);
+        cell3DsFaceNormals[c] = geometryUtility.PolyhedronFaceNormals(cell3DsFaceVertices[c],
+                                                                      cell3DsBarycenters[c]);
+      }
+
       // create segments
       const unsigned int numSegments = 4;
       Eigen::MatrixXd segmentOrigins(3, numSegments);
@@ -1494,6 +1558,7 @@ namespace GedimUnitTesting {
       for (unsigned int s = 0; s < numSegments; s++)
       {
         result[s] = geometryUtility.IntersectionPolyhedronsSegment(cell3Ds,
+                                                                   cell3DsFaceNormals,
                                                                    segmentOrigins.col(s),
                                                                    segmentEnds.col(s),
                                                                    segmentTagents.col(s));
