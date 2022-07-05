@@ -772,6 +772,16 @@ namespace Gedim
         return (point - segmentOrigin).dot(segmentEnd - segmentOrigin) / (segmentEnd - segmentOrigin).squaredNorm();
       }
 
+      /// \param point the point
+      /// \param lineOrigin the line origin
+      /// \param lineTangent the line tangent
+      /// \param lineTangentLength the line tangent lenght
+      /// \return true if the point belongs on line
+      bool IsPointOnLine(const Eigen::Vector3d& point,
+                         const Eigen::Vector3d& lineOrigin,
+                         const Eigen::Vector3d& lineTangent,
+                         const double& lineTangentLength) const;
+
       /// \brief Compute point position respect to a segment
       /// \param point the point
       /// \param segmentOrigin the segment origin

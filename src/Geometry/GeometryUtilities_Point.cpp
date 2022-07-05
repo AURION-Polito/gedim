@@ -28,6 +28,20 @@ namespace Gedim
     return vector<unsigned int>(indices.begin(), indices.end());
   }
   // ***************************************************************************
+  bool GeometryUtilities::IsPointOnLine(const Eigen::Vector3d& point,
+                                        const Eigen::Vector3d& lineOrigin,
+                                        const Eigen::Vector3d& lineTangent,
+                                        const double& lineTangentLength) const
+  {
+    const Eigen::Vector3d pointDirection = (point - lineOrigin);
+
+    if (IsValue2DZero(pointDirection.squaredNorm()) ||
+        IsValue2DZero(pointDirection.cross(lineTangent).squaredNorm() / (lineTangentLength * lineTangentLength)))
+      return true;
+
+    return false;
+  }
+  // ***************************************************************************
   GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const Vector3d& point,
                                                                                        const Vector3d& segmentOrigin,
                                                                                        const Vector3d& segmentEnd) const

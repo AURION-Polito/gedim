@@ -202,6 +202,164 @@ namespace GedimUnitTesting {
     }
   }
   
+  TEST(TestGeometryUtilities, TestIsPointOnLine)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check not in line
+      {
+        const Eigen::Vector3d point(0.5, -1.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+                                                   lineOrigin,
+                                                   lineTangent,
+                                                   lineTangentLength));
+      }
+
+      // check not in line
+      {
+        const Eigen::Vector3d point(0.5, 1.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+                                                   lineOrigin,
+                                                   lineTangent,
+                                                   lineTangentLength));
+      }
+
+      // check on segment line before origin
+      {
+        const Eigen::Vector3d point(-10.0, 0.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+
+      // check on segment line after end
+      {
+        const Eigen::Vector3d point(10.0, 0.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+
+      // check on segment origin
+      {
+        const Eigen::Vector3d point(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+
+      // check on segment end
+      {
+        const Eigen::Vector3d point(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+
+      // check inside segment
+      {
+        const Eigen::Vector3d point(0.5, 0.0, 0.0);
+        const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
+        const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+
+      // check not in line 3D
+      {
+        const Eigen::Vector3d point(0.0, -1.0, -7.0);
+        const Eigen::Vector3d lineOrigin(1.0, 2.0, 3.0);
+        const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+                                                   lineOrigin,
+                                                   lineTangent,
+                                                   lineTangentLength));
+      }
+
+      // check in line 3D
+      {
+        const Eigen::Vector3d point(3.0, 4.5, 6.0);
+        const Eigen::Vector3d lineOrigin(1.0, 2.0, 3.0);
+        const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
+        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+                                                                           lineEnd);
+        const double lineTangentLength = lineTangent.norm();
+
+        Gedim::GeometryUtilities::PointSegmentPositionTypes result;
+        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+                                                  lineOrigin,
+                                                  lineTangent,
+                                                  lineTangentLength));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPointSegmentPosition)
   {
     try
