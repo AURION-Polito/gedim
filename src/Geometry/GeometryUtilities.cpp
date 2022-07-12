@@ -6,7 +6,7 @@ using namespace Eigen;
 
 namespace Gedim
 {
-  // ***************************************************************************
+  // **************************************************************
   GeometryUtilities::GeometryUtilities(const GeometryUtilitiesConfig& configuration) :
     _configuration(configuration)
   {

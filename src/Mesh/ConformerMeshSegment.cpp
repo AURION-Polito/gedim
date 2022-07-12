@@ -6,13 +6,17 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
+
   ConformerMeshSegment::ConformerMeshSegment(const GeometryUtilities& geometryUtilities) :
     _geometryUtilities(geometryUtilities)
   {
+
   }
+
   ConformerMeshSegment::~ConformerMeshSegment()
   {
   }
+
   // ***************************************************************************
   void ConformerMeshSegment::ToCurvilinearCoordinates(const ConformerMeshSegment::ConformMesh& conformMesh,
                                                       vector<double>& curvilinearCoordinates)

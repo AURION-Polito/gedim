@@ -49,6 +49,14 @@ namespace Gedim
         RightTheSegment = 7
       };
 
+      enum struct PointPlanePositionTypes
+      {
+        Unknown = 0,
+        Negative = 1,
+        OnPlane = 2,
+        Positive = 3
+      };
+
       enum struct PolygonCirclePositionTypes
       {
         Unknown = 0,
@@ -350,6 +358,96 @@ namespace Gedim
           Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
       };
 
+      struct IntersectionPolyhedronLineResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            None = 1, ///< No intersection found
+            OneIntersection = 2, ///< One intersection found
+            TwoIntersections = 3, ///< Two intersection found
+            MultipleIntersections = 4 ///< Multiple intersection found
+          };
+
+          struct PolyhedronFaceIntersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Intersection = 1,
+                NoIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
+          };
+
+          struct PolyhedronEdgeIntersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Intersection = 1,
+                NoIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
+          };
+
+          struct PolyhedronVertexIntersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Intersection = 1,
+                NoIntersection = 2
+              };
+
+              Types Type = Types::Unknown;
+              unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
+          };
+
+          struct LineIntersection
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                OnVertex = 1, ///< On polyhedron vertex
+                OnEdge = 2, ///< On polyhedron edge
+                OnFace = 3, ///< On polyhedron face
+                Inside = 4, ///< Inside polyhedron
+              };
+
+              Types PolyhedronType = Types::Unknown; ///< Type of intersection
+              unsigned int PolyhedronIndex = 0; ///<  Index of the intersecting element of the Polyhedron (face, edge or vertex index)
+              double CurvilinearCoordinate = 0.0; ///< Curvilinear coordinate in the line
+          };
+
+          Types Type = Types::Unknown; /// The
+          vector<LineIntersection> LineIntersections; ///< The line intersections
+          vector<PolyhedronVertexIntersection> PolyhedronVertexIntersections = {}; ///< Polyhedron Vertex intersections, size polyhedron num vertices
+          vector<PolyhedronEdgeIntersection> PolyhedronEdgeIntersections = {}; ///< Polyhedron Edge intersections, size polyhedron num edges
+          vector<PolyhedronFaceIntersection> PolyhedronFaceIntersections = {}; ///< Polyhedron Face intersections, size polyhedron num faces
+      };
+
+      struct IntersectionPolyhedronsSegmentResult final
+      {
+          struct IntersectionPoint final
+          {
+              vector<unsigned int> Cell3DIndices = {};
+          };
+
+          struct IntersectionSegment final
+          {
+              vector<double> Points = {};
+              vector<unsigned int> Cell3DIndices = {};
+          };
+
+          map<double, IntersectionPoint> Points;
+          vector<IntersectionSegment> Segments;
+      };
+
       struct IntersectionPolyhedronPlaneResult final
       {
           enum struct Types
@@ -455,7 +553,6 @@ namespace Gedim
                                  const double& second,
                                  const double& tolerance) const;
     public:
-
       GeometryUtilities(const GeometryUtilitiesConfig& configuration);
       ~GeometryUtilities();
 
@@ -672,8 +769,36 @@ namespace Gedim
                                                const Eigen::Vector3d& segmentOrigin,
                                                const Eigen::Vector3d& segmentEnd) const
       {
-        return (point - segmentOrigin).dot(segmentEnd - segmentOrigin) / (segmentEnd - segmentOrigin).squaredNorm();
+        const Eigen::Vector3d segmentTangent = (segmentEnd - segmentOrigin);
+        return PointLineCurvilinearCoordinate(point,
+                                              segmentOrigin,
+                                              segmentTangent,
+                                              segmentTangent.squaredNorm());
       }
+
+      /// \brief compute the Point Curvilinear Coordinate of line
+      /// \param point the point
+      /// \param lineOrigin the line origin
+      /// \param lineTangent the line tangent
+      /// \param lineTangentSquaredLength the line tangent length squared
+      /// \return the curvilinear coordinate computed
+      inline double PointLineCurvilinearCoordinate(const Eigen::Vector3d& point,
+                                                   const Eigen::Vector3d& lineOrigin,
+                                                   const Eigen::Vector3d& lineTangent,
+                                                   const double& lineTangentSquaredLength) const
+      {
+        return (point - lineOrigin).dot(lineTangent) / lineTangentSquaredLength;
+      }
+
+      /// \param point the point
+      /// \param lineOrigin the line origin
+      /// \param lineTangent the line tangent
+      /// \param lineTangentSquaredLength the line tangent length squared
+      /// \return true if the point belongs on line
+      bool IsPointOnLine(const Eigen::Vector3d& point,
+                         const Eigen::Vector3d& lineOrigin,
+                         const Eigen::Vector3d& lineTangent,
+                         const double& lineTangentSquaredLength) const;
 
       /// \brief Compute point position respect to a segment
       /// \param point the point
@@ -701,6 +826,15 @@ namespace Gedim
       {
         return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd);
       }
+
+      /// \brief Compute point position respect to a plane
+      /// \param point the point
+      /// \param planeNormal the plane normal
+      /// \param planeOrigin the plane origin
+      /// \return result the point position
+      PointPlanePositionTypes PointPlanePosition(const Eigen::Vector3d& point,
+                                                 const Eigen::Vector3d& planeNormal,
+                                                 const Eigen::Vector3d& planeOrigin) const;
 
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
@@ -806,6 +940,50 @@ namespace Gedim
                                                                     const Eigen::Vector3d& planeOrigin,
                                                                     const Eigen::Matrix3d& planeRotationMatrix,
                                                                     const Eigen::Vector3d& planeTranslation) const;
+
+      /// \brief Intersection between a Polyhedron and a line
+      /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
+      /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
+      /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
+      /// \param lineTangent the line tangent
+      /// \param lineOrigin the line origin
+      /// \return the intersection result
+      IntersectionPolyhedronLineResult IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
+                                                                  const Eigen::MatrixXi& polyhedronEdges,
+                                                                  const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                  const vector<Eigen::Vector3d> polyhedronFaceNormals,
+                                                                  const Eigen::Vector3d& lineTangent,
+                                                                  const Eigen::Vector3d& lineOrigin) const;
+
+      /// \brief Intersection between a Polyhedron and a segment
+      /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
+      /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
+      /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \param segmentTangent the segment tangent
+      /// \param polyhedronLineIntersections the intersection between the polyhedron and the line of the segment
+      /// \return the intersection result
+      IntersectionPolyhedronLineResult IntersectionPolyhedronSegment(const Eigen::MatrixXd& polyhedronVertices,
+                                                                     const Eigen::MatrixXi& polyhedronEdges,
+                                                                     const vector<Eigen::MatrixXi> polyhedronFaces,
+                                                                     const Eigen::Vector3d& segmentOrigin,
+                                                                     const Eigen::Vector3d& segmentEnd,
+                                                                     const Eigen::Vector3d& segmentTangent,
+                                                                     const IntersectionPolyhedronLineResult& polyhedronLineIntersections) const;
+
+      /// \brief Intersection between a collectio of Polyhedrons and a segment
+      /// \param polyhedrons the polyhedron collection
+      /// \param polyhedronFaceNormals polyhedron face normals
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      /// \param segmentTangent the segment tangent
+      /// \return the intersection result
+      IntersectionPolyhedronsSegmentResult IntersectionPolyhedronsSegment(const vector<Polyhedron>& polyhedrons,
+                                                                          const vector<vector<Eigen::Vector3d>> polyhedronFaceNormals,
+                                                                          const Eigen::Vector3d& segmentOrigin,
+                                                                          const Eigen::Vector3d& segmentEnd,
+                                                                          const Eigen::Vector3d& segmentTangent) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point
@@ -980,12 +1158,28 @@ namespace Gedim
       /// \return the resulting edge normals outgoing the polygon, size 3 x numVertices
       Eigen::MatrixXd PolygonEdgeNormals(const Eigen::MatrixXd& polygonVertices) const;
 
+      /// \brief Compute the simplex barycenter as a mean of all vertices
+      /// \param vertices the matrix of vertices of the simplex (size 3 x numVertices)
+      inline Eigen::Vector3d SimplexBarycenter(const Eigen::MatrixXd& vertices) const
+      {
+        Output::Assert(vertices.rows() == 3);
+        return vertices.rowwise().mean();
+      }
+
       /// \brief Compute the Polygon barycenter as a mean of all vertices
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       inline Eigen::Vector3d PolygonBarycenter(const Eigen::MatrixXd& polygonVertices) const
       {
         Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
-        return polygonVertices.rowwise().mean();
+        return SimplexBarycenter(polygonVertices);
+      }
+
+      /// \brief Compute the polyhedron barycenter as a mean of all vertices
+      /// \param polyhedronVertices the matrix of vertices of the polyhedron (size 3 x numVertices)
+      inline Eigen::Vector3d PolyhedronBarycenter(const Eigen::MatrixXd& polyhedronVertices) const
+      {
+        Output::Assert(polyhedronVertices.rows() == 3 && polyhedronVertices.cols() > 2);
+        return SimplexBarycenter(polyhedronVertices);
       }
 
       /// \brief Compute the Polygon centroid as described in https://en.wikipedia.org/wiki/Centroid
@@ -1166,11 +1360,39 @@ namespace Gedim
       /// \param lengthVector the length vector
       /// \param heightVector the heigth vector
       /// \param widthVector the width vector
-      /// \return the tetrahedron created
+      /// \return the parallelepiped created
       Polyhedron CreateParallelepipedWithOrigin(const Eigen::Vector3d& origin,
                                                 const Eigen::Vector3d& lengthVector,
                                                 const Eigen::Vector3d& heightVector,
                                                 const Eigen::Vector3d& widthVector) const;
+
+      /// \brief Compute Polyhedron Faces Vertices
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronEdges the polyhedron edges
+      /// \param polyhedronFaces the polyhedron faces
+      /// \return for each face the vertices, size 1xnumFaces
+      vector<Eigen::MatrixXd> PolyhedronFaceVertices(const Eigen::MatrixXd& polyhedronVertices,
+                                                     const Eigen::MatrixXi& polyhedronEdges,
+                                                     const vector<Eigen::MatrixXi> polyhedronFaces) const;
+
+      /// \brief Compute Polyhedron Faces Rotation matrix
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \return for each polyhedron face the rotation matrix
+      vector<Eigen::Matrix3d> PolyhedronFaceRotationMatrices(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                             const vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                             const vector<Eigen::Vector3d>& polyhedronFaceTranslations) const;
+
+      /// \brief Compute Polyhedron Faces translation vectors
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \return for each polyhedron face the translation vector
+      vector<Eigen::Vector3d> PolyhedronFaceTranslations(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
+
+      /// \brief Compute Polyhedron Faces Normals
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \param pointInsidePolyhedron a point inside polyhedron
+      /// \return for each polyhedron face the outgoing normal
+      vector<Eigen::Vector3d> PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                    const Eigen::Vector3d& pointInsidePolyhedron) const;
   };
 }
 
