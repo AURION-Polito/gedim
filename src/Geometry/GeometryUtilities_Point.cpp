@@ -185,19 +185,19 @@ namespace Gedim
     return positions;
   }
   // ***************************************************************************
-  vector<bool> GeometryUtilities::PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
-                                                   const Eigen::Vector3d& segmentEnd,
-                                                   const Eigen::MatrixXd& points) const
+  vector<bool> GeometryUtilities::PointsAreOnLine(const Eigen::MatrixXd& points,
+                                                  const Eigen::Vector3d& lineOrigin,
+                                                  const Eigen::Vector3d& lineTangent) const
   {
     Output::Assert(points.rows() == 3 && points.cols() > 0);
     const unsigned int numPoints = points.cols();
 
-    const Eigen::Vector3d t = SegmentTangent(segmentOrigin, segmentEnd).normalized();
+    const Eigen::Vector3d t = lineTangent.normalized();
 
     vector<bool> aligned(numPoints, false);
     for (unsigned int p = 0; p < numPoints; p++)
     {
-      const Eigen::Vector3d s = (points.col(p) - segmentOrigin).normalized();
+      const Eigen::Vector3d s = (points.col(p) - lineOrigin).normalized();
       aligned[p] = IsValue1DZero(t.cross(s).norm());
     }
     return aligned;

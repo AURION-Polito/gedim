@@ -944,9 +944,9 @@ namespace Gedim
       const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(edgeNumber);
 
       // check if the edge is aligned to the angle quadrant
-      if (PointIsAligned(edgeOrigin,
-                         edgeEnd,
-                         circleCenter))
+      if (PointIsOnLine(circleCenter,
+                        edgeOrigin,
+                        edgeTangent))
       {
         edgeNumber++;
         if (edgeNumber == numPolygonVertices)

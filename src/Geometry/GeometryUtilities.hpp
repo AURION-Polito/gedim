@@ -1294,9 +1294,23 @@ namespace Gedim
       /// \param segmentEnd segment end of the line
       /// \param points the points, size 3 x numPoints
       /// \return true if the i-th point is aligned, size 1 x numPoints
-      vector<bool> PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
-                                    const Eigen::Vector3d& segmentEnd,
-                                    const Eigen::MatrixXd& points) const;
+      inline vector<bool> PointsAreAligned(const Eigen::Vector3d& segmentOrigin,
+                                           const Eigen::Vector3d& segmentEnd,
+                                           const Eigen::MatrixXd& points) const
+      {
+        return PointsAreOnLine(points,
+                               segmentOrigin,
+                               SegmentTangent(segmentOrigin, segmentEnd));
+      }
+
+      /// \brief Check if a set of points are on a line
+      /// \param points the points, size 3 x numPoints
+      /// \param lineTangent the line tangent
+      /// \param lineOrigin the line origin
+      /// \return true if the i-th point is aligned, size 1 x numPoints
+      vector<bool> PointsAreOnLine(const Eigen::MatrixXd& points,
+                                   const Eigen::Vector3d& lineOrigin,
+                                   const Eigen::Vector3d& lineTangent) const;
 
       /// \brief Check if a point is aligned to a line identified by a segment
       /// \param segmentOrigin segment origin of the line
@@ -1307,6 +1321,16 @@ namespace Gedim
                                  const Eigen::Vector3d& segmentEnd,
                                  const Eigen::Vector3d& point) const
       { return PointsAreAligned(segmentOrigin, segmentEnd, point)[0]; }
+
+      /// \brief Check if a point is on a line
+      /// \param point the point
+      /// \param lineTangent the line tangent
+      /// \param lineOrigin the line origin
+      /// \return true if the point is aligned
+      inline bool PointIsOnLine(const Eigen::Vector3d& point,
+                                const Eigen::Vector3d& lineOrigin,
+                                const Eigen::Vector3d& lineTangent) const
+      { return PointsAreOnLine(point, lineOrigin, lineTangent)[0]; }
 
       /// \brief Extract the circumscribed unaligned points (minimum 2) in a set of points
       /// \param points the points, size 3 x numPoints
