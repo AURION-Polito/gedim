@@ -939,6 +939,14 @@ namespace Gedim
                        facesCell0DIndices[e]);
   }
   // ***************************************************************************
+  MatrixXd MeshMatricesDAO::Cell3DVerticesCoordinates(const unsigned int& cell3DIndex) const
+  {
+    MatrixXd coordinates(3, Cell3DNumberVertices(cell3DIndex));
+    for (unsigned int v = 0; v < Cell3DNumberVertices(cell3DIndex); v++)
+      coordinates.col(v) << Cell3DVertexCoordinates(cell3DIndex, v);
+    return coordinates;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell3DInsertUpdatedCell3D(const unsigned int& cell3DIndex,
                                                   const unsigned int& updatedCell3DIdex)
   {

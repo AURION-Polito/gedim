@@ -139,6 +139,13 @@ namespace Gedim
       void ExportMeshToVTU(const IMeshDAO& mesh,
                            const string& exportFolder,
                            const string& fileName) const;
+
+      /// \brief Convert a mesh cell3D to a geometric polydheron
+      /// \param mesh a mesh
+      /// \param cell3DIndex the cell3D index
+      /// \return polyhedron from mesh 3D cell
+      GeometryUtilities::Polyhedron MeshCell3DToPolyhedron(const IMeshDAO& mesh,
+                                                           const unsigned int& cell3DIndex) const;
   };
 
 }

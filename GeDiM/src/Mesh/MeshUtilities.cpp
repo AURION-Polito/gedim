@@ -775,4 +775,53 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const IMeshDAO& mesh,
+                                                                      const unsigned int& cell3DIndex) const
+  {
+    GeometryUtilities::Polyhedron polyhedron;
+
+    unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
+    unordered_map<unsigned int, unsigned int> cell1DIndexToEdgeIndex;
+
+    polyhedron.Vertices = mesh.Cell3DVerticesCoordinates(cell3DIndex);
+    polyhedron.Edges.resize(2, mesh.Cell3DNumberEdges(cell3DIndex));
+    polyhedron.Faces.resize(mesh.Cell3DNumberFaces(cell3DIndex));
+
+    for (unsigned int v = 0; v < polyhedron.Vertices.cols(); v++)
+    {
+      cell0DIndexToVertexIndex.insert(make_pair(mesh.Cell3DVertex(cell3DIndex,
+                                                                  v),
+                                                v));
+    }
+
+    for (unsigned int e = 0; e < polyhedron.Edges.cols(); e++)
+    {
+      const unsigned int cell1DIndex = mesh.Cell3DEdge(cell3DIndex,
+                                                       e);
+      cell1DIndexToEdgeIndex.insert(make_pair(cell1DIndex,
+                                              e));
+
+      polyhedron.Edges(0, e) = cell0DIndexToVertexIndex.at(mesh.Cell1DOrigin(cell1DIndex));
+      polyhedron.Edges(1, e) = cell0DIndexToVertexIndex.at(mesh.Cell1DEnd(cell1DIndex));
+    }
+
+    for (unsigned int f = 0; f < polyhedron.Faces.size(); f++)
+    {
+      const unsigned int cell2DIndex = mesh.Cell3DFace(cell3DIndex,
+                                                       f);
+      const unsigned int numFaceVertices = mesh.Cell2DNumberVertices(cell2DIndex);
+
+      polyhedron.Faces[f].resize(2, numFaceVertices);
+      for (unsigned int v = 0; v < numFaceVertices; v++)
+      {
+        polyhedron.Faces[f](0, v) = cell0DIndexToVertexIndex.at(mesh.Cell2DVertex(cell2DIndex,
+                                                                                  v));
+        polyhedron.Faces[f](1, v) = cell1DIndexToEdgeIndex.at(mesh.Cell2DEdge(cell2DIndex ,
+                                                                              v));
+      }
+    }
+
+    return polyhedron;
+  }
+  // ***************************************************************************
 }

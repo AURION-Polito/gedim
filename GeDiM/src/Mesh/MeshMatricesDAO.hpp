@@ -847,6 +847,14 @@ namespace Gedim
 
         return _mesh.Cell3DVertices[_mesh.NumberCell3DVertices[cell3DIndex] + vertexIndex];
       }
+      inline Eigen::Vector3d Cell3DVertexCoordinates(const unsigned int& cell3DIndex,
+                                                     const unsigned int& vertexIndex) const
+      {
+        Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
+        Gedim::Output::Assert(vertexIndex < Cell3DNumberVertices(cell3DIndex));
+        return Cell0DCoordinates(Cell3DVertex(cell3DIndex, vertexIndex));
+      }
+      Eigen::MatrixXd Cell3DVerticesCoordinates(const unsigned int& cell3DIndex) const;
       inline unsigned int Cell3DEdge(const unsigned int& cell3DIndex,
                                      const unsigned int& edgeIndex) const
       {

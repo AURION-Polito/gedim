@@ -807,6 +807,14 @@ namespace Gedim
       virtual unsigned int Cell3DVertex(const unsigned int& cell3DIndex,
                                         const unsigned int& vertexIndex ) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
+      /// \param vertexIndex the index of cell0D vertex from 0 to NumberCell3DVertices(cell3DIndex)
+      /// \return the Cell0D coordinates of vertex of Cell3D, size 3 x 1
+      virtual Eigen::Vector3d Cell3DVertexCoordinates(const unsigned int& cell3DIndex,
+                                                      const unsigned int& vertexIndex) const = 0;
+      /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
+      /// \return the Cell0D coordinates of all the vertices of Cell3D, size 3 x NumberCell3DVertices(cell3DIndex)
+      virtual Eigen::MatrixXd Cell3DVerticesCoordinates(const unsigned int& cell3DIndex) const = 0;
+      /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \param edgeIndex the index of cell1D edge from 0 to NumberCell3DEdges(edgeIndex)
       /// \return the Cell1D index of edge of Cell3D from 0 to Cell1DTotalNumber()
       virtual unsigned int Cell3DEdge(const unsigned int& cell3DIndex,
