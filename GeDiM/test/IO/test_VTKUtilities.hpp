@@ -6,6 +6,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
+#include "MeshMatrices_3D_22Cells_Mock.hpp"
 
 #include "GeometryUtilities.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -327,6 +328,42 @@ namespace GedimUnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     vtpUtilities.Export(exportFolder + "/Mesh2D_Cell2Ds.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
+  // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell0Ds)
+  {
+    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+    Gedim::VTKUtilities vtpUtilities;
+
+    // Export to VTK
+    for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
+    {
+      vector<double> id(1, mesh.Cell0DId(g));
+      vector<double> marker(1, mesh.Cell0DMarker(g));
+
+      vtpUtilities.AddPoint(mesh.Cell0DCoordinates(g),
+                            {
+                              {
+                                "Id",
+                                Gedim::VTPProperty::Formats::Cells,
+                                static_cast<unsigned int>(id.size()),
+                                id.data()
+                              },
+                              {
+                                "Marker",
+                                Gedim::VTPProperty::Formats::Cells,
+                                static_cast<unsigned int>(marker.size()),
+                                marker.data()
+                              }
+                            });
+    }
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Mesh3D_Cell0Ds.vtu",
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
