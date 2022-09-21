@@ -6,7 +6,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
-#include "MeshMatrices_3D_22Cells_Mock.hpp"
+#include "MeshMatrices_3D_329Cells_Mock.hpp"
 
 #include "GeometryUtilities.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -334,7 +334,7 @@ namespace GedimUnitTesting
   // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell0Ds)
   {
-    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
     Gedim::VTKUtilities vtpUtilities;
 
@@ -370,7 +370,7 @@ namespace GedimUnitTesting
   // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell1Ds)
   {
-    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
     Gedim::VTKUtilities vtpUtilities;
 
@@ -406,7 +406,7 @@ namespace GedimUnitTesting
   // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell2Ds)
   {
-    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
     Gedim::VTKUtilities vtpUtilities;
 
@@ -442,7 +442,7 @@ namespace GedimUnitTesting
   // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell3Ds)
   {
-    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
     Gedim::VTKUtilities vtpUtilities;
     Gedim::MeshUtilities meshUtilities;
