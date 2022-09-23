@@ -206,6 +206,49 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration& configuration,
+                                  const GeometryUtilities& geometryUtilities,
+                                  const IMeshDAO& convexMesh) const
+  {
+    Output::Assert(convexMesh.Dimension() == 2);
+
+    // check Cell0D are 2D
+    if (configuration.Cell0D_CheckCoordinates2D)
+      Output::Assert(geometryUtilities.PointsAre2D(convexMesh.Cell0DCoordinates()));
+
+    // check Cell0D duplications
+    if (configuration.Cell0D_CheckDuplications)
+    {
+      for (unsigned int p1 = 0; p1 < convexMesh.Cell0DTotalNumber(); p1++)
+      {
+        for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell0DTotalNumber(); p2++)
+        {
+          Output::Assert(!geometryUtilities.PointsAreCoincident(convexMesh.Cell0DCoordinates(p1),
+                                                                convexMesh.Cell0DCoordinates(p2)));
+        }
+      }
+    }
+
+    if (configuration.Cell1D_CheckDuplications)
+    {
+      for (unsigned int e1 = 0; e1 < convexMesh.Cell1DTotalNumber(); e1++)
+      {
+        Output::Assert(convexMesh.Cell1DExists(convexMesh.Cell1DOrigin(e1),
+                                               convexMesh.Cell1DEnd(e1)));
+        Output::Assert(!convexMesh.Cell1DExists(convexMesh.Cell1DEnd(e1),
+                                                convexMesh.Cell1DOrigin(e1)));
+
+        for (unsigned int e2 = e1 + 1; e2 < convexMesh.Cell1DTotalNumber(); e2++)
+        {
+          Output::Assert(!(convexMesh.Cell1DOrigin(e1) == convexMesh.Cell1DOrigin(e2) &&
+                           convexMesh.Cell1DEnd(e1) == convexMesh.Cell1DEnd(e2)));
+          Output::Assert(!(convexMesh.Cell1DEnd(e1) == convexMesh.Cell1DOrigin(e2) &&
+                           convexMesh.Cell1DOrigin(e1) == convexMesh.Cell1DEnd(e2)));
+        }
+      }
+    }
+  }
+  // ***************************************************************************
   void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,
                                         const vector<unsigned int> vertexMarkers,
                                         const vector<unsigned int> edgeMarkers,

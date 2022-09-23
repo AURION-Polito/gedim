@@ -164,11 +164,6 @@ namespace GedimUnitTesting
     EXPECT_EQ(expectedMesh.Cell1DExtremes(),
               meshDao.Cell1DExtremes());
 
-    { using namespace Gedim;
-      cerr<< "Before:\n"<< mesh.Cell0DMarkers<< endl;
-      cerr<< "Before:\n"<< mesh.Cell1DMarkers<< endl;
-    }
-
     const vector<unsigned int> cell0DMarkers = { 11, 12, 13, 14 };
     const vector<unsigned int> cell1DMarkers = { 15, 16, 17, 18 };
     meshUtilities.ChangePolygonMeshMarkers(polygon,
@@ -188,6 +183,25 @@ namespace GedimUnitTesting
         meshDao.Cell1DMarker(20));
     EXPECT_EQ(cell1DMarkers[0],
         meshDao.Cell1DMarker(23));
+  }
+
+  TEST(TestMeshUtilities, TestCheckMesh2D)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+    config.Cell0D_CheckCoordinates2D = true;
+    config.Cell0D_CheckDuplications = true;
+    config.Cell1D_CheckDuplications = true;
+
+    meshUtilities.CheckMesh2D(config,
+                              geometryUtilities,
+                              meshDao);
   }
 
   TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)

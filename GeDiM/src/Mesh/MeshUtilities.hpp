@@ -12,6 +12,13 @@ namespace Gedim
   /// \copyright See top level LICENSE file for details.
   class MeshUtilities final {
     public:
+      struct CheckMesh2DConfiguration final
+      {
+          bool Cell0D_CheckCoordinates2D = false;
+          bool Cell0D_CheckDuplications = false;
+          bool Cell1D_CheckDuplications = false;
+      };
+
       struct ExtractActiveMeshData final
       {
           map<unsigned int, unsigned int> OldCell0DToNewCell0D; ///< each pair is {old Cell0D index, new Cell0D index}
@@ -65,6 +72,13 @@ namespace Gedim
                       const Eigen::MatrixXi& cell1Ds,
                       const vector<Eigen::MatrixXi>& cell2Ds,
                       IMeshDAO& mesh) const;
+
+      /// \brief Check Mesh2D correctness
+      /// \param geometryUtilities the geometry utilities
+      /// \param convexMesh a convex 2D mesh
+      void CheckMesh2D(const CheckMesh2DConfiguration& configuration,
+                       const GeometryUtilities& geometryUtilities,
+                       const IMeshDAO& convexMesh) const;
 
       /// \brief Create a Mesh 2D with a polygon
       /// \param polygonVertices the polygon coordinates, size 3xNumPolygonVertices()
