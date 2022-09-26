@@ -17,6 +17,7 @@ namespace Gedim
           bool Cell0D_CheckCoordinates2D = false;
           bool Cell0D_CheckDuplications = false;
           bool Cell1D_CheckDuplications = false;
+          bool Cell2D_CheckEdges = false;
       };
 
       struct ExtractActiveMeshData final

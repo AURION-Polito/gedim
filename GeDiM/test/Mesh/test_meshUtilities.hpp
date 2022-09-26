@@ -198,10 +198,11 @@ namespace GedimUnitTesting
     config.Cell0D_CheckCoordinates2D = true;
     config.Cell0D_CheckDuplications = true;
     config.Cell1D_CheckDuplications = true;
+    config.Cell2D_CheckEdges = true;
 
-    meshUtilities.CheckMesh2D(config,
-                              geometryUtilities,
-                              meshDao);
+    ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config,
+                                              geometryUtilities,
+                                              meshDao));
   }
 
   TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)

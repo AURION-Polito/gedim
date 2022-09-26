@@ -247,6 +247,21 @@ namespace Gedim
         }
       }
     }
+
+    if (configuration.Cell2D_CheckEdges)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+      {
+        for (unsigned int v = 0; v < convexMesh.Cell2DNumberVertices(p); v++)
+        {
+          const unsigned int eO = convexMesh.Cell2DVertex(p, v);
+          const unsigned int eE = convexMesh.Cell2DVertex(p, (v + 1) % convexMesh.Cell2DNumberVertices(p));
+          const unsigned int edgeFromVertices = convexMesh.Cell1DExists(eO, eE) ? convexMesh.Cell1DByExtremes(eO, eE) :
+                                                                                  convexMesh.Cell1DByExtremes(eE, eO);
+          Output::Assert(convexMesh.Cell2DEdge(p, v) == edgeFromVertices);
+        }
+      }
+    }
   }
   // ***************************************************************************
   void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,
