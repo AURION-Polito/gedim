@@ -429,13 +429,14 @@ namespace GedimUnitTesting
     }
   }
 
-  TEST(TestConformMesh, TestConformMesh2D)
+  TEST(TestConformMesh, TestConformMesh2DTwoPoints)
   {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       geometryUtilitiesConfig.Tolerance = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::MeshUtilities meshUtilities;
 
       // conform of simple 2 points mesh
       {
@@ -499,6 +500,17 @@ namespace GedimUnitTesting
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
 
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 6);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 10);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell2D, 4);
@@ -525,6 +537,16 @@ namespace GedimUnitTesting
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
 
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshTwo);
+
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 6);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 10);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell2D, 4);
@@ -533,6 +555,21 @@ namespace GedimUnitTesting
         for (const auto& mesh1Dsegment : conformMeshTwo.Segments)
           EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestConformMesh, TestConformMesh2DFivePoints)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1e-14;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // conform of simple 5 points mesh
       {
@@ -590,11 +627,34 @@ namespace GedimUnitTesting
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
         Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
+        std::string exportFolder = "./Export/TestConformMesh2D/TestFivePointsMesh";
+        Gedim::Output::CreateFolder(exportFolder);
+
+        Gedim::MeshUtilities meshUtilities;
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "Original");
+
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
+
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "Conformed");
+
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
 
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 8);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 16);
@@ -626,6 +686,16 @@ namespace GedimUnitTesting
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
 
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshTwo);
+
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 8);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 16);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell2D, 9);
@@ -638,6 +708,22 @@ namespace GedimUnitTesting
           EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
 
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestConformMesh, TestConformMesh2DTwentysixPoints)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1e-14;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::MeshUtilities meshUtilities;
 
       // conform of 26 points mesh
       {
@@ -696,11 +782,34 @@ namespace GedimUnitTesting
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
         Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
+        std::string exportFolder = "./Export/TestConformMesh2D/TestTwentysixPointsMesh";
+        Gedim::Output::CreateFolder(exportFolder);
+
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "Original");
+
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
+
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "Conformed");
+
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
 
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 31);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 76);
@@ -735,6 +844,16 @@ namespace GedimUnitTesting
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
 
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshTwo);
+
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 31);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 76);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell2D, 53);
@@ -751,6 +870,22 @@ namespace GedimUnitTesting
           EXPECT_EQ(mesh1Dsegment.Edge2DIds.size(), 1);
 
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestConformMesh, TestConformMesh2DTwoPointsFourPoints)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1e-14;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::MeshUtilities meshUtilities;
 
       // conform of simple 2 points and 4 points mesh
       {
@@ -814,6 +949,17 @@ namespace GedimUnitTesting
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
 
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 7);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 12);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell2D, 6);
@@ -840,6 +986,16 @@ namespace GedimUnitTesting
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
 
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 8);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 16);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell2D, 9);
@@ -848,6 +1004,23 @@ namespace GedimUnitTesting
         for (const auto& mesh1Dsegment : conformMeshTwo.Segments)
           EXPECT_GE(mesh1Dsegment.Edge2DIds.size(), 1);
       }
+
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestConformMesh, TestConformMesh2DTwentysixPointsTwentysixPoints)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1e-14;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::MeshUtilities meshUtilities;
 
       // conform of simple 26 points and 26 points mesh with different traces
       {
@@ -911,6 +1084,17 @@ namespace GedimUnitTesting
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
 
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 33);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 80);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell2D, 57);
@@ -937,6 +1121,16 @@ namespace GedimUnitTesting
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
 
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
 
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 32);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 76);
@@ -946,6 +1140,23 @@ namespace GedimUnitTesting
         for (const auto& mesh1Dsegment : conformMeshTwo.Segments)
           EXPECT_GE(mesh1Dsegment.Edge2DIds.size(), 1);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestConformMesh, TestConformMesh2DTwoPointsWithNonPassingTrace)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1e-14;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+      Gedim::MeshUtilities meshUtilities;
+
 
       // conform of simple 2 points with trace non-passing by domain edges
       {
@@ -1009,6 +1220,17 @@ namespace GedimUnitTesting
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
 
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshOne);
+
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 7);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 13);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell2D, 11);
@@ -1034,6 +1256,16 @@ namespace GedimUnitTesting
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
+
+        config.Cell0D_CheckCoordinates2D = true;
+        config.Cell0D_CheckDuplications = true;
+        config.Cell1D_CheckDuplications = true;
+        config.Cell1D_CheckNeighbours = true;
+        config.Cell2D_CheckEdges = true;
+        config.Cell2D_CheckDuplications = true;
+        meshUtilities.CheckMesh2D(config,
+                                  geometryUtilities,
+                                  fractureMeshTwo);
 
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 7);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 13);

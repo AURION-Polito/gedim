@@ -469,12 +469,14 @@ namespace Gedim
     map<unsigned int, unsigned int> newEdgeMap;
     for (const GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge& newEdge : splitResult.NewEdges)
     {
-      const unsigned int cell1DOrigin = (newEdge.OriginId < numOriginalVerticesCell2DMesh2D) ? mesh2D.Cell2DVertex(cell2DMesh2DId,
-                                                                                                                   newEdge.OriginId) :
-                                                                                               newVertexMap.at(newEdge.OriginId);
-      const unsigned int cell1DEnd = (newEdge.EndId < numOriginalVerticesCell2DMesh2D) ? mesh2D.Cell2DVertex(cell2DMesh2DId,
-                                                                                                             newEdge.EndId) :
-                                                                                         newVertexMap.at(newEdge.EndId);
+      const bool cell1DOriginOriginal = (newEdge.OriginId < numOriginalVerticesCell2DMesh2D);
+      const unsigned int cell1DOrigin = cell1DOriginOriginal ? mesh2D.Cell2DVertex(cell2DMesh2DId,
+                                                                                   newEdge.OriginId) :
+                                                               newVertexMap.at(newEdge.OriginId);
+      const bool cell1DEndOriginal = (newEdge.EndId < numOriginalVerticesCell2DMesh2D);
+      const unsigned int cell1DEnd = cell1DEndOriginal ? mesh2D.Cell2DVertex(cell2DMesh2DId,
+                                                                             newEdge.EndId) :
+                                                         newVertexMap.at(newEdge.EndId);
 
       mesh2D.Cell1DInsertExtremes(e, cell1DOrigin, cell1DEnd);
 
@@ -499,6 +501,9 @@ namespace Gedim
       {
         const unsigned int edgeIdToUpdate = mesh2D.Cell2DEdge(cell2DMesh2DId,
                                                               newEdge.OldEdgeId);
+        const bool newEdgeDirection = cell1DOriginOriginal ?
+                                        (mesh2D.Cell1DOrigin(edgeIdToUpdate) == cell1DOrigin) :
+                                        (mesh2D.Cell1DEnd(edgeIdToUpdate) == cell1DEnd);
 
         mesh2D.Cell1DInsertUpdatedCell1D(edgeIdToUpdate, e);
         mesh2D.Cell1DSetState(edgeIdToUpdate, 0);
@@ -520,13 +525,17 @@ namespace Gedim
           if (!mesh2D.Cell1DHasNeighbourCell2D(edgeIdToUpdate, n))
             continue;
 
+          // invert neighbours if direction of the edge is opposite
+          const unsigned int neighPosition = newEdgeDirection ? n :
+                                                                (n + 1) % mesh2D.Cell1DNumberNeighbourCell2D(edgeIdToUpdate);
+
           if (mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, n) == cell2DMesh2DId)
             mesh2D.Cell1DInsertNeighbourCell2D(e,
-                                               n,
+                                               neighPosition,
                                                c + newEdge.Cell2DNeighbours[0]);
           else
             mesh2D.Cell1DInsertNeighbourCell2D(e,
-                                               n,
+                                               neighPosition,
                                                mesh2D.Cell1DNeighbourCell2D(edgeIdToUpdate, n));
         }
 
@@ -550,7 +559,7 @@ namespace Gedim
         for (unsigned int n = 0; n < 2; n++)
         {
           mesh2D.Cell1DInsertNeighbourCell2D(e,
-                                             newEdge.Cell2DNeighbours[n],
+                                             n,
                                              c + newEdge.Cell2DNeighbours[n]);
         }
 

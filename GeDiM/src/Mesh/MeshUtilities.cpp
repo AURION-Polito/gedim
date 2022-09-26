@@ -248,6 +248,56 @@ namespace Gedim
       }
     }
 
+    if (configuration.Cell1D_CheckNeighbours)
+    {
+      for (unsigned int e = 0; e < convexMesh.Cell1DTotalNumber(); e++)
+      {
+        Output::Assert(convexMesh.Cell1DNumberNeighbourCell2D(e) == 2);
+
+        if (convexMesh.Cell1DHasNeighbourCell2D(e, 0))
+        {
+          const unsigned int cell2DRight = convexMesh.Cell1DNeighbourCell2D(e, 0);
+          const vector<unsigned int> cell2DEdges = convexMesh.Cell2DEdges(cell2DRight);
+
+          // check edge orientation
+          vector<unsigned int>::const_iterator it = std::find(cell2DEdges.begin(), cell2DEdges.end(), e);
+          Output::Assert(it != cell2DEdges.end());
+
+          const unsigned int cell2DEdgeIndex = std::distance(cell2DEdges.begin(), it);
+          const unsigned int edgeOrigin = convexMesh.Cell2DVertex(cell2DRight,
+                                                                  (cell2DEdgeIndex + 1) % cell2DEdges.size());
+          const unsigned int edgeEnd = convexMesh.Cell2DVertex(cell2DRight,
+                                                               cell2DEdgeIndex);
+
+          Output::Assert(convexMesh.Cell1DExists(edgeOrigin,
+                                                 edgeEnd) &&
+                         convexMesh.Cell1DByExtremes(edgeOrigin,
+                                                     edgeEnd) == e);
+        }
+
+        if (convexMesh.Cell1DHasNeighbourCell2D(e, 1))
+        {
+          const unsigned int cell2DLeft = convexMesh.Cell1DNeighbourCell2D(e, 1);
+          const vector<unsigned int> cell2DEdges = convexMesh.Cell2DEdges(cell2DLeft);
+
+          // check edge orientation
+          vector<unsigned int>::const_iterator it = std::find(cell2DEdges.begin(), cell2DEdges.end(), e);
+          Output::Assert(it != cell2DEdges.end());
+
+          const unsigned int cell2DEdgeIndex = std::distance(cell2DEdges.begin(), it);
+          const unsigned int edgeOrigin = convexMesh.Cell2DVertex(cell2DLeft,
+                                                                  cell2DEdgeIndex);
+          const unsigned int edgeEnd = convexMesh.Cell2DVertex(cell2DLeft,
+                                                               (cell2DEdgeIndex + 1) % cell2DEdges.size());
+
+          Output::Assert(convexMesh.Cell1DExists(edgeOrigin,
+                                                 edgeEnd) &&
+                         convexMesh.Cell1DByExtremes(edgeOrigin,
+                                                     edgeEnd) == e);
+        }
+      }
+    }
+
     if (configuration.Cell2D_CheckEdges)
     {
       for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
@@ -279,12 +329,12 @@ namespace Gedim
           vector<unsigned int> cell2D2Edges = convexMesh.Cell2DEdges(p2);
           sort(cell2D2Edges.begin(), cell2D2Edges.end());
 
-          Output::Assert(!equal(cell2D1Vertices.begin(),
-                                cell2D1Vertices.end(),
-                                cell2D2Vertices.begin()));
-          Output::Assert(!equal(cell2D1Edges.begin(),
-                                cell2D1Edges.end(),
-                                cell2D2Edges.begin()));
+          Output::Assert(cell2D1Vertices.size() != cell2D2Vertices.size() || !equal(cell2D1Vertices.begin(),
+                                                                                    cell2D1Vertices.end(),
+                                                                                    cell2D2Vertices.begin()));
+          Output::Assert(cell2D1Edges.size() != cell2D2Edges.size() || !equal(cell2D1Edges.begin(),
+                                                                              cell2D1Edges.end(),
+                                                                              cell2D2Edges.begin()));
         }
       }
     }
