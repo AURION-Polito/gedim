@@ -262,6 +262,32 @@ namespace Gedim
         }
       }
     }
+
+    if (configuration.Cell2D_CheckDuplications)
+    {
+      for (unsigned int p1 = 0; p1 < convexMesh.Cell2DTotalNumber(); p1++)
+      {
+        vector<unsigned int> cell2D1Vertices = convexMesh.Cell2DVertices(p1);
+        sort(cell2D1Vertices.begin(), cell2D1Vertices.end());
+        vector<unsigned int> cell2D1Edges = convexMesh.Cell2DEdges(p1);
+        sort(cell2D1Edges.begin(), cell2D1Edges.end());
+
+        for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell2DTotalNumber(); p2++)
+        {
+          vector<unsigned int> cell2D2Vertices = convexMesh.Cell2DVertices(p2);
+          sort(cell2D2Vertices.begin(), cell2D2Vertices.end());
+          vector<unsigned int> cell2D2Edges = convexMesh.Cell2DEdges(p2);
+          sort(cell2D2Edges.begin(), cell2D2Edges.end());
+
+          Output::Assert(!equal(cell2D1Vertices.begin(),
+                                cell2D1Vertices.end(),
+                                cell2D2Vertices.begin()));
+          Output::Assert(!equal(cell2D1Edges.begin(),
+                                cell2D1Edges.end(),
+                                cell2D2Edges.begin()));
+        }
+      }
+    }
   }
   // ***************************************************************************
   void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,

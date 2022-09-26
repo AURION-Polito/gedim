@@ -118,8 +118,8 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mockMesh;
         Gedim::MeshMatricesDAO fractureMesh(mockMesh.Mesh);
 
-        Vector3d segmentOrigin(0.25, 0.75, 0.0);
-        Vector3d segmentEnd(   0.75, 0.25, 0.0);
+        Eigen::Vector3d segmentOrigin(0.25, 0.75, 0.0);
+        Eigen::Vector3d segmentEnd(   0.75, 0.25, 0.0);
 
         Gedim::IntersectorMesh2DSegment IntersectorMesh2DSegment(fractureMesh,
                                                                  geometryUtilities);

@@ -190,7 +190,7 @@ namespace GedimUnitTesting
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     Gedim::MeshUtilities meshUtilities;
 
@@ -199,6 +199,7 @@ namespace GedimUnitTesting
     config.Cell0D_CheckDuplications = true;
     config.Cell1D_CheckDuplications = true;
     config.Cell2D_CheckEdges = true;
+    config.Cell2D_CheckDuplications = true;
 
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config,
                                               geometryUtilities,
