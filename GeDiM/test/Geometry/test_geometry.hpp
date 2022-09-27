@@ -370,6 +370,19 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtility.ExtractPoints(points,
                                                 unalignedPoints), result);
       }
+
+      // check polygon with aligned points
+      {
+        Eigen::MatrixXd points(3, 9);
+        points.row(0)<< 7.2754511553713841e-01, 7.4480304993744473e-01, 7.5185585251002640e-01, 7.5345218473528253e-01, 7.6972896840646954e-01, 7.5390268173810171e-01, 7.4856666415042183e-01, 7.1779224448481360e-01, 7.1510764095510071e-01;
+        points.row(1)<< 7.3131140323620392e-01, 7.2528958603603755e-01, 7.2505927150373028e-01, 7.3006842450775100e-01, 7.7809412779739129e-01, 8.0606390611392287e-01, 8.0648898431463600e-01, 7.8362391665369779e-01, 7.6423021194472562e-01;
+        points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+
+        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 2, 3, 4, 5, 6, 7, 8 }));
+      }
+
+
     }
     catch (const exception& exception)
     {

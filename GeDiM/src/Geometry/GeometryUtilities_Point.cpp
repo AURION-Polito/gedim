@@ -300,9 +300,9 @@ namespace Gedim
       const Eigen::Vector3d& segmentEnd = points.col((p + 1) % numPoints);
       const Eigen::Vector3d& nextPoint = points.col((p + 2) % numPoints);
 
-      if (PointsAreAligned(segmentOrigin,
-                           segmentEnd,
-                           nextPoint)[0])
+      if (PointIsAligned(segmentOrigin,
+                         segmentEnd,
+                         nextPoint))
         unalignedPoints.pop_back();
 
       unalignedPoints.push_back(pointIndexToTest);
