@@ -151,6 +151,18 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ExpectedTriangleMesh");
 
+    Gedim::MeshUtilities::MeshGeometricData cell2DsGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                                                         meshDao);
+    const unsigned int cell2DToExportIndex = 0;
+    meshUtilities.ExportCell2DToVTU(meshDao,
+                                    cell2DToExportIndex,
+                                    cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
+                                    exportFolder);
+
+
     EXPECT_EQ(expectedMesh.Dimension(),
               meshDao.Dimension());
     EXPECT_EQ(expectedMesh.Cell0DTotalNumber(),
@@ -195,13 +207,6 @@ namespace GedimUnitTesting
     Gedim::MeshUtilities meshUtilities;
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-    config.Cell0D_CheckCoordinates2D = true;
-    config.Cell0D_CheckDuplications = true;
-    config.Cell1D_CheckDuplications = true;
-    config.Cell1D_CheckNeighbours = true;
-    config.Cell2D_CheckEdges = true;
-    config.Cell2D_CheckDuplications = true;
-
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config,
                                               geometryUtilities,
                                               meshDao));

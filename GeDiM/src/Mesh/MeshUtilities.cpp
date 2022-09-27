@@ -337,6 +337,12 @@ namespace Gedim
                                                                               cell2D2Edges.begin()));
         }
       }
+
+      if (configuration.Cell2D_CheckConvexity)
+      {
+        for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+          Output::Assert(geometryUtilities.PolygonIsConvex(convexMesh.Cell2DVerticesCoordinates(p)));
+      }
     }
   }
   // ***************************************************************************
@@ -906,6 +912,75 @@ namespace Gedim
       }
 
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell2Ds.vtu");
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportCell2DToVTU(const IMeshDAO& mesh,
+                                        const unsigned int& cell2DIndex,
+                                        const Eigen::MatrixXd& cell2DVertices,
+                                        const vector<Eigen::Matrix3d>& cell2DTriangulations,
+                                        const double& cell2DArea,
+                                        const Eigen::Vector3d& cell2DCentroid,
+                                        const string& exportFolder) const
+  {
+    {
+      Gedim::VTKUtilities vtpUtilities;
+
+      vector<double> id(1, cell2DIndex);
+      vector<double> area(1, cell2DArea);
+
+      // Export cell2D
+      vtpUtilities.AddPolygon(cell2DVertices,
+                              {
+                                {
+                                  "Id",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(id.size()),
+                                  id.data()
+                                },
+                                {
+                                  "Area",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(area.size()),
+                                  area.data()
+                                }
+                              });
+
+      vtpUtilities.Export(exportFolder + "/" + "Cell2D_" + to_string(cell2DIndex) + ".vtu");
+    }
+
+    {
+      Gedim::VTKUtilities vtpUtilities;
+
+      // Export cell2D triangulation
+      for (unsigned int t = 0; t < cell2DTriangulations.size(); t++)
+      {
+        vector<double> id(1, t);
+        vtpUtilities.AddPolygon(cell2DTriangulations[t],
+                                {
+                                  {
+                                    "Id",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(id.size()),
+                                    id.data()
+                                  }
+                                });
+      }
+
+      vtpUtilities.Export(exportFolder + "/" +
+                          "Cell2D_" + to_string(cell2DIndex) +
+                          "_Triangles" + ".vtu");
+    }
+
+    {
+      Gedim::VTKUtilities vtpUtilities;
+
+      // Export cell2D centroid
+      vtpUtilities.AddPoint(cell2DCentroid);
+
+      vtpUtilities.Export(exportFolder + "/" +
+                          "Cell2D_" + to_string(cell2DIndex) +
+                          "_Centroid" + ".vtu");
     }
   }
   // ***************************************************************************

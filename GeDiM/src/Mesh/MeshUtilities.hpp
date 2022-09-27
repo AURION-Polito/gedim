@@ -14,12 +14,13 @@ namespace Gedim
     public:
       struct CheckMesh2DConfiguration final
       {
-          bool Cell0D_CheckCoordinates2D = false;
-          bool Cell0D_CheckDuplications = false;
-          bool Cell1D_CheckDuplications = false;
-          bool Cell1D_CheckNeighbours = false;
-          bool Cell2D_CheckEdges = false;
-          bool Cell2D_CheckDuplications = false;
+          bool Cell0D_CheckCoordinates2D = true;
+          bool Cell0D_CheckDuplications = true;
+          bool Cell1D_CheckDuplications = true;
+          bool Cell1D_CheckNeighbours = true;
+          bool Cell2D_CheckEdges = true;
+          bool Cell2D_CheckDuplications = true;
+          bool Cell2D_CheckConvexity = true;
       };
 
       struct ExtractActiveMeshData final
@@ -156,6 +157,22 @@ namespace Gedim
       void ExportMeshToVTU(const IMeshDAO& mesh,
                            const string& exportFolder,
                            const string& fileName) const;
+
+      /// \brief Export Cell2D To VTU
+      /// \param mesh the mesh
+      /// \param cell2DIndex the cell2D index
+      /// \param cell2DVertices the cell2D vertices
+      /// \param cell2DTriangulations the cell2D triangulation
+      /// \param cell2DArea the cell2D area
+      /// \param cell2DCentroid the cell2D centroid
+      /// \param exportFolder the folder in which to export
+      void ExportCell2DToVTU(const IMeshDAO& mesh,
+                             const unsigned int& cell2DIndex,
+                             const Eigen::MatrixXd& cell2DVertices,
+                             const vector<Eigen::Matrix3d>& cell2DTriangulations,
+                             const double& cell2DArea,
+                             const Eigen::Vector3d& cell2DCentroid,
+                             const string& exportFolder) const;
 
       /// \brief Convert a mesh cell3D to a geometric polydheron
       /// \param mesh a mesh

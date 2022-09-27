@@ -501,12 +501,6 @@ namespace GedimUnitTesting
                                                                   fractureConformedMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
@@ -646,12 +640,6 @@ namespace GedimUnitTesting
                                       "Conformed");
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
@@ -800,12 +788,6 @@ namespace GedimUnitTesting
                                       "Conformed");
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
@@ -950,12 +932,6 @@ namespace GedimUnitTesting
                                                                   fractureConformedMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
@@ -1085,12 +1061,6 @@ namespace GedimUnitTesting
                                                                   fractureConformedMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
@@ -1221,12 +1191,6 @@ namespace GedimUnitTesting
                                                                   fractureConformedMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
-        config.Cell0D_CheckCoordinates2D = true;
-        config.Cell0D_CheckDuplications = true;
-        config.Cell1D_CheckDuplications = true;
-        config.Cell1D_CheckNeighbours = true;
-        config.Cell2D_CheckEdges = true;
-        config.Cell2D_CheckDuplications = true;
         meshUtilities.CheckMesh2D(config,
                                   geometryUtilities,
                                   fractureMeshOne);
