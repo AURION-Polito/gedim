@@ -183,7 +183,7 @@ namespace GedimUnitTesting {
     }
   }
 
-  TEST(TestGeometryUtilities, TestConvexHull)
+  TEST(TestGeometryUtilities, TestConvexHullSimple)
   {
     try
     {
@@ -210,6 +210,70 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtility.ExtractPoints(points,
                                                 convexHull), result);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestConvexHullAlignedPointsTriangle)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check convex hull with aligned points
+      {
+        Eigen::MatrixXd points(3, 4);
+        points.row(0)<< 3.1250000000000000e-01, 2.8125000000000000e-01, 2.5000000000000000e-01, 5.0000000000000000e-01;
+        points.row(1)<< 5.6250000000000000e-01, 4.6875000000000000e-01, 3.7500000000000000e-01, 5.0000000000000000e-01;
+        points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+
+        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        ASSERT_EQ(convexHull, vector<unsigned int>({ 2, 3, 0, 1 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestConvexHullAlignedPointsSquare)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+
+      // check convex hull with aligned points
+      {
+        Eigen::MatrixXd points(3, 5);
+        points.row(0)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 3.7500000000000000e-01, 7.5000000000000000e-01, 1.0000000000000000e+00;
+        points.row(1)<< 1.0000000000000000e+00, 7.5000000000000000e-01, 3.7500000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00;
+        points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+
+        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        ASSERT_EQ(convexHull, vector<unsigned int>({ 0, 1, 2, 3, 4 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestConvexHullComplex)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
+      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
 
       // check complex convex hull
       {

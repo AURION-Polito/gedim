@@ -596,7 +596,12 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				ASSERT_TRUE(geometryUtility.PolygonIsConvex(polygonVertices));
+        const vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtility.ExtractPoints(polygonVertices,
+                                                                                 convexHull);
+
+        ASSERT_TRUE(geometryUtility.PolygonIsConvex(polygonVertices,
+                                                    convexHullVertices));
 			}
 
 			// check concave polygon 2D
@@ -607,7 +612,12 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 0.25, 0.25, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-				ASSERT_FALSE(geometryUtility.PolygonIsConvex(polygonVertices));
+        const vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtility.ExtractPoints(polygonVertices,
+                                                                                 convexHull);
+
+        ASSERT_FALSE(geometryUtility.PolygonIsConvex(polygonVertices,
+                                                     convexHullVertices));
 			}
 		}
 		catch (const exception& exception)

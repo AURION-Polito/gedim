@@ -163,20 +163,17 @@ namespace Gedim
     return svd.matrixV() * (svd.matrixU()).transpose();
   }
   // ***************************************************************************
-  bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const
+  bool GeometryUtilities::PolygonIsConvex(const Eigen::MatrixXd& polygonVertices,
+                                          const Eigen::MatrixXd& convexHull) const
   {
     Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
 
-    const unsigned int& numVertices = polygonVertices.cols();
-    for (unsigned int v = 0; v < numVertices; v++)
+    for (unsigned int v = 0; v < polygonVertices.cols(); v++)
     {
-      const Eigen::Vector3d edgeOrigin = polygonVertices.col(v);
-      const Eigen::Vector3d edgeEnd = polygonVertices.col((v + 1) % numVertices);
-      const Eigen::Vector3d vertexNextEdge = polygonVertices.col((v + 2) % numVertices);
-
-      if (PointSegmentPosition(vertexNextEdge,
-                               edgeOrigin,
-                               edgeEnd) == PointSegmentPositionTypes::RightTheSegment)
+      const PointPolygonPositionResult::Types vertexPosition = PointPolygonPosition(polygonVertices.col(v),
+                                                                                    convexHull).Type;
+      if (vertexPosition != PointPolygonPositionResult::Types::BorderVertex &&
+          vertexPosition != PointPolygonPositionResult::Types::BorderEdge)
         return false;
     }
 

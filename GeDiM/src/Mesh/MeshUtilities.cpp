@@ -341,7 +341,18 @@ namespace Gedim
       if (configuration.Cell2D_CheckConvexity)
       {
         for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
-          Output::Assert(geometryUtilities.PolygonIsConvex(convexMesh.Cell2DVerticesCoordinates(p)));
+        {
+          const Eigen::MatrixXd cell2DVertices = convexMesh.Cell2DVerticesCoordinates(p);
+          const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
+          const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices,
+                                                                                                convexCell2DUnalignedVerticesFilter);
+          const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+          const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
+                                                                                     convexHull);
+
+          Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
+                                                           convexHullVertices));
+        }
       }
     }
   }

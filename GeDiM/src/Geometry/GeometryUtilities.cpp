@@ -1,5 +1,6 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include <unordered_set>
 
 using namespace std;
 using namespace Eigen;
@@ -103,14 +104,33 @@ namespace Gedim
     do
     {
       convexHull.push_back(pointOnHull);
+
       unsigned int endpoint = 0;
-      for (unsigned int j = 0; j < numPoints; j++)
+      unsigned int numPointTested = 0;
+
+      while (numPointTested < numPoints) // to avoid aligned points
       {
-        if ((endpoint == pointOnHull) ||
-            PointSegmentPosition(points.col(j),
-                                 points.col(pointOnHull),
-                                 points.col(endpoint)) == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
-          endpoint = j;
+        for (unsigned int j = 0; j < numPoints; j++)
+        {
+          if (endpoint == pointOnHull)
+          {
+            endpoint = j;
+            continue;
+          }
+
+          const  GeometryUtilities::PointSegmentPositionTypes pointPosition =  PointSegmentPosition(points.col(j),
+                                                                                                    points.col(pointOnHull),
+                                                                                                    points.col(endpoint));
+
+          if (pointPosition == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
+          {
+            endpoint = j;
+            numPointTested = 0;
+            break;
+          }
+
+          numPointTested++;
+        }
       }
       pointOnHull = endpoint;
     }

@@ -1349,9 +1349,11 @@ namespace Gedim
 
       /// \brief Check if Polygon is Convex
       /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param convexHull the convex hull vertices unclockwise
       /// \return true if polygon is convex, false otherwise
       /// \note works only in 2D-plane
-      bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices) const;
+      bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices,
+                           const Eigen::MatrixXd& convexHull) const;
 
       PolygonTypes PolygonType(const Eigen::MatrixXd& polygonVertices) const;
 

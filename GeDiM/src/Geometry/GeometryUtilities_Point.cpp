@@ -136,21 +136,22 @@ namespace Gedim
         {
           result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
           result.BorderIndex = v;
+          return result;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin)
         {
           result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
           result.BorderIndex = v;
+          return result;
         }
         else if (resultSegment == GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd)
         {
           result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
           result.BorderIndex = (v + 1) % numVertices;
+          return result;
         }
         else
-          result.Type = GeometryUtilities::PointPolygonPositionResult::Types::Outside;
-
-        return result;
+          continue; // check for future aligned points on edges
       }
     }
 

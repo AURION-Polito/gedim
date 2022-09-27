@@ -560,6 +560,19 @@ namespace GedimUnitTesting {
                                                                                                            polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
       }
+
+      // check on vertex aligned edge
+      {
+        Eigen::Vector3d point(7.5000000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00);
+        Eigen::MatrixXd polygonVertices(3, 5);
+        polygonVertices.row(0)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 3.7500000000000000e-01, 7.5000000000000000e-01, 1.0000000000000000e+00;
+        polygonVertices.row(1)<< 1.0000000000000000e+00, 7.5000000000000000e-01, 3.7500000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00;
+        polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+                                                                                                           polygonVertices);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+      }
     }
     catch (const exception& exception)
     {
