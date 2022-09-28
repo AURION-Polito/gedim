@@ -129,7 +129,7 @@ namespace Gedim
       /// \param convexMesh the convex mesh
       /// \return the MeshGeometricData computed
       MeshGeometricData2D FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
-                                                const IMeshDAO& convexMesh) const;
+                                                  const IMeshDAO& convexMesh) const;
 
       /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
       /// \param mesh the mesh
@@ -137,15 +137,15 @@ namespace Gedim
       /// \param meshCell2DToConvexCell2DIndices the collection of convex cell2Ds for each mesh cell2D
       /// \return the MeshGeometricData computed
       MeshGeometricData2D FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
-                                                const IMeshDAO& mesh,
-                                                const IMeshDAO& convexMesh,
-                                                const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
+                                                  const IMeshDAO& mesh,
+                                                  const IMeshDAO& convexMesh,
+                                                  const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
 
       /// \brief Fill Mesh3D Geometric Data given a mesh with convex mesh cells
       /// \param convexMesh the convex mesh
       /// \return the MeshGeometricData computed
       MeshGeometricData3D FillMesh3DGeometricData(const GeometryUtilities& geometryUtilities,
-                                                const IMeshDAO& convexMesh) const;
+                                                  const IMeshDAO& convexMesh) const;
 
       /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
       /// \param mesh the resulting mesh

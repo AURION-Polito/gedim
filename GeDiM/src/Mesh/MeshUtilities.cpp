@@ -435,7 +435,7 @@ namespace Gedim
   }
   // ***************************************************************************
   MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
-                                                                          const IMeshDAO& convexMesh) const
+                                                                            const IMeshDAO& convexMesh) const
   {
     MeshGeometricData2D result;
 
@@ -522,9 +522,9 @@ namespace Gedim
   }
   // ***************************************************************************
   MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
-                                                                          const IMeshDAO& mesh,
-                                                                          const IMeshDAO& convexMesh,
-                                                                          const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const
+                                                                            const IMeshDAO& mesh,
+                                                                            const IMeshDAO& convexMesh,
+                                                                            const vector<vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const
   {
     MeshGeometricData2D result;
 
@@ -665,18 +665,18 @@ namespace Gedim
       const unsigned int& domainCell3DIndex = c;
 
       GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(convexMesh,
-                                                                         domainCell3DIndex);
+                                                                        domainCell3DIndex);
 
       result.Cell3DsVertices[c] = polyhedron.Vertices;
       result.Cell3DsEdges[c] = polyhedron.Edges;
       result.Cell3DsFaces[c] = polyhedron.Faces;
 
       result.Cell3DsEdgeTangents[c] = geometryUtilities.PolyhedronEdgeTangents(result.Cell3DsVertices[c],
-                                                                                           result.Cell3DsEdges[c]);
+                                                                               result.Cell3DsEdges[c]);
       result.Cell3DsEdgeDirections[c] = vector<bool>(8, true);
 
       const vector<Eigen::MatrixXd> facesVertices = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
-                                                                                           result.Cell3DsFaces[c]);
+                                                                                             result.Cell3DsFaces[c]);
       result.facesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(facesVertices);
       result.facesNormals[c] = geometryUtilities.PolyhedronFaceNormals(facesVertices);
       result.facesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(facesVertices,
@@ -686,8 +686,8 @@ namespace Gedim
 
 
       result.facesEdgeDirections[c] = geometryUtilities.PolyhedronFaceEdgeDirections(result.Cell3DsVertices[c],
-                                                                                    result.Cell3DsEdges[c],
-                                                                                    result.Cell3DsFaces[c]);
+                                                                                     result.Cell3DsEdges[c],
+                                                                                     result.Cell3DsFaces[c]);
 
       if(polyhedron.Vertices.cols() == 4)
       {
@@ -714,13 +714,13 @@ namespace Gedim
                                                                                                                    result.Cell3DsCentroids[c]);
 
         result.Cell3DsTetrahedronPoints[c] = geometryUtilities.ExtractTetrahedronPoints(result.Cell3DsVertices[c],
-                                                                                       result.Cell3DsCentroids[c],
-                                                                                       polyhedronTetrahedrons);
+                                                                                        result.Cell3DsCentroids[c],
+                                                                                        polyhedronTetrahedrons);
       }
 
       result.facesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(facesVertices,
-                                                                                        result.Cell3DsCentroids[c],
-                                                                                        result.facesNormals[c]);
+                                                                                         result.Cell3DsCentroids[c],
+                                                                                         result.facesNormals[c]);
 
       result.Cell3DsDiameters[c] = geometryUtilities.PolyhedronDiameter(result.Cell3DsVertices[c]);
 

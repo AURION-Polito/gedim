@@ -662,8 +662,14 @@ namespace GedimUnitTesting
                                                                                             cube.Faces);
         const vector<Eigen::Vector3d> faceBarycenters = geometryUtility.PolyhedronFaceBarycenter(faceVertices);
 
-        ASSERT_EQ(geometryUtility.PolyhedronFaceTriangulationsByFirstVertex(cube.Faces,
-                                                                            faceVertices),
+        const vector<vector<unsigned int>> faceTriangulationsByFirstVertex = geometryUtility.PolyhedronFaceTriangulationsByFirstVertex(cube.Faces,
+                                                                                                                                       faceVertices);
+        const vector<vector<unsigned int>> faceTriangulationsByInternalPoint = geometryUtility.PolyhedronFaceTriangulationsByInternalPoint(cube.Vertices,
+                                                                                                                                           cube.Faces,
+                                                                                                                                           faceVertices,
+                                                                                                                                           faceBarycenters);
+
+        ASSERT_EQ(faceTriangulationsByFirstVertex,
                   vector<vector<unsigned int>>({
                                                  vector<unsigned int>({ 0,1,2,0,2,3 }),
                                                  vector<unsigned int>({ 4,5,6,4,6,7 }),
@@ -672,10 +678,38 @@ namespace GedimUnitTesting
                                                  vector<unsigned int>({ 0,1,5,0,5,4 }),
                                                  vector<unsigned int>({ 3,2,6,3,6,7 })
                                                }));
-        ASSERT_EQ(geometryUtility.PolyhedronFaceTriangulationsByInternalPoint(cube.Vertices,
-                                                                              cube.Faces,
-                                                                              faceVertices,
-                                                                              faceBarycenters),
+        ASSERT_EQ(geometryUtility.PolyhedronFaceTriangulationPointsByFirstVertex(cube.Vertices,
+                                                                                 faceTriangulationsByFirstVertex),
+                  vector<vector<Eigen::Matrix3d>>({
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(1), cube.Vertices.col(2)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(2), cube.Vertices.col(3)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(4), cube.Vertices.col(5), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(4), cube.Vertices.col(6), cube.Vertices.col(7)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(3), cube.Vertices.col(7)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(7), cube.Vertices.col(4)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(1), cube.Vertices.col(2), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(1), cube.Vertices.col(6), cube.Vertices.col(5)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(1), cube.Vertices.col(5)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(5), cube.Vertices.col(4)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(3), cube.Vertices.col(2), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< cube.Vertices.col(3), cube.Vertices.col(6), cube.Vertices.col(7)).finished(),
+                                                    })
+                                                  })
+                  );
+
+
+        ASSERT_EQ(faceTriangulationsByInternalPoint,
                   vector<vector<unsigned int>>({
                                                  vector<unsigned int>({ 8 ,0,1,8 ,1,2,8 ,2,3,8 ,3,0 }),
                                                  vector<unsigned int>({ 9 ,4,5,9 ,5,6,9 ,6,7,9 ,7,4 }),
@@ -684,6 +718,49 @@ namespace GedimUnitTesting
                                                  vector<unsigned int>({ 12,0,1,12,1,5,12,5,4,12,4,0 }),
                                                  vector<unsigned int>({ 13,3,2,13,2,6,13,6,7,13,7,3 })
                                                }));
+
+        ASSERT_EQ(geometryUtility.PolyhedronFaceTriangulationPointsByInternalPoint(cube.Vertices,
+                                                                                   faceBarycenters,
+                                                                                   faceTriangulationsByInternalPoint),
+                  vector<vector<Eigen::Matrix3d>>({
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[0], cube.Vertices.col(0), cube.Vertices.col(1)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[0], cube.Vertices.col(1), cube.Vertices.col(2)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[0], cube.Vertices.col(2), cube.Vertices.col(3)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[0], cube.Vertices.col(3), cube.Vertices.col(0)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[1], cube.Vertices.col(4), cube.Vertices.col(5)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[1], cube.Vertices.col(5), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[1], cube.Vertices.col(6), cube.Vertices.col(7)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[1], cube.Vertices.col(7), cube.Vertices.col(4)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[2], cube.Vertices.col(0), cube.Vertices.col(3)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[2], cube.Vertices.col(3), cube.Vertices.col(7)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[2], cube.Vertices.col(7), cube.Vertices.col(4)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[2], cube.Vertices.col(4), cube.Vertices.col(0)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[3], cube.Vertices.col(1), cube.Vertices.col(2)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[3], cube.Vertices.col(2), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[3], cube.Vertices.col(6), cube.Vertices.col(5)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[3], cube.Vertices.col(5), cube.Vertices.col(1)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[4], cube.Vertices.col(0), cube.Vertices.col(1)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[4], cube.Vertices.col(1), cube.Vertices.col(5)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[4], cube.Vertices.col(5), cube.Vertices.col(4)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[4], cube.Vertices.col(4), cube.Vertices.col(0)).finished(),
+                                                    }),
+                                                    vector<Eigen::Matrix3d>({
+                                                      (Eigen::Matrix3d()<< faceBarycenters[5], cube.Vertices.col(3), cube.Vertices.col(2)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[5], cube.Vertices.col(2), cube.Vertices.col(6)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[5], cube.Vertices.col(6), cube.Vertices.col(7)).finished(),
+                                                      (Eigen::Matrix3d()<< faceBarycenters[5], cube.Vertices.col(7), cube.Vertices.col(3)).finished(),
+                                                    })
+                                                  })
+                  );
       }
 
       // check tetrahedron face triangulations
