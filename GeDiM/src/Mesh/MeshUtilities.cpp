@@ -710,6 +710,7 @@ namespace Gedim
                                                                                                                         facesVertices);
 
         vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(result.Cell3DsVertices[c],
+                                                                                                                   result.Cell3DsFaces[c],
                                                                                                                    facesTriangulation3D,
                                                                                                                    result.Cell3DsCentroids[c]);
 

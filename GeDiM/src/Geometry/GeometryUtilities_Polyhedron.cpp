@@ -306,28 +306,27 @@ namespace Gedim
   vector<vector<unsigned int>> GeometryUtilities::PolyhedronFaceTriangulationsByFirstVertex(const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                             const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
   {
-    vector<vector<unsigned int>> localFacesTriangulations(polyhedronFaces.size());
+    vector<vector<unsigned int>> polyhedronFacesTriangulations(polyhedronFaces.size());
     for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
-      localFacesTriangulations[f] = PolygonTriangulationByFirstVertex(polyhedronFaceVertices[f]);
+      polyhedronFacesTriangulations[f] = PolygonTriangulationByFirstVertex(polyhedronFaceVertices[f]);
 
-    return PolyhedronFaceTriangulations(polyhedronFaces,
-                                        localFacesTriangulations);
+    return polyhedronFacesTriangulations;
   }
   // ***************************************************************************
-  std::vector<std::vector<Matrix3d>> GeometryUtilities::PolyhedronFaceTriangulationPointsByFirstVertex(const Eigen::MatrixXd& polyhedronVertices,
+  std::vector<std::vector<Matrix3d>> GeometryUtilities::PolyhedronFaceTriangulationPointsByFirstVertex(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                                                                        const std::vector<std::vector<unsigned int> >& polyhedronFaceTriangulations) const
   {
     const unsigned int numFaces = polyhedronFaceTriangulations.size();
     vector<std::vector<Matrix3d>> faceTriangulationsPoints(numFaces);
 
     for (unsigned int f = 0; f < numFaces; f++)
-      faceTriangulationsPoints[f] = ExtractTriangulationPoints(polyhedronVertices,
+      faceTriangulationsPoints[f] = ExtractTriangulationPoints(polyhedronFaceVertices[f],
                                                                polyhedronFaceTriangulations[f]);
 
     return faceTriangulationsPoints;
   }
   // ***************************************************************************
-  std::vector<std::vector<Matrix3d> > GeometryUtilities::PolyhedronFaceTriangulationPointsByInternalPoint(const Eigen::MatrixXd& polyhedronVertices,
+  std::vector<std::vector<Matrix3d> > GeometryUtilities::PolyhedronFaceTriangulationPointsByInternalPoint(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                                                                           const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
                                                                                                           const std::vector<std::vector<unsigned int> >& polyhedronFaceTriangulations) const
   {
@@ -335,7 +334,7 @@ namespace Gedim
     vector<std::vector<Matrix3d>> faceTriangulationsPoints(numFaces);
 
     for (unsigned int f = 0; f < numFaces; f++)
-      faceTriangulationsPoints[f] = ExtractTriangulationPointsByInternalPoint(polyhedronVertices,
+      faceTriangulationsPoints[f] = ExtractTriangulationPointsByInternalPoint(polyhedronFaceVertices[f],
                                                                               polyhedronFaceInternalPoints[f],
                                                                               polyhedronFaceTriangulations[f]);
 
@@ -347,25 +346,19 @@ namespace Gedim
                                                                                               const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                                                               const vector<Eigen::Vector3d>& polyhedronFaceInternalPoints) const
   {
-    vector<vector<unsigned int>> facesTriangulation(polyhedronFaces.size());
+    vector<vector<unsigned int>> polyhedronFacesTriangulation(polyhedronFaces.size());
 
     for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
     {
-      vector<unsigned int>& faceTriangulation = facesTriangulation[f];
-
-      vector<unsigned int> faceLocalTriangulation = PolygonTriangulationByInternalPoint(polyhedronFaceVertices[f],
-                                                                                        polyhedronFaceInternalPoints[f]);
-      faceTriangulation.resize(faceLocalTriangulation.size());
-
-      for (unsigned int v = 0; v < faceLocalTriangulation.size(); v++)
-        faceTriangulation[v] = (v % 3 == 0) ? polyhedronVertices.cols() + f :
-                                              polyhedronFaces[f](0, faceLocalTriangulation[v]);
+      polyhedronFacesTriangulation[f] = PolygonTriangulationByInternalPoint(polyhedronFaceVertices[f],
+                                                                            polyhedronFaceInternalPoints[f]);
     }
 
-    return facesTriangulation;
+    return polyhedronFacesTriangulation;
   }
   // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                     const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                      const vector<vector<unsigned int>>& polyhedronFaceTriangulations,
                                                                                      const Eigen::Vector3d& polyhedronInternalPoint) const
   {
@@ -377,9 +370,9 @@ namespace Gedim
       const unsigned int numFaceTriangulation = polyhedronFaceTriangulations[f].size() / 3;
       for (unsigned int ft = 0; ft < numFaceTriangulation; ft++)
       {
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft]);
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft + 1]);
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft + 2]);
+        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft]));
+        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 1]));
+        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
         tetrahedronList.push_back(numPolyhedronVertices);
       }
     }
@@ -390,6 +383,7 @@ namespace Gedim
   }
   // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                     const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                      const vector<vector<unsigned int> >& polyhedronFaceTriangulations,
                                                                                      const vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
                                                                                      const Eigen::Vector3d& polyhedronInternalPoint) const
@@ -402,9 +396,9 @@ namespace Gedim
       const unsigned int numFaceTriangulation = polyhedronFaceTriangulations[f].size() / 3;
       for (unsigned int ft = 0; ft < numFaceTriangulation; ft++)
       {
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft]);
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft + 1]);
-        tetrahedronList.push_back(polyhedronFaceTriangulations[f][3 * ft + 2]);
+        tetrahedronList.push_back(numPolyhedronVertices + f);
+        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 1]));
+        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
         tetrahedronList.push_back(numPolyhedronVertices + polyhedronFaceInternalPoints.size());
       }
     }
