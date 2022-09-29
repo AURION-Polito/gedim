@@ -1604,6 +1604,22 @@ namespace Gedim
                               const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
                               const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const;
 
+      /// \brief Compute the Polyhedron centroid
+      /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace
+      /// \param polyhedronFaceNormals polyhedron face normals, size numPolyhedronFaces
+      /// \param polyhedronFaceNormalDirections polyhedron face normal directions, size numPolyhedronFaces
+      /// \param polyhedronFaceTranslations polyhedron face translation vector from 2D to 3D
+      /// \param polyhedronFaceRotationMatrices polyhedron face rotation matrix from 2D to 3D
+      /// \param polyhedronVolume the polyhedron volume
+      /// \return the polyhedron centroid
+      /// \note use the divergence theorem, with F_x = 1/2 (x^2, 0, 0), F_y = 1/2 (0, y^2, 0), F_z = 1/2 (0, 0, z^2), see https://en.wikipedia.org/wiki/Divergence_theorem
+      Eigen::Vector3d PolyhedronCentroid(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
+                                         const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                         const std::vector<bool>& polyhedronFaceNormalDirections,
+                                         const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                         const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices,
+                                         const double& polyhedronVolume) const;
+
       /// \brief Compute the Polyhedron diameter defined as the maximum distance between the vertices
       /// \param polyhedronVertices the matrix of vertices of the polyhedron (size 3 x numVertices)
       inline double PolyhedronDiameter(const Eigen::MatrixXd& polyhedronVertices) const
