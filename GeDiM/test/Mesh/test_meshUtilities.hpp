@@ -12,6 +12,7 @@
 #include "MeshUtilities.hpp"
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
+#include "MeshMatrices_3D_1Cells_Mock.hpp"
 
 using namespace testing;
 using namespace std;
@@ -400,6 +401,38 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Cell2DsEdgeTangents, expectedResult.Cell2DsEdgeTangents);
     EXPECT_EQ(result.Cell2DsTriangulations, expectedResult.Cell2DsTriangulations);
     EXPECT_EQ(result.Cell2DsVertices, expectedResult.Cell2DsVertices);
+  }
+
+  TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                             1.0);
+
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                   meshDao);
+
+    Gedim::MeshUtilities::MeshGeometricData3D expectedResult;
+    expectedResult.Cell3DsVolumes = { 1.0 };
+    expectedResult.Cell3DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.5) };
+    expectedResult.Cell3DsDiameters = { sqrt(3.0) };
+    expectedResult.Cell3DsVertices = { cube.Vertices };
+    expectedResult.Cell3DsEdges = { cube.Edges };
+    expectedResult.Cell3DsFaces = { cube.Faces };
+
+    EXPECT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
+    EXPECT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
+    EXPECT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
+    EXPECT_EQ(result.Cell3DsVolumes, expectedResult.Cell3DsVolumes);
+    EXPECT_EQ(result.Cell3DsCentroids, expectedResult.Cell3DsCentroids);
+    EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
   }
 }
 
