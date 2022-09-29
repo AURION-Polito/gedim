@@ -418,6 +418,89 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::Mesh3DFromPolyhedron(const Eigen::MatrixXd& polyhedronVertices,
+                                           const Eigen::MatrixXi& polyhedronEdges,
+                                           const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                           const vector<unsigned int> vertexMarkers,
+                                           const vector<unsigned int> edgeMarkers,
+                                           const vector<unsigned int> faceMarkers,
+                                           IMeshDAO& mesh) const
+  {
+    mesh.InitializeDimension(3);
+
+    Output::Assert(polyhedronVertices.rows() == 3 && polyhedronVertices.cols() > 3);
+    const unsigned int numVertices = polyhedronVertices.cols();
+    const unsigned int numEdges = polyhedronEdges.cols();
+    const unsigned int numFaces = polyhedronFaces.size();
+
+    Output::Assert(vertexMarkers.size() == numVertices);
+    Output::Assert(edgeMarkers.size() == numEdges);
+    Output::Assert(faceMarkers.size() == numFaces);
+
+    // Create Cell0Ds
+    const unsigned int& numCell0Ds = numVertices;
+    mesh.Cell0DsInitialize(numCell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+    {
+      mesh.Cell0DSetId(v, v);
+      mesh.Cell0DSetState(v, true);
+      mesh.Cell0DInsertCoordinates(v, polyhedronVertices.col(v));
+      mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+    }
+
+    // Create Cell1Ds
+    unsigned int numCell1Ds = numEdges;
+    mesh.Cell1DsInitialize(numCell1Ds);
+    for (int e = 0; e < numCell1Ds; e++)
+    {
+      mesh.Cell1DSetId(e, e);
+      mesh.Cell1DInsertExtremes(e,
+                                polyhedronEdges(0, e),
+                                polyhedronEdges(1, e));
+      mesh.Cell1DSetState(e, true);
+      mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+    }
+
+
+    // Create Cell2Ds
+    const unsigned int& numCell2Ds = numFaces;
+    mesh.Cell2DsInitialize(numCell2Ds);
+    for (int f = 0; f < numCell2Ds; f++)
+    {
+      const unsigned int numCell2DVertices = polyhedronFaces.at(f).cols();
+      mesh.Cell2DInitializeVertices(f, numCell2DVertices);
+      mesh.Cell2DInitializeEdges(f, numCell2DVertices);
+
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
+        mesh.Cell2DInsertVertex(f, v, polyhedronFaces.at(f)(0, v));
+      for (unsigned int e = 0; e < numCell2DVertices; e++)
+        mesh.Cell2DInsertEdge(f, e, polyhedronFaces.at(f)(1, e));
+
+      mesh.Cell2DSetId(f, f);
+      mesh.Cell2DSetState(f, true);
+      mesh.Cell2DSetMarker(f, faceMarkers[f]);
+    }
+
+    // Create Cell3Ds
+    const unsigned int& numCell3Ds = 1;
+    mesh.Cell3DsInitialize(numCell3Ds);
+
+    mesh.Cell3DInitializeVertices(0, numVertices);
+    mesh.Cell3DInitializeEdges(0, numEdges);
+    mesh.Cell3DInitializeFaces(0, numFaces);
+
+    for (unsigned int v = 0; v < numVertices; v++)
+      mesh.Cell3DInsertVertex(0, v, v);
+    for (unsigned int e = 0; e < numEdges; e++)
+      mesh.Cell3DInsertEdge(0, e, e);
+    for (unsigned int f = 0; f < numFaces; f++)
+      mesh.Cell3DInsertEdge(0, f, f);
+
+    mesh.Cell3DSetId(0, 0);
+    mesh.Cell3DSetState(0, true);
+    mesh.Cell3DSetMarker(0, 0);
+  }
+  // ***************************************************************************
   vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO& mesh) const
   {
     vector<unsigned int> rootCell2Ds(mesh.Cell2DTotalNumber());
@@ -1016,6 +1099,7 @@ namespace Gedim
                                       const string& fileName) const
   {
     // Export Cell0Ds
+    if (mesh.Cell0DTotalNumber() > 0)
     {
       Gedim::VTKUtilities vtpUtilities;
       for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
@@ -1044,6 +1128,7 @@ namespace Gedim
     }
 
     // Export Cell1Ds
+    if (mesh.Cell1DTotalNumber() > 0)
     {
       Gedim::VTKUtilities vtpUtilities;
       for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
@@ -1072,6 +1157,7 @@ namespace Gedim
     }
 
     // Export Cell2Ds
+    if (mesh.Cell2DTotalNumber() > 0)
     {
       Gedim::VTKUtilities vtpUtilities;
       for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
@@ -1097,6 +1183,39 @@ namespace Gedim
       }
 
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell2Ds.vtu");
+    }
+
+    // Export Cell3Ds
+    if (mesh.Cell3DTotalNumber() > 0)
+    {
+      Gedim::VTKUtilities vtpUtilities;
+      for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
+      {
+        const Gedim::GeometryUtilities::Polyhedron cell3D = MeshCell3DToPolyhedron(mesh, g);
+
+        vector<double> id(cell3D.Vertices.cols(), mesh.Cell3DId(g));
+        vector<double> marker(cell3D.Vertices.cols(), mesh.Cell3DMarker(g));
+
+        vtpUtilities.AddPolyhedron(cell3D.Vertices,
+                                   cell3D.Edges,
+                                   cell3D.Faces,
+                                   {
+                                     {
+                                       "Id",
+                                       Gedim::VTPProperty::Formats::Points,
+                                       static_cast<unsigned int>(id.size()),
+                                       id.data()
+                                     },
+                                     {
+                                       "Marker",
+                                       Gedim::VTPProperty::Formats::Points,
+                                       static_cast<unsigned int>(marker.size()),
+                                       marker.data()
+                                     }
+                                   });
+      }
+
+      vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell3Ds.vtu");
     }
   }
   // ***************************************************************************

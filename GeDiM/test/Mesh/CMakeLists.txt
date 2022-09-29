@@ -9,6 +9,7 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_2
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_4Cells_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_2D_26Cells_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MashMatrices_2D_CleanTest_Mock.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_3D_1Cells_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_3D_22Cells_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_3D_68Cells_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_3D_329Cells_Mock.hpp)

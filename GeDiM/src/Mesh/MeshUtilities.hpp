@@ -120,6 +120,21 @@ namespace Gedim
                              const vector<unsigned int> edgeMarkers,
                              IMeshDAO& mesh) const;
 
+      /// \brief Create a Mesh 3D with a polyhedron
+      /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
+      /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
+      /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
+      /// \param vertexMarkers mesh markers of vertices, size 1xnumVertices
+      /// \param edgeMarkers mesh markers of edges, size 1xnumEdges
+      /// \param faceMarkers mesh markers of faces, size 1xnumFaces
+      void Mesh3DFromPolyhedron(const Eigen::MatrixXd& polyhedronVertices,
+                                const Eigen::MatrixXi& polyhedronEdges,
+                                const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                const vector<unsigned int> vertexMarkers,
+                                const vector<unsigned int> edgeMarkers,
+                                const vector<unsigned int> faceMarkers,
+                                IMeshDAO& mesh) const;
+
       /// \brief Extract the mesh Cell2D Roots
       /// \param mesh the mesh
       /// \return the root cell for each cell2D, size 1xCell2DTotalNumber()

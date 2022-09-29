@@ -42,10 +42,53 @@ namespace GedimUnitTesting
                                     edgeMarkers,
                                     meshDao);
 
+    std::string exportFolder = "./Export/TestMesh2DFromPolygon/";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
     EXPECT_EQ(meshDao.Dimension(), 2);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 1);
+  }
+
+  TEST(TestMeshUtilities, TestMesh3DFromPolyhedron)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                             1.0);
+
+    const vector<unsigned int> vertexMarkers = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    const vector<unsigned int> edgeMarkers = { 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+    const vector<unsigned int> faceMarkers = { 21, 22, 23, 24, 25, 26 };
+
+    meshUtilities.Mesh3DFromPolyhedron(cube.Vertices,
+                                       cube.Edges,
+                                       cube.Faces,
+                                       vertexMarkers,
+                                       edgeMarkers,
+                                       faceMarkers,
+                                       meshDao);
+
+    std::string exportFolder = "./Export/TestMesh3DFromPolyhedron/";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    EXPECT_EQ(meshDao.Dimension(), 3);
+    EXPECT_EQ(meshDao.Cell0DTotalNumber(), 8);
+    EXPECT_EQ(meshDao.Cell1DTotalNumber(), 12);
+    EXPECT_EQ(meshDao.Cell2DTotalNumber(), 6);
   }
 
   TEST(TestMeshUtilities, TestCreateRectangleMesh)
@@ -244,7 +287,7 @@ namespace GedimUnitTesting
 
     const Gedim::MeshUtilities::MeshGeometricData2D result = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                    meshDao);
-                                                                                                   
+
     Gedim::MeshUtilities::MeshGeometricData2D expectedResult;
     expectedResult.Cell2DsAreas = { 1.0 };
     expectedResult.Cell2DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.0) };
