@@ -184,7 +184,8 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhedronPosition(const Eigen::Vector3d& point,
                                                                                               const vector<Eigen::MatrixXi>& polyhedronFaces,
-                                                                                              const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                                              const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                                              const vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                                                                                               const vector<Eigen::Vector3d>& polyhedronFaceNormals,
                                                                                               const vector<bool>& polyhedronFaceNormalDirections,
                                                                                               const vector<Eigen::Vector3d>& polyhedronFaceTranslations,
@@ -195,12 +196,13 @@ namespace Gedim
     unsigned int negativeFacePositions = 0;
     for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
     {
-      const Eigen::MatrixXd& faceVertices = polyhedronFaceVertices[f];
+      const Eigen::MatrixXd& faceVertices3D = polyhedronFaceVertices[f];
+      const Eigen::MatrixXd& faceVertices2D = polyhedronFaceRotatedVertices[f];
       const double faceOutgoingNormal = polyhedronFaceNormalDirections[f] ? 1.0 : -1.0;
 
       const PointPlanePositionTypes pointFacePlanePosition = PointPlanePosition(point,
                                                                                 faceOutgoingNormal * polyhedronFaceNormals[f],
-                                                                                faceVertices.col(0));
+                                                                                faceVertices3D.col(0));
 
       switch (pointFacePlanePosition)
       {
@@ -219,9 +221,6 @@ namespace Gedim
       const Eigen::Vector3d point2D = RotatePointsFrom3DTo2D(point,
                                                              polyhedronFaceRotationMatrices[f].transpose(),
                                                              polyhedronFaceTranslations[f]);
-      const Eigen::MatrixXd faceVertices2D = RotatePointsFrom3DTo2D(faceVertices,
-                                                                    polyhedronFaceRotationMatrices[f].transpose(),
-                                                                    polyhedronFaceTranslations[f]);
 
       PointPolygonPositionResult pointFacePosition = PointPolygonPosition(point2D,
                                                                           faceVertices2D);

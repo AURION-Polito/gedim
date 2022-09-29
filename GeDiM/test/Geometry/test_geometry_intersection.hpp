@@ -16,8 +16,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check simply no intersection
       {
@@ -26,7 +26,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 2.0);
         Eigen::Vector3d segmentTwoEnd(   1.0, 0.0, 2.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -40,7 +40,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -54,7 +54,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.5, 0.5, 0.0  );
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0  );
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -62,10 +62,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.5) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
@@ -79,7 +79,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(2.0, 0.0, 0.25 );
         Eigen::Vector3d segmentTwoEnd(   0.5, 0.0, 0.25 );
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -87,10 +87,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 2.0 / 3.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 5.0 / 6.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 2.0 / 3.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 5.0 / 6.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
@@ -104,7 +104,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.5, 0.0, 0.25 );
         Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.25);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -112,10 +112,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 0);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 1);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.75) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 0.75) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
@@ -130,13 +130,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, -1.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25 );
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.5) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
       }
@@ -148,13 +148,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0, -1.0, 0.25);
         Eigen::Vector3d segmentTwoEnd(   0.0, 0.0, 0.25 );
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
       }
@@ -166,7 +166,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999978e-01, 1.9999999999999996e+00, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   9.9999999999999978e-01, 0.0000000000000000e+00, 0.0000000000000000e+00);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -180,7 +180,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 1.2412670766236366e-16);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 2.4825341532472739e-17);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -194,7 +194,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 1.2412670766236366e-16);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 2.4825341532472739e-17);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -208,7 +208,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(9.9999999999999956e-01, 2.0000000000000000e+00, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   1.0000000000000000e+00, 2.2204460492503131e-16, 0.0000000000000000e+00);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -222,7 +222,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(1.1586807759999997e+00, -2.3999999858728053e-08, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   1.1586807759999993e+00, 3.3173615759999997e+00, 0.0000000000000000e+00 );
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -237,7 +237,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   6.9388939039072284e-18, 9.9999999999999989e-01, 0.0000000000000000e+00);
 
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtility.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                        segmentOneEnd,
                                                                                                                        segmentTwoOrigin,
                                                                                                                        segmentTwoEnd);
@@ -245,10 +245,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.75) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.75) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
@@ -262,10 +262,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentTwoOrigin(2.5749609556478464e+02, 1.8464458790048394e+02, 0.0000000000000000e+00);
         Eigen::Vector3d segmentTwoEnd(   1.9112000445373033e+02, 2.5749609588054147e+02, 0.0000000000000000e+00);
 
-        Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-        geometryUtilityConfig.Tolerance = 1.0e-6;
-        Gedim::GeometryUtilities geometryUtilityLocal(geometryUtilityConfig);
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilityLocal.IntersectionSegmentSegment(segmentOneOrigin,
+        Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+        geometryUtilitiesConfig.Tolerance = 1.0e-6;
+        Gedim::GeometryUtilities geometryUtilitiesLocal(geometryUtilitiesConfig);
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilitiesLocal.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                             segmentOneEnd,
                                                                                                                             segmentTwoOrigin,
                                                                                                                             segmentTwoEnd);
@@ -273,10 +273,10 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
         ASSERT_EQ(result.SecondIntersectionRelation[0], 1);
         ASSERT_EQ(result.SecondIntersectionRelation[1], 0);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilityConfig.Tolerance);
-        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.35255671401423067) < geometryUtilityConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.FirstSegmentIntersections[1].CurvilinearCoordinate - 1.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[0].CurvilinearCoordinate - 0.0) < geometryUtilitiesConfig.Tolerance);
+        ASSERT_TRUE(abs(result.SecondSegmentIntersections[1].CurvilinearCoordinate - 0.35255671401423067) < geometryUtilitiesConfig.Tolerance);
         ASSERT_EQ(result.FirstSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_EQ(result.FirstSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
@@ -294,8 +294,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check no intersection
       {
@@ -305,7 +305,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -321,7 +321,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -339,7 +339,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(1.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -357,7 +357,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(1.5, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -375,7 +375,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(2.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -393,7 +393,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(10.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -411,7 +411,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 0.0, 0.0);
         Eigen::Vector3d planeOrigin(-10.0, 11.0, 13.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -427,7 +427,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 2.0);
 
-        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtility.IntersectionSegmentPlane(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult result = geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
                                                                                                                    segmentEnd,
                                                                                                                    planeNormal,
                                                                                                                    planeOrigin);
@@ -446,9 +446,9 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-15;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-15;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // test no intersection with reference tetrahedron
       {
@@ -457,15 +457,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(+0.0, +1.0, +0.0);
         Eigen::Vector3d v4(+0.0, +0.0, +1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 2.0);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -483,15 +483,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(+0.0, +1.0, +0.0);
         Eigen::Vector3d v4(+0.0, +0.0, +1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -533,15 +533,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(+0.0, +1.0, +0.0);
         Eigen::Vector3d v4(+0.0, +0.0, +1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(-1.0 / sqrt(2), -1.0 / sqrt(2), 0.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -585,15 +585,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(+0.0, +1.0, +0.0);
         Eigen::Vector3d v4(+0.0, +0.0, +1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(-1.0 / sqrt(3), -1.0 / sqrt(3), -1.0 / sqrt(3));
         Eigen::Vector3d planeOrigin(0.0, 0.0, 1.0);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -635,15 +635,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(+0.0, +1.0, +0.0);
         Eigen::Vector3d v4(+0.0, +0.0, +1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 0.25);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -673,15 +673,15 @@ namespace GedimUnitTesting {
         Eigen::Vector3d v3(-1.0, +1.0, -1.0);
         Eigen::Vector3d v4(+1.0, -1.0, -1.0);
 
-        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateTetrahedronWithVertices(v1,v2,v3,v4);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
         Eigen::Vector3d planeNormal(-8.9087080637474766e-02, -4.4543540318737396e-01, 8.9087080637474791e-01);
         Eigen::Vector3d planeOrigin(1.4761904761904763e+00, 1.3809523809523809e+00, 1.2380952380952377e+00);
-        Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal).transpose();
-        Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
+        Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                             planeOrigin);
 
-        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtility.IntersectionPolyhedronPlane(polyhedron.Vertices,
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result = geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          planeNormal,
@@ -732,8 +732,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check simply no intersection
       {
@@ -742,7 +742,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
         double circleRadius = 2.0;
 
-        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtilities.IntersectionSegmentCircle(segmentOrigin,
                                                                                                                      segmentEnd,
                                                                                                                      circleCenter,
                                                                                                                      circleRadius);
@@ -757,7 +757,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
         double circleRadius = 2.0;
 
-        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtilities.IntersectionSegmentCircle(segmentOrigin,
                                                                                                                      segmentEnd,
                                                                                                                      circleCenter,
                                                                                                                      circleRadius);
@@ -775,7 +775,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter( 0.0, 3.0, 0.0);
         double circleRadius = 2.0;
 
-        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtility.IntersectionSegmentCircle(segmentOrigin,
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult result = geometryUtilities.IntersectionSegmentCircle(segmentOrigin,
                                                                                                                      segmentEnd,
                                                                                                                      circleCenter,
                                                                                                                      circleRadius);
@@ -799,8 +799,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check simply no intersection
       {
@@ -811,7 +811,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
         double circleRadius = 1.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult result = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult result = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                      circleCenter,
                                                                                                                      circleRadius);
         ASSERT_EQ(result.Intersections.size(), 0);
@@ -826,7 +826,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
         double circleRadius = 10.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 0);
@@ -841,7 +841,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(sqrt(2.0), sqrt(2.0), 0.0);
         double circleRadius = 2.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
@@ -861,7 +861,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
         double circleRadius = 0.125;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 0);
@@ -876,7 +876,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
         double circleRadius = 10.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 0);
@@ -891,7 +891,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
         double circleRadius = sqrt(2) / 2;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 3);
@@ -921,7 +921,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 2.0, 0.0);
         double circleRadius = 1.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
@@ -941,7 +941,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.5, -1.0, 0.0);
         double circleRadius = 1.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 1);
@@ -962,7 +962,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
         double circleRadius = 0.5;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 4);
@@ -1002,7 +1002,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
         double circleRadius = 1.0;
 
-        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+        Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
                                                                                                                                          circleCenter,
                                                                                                                                          circleRadius);
         ASSERT_EQ(polygonCircleIntersections.Intersections.size(), 6);
@@ -1055,9 +1055,9 @@ namespace GedimUnitTesting {
     // test no intersection with reference cube
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
@@ -1065,16 +1065,16 @@ namespace GedimUnitTesting {
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
 
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
@@ -1082,7 +1082,7 @@ namespace GedimUnitTesting {
       Eigen::Vector3d lineTangent(1.0, 0.0, 0.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 2.0);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
                                                                                                                      polyhedronFaceNormals,
@@ -1105,31 +1105,31 @@ namespace GedimUnitTesting {
     // test single intersection with reference cube
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
       Eigen::Vector3d length(+1.0, +0.0, +0.0);
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
       Eigen::Vector3d lineTangent(1.0, 1.0, 1.0);
       Eigen::Vector3d lineOrigin(0.0, 0.0, 1.0);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
                                                                                                                      polyhedronFaceNormals,
@@ -1141,7 +1141,7 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection);
       ASSERT_EQ(result.LineIntersections.size(),
                 1);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
                   0.0));
       ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnVertex);
@@ -1164,31 +1164,31 @@ namespace GedimUnitTesting {
     // test two intersections with reference cube
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
       Eigen::Vector3d length(+1.0, +0.0, +0.0);
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
       Eigen::Vector3d lineTangent(0.0, 0.0, 1.0);
       Eigen::Vector3d lineOrigin(0.5, 0.5, 0.0);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
                                                                                                                      polyhedronFaceNormals,
@@ -1200,13 +1200,13 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections);
       ASSERT_EQ(result.LineIntersections.size(),
                 2);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
                   0.0));
       ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace);
       ASSERT_EQ(result.LineIntersections[0].PolyhedronIndex,
           0);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[1].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[1].CurvilinearCoordinate,
                   1.0));
       ASSERT_EQ(result.LineIntersections[1].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace);
@@ -1232,31 +1232,31 @@ namespace GedimUnitTesting {
     // test two intersections with reference cube
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
       Eigen::Vector3d length(+1.0, +0.0, +0.0);
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
       Eigen::Vector3d lineTangent(1.0, 0.5, 0.0);
       Eigen::Vector3d lineOrigin(-1.0, -0.5, 0.5);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                      polyhedron.Edges,
                                                                                                                      polyhedron.Faces,
                                                                                                                      polyhedronFaceNormals,
@@ -1268,13 +1268,13 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections);
       ASSERT_EQ(result.LineIntersections.size(),
                 2);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
                   1.0));
       ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnEdge);
       ASSERT_EQ(result.LineIntersections[0].PolyhedronIndex,
           8);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[1].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[1].CurvilinearCoordinate,
                   2.0));
       ASSERT_EQ(result.LineIntersections[1].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace);
@@ -1301,9 +1301,9 @@ namespace GedimUnitTesting {
     // test no intersection with reference cube
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
@@ -1311,15 +1311,15 @@ namespace GedimUnitTesting {
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
@@ -1330,7 +1330,7 @@ namespace GedimUnitTesting {
       Eigen::Vector3d segmentEnd = lineOrigin + lineTangent;
       Eigen::Vector3d segmentTangent = lineTangent;
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
                                                                                                                                           polyhedronFaceNormals,
@@ -1338,7 +1338,7 @@ namespace GedimUnitTesting {
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronSegment(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronSegment(polyhedron.Vertices,
                                                                                                                         polyhedron.Edges,
                                                                                                                         polyhedron.Faces,
                                                                                                                         segmentOrigin,
@@ -1360,9 +1360,9 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
@@ -1370,15 +1370,15 @@ namespace GedimUnitTesting {
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
@@ -1389,7 +1389,7 @@ namespace GedimUnitTesting {
       Eigen::Vector3d segmentEnd = lineOrigin + lineTangent;
       Eigen::Vector3d segmentTangent = lineTangent;
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
                                                                                                                                           polyhedronFaceNormals,
@@ -1397,7 +1397,7 @@ namespace GedimUnitTesting {
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronSegment(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronSegment(polyhedron.Vertices,
                                                                                                                         polyhedron.Edges,
                                                                                                                         polyhedron.Faces,
                                                                                                                         segmentOrigin,
@@ -1409,7 +1409,7 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection);
       ASSERT_EQ(result.LineIntersections.size(),
                 1);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
                   0.0));
       ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnVertex);
@@ -1433,9 +1433,9 @@ namespace GedimUnitTesting {
 
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 
       Eigen::Vector3d origin(+0.0, +0.0, +0.0);
@@ -1443,15 +1443,15 @@ namespace GedimUnitTesting {
       Eigen::Vector3d width(+0.0, +1.0, +0.0);
       Eigen::Vector3d height(+0.0, +0.0, +1.0);
 
-      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtility.CreateParallelepipedWithOrigin(origin,
+      Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(origin,
                                                                                                        length,
                                                                                                        height,
                                                                                                        width);
-      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+      const vector<Eigen::MatrixXd> ployhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                     polyhedron.Faces);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(ployhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(ployhedronFaceVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(ployhedronFaceVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
 
@@ -1462,7 +1462,7 @@ namespace GedimUnitTesting {
       Eigen::Vector3d segmentEnd = lineOrigin + lineTangent;
       Eigen::Vector3d segmentTangent = lineTangent;
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtility.IntersectionPolyhedronLine(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult polyhedronLineIntersections = geometryUtilities.IntersectionPolyhedronLine(polyhedron.Vertices,
                                                                                                                                           polyhedron.Edges,
                                                                                                                                           polyhedron.Faces,
                                                                                                                                           polyhedronFaceNormals,
@@ -1470,7 +1470,7 @@ namespace GedimUnitTesting {
                                                                                                                                           lineTangent,
                                                                                                                                           lineOrigin);
 
-      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtility.IntersectionPolyhedronSegment(polyhedron.Vertices,
+      Gedim::GeometryUtilities::IntersectionPolyhedronLineResult result = geometryUtilities.IntersectionPolyhedronSegment(polyhedron.Vertices,
                                                                                                                         polyhedron.Edges,
                                                                                                                         polyhedron.Faces,
                                                                                                                         segmentOrigin,
@@ -1482,7 +1482,7 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection);
       ASSERT_EQ(result.LineIntersections.size(),
                 1);
-      ASSERT_TRUE(geometryUtility.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.LineIntersections[0].CurvilinearCoordinate,
                   1.0));
       ASSERT_EQ(result.LineIntersections[0].PolyhedronType,
           Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnEdge);
@@ -1505,27 +1505,27 @@ namespace GedimUnitTesting {
     // test no intersection with simple hexahedron mesh
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // create cell3Ds
       const unsigned int numCell3Ds = 4;
       vector<Gedim::GeometryUtilities::Polyhedron> cell3Ds(numCell3Ds);
 
-      cell3Ds[0] = geometryUtility.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+      cell3Ds[0] = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.5, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                   Eigen::Vector3d(0.0, 0.5, 0.0));
-      cell3Ds[1] = geometryUtility.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.5, 0.0, 0.0),
+      cell3Ds[1] = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.5, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.5, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                   Eigen::Vector3d(0.0, 0.5, 0.0));
-      cell3Ds[2] = geometryUtility.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.5, 0.0),
+      cell3Ds[2] = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.5, 0.0),
                                                                   Eigen::Vector3d(0.5, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                   Eigen::Vector3d(0.0, 0.5, 0.0));
-      cell3Ds[3] = geometryUtility.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.5, 0.5, 0.0),
+      cell3Ds[3] = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.5, 0.5, 0.0),
                                                                   Eigen::Vector3d(0.5, 0.0, 0.0),
                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                   Eigen::Vector3d(0.0, 0.5, 0.0));
@@ -1537,11 +1537,11 @@ namespace GedimUnitTesting {
 
       for (unsigned int c = 0; c < numCell3Ds; c++)
       {
-        cell3DsFaceVertices[c] = geometryUtility.PolyhedronFaceVertices(cell3Ds[c].Vertices,
+        cell3DsFaceVertices[c] = geometryUtilities.PolyhedronFaceVertices(cell3Ds[c].Vertices,
                                                                         cell3Ds[c].Faces);
-        cell3DsBarycenters[c] = geometryUtility.PolyhedronBarycenter(cell3Ds[c].Vertices);
-        cell3DsFaceNormals[c] = geometryUtility.PolyhedronFaceNormals(cell3DsFaceVertices[c]);
-        cell3DsFaceNormalDirections[c] = geometryUtility.PolyhedronFaceNormalDirections(cell3DsFaceVertices[c],
+        cell3DsBarycenters[c] = geometryUtilities.PolyhedronBarycenter(cell3Ds[c].Vertices);
+        cell3DsFaceNormals[c] = geometryUtilities.PolyhedronFaceNormals(cell3DsFaceVertices[c]);
+        cell3DsFaceNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(cell3DsFaceVertices[c],
                                                                                         cell3DsBarycenters[c],
                                                                                         cell3DsFaceNormals[c]);
       }
@@ -1566,7 +1566,7 @@ namespace GedimUnitTesting {
 
       for (unsigned int s = 0; s < numSegments; s++)
       {
-        segmentTagents.col(s) = geometryUtility.SegmentTangent(segmentOrigins.col(s),
+        segmentTagents.col(s) = geometryUtilities.SegmentTangent(segmentOrigins.col(s),
                                                                segmentEnds.col(s));
       }
 
@@ -1574,7 +1574,7 @@ namespace GedimUnitTesting {
       vector<Gedim::GeometryUtilities::IntersectionPolyhedronsSegmentResult> result(numSegments);
       for (unsigned int s = 0; s < numSegments; s++)
       {
-        result[s] = geometryUtility.IntersectionPolyhedronsSegment(cell3Ds,
+        result[s] = geometryUtilities.IntersectionPolyhedronsSegment(cell3Ds,
                                                                    cell3DsFaceNormals,
                                                                    cell3DsFaceNormalDirections,
                                                                    segmentOrigins.col(s),

@@ -16,7 +16,7 @@ namespace Gedim
       };
 
     private:
-      const GeometryUtilities& geometryUtility;
+      const GeometryUtilities& geometryUtilities;
 
       bool TestMapConfiguration(const Eigen::MatrixXd& vertices,
                                 const Eigen::MatrixXd& referencePoints,
@@ -50,8 +50,8 @@ namespace Gedim
       }
 
     public:
-      MapTetrahedron(const GeometryUtilities& geometryUtility) :
-        geometryUtility(geometryUtility) {}
+      MapTetrahedron(const GeometryUtilities& geometryUtilities) :
+        geometryUtilities(geometryUtilities) {}
       ~MapTetrahedron() {}
 
       /// Map from the tetrahedron reference element [0,1]x[0,1]x[0,1]/2 to the polygon x = F(x_r) = Q * x_r + b

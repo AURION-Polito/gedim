@@ -139,7 +139,11 @@ namespace Gedim
     return parallelpiped;
   }
   // ***************************************************************************
-  double GeometryUtilities::PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceTriangulationPoints, const std::vector<Eigen::Vector3d>& polyhedronFaceNormals, const std::vector<bool>& polyhedronFaceNormalDirections, const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations, const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
+  double GeometryUtilities::PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceRotatedTriangulationPoints,
+                                             const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                             const std::vector<bool>& polyhedronFaceNormalDirections,
+                                             const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                             const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
   {
     return 0.0;
   }
@@ -238,6 +242,23 @@ namespace Gedim
       translations.push_back(PolygonTranslation(polyhedronFaceVertices[f]));
 
     return translations;
+  }
+  // ***************************************************************************
+  std::vector<MatrixXd> GeometryUtilities::PolyhedronFaceRotatedVertices(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                         const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                                         const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
+  {
+    const unsigned int numFaces = polyhedronFaceVertices.size();
+    std::vector<MatrixXd> faceRotatedVertices(numFaces);
+
+    for (unsigned int f = 0; f < numFaces; f++)
+    {
+      faceRotatedVertices[f] = RotatePointsFrom3DTo2D(polyhedronFaceVertices[f],
+                                                      polyhedronFaceRotationMatrices[f].transpose(),
+                                                      polyhedronFaceTranslations[f]);
+    }
+
+    return faceRotatedVertices;
   }
   // ***************************************************************************
   vector<Vector3d> GeometryUtilities::PolyhedronFaceNormals(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
@@ -371,9 +392,9 @@ namespace Gedim
       for (unsigned int ft = 0; ft < numFaceTriangulation; ft++)
       {
         tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft]));
-        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 1]));
-        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
-        tetrahedronList.push_back(numPolyhedronVertices);
+            tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 1]));
+            tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
+            tetrahedronList.push_back(numPolyhedronVertices);
       }
     }
 
@@ -398,8 +419,8 @@ namespace Gedim
       {
         tetrahedronList.push_back(numPolyhedronVertices + f);
         tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 1]));
-        tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
-        tetrahedronList.push_back(numPolyhedronVertices + polyhedronFaceInternalPoints.size());
+            tetrahedronList.push_back(polyhedronFaces[f](0, polyhedronFaceTriangulations[f][3 * ft + 2]));
+            tetrahedronList.push_back(numPolyhedronVertices + polyhedronFaceInternalPoints.size());
       }
     }
 

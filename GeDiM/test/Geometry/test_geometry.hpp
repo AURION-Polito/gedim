@@ -16,13 +16,13 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      ASSERT_EQ(geometryUtility.EquispaceCoordinates(1.0, true), vector<double>({ 0.0, 1.0 }));
-      ASSERT_EQ(geometryUtility.EquispaceCoordinates(1.0, false), vector<double>({ }));
-      ASSERT_EQ(geometryUtility.EquispaceCoordinates(0.5, true), vector<double>({ 0.0, 0.5, 1.0 }));
-      ASSERT_EQ(geometryUtility.EquispaceCoordinates(0.5, false), vector<double>({ 0.5 }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(1.0, true), vector<double>({ 0.0, 1.0 }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(1.0, false), vector<double>({ }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(0.5, true), vector<double>({ 0.0, 0.5, 1.0 }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(0.5, false), vector<double>({ 0.5 }));
     }
     catch (const exception& exception)
     {
@@ -35,61 +35,61 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check Compare1DValues
       {
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, -7.6547685574189633e-17), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare1DValues(-7.6547685574189633e-17, 0.0), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare1DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, -7.6547685574189633e-17), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(-7.6547685574189633e-17, 0.0), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare2DValues
       {
-        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare2DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare2DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.Compare2DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare2DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.Compare2DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare3DValues
       {
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare3DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.0, geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtility.Compare3DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.Compare3DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check IsLenghtPositive
       {
-        ASSERT_FALSE(geometryUtility.IsValue1DPositive(0.0));
-				ASSERT_FALSE(geometryUtility.IsValue1DPositive(geometryUtilityConfig.Tolerance));
-        ASSERT_FALSE(geometryUtility.IsValue1DPositive(-1.0));
-        ASSERT_TRUE(geometryUtility.IsValue1DPositive(2 * geometryUtilityConfig.Tolerance));
-        ASSERT_TRUE(geometryUtility.IsValue1DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(0.0));
+				ASSERT_FALSE(geometryUtilities.IsValue1DPositive(geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(-1.0));
+        ASSERT_TRUE(geometryUtilities.IsValue1DPositive(2 * geometryUtilitiesConfig.Tolerance));
+        ASSERT_TRUE(geometryUtilities.IsValue1DPositive(10.0));
       }
 
       // check IsAreaPositive
       {
-        ASSERT_FALSE(geometryUtility.IsValue2DPositive(0.0));
-				ASSERT_TRUE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance));
-				ASSERT_FALSE(geometryUtility.IsValue2DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
-        ASSERT_FALSE(geometryUtility.IsValue2DPositive(-1.0));
-        ASSERT_TRUE(geometryUtility.IsValue2DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(0.0));
+				ASSERT_TRUE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance));
+				ASSERT_FALSE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(-1.0));
+        ASSERT_TRUE(geometryUtilities.IsValue2DPositive(10.0));
       }
 
       // check IsLenghtPositive
       {
-        ASSERT_FALSE(geometryUtility.IsValue3DPositive(0.0));
-				ASSERT_TRUE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance));
-				ASSERT_TRUE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
-				ASSERT_FALSE(geometryUtility.IsValue3DPositive(geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance * geometryUtilityConfig.Tolerance));
-        ASSERT_FALSE(geometryUtility.IsValue3DPositive(-1.0));
-        ASSERT_TRUE(geometryUtility.IsValue3DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(0.0));
+				ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance));
+				ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+				ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(-1.0));
+        ASSERT_TRUE(geometryUtilities.IsValue3DPositive(10.0));
       }
     }
     catch (const exception& exception)
@@ -103,21 +103,21 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check rotation matrix of plane 2D
       {
         const Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
-        const Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
-        const Eigen::Vector3d planeOrigin2D = geometryUtility.RotatePointsFrom3DTo2D(planeOrigin,
+        const Eigen::Vector3d planeOrigin2D = geometryUtilities.RotatePointsFrom3DTo2D(planeOrigin,
                                                                                      planeRotationMatrix.transpose(),
                                                                                      planeTranslation);
 
-        const Eigen::Vector3d point2D = geometryUtility.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 3.0),
+        const Eigen::Vector3d point2D = geometryUtilities.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 3.0),
                                                                                planeRotationMatrix.transpose(),
                                                                                planeTranslation);
 
@@ -141,13 +141,13 @@ namespace GedimUnitTesting {
         Eigen::Vector3d planeNormal(1.0, 1.0, 1.0);
         planeNormal.normalize();
         const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
-        const Eigen::Matrix3d planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
-        const Eigen::Vector3d planeOrigin2D = geometryUtility.RotatePointsFrom3DTo2D(planeOrigin,
+        const Eigen::Vector3d planeOrigin2D = geometryUtilities.RotatePointsFrom3DTo2D(planeOrigin,
                                                                                      planeRotationMatrix.transpose(),
                                                                                      planeTranslation);
-        const Eigen::Vector3d point2D = geometryUtility.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 6.0),
+        const Eigen::Vector3d point2D = geometryUtilities.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 6.0),
                                                                                planeRotationMatrix.transpose(),
                                                                                planeTranslation);
 
@@ -169,7 +169,7 @@ namespace GedimUnitTesting {
       {
         Eigen::Vector3d normal(-1.0, -1.0, -1.0);
         normal.normalize();
-        Eigen::Matrix3d rotationMatrix = geometryUtility.PlaneRotationMatrix(normal);
+        Eigen::Matrix3d rotationMatrix = geometryUtilities.PlaneRotationMatrix(normal);
 
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), 7.0710678118654757e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386307e-01);
@@ -187,8 +187,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check simple convex hull
       {
@@ -198,7 +198,7 @@ namespace GedimUnitTesting {
         points.col(2)<< 0.0, 1.0, 0.0;
         points.col(3)<< 1.0, 0.0, 0.0;
 
-        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
         ASSERT_EQ(convexHull, vector<unsigned int>({ 1, 3, 0, 2 }));
 
         Eigen::MatrixXd result(3, 4);
@@ -207,7 +207,7 @@ namespace GedimUnitTesting {
         result.col(2)<< 1.0, 1.0, 0.0;
         result.col(3)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                 convexHull), result);
       }
     }
@@ -222,8 +222,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check convex hull with aligned points
       {
@@ -232,7 +232,7 @@ namespace GedimUnitTesting {
         points.row(1)<< 5.6250000000000000e-01, 4.6875000000000000e-01, 3.7500000000000000e-01, 5.0000000000000000e-01;
         points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
         ASSERT_EQ(convexHull, vector<unsigned int>({ 2, 3, 0, 1 }));
       }
     }
@@ -247,8 +247,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check convex hull with aligned points
       {
@@ -257,7 +257,7 @@ namespace GedimUnitTesting {
         points.row(1)<< 1.0000000000000000e+00, 7.5000000000000000e-01, 3.7500000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00;
         points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
         ASSERT_EQ(convexHull, vector<unsigned int>({ 0, 1, 2, 3, 4 }));
       }
     }
@@ -272,8 +272,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check complex convex hull
       {
@@ -287,7 +287,7 @@ namespace GedimUnitTesting {
         points.col(6)<< 0.0, 30.0, 0.0;
         points.col(7)<< 15.0, 25.0, 0.0;
 
-        vector<unsigned int> convexHull = geometryUtility.ConvexHull(points);
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
         ASSERT_EQ(convexHull, vector<unsigned int>({ 6, 0, 5, 3, 1 }));
 
         Eigen::MatrixXd result(3, 5);
@@ -297,7 +297,7 @@ namespace GedimUnitTesting {
         result.col(3)<< 70.0, 30.0, 0.0;
         result.col(4)<< 30.0, 60.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                 convexHull), result);
       }
     }
@@ -312,8 +312,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check two aligned points
       {
@@ -321,14 +321,14 @@ namespace GedimUnitTesting {
         points.col(0)<< 0.0, 0.0, 0.0;
         points.col(1)<< 1.0, 1.0, 0.0;
 
-        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(points);
         ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1 }));
 
         Eigen::MatrixXd result(3, 2);
         result.col(0)<< 0.0, 0.0, 0.0;
         result.col(1)<< 1.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                 unalignedPoints), result);
       }
 
@@ -339,7 +339,7 @@ namespace GedimUnitTesting {
         points.col(1)<< 1.0, 0.0, 0.0;
         points.col(2)<< 0.0, 1.0, 0.0;
 
-        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(points);
         ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 2 }));
 
         Eigen::MatrixXd result(3, 3);
@@ -347,7 +347,7 @@ namespace GedimUnitTesting {
         result.col(1)<< 1.0, 0.0, 0.0;
         result.col(2)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                 unalignedPoints), result);
       }
 
@@ -359,7 +359,7 @@ namespace GedimUnitTesting {
         points.col(2)<< 0.5, 0.5, 0.0;
         points.col(3)<< 0.0, 1.0, 0.0;
 
-        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(points);
         ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 3 }));
 
         Eigen::MatrixXd result(3, 3);
@@ -367,7 +367,7 @@ namespace GedimUnitTesting {
         result.col(1)<< 1.0, 0.0, 0.0;
         result.col(2)<< 0.0, 1.0, 0.0;
 
-        ASSERT_EQ(geometryUtility.ExtractPoints(points,
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                 unalignedPoints), result);
       }
 
@@ -378,7 +378,7 @@ namespace GedimUnitTesting {
         points.row(1)<< 7.3131140323620392e-01, 7.2528958603603755e-01, 7.2505927150373028e-01, 7.3006842450775100e-01, 7.7809412779739129e-01, 8.0606390611392287e-01, 8.0648898431463600e-01, 7.8362391665369779e-01, 7.6423021194472562e-01;
         points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        vector<unsigned int> unalignedPoints = geometryUtility.UnalignedPoints(points);
+        vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(points);
         ASSERT_EQ(unalignedPoints, vector<unsigned int>({ 0, 1, 2, 3, 4, 5, 6, 7, 8 }));
       }
 

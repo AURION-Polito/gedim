@@ -17,46 +17,46 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split tetrahedron with plane
       {
-        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtility.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                              Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                              Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                                                              Eigen::Vector3d(0.0, 1.0, 0.0));
 
-        const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtility.PolyhedronEdgeTangents(polyhedron.Vertices,
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
                                                                                               polyhedron.Edges);
-        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                       polyhedron.Faces);
-        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(polyhedronFaceVertices);
-        const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFaceVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
                                                                                                            polyhedronBarycenter,
                                                                                                            polyhedronFaceNormals);
-        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtility.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
+        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtilities.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces);
-        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtility.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtilities.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces,
                                                                                                                polyhedronFaceEdgeDirections,
                                                                                                                polyhedronEdgeTangents);
-        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtility.PolyhedronFaceTranslations(polyhedronFaceVertices);
-        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtility.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFaceVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
                                                                                                                       polyhedronFaceNormals,
                                                                                                                       polyhedronFaceTranslations);
 
         const Eigen::Vector3d planeOrigin(0.0, 0.0, 0.5);
         const Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
-        const Eigen::MatrixXd planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::MatrixXd planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
 
-        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtility.SplitPolyhedronWithPlane(polyhedron.Vertices,
+        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          polyhedronFaceVertices,
@@ -113,7 +113,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NegativePolyhedron.Edges, std::vector<unsigned int>({ 0,1,2,6,7,8,9,10,11 }));
         ASSERT_EQ(result.NegativePolyhedron.Faces, std::vector<unsigned int>({ 3,4,5,6,7 }));
 
-        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtility.SplitPolyhedronWithPlaneResultToPolyhedra(result);
+        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
 
         ASSERT_EQ(splitPolyhedra.size(), 2);
 
@@ -172,46 +172,46 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split tetrahedron with plane
       {
-        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtility.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                              Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                              Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                                                              Eigen::Vector3d(0.0, 1.0, 0.0));
 
-        const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtility.PolyhedronEdgeTangents(polyhedron.Vertices,
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
                                                                                               polyhedron.Edges);
-        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                       polyhedron.Faces);
-        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(polyhedronFaceVertices);
-        const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFaceVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
                                                                                                            polyhedronBarycenter,
                                                                                                            polyhedronFaceNormals);
-        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtility.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
+        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtilities.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces);
-        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtility.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtilities.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces,
                                                                                                                polyhedronFaceEdgeDirections,
                                                                                                                polyhedronEdgeTangents);
-        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtility.PolyhedronFaceTranslations(polyhedronFaceVertices);
-        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtility.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFaceVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
                                                                                                                       polyhedronFaceNormals,
                                                                                                                       polyhedronFaceTranslations);
 
         const Eigen::Vector3d planeOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d planeNormal(-1.0 / sqrt(3.0), -1.0 / sqrt(3.0), 1.0 / sqrt(3.0));
-        const Eigen::MatrixXd planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::MatrixXd planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
 
-        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtility.SplitPolyhedronWithPlane(polyhedron.Vertices,
+        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          polyhedronFaceVertices,
@@ -268,7 +268,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NegativePolyhedron.Edges, std::vector<unsigned int>({ 0,1,2,6,7,8,9,10 }));
         ASSERT_EQ(result.NegativePolyhedron.Faces, std::vector<unsigned int>({ 3,4,5,6,7 }));
 
-        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtility.SplitPolyhedronWithPlaneResultToPolyhedra(result);
+        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSplitPolyhedronWithPlane/TetraTwo";
@@ -325,44 +325,44 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split cube with plane
       {
-        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                       1.0);
 
-        const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtility.PolyhedronEdgeTangents(polyhedron.Vertices,
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
                                                                                               polyhedron.Edges);
-        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                       polyhedron.Faces);
-        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(polyhedronFaceVertices);
-        const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFaceVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
                                                                                                            polyhedronBarycenter,
                                                                                                            polyhedronFaceNormals);
-        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtility.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
+        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtilities.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces);
-        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtility.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtilities.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces,
                                                                                                                polyhedronFaceEdgeDirections,
                                                                                                                polyhedronEdgeTangents);
-        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtility.PolyhedronFaceTranslations(polyhedronFaceVertices);
-        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtility.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFaceVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
                                                                                                                       polyhedronFaceNormals,
                                                                                                                       polyhedronFaceTranslations);
 
         const Eigen::Vector3d planeOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d planeNormal(-1.0 / sqrt(3.0), -1.0 / sqrt(3.0), 1.0 / sqrt(3.0));
-        const Eigen::MatrixXd planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::MatrixXd planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
 
-        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtility.SplitPolyhedronWithPlane(polyhedron.Vertices,
+        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          polyhedronFaceVertices,
@@ -425,7 +425,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NegativePolyhedron.Edges, std::vector<unsigned int>({ 0,1,2,6,7,8,9,10,11,12,13,14 }));
         ASSERT_EQ(result.NegativePolyhedron.Faces, std::vector<unsigned int>({ 3,4,5,6,7,8,9 }));
 
-        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtility.SplitPolyhedronWithPlaneResultToPolyhedra(result);
+        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSplitPolyhedronWithPlane/CubeOne";
@@ -482,44 +482,44 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      geometryUtilityConfig.Tolerance = 1.0e-12;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split cube with plane
       {
-        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                       1.0);
 
-        const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtility.PolyhedronEdgeTangents(polyhedron.Vertices,
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const Eigen::MatrixXd polyhedronEdgeTangents = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
                                                                                               polyhedron.Edges);
-        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                       polyhedron.Faces);
-        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(polyhedronFaceVertices);
-        const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFaceVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
                                                                                                            polyhedronBarycenter,
                                                                                                            polyhedronFaceNormals);
-        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtility.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
+        const vector<vector<bool>> polyhedronFaceEdgeDirections = geometryUtilities.PolyhedronFaceEdgeDirections(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces);
-        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtility.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
+        const vector<Eigen::MatrixXd> polyhedronFaceEdgesTangents = geometryUtilities.PolyhedronFaceEdgeTangents(polyhedron.Vertices,
                                                                                                                polyhedron.Edges,
                                                                                                                polyhedron.Faces,
                                                                                                                polyhedronFaceEdgeDirections,
                                                                                                                polyhedronEdgeTangents);
-        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtility.PolyhedronFaceTranslations(polyhedronFaceVertices);
-        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtility.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFaceVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
                                                                                                                       polyhedronFaceNormals,
                                                                                                                       polyhedronFaceTranslations);
 
         const Eigen::Vector3d planeOrigin(1.0, 0.0, 0.0);
         const Eigen::Vector3d planeNormal(1.0 / sqrt(2.0), 0.0, 1.0 / sqrt(2.0));
-        const Eigen::MatrixXd planeRotationMatrix = geometryUtility.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtility.PlaneTranslation(planeNormal,
+        const Eigen::MatrixXd planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
                                                                                   planeOrigin);
 
-        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtility.SplitPolyhedronWithPlane(polyhedron.Vertices,
+        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
                                                                                                                          polyhedron.Edges,
                                                                                                                          polyhedron.Faces,
                                                                                                                          polyhedronFaceVertices,
@@ -579,7 +579,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.NegativePolyhedron.Edges, std::vector<unsigned int>({ 0,1,2,3,9,10,11,12,13 }));
         ASSERT_EQ(result.NegativePolyhedron.Faces, std::vector<unsigned int>({ 4,5,6,7,8 }));
 
-        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtility.SplitPolyhedronWithPlaneResultToPolyhedra(result);
+        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSplitPolyhedronWithPlane/CubeTwo";

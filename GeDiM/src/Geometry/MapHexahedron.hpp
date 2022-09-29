@@ -16,7 +16,7 @@ namespace Gedim
       };
 
     private:
-      const GeometryUtilities& geometryUtility;
+      const GeometryUtilities& geometryUtilities;
 
       bool TestMapConfiguration(const Eigen::MatrixXd& vertices,
                                 const std::vector<unsigned int>& coordinateSystem,
@@ -51,8 +51,8 @@ namespace Gedim
       }
 
     public:
-      MapHexahedron(const GeometryUtilities& geometryUtility) :
-        geometryUtility(geometryUtility) {}
+      MapHexahedron(const GeometryUtilities& geometryUtilities) :
+        geometryUtilities(geometryUtilities) {}
       ~MapHexahedron() {}
 
       /// Map from the hexahedron reference element [0,1]x[0,1]x[0,1]/2 to the polygon x = F(x_r) = Q * x_r + b

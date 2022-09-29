@@ -16,14 +16,14 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check coincident points
       {
         Eigen::Vector3d firstPoint(1.0, 2.0, 3.0);
         Eigen::Vector3d secondPoint(1.0, 2.0, 3.0);
-        ASSERT_TRUE(geometryUtility.PointsAreCoincident(firstPoint,
+        ASSERT_TRUE(geometryUtilities.PointsAreCoincident(firstPoint,
                                                         secondPoint));
       }
       
@@ -31,7 +31,7 @@ namespace GedimUnitTesting {
       {
         Eigen::Vector3d firstPoint(1.0, 2.0, 3.0);
         Eigen::Vector3d secondPoint(2.0, 2.0, 3.0);
-        ASSERT_FALSE(geometryUtility.PointsAreCoincident(firstPoint,
+        ASSERT_FALSE(geometryUtilities.PointsAreCoincident(firstPoint,
                                                          secondPoint));
       }
       
@@ -44,19 +44,19 @@ namespace GedimUnitTesting {
         points.col(3)<< 1.0, 2.0, 3.0;
         points.col(4)<< 1.1, 1.2, 1.3;
         
-        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+        ASSERT_EQ(geometryUtilities.FindPointInPoints(points,
                                                     Eigen::Vector3d(6.0, 6.0, 6.0)),
                   vector<unsigned int>({ }));
-        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+        ASSERT_EQ(geometryUtilities.FindPointInPoints(points,
                                                     Eigen::Vector3d(0.0, 0.0, 0.0)),
                   vector<unsigned int>({ 0 }));
-        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+        ASSERT_EQ(geometryUtilities.FindPointInPoints(points,
                                                     Eigen::Vector3d(1.0, 2.0, 3.0)),
                   vector<unsigned int>({ 1, 3 }));
-        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+        ASSERT_EQ(geometryUtilities.FindPointInPoints(points,
                                                     Eigen::Vector3d(4.0, 5.0, 6.0)),
                   vector<unsigned int>({ 2 }));
-        ASSERT_EQ(geometryUtility.FindPointInPoints(points,
+        ASSERT_EQ(geometryUtilities.FindPointInPoints(points,
                                                     Eigen::Vector3d(1.1, 1.2, 1.3)),
                   vector<unsigned int>({ 4 }));
       }
@@ -72,8 +72,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check 2D points
       {
@@ -81,7 +81,7 @@ namespace GedimUnitTesting {
         points.setZero(3,2);
         points.row(0).setConstant(1.0);
         points.row(1).setConstant(2.0);
-        ASSERT_TRUE(geometryUtility.PointsAre2D(points));
+        ASSERT_TRUE(geometryUtilities.PointsAre2D(points));
       }
       
       // check 2D points
@@ -91,7 +91,7 @@ namespace GedimUnitTesting {
         points.row(0).setConstant(1.0);
         points.row(1).setConstant(2.0);
         points.row(2).setConstant(3.0);
-        ASSERT_FALSE(geometryUtility.PointsAre2D(points));
+        ASSERT_FALSE(geometryUtilities.PointsAre2D(points));
       }
     }
     catch (const exception& exception)
@@ -105,24 +105,24 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check curvilinear coordinate before
       {
-        ASSERT_EQ(geometryUtility.Compare1DValues(-0.5, 1.5),
+        ASSERT_EQ(geometryUtilities.Compare1DValues(-0.5, 1.5),
                   Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
       }
       
       // check curvilinear coordinate coincident
       {
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.5, 0.5 + geometryUtilityConfig.Tolerance / 2.0),
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.5, 0.5 + geometryUtilitiesConfig.Tolerance / 2.0),
                   Gedim::GeometryUtilities::CompareTypes::Coincident);
       }
       
       // check curvilinear coordinate before
       {
-        ASSERT_EQ(geometryUtility.Compare1DValues(0.5, -1.5),
+        ASSERT_EQ(geometryUtilities.Compare1DValues(0.5, -1.5),
                   Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
     }
@@ -137,8 +137,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check curvilinear coordinate origin
       {
@@ -146,9 +146,9 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 4.0);
         Eigen::Vector3d segmentEnd(10.0, 0.0, 4.0);
         
-        ASSERT_TRUE(abs(geometryUtility.PointCurvilinearCoordinate(point,
+        ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                    segmentOrigin,
-                                                                   segmentEnd) - 0.0) < geometryUtilityConfig.Tolerance);
+                                                                   segmentEnd) - 0.0) < geometryUtilitiesConfig.Tolerance);
       }
       
       // check curvilinear coordinate end
@@ -157,9 +157,9 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 4.0);
         Eigen::Vector3d segmentEnd(10.0, 0.0, 4.0);
         
-        ASSERT_TRUE(abs(geometryUtility.PointCurvilinearCoordinate(point,
+        ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                    segmentOrigin,
-                                                                   segmentEnd) - 1.0) < geometryUtilityConfig.Tolerance);
+                                                                   segmentEnd) - 1.0) < geometryUtilitiesConfig.Tolerance);
       }
       
       // check curvilinear coordinate inside
@@ -168,9 +168,9 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 4.0);
         Eigen::Vector3d segmentEnd(10.0, 0.0, 4.0);
         
-        ASSERT_TRUE(abs(geometryUtility.PointCurvilinearCoordinate(point,
+        ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                    segmentOrigin,
-                                                                   segmentEnd) - 0.5) < geometryUtilityConfig.Tolerance);
+                                                                   segmentEnd) - 0.5) < geometryUtilitiesConfig.Tolerance);
       }
       
       // check curvilinear coordinate before origin
@@ -179,9 +179,9 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 4.0);
         Eigen::Vector3d segmentEnd(10.0, 0.0, 4.0);
         
-        ASSERT_TRUE(abs(geometryUtility.PointCurvilinearCoordinate(point,
+        ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                    segmentOrigin,
-                                                                   segmentEnd) - -0.5) < geometryUtilityConfig.Tolerance);
+                                                                   segmentEnd) - -0.5) < geometryUtilitiesConfig.Tolerance);
       }
       
       // check curvilinear coordinate after end
@@ -190,9 +190,9 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentOrigin(0.0, 0.0, 4.0);
         Eigen::Vector3d segmentEnd(10.0, 0.0, 4.0);
         
-        ASSERT_TRUE(abs(geometryUtility.PointCurvilinearCoordinate(point,
+        ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                    segmentOrigin,
-                                                                   segmentEnd) - 1.5) < geometryUtilityConfig.Tolerance);
+                                                                   segmentEnd) - 1.5) < geometryUtilitiesConfig.Tolerance);
       }
     }
     catch (const exception& exception)
@@ -206,20 +206,20 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check not in line
       {
         const Eigen::Vector3d point(0.5, -1.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+        ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
                                                    lineTangentSquaredLength));
@@ -230,12 +230,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(0.5, 1.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+        ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
                                                    lineTangentSquaredLength));
@@ -246,12 +246,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(-10.0, 0.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
@@ -262,12 +262,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(10.0, 0.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
@@ -278,12 +278,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
@@ -294,12 +294,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(1.0, 0.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
@@ -310,12 +310,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(0.5, 0.0, 0.0);
         const Eigen::Vector3d lineOrigin(0.0, 0.0, 0.0);
         const Eigen::Vector3d lineEnd(1.0, 0.0, 0.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
@@ -326,12 +326,12 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(0.0, -1.0, -7.0);
         const Eigen::Vector3d lineOrigin(1.0, 2.0, 3.0);
         const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_FALSE(geometryUtility.IsPointOnLine(point,
+        ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,
                                                    lineOrigin,
                                                    lineTangent,
                                                    lineTangentSquaredLength));
@@ -342,16 +342,16 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d point(3.0, 4.5, 6.0);
         const Eigen::Vector3d lineOrigin(1.0, 2.0, 3.0);
         const Eigen::Vector3d lineEnd(5.0, 7.0, 9.0);
-        const Eigen::Vector3d lineTangent = geometryUtility.SegmentTangent(lineOrigin,
+        const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                            lineEnd);
         const double lineTangentSquaredLength = lineTangent.squaredNorm();
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_TRUE(geometryUtility.IsPointOnLine(point,
+        ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
                                                   lineOrigin,
                                                   lineTangent,
                                                   lineTangentSquaredLength));
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.PointLineCurvilinearCoordinate(point,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.PointLineCurvilinearCoordinate(point,
                                                                                                     lineOrigin,
                                                                                                     lineTangent,
                                                                                                     lineTangentSquaredLength),
@@ -369,8 +369,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check 2D right
       {
@@ -379,11 +379,11 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          0.5);
@@ -396,11 +396,11 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          0.5);
@@ -413,11 +413,11 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          -10.0);
@@ -430,11 +430,11 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd),
                   Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          10.0);
@@ -447,10 +447,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          0.0);
@@ -463,10 +463,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          1.0);
@@ -479,10 +479,10 @@ namespace GedimUnitTesting {
         Eigen::Vector3d segmentEnd(   1.0, 0.0, 0.0);
         
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
-        ASSERT_EQ(geometryUtility.PointSegmentPosition(point,
+        ASSERT_EQ(geometryUtilities.PointSegmentPosition(point,
                                                        segmentOrigin,
                                                        segmentEnd), Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
-        ASSERT_DOUBLE_EQ(geometryUtility.PointSegmentProjection(point,
+        ASSERT_DOUBLE_EQ(geometryUtilities.PointSegmentProjection(point,
                                                                 segmentOrigin,
                                                                 segmentEnd),
                          0.5);
@@ -499,8 +499,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check outside
       {
@@ -510,7 +510,7 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         
-        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                            polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
       }
@@ -523,13 +523,13 @@ namespace GedimUnitTesting {
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         
         // border edge
-        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge= geometryUtility.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge= geometryUtilities.PointPolygonPosition(Eigen::Vector3d(0.5, 0.5, 0.0),
                                                                                                                     polygonVertices);
         ASSERT_EQ(resultBorderEdge.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
         
         // border vertex
-        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex = geometryUtility.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex = geometryUtilities.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                                        polygonVertices);
         ASSERT_EQ(resultBorderVertex.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
@@ -543,7 +543,7 @@ namespace GedimUnitTesting {
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
         
-        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                            polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside);
       }
@@ -556,7 +556,7 @@ namespace GedimUnitTesting {
         polygonVertices.row(1)<< 2.0000000000000000e+00, 1.9234735079187608e+00, 1.8120621438385331e+00;
         polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
         
-        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                            polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
       }
@@ -569,7 +569,7 @@ namespace GedimUnitTesting {
         polygonVertices.row(1)<< 1.0000000000000000e+00, 7.5000000000000000e-01, 3.7500000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00;
         polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtility.PointPolygonPosition(point,
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                            polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
       }
@@ -585,8 +585,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       const Eigen::Vector3d planeNormal = Eigen::Vector3d::Constant(1.0).normalized();
       const Eigen::Vector3d planeOrigin = Eigen::Vector3d(0.0, 0.0, 1.0);
@@ -594,7 +594,7 @@ namespace GedimUnitTesting {
       // check point on plane
       {
         const Eigen::Vector3d point = Eigen::Vector3d(5.0, -5.0, 1.0);
-        ASSERT_EQ(geometryUtility.PointPlanePosition(point,
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
                                                      planeNormal,
                                                      planeOrigin),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::OnPlane);
@@ -603,7 +603,7 @@ namespace GedimUnitTesting {
       // check curvilinear coordinate coincident
       {
         const Eigen::Vector3d point = Eigen::Vector3d(-1.0, -1.0, -2.0);
-        ASSERT_EQ(geometryUtility.PointPlanePosition(point,
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
                                                      planeNormal,
                                                      planeOrigin),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::Negative);
@@ -612,7 +612,7 @@ namespace GedimUnitTesting {
       // check curvilinear coordinate before
       {
         const Eigen::Vector3d point = Eigen::Vector3d(0.0, 1.0, 2.0);
-        ASSERT_EQ(geometryUtility.PointPlanePosition(point,
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
                                                      planeNormal,
                                                      planeOrigin),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::Positive);
@@ -629,8 +629,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       
       // check point outside
       {
@@ -638,7 +638,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
         double circleRadius = 1.0;
         
-        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtilities.PointCirclePosition(point,
                                                                                                          circleCenter,
                                                                                                          circleRadius);
         ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::Outside);
@@ -650,7 +650,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
         double circleRadius = 1.0;
         
-        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtilities.PointCirclePosition(point,
                                                                                                          circleCenter,
                                                                                                          circleRadius);
         ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::OnBorder);
@@ -662,7 +662,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
         double circleRadius = 1.0;
         
-        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtility.PointCirclePosition(point,
+        Gedim::GeometryUtilities::PointCirclePositionResult result = geometryUtilities.PointCirclePosition(point,
                                                                                                          circleCenter,
                                                                                                          circleRadius);
         ASSERT_EQ(result, Gedim::GeometryUtilities::PointCirclePositionResult::Inside);
@@ -678,7 +678,7 @@ namespace GedimUnitTesting {
         Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
         double circleRadius = 1.0;
         
-        vector<Gedim::GeometryUtilities::PointCirclePositionResult> result = geometryUtility.PointCirclePositions(points,
+        vector<Gedim::GeometryUtilities::PointCirclePositionResult> result = geometryUtilities.PointCirclePositions(points,
                                                                                                                   circleCenter,
                                                                                                                   circleRadius);
         ASSERT_EQ(result.size(), 4);
@@ -699,29 +699,33 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtility.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+      const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                     1.0);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtility.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::MatrixXd> polyhedronFaceVertices = geometryUtility.PolyhedronFaceVertices(polyhedron.Vertices,
-                                                                                                    polyhedron.Faces);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtility.PolyhedronFaceNormals(polyhedronFaceVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtility.PolyhedronFaceNormalDirections(polyhedronFaceVertices,
+      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+      const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                      polyhedron.Faces);
+      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
                                                                                                          polyhedronBarycenter,
                                                                                                          polyhedronFaceNormals);
-      const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtility.PolyhedronFaceTranslations(polyhedronFaceVertices);
-      const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtility.PolyhedronFaceRotationMatrices(polyhedronFaceVertices,
+      const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+      const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
                                                                                                                     polyhedronFaceNormals,
                                                                                                                     polyhedronFaceTranslations);
 
+      const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                             polyhedronFaceTranslations,
+                                                                                                             polyhedronFaceRotationMatrices);
       // check point outside
       {
         Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtility.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
+            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
                                                     polyhedron.Faces,
-                                                    polyhedronFaceVertices,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
                                                     polyhedronFaceNormals,
                                                     polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
@@ -733,9 +737,10 @@ namespace GedimUnitTesting {
       // check point inside
       {
         Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtility.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 0.25),
+            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 0.25),
                                                     polyhedron.Faces,
-                                                    polyhedronFaceVertices,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
                                                     polyhedronFaceNormals,
                                                     polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
@@ -747,9 +752,10 @@ namespace GedimUnitTesting {
       // check point on face
       {
         Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtility.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 1.0),
+            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 1.0),
                                                     polyhedron.Faces,
-                                                    polyhedronFaceVertices,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
                                                     polyhedronFaceNormals,
                                                     polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
@@ -763,9 +769,10 @@ namespace GedimUnitTesting {
       // check point on edge
       {
         Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtility.PointPolyhedronPosition(Eigen::Vector3d(0.0, 0.5, 1.0),
+            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.0, 0.5, 1.0),
                                                     polyhedron.Faces,
-                                                    polyhedronFaceVertices,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
                                                     polyhedronFaceNormals,
                                                     polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
@@ -779,9 +786,10 @@ namespace GedimUnitTesting {
       // check point on vertex
       {
         Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtility.PointPolyhedronPosition(Eigen::Vector3d(1.0, 1.0, 1.0),
+            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.0, 1.0, 1.0),
                                                     polyhedron.Faces,
-                                                    polyhedronFaceVertices,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
                                                     polyhedronFaceNormals,
                                                     polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,

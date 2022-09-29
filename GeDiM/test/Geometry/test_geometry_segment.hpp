@@ -16,8 +16,8 @@ namespace GedimUnitTesting {
   {
     try
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-      Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check line passing in the origin positive
       {
@@ -27,11 +27,11 @@ namespace GedimUnitTesting {
         const double expectedSlope = 1.0;
         const double expectedIntercept = 0.0;
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentSlope(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
                                                                                   segmentEnd),
                                                      expectedSlope));
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentIntercept(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
                                                                                       segmentEnd),
                                                      expectedIntercept));
       }
@@ -44,11 +44,11 @@ namespace GedimUnitTesting {
         const double expectedSlope = -1.0;
         const double expectedIntercept = 0.0;
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentSlope(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
                                                                                   segmentEnd),
                                                      expectedSlope));
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentIntercept(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
                                                                                       segmentEnd),
                                                      expectedIntercept));
       }
@@ -61,11 +61,11 @@ namespace GedimUnitTesting {
         const double expectedSlope = 1.0;
         const double expectedIntercept = 1.0;
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentSlope(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
                                                                                   segmentEnd),
                                                      expectedSlope));
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentIntercept(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
                                                                                       segmentEnd),
                                                      expectedIntercept));
       }
@@ -78,11 +78,11 @@ namespace GedimUnitTesting {
         const double expectedSlope = -1.0;
         const double expectedIntercept = -1.0;
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentSlope(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
                                                                                   segmentEnd),
                                                      expectedSlope));
 
-        ASSERT_TRUE(geometryUtility.Are1DValuesEqual(geometryUtility.SegmentIntercept(segmentOrigin,
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
                                                                                       segmentEnd),
                                                      expectedIntercept));
       }

@@ -21,7 +21,7 @@ namespace Gedim
         vertices.col(coordinateSystem[fourthVertexIndex]));
     result.b = b(vertices.col(coordinateSystem[0]));
 
-    return (geometryUtility.IsValue1DZero((vertices -
+    return (geometryUtilities.IsValue1DZero((vertices -
                                            F(result,
                                              referencePoints)).norm()));
   }

@@ -16,8 +16,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check normal of polygon 2D
 			{
@@ -26,18 +26,18 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
+				Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
 				ASSERT_DOUBLE_EQ(normal[0], 0.0);
 				ASSERT_DOUBLE_EQ(normal[1], 0.0);
 				ASSERT_DOUBLE_EQ(normal[2], 1.0);
 
-				Eigen::VectorXd edgeLengths = geometryUtility.PolygonEdgeLengths(polygonVertices);
+				Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
 				ASSERT_EQ(edgeLengths, (Eigen::VectorXd(3) << 1.0,sqrt(2.0),1.0).finished());
 
-				Eigen::MatrixXd edgeTangents = geometryUtility.PolygonEdgeTangents(polygonVertices);
+				Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
 				ASSERT_EQ(edgeTangents, (Eigen::MatrixXd(3, 3) << 1.0,-1.0,0.0, 0.0,1.0,-1.0, 0.0,0.0,0.0).finished());
 
-				Eigen::MatrixXd edgeNormals = geometryUtility.PolygonEdgeNormals(polygonVertices);
+				Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
 				ASSERT_EQ(edgeNormals, (Eigen::MatrixXd(3, 3) << 0.0,1.0/sqrt(2),-1.0, -1.0,1.0/sqrt(2),0.0, 0.0,0.0,0.0).finished());
 			}
 
@@ -48,7 +48,7 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 0.0, 1.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
-				Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
+				Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
 				ASSERT_DOUBLE_EQ(normal[0], 1.0 / sqrt(3));
 				ASSERT_DOUBLE_EQ(normal[1], 1.0 / sqrt(3));
 				ASSERT_DOUBLE_EQ(normal[2], 1.0 / sqrt(3));
@@ -65,8 +65,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check centroid of reference triangle 2D
 			{
@@ -76,12 +76,12 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 				double polygonArea = 1.0 / 2.0;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 3.0);
 				ASSERT_DOUBLE_EQ(barycenter[1], 1.0 / 3.0);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 3.0);
 				ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 3.0);
@@ -89,18 +89,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -118,12 +118,12 @@ namespace GedimUnitTesting {
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 				double polygonArea = 1.0;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 2.0);
 				ASSERT_DOUBLE_EQ(barycenter[1], 1.0 / 2.0);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 2.0);
 				ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 2.0);
@@ -131,18 +131,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -159,12 +159,12 @@ namespace GedimUnitTesting {
 				polygonVertices.row(1) << -2.0, -1.0, +5.0;
 				double polygonArea = 1.850000000000000e+01;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 2.666666666666667e+00);
 				ASSERT_DOUBLE_EQ(barycenter[1], 6.666666666666665e-01);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 2.666666666666667e+00);
 				ASSERT_DOUBLE_EQ(centroid[1], 6.666666666666665e-01);
@@ -172,18 +172,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -200,12 +200,12 @@ namespace GedimUnitTesting {
 				polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 				double polygonArea = 1.511000000000000e+01;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 3.100000000000000e+00);
 				ASSERT_DOUBLE_EQ(barycenter[1], 2.850000000000000e+00);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
 				ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
@@ -213,18 +213,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -241,12 +241,12 @@ namespace GedimUnitTesting {
 				polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 				double polygonArea = 1.511000000000000e+01;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 3.400000000000000e+00);
 				ASSERT_DOUBLE_EQ(barycenter[1], 2.401773049645390e+00);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 3.338451356717406e+00);
 				ASSERT_DOUBLE_EQ(centroid[1], 2.617008603573792e+00);
@@ -254,18 +254,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 2, 3, 0, 3, 4, 0, 4, 5 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -282,12 +282,12 @@ namespace GedimUnitTesting {
 				polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 3.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00, 3.000000000000000e+00;
 				double polygonArea = 7.210000000000001e+00;
 
-				Eigen::Vector3d barycenter = geometryUtility.PolygonBarycenter(polygonVertices);
+				Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
 				ASSERT_DOUBLE_EQ(barycenter[0], 2.816666666666666e+00);
 				ASSERT_DOUBLE_EQ(barycenter[1], 2.900000000000000e+00);
 				ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-				Eigen::Vector3d centroid = geometryUtility.PolygonCentroid(polygonVertices,
+				Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
 																																	 polygonArea);
 				ASSERT_DOUBLE_EQ(centroid[0], 2.842903374942210e+00);
 				ASSERT_DOUBLE_EQ(centroid[1], 2.754923717059639e+00);
@@ -295,18 +295,18 @@ namespace GedimUnitTesting {
 
 				vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 5, 2, 3, 4, 2, 4, 5 };
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::MatrixXd polygonTriangulationCentroids(3, polygonTriangulationPoints.size());
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
 				{
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
-					polygonTriangulationCentroids.col(t) = geometryUtility.PolygonBarycenter(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationCentroids.col(t) = geometryUtilities.PolygonBarycenter(polygonTriangulationPoints[t]);
 				}
 
-				Eigen::Vector3d centroidWithTriangles = geometryUtility.PolygonCentroid(polygonTriangulationCentroids,
+				Eigen::Vector3d centroidWithTriangles = geometryUtilities.PolygonCentroid(polygonTriangulationCentroids,
 																																								polygonTriangulationAreas,
 																																								polygonArea);
 
@@ -327,8 +327,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check area of reference triangle 2D
 			{
@@ -337,7 +337,7 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+				double diameter = geometryUtilities.PolygonDiameter(polygonVertices);
 				ASSERT_DOUBLE_EQ(diameter, sqrt(2.0));
 			}
 
@@ -349,7 +349,7 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 1.0, 1.0, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-				double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+				double diameter = geometryUtilities.PolygonDiameter(polygonVertices);
 				ASSERT_DOUBLE_EQ(diameter, sqrt(2.0));
 			}
 
@@ -360,7 +360,7 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << -1.0, +5.0, +4.0;
 				polygonVertices.row(1) << -2.0, -1.0, +5.0;
 
-				double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+				double diameter = geometryUtilities.PolygonDiameter(polygonVertices);
 				ASSERT_DOUBLE_EQ(diameter, 8.602325267042627e+00);
 			}
 
@@ -371,7 +371,7 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
 				polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 
-				double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+				double diameter = geometryUtilities.PolygonDiameter(polygonVertices);
 				ASSERT_DOUBLE_EQ(diameter, 7.300684899377592e+00);
 			}
 
@@ -382,7 +382,7 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << 1.000000000000000e+00, 3.000000000000000e+00, 5.700000000000000e+00, 5.000000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
 				polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 
-				double diameter = geometryUtility.PolygonDiameter(polygonVertices);
+				double diameter = geometryUtilities.PolygonDiameter(polygonVertices);
 				ASSERT_DOUBLE_EQ(diameter, 7.300684899377592e+00);
 			}
 		}
@@ -397,8 +397,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check area of reference triangle 2D
 			{
@@ -407,17 +407,17 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				vector<unsigned int> polygonTriangulation = geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices);
+				vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-				double area = geometryUtility.PolygonArea(polygonVertices);
+				double area = geometryUtilities.PolygonArea(polygonVertices);
 				ASSERT_DOUBLE_EQ(area, 0.5);
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
 
 				double areaWithTriangles = polygonTriangulationAreas.sum();
 
@@ -432,17 +432,17 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 1.0, 1.0, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-				vector<unsigned int> polygonTriangulation = geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices);
+				vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-				double area = geometryUtility.PolygonArea(polygonVertices);
+				double area = geometryUtilities.PolygonArea(polygonVertices);
 				ASSERT_DOUBLE_EQ(area, 1.0);
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
 
 				double areaWithTriangles = polygonTriangulationAreas.sum();
 
@@ -456,17 +456,17 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << -1.0, +5.0, +4.0;
 				polygonVertices.row(1) << -2.0, -1.0, +5.0;
 
-				vector<unsigned int> polygonTriangulation = geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices);
+				vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-				double area = geometryUtility.PolygonArea(polygonVertices);
+				double area = geometryUtilities.PolygonArea(polygonVertices);
 				ASSERT_DOUBLE_EQ(area, 1.850000000000000e+01);
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
 
 				double areaWithTriangles = polygonTriangulationAreas.sum();
 
@@ -480,17 +480,17 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
 				polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 
-				vector<unsigned int> polygonTriangulation = geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices);
+				vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-				double area = geometryUtility.PolygonArea(polygonVertices);
+				double area = geometryUtilities.PolygonArea(polygonVertices);
 				ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
 
 				double areaWithTriangles = polygonTriangulationAreas.sum();
 
@@ -504,17 +504,17 @@ namespace GedimUnitTesting {
 				polygonVertices.row(0) << 1.000000000000000e+00, 3.000000000000000e+00, 5.700000000000000e+00, 5.000000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
 				polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
 
-				vector<unsigned int> polygonTriangulation = geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices);
+				vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-				double area = geometryUtility.PolygonArea(polygonVertices);
+				double area = geometryUtilities.PolygonArea(polygonVertices);
 				ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
 
-				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtility.ExtractTriangulationPoints(polygonVertices,
+				vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
 																																																				polygonTriangulation);
 
 				Eigen::VectorXd polygonTriangulationAreas(polygonTriangulationPoints.size());
 				for (unsigned int t = 0; t < polygonTriangulationPoints.size(); t++)
-					polygonTriangulationAreas[t] = geometryUtility.PolygonArea(polygonTriangulationPoints[t]);
+					polygonTriangulationAreas[t] = geometryUtilities.PolygonArea(polygonTriangulationPoints[t]);
 
 				double areaWithTriangles = polygonTriangulationAreas.sum();
 
@@ -532,8 +532,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check triangle
 			{
@@ -542,7 +542,7 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				ASSERT_EQ(geometryUtility.PolygonType(polygonVertices),
+				ASSERT_EQ(geometryUtilities.PolygonType(polygonVertices),
 									Gedim::GeometryUtilities::PolygonTypes::Triangle);
 			}
 
@@ -554,7 +554,7 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 0.25, 0.25, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-				ASSERT_EQ(geometryUtility.PolygonType(polygonVertices),
+				ASSERT_EQ(geometryUtilities.PolygonType(polygonVertices),
 									Gedim::GeometryUtilities::PolygonTypes::Quadrilateral);
 			}
 
@@ -566,12 +566,12 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 0.5, 0.5, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-				vector<unsigned int> unalignedPoint = geometryUtility.UnalignedPoints(polygonVertices);
+				vector<unsigned int> unalignedPoint = geometryUtilities.UnalignedPoints(polygonVertices);
 
-				Eigen::MatrixXd extraction = geometryUtility.ExtractPoints(polygonVertices,
+				Eigen::MatrixXd extraction = geometryUtilities.ExtractPoints(polygonVertices,
 																																	 unalignedPoint);
 
-				ASSERT_EQ(geometryUtility.PolygonType(extraction),
+				ASSERT_EQ(geometryUtilities.PolygonType(extraction),
 									Gedim::GeometryUtilities::PolygonTypes::Triangle);
 			}
 		}
@@ -586,8 +586,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check convex polygon 2D
 			{
@@ -596,11 +596,11 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-        const vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
-        const Eigen::MatrixXd convexHullVertices = geometryUtility.ExtractPoints(polygonVertices,
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(polygonVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(polygonVertices,
                                                                                  convexHull);
 
-        ASSERT_TRUE(geometryUtility.PolygonIsConvex(polygonVertices,
+        ASSERT_TRUE(geometryUtilities.PolygonIsConvex(polygonVertices,
                                                     convexHullVertices));
 			}
 
@@ -612,11 +612,11 @@ namespace GedimUnitTesting {
 				polygonVertices.col(2)<< 0.25, 0.25, 0.0;
 				polygonVertices.col(3)<< 0.0, 1.0, 0.0;
 
-        const vector<unsigned int> convexHull = geometryUtility.ConvexHull(polygonVertices);
-        const Eigen::MatrixXd convexHullVertices = geometryUtility.ExtractPoints(polygonVertices,
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(polygonVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(polygonVertices,
                                                                                  convexHull);
 
-        ASSERT_FALSE(geometryUtility.PolygonIsConvex(polygonVertices,
+        ASSERT_FALSE(geometryUtilities.PolygonIsConvex(polygonVertices,
                                                      convexHullVertices));
 			}
 		}
@@ -631,8 +631,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check rotation matrix of polygon 2D
 			{
@@ -641,9 +641,9 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 1.0, 0.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 1.0, 0.0;
 
-				Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-				Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
-				Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+				Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
+				Eigen::Vector3d translation = geometryUtilities.PolygonTranslation(polygonVertices);
+				Eigen::Matrix3d rotationMatrix = geometryUtilities.PolygonRotationMatrix(polygonVertices,
 																																							 normal,
 																																							 translation);
 				ASSERT_DOUBLE_EQ(translation[0], polygonVertices(0, 0));
@@ -661,9 +661,9 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 0.0, 1.0, 0.0;
 				polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
-				Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-				Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
-				Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+				Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
+				Eigen::Vector3d translation = geometryUtilities.PolygonTranslation(polygonVertices);
+				Eigen::Matrix3d rotationMatrix = geometryUtilities.PolygonRotationMatrix(polygonVertices,
 																																							 normal,
 																																							 translation);
 
@@ -683,9 +683,9 @@ namespace GedimUnitTesting {
 				polygonVertices.col(1)<< 0.0, 1.0, 0.0;
 				polygonVertices.col(2)<< 1.0, 0.0, 0.0;
 
-				Eigen::Vector3d normal = geometryUtility.PolygonNormal(polygonVertices);
-				Eigen::Vector3d translation = geometryUtility.PolygonTranslation(polygonVertices);
-				Eigen::Matrix3d rotationMatrix = geometryUtility.PolygonRotationMatrix(polygonVertices,
+				Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
+				Eigen::Vector3d translation = geometryUtilities.PolygonTranslation(polygonVertices);
+				Eigen::Matrix3d rotationMatrix = geometryUtilities.PolygonRotationMatrix(polygonVertices,
 																																							 normal,
 																																							 translation);
 
@@ -708,8 +708,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check triangle triangulation
 			{
@@ -720,8 +720,8 @@ namespace GedimUnitTesting {
 
 				Eigen::Vector3d internalPoint(0.25, 0.25, 0.0);
 
-				ASSERT_EQ(geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
-				ASSERT_EQ(geometryUtility.PolygonTriangulationByInternalPoint(polygonVertices,
+				ASSERT_EQ(geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
+				ASSERT_EQ(geometryUtilities.PolygonTriangulationByInternalPoint(polygonVertices,
 																																			internalPoint), vector<unsigned int>({ 3, 0, 1, 3, 1, 2, 3, 2, 0 }));
 			}
 
@@ -735,8 +735,8 @@ namespace GedimUnitTesting {
 
 				Eigen::Vector3d internalPoint(0.25, 0.25, 0.0);
 
-				ASSERT_EQ(geometryUtility.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
-				ASSERT_EQ(geometryUtility.PolygonTriangulationByInternalPoint(polygonVertices,
+				ASSERT_EQ(geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
+				ASSERT_EQ(geometryUtilities.PolygonTriangulationByInternalPoint(polygonVertices,
 																																			internalPoint), vector<unsigned int>({ 4, 0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0 }));
 			}
 		}
@@ -751,8 +751,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check triangle sub-division
 			{
@@ -771,7 +771,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 1;
 
 				Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
-						geometryUtility.CircleDivisionByPolygon(polygonVertices,
+						geometryUtilities.CircleDivisionByPolygon(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -811,7 +811,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 3;
 
 				Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
-						geometryUtility.CircleDivisionByPolygon(polygonVertices,
+						geometryUtilities.CircleDivisionByPolygon(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -851,7 +851,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 4;
 
 				Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
-						geometryUtility.CircleDivisionByPolygon(polygonVertices,
+						geometryUtilities.CircleDivisionByPolygon(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -894,7 +894,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 5;
 
 				Gedim::GeometryUtilities::CircleDivisionByPolygonResult result =
-						geometryUtility.CircleDivisionByPolygon(polygonVertices,
+						geometryUtilities.CircleDivisionByPolygon(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -928,8 +928,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check triangle sub-division
 			{
@@ -948,7 +948,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 0;
 
 				Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
-						geometryUtility.PolygonDivisionByCircle(polygonVertices,
+						geometryUtilities.PolygonDivisionByCircle(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -990,7 +990,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 3;
 
 				Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
-						geometryUtility.PolygonDivisionByCircle(polygonVertices,
+						geometryUtilities.PolygonDivisionByCircle(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -1034,7 +1034,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 5;
 
 				Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
-						geometryUtility.PolygonDivisionByCircle(polygonVertices,
+						geometryUtilities.PolygonDivisionByCircle(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -1078,7 +1078,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 0;
 
 				Gedim::GeometryUtilities::PolygonDivisionByCircleResult result =
-						geometryUtility.PolygonDivisionByCircle(polygonVertices,
+						geometryUtilities.PolygonDivisionByCircle(polygonVertices,
 																										polygonEdgeTangents,
 																										circleCenter,
 																										circleRadius,
@@ -1110,9 +1110,9 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			geometryUtilityConfig.Tolerance = 1.0e-12;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			geometryUtilitiesConfig.Tolerance = 1.0e-12;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check square sub-division
 			{
@@ -1131,7 +1131,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 1;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonInsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonInsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																			 polygonEdgeTangents,
 																																			 circleCenter,
 																																			 circleRadius,
@@ -1164,9 +1164,9 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			geometryUtilityConfig.Tolerance = 1.0e-12;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			geometryUtilitiesConfig.Tolerance = 1.0e-12;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check square sub-division
 			{
@@ -1185,7 +1185,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 3;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1224,7 +1224,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 3;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1265,7 +1265,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 4;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1313,7 +1313,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 1;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1359,7 +1359,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 1;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1401,7 +1401,7 @@ namespace GedimUnitTesting {
 				const unsigned int curvedEdgeIndex = 0;
 
 				Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
-						geometryUtility.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+						geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
 																																				polygonEdgeTangents,
 																																				circleCenter,
 																																				circleRadius,
@@ -1436,8 +1436,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// check circle outside and no intersection
 			{
@@ -1448,13 +1448,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1471,13 +1471,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
 				double circleRadius = 10.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1494,14 +1494,14 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(sqrt(2.0), sqrt(2.0), 0.0);
 				double circleRadius = 2.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1518,13 +1518,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
 				double circleRadius = 0.125;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1541,13 +1541,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
 				double circleRadius = 10.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1564,13 +1564,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
 				double circleRadius = sqrt(2) / 2;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1587,13 +1587,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 2.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1610,13 +1610,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, -1.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1633,13 +1633,13 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.125, 0.0);
 				double circleRadius = 0.125;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1656,14 +1656,14 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.55, 0.0);
 				double circleRadius = 0.5;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1680,14 +1680,14 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
 				double circleRadius = 0.5;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,
@@ -1705,14 +1705,14 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes position = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																							circleCenter,
 																																																							circleRadius,
 																																																							vertexPositions,

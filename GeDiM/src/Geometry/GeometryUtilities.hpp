@@ -1086,13 +1086,26 @@ namespace Gedim
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
 
+
       /// \brief Check if point is inside a polygon
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param result the resulting position
+
+      /// \brief Check if point is inside a polygon
+      /// \param point the point
+      /// \param polyhedronFaces the polyhedron faces, size numPolyhedronFaces
+      /// \param polyhedronFaceVertices the polyhedron face 3D vertices, size numPolyhedronFaces
+      /// \param polyhedronFaceRotatedVertices the polyhedron face 2D vertices, size numPolyhedronFaces
+      /// \param polyhedronFaceNormals the polyhedron face normals
+      /// \param polyhedronFaceNormalDirections the polyhedron face normal directions
+      /// \param polyhedronFaceTranslations the polyhedron face translation from 2D to 3D
+      /// \param polyhedronFaceRotationMatrices the polyhedron face rotation matrix from 2D to 3D
+      /// \return the point position respect the polyhedron
       PointPolyhedronPositionResult PointPolyhedronPosition(const Eigen::Vector3d& point,
                                                             const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                             const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                            const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                                                             const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
                                                             const std::vector<bool>& polyhedronFaceNormalDirections,
                                                             const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
@@ -1577,7 +1590,14 @@ namespace Gedim
                                               Eigen::Vector3d(0.0, edgeLength, 0.0));
       }
 
-      double PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceTriangulationPoints,
+      /// \brief Compute the Polyhedron Volume
+      /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace
+      /// \param polyhedronFaceNormals polyhedron face normals, size numPolyhedronFaces
+      /// \param polyhedronFaceNormalDirections polyhedron face normal directions, size numPolyhedronFaces
+      /// \param polyhedronFaceTranslations polyhedron face translation vector from 2D to 3D
+      /// \param polyhedronFaceRotationMatrices polyhedron face rotation matrix from 2D to 3D
+      /// \return the polyhedron volume
+      double PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
                               const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
                               const std::vector<bool>& polyhedronFaceNormalDirections,
                               const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
@@ -1637,6 +1657,16 @@ namespace Gedim
       /// \param polyhedronFaceVertices the polyhedron faces vertices
       /// \return for each polyhedron face the translation vector
       std::vector<Eigen::Vector3d> PolyhedronFaceTranslations(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
+
+      /// \brief Compute Polyhedron Faces Rotated Vertices 2D
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronFaceTranslations the polyhedron face translations from 2D to 3D
+      /// \param polyhedronFaceRotationMatrices the polyhedron face rotation matrix from 2D to 3D
+      /// \return for each face the 2D vertices, size 1xnumFaces
+      std::vector<Eigen::MatrixXd> PolyhedronFaceRotatedVertices(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                 const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                                 const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const;
+
 
       /// \brief Compute Polyhedron Faces Normals
       /// \param polyhedronFaceVertices the polyhedron faces vertices

@@ -16,8 +16,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// no action
 			{
@@ -28,7 +28,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 1;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::NoAction);
 				ASSERT_EQ(result.NewVertices.size(), 0);
@@ -45,7 +45,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
 				input.Segment.End.Index = 0;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -77,7 +77,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
 				input.Segment.End.Index = 0;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate);
 				ASSERT_EQ(result.NewVertices.size(), 2);
@@ -117,7 +117,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
 				input.Segment.End.Index = 1;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate);
 				ASSERT_EQ(result.NewVertices.size(), 2);
@@ -160,7 +160,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 0);
@@ -187,7 +187,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -226,7 +226,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 2);
@@ -277,7 +277,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 0;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -317,7 +317,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -357,7 +357,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 1;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -397,7 +397,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -437,7 +437,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 2;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -468,7 +468,7 @@ namespace GedimUnitTesting {
 				input.Segment.End.Type = Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
 				input.Segment.End.Index = 4;
 
-				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtility.SplitPolygonWithSegment(input);
+				Gedim::GeometryUtilities::SplitPolygonWithSegmentResult result = geometryUtilities.SplitPolygonWithSegment(input);
 
 				ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonCreation);
 				ASSERT_EQ(result.NewVertices.size(), 1);
@@ -509,8 +509,8 @@ namespace GedimUnitTesting {
 	{
 		try
 		{
-			Gedim::GeometryUtilitiesConfig geometryUtilityConfig;
-			Gedim::GeometryUtilities geometryUtility(geometryUtilityConfig);
+			Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+			Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
 			// circle outside and no intersection
 			{
@@ -521,18 +521,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -551,18 +551,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 3.0, 0.0);
 				double circleRadius = 10.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -580,19 +580,19 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(sqrt(2.0), sqrt(2.0), 0.0);
 				double circleRadius = 2.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -610,19 +610,19 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
 				double circleRadius = 0.125;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
 
-				ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				ASSERT_ANY_THROW(geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																circleCenter,
 																																circleRadius,
 																																vertexPositions,
@@ -639,18 +639,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.25, 0.25, 0.0);
 				double circleRadius = 10.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -668,18 +668,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
 				double circleRadius = sqrt(2) / 2;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -697,18 +697,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 2.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -726,18 +726,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, -1.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				ASSERT_ANY_THROW(geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																circleCenter,
 																																circleRadius,
 																																vertexPositions,
@@ -754,18 +754,18 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.125, 0.0);
 				double circleRadius = 0.125;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				ASSERT_ANY_THROW(geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				ASSERT_ANY_THROW(geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																circleCenter,
 																																circleRadius,
 																																vertexPositions,
@@ -782,19 +782,19 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.55, 0.0);
 				double circleRadius = 0.5;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -868,19 +868,19 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.5, 0.5, 0.0);
 				double circleRadius = 0.5;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -966,19 +966,19 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(3.0, 3.0, 0.0);
 				double circleRadius = 1.0;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
@@ -1086,20 +1086,20 @@ namespace GedimUnitTesting {
 				Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
 				double circleRadius = 0.1;
 
-				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtility.IntersectionPolygonCircle(polygonVertices,
+				Gedim::GeometryUtilities::IntersectionPolygonCircleResult polygonCircleIntersections = geometryUtilities.IntersectionPolygonCircle(polygonVertices,
 																																																																				 circleCenter,
 																																																																				 circleRadius);
 
-				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtility.PointCirclePositions(polygonVertices,
+				vector<Gedim::GeometryUtilities::PointCirclePositionResult> vertexPositions = geometryUtilities.PointCirclePositions(polygonVertices,
 																																																													 circleCenter,
 																																																													 circleRadius);
-				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtility.PolygonCirclePosition(polygonVertices,
+				Gedim::GeometryUtilities::PolygonCirclePositionTypes polygonPosition = geometryUtilities.PolygonCirclePosition(polygonVertices,
 																																																										 circleCenter,
 																																																										 circleRadius,
 																																																										 vertexPositions,
 																																																										 polygonCircleIntersections);
 
-				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtility.SplitPolygonWithCircle(polygonVertices,
+				Gedim::GeometryUtilities::SplitPolygonWithCircleResult result = geometryUtilities.SplitPolygonWithCircle(polygonVertices,
 																																																							 circleCenter,
 																																																							 circleRadius,
 																																																							 vertexPositions,
