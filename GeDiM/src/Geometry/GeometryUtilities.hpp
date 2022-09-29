@@ -1597,6 +1597,7 @@ namespace Gedim
       /// \param polyhedronFaceTranslations polyhedron face translation vector from 2D to 3D
       /// \param polyhedronFaceRotationMatrices polyhedron face rotation matrix from 2D to 3D
       /// \return the polyhedron volume
+      /// \note use the divergence theorem, with F = 1/3 (x, y, z), see https://en.wikipedia.org/wiki/Divergence_theorem
       double PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
                               const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
                               const std::vector<bool>& polyhedronFaceNormalDirections,

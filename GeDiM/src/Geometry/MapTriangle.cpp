@@ -6,30 +6,33 @@ using namespace std;
 namespace Gedim
 {
   // ***************************************************************************
-  MatrixXd MapTriangle::F(const Matrix3d& vertices,
-                          const MatrixXd& x) const
+  MapTriangle::MapTriangleData MapTriangle::Compute(const Eigen::Matrix3d& vertices) const
   {
-    return (Q(vertices) * x).colwise() + b(vertices);
+    MapTriangleData result;
+
+    result.B = B(vertices);
+    result.b = b(vertices);
+
+    return result;
   }
   // ***************************************************************************
-  MatrixXd MapTriangle::J(const Matrix3d& vertices,
+  MatrixXd MapTriangle::J(const MapTriangleData& mapData,
                           const MatrixXd& x) const
   {
     const unsigned int numPoints = x.cols();
     MatrixXd jacb(3, 3 * numPoints);
-    Matrix3d q = Q(vertices);
 
     for (unsigned int p = 0; p < numPoints; p++)
-      jacb.block(0, 3 * p, 3, 3) = q;
+      jacb.block(0, 3 * p, 3, 3) = mapData.B;
 
     return jacb;
   }
   // ***************************************************************************
-  VectorXd MapTriangle::DetJ(const Matrix3d& vertices,
+  VectorXd MapTriangle::DetJ(const MapTriangleData& mapData,
                              const MatrixXd& x) const
   {
-    MatrixXd jacb = J(vertices,
-                      x);
+    const MatrixXd jacb = J(mapData,
+                            x);
 
     const unsigned int numPoints = x.cols();
     VectorXd detJacb(numPoints);

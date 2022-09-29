@@ -1,5 +1,6 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include "MapTriangle.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -145,7 +146,32 @@ namespace Gedim
                                              const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
                                              const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
   {
-    return 0.0;
+    double volume = 0.0;
+    const unsigned int numFaces = polyhedronFaceRotatedTriangulationPoints.size();
+    const Eigen::Vector3d quadraturePoint(1.0 / 3.0, 1.0 / 3.0, 0.0);
+
+    for (unsigned int f = 0; f < numFaces; f++)
+    {
+      const unsigned int numFaceTriangles = polyhedronFaceRotatedTriangulationPoints[f].size();
+      const Eigen::Matrix3d& faceRotationMatrix = polyhedronFaceRotationMatrices[f];
+      const Eigen::Vector3d& faceTranslation = polyhedronFaceTranslations[f];
+      const Eigen::Vector3d& faceNormal = polyhedronFaceNormalDirections[f] ? polyhedronFaceNormals[f] :
+                                                                              -1.0 * polyhedronFaceNormals[f];
+
+      for (unsigned int t = 0; t < numFaceTriangles; t++)
+      {
+        const Eigen::Matrix3d& face2DTriangle = polyhedronFaceRotatedTriangulationPoints[f][t];
+
+        Gedim::MapTriangle mapping;
+        const Gedim::MapTriangle::MapTriangleData mapData = mapping.Compute(face2DTriangle);
+
+        volume += mapData.B.determinant() * (faceRotationMatrix * mapData.B * quadraturePoint +
+                                             faceRotationMatrix * mapData.b +
+                                             faceTranslation).transpose() * faceNormal;
+      }
+    }
+
+    return 1.0 / 6.0 * volume;
   }
   // ***************************************************************************
   MatrixXd GeometryUtilities::PolyhedronEdgeTangents(const Eigen::MatrixXd& polyhedronVertices,

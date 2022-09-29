@@ -119,13 +119,14 @@ namespace GedimUnitTesting
     vertices.row(1) << -2.0, -1.0, +5.0;
 
     Gedim::MapTriangle mapping;
+    const Gedim::MapTriangle::MapTriangleData mapData = mapping.Compute(vertices);
 
     Eigen::MatrixXd points;
     points.setZero(3, 7);
     points.row(0)<< 3.333333333333330e-01, 4.701420641051151e-01, 4.701420641051151e-01, 5.971587178976985e-02, 1.012865073234563e-01, 1.012865073234563e-01, 7.974269853530873e-01;
     points.row(1)<< 3.333333333333330e-01, 4.701420641051151e-01, 5.971587178976985e-02, 4.701420641051151e-01, 1.012865073234563e-01, 7.974269853530873e-01, 1.012865073234563e-01;
 
-    Eigen::MatrixXd mappedPoints = mapping.F(vertices,
+    Eigen::MatrixXd mappedPoints = mapping.F(mapData,
                                              points);
 
     Eigen::MatrixXd expectedPoints;
@@ -138,7 +139,7 @@ namespace GedimUnitTesting
     Eigen::VectorXd weights(7);
     weights<< 1.125000000000000e-01, 6.619707639425310e-02, 6.619707639425310e-02, 6.619707639425310e-02, 6.296959027241358e-02, 6.296959027241358e-02, 6.296959027241358e-02;
 
-    Eigen::VectorXd mappedWeights = weights.array() * mapping.DetJ(vertices,
+    Eigen::VectorXd mappedWeights = weights.array() * mapping.DetJ(mapData,
                                                                    points).array().abs();
 
     Eigen::VectorXd expectedWeights(7);
