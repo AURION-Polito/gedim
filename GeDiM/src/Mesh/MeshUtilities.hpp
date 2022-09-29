@@ -59,20 +59,21 @@ namespace Gedim
           vector<Eigen::MatrixXd> Cell3DsEdgeTangents;
           vector<vector<bool>> Cell3DsEdgeDirections;
           vector<vector<Eigen::MatrixXd>> Cell3DsTetrahedronPoints;
-          vector<vector<Eigen::Vector3d>> facesTranslations;
-          vector<vector<Eigen::Matrix3d>> facesRotationMatrices;
-          vector<vector<Eigen::Vector3d>> facesNormals;
-          vector<vector<bool>> facesNormalDirections;
-          vector<vector<vector<bool>>> facesEdgeDirections;
+          vector<vector<Eigen::Vector3d>> Cell3DFacesTranslations;
+          vector<vector<Eigen::Matrix3d>> Cell3DFacesRotationMatrices;
+          vector<vector<Eigen::Vector3d>> Cell3DFacesNormals;
+          vector<vector<bool>> Cell3DFacesNormalDirections;
+          vector<vector<vector<bool>>> Cell3DFacesEdgeDirections;
 
-          vector<vector<Eigen::MatrixXd>> facesRotatedVertices; ///< faces vertices coordinates
-          vector<vector<vector<Eigen::Matrix3d>>> facesTriangulations; ///< faces triangulations
-          vector<vector<double>> facesAreas; ///< faces areas
-          vector<vector<Eigen::Vector3d>> facesCentroids; ///< faces centroids
-          vector<vector<double>> facesDiameters; ///< faces diameters
-          vector<vector<Eigen::VectorXd>> facesEdgeLengths; ///< faces edge lenghts
-          vector<vector<Eigen::MatrixXd>> facesEdgeTangents; ///< faces edge tangents
-          vector<vector<Eigen::MatrixXd>> facesEdgeNormals; ///< faces edge normals
+          vector<vector<Eigen::MatrixXd>> Cell3DFacesVertices; ///< faces vertices 3D coordinates
+          vector<vector<Eigen::MatrixXd>> Cell3DFacesRotatedVertices; ///< faces vertices 2D coordinates
+          vector<vector<vector<Eigen::Matrix3d>>> Cell3DFacesTriangulations; ///< faces triangulations
+          vector<vector<double>> Cell3DFacesAreas; ///< faces areas
+          vector<vector<Eigen::Vector3d>> Cell3DFacesCentroids; ///< faces centroids
+          vector<vector<double>> Cell3DFacesDiameters; ///< faces diameters
+          vector<vector<Eigen::VectorXd>> Cell3DFacesEdgeLengths; ///< faces edge lenghts
+          vector<vector<Eigen::MatrixXd>> Cell3DFacesEdgeTangents; ///< faces edge tangents
+          vector<vector<Eigen::MatrixXd>> Cell3DFacesEdgeNormals; ///< faces edge normals
       };
 
     public:
