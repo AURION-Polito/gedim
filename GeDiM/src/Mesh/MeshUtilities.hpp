@@ -67,7 +67,7 @@ namespace Gedim
 
           vector<vector<Eigen::MatrixXd>> Cell3DFacesVertices; ///< faces vertices 3D coordinates
           vector<vector<Eigen::MatrixXd>> Cell3DFacesRotatedVertices; ///< faces vertices 2D coordinates
-          vector<vector<vector<Eigen::Matrix3d>>> Cell3DFacesTriangulations; ///< faces triangulations
+          vector<vector<vector<Eigen::Matrix3d>>> Cell3DFacesRotatedTriangulations; ///< faces triangulations 2D
           vector<vector<double>> Cell3DFacesAreas; ///< faces areas
           vector<vector<Eigen::Vector3d>> Cell3DFacesCentroids; ///< faces centroids
           vector<vector<double>> Cell3DFacesDiameters; ///< faces diameters

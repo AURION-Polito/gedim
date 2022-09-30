@@ -406,6 +406,7 @@ namespace GedimUnitTesting
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
@@ -430,8 +431,10 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
     EXPECT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
     EXPECT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
-    EXPECT_EQ(result.Cell3DsVolumes, expectedResult.Cell3DsVolumes);
-    EXPECT_EQ(result.Cell3DsCentroids, expectedResult.Cell3DsCentroids);
+    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
+    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
+    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
+    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
     EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
   }
 }

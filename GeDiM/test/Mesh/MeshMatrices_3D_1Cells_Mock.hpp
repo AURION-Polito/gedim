@@ -75,7 +75,7 @@ namespace GedimUnitTesting
         Mesh.NumberCell3DEdges = { 0,12 };
         Mesh.Cell3DEdges = { 0,1,2,3,4,5,6,7,8,9,10,11 };
         Mesh.NumberCell3DFaces = { 0,6 };
-        Mesh.Cell3DFaces = { 0,0,0,0,0,0 };
+        Mesh.Cell3DFaces = { 0,1,2,3,4,5 };
         Mesh.Cell3DMarkers = { 0 };
         Mesh.ActiveCell3D = { 1 };
         Mesh.UpdatedCell3Ds = {};
