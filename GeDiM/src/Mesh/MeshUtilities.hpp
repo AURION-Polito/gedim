@@ -38,7 +38,7 @@ namespace Gedim
       struct MeshGeometricData1D final
       {
           vector<Eigen::MatrixXd> Cell1DsVertices; ///< cell1D vertices coordinates
-          vector<Eigen::MatrixXd> Cell1DsTangents; ///< cell1D tangents
+          vector<Eigen::Vector3d> Cell1DsTangents; ///< cell1D tangents
           vector<double> Cell1DsLengths; ///< cell1D lengths
           vector<double> Cell1DsSquaredLengths; ///< cell1D squared lengths
           vector<Eigen::Vector3d> Cell1DsCentroids; ///< cell1D centroids

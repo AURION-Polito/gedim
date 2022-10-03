@@ -307,7 +307,7 @@ namespace GedimUnitTesting
               vector<unsigned int>({ 1,0,1,0,1,0,1,0 }));
   }
 
-  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_Convex)
+  TEST(TestMeshUtilities, TestFillMesh1DGeometricData)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -365,6 +365,42 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Cell2DsEdgeTangents, expectedResult.Cell2DsEdgeTangents);
     EXPECT_EQ(result.Cell2DsTriangulations, expectedResult.Cell2DsTriangulations);
     EXPECT_EQ(result.Cell2DsVertices, expectedResult.Cell2DsVertices);
+  }
+
+  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_Convex)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Eigen::MatrixXd segment(3, 4);
+    segment.col(0)<< 0.0, 0.0, 0.0;
+    segment.col(1)<< 1.0, 0.0, 0.0;
+    vector<unsigned int> vertexMarkers = { 1, 2 };
+
+    meshUtilities.Mesh1DFromSegment(geometryUtilities,
+                                    segment,
+                                    vertexMarkers,
+                                    meshDao);
+
+    const Gedim::MeshUtilities::MeshGeometricData1D result = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
+                                                                                                   meshDao);
+
+    Gedim::MeshUtilities::MeshGeometricData1D expectedResult;
+    expectedResult.Cell1DsLengths = { 1.0 };
+    expectedResult.Cell1DsSquaredLengths = { 1.0 };
+    expectedResult.Cell1DsCentroids = { Eigen::Vector3d(0.5, 0.0, 0.0) };
+    expectedResult.Cell1DsTangents = { Eigen::Vector3d(1.0, 0.0, 0.0) };
+    expectedResult.Cell1DsVertices = { (Eigen::MatrixXd(3, 2)<< 0.0, 1.0, 0.0, 0.0, 0.0, 0.0).finished() };
+
+    EXPECT_EQ(result.Cell1DsLengths, expectedResult.Cell1DsLengths);
+    EXPECT_EQ(result.Cell1DsSquaredLengths, expectedResult.Cell1DsSquaredLengths);
+    EXPECT_EQ(result.Cell1DsCentroids, expectedResult.Cell1DsCentroids);
+    EXPECT_EQ(result.Cell1DsTangents, expectedResult.Cell1DsTangents);
+    EXPECT_EQ(result.Cell1DsVertices, expectedResult.Cell1DsVertices);
   }
 
   TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
