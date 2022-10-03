@@ -728,21 +728,21 @@ namespace Gedim
     result.Cell3DsEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsTetrahedronPoints.resize(convexMesh.Cell3DTotalNumber());
 
-    result.Cell3DFacesTranslations.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesRotationMatrices.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesNormals.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesNormalDirections.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTranslations.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesRotationMatrices.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesNormals.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesNormalDirections.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
 
-    result.Cell3DFacesVertices.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesRotatedVertices.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesRotatedTriangulations.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesAreas.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesCentroids.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesDiameters.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesEdgeLengths.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesEdgeTangents.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DFacesEdgeNormals.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFaces3DVertices.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFaces2DVertices.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFaces2DTriangulations.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesAreas.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFaces2DCentroids.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesDiameters.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdgeLengths.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdge2DTangents.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdge2DNormals.resize(convexMesh.Cell3DTotalNumber());
 
     for(unsigned int c = 0; c <  convexMesh.Cell3DTotalNumber(); c++)
     {
@@ -765,23 +765,23 @@ namespace Gedim
                                                                      meshEnd);
       }
 
-      result.Cell3DFacesVertices[c] = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
-                                                                               result.Cell3DsFaces[c]);
-      result.Cell3DFacesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(result.Cell3DFacesVertices[c]);
-      result.Cell3DFacesNormals[c] = geometryUtilities.PolyhedronFaceNormals(result.Cell3DFacesVertices[c]);
-      result.Cell3DFacesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(result.Cell3DFacesVertices[c],
-                                                                                               result.Cell3DFacesNormals[c],
-                                                                                               result.Cell3DFacesTranslations[c]);
+      result.Cell3DsFaces3DVertices[c] = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
+                                                                                result.Cell3DsFaces[c]);
+      result.Cell3DsFacesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(result.Cell3DsFaces3DVertices[c]);
+      result.Cell3DsFacesNormals[c] = geometryUtilities.PolyhedronFaceNormals(result.Cell3DsFaces3DVertices[c]);
+      result.Cell3DsFacesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(result.Cell3DsFaces3DVertices[c],
+                                                                                                result.Cell3DsFacesNormals[c],
+                                                                                                result.Cell3DsFacesTranslations[c]);
 
 
 
       /// TODO: qui secondo me questo non è corretto, occore utilizzare le informazioni della mesh
       const unsigned int numFaces = result.Cell3DsFaces[c].size();
-      result.Cell3DFacesEdgeDirections[c].resize(numFaces);
+      result.Cell3DsFacesEdgeDirections[c].resize(numFaces);
       for (unsigned int f = 0; f < numFaces; f++)
       {
         const unsigned int numFaceEdges = polyhedron.Faces[f].cols();
-        result.Cell3DFacesEdgeDirections[c][f].resize(numFaceEdges);
+        result.Cell3DsFacesEdgeDirections[c][f].resize(numFaceEdges);
         for (unsigned int e = 0; e < numFaceEdges; e++)
         {
           const unsigned int faceEdgeOrigin = polyhedron.Faces[f](0, e);
@@ -790,35 +790,35 @@ namespace Gedim
           const unsigned int meshOrigin = convexMesh.Cell3DVertex(c, faceEdgeOrigin);
           const unsigned int meshEnd = convexMesh.Cell3DVertex(c, faceEdgeEnd);
 
-          result.Cell3DFacesEdgeDirections[c][f][e] = convexMesh.Cell1DExists(meshOrigin,
-                                                                              meshEnd);
+          result.Cell3DsFacesEdgeDirections[c][f][e] = convexMesh.Cell1DExists(meshOrigin,
+                                                                               meshEnd);
         }
       }
 
       result.Cell3DsDiameters[c] = geometryUtilities.PolyhedronDiameter(result.Cell3DsVertices[c]);
 
       const vector<vector<unsigned int>> polyhedronFaceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(polyhedron.Faces,
-                                                                                                                                    result.Cell3DFacesVertices[c]);
+                                                                                                                                    result.Cell3DsFaces3DVertices[c]);
 
-      result.Cell3DFacesRotatedVertices[c] = geometryUtilities.PolyhedronFaceRotatedVertices(result.Cell3DFacesVertices[c],
-                                                                                             result.Cell3DFacesTranslations[c],
-                                                                                             result.Cell3DFacesRotationMatrices[c]);
+      result.Cell3DsFaces2DVertices[c] = geometryUtilities.PolyhedronFaceRotatedVertices(result.Cell3DsFaces3DVertices[c],
+                                                                                              result.Cell3DsFacesTranslations[c],
+                                                                                              result.Cell3DsFacesRotationMatrices[c]);
 
-      result.Cell3DFacesRotatedTriangulations[c] = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(result.Cell3DFacesRotatedVertices[c],
-                                                                                                                    polyhedronFaceTriangulations);
+      result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(result.Cell3DsFaces2DVertices[c],
+                                                                                                                     polyhedronFaceTriangulations);
 
 
-      result.Cell3DFacesAreas[c].resize(numFaces);
-      result.Cell3DFacesDiameters[c].resize(numFaces);
-      result.Cell3DFacesCentroids[c].resize(numFaces);
-      result.Cell3DFacesEdgeLengths[c].resize(numFaces);
-      result.Cell3DFacesEdgeNormals[c].resize(numFaces);
-      result.Cell3DFacesEdgeTangents[c].resize(numFaces);
+      result.Cell3DsFacesAreas[c].resize(numFaces);
+      result.Cell3DsFacesDiameters[c].resize(numFaces);
+      result.Cell3DsFaces2DCentroids[c].resize(numFaces);
+      result.Cell3DsFacesEdgeLengths[c].resize(numFaces);
+      result.Cell3DsFacesEdge2DNormals[c].resize(numFaces);
+      result.Cell3DsFacesEdge2DTangents[c].resize(numFaces);
 
       for(unsigned int f = 0; f < numFaces; f++)
       {
         // Extract original cell2D geometric information
-        const vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = result.Cell3DFacesRotatedTriangulations[c][f];
+        const vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
         const unsigned int& numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
 
         // compute original cell2D area and centroids
@@ -830,32 +830,32 @@ namespace Gedim
           convexCell2DTriangulationCentroids.col(cct) = geometryUtilities.PolygonBarycenter(convexCell2DTriangulationPoints[cct]);
         }
 
-        result.Cell3DFacesAreas[c][f] = convexCell2DTriangulationAreas.sum();
-        result.Cell3DFacesCentroids[c][f] = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
-                                                                              convexCell2DTriangulationAreas,
-                                                                              result.Cell3DFacesAreas[c][f]);
-        result.Cell3DFacesDiameters[c][f] = geometryUtilities.PolygonDiameter(result.Cell3DFacesRotatedVertices[c][f]);
-        result.Cell3DFacesEdgeLengths[c][f] = geometryUtilities.PolygonEdgeLengths(result.Cell3DFacesRotatedVertices[c][f]);
-        result.Cell3DFacesEdgeTangents[c][f] = geometryUtilities.PolygonEdgeTangents(result.Cell3DFacesRotatedVertices[c][f]);
-        result.Cell3DFacesEdgeNormals[c][f] = geometryUtilities.PolygonEdgeNormals(result.Cell3DFacesRotatedVertices[c][f]);
+        result.Cell3DsFacesAreas[c][f] = convexCell2DTriangulationAreas.sum();
+        result.Cell3DsFaces2DCentroids[c][f] = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
+                                                                               convexCell2DTriangulationAreas,
+                                                                               result.Cell3DsFacesAreas[c][f]);
+        result.Cell3DsFacesDiameters[c][f] = geometryUtilities.PolygonDiameter(result.Cell3DsFaces2DVertices[c][f]);
+        result.Cell3DsFacesEdgeLengths[c][f] = geometryUtilities.PolygonEdgeLengths(result.Cell3DsFaces2DVertices[c][f]);
+        result.Cell3DsFacesEdge2DTangents[c][f] = geometryUtilities.PolygonEdgeTangents(result.Cell3DsFaces2DVertices[c][f]);
+        result.Cell3DsFacesEdge2DNormals[c][f] = geometryUtilities.PolygonEdgeNormals(result.Cell3DsFaces2DVertices[c][f]);
       }
 
       /// TODO: qui secondo me questo non è corretto, occore utilizzare le informazioni della mesh
-      result.Cell3DFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DFacesVertices[c],
-                                                                                               geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
-                                                                                               result.Cell3DFacesNormals[c]);
+      result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
+                                                                                                geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
+                                                                                                result.Cell3DsFacesNormals[c]);
 
-      result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolume(result.Cell3DFacesRotatedTriangulations[c],
-                                                                    result.Cell3DFacesNormals[c],
-                                                                    result.Cell3DFacesNormalDirections[c],
-                                                                    result.Cell3DFacesTranslations[c],
-                                                                    result.Cell3DFacesRotationMatrices[c]);
+      result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolume(result.Cell3DsFaces2DTriangulations[c],
+                                                                    result.Cell3DsFacesNormals[c],
+                                                                    result.Cell3DsFacesNormalDirections[c],
+                                                                    result.Cell3DsFacesTranslations[c],
+                                                                    result.Cell3DsFacesRotationMatrices[c]);
 
-      result.Cell3DsCentroids[c] = geometryUtilities.PolyhedronCentroid(result.Cell3DFacesRotatedTriangulations[c],
-                                                                        result.Cell3DFacesNormals[c],
-                                                                        result.Cell3DFacesNormalDirections[c],
-                                                                        result.Cell3DFacesTranslations[c],
-                                                                        result.Cell3DFacesRotationMatrices[c],
+      result.Cell3DsCentroids[c] = geometryUtilities.PolyhedronCentroid(result.Cell3DsFaces2DTriangulations[c],
+                                                                        result.Cell3DsFacesNormals[c],
+                                                                        result.Cell3DsFacesNormalDirections[c],
+                                                                        result.Cell3DsFacesTranslations[c],
+                                                                        result.Cell3DsFacesRotationMatrices[c],
                                                                         result.Cell3DsVolumes[c]);
 
       vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(result.Cell3DsVertices[c],
