@@ -20,6 +20,37 @@ using namespace std;
 namespace GedimUnitTesting
 {
 
+  TEST(TestMeshUtilities, TestMesh1DFromSegment)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    Eigen::MatrixXd segment(3, 4);
+    segment.col(0)<< 0.0, 0.0, 0.0;
+    segment.col(1)<< 1.0, 0.0, 0.0;
+    vector<unsigned int> vertexMarkers = { 1, 2 };
+
+    meshUtilities.Mesh1DFromSegment(geometryUtilities,
+                                    segment,
+                                    vertexMarkers,
+                                    meshDao);
+
+    std::string exportFolder = "./Export/TestMesh1DFromSegment/";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    EXPECT_EQ(meshDao.Dimension(), 1);
+    EXPECT_EQ(meshDao.Cell0DTotalNumber(), 2);
+    EXPECT_EQ(meshDao.Cell1DTotalNumber(), 1);
+  }
+
   TEST(TestMeshUtilities, TestMesh2DFromPolygon)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;

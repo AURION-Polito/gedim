@@ -141,6 +141,8 @@ namespace Gedim
       mesh.Cell0DSetState(c, true);
       mesh.Cell0DInsertCoordinates(c, segmentOrigin + coordinates[c] * segmentTangent);
     }
+    mesh.Cell0DSetMarker(0, 1);
+    mesh.Cell0DSetMarker(numCell0Ds - 1, 2);
 
     const unsigned int numCell1Ds = numCell0Ds - 1;
     mesh.Cell1DsInitialize(numCell1Ds);
@@ -151,6 +153,7 @@ namespace Gedim
                                 e,
                                 e + 1);
       mesh.Cell1DSetState(e, true);
+      mesh.Cell1DSetMarker(e, 0);
     }
   }
   // ***************************************************************************
@@ -358,6 +361,21 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::Mesh1DFromSegment(const GeometryUtilities& geometryUtilities,
+                                        const Eigen::MatrixXd& segmentVertices,
+                                        const vector<unsigned int> vertexMarkers,
+                                        IMeshDAO& mesh) const
+  {
+     FillMesh1D(geometryUtilities,
+                segmentVertices.col(0),
+                segmentVertices.col(1),
+                { 0.0, 1.0 },
+                mesh);
+
+     mesh.Cell0DSetMarker(0, vertexMarkers[0]);
+     mesh.Cell0DSetMarker(mesh.Cell0DTotalNumber() - 1, vertexMarkers[1]);
+  }
+  // ***************************************************************************
   void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd& polygonVertices,
                                         const vector<unsigned int> vertexMarkers,
                                         const vector<unsigned int> edgeMarkers,
@@ -515,6 +533,33 @@ namespace Gedim
     }
 
     return rootCell2Ds;
+  }
+  // ***************************************************************************
+  MeshUtilities::MeshGeometricData1D MeshUtilities::FillMesh1DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                                            const IMeshDAO& convexMesh) const
+  {
+    MeshGeometricData1D result;
+
+    result.Cell1DsVertices.resize(convexMesh.Cell1DTotalNumber());
+    result.Cell1DsTangents.resize(convexMesh.Cell1DTotalNumber());
+    result.Cell1DsLengths.resize(convexMesh.Cell1DTotalNumber());
+    result.Cell1DsSquaredLengths.resize(convexMesh.Cell1DTotalNumber());
+    result.Cell1DsCentroids.resize(convexMesh.Cell1DTotalNumber());
+
+    for (unsigned int c = 0; c < convexMesh.Cell1DTotalNumber(); c++)
+    {
+      // Extract original cell1D geometric information
+
+      result.Cell1DsVertices[c] = convexMesh.Cell1DCoordinates(c);
+      result.Cell1DsTangents[c] = geometryUtilities.SegmentTangent(result.Cell1DsVertices[c].col(0),
+                                                                   result.Cell1DsVertices[c].col(1));
+      result.Cell1DsLengths[c] = geometryUtilities.SegmentLength(result.Cell1DsVertices[c].col(0),
+                                                                 result.Cell1DsVertices[c].col(1));
+      result.Cell1DsSquaredLengths[c] = result.Cell1DsLengths[c] * result.Cell1DsLengths[c];
+      result.Cell1DsCentroids[c] = geometryUtilities.SimplexBarycenter(result.Cell1DsVertices[c]);
+    }
+
+    return result;
   }
   // ***************************************************************************
   MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
