@@ -192,7 +192,7 @@ namespace GedimUnitTesting
                                                          rotationMatrix,
                                                          translation);
 
-      vector<double> id(geometry.Faces.size(), g);
+      vector<double> id(1, g);
       vector<double> data(geometry.Vertices.cols());
 
       for (unsigned int v = 0; v < geometry.Vertices.cols(); v++)
@@ -453,7 +453,7 @@ namespace GedimUnitTesting
       const Gedim::GeometryUtilities::Polyhedron polyhedron = meshUtilities.MeshCell3DToPolyhedron(mesh,
                                                                                                    g);
 
-      vector<double> id(polyhedron.Vertices.cols(),
+      vector<double> id(1,
                         mesh.Cell3DId(g));
       vector<double> marker(polyhedron.Vertices.cols(),
                             mesh.Cell3DMarker(g));
@@ -464,7 +464,7 @@ namespace GedimUnitTesting
                                  {
                                    {
                                      "Id",
-                                     Gedim::VTPProperty::Formats::Points,
+                                     Gedim::VTPProperty::Formats::Cells,
                                      static_cast<unsigned int>(id.size()),
                                      id.data()
                                    },

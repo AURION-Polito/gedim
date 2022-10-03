@@ -766,7 +766,7 @@ namespace Gedim
       }
 
       result.Cell3DsFaces3DVertices[c] = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
-                                                                                result.Cell3DsFaces[c]);
+                                                                                  result.Cell3DsFaces[c]);
       result.Cell3DsFacesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(result.Cell3DsFaces3DVertices[c]);
       result.Cell3DsFacesNormals[c] = geometryUtilities.PolyhedronFaceNormals(result.Cell3DsFaces3DVertices[c]);
       result.Cell3DsFacesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(result.Cell3DsFaces3DVertices[c],
@@ -801,11 +801,11 @@ namespace Gedim
                                                                                                                                     result.Cell3DsFaces3DVertices[c]);
 
       result.Cell3DsFaces2DVertices[c] = geometryUtilities.PolyhedronFaceRotatedVertices(result.Cell3DsFaces3DVertices[c],
-                                                                                              result.Cell3DsFacesTranslations[c],
-                                                                                              result.Cell3DsFacesRotationMatrices[c]);
+                                                                                         result.Cell3DsFacesTranslations[c],
+                                                                                         result.Cell3DsFacesRotationMatrices[c]);
 
       result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(result.Cell3DsFaces2DVertices[c],
-                                                                                                                     polyhedronFaceTriangulations);
+                                                                                                                polyhedronFaceTriangulations);
 
 
       result.Cell3DsFacesAreas[c].resize(numFaces);
@@ -832,8 +832,8 @@ namespace Gedim
 
         result.Cell3DsFacesAreas[c][f] = convexCell2DTriangulationAreas.sum();
         result.Cell3DsFaces2DCentroids[c][f] = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
-                                                                               convexCell2DTriangulationAreas,
-                                                                               result.Cell3DsFacesAreas[c][f]);
+                                                                                 convexCell2DTriangulationAreas,
+                                                                                 result.Cell3DsFacesAreas[c][f]);
         result.Cell3DsFacesDiameters[c][f] = geometryUtilities.PolygonDiameter(result.Cell3DsFaces2DVertices[c][f]);
         result.Cell3DsFacesEdgeLengths[c][f] = geometryUtilities.PolygonEdgeLengths(result.Cell3DsFaces2DVertices[c][f]);
         result.Cell3DsFacesEdge2DTangents[c][f] = geometryUtilities.PolygonEdgeTangents(result.Cell3DsFaces2DVertices[c][f]);
@@ -1178,8 +1178,8 @@ namespace Gedim
       {
         const Gedim::GeometryUtilities::Polyhedron cell3D = MeshCell3DToPolyhedron(mesh, g);
 
-        vector<double> id(cell3D.Vertices.cols(), mesh.Cell3DId(g));
-        vector<double> marker(cell3D.Vertices.cols(), mesh.Cell3DMarker(g));
+        vector<double> id(1, mesh.Cell3DId(g));
+        vector<double> marker(1, mesh.Cell3DMarker(g));
 
         vtpUtilities.AddPolyhedron(cell3D.Vertices,
                                    cell3D.Edges,
@@ -1187,13 +1187,13 @@ namespace Gedim
                                    {
                                      {
                                        "Id",
-                                       Gedim::VTPProperty::Formats::Points,
+                                       Gedim::VTPProperty::Formats::Cells,
                                        static_cast<unsigned int>(id.size()),
                                        id.data()
                                      },
                                      {
                                        "Marker",
-                                       Gedim::VTPProperty::Formats::Points,
+                                       Gedim::VTPProperty::Formats::Cells,
                                        static_cast<unsigned int>(marker.size()),
                                        marker.data()
                                      }

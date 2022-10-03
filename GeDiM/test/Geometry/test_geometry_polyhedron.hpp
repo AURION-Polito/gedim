@@ -866,7 +866,7 @@ namespace GedimUnitTesting
                                                                                                             tetrahedrons[t].col(1),
                                                                                                             tetrahedrons[t].col(2),
                                                                                                             tetrahedrons[t].col(3));
-            vector<double> id(subTetra.Faces.size(), t);
+            vector<double> id(1, t);
 
             vtkExperter.AddPolyhedron(subTetra.Vertices,
                                       subTetra.Edges,
@@ -898,7 +898,7 @@ namespace GedimUnitTesting
                                                                                                             tetrahedrons[t].col(1),
                                                                                                             tetrahedrons[t].col(2),
                                                                                                             tetrahedrons[t].col(3));
-            vector<double> id(subTetra.Faces.size(), t);
+            vector<double> id(1, t);
 
             vtkExperter.AddPolyhedron(subTetra.Vertices,
                                       subTetra.Edges,
@@ -969,7 +969,7 @@ namespace GedimUnitTesting
                                                                                                             tetrahedrons[t].col(1),
                                                                                                             tetrahedrons[t].col(2),
                                                                                                             tetrahedrons[t].col(3));
-            vector<double> id(subTetra.Faces.size(), t);
+            vector<double> id(1, t);
 
             vtkExperter.AddPolyhedron(subTetra.Vertices,
                                       subTetra.Edges,
@@ -1001,7 +1001,7 @@ namespace GedimUnitTesting
                                                                                                             tetrahedrons[t].col(1),
                                                                                                             tetrahedrons[t].col(2),
                                                                                                             tetrahedrons[t].col(3));
-            vector<double> id(subTetra.Faces.size(), t);
+            vector<double> id(1, t);
 
             vtkExperter.AddPolyhedron(subTetra.Vertices,
                                       subTetra.Edges,
