@@ -64,7 +64,7 @@ namespace GedimUnitTesting {
         ASSERT_EQ(geometryUtilities.Compare3DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
-      // check IsLenghtPositive
+      // check IsLengthPositive
       {
         ASSERT_FALSE(geometryUtilities.IsValue1DPositive(0.0));
 				ASSERT_FALSE(geometryUtilities.IsValue1DPositive(geometryUtilitiesConfig.Tolerance));
@@ -82,7 +82,7 @@ namespace GedimUnitTesting {
         ASSERT_TRUE(geometryUtilities.IsValue2DPositive(10.0));
       }
 
-      // check IsLenghtPositive
+      // check IsLengthPositive
       {
         ASSERT_FALSE(geometryUtilities.IsValue3DPositive(0.0));
 				ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance));

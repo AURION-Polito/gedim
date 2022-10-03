@@ -419,10 +419,10 @@ namespace Gedim
     ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
     ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
 
-    GeometryUtilities::CompareTypes segment1DLenght = _geometryUtilities.Compare1DValues(originCurvilinearCoordinate,
+    GeometryUtilities::CompareTypes segment1DLength = _geometryUtilities.Compare1DValues(originCurvilinearCoordinate,
                                                                                          endCurvilinearCoordinate);
 
-    if (segment1DLenght == GeometryUtilities::CompareTypes::Coincident)
+    if (segment1DLength == GeometryUtilities::CompareTypes::Coincident)
       throw runtime_error("Mesh1D cell1d length under tolerance");
 
     const unsigned int numOriginalVerticesCell2DMesh2D = mesh2D.Cell2DNumberVertices(cell2DMesh2DId);

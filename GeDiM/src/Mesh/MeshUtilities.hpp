@@ -43,7 +43,7 @@ namespace Gedim
           vector<Eigen::Vector3d> Cell2DsCentroids; ///< cell2D centroids
           vector<double> Cell2DsDiameters; ///< cell2D diameters
           vector<vector<bool>> Cell2DsEdgeDirections; ///< cell2D edge directions
-          vector<Eigen::VectorXd> Cell2DsEdgeLengths; ///< cell2D edge lenghts
+          vector<Eigen::VectorXd> Cell2DsEdgeLengths; ///< cell2D edge lengths
           vector<Eigen::MatrixXd> Cell2DsEdgeTangents; ///< cell2D edge tangents
           vector<Eigen::MatrixXd> Cell2DsEdgeNormals; ///< cell2D edge normals
       };
@@ -71,7 +71,7 @@ namespace Gedim
           vector<vector<double>> Cell3DsFacesAreas; ///< faces areas
           vector<vector<Eigen::Vector3d>> Cell3DsFaces2DCentroids; ///< faces centroids
           vector<vector<double>> Cell3DsFacesDiameters; ///< faces diameters
-          vector<vector<Eigen::VectorXd>> Cell3DsFacesEdgeLengths; ///< faces edge lenghts
+          vector<vector<Eigen::VectorXd>> Cell3DsFacesEdgeLengths; ///< faces edge lengths
           vector<vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DTangents; ///< faces edge tangents
           vector<vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DNormals; ///< faces edge normals
       };

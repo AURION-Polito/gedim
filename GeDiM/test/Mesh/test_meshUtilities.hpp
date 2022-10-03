@@ -294,9 +294,9 @@ namespace GedimUnitTesting
     expectedResult.Cell2DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.0) };
     expectedResult.Cell2DsDiameters = { sqrt(2.0) };
     expectedResult.Cell2DsEdgeDirections = { { true, true, true, true } };
-    Eigen::VectorXd edgeLenghts(4);
-    edgeLenghts<< 1.0, 1.0, 1.0, 1.0;
-    expectedResult.Cell2DsEdgeLengths = { edgeLenghts };
+    Eigen::VectorXd edgeLengths(4);
+    edgeLengths<< 1.0, 1.0, 1.0, 1.0;
+    expectedResult.Cell2DsEdgeLengths = { edgeLengths };
     Eigen::MatrixXd edgeNormals(3, 4);
     edgeNormals.col(0)<< -1.0, 0.0, 0.0;
     edgeNormals.col(1)<< 0.0, -1.0, 0.0;
@@ -361,9 +361,9 @@ namespace GedimUnitTesting
     expectedResult.Cell2DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.0) };
     expectedResult.Cell2DsDiameters = { sqrt(2.0) };
     expectedResult.Cell2DsEdgeDirections = { { true, true, true, true } };
-    Eigen::VectorXd edgeLenghts(4);
-    edgeLenghts<< 1.0, 1.0, 1.0, 1.0;
-    expectedResult.Cell2DsEdgeLengths = { edgeLenghts };
+    Eigen::VectorXd edgeLengths(4);
+    edgeLengths<< 1.0, 1.0, 1.0, 1.0;
+    expectedResult.Cell2DsEdgeLengths = { edgeLengths };
     Eigen::MatrixXd edgeNormals(3, 4);
     edgeNormals.col(0)<< -1.0, 0.0, 0.0;
     edgeNormals.col(1)<< 0.0, -1.0, 0.0;
