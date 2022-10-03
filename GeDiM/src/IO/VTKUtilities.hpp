@@ -108,7 +108,7 @@ namespace Gedim
                                const double* solution) = 0;
 
 #if ENABLE_VTK == 1
-      virtual vtkSmartPointer<vtkPolyData> Convert() const = 0;
+      virtual void Convert(vtkNew<vtkAppendFilter>& exportData) const = 0;
 #endif
   };
 
@@ -174,24 +174,19 @@ namespace Gedim
 
 #if ENABLE_VTK == 1
       void AddPoint(const Eigen::Vector3d& point,
-                    vtkSmartPointer<vtkPoints>& points) const;
+                    vtkNew<vtkPoints>& points) const;
       void AddVertex(const unsigned int& pointId,
-                     vtkSmartPointer<vtkCellArray>& vertices) const;
+                     vtkNew<vtkCellArray>& vertices) const;
       void AddLine(const unsigned int& originId,
                    const unsigned int& endId,
-                   vtkSmartPointer<vtkCellArray>& lines) const;
+                   vtkNew<vtkCellArray>& lines) const;
       void AddPolygon(const Eigen::VectorXi& faceVerticesIds,
-                      vtkSmartPointer<vtkCellArray>& faces) const;
+                      vtkNew<vtkCellArray>& faces) const;
+      void AppendSolution(vtkDataSet* polyData) const;
 #endif
 
-      void InitializePoints(void* vtkPointsPointer, void* vtkVerticesPointer) const;
-      void AddPoints(void* vtkPointsPointer, void* vtkVerticesPointer) const;
-      void AddVertices(void* vtkVerticesPointer) const;
-      void InitializeLines(void* vtkLinesPointer) const;
-      void AddLines(void* vtkLinesPointer) const;
-      void InitializeFaces(void* vtkFacesPointer) const;
-      void AddFaces(void* vtkFacesPointer) const;
-      void AddSolution(const unsigned int& solutionPosition, void* vtkDoubleArrayPointer) const;
+      void AddSolution(const unsigned int& solutionPosition,
+                       void* vtkDoubleArrayPointer) const;
 
     public:
       GeometryToPolyData(const T& geometry);
@@ -206,7 +201,7 @@ namespace Gedim
                        const double* solution);
 
 #if ENABLE_VTK == 1
-      vtkSmartPointer<vtkPolyData> Convert() const;
+      void Convert(vtkNew<vtkAppendFilter>& exportData) const;
 #endif
   };
 }
