@@ -274,13 +274,16 @@ namespace Gedim
 
       /// \return the extrems as Eigen MatrixXi of cell1Ds, size 2xCell1DTotalNumber()
       virtual Eigen::MatrixXi Cell1DExtremes() const = 0;
+      /// \return the extrems as Eigen MatrixXi of cell1D, size 2
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      virtual Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const = 0;
       /// \return the Cell1D Index if Cell1D (origin->end) exists, exception otherwise
       /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       virtual unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
                                             const unsigned int& endCell0DIndex) const = 0;
       /// \brief Set the Cell1D Id
-      /// \param cell1DIndex the index of Cell0D from 0 to Cell1DTotalNumber()
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param id the id of the Cell1D
       virtual void Cell1DSetId(const unsigned int& cell1DIndex,
                                const unsigned int& id) = 0;

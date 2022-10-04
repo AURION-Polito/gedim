@@ -299,7 +299,7 @@ namespace Gedim
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
         Gedim::Output::Assert(propertyIndex < Cell0DNumberDoubleProperties());
         Gedim::Output::Assert(propertyValueIndex < Cell0DDoublePropertySize(cell0DIndex,
-                                                                     propertyIndex));
+                                                                            propertyIndex));
 
         return _mesh.Cell0DDoublePropertyValues[propertyIndex][_mesh.Cell0DDoublePropertySizes[propertyIndex][cell0DIndex] +
             propertyValueIndex];
@@ -322,6 +322,11 @@ namespace Gedim
         _mesh.Cell1DAdjacency.makeCompressed();
       }
       Eigen::MatrixXi Cell1DExtremes() const;
+      /// \return the extrems as Eigen MatrixXi of cell1D, size 2
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      inline Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const
+      { return (Eigen::VectorXi(2)<< Cell1DOrigin(cell1DIndex), Cell1DEnd(cell1DIndex)).finished(); }
+
       inline bool Cell1DExists(const unsigned int& originCell0DIndex,
                                const unsigned int& endCell0DIndex) const
       {
@@ -521,7 +526,7 @@ namespace Gedim
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         Gedim::Output::Assert(propertyIndex < Cell1DNumberDoubleProperties());
         Gedim::Output::Assert(propertyValueIndex < Cell1DDoublePropertySize(cell1DIndex,
-                                                                     propertyIndex));
+                                                                            propertyIndex));
 
         return _mesh.Cell1DDoublePropertyValues[propertyIndex][_mesh.Cell1DDoublePropertySizes[propertyIndex][cell1DIndex] +
             propertyValueIndex];
@@ -723,7 +728,7 @@ namespace Gedim
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
         Gedim::Output::Assert(propertyIndex < Cell2DNumberDoubleProperties());
         Gedim::Output::Assert(propertyValueIndex < Cell2DDoublePropertySize(cell2DIndex,
-                                                                     propertyIndex));
+                                                                            propertyIndex));
 
         return _mesh.Cell2DDoublePropertyValues[propertyIndex][_mesh.Cell2DDoublePropertySizes[propertyIndex][cell2DIndex] +
             propertyValueIndex];
@@ -959,7 +964,7 @@ namespace Gedim
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
         Gedim::Output::Assert(propertyIndex < Cell3DNumberDoubleProperties());
         Gedim::Output::Assert(propertyValueIndex < Cell3DDoublePropertySize(cell3DIndex,
-                                                                     propertyIndex));
+                                                                            propertyIndex));
 
         return _mesh.Cell3DDoublePropertyValues[propertyIndex][_mesh.Cell3DDoublePropertySizes[propertyIndex][cell3DIndex] +
             propertyValueIndex];
