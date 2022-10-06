@@ -34,10 +34,10 @@ namespace GedimUnitTesting {
                                                                         segmentOneEnd);
         const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
                                                                         segmentTwoEnd);
-        ASSERT_TRUE(geometryUtilities.CheckNoSegmentSegmentIntersection(segmentOneBarycenter,
-                                                                        segmentTwoBarycenter,
-                                                                        segmentOneLength,
-                                                                        segmentTwoLength));
+        ASSERT_TRUE(geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
+                                                                 segmentTwoBarycenter,
+                                                                 segmentOneLength,
+                                                                 segmentTwoLength));
 
         Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                          segmentOneEnd,
@@ -48,10 +48,10 @@ namespace GedimUnitTesting {
 
       // check no coplanarity
       {
-        Eigen::Vector3d segmentOneOrigin(0.0, 0.0, 0.0 );
-        Eigen::Vector3d segmentOneEnd(   1.0, 0.0, 0.0 );
-        Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 0.25);
-        Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 0.0, 0.0 );
+        const Eigen::Vector3d segmentOneEnd(   1.0, 0.0, 0.0 );
+        const Eigen::Vector3d segmentTwoOrigin(0.0, 0.0, 0.25);
+        const Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.25);
 
         const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
                                                                                          segmentOneEnd);
@@ -61,10 +61,10 @@ namespace GedimUnitTesting {
                                                                         segmentOneEnd);
         const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
                                                                         segmentTwoEnd);
-        ASSERT_TRUE(geometryUtilities.CheckNoSegmentSegmentIntersection(segmentOneBarycenter,
-                                                                        segmentTwoBarycenter,
-                                                                        segmentOneLength,
-                                                                        segmentTwoLength));
+        ASSERT_TRUE(!geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
+                                                                  segmentTwoBarycenter,
+                                                                  segmentOneLength,
+                                                                  segmentTwoLength));
 
         Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                          segmentOneEnd,
@@ -75,10 +75,10 @@ namespace GedimUnitTesting {
 
       // check MultipleIntersections, no inclusion
       {
-        Eigen::Vector3d segmentOneOrigin(0.25, 0.75, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.25, 0.0);
-        Eigen::Vector3d segmentTwoOrigin(0.5, 0.5, 0.0  );
-        Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0  );
+        const Eigen::Vector3d segmentOneOrigin(0.25, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.25, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.5, 0.5, 0.0  );
+        const Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0  );
 
         const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
                                                                                          segmentOneEnd);
@@ -88,10 +88,10 @@ namespace GedimUnitTesting {
                                                                         segmentOneEnd);
         const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
                                                                         segmentTwoEnd);
-        ASSERT_FALSE(geometryUtilities.CheckNoSegmentSegmentIntersection(segmentOneBarycenter,
-                                                                         segmentTwoBarycenter,
-                                                                         segmentOneLength,
-                                                                         segmentTwoLength));
+        ASSERT_FALSE(geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
+                                                                  segmentTwoBarycenter,
+                                                                  segmentOneLength,
+                                                                  segmentTwoLength));
 
         Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
                                                                                                                          segmentOneEnd,

@@ -201,6 +201,20 @@ namespace Gedim
       const Vector3d edgeOrigin = _mesh.Cell1DOriginCoordinates(e);
       const Vector3d edgeEnd = _mesh.Cell1DEndCoordinates(e);
 
+      const Eigen::Vector3d segmentOneBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
+                                                                                        edgeEnd);
+      const Eigen::Vector3d segmentTwoBarycenter = _geometryUtilities.SegmentBarycenter(segmentOrigin,
+                                                                                        segmentEnd);
+      const double segmentOneLength = _geometryUtilities.SegmentLength(edgeOrigin,
+                                                                       edgeEnd);
+      const double segmentTwoLength = _geometryUtilities.SegmentLength(segmentOrigin,
+                                                                       segmentEnd);
+      if (_geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
+                                                        segmentTwoBarycenter,
+                                                        segmentOneLength,
+                                                        segmentTwoLength))
+        continue;
+
       Gedim::GeometryUtilities::IntersectionSegmentSegmentResult intersectionSegmentSegmentResult = _geometryUtilities.IntersectionSegmentSegment(edgeOrigin,
                                                                                                                                                   edgeEnd,
                                                                                                                                                   segmentOrigin,

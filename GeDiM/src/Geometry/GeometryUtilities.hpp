@@ -965,19 +965,20 @@ namespace Gedim
             segmentOrigin.x() * (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
       }
 
-      /// \brief Check if two segments do not intersect
-      /// \param firstSegmentBaricenter the first segment barycenter
-      /// \param secondSegmentBaricenter the second segment barycenter
-      /// \param firstSegmentLength the first segment length
-      /// \param secondSegmentLength the second segment length
+      /// \brief Check if two spheres do not intersect
+      /// \param firstSphereCenter the first sphere center
+      /// \param secondSphereCenter the second sphere center
+      /// \param firstSphereDiameter the first sphere diameter
+      /// \param secondSphereDiameter the second sphere diameter
       /// \return true if the two segments do not intersect
       /// \note if the function returns true it does not mean that the two segments intersects
-      inline bool CheckNoSegmentSegmentIntersection(const Eigen::Vector3d& firstSegmentBaricenter,
-                                                    const Eigen::Vector3d& secondSegmentBaricenter,
-                                                    const double& firstSegmentLength,
-                                                    const double& secondSegmentLength) const
+      inline bool CheckNoSpheresIntersection(const Eigen::Vector3d& firstSphereCenter,
+                                             const Eigen::Vector3d& secondSphereCenter,
+                                             const double& firstSphereDiameter,
+                                             const double& secondSphereDiameter) const
       {
-        return 2.0 * PointDistance(firstSegmentBaricenter, secondSegmentBaricenter) > (firstSegmentLength + secondSegmentLength);
+        return IsValue1DGreater(2.0 * PointDistance(firstSphereCenter, secondSphereCenter),
+                                firstSphereDiameter + secondSphereDiameter);
       }
 
       /// \brief Compute the intersection between the two segments
