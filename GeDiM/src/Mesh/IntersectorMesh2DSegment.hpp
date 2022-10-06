@@ -12,16 +12,19 @@ namespace Gedim
   class IntersectorMesh2DSegment final
   {
     public:
-      struct IntersectionMesh final {
-          struct IntersectionMeshPoint final {
+      struct IntersectionMesh final
+      {
+          struct IntersectionMeshPoint final
+          {
               set<unsigned int> Cell2DIds = {};
               set<unsigned int> Edge2DIds = {};
               set<unsigned int> Vertex2DIds = {};
           };
 
-          struct IntersectionMeshSegment final {
+          struct IntersectionMeshSegment final
+          {
               vector<double> Points = {};
-              list<unsigned int> Cell2DIds = {};
+              set<unsigned int> Cell2DIds = {};
               set<unsigned int> Edge2DIds = {};
           };
 

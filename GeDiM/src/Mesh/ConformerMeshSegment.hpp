@@ -14,7 +14,8 @@ namespace Gedim
   class ConformerMeshSegment final
   {
     public:
-      struct ConformMesh final {
+      struct ConformMesh final
+      {
           struct ConformMeshPoint final
           {
               enum Types
@@ -25,7 +26,7 @@ namespace Gedim
                 External = 3 ///< other points not inherith from intersection mesh
               };
 
-              list<unsigned int> Cell2DIds = {};
+              set<unsigned int> Cell2DIds = {};
               set<unsigned int> Edge2DIds = {};
               list<unsigned int> Vertex2DIds = {};
               Types Type;

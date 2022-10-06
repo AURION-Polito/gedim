@@ -424,7 +424,8 @@ namespace Gedim
                        intersectionPoint.Cell2DIds.end(),
                        intersectionPointNext.Cell2DIds.begin(),
                        intersectionPointNext.Cell2DIds.end(),
-                       back_inserter(meshSegment.Cell2DIds));
+                       std::inserter(meshSegment.Cell2DIds,
+                                     meshSegment.Cell2DIds.begin()));
       itPoint++;
       itPointNext++;
     }
