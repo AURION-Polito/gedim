@@ -636,7 +636,6 @@ namespace Gedim
       if (mesh2D.Cell1DHasNeighbourCell2D(cell1DTwoIndex, 1))
         conformPoint.Cell2DIds.insert(mesh2D.Cell1DNeighbourCell2D(cell1DTwoIndex, 1));
 
-      cerr<< "Add coordinate "<< curvilinearCoordinate<< endl;
       newCoordinatesCreated = true;
     }
 

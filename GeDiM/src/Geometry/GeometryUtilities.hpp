@@ -965,6 +965,21 @@ namespace Gedim
             segmentOrigin.x() * (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
       }
 
+      /// \brief Check if two segments do not intersect
+      /// \param firstSegmentBaricenter the first segment barycenter
+      /// \param secondSegmentBaricenter the second segment barycenter
+      /// \param firstSegmentLength the first segment length
+      /// \param secondSegmentLength the second segment length
+      /// \return true if the two segments do not intersect
+      /// \note if the function returns true it does not mean that the two segments intersects
+      inline bool CheckNoSegmentSegmentIntersection(const Eigen::Vector3d& firstSegmentBaricenter,
+                                                    const Eigen::Vector3d& secondSegmentBaricenter,
+                                                    const double& firstSegmentLength,
+                                                    const double& secondSegmentLength) const
+      {
+        return 2.0 * PointDistance(firstSegmentBaricenter, secondSegmentBaricenter) > (firstSegmentLength + secondSegmentLength);
+      }
+
       /// \brief Compute the intersection between the two segments
       /// \param firstSegmentOrigin first segment origin
       /// \param firstSegmentEnd first segment end
@@ -1299,6 +1314,15 @@ namespace Gedim
       {
         Gedim::Output::Assert(vertices.rows() == 3);
         return vertices.rowwise().mean();
+      }
+
+      /// \brief Compute the segment barycenter as a mean of all vertices
+      /// \param segmentOrigin the segment origin
+      /// \param segmentEnd the segment end
+      inline Eigen::Vector3d SegmentBarycenter(const Eigen::Vector3d& segmentOrigin,
+                                               const Eigen::Vector3d& segmentEnd) const
+      {
+        return SimplexBarycenter((Eigen::MatrixXd(3, 2)<< segmentOrigin, segmentEnd).finished());
       }
 
       /// \brief Compute the Polygon barycenter as a mean of all vertices
