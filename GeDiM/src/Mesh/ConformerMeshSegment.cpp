@@ -55,7 +55,7 @@ namespace Gedim
   // ***************************************************************************
   ConformerMeshSegment::ConformMesh::ConformMeshPoint& ConformerMeshSegment::InsertNewIntersection(const double& curvilinearCoordinate,
                                                                                                    ConformerMeshSegment::ConformMesh& result,
-                                                                                                   bool& found)
+                                                                                                   bool& found) const
   {
     double foundCoordinate = -1.0;
     for (std::map<double,
@@ -260,13 +260,13 @@ namespace Gedim
       {
         case 1:
           point.Type = ConformMesh::ConformMeshPoint::Types::Original;
-        break;
+          break;
         case 2:
           point.Type = ConformMesh::ConformMeshPoint::Types::Inherited;
-        break;
+          break;
         case 3:
           point.Type = ConformMesh::ConformMeshPoint::Types::External;
-        break;
+          break;
         default:
           throw runtime_error("Unknown point type");
       }
@@ -536,6 +536,7 @@ namespace Gedim
   void ConformerMeshSegment::UpdateWithActiveMesh2D(const MeshUtilities::ExtractActiveMeshData& activeMesh2DData,
                                                     ConformMesh& conformedMesh) const
   {
+    // update points
     for (map<double, ConformerMeshSegment::ConformMesh::ConformMeshPoint>::iterator it = conformedMesh.Points.begin();
          it != conformedMesh.Points.end();
          it++)
@@ -567,6 +568,7 @@ namespace Gedim
       });
     }
 
+    // update segments
     for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
     {
       segment.Edge2DIds.remove_if([activeMesh2DData](unsigned int cell0DIndex){
@@ -585,6 +587,46 @@ namespace Gedim
         s = activeMesh2DData.OldCell2DToNewCell2D.at(s);
       });
     }
+  }
+  // ***************************************************************************
+  void ConformerMeshSegment::AddMissingMesh2DCell0Ds(const Vector3d& segmentOrigin,
+                                                     const Vector3d& segmentTangent,
+                                                     const double& segmentSquaredLength,
+                                                     const Gedim::IMeshDAO& mesh2D,
+                                                     ConformMesh& conformedMesh) const
+  {
+    for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
+    {
+      if (segment.Edge2DIds.size() == 1)
+        continue;
+
+      Output::Assert(segment.Edge2DIds.size() == 2);
+      // add missing Cell0D point
+      const unsigned int cell1DOneIndex = segment.Edge2DIds.front();
+      const unsigned int cell1DTwoIndex = segment.Edge2DIds.back();
+      const unsigned int meshCell0DIndex = mesh2D.Cell1DOrigin(cell1DOneIndex) ==
+                                           mesh2D.Cell1DOrigin(cell1DTwoIndex) ? mesh2D.Cell1DOrigin(cell1DOneIndex) :
+                                                                                 mesh2D.Cell1DEnd(cell1DOneIndex);
+      const Eigen::Vector3d cell0DCoordinate = mesh2D.Cell0DCoordinates(meshCell0DIndex);
+
+      const double curvilinearCoordinate = _geometryUtilities.PointLineCurvilinearCoordinate(cell0DCoordinate,
+                                                                                             segmentOrigin,
+                                                                                             segmentTangent,
+                                                                                             segmentSquaredLength);
+
+      bool found;
+      ConformerMeshSegment::ConformMesh::ConformMeshPoint& conformPoint = InsertNewIntersection(curvilinearCoordinate,
+                                                                                                conformedMesh,
+                                                                                                found);
+
+      Output::Assert(!found);
+
+      cerr<< "Add coordinate "<< curvilinearCoordinate<< endl;
+    }
+
+    // recreate conform mesh segments
+    conformedMesh.Segments.clear();
+    CreateConformSegments(conformedMesh);
   }
   // ***************************************************************************
 }

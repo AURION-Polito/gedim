@@ -58,7 +58,7 @@ namespace Gedim
 
       ConformMesh::ConformMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
                                                            ConformMesh& result,
-                                                           bool& found);
+                                                           bool& found) const;
       void CreateConformPoints(const Gedim::IntersectorMesh2DSegment::IntersectionMesh& meshIntersection,
                                const Gedim::UnionMeshSegment::UnionMesh& meshUnion,
                                const unsigned int& meshIntersectionPosition,
@@ -99,6 +99,17 @@ namespace Gedim
       /// \param conformedMesh the resulting conformed mesh
       void UpdateWithActiveMesh2D(const Gedim::MeshUtilities::ExtractActiveMeshData& activeMesh2DData,
                                   ConformMesh& conformedMesh) const;
+
+      ///
+      /// \brief Add Missing Mesh2D Cell0Ds generated from the intersections with other interfaces
+      /// \param mesh2D the mesh data
+      /// \param conformedMesh the resulting conformed mesh
+      /// \note the mesh2D shall be made by only active elements
+      void AddMissingMesh2DCell0Ds(const Eigen::Vector3d& segmentOrigin,
+                                   const Eigen::Vector3d& segmentTangent,
+                                   const double& segmentSquaredLength,
+                                   const Gedim::IMeshDAO& mesh2D,
+                                   ConformMesh& conformedMesh) const;
   };
 }
 

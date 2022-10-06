@@ -34,8 +34,13 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockOriginalMesh;
         Gedim::MeshMatricesDAO domainMesh(mockOriginalMesh.Mesh);
 
-        Vector3d segmentOrigin(0.25, 0.25, 0.0);
-        Vector3d segmentEnd(0.35, 0.35, 0.0);
+        const Vector3d segmentOrigin(0.25, 0.25, 0.0);
+        const Vector3d segmentEnd(0.35, 0.35, 0.0);
+        const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                                segmentEnd);
+        const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
+                                                                     segmentEnd);
+        const double segmentSquaredLength = segmentLength * segmentLength;
 
         // Intersect mesh 2D with segment
         Gedim::IntersectorMesh2DSegment intersectorMeshSegment(domainMesh,
@@ -85,6 +90,13 @@ namespace GedimUnitTesting
         // Update mesh 1D with cleaned mesh 2D
         ASSERT_NO_THROW(conformMeshSegment.UpdateWithActiveMesh2D(extractionData,
                                                                   conformMesh));
+
+        // Check missing mesh 2D cell0Ds
+        ASSERT_NO_THROW(conformMeshSegment.AddMissingMesh2DCell0Ds(segmentOrigin,
+                                                                   segmentTangent,
+                                                                   segmentSquaredLength,
+                                                                   domainMesh,
+                                                                   conformMesh));
 
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell0D, 7);
         EXPECT_EQ(mockOriginalMesh.Mesh.NumberCell1D, 9);
