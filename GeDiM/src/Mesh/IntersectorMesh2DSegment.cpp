@@ -417,7 +417,8 @@ namespace Gedim
                        intersectionPoint.Edge2DIds.end(),
                        intersectionPointNext.Edge2DIds.begin(),
                        intersectionPointNext.Edge2DIds.end(),
-                       back_inserter(meshSegment.Edge2DIds));
+                       std::inserter(meshSegment.Edge2DIds,
+                                     meshSegment.Edge2DIds.begin()));
       // fill the mesh 2D cells
       set_intersection(intersectionPoint.Cell2DIds.begin(),
                        intersectionPoint.Cell2DIds.end(),

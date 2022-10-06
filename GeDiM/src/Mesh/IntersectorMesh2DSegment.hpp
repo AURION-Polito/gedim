@@ -22,7 +22,7 @@ namespace Gedim
           struct IntersectionMeshSegment final {
               vector<double> Points = {};
               list<unsigned int> Cell2DIds = {};
-              list<unsigned int> Edge2DIds = {};
+              set<unsigned int> Edge2DIds = {};
           };
 
           map<double, IntersectionMeshPoint> Points;

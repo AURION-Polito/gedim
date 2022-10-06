@@ -15,8 +15,10 @@ namespace Gedim
   {
     public:
       struct ConformMesh final {
-          struct ConformMeshPoint final {
-              enum Types {
+          struct ConformMeshPoint final
+          {
+              enum Types
+              {
                 Unknown = 0,
                 Original = 1, ///< point belong to original intersection mesh
                 Inherited = 2, ///< point belong to other intersection mesh
@@ -24,12 +26,13 @@ namespace Gedim
               };
 
               list<unsigned int> Cell2DIds = {};
-              list<unsigned int> Edge2DIds = {};
+              set<unsigned int> Edge2DIds = {};
               list<unsigned int> Vertex2DIds = {};
               Types Type;
           };
 
-          struct ConformMeshSegment final {
+          struct ConformMeshSegment final
+          {
               vector<double> Points = {};
               list<unsigned int> Cell2DIds = {};
               list<unsigned int> Edge2DIds = {};

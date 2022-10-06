@@ -440,9 +440,17 @@ namespace GedimUnitTesting
 
       // conform of simple 2 points mesh
       {
+        std::string exportFolder = "./Export/TestConformMesh2D/TestConformMesh2DTwoPoints";
+        Gedim::Output::CreateFolder(exportFolder);
+        Gedim::MeshUtilities meshUtilities;
+
         // Create mesh fracture one and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
+
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "DomainOne_Original");
 
         Eigen::Vector3d segmentOneOrigin(0.75, 0.0, 0.0);
         Eigen::Vector3d segmentOneEnd(   0.0, 0.75, 0.0);
@@ -499,6 +507,11 @@ namespace GedimUnitTesting
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
+
+        meshUtilities.ExportMeshToVTU(fractureMeshOne,
+                                      exportFolder,
+                                      "DomainOne_Conformed");
+
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
         meshUtilities.CheckMesh2D(config,

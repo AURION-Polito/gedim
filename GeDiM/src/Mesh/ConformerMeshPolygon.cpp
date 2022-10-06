@@ -111,7 +111,7 @@ namespace Gedim
                                                                                               found);
 
         newPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::External;
-        newPoint.Edge2DIds.push_back(edgeId);
+        newPoint.Edge2DIds.insert(edgeId);
 
         if (find(newPoint.Cell2DIds.begin(), newPoint.Cell2DIds.end(), cell2DMesh2DId) == newPoint.Cell2DIds.end())
           newPoint.Cell2DIds.push_back(cell2DMesh2DId);
@@ -181,7 +181,7 @@ namespace Gedim
                                                                                               found);
 
         newPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::External;
-        newPoint.Edge2DIds.push_back(edgeId);
+        newPoint.Edge2DIds.insert(edgeId);
         newPoint.Cell2DIds.push_back(cell2DMesh2DId);
         for (unsigned int en = 0; en < mesh2DReader.Cell1DNumberNeighbourCell2D(edgeId); en++)
         {
@@ -358,7 +358,7 @@ namespace Gedim
     {
       Output::Assert(origin.Edge2DIds.size() > 0);
       splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
-      splitInput.Segment.Origin.Index = cell2DMesh2DEdgesMap.at(origin.Edge2DIds.front());
+      splitInput.Segment.Origin.Index = cell2DMesh2DEdgesMap.at(*origin.Edge2DIds.rbegin());
     }
     else
       throw runtime_error("cell1Ds origin of mesh1D are not correct");
@@ -372,7 +372,7 @@ namespace Gedim
     {
       Output::Assert(end.Edge2DIds.size() > 0);
       splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Edge;
-      splitInput.Segment.End.Index = cell2DMesh2DEdgesMap.at(end.Edge2DIds.front());
+      splitInput.Segment.End.Index = cell2DMesh2DEdgesMap.at(*end.Edge2DIds.rbegin());
     }
     else
       throw runtime_error("cell1Ds end of mesh1D are not correct");
@@ -487,13 +487,13 @@ namespace Gedim
       if (originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
           originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e))
       {
-        originCell0DMesh1D.Edge2DIds.push_back(e);
+        originCell0DMesh1D.Edge2DIds.insert(e);
       }
 
       if (endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
           endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e))
       {
-        endCell0DMesh1D.Edge2DIds.push_back(e);
+        endCell0DMesh1D.Edge2DIds.insert(e);
       }
 
       // update mesh2D
@@ -694,7 +694,7 @@ namespace Gedim
       if (originCell0DMesh1D.Vertex2DIds.size() == 0)
       {
         Output::Assert(originCell0DMesh1D.Edge2DIds.size() == 1 &&
-                       originCell0DMesh1D.Edge2DIds.back() == cell1DMesh2DToUpdate);
+                       *originCell0DMesh1D.Edge2DIds.begin() == cell1DMesh2DToUpdate);
 
         // add new cell0D in mesh2D
         const Vector3d newCell0DCoordinates = segmentOrigin + originCurvilinearCoordinate * segmentTangent;
@@ -777,8 +777,8 @@ namespace Gedim
 
         cell1DMesh2DsNewCell1Ds[cell1DMesh2DToUpdate][ci] = newCell1DMesh2DId;
 
-        origin.Edge2DIds.push_back(newCell1DMesh2DId);
-        end.Edge2DIds.push_back(newCell1DMesh2DId);
+        origin.Edge2DIds.insert(newCell1DMesh2DId);
+        end.Edge2DIds.insert(newCell1DMesh2DId);
         cell1DMesh1D.Edge2DIds.push_back(newCell1DMesh2DId);
 
         const unsigned int originCell1D = origin.Vertex2DIds.back();
@@ -1012,8 +1012,8 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& end = mesh1D.Points[endCurvilinearCoordinate];
 
-      origin.Edge2DIds.push_back(e);
-      end.Edge2DIds.push_back(e);
+      origin.Edge2DIds.insert(e);
+      end.Edge2DIds.insert(e);
       segment.Edge2DIds.push_back(e);
 
       // update mesh2D
@@ -1211,8 +1211,8 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& end = mesh1D.Points[endCurvilinearCoordinate];
 
-      origin.Edge2DIds.push_back(e);
-      end.Edge2DIds.push_back(e);
+      origin.Edge2DIds.insert(e);
+      end.Edge2DIds.insert(e);
       segment.Edge2DIds.push_back(e);
 
       // update mesh2D
