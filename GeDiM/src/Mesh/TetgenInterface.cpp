@@ -328,8 +328,35 @@ namespace Gedim
         mesh.Cell3DInsertVertex(0, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
       for (unsigned int e = 0; e < numEdges; e++)
         mesh.Cell3DInsertEdge(0, e, e); // TODO: fix here
-      for (unsigned int f = 0; f < numFaces; f++)
-        mesh.Cell3DInsertFace(0, f, f); // TODO: fix here
+
+      // find cell faces
+      for (unsigned int j = 0; j < numFaces; j++)
+      {
+        for(unsigned int k = 0; k < 3; k++)
+        {
+          const unsigned int faceVertexId =(mesh.Cell3DVertex(c, (j + k) % 4));
+          faceVertices[k] = faceVertexId;
+        }
+
+        sort(faceVertices.begin(),faceVertices.end());
+        const unsigned int indexI = faceVertices[0];
+        const unsigned int indexJK = (faceVertices[1] + faceVertices[2]) * (faceVertices[1] + faceVertices[2] + 1) * 0.5 + faceVertices[2] + 1 ;
+
+        const int faceId = connectivityPointsFaces.coeff(indexI, indexJK) - 1;
+        mesh.Cell3DInsertFace(0, j, faceId);
+
+        // This is the convention for the face normal sign
+        //        if(face.PointInPlane(barycenter) == Polygon::Negative)
+        //        {
+        //          face.InsertNeighCell3D(*cell, 1);
+        //          cell->SetNormalSign(true, j);
+        //        }
+        //        else
+        //        {
+        //          face.InsertNeighCell3D(*cell, 0);
+        //          cell->SetNormalSign(false, j);
+        //        }
+      }
 
       mesh.Cell3DSetId(c, c);
       mesh.Cell3DSetState(c, true);
