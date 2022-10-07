@@ -356,18 +356,6 @@ namespace Gedim
             cell3DEdges.insert(cell1D);
           }
         }
-
-        // This is the convention for the face normal sign
-        //        if(face.PointInPlane(barycenter) == Polygon::Negative)
-        //        {
-        //          face.InsertNeighCell3D(*cell, 1);
-        //          cell->SetNormalSign(true, j);
-        //        }
-        //        else
-        //        {
-        //          face.InsertNeighCell3D(*cell, 0);
-        //          cell->SetNormalSign(false, j);
-        //        }
       }
 
       mesh.Cell3DSetId(c, c);

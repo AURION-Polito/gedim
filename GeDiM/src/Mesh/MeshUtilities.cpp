@@ -886,7 +886,6 @@ namespace Gedim
         result.Cell3DsFacesEdge2DNormals[c][f] = geometryUtilities.PolygonEdgeNormals(result.Cell3DsFaces2DVertices[c][f]);
       }
 
-      /// TODO: qui secondo me questo non è corretto, occore utilizzare le informazioni della mesh
       result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
                                                                                                 geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
                                                                                                 result.Cell3DsFacesNormals[c]);
