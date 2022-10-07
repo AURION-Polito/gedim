@@ -54,6 +54,10 @@ list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC Eigen3::Eigen)
 find_package(triangle CONFIG REQUIRED)
 list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC triangle::triangle)
 
+## tetgen
+find_package(tetgen CONFIG REQUIRED)
+list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
+
 ## VTK
 if(${ENABLE_VTK})
   find_package(VTK CONFIG REQUIRED)

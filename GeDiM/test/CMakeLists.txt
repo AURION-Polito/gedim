@@ -35,14 +35,6 @@ else()
     list(APPEND ${GEDIM_LIBRARY_TEST_LINKED_LIBRARIES} PRIVATE GTest::gmock_main)
 endif()
 
-## Eigen3
-find_package(Eigen3 CONFIG REQUIRED)
-
-## VTK
-find_package(VTK CONFIG REQUIRED)
-
-## triangle
-find_package(triangle CONFIG REQUIRED)
 
 ## GeDiM
 if (NOT TARGET GeDiM::GeDiM)
@@ -60,6 +52,18 @@ else()
 	list(APPEND ${GEDIM_LIBRARY_TEST_INCLUDE} ${GEDIM_LIBRARY_INCLUDE_DIRECTORIES})
 	list(APPEND ${GEDIM_LIBRARY_TEST_LINKED_LIBRARIES} PRIVATE GeDiM::GeDiM)
 endif()
+
+## Eigen3
+find_package(Eigen3 CONFIG REQUIRED)
+
+## VTK
+find_package(VTK CONFIG REQUIRED)
+
+## triangle
+find_package(triangle CONFIG REQUIRED)
+
+## tetgen
+find_package(tetgen CONFIG REQUIRED)
 
 # Insert Sources
 ###############################################################################################
