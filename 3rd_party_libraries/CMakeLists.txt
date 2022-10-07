@@ -12,6 +12,7 @@ option(INSTALL_EIGEN3 "Install Eigen3" ON)
 option(INSTALL_GOOGLETEST "Install GoogleTest" ON)
 option(INSTALL_VTK "Install VTK" OFF)
 option(INSTALL_TRIANGLE "Install triangle" ON)
+option(INSTALL_TETGEN "Install tetgen" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
@@ -39,4 +40,9 @@ endif()
 ## triangle
 if(INSTALL_TRIANGLE)
 	include(InstallTriangle)
+endif()
+
+## tetgen
+if(INSTALL_TETGEN)
+	include(InstallTetgen)
 endif()
