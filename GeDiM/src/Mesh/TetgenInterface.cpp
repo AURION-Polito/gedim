@@ -325,9 +325,9 @@ namespace Gedim
       mesh.Cell3DInitializeFaces(c, numFaces);
 
       for (unsigned int v = 0; v < numVertices; v++)
-        mesh.Cell3DInsertVertex(0, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
+        mesh.Cell3DInsertVertex(c, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
       for (unsigned int e = 0; e < numEdges; e++)
-        mesh.Cell3DInsertEdge(0, e, e); // TODO: fix here
+        mesh.Cell3DInsertEdge(c, e, e); // TODO: fix here
 
       // find cell faces
       for (unsigned int j = 0; j < numFaces; j++)
@@ -343,7 +343,7 @@ namespace Gedim
         const unsigned int indexJK = (faceVertices[1] + faceVertices[2]) * (faceVertices[1] + faceVertices[2] + 1) * 0.5 + faceVertices[2] + 1 ;
 
         const int faceId = connectivityPointsFaces.coeff(indexI, indexJK) - 1;
-        mesh.Cell3DInsertFace(0, j, faceId);
+        mesh.Cell3DInsertFace(c, j, faceId);
 
         // This is the convention for the face normal sign
         //        if(face.PointInPlane(barycenter) == Polygon::Negative)
