@@ -1,4 +1,5 @@
 #include "TetgenInterface.hpp"
+#include <unordered_set>
 
 using namespace std;
 using namespace Eigen;
@@ -326,13 +327,11 @@ namespace Gedim
 
       for (unsigned int v = 0; v < numVertices; v++)
         mesh.Cell3DInsertVertex(c, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
-      for (unsigned int e = 0; e < numEdges; e++)
-        mesh.Cell3DInsertEdge(c, e, e); // TODO: fix here
 
-      // find cell faces
+      unordered_set<unsigned int> cell3DEdges;      // find cell edges and faces
       for (unsigned int j = 0; j < numFaces; j++)
       {
-        for(unsigned int k = 0; k < 3; k++)
+        for (unsigned int k = 0; k < 3; k++)
         {
           const unsigned int faceVertexId =(mesh.Cell3DVertex(c, (j + k) % 4));
           faceVertices[k] = faceVertexId;
@@ -344,6 +343,19 @@ namespace Gedim
 
         const int faceId = connectivityPointsFaces.coeff(indexI, indexJK) - 1;
         mesh.Cell3DInsertFace(c, j, faceId);
+
+        if (j < 3)
+        {
+          for (unsigned int e = 0; e < 3; e++)
+          {
+            const unsigned int cell1D = mesh.Cell2DEdge(faceId, e);
+            if (cell3DEdges.find(cell1D) != cell3DEdges.end())
+              continue;
+
+            mesh.Cell3DInsertEdge(c, cell3DEdges.size(), cell1D);
+            cell3DEdges.insert(cell1D);
+          }
+        }
 
         // This is the convention for the face normal sign
         //        if(face.PointInPlane(barycenter) == Polygon::Negative)
