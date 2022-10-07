@@ -38,6 +38,8 @@ namespace GedimUnitTesting
         const Vector3d segmentEnd(0.35, 0.35, 0.0);
         const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                                 segmentEnd);
+        const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
+                                                                                      segmentEnd);
         const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
                                                                      segmentEnd);
         const double segmentSquaredLength = segmentLength * segmentLength;
@@ -49,6 +51,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMesh;
         intersectorMeshSegment.CreateIntersectionMesh(segmentOrigin,
                                                       segmentEnd,
+                                                      segmentTangent,
+                                                      segmentBarycenter,
+                                                      segmentLength,
                                                       intersectionMesh);
 
         // Create mesh union

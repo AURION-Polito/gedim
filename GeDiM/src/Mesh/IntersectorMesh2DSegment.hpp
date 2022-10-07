@@ -50,6 +50,9 @@ namespace Gedim
                                             IntersectionMesh& result);
       void CreateIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
                                     const Eigen::Vector3d& segmentEnd,
+                                    const Eigen::Vector3d& segmentTangent,
+                                    const Eigen::Vector3d& segmentBarycenter,
+                                    const double& segmentLength,
                                     IntersectionMesh& result);
       void CreateIntersectionSegments(IntersectionMesh& result);
 
@@ -66,6 +69,9 @@ namespace Gedim
 
       void CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                   const Eigen::Vector3d& segmentEnd,
+                                  const Eigen::Vector3d& segmentTangent,
+                                  const Eigen::Vector3d& segmentBarycenter,
+                                  const double& segmentLength,
                                   IntersectionMesh& result);
   };
 }

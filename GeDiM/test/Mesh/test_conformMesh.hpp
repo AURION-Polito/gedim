@@ -85,8 +85,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO domainMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.25, 0.5, 0.0);
-        Eigen::Vector3d segmentOneEnd(0.5, 0.25, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.25, 0.5, 0.0);
+        const Eigen::Vector3d segmentOneEnd(0.5, 0.25, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(domainMeshOne,
                                                                   geometryUtilities);
@@ -94,14 +101,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.25, 0.5, 0.0);
-        Eigen::Vector3d segmentTwoEnd(0.5, 0.25, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.25, 0.5, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(0.5, 0.25, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -109,6 +126,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -178,8 +198,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.25, 0.5, 0.0);
-        Eigen::Vector3d segmentOneEnd(0.5, 0.25, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.25, 0.5, 0.0);
+        const Eigen::Vector3d segmentOneEnd(0.5, 0.25, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -187,6 +214,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
@@ -202,6 +232,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -303,8 +336,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.25, 0.25, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.25, 0.25, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.75, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -312,14 +352,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.25, 0.25, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.75, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.25, 0.25, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.75, 0.75, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -327,6 +377,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -452,8 +505,15 @@ namespace GedimUnitTesting
                                       exportFolder,
                                       "DomainOne_Original");
 
-        Eigen::Vector3d segmentOneOrigin(0.75, 0.0, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.0, 0.75, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -461,14 +521,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.75, 0.0, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.0, 0.75, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -476,6 +546,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -584,8 +657,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -593,14 +673,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -608,6 +698,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -732,8 +825,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
@@ -742,14 +842,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -757,6 +867,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -888,8 +1001,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -897,14 +1017,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -912,6 +1042,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -1017,8 +1150,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -1026,14 +1166,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(1.0, 0.25, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.25, 1.0, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(1.0, 0.25, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.25, 1.0, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -1041,6 +1191,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -1147,8 +1300,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.25, 0.25, 0.0);
-        Eigen::Vector3d segmentOneEnd(   0.75, 0.75, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.25, 0.25, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   0.75, 0.75, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -1156,14 +1316,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(0.75, 0.75, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.25, 0.25, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(0.75, 0.75, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.25, 0.25, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -1171,6 +1341,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
@@ -1274,8 +1447,15 @@ namespace GedimUnitTesting
         GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
         Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-        Eigen::Vector3d segmentOneOrigin(0.0, 1.0, 0.0);
-        Eigen::Vector3d segmentOneEnd(   1.0, 0.0, 0.0);
+        const Eigen::Vector3d segmentOneOrigin(0.0, 1.0, 0.0);
+        const Eigen::Vector3d segmentOneEnd(   1.0, 0.0, 0.0);
+
+        const Eigen::Vector3d segmentOneTangent = geometryUtilities.SegmentTangent(segmentOneOrigin,
+                                                                                   segmentOneEnd);
+        const Eigen::Vector3d segmentOneBarycenter = geometryUtilities.SegmentBarycenter(segmentOneOrigin,
+                                                                                         segmentOneEnd);
+        const double segmentOneLength = geometryUtilities.SegmentLength(segmentOneOrigin,
+                                                                        segmentOneEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentOne(fractureMeshOne,
                                                                   geometryUtilities);
@@ -1283,14 +1463,24 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshOne;
         intersectorMeshSegmentOne.CreateIntersectionMesh(segmentOneOrigin,
                                                          segmentOneEnd,
+                                                         segmentOneTangent,
+                                                         segmentOneBarycenter,
+                                                         segmentOneLength,
                                                          intersectionMeshOne);
 
         // Create mesh fracture two and corresponding intersection meshes
         GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMeshTwo;
         Gedim::MeshMatricesDAO fractureMeshTwo(mockMeshTwo.Mesh);
 
-        Eigen::Vector3d segmentTwoOrigin(1.0, 0.0, 0.0);
-        Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0);
+        const Eigen::Vector3d segmentTwoOrigin(1.0, 0.0, 0.0);
+        const Eigen::Vector3d segmentTwoEnd(   0.0, 1.0, 0.0);
+
+        const Eigen::Vector3d segmentTwoTangent = geometryUtilities.SegmentTangent(segmentTwoOrigin,
+                                                                                   segmentTwoEnd);
+        const Eigen::Vector3d segmentTwoBarycenter = geometryUtilities.SegmentBarycenter(segmentTwoOrigin,
+                                                                                         segmentTwoEnd);
+        const double segmentTwoLength = geometryUtilities.SegmentLength(segmentTwoOrigin,
+                                                                        segmentTwoEnd);
 
         Gedim::IntersectorMesh2DSegment intersectorMeshSegmentTwo(fractureMeshTwo,
                                                                   geometryUtilities);
@@ -1298,6 +1488,9 @@ namespace GedimUnitTesting
         Gedim::IntersectorMesh2DSegment::IntersectionMesh intersectionMeshTwo;
         intersectorMeshSegmentTwo.CreateIntersectionMesh(segmentTwoOrigin,
                                                          segmentTwoEnd,
+                                                         segmentTwoTangent,
+                                                         segmentTwoBarycenter,
+                                                         segmentTwoLength,
                                                          intersectionMeshTwo);
 
         // Create mesh union
