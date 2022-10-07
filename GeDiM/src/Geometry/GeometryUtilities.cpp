@@ -22,25 +22,18 @@ namespace Gedim
     Output::Assert(IsValue1DPositive(step) &&
                    Compare1DValues(step, 1.0) != CompareTypes::SecondBeforeFirst);
 
-    VectorXd generated = VectorXd::LinSpaced(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0);
-    vector<double> coordinates;
-    if (insertExtremes)
-      coordinates.resize(generated.size());
-    else
-      coordinates.resize(generated.size() - 2);
-
-    for (unsigned int c = 0; c < coordinates.size(); c++)
-      coordinates[c] = insertExtremes ? generated[c] : generated[c + 1];
-
-    return coordinates;
+    return EquispaceCoordinates(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0, insertExtremes);
   }
   // ***************************************************************************
-  std::vector<double> GeometryUtilities::EquispaceCoordinates(const unsigned int& numLinSpace,
+  std::vector<double> GeometryUtilities::EquispaceCoordinates(const unsigned int& size,
                                                               const double& origin,
                                                               const double& end,
                                                               const bool& insertExtremes) const
   {
-    VectorXd generated = VectorXd::LinSpaced(numLinSpace, origin, end);
+    VectorXd generated = VectorXd::LinSpaced(size,
+                                             origin,
+                                             end);
+
     vector<double> coordinates;
     if (insertExtremes)
       coordinates.resize(generated.size());

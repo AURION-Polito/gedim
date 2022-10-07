@@ -792,7 +792,12 @@ namespace Gedim
       std::vector<double> EquispaceCoordinates(const double& step,
                                                const bool& insertExtremes) const;
 
-      std::vector<double> EquispaceCoordinates(const unsigned int& numLinSpace,
+      /// \param size the number of resulting coordinates
+      /// \param origin the starting curvilinear coordinate
+      /// \param end the ending curvilinear coordinate
+      /// \param insertExtremes if true keeps the extremes
+      /// \return equispaced curvilinear coordinates in the interval [origin, end]
+      std::vector<double> EquispaceCoordinates(const unsigned int& size,
                                                const double& origin,
                                                const double& end,
                                                const bool& insertExtremes) const;
