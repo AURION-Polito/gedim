@@ -5,6 +5,7 @@
 #include "VTKUtilities.hpp"
 #include "MapTetrahedron.hpp"
 
+using namespace std;
 using namespace Eigen;
 
 namespace Gedim
