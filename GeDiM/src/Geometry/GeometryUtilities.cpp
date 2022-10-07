@@ -35,6 +35,24 @@ namespace Gedim
     return coordinates;
   }
   // ***************************************************************************
+  std::vector<double> GeometryUtilities::EquispaceCoordinates(const unsigned int& numLinSpace,
+                                                              const double& origin,
+                                                              const double& end,
+                                                              const bool& insertExtremes) const
+  {
+    VectorXd generated = VectorXd::LinSpaced(numLinSpace, origin, end);
+    vector<double> coordinates;
+    if (insertExtremes)
+      coordinates.resize(generated.size());
+    else
+      coordinates.resize(generated.size() - 2);
+
+    for (unsigned int c = 0; c < coordinates.size(); c++)
+      coordinates[c] = insertExtremes ? generated[c] : generated[c + 1];
+
+    return coordinates;
+  }
+  // ***************************************************************************
   GeometryUtilities::CompareTypes GeometryUtilities::CompareValues(const double& first,
                                                                    const double& second,
                                                                    const double& tolerance) const

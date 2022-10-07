@@ -792,6 +792,11 @@ namespace Gedim
       std::vector<double> EquispaceCoordinates(const double& step,
                                                const bool& insertExtremes) const;
 
+      std::vector<double> EquispaceCoordinates(const unsigned int& numLinSpace,
+                                               const double& origin,
+                                               const double& end,
+                                               const bool& insertExtremes) const;
+
       /// \brief compute the Point distance
       /// \param firstPoint the first point
       /// \param secondPoint the second point
