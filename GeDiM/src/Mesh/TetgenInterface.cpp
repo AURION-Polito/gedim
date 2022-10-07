@@ -1,120 +1,141 @@
-#include "MeshCreator3DTetgen.hpp"
-#include "Output.hpp"
+#include "TetgenInterface.hpp"
 
-using namespace MainApplication;
+using namespace std;
+using namespace Eigen;
 
-namespace GeDiM
+namespace Gedim
 {
   // ***************************************************************************
-  MeshCreator3DTetgen::MeshCreator3DTetgen() : MeshCreator()
+  TetgenInterface::TetgenInterface()
   {
-    inputMeshPointer = NULL;
-    outputMeshPointer = NULL;
-    tetgenOptions = "Qpqfezna";
   }
-  MeshCreator3DTetgen::~MeshCreator3DTetgen()
+  TetgenInterface::~TetgenInterface()
   {
-    if (inputMeshPointer != NULL)
-    {
-      delete[] inputMeshPointer->pointlist; inputMeshPointer->pointlist = NULL;
-      delete[] inputMeshPointer->pointmarkerlist; inputMeshPointer->pointmarkerlist = NULL;
-
-      delete[] inputMeshPointer->edgelist; inputMeshPointer->edgelist = NULL;
-      delete[] inputMeshPointer->edgemarkerlist; inputMeshPointer->edgemarkerlist = NULL;
-
-      for (int f = 0; f < inputMeshPointer->numberoffacets; f++)
-      {
-        tetgenio::facet* tetgenFace = &inputMeshPointer->facetlist[f];
-
-        tetgenio::polygon* tetgenPolygon =  &tetgenFace->polygonlist[0];
-        delete[] tetgenPolygon->vertexlist; tetgenPolygon->vertexlist = NULL;
-
-        delete[] tetgenFace->polygonlist; tetgenFace->polygonlist = NULL;
-      }
-
-      delete[] inputMeshPointer->facetlist; inputMeshPointer->facetlist = NULL;
-    }
-
-    delete inputMeshPointer; inputMeshPointer = NULL;
-    delete outputMeshPointer; outputMeshPointer = NULL;
   }
   // ***************************************************************************
-  Output::ExitCodes MeshCreator3DTetgen::CreateTetgenInput(const Polyhedron& domain)
+  void TetgenInterface::DeleteTetgenStructure(tetgenio& tetgenInput,
+                                              tetgenio& tetgenOutput) const
   {
-    delete inputMeshPointer; inputMeshPointer = NULL;
+    delete[] tetgenInput.pointlist; tetgenInput.pointlist = NULL;
+    delete[] tetgenInput.pointmarkerlist; tetgenInput.pointmarkerlist = NULL;
 
-    const unsigned int& numberOfVertices = domain.NumberOfVertices();
-    unsigned int numberOfConstrainedPoints = 0;
-    for(unsigned int numConst = 0; numConst < constrainedPoints.size(); numConst++)
-      numberOfConstrainedPoints += constrainedPoints[numConst].rows();
+    delete[] tetgenInput.edgelist; tetgenInput.edgelist = NULL;
+    delete[] tetgenInput.edgemarkerlist; tetgenInput.edgemarkerlist = NULL;
 
-    const unsigned int& numberOfEdges = domain.NumberOfEdges();
-    const unsigned int& numberOfFaces = domain.NumberOfFaces();
-    unsigned int numberOfConstrainedFaces = 0;
-    for(unsigned int numConst = 0; numConst < constrainedFaces.size(); numConst++)
-      numberOfConstrainedFaces += constrainedFaces[numConst].size();
-
-    if (numberOfVertices == 0 || numberOfEdges == 0 || numberOfFaces == 0)
+    for (int f = 0; f < tetgenInput.numberoffacets; f++)
     {
-      Output::PrintErrorMessage("Wrong initialization of the domain %d, no vertices or faces", false, domain.GlobalId());
-      return Output::GenericError;
+      tetgenio::facet* tetgenFace = &tetgenInput.facetlist[f];
+
+      tetgenio::polygon* tetgenPolygon =  &tetgenFace->polygonlist[0];
+      delete[] tetgenPolygon->vertexlist; tetgenPolygon->vertexlist = NULL;
+
+      delete[] tetgenFace->polygonlist; tetgenFace->polygonlist = NULL;
     }
 
-    inputMeshPointer = new tetgenio();
+    delete[] tetgenInput.facetlist; tetgenInput.facetlist = NULL;
+  }
+  // ***************************************************************************
+  void TetgenInterface::CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
+                                   const Eigen::MatrixXi& polyhedronEdges,
+                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                   const double& maxTetrahedronVolume,
+                                   IMeshDAO& mesh) const
+  {
+    tetgenio* tetgenInput = new tetgenio();
+    tetgenio* tetgenOutput = new tetgenio();
 
-    inputMeshPointer->firstnumber = 0;
-    inputMeshPointer->numberofpoints = numberOfVertices + numberOfConstrainedPoints;
-    inputMeshPointer->pointlist = new REAL[(numberOfVertices + numberOfConstrainedPoints) * 3];
-    inputMeshPointer->pointmarkerlist = new int[numberOfVertices + numberOfConstrainedPoints];
+    CreateTetgenInput(polyhedronVertices,
+                      polyhedronEdges,
+                      polyhedronFaces,
+                      *tetgenInput);
+    CreateTetgenOutput(maxTetrahedronVolume,
+                       *tetgenInput,
+                       *tetgenOutput);
 
-    inputMeshPointer->numberofedges = numberOfEdges;
-    inputMeshPointer->edgelist = new int[(numberOfEdges)* 2];
-    inputMeshPointer->edgemarkerlist = new int[(numberOfEdges )];
+    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
+                                 mesh);
 
-    inputMeshPointer->numberoffacets = numberOfFaces + numberOfConstrainedFaces;
-    inputMeshPointer->facetlist = new tetgenio::facet[numberOfFaces + numberOfConstrainedFaces];
-    inputMeshPointer->facetmarkerlist = new int[numberOfFaces + numberOfConstrainedFaces];
+    DeleteTetgenStructure(*tetgenInput,
+                          *tetgenOutput);
+    delete tetgenInput;
+    delete tetgenOutput;
+  }
+  // ***************************************************************************
+  void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd& polyhedronVertices,
+                                          const Eigen::MatrixXi& polyhedronEdges,
+                                          const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                          tetgenio& tetgenInput,
+                                          const MatrixXd& constrainedPoints,
+                                          const std::vector<Eigen::VectorXi>& constrainedFaces) const
+  {
+    const unsigned int& numberOfVertices = polyhedronVertices.cols();
+    const unsigned int numberOfConstrainedPoints = constrainedPoints.cols();
 
-    double* point_list = inputMeshPointer->pointlist;
-    int* point_markerlist = inputMeshPointer->pointmarkerlist;
+    const unsigned int& numberOfEdges = polyhedronEdges.cols();
+    const unsigned int& numberOfFaces = polyhedronFaces.size();
+    const unsigned int numberOfConstrainedFaces = constrainedFaces.size();
 
-    int* edge_list = inputMeshPointer->edgelist;
-    int* edge_markerlist = inputMeshPointer->edgemarkerlist;
+    Output::Assert(numberOfVertices > 0 && numberOfEdges > 0 && numberOfFaces > 0);
 
-    tetgenio::facet* face_list = inputMeshPointer->facetlist;
-    int* face_markerlist = inputMeshPointer->facetmarkerlist;
+    tetgenInput.firstnumber = 0;
+    tetgenInput.numberofpoints = numberOfVertices + numberOfConstrainedPoints;
+    tetgenInput.pointlist = new REAL[(numberOfVertices + numberOfConstrainedPoints) * 3];
+    tetgenInput.pointmarkerlist = new int[numberOfVertices + numberOfConstrainedPoints];
+
+    tetgenInput.numberofedges = numberOfEdges;
+    tetgenInput.edgelist = new int[(numberOfEdges)* 2];
+    tetgenInput.edgemarkerlist = new int[(numberOfEdges )];
+
+    tetgenInput.numberoffacets = numberOfFaces + numberOfConstrainedFaces;
+    tetgenInput.facetlist = new tetgenio::facet[numberOfFaces + numberOfConstrainedFaces];
+    tetgenInput.facetmarkerlist = new int[numberOfFaces + numberOfConstrainedFaces];
+
+    double* point_list = tetgenInput.pointlist;
+    int* point_markerlist = tetgenInput.pointmarkerlist;
+
+    int* edge_list = tetgenInput.edgelist;
+    int* edge_markerlist = tetgenInput.edgemarkerlist;
+
+    tetgenio::facet* face_list = tetgenInput.facetlist;
+    int* face_markerlist = tetgenInput.facetmarkerlist;
 
     for (unsigned int v = 0; v < numberOfVertices; v++)
     {
-      const Point& point = (*domain.Vertex(v));
+      const Eigen::Vector3d& point = polyhedronVertices.col(v);
       point_list[3 * v] = point(0);
       point_list[3 * v + 1] = point(1);
       point_list[3 * v + 2] = point(2);
 
-      point_markerlist[v] = 0;
+      point_markerlist[v] = v;
+    }
+
+    if(numberOfConstrainedPoints > 0)
+    {
+      unsigned int localOffset = numberOfVertices;
+      for (unsigned int j = 0; j < constrainedPoints.cols(); j++)
+      {
+        point_list[3 * (localOffset + j)] = constrainedPoints(0, j);
+        point_list[3 * (localOffset + j) + 1] = constrainedPoints(1, j);
+        point_list[3 * (localOffset + j) + 2] = constrainedPoints(2, j);
+
+        point_markerlist[(localOffset + j)] = numberOfVertices +
+                                              j;
+      }
     }
 
     for (unsigned int e = 0; e < numberOfEdges; e++)
     {
-      const unsigned int& vId1 = domain.PositionPoint(*domain.Edge(e)->Vertex(0));
-      const unsigned int& vId2 = domain.PositionPoint(*domain.Edge(e)->Vertex(1));
+      const unsigned int& vId1 = polyhedronEdges(0, e);
+      const unsigned int& vId2 = polyhedronEdges(1, e);
 
-      if (vId1 >= numberOfVertices)
-      {
-        Output::PrintErrorMessage("%s: Vertex id  %dnot correct", false, __func__, vId1);
-        return Output::GenericError;
-      }
-
-      if (vId2 >= numberOfVertices)
-      {
-        Output::PrintErrorMessage("%s: Vertex id  %dnot correct", false, __func__, vId2);
-        return Output::GenericError;
-      }
+      Output::Assert(vId1 < numberOfVertices && vId2 < numberOfVertices);
 
       edge_list[2 * e] = vId1;
       edge_list[2 * e + 1] = vId2;
 
-      edge_markerlist[e]= 0;
+      edge_markerlist[e]= numberOfVertices +
+                          numberOfConstrainedPoints +
+                          e;
     }
 
     for (unsigned int f = 0; f < numberOfFaces; f++)
@@ -128,123 +149,72 @@ namespace GeDiM
 
       tetgenio::polygon* tetgenPolygon =  &tetgenFace->polygonlist[0];
 
-      const Polygon& face = *domain.Face(f);
-      const size_t numberFacePoints = face.NumberOfVertices();
+      const MatrixXi& face = polyhedronFaces[f];
+      const size_t numberFacePoints = face.cols();
       tetgenPolygon->numberofvertices = numberFacePoints;
       tetgenPolygon->vertexlist = new int[tetgenPolygon->numberofvertices];
 
       for (unsigned int v = 0; v < numberFacePoints; v++)
       {
-        const unsigned int& vId =  domain.PositionPoint(*face.Vertex(v));
-
-        if (vId >= numberOfVertices)
-        {
-          Output::PrintErrorMessage("%s: Vertex id  %dnot correct", false, __func__, vId);
-          return Output::GenericError;
-        }
+        const unsigned int& vId =  face(0, v);
+        Output::Assert(vId < numberOfVertices);
 
         tetgenPolygon->vertexlist[v] = vId;
       }
 
-      face_markerlist[f] = 0;
-    }
-
-    if(numberOfConstrainedPoints > 0)
-    {
-      unsigned int localOffset = numberOfVertices;
-      for(unsigned int numConst = 0; numConst < constrainedPoints.size(); numConst++)
-      {
-        MatrixXd& localConstrainedPoints = constrainedPoints[numConst];
-
-        for (unsigned int j = 0; j < localConstrainedPoints.rows(); j++)
-        {
-          point_list[3 * (localOffset + j)] = localConstrainedPoints(j, 0);
-          point_list[3 * (localOffset + j) + 1] = localConstrainedPoints(j, 1);
-          point_list[3 * (localOffset + j) + 2] = localConstrainedPoints(j, 2);
-
-          point_markerlist[(localOffset + j)] = 0;
-        }
-
-        localOffset += localConstrainedPoints.rows();
-      }
+      face_markerlist[f] = numberOfVertices +
+                           numberOfConstrainedPoints +
+                           numberOfEdges +
+                           f;
     }
 
     if(constrainedFaces.size() > 0)
     {
       unsigned int localOffset = numberOfFaces;
       unsigned int localOffsetPoints = numberOfVertices;
-      for(unsigned int numConst = 0; numConst < constrainedFaces.size(); numConst++)
+      for(unsigned int numFac = 0; numFac < constrainedFaces.size(); numFac++)
       {
-        vector<VectorXi>& localConstrainedFaces = constrainedFaces[numConst];
+        const VectorXi& localIds = constrainedFaces[numFac];
+        tetgenio::facet* tetgenFace = &face_list[localOffset + numFac];
 
-        for(unsigned int numFac = 0; numFac < localConstrainedFaces.size(); numFac++)
+        tetgenFace->numberofpolygons = 1;
+        tetgenFace->polygonlist = new tetgenio::polygon[1];
+        tetgenFace->numberofholes = 0;
+        tetgenFace->holelist = NULL;
+
+        tetgenio::polygon* tetgenPolygon =  &tetgenFace->polygonlist[0];
+
+        const size_t numberFacePoints = localIds.size();
+        tetgenPolygon->numberofvertices = numberFacePoints;
+        tetgenPolygon->vertexlist = new int[tetgenPolygon->numberofvertices];
+
+        for (unsigned int v = 0; v < numberFacePoints; v++)
         {
-          VectorXi& localIds = localConstrainedFaces[numFac];
-          tetgenio::facet* tetgenFace = &face_list[localOffset + numFac];
-
-          tetgenFace->numberofpolygons = 1;
-          tetgenFace->polygonlist = new tetgenio::polygon[1];
-          tetgenFace->numberofholes = 0;
-          tetgenFace->holelist = NULL;
-
-          tetgenio::polygon* tetgenPolygon =  &tetgenFace->polygonlist[0];
-
-          const size_t numberFacePoints = localIds.size();
-          tetgenPolygon->numberofvertices = numberFacePoints;
-          tetgenPolygon->vertexlist = new int[tetgenPolygon->numberofvertices];
-
-          for (unsigned int v = 0; v < numberFacePoints; v++)
-          {
-            unsigned int vId = localIds(v) + localOffsetPoints;
-            tetgenPolygon->vertexlist[v] = vId;
-          }
-          face_markerlist[localOffset + numFac] = 0;
+          unsigned int vId = localIds(v) + localOffsetPoints;
+          tetgenPolygon->vertexlist[v] = vId;
         }
-
-        localOffset += localConstrainedFaces.size();
-        localOffsetPoints += constrainedPoints[numConst].rows();
+        face_markerlist[localOffset + numFac] = numberOfVertices +
+                                                numberOfConstrainedPoints +
+                                                numberOfEdges +
+                                                numberOfFaces +
+                                                numFac;
       }
     }
-
-    if (!unidimensionalVertexMarkers.empty())
-      memcpy(point_markerlist, unidimensionalVertexMarkers.data(), (numberOfVertices) * sizeof(int));
-    if (!unidimensionalEdgeMarkers.empty())
-      memcpy(edge_markerlist, unidimensionalEdgeMarkers.data(), (numberOfEdges) * sizeof(int));
-    if (!unidimensionalFaceMarkers.empty())
-      memcpy(face_markerlist, unidimensionalFaceMarkers.data(), (numberOfFaces) * sizeof(int));
-
-    return Output::Success;
   }
   // ***************************************************************************
-  Output::ExitCodes MeshCreator3DTetgen::CreateTetgenOutput(const Polyhedron& domain)
+  void TetgenInterface::CreateTetgenOutput(const double& maxTetrahedronArea,
+                                           tetgenio& tetgenInput,
+                                           tetgenio& tetgenOutput,
+                                           const std::string& tetgenOptions) const
   {
-    if (minimumNumberOfCells == 0 && maximumCellSize <= 0)
-    {
-      Output::PrintErrorMessage("Wrong initialization of the minimumNumberOfCells or minimumCellSize", false);
-      return Output::GenericError;
-    }
-
-    if (inputMeshPointer == NULL)
-    {
-      Output::PrintErrorMessage("No Tetgen input in domain %d", false, domain.GlobalId());
-      return Output::GenericError;
-    }
-
-    if (minimumNumberOfCells > 0 && domain.Measure() <= 0)
-    {
-      Output::PrintErrorMessage("%s: Wrong initialization of the domain %d, no measure computed", false, __func__, domain.GlobalId());
-      return Output::GenericError;
-    }
-
-    const double& domainVolume = domain.Measure();
-    double cellVolume = minimumNumberOfCells == 0 ? maximumCellSize : domainVolume / (double)minimumNumberOfCells;
+    Output::Assert(maxTetrahedronArea > 0.0);
 
     tetgenbehavior b;
 
     ostringstream options;
     options.precision(16);
     options<< tetgenOptions;
-    options<< cellVolume;
+    options<< maxTetrahedronArea;
     size_t sizeOptions = options.str().size();
     char* optionPointer = new char[sizeOptions + 1];
     options.str().copy(optionPointer, sizeOptions);
@@ -252,124 +222,48 @@ namespace GeDiM
 
     b.parse_commandline(optionPointer);
 
-    delete outputMeshPointer; outputMeshPointer = NULL;
-    outputMeshPointer = new tetgenio();
-
-    tetrahedralize(&b, inputMeshPointer, outputMeshPointer);
+    tetrahedralize(&b, &tetgenInput, &tetgenOutput);
 
     delete[] optionPointer;
-
-    return Output::Success;
   }
   // ***************************************************************************
-  Output::ExitCodes MeshCreator3DTetgen::CreateMesh(const IGeometricObject& domain,
-                                                    IMesh& mesh)
+  void TetgenInterface::ConvertTetgenOutputToMeshDAO(const tetgenio& tetgenOutput,
+                                                     IMeshDAO& mesh) const
   {
-    /// <ul>
-
-    const Polyhedron& polyhedron = static_cast<const Polyhedron&>(domain);
-    CreateUniDimMarkers();
-    CreateMappedMarkers();
-    CreateTetgenInput(polyhedron);
-    CreateTetgenOutput(polyhedron);
-
-    if (outputMeshPointer == NULL)
-    {
-      Output::PrintErrorMessage("No Tetgen ouput in domain %d", false, polyhedron.GlobalId());
-      return Output::GenericError;
-    }
-
-    const tetgenio& tetgenMesh = *outputMeshPointer;
-
     /// <li>	Fill mesh structures
-    unsigned int numberOfCellsMesh = tetgenMesh.numberoftetrahedra;
-    unsigned int numberOfFacesMesh = tetgenMesh.numberoftrifaces;
-    unsigned int numberOfEgdesMesh = tetgenMesh.numberofedges;
-    unsigned int numberOfPointsMesh = tetgenMesh.numberofpoints;
+    unsigned int numberOfCellsMesh = tetgenOutput.numberoftetrahedra;
+    unsigned int numberOfFacesMesh = tetgenOutput.numberoftrifaces;
+    unsigned int numberOfEgdesMesh = tetgenOutput.numberofedges;
+    unsigned int numberOfPointsMesh = tetgenOutput.numberofpoints;
 
-    mesh.SetDimension(3);
-    mesh.InitializeCells3D(numberOfCellsMesh);
-    mesh.InitializeCells2D(numberOfFacesMesh);
-    mesh.InitializeCells1D(numberOfEgdesMesh);
-    mesh.InitializeCells0D(numberOfPointsMesh);
-    vector<Cell3D*> cells(numberOfCellsMesh);
-    vector<Cell2D*> faces(numberOfFacesMesh);
-    vector<Cell1D*> edges(numberOfEgdesMesh);
-    vector<Cell0D*> points(numberOfPointsMesh);
+    mesh.InitializeDimension(3);
+    mesh.Cell0DsInitialize(numberOfPointsMesh);
+    mesh.Cell1DsInitialize(numberOfEgdesMesh);
+    mesh.Cell2DsInitialize(numberOfFacesMesh);
+    mesh.Cell3DsInitialize(numberOfCellsMesh);
 
-    /// <li> Set Points
+    /// <li> Set Cell0Ds
     for (unsigned int p = 0; p < numberOfPointsMesh; p++)
     {
-      points[p] = mesh.CreateCell0D();
-
-      Cell0D* point = points[p];
-
-      Vector3d point3d(tetgenMesh.pointlist[3 * p], tetgenMesh.pointlist[3 * p + 1], tetgenMesh.pointlist[3 * p + 2]);
-
-      point->SetCoordinates(point3d);
-      if(!unidimensionalVertexMarkers.empty())
-      {
-        unsigned int position = tetgenMesh.pointmarkerlist[p];
-
-        if(position == 0)
-          point->SetMarkers(vector<unsigned int>(markerDimension, 0));
-        else if (position <= mappedMarkers.size())
-          point->SetMarkers(mappedMarkers[position - 1]);
-        else
-          point->SetMarkers(vector<unsigned int>(markerDimension, position));
-      }
-      else
-      {
-        point->SetMarkers(vector<unsigned int>(markerDimension, 0));
-      }
-      point->InitializeNeighbourhood3D(4);
-      point->InitializeNeighbourhood2D(4);
-      point->InitializeNeighbourhood1D(4);
-
-
-      mesh.AddCell0D(point);
+      mesh.Cell0DSetId(p, p);
+      mesh.Cell0DSetState(p, true);
+      mesh.Cell0DInsertCoordinates(p,
+                                   Vector3d(tetgenOutput.pointlist[3 * p],
+                                   tetgenOutput.pointlist[3 * p + 1],
+          tetgenOutput.pointlist[3 * p + 2]));
+      mesh.Cell0DSetMarker(p, tetgenOutput.pointmarkerlist[p]);
     }
 
-    /// <li> Set Edges
-    SparseMatrix<int> connectivityPointsEdges(numberOfPointsMesh,numberOfPointsMesh);
-    vector< Triplet<int> > triplets;
-    triplets.reserve(numberOfEgdesMesh);
-
-    for(unsigned int ed = 0; ed < numberOfEgdesMesh; ed++)
+    /// <li> Set Cell1Ds
+    for(unsigned int e = 0; e < numberOfEgdesMesh; e++)
     {
-      edges[ed] = mesh.CreateCell1D();
-
-      Cell1D* edge = edges[ed];
-      edge->InitializeVertices(2);
-      if(!unidimensionalEdgeMarkers.empty())
-      {
-        unsigned int position = tetgenMesh.edgemarkerlist[ed];
-
-        if(position == 0)
-          edge->SetMarkers(vector<unsigned int>(markerDimension, 0));
-        else if (position <= mappedMarkers.size())
-          edge->SetMarkers(mappedMarkers[position - 1]);
-        else
-          edge->SetMarkers(vector<unsigned int>(markerDimension, position));
-      }
-      else
-      {
-        edge->SetMarkers(vector<unsigned int>(markerDimension, 0));
-      }
-      edge->InitializeNeighbourhood3D(10);
-      edge->InitializeNeighbourhood2D(10);
-
-      for(int i = 0; i < 2; i++)
-      {
-        Cell0D* point = points[tetgenMesh.edgelist[2 * ed + i]];
-        edge->AddVertex(*point);
-        point->AddNeighCell1D(*edge);
-      }
-
-      triplets.push_back(Triplet<int>(tetgenMesh.edgelist[2 * ed], tetgenMesh.edgelist[2 * ed + 1], ed + 1));
-      mesh.AddCell1D(edge);
+      mesh.Cell1DSetId(e, e);
+      mesh.Cell1DInsertExtremes(e,
+                                tetgenOutput.edgelist[2 * e + 0],
+          tetgenOutput.edgelist[2 * e + 1]);
+      mesh.Cell1DSetState(e, true);
+      mesh.Cell1DSetMarker(e, tetgenOutput.edgemarkerlist[e]);
     }
-    connectivityPointsEdges.setFromTriplets(triplets.begin(), triplets.end());
 
     /// <li> Set Faces
     vector<unsigned int> vertices(3);
@@ -381,79 +275,38 @@ namespace GeDiM
     tripletsFaces.reserve(numberOfFacesMesh);
     for(unsigned int f = 0; f < numberOfFacesMesh; f++)
     {
-      faces[f] = mesh.CreateCell2D();
+      const unsigned int numCell2DVertices = 3;
+      mesh.Cell2DInitializeVertices(f, numCell2DVertices);
+      mesh.Cell2DInitializeEdges(f, numCell2DVertices);
 
-      Cell2D* face = faces[f];
-
-      face->AllocateNeighCell3D(2);
-      face->InitializeEdges(3);
-      face->AllocateVertices(3);
-      face->SetType(Polygon::Triangle);
-
-      if(!unidimensionalFaceMarkers.empty())
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
       {
-        unsigned int position = tetgenMesh.trifacemarkerlist[f];
+        const unsigned int vertexId = tetgenOutput.trifacelist[3 * f + v];
+        const unsigned int nextVertexId = tetgenOutput.trifacelist[3 * f + (v + 1) % 3];
+        const unsigned int edgeId = mesh.Cell1DExists(vertexId,
+                                                      nextVertexId) ?
+                                      mesh.Cell1DByExtremes(vertexId,
+                                                            nextVertexId) :
+                                      mesh.Cell1DByExtremes(nextVertexId,
+                                                            vertexId);
+        vertices[v] = vertexId;
 
-        if(position == 0)
-          face->SetMarkers(vector<unsigned int>(markerDimension, 0));
-        else if (position <= mappedMarkers.size())
-          face->SetMarkers(mappedMarkers[position - 1]);
-        else
-          face->SetMarkers(vector<unsigned int>(markerDimension, position));
-      }
-      else
-      {
-        face->SetMarkers(vector<unsigned int>(markerDimension, 0));
+        mesh.Cell2DInsertVertex(f, v, vertexId);
+        mesh.Cell2DInsertEdge(f, v, edgeId);
       }
 
-      for (unsigned int j = 0; j < 3; j++)
-      {
-        vertices[j] = tetgenMesh.trifacelist[3 * f + j];
-        Cell0D* point = points[vertices[j]];
-        face->InsertVertex(*point, j);
-        point->AddNeighCell2D(*face);
-      }
+      mesh.Cell2DSetId(f, f);
+      mesh.Cell2DSetState(f, true);
+      mesh.Cell2DSetMarker(f,
+                           tetgenOutput.trifacemarkerlist[f]);
 
-      face->ComputePlane();
-
-      sort(vertices.begin(),vertices.end());
+      sort(vertices.begin(), vertices.end());
       unsigned long indexI = vertices[0];
       unsigned long indexJK = (vertices[1] + vertices[2]) * (vertices[1] + vertices[2] + 1) * 0.5 + vertices[2] + 1 ;
-      tripletsFaces.push_back(Triplet<int, unsigned long>(indexI, indexJK, f + 1));
+      tripletsFaces.push_back(Triplet<int, unsigned long>(indexI,
+                                                          indexJK,
+                                                          f + 1));
 
-      for (unsigned int j = 0; j < 3; j++)
-      {
-        const Point* firstPoint = face->Vertex(j);
-        const Point* secondPoint = face->Vertex((j + 1) % 3);
-        edgeEndPoints[0] = firstPoint->Id();
-        edgeEndPoints[1] = secondPoint->Id();
-
-        int value = 0;
-        value = connectivityPointsEdges.coeff(edgeEndPoints[0], edgeEndPoints[1]) - 1;
-        if(value < 0)
-          value = connectivityPointsEdges.coeff(edgeEndPoints[1], edgeEndPoints[0]) - 1;
-
-        face->AddEdge(*edges[value]);
-
-        if(tetgenMesh.trifacemarkerlist[f] != 0)
-        {
-          if(tetgenMesh.edgemarkerlist[value] == 0)
-          {
-            Cell1D* edge = edges[value];
-            unsigned int position = tetgenMesh.trifacemarkerlist[f];
-
-            if(position == 0)
-              edge->SetMarkers(vector<unsigned int>(markerDimension, 0));
-            else if (position <= mappedMarkers.size())
-              edge->SetMarkers(mappedMarkers[position - 1]);
-            else
-              edge->SetMarkers(vector<unsigned int>(markerDimension, position));
-          }
-        }
-        Cell1D& segment = *edges[value];
-        segment.AddNeighCell2D(*face);
-      }
-      mesh.AddCell2D(face);
     }
 
     connectivityPointsFaces.setFromTriplets(tripletsFaces.begin(), tripletsFaces.end());
@@ -463,103 +316,31 @@ namespace GeDiM
     vector<unsigned int> faceVertices(3);
     for (unsigned int c = 0; c < numberOfCellsMesh; c++)
     {
-      cells[c] = mesh.CreateCell3D();
+      const unsigned int numVertices = 4;
+      const unsigned int numEdges = 6;
+      const unsigned int numFaces = 4;
 
-      Cell3D* cell = cells[c];
+      mesh.Cell3DInitializeVertices(c, numVertices);
+      mesh.Cell3DInitializeEdges(c, numEdges);
+      mesh.Cell3DInitializeFaces(c, numFaces);
 
-      cell->SetMarkers(vector<unsigned int>(markerDimension, 0));
-      cell->AllocateVertices(4);
-      cell->AllocateNeighCell3D(4);
-      cell->AllocateFaces(4);
-      cell->InitializeEdges(6);
-      cell->SetType(Polyhedron::Tetrahedron);
-      cell->AllocateNormalSign();
+      for (unsigned int v = 0; v < numVertices; v++)
+        mesh.Cell3DInsertVertex(0, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
+      for (unsigned int e = 0; e < numEdges; e++)
+        mesh.Cell3DInsertEdge(0, e, e); // TODO: fix here
+      for (unsigned int f = 0; f < numFaces; f++)
+        mesh.Cell3DInsertFace(0, f, f); // TODO: fix here
 
-      for (int i = 0; i < 4; i++)
-      {
-        Cell0D* point = points[tetgenMesh.tetrahedronlist[tetgenMesh.numberofcorners * c + i]];
-        cell->InsertVertex(*point, i);
-        point->AddNeighCell3D(*cell);
-      }
-      Point barycenter;
-      cell->ComputeBarycenter(barycenter);
-
-      for (unsigned int j = 0; j < 4; j++)
-      {
-        for(unsigned int k = 0; k < 3; k++)
-        {
-          const Point* point =(cell->Vertex((j + k) % 4));
-          faceVertices[k] = point->Id();
-        }
-
-        sort(faceVertices.begin(),faceVertices.end());
-        unsigned int indexI = faceVertices[0];
-        unsigned int indexJK = (faceVertices[1] + faceVertices[2]) * (faceVertices[1] + faceVertices[2] + 1) * 0.5 + faceVertices[2] + 1 ;
-
-        int faceId = connectivityPointsFaces.coeff(indexI, indexJK) - 1;
-        Cell2D& face = *faces[faceId];
-        cell->InsertFace(*faces[faceId], j);
-
-        if(face.PointInPlane(barycenter) == Polygon::Negative)
-        {
-          face.InsertNeighCell3D(*cell, 1);
-          cell->SetNormalSign(true, j);
-        }
-        else
-        {
-          face.InsertNeighCell3D(*cell, 0);
-          cell->SetNormalSign(false, j);
-        }
-
-        if (j < 3)
-        {
-          for(unsigned int k = 0; k < 3; k++)
-          {
-            bool flag = true;
-            unsigned int pos = 0;
-
-            while (pos < cell->NumberOfEdges() && flag)
-            {
-              const Polygon* poly = cell->Face(j);
-              flag = poly->Edge(k) != cell->Edge(pos++);
-            }
-
-            if(flag)
-            {
-              cell->AddEdge(*(cell->Face(j)->Edge(k)));
-              const Cell1D* edge = static_cast<const Cell1D*>(cell->Face(j)->Edge(k));
-              edges[edge->Id()]->AddNeighCell3D(*cell);
-            }
-          }
-        }
-      }
-
-      mesh.AddCell3D(cell);
+      mesh.Cell3DSetId(c, c);
+      mesh.Cell3DSetState(c, true);
+      mesh.Cell3DSetMarker(c, c);
     }
-    if ( outputMeshPointer->neighborlist != NULL)
-    {
-      for (unsigned int c = 0; c < numberOfCellsMesh; c++)
-      {
-        Cell3D* cell = cells[c];
-
-        for (int i = 0; i < 4; i++)
-        {
-          if (outputMeshPointer->neighborlist[tetgenMesh.numberofcorners * c + i] > -1)
-          {
-            Cell3D* cellNeigh = cells[tetgenMesh.neighborlist[4 * c + i]];
-            cell->InsertNeighCell3D(*cellNeigh, (i+1)%4);
-          }
-        }
-      }
-    }
-    return Output::Success;
-
   }
   // ***************************************************************************
-  Output::ExitCodes MeshCreator3DTetgen::ExportTetgenMesh(const string& nameFolder, const string& nameFile) const
+  void TetgenInterface::ExportTetgenOutput(const string& nameFolder,
+                                           const string& nameFile,
+                                           tetgenio& tetgenOutput) const
   {
-    if (outputMeshPointer == NULL)
-      return Output::GenericError;
 
     ostringstream nameFolderStream, nameFileStream;
 
@@ -572,135 +353,11 @@ namespace GeDiM
 
     Output::CreateFolder(nameFolderStream.str());
 
-    outputMeshPointer->firstnumber = 0;
-    outputMeshPointer->save_nodes((char*)nameFileStream.str().c_str());
-    outputMeshPointer->save_elements((char*)nameFileStream.str().c_str());
-    outputMeshPointer->save_faces((char*)nameFileStream.str().c_str());
-    outputMeshPointer->save_edges((char*)nameFileStream.str().c_str());
-
-    return Output::Success;
+    tetgenOutput.firstnumber = 0;
+    tetgenOutput.save_nodes((char*)nameFileStream.str().c_str());
+    tetgenOutput.save_elements((char*)nameFileStream.str().c_str());
+    tetgenOutput.save_faces((char*)nameFileStream.str().c_str());
+    tetgenOutput.save_edges((char*)nameFileStream.str().c_str());
   }
-  // ***************************************************************************
-  /*Output::ExitCodes TetgenVemInterface::TetgenToVemMesh(const tetgenio& tetgenMesh, VemMesh& mesh) const
-    {
-    /// Add Points
-    mesh.InitializePoints(tetgenMesh.numberofpoints);
-    for(unsigned int i = 0; i < tetgenMesh.numberofpoints; i++)
-    {
-    VemPoint& point = *(mesh.CreatePoint());
-    point.SetCoordinates(tetgenMesh.pointlist[3*i],tetgenMesh.pointlist[3*i+1],tetgenMesh.pointlist[3*i+2]);
-    point.SetMarker(tetgenMesh.pointmarkerlist[i]);
-    mesh.AddPoint(&point);
-    }
-
-    /// Add Edges
-    mesh.InitializeEdges(tetgenMesh.numberofedges);
-    map< vector<unsigned int> , unsigned int > endpointsToEdge;
-    vector<unsigned int> endpoints (2);
-    for(unsigned int i = 0; i < tetgenMesh.numberofedges; i++)
-    {
-    VemEdge& edge = *(mesh.CreateEdge());
-    endpoints[0] = tetgenMesh.edgelist[2*i];
-    endpoints[1] = tetgenMesh.edgelist[2*i+1];
-    edge.AddPoint(mesh.Point(endpoints[0]));
-    edge.AddPoint(mesh.Point(endpoints[1]));
-    sort(endpoints.begin(),endpoints.end());
-    endpointsToEdge.insert(std::pair< vector<unsigned int>, unsigned int>(endpoints, edge.Id()));
-    edge.SetMarker(tetgenMesh.edgemarkerlist[i]);
-    mesh.AddEdge(&edge);
-    }
-
-    /// Add Faces
-    map< vector<unsigned int> , unsigned int > verticesToFace;
-    vector<unsigned int> vertices (3);
-    mesh.InitializeFaces(tetgenMesh.numberoftrifaces);
-    for(unsigned int i = 0; i < tetgenMesh.numberoftrifaces; i++)
-    {
-    VemFace& face = *(mesh.CreateFace());
-    face.InitializePoints(3);
-    /// Points
-    for(unsigned int j = 0; j < 3; j++)
-    {
-    vertices[j] = tetgenMesh.trifacelist[3*i+j];
-    face.AddPoint(mesh.Point(vertices[j]));
-    }
-    sort(vertices.begin(),vertices.end());
-    verticesToFace.insert(std::pair< vector<unsigned int>, unsigned int >(vertices, face.Id()));
-    /// Edges
-    vector<unsigned int> edgeEndPoints (2);
-    face.InitializeEdges(3);
-    for(unsigned int j = 0; j < 3; j++)
-    {
-    edgeEndPoints[0] = face.Point(j)->Id();
-    edgeEndPoints[1] = face.Point((j+1)%3)->Id();
-    sort(edgeEndPoints.begin(),edgeEndPoints.end());
-    if(endpointsToEdge.find(edgeEndPoints)==endpointsToEdge.end())
-    {
-    Output::PrintErrorMessage("%s: error retrieving an edge when adding edges to faces", true, __func__);
-    exit(-1);
-    }
-    face.AddEdge(mesh.Edge(endpointsToEdge.find(edgeEndPoints)->second));
-    }
-    face.SetMarker(tetgenMesh.trifacemarkerlist[i]);
-    face.InitializeCells(2);
-    mesh.AddFace(&face);
-    }
-
-    /// Add Cells
-    mesh.InitializeCells(tetgenMesh.numberoftetrahedra);
-    map<vector<unsigned int> , unsigned int>::iterator verticesToFace_iterator;
-    for(unsigned int i = 0; i < tetgenMesh.numberoftetrahedra; i++)
-    {
-    VemCell& cell = *(mesh.CreateCell3D());
-    /// Points
-    cell.InitializePoints(4);
-    bool flag = false;
-    cell.AddPoint(mesh.Point(tetgenMesh.tetrahedronlist[tetgenMesh.numberofcorners*i]));
-    cell.AddPoint(mesh.Point(tetgenMesh.tetrahedronlist[tetgenMesh.numberofcorners*i+1]));
-    cell.AddPoint(mesh.Point(tetgenMesh.tetrahedronlist[tetgenMesh.numberofcorners*i+2]));
-    cell.AddPoint(mesh.Point(tetgenMesh.tetrahedronlist[tetgenMesh.numberofcorners*i+3]));
-    /// Faces and Edges
-    cell.InitializeFaces(4);
-    cell.InitializeEdges(6);
-    vector<unsigned int> faceVertices (3);
-    for(unsigned int j = 0; j < 4; j++)
-    {
-    for(unsigned int k = 0; k < 3; k++)
-    faceVertices[k] = cell.Point((j+k)%4)->Id();
-    sort(faceVertices.begin(),faceVertices.end());
-    verticesToFace_iterator = verticesToFace.find(faceVertices);
-    if(verticesToFace_iterator != verticesToFace.end())
-    {
-    unsigned int faceId = verticesToFace_iterator->second;
-    cell.AddFace(mesh.Face(faceId));
-    mesh.AddFaceNeighbourCell( faceId, &cell );
-    }
-    else
-    {
-    Output::PrintErrorMessage("%s: error retrieving faces when adding faces to cells", true, __func__);
-    exit(-1);
-    }
-    if(j < 3)
-    {
-    for(unsigned int k = 0; k < 3; k++)
-    {
-    bool flag = true;
-    unsigned int pos = 0;
-    while(pos < cell.NumberOfEdges() && flag)
-    flag = cell.Face(j)->Edge(k) != cell.Edge(pos++);
-    if(flag)
-    cell.AddEdge(cell.Face(j)->Edge(k));
-    }
-    }
-    }
-    if(cell.NumberOfEdges() != 6)
-    {
-    Output::PrintErrorMessage("%s: error retrieving edges when adding edges to cells", true, __func__);
-    exit(-1);
-    }
-    mesh.AddCell(&cell);
-    }
-    return Output::Success;
-    }*/
   // ***************************************************************************
 }

@@ -1,6 +1,7 @@
 #include "MeshUtilities.hpp"
 
 #include "TriangleInterface.hpp"
+#include "TetgenInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "MapTetrahedron.hpp"
 
@@ -1088,6 +1089,21 @@ namespace Gedim
     triangleInterface.CreateMesh(polygonVertices,
                                  maxTriangleArea,
                                  mesh);
+  }
+  // ***************************************************************************
+  void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd& polyhedronVertices,
+                                            const Eigen::MatrixXi& polyhedronEdges,
+                                            const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                            const double& maxTetrahedronVolume,
+                                            IMeshDAO& mesh) const
+  {
+    TetgenInterface tetgenInterface;
+
+    tetgenInterface.CreateMesh(polyhedronVertices,
+                               polyhedronEdges,
+                               polyhedronFaces,
+                               maxTetrahedronVolume,
+                               mesh);
   }
   // ***************************************************************************
   void MeshUtilities::ChangePolygonMeshMarkers(const Eigen::MatrixXd& polygonVertices,

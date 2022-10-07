@@ -1,41 +1,52 @@
-#ifndef __MESHCREATOR3DTETGEN_H
-#define __MESHCREATOR3DTETGEN_H
+#ifndef __TetgenInterface_H
+#define __TetgenInterface_H
 
-#include "MeshCreator.hpp"
+#include "IMeshDAO.hpp"
 #include "tetgen.h"
+#include "Eigen/Eigen"
 
-using namespace std;
-using namespace Eigen;
-using namespace MainApplication;
-
-namespace GeDiM
+namespace Gedim
 {
-  class MeshCreator3DTetgen : public MeshCreator
+  /// \brief The Tetgen Interface
+  /// \see http://wias-berlin.de/software/tetgen/files/tetcall.cxx
+  class TetgenInterface final
   {
     protected:
-      tetgenio* inputMeshPointer;
-      tetgenio* outputMeshPointer;
 
-      string tetgenOptions;
+      std::string tetgenOptions;
 
-      // http://wias-berlin.de/software/tetgen/files/tetcall.cxx
-      void SetInputMesh(tetgenio* _inputMeshPointer) { inputMeshPointer = _inputMeshPointer; }
-      void SetOutputMesh(tetgenio* _outputMeshPointer) { outputMeshPointer = _outputMeshPointer; }
-      void SetTetgenOptions(const string& _tetgenOptions) { tetgenOptions = _tetgenOptions; }
 
-      Output::ExitCodes CreateTetgenInput(const Polyhedron& domain);
-      Output::ExitCodes CreateTetgenOutput(const Polyhedron& domain);
+      void CreateTetgenInput(const Eigen::MatrixXd& polyhedronVertices,
+                             const Eigen::MatrixXi& polyhedronEdges,
+                             const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                             tetgenio& tetgenInput,
+                             const Eigen::MatrixXd& constrainedPoints = Eigen::MatrixXd(),
+                             const std::vector<Eigen::VectorXi>& constrainedFaces = std::vector<Eigen::VectorXi>()) const;
+      void CreateTetgenOutput(const double& maxTetrahedronArea,
+                              tetgenio& tetgenInput,
+                              tetgenio& tetgenOutput,
+                              const std::string& tetgenOptions = "Qpqfezna") const;
+      void ConvertTetgenOutputToMeshDAO(const tetgenio& tetgenOutput,
+                                        IMeshDAO& mesh) const;
+
+      void DeleteTetgenStructure(tetgenio& tetgenInput,
+                                 tetgenio& tetgenOutput) const;
 
     public:
-      MeshCreator3DTetgen();
-      virtual ~MeshCreator3DTetgen();
+      TetgenInterface();
+      ~TetgenInterface();
 
-      Output::ExitCodes CreateMesh(const IGeometricObject& domain,
-                                   IMesh& mesh);
+      void CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
+                      const Eigen::MatrixXi& polyhedronEdges,
+                      const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                      const double& maxTetrahedronVolume,
+                      IMeshDAO& mesh) const;
 
-      Output::ExitCodes ExportTetgenMesh(const string& nameFolder, const string& nameFile) const;
+      void ExportTetgenOutput(const std::string& nameFolder,
+                              const std::string& nameFile,
+                              tetgenio& tetgenOutput) const;
   };
 
 }
 
-#endif // __MESHCREATOR3DTETGEN_H
+#endif // __TetgenInterface_H
