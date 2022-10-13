@@ -127,13 +127,13 @@ namespace Gedim
 
         if (result.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin)
         {
-          if (find(newPoint.Vertex2DIds.begin(), newPoint.Vertex2DIds.end(), edgeOriginId) == newPoint.Vertex2DIds.end())
-            newPoint.Vertex2DIds.push_back(edgeOriginId);
+          if (newPoint.Vertex2DIds.find(edgeOriginId) == newPoint.Vertex2DIds.end())
+            newPoint.Vertex2DIds.insert(edgeOriginId);
         }
         else if (result.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd)
         {
-          if (find(newPoint.Vertex2DIds.begin(), newPoint.Vertex2DIds.end(), edgeEndId) == newPoint.Vertex2DIds.end())
-            newPoint.Vertex2DIds.push_back(edgeEndId);
+          if (newPoint.Vertex2DIds.find(edgeEndId) == newPoint.Vertex2DIds.end())
+            newPoint.Vertex2DIds.insert(edgeEndId);
         }
       }
     }
@@ -194,13 +194,13 @@ namespace Gedim
 
         if (result.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin)
         {
-          if (find(newPoint.Vertex2DIds.begin(), newPoint.Vertex2DIds.end(), edgeOriginId) == newPoint.Vertex2DIds.end())
-            newPoint.Vertex2DIds.push_back(edgeOriginId);
+          if (newPoint.Vertex2DIds.find(edgeOriginId) == newPoint.Vertex2DIds.end())
+            newPoint.Vertex2DIds.insert(edgeOriginId);
         }
         else if (result.SecondSegmentIntersections[0].Type == GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd)
         {
-          if (find(newPoint.Vertex2DIds.begin(), newPoint.Vertex2DIds.end(), edgeEndId) == newPoint.Vertex2DIds.end())
-            newPoint.Vertex2DIds.push_back(edgeEndId);
+          if (newPoint.Vertex2DIds.find(edgeEndId) == newPoint.Vertex2DIds.end())
+            newPoint.Vertex2DIds.insert(edgeEndId);
         }
       }
     }
@@ -352,7 +352,7 @@ namespace Gedim
     if (origin.Vertex2DIds.size() == 1)
     {
       splitInput.Segment.Origin.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
-      splitInput.Segment.Origin.Index = cell2DMesh2DVerticesMap.at(origin.Vertex2DIds.front());
+      splitInput.Segment.Origin.Index = cell2DMesh2DVerticesMap.at(*origin.Vertex2DIds.rbegin());
     }
     else if (origin.Vertex2DIds.size() == 0)
     {
@@ -366,7 +366,7 @@ namespace Gedim
     if (end.Vertex2DIds.size() == 1)
     {
       splitInput.Segment.End.Type = GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types::Vertex;
-      splitInput.Segment.End.Index = cell2DMesh2DVerticesMap.at(end.Vertex2DIds.front());
+      splitInput.Segment.End.Index = cell2DMesh2DVerticesMap.at(*end.Vertex2DIds.rbegin());
     }
     else if (end.Vertex2DIds.size() == 0)
     {
@@ -441,7 +441,7 @@ namespace Gedim
         mesh2D.Cell0DSetMarker(v, 0);
         mesh2D.Cell0DSetState(v, true);
 
-        originCell0DMesh1D.Vertex2DIds.push_back(v);
+        originCell0DMesh1D.Vertex2DIds.insert(v);
       }
       else if (newVertex.Type == GeometryUtilities::SplitPolygonWithSegmentResult::NewVertex::Types::SegmentEnd)
       {
@@ -450,7 +450,7 @@ namespace Gedim
         mesh2D.Cell0DSetMarker(v, 0);
         mesh2D.Cell0DSetState(v, true);
 
-        endCell0DMesh1D.Vertex2DIds.push_back(v);
+        endCell0DMesh1D.Vertex2DIds.insert(v);
       }
       else
         throw runtime_error("New cell0d of mesh2D not recognized");
@@ -484,14 +484,14 @@ namespace Gedim
       mesh2D.Cell1DSetState(e, true);
 
       // update conform mesh 1D
-      if (originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
-          originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e))
+      if (*originCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DOrigin(e) ||
+          *originCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DEnd(e))
       {
         originCell0DMesh1D.Edge2DIds.insert(e);
       }
 
-      if (endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
-          endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e))
+      if (*endCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DOrigin(e) ||
+          *endCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DEnd(e))
       {
         endCell0DMesh1D.Edge2DIds.insert(e);
       }
@@ -541,10 +541,10 @@ namespace Gedim
 
         if (splitResult.Type == GeometryUtilities::SplitPolygonWithSegmentResult::Types::PolygonUpdate)
         {
-          if ((originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
-               originCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e)) &&
-              (endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DOrigin(e) ||
-               endCell0DMesh1D.Vertex2DIds.front() == mesh2D.Cell1DEnd(e)))
+          if ((*originCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DOrigin(e) ||
+               *originCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DEnd(e)) &&
+              (*endCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DOrigin(e) ||
+               *endCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DEnd(e)))
           {
             for (const unsigned int& mesh1DCell1DId : cell1DMesh1DIds)
               mesh1D.Segments[mesh1DCell1DId].Edge2DIds.push_back(e);
@@ -705,7 +705,7 @@ namespace Gedim
         mesh2D.Cell0DSetState(v, true);
 
         // update mesh1D
-        originCell0DMesh1D.Vertex2DIds.push_back(v);
+        originCell0DMesh1D.Vertex2DIds.insert(v);
 
         isCell2DMesh2DToUpdate = true;
       }
@@ -737,8 +737,8 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
 
-      const unsigned int originSegmentMesh2DCell0D = originCell0DMesh1D.Vertex2DIds.back();
-      const unsigned int endSegmentMesh2DCell0D = endCell0DMesh1D.Vertex2DIds.back();
+      const unsigned int originSegmentMesh2DCell0D = *originCell0DMesh1D.Vertex2DIds.rbegin();
+      const unsigned int endSegmentMesh2DCell0D = *endCell0DMesh1D.Vertex2DIds.rbegin();
 
       // check order of edge and segment
       bool edgeListDirection = true;
@@ -781,8 +781,8 @@ namespace Gedim
         end.Edge2DIds.insert(newCell1DMesh2DId);
         cell1DMesh1D.Edge2DIds.push_back(newCell1DMesh2DId);
 
-        const unsigned int originCell1D = origin.Vertex2DIds.back();
-        const unsigned int endCell1D = end.Vertex2DIds.back();
+        const unsigned int originCell1D = *origin.Vertex2DIds.rbegin();
+        const unsigned int endCell1D = *end.Vertex2DIds.rbegin();
 
         // add new Cell1Ds on Mesh2D
         mesh2D.Cell1DInsertExtremes(newCell1DMesh2DId,
@@ -918,8 +918,8 @@ namespace Gedim
 
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& originSegment = mesh1D.Segments[cell1DMesh1DIds.front()];
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& endSegment = mesh1D.Segments[cell1DMesh1DIds.back()];
-    const unsigned int originSegmentMesh2DCell0D = mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.back();
-    const unsigned int endSegmentMesh2DCell0D = mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.back();
+    const unsigned int originSegmentMesh2DCell0D = *mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.rbegin();
+    const unsigned int endSegmentMesh2DCell0D = *mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.rbegin();
 
     unsigned int cell1DMesh2DToUpdate = originSegment.Edge2DIds.back();
 
@@ -981,7 +981,7 @@ namespace Gedim
 
       // update mesh 1D
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
-      origin.Vertex2DIds.push_back(v);
+      origin.Vertex2DIds.insert(v);
 
       newCell0DMesh2Ds[counter] = v;
 
@@ -1117,8 +1117,8 @@ namespace Gedim
 
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& originSegment = mesh1D.Segments[cell1DMesh1DIds.front()];
     const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& endSegment = mesh1D.Segments[cell1DMesh1DIds.back()];
-    const unsigned int originSegmentMesh2DCell0D = mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.back();
-    const unsigned int endSegmentMesh2DCell0D = mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.back();
+    const unsigned int originSegmentMesh2DCell0D = *mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.rbegin();
+    const unsigned int endSegmentMesh2DCell0D = *mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.rbegin();
 
     unsigned int cell1DMesh2DToUpdate = originSegment.Edge2DIds.back();
 
@@ -1180,7 +1180,7 @@ namespace Gedim
 
       // update mesh 1D
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
-      origin.Vertex2DIds.push_back(v);
+      origin.Vertex2DIds.insert(v);
 
       newCell0DMesh2Ds[counter] = v;
 

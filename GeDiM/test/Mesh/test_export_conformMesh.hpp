@@ -212,7 +212,7 @@ namespace GedimUnitTesting
         segmentMesh.Points.at(2.7084084009418125e-01).Cell2DIds.insert(3);
         segmentMesh.Points.at(2.8618524662562461e-01).Cell2DIds.insert(3);
         segmentMesh.Points.at(2.9736416870129134e-01).Cell2DIds.insert(3);
-        segmentMesh.Points.at(3.5907750767017105e-01).Vertex2DIds.push_back(40);
+        segmentMesh.Points.at(3.5907750767017105e-01).Vertex2DIds.insert(40);
         segmentMesh.Points.at(3.5907750767017105e-01).Edge2DIds.insert(43);
         segmentMesh.Points.at(3.5907750767017105e-01).Edge2DIds.insert(44);
         segmentMesh.Points.at(3.5907750767017105e-01).Cell2DIds.insert(3);

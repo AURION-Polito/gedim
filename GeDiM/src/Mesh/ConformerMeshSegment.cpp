@@ -114,8 +114,7 @@ namespace Gedim
         const IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint& intersectionPoint = itIntersectionPoint->second;
         conformPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::Original;
 
-        conformPoint.Vertex2DIds.resize(intersectionPoint.Vertex2DIds.size());
-        copy(intersectionPoint.Vertex2DIds.begin(), intersectionPoint.Vertex2DIds.end(), conformPoint.Vertex2DIds.begin());
+        conformPoint.Vertex2DIds = intersectionPoint.Vertex2DIds; // copy assignment
         conformPoint.Edge2DIds = intersectionPoint.Edge2DIds; // copy assignment
         conformPoint.Cell2DIds = intersectionPoint.Cell2DIds; // copy assignment
 
@@ -273,7 +272,7 @@ namespace Gedim
       {
         unsigned int pointVertex;
         is >>pointVertex;
-        point.Vertex2DIds.push_back(pointVertex);
+        point.Vertex2DIds.insert(pointVertex);
       }
 
       unsigned int pointEdgesSize = 0;
@@ -386,12 +385,12 @@ namespace Gedim
         const unsigned int edgeToInsert = mesh2D.Cell2DEdge(c, pointPolygonPositionResult.BorderIndex);
         const unsigned int previousEdgeToInsert = mesh2D.Cell2DEdge(c, (previousVertex < 0) ? mesh2D.Cell2DNumberVertices(c) - 1 :
                                                                                               previousVertex);
-        if (find(newPoint.Vertex2DIds.begin(), newPoint.Vertex2DIds.end(), vertexToInsert) == newPoint.Vertex2DIds.end())
-          newPoint.Vertex2DIds.push_back(vertexToInsert);
-        if (find(newPoint.Edge2DIds.begin(), newPoint.Edge2DIds.end(), edgeToInsert) == newPoint.Edge2DIds.end())
-          newPoint.Vertex2DIds.push_back(edgeToInsert);
-        if (find(newPoint.Edge2DIds.begin(), newPoint.Edge2DIds.end(), previousEdgeToInsert) == newPoint.Edge2DIds.end())
-          newPoint.Vertex2DIds.push_back(previousEdgeToInsert);
+        if (newPoint.Vertex2DIds.find(vertexToInsert) == newPoint.Vertex2DIds.end())
+          newPoint.Vertex2DIds.insert(vertexToInsert);
+        if (newPoint.Edge2DIds.find(edgeToInsert) == newPoint.Edge2DIds.end())
+          newPoint.Vertex2DIds.insert(edgeToInsert);
+        if (newPoint.Edge2DIds.find(previousEdgeToInsert) == newPoint.Edge2DIds.end())
+          newPoint.Vertex2DIds.insert(previousEdgeToInsert);
       }
     }
 
@@ -422,11 +421,11 @@ namespace Gedim
             newCell0DIndices.push_back(nv);
         }
         for (const unsigned int& nv : newCell0DIndices)
-          point.Vertex2DIds.push_back(nv);
+          point.Vertex2DIds.insert(nv);
       }
 
       Output::Assert(point.Vertex2DIds.size() == 1);
-      const unsigned int mesh2DCell0DIndex = point.Vertex2DIds.front();
+      const unsigned int mesh2DCell0DIndex = *point.Vertex2DIds.rbegin();
 
       {
         list<unsigned int> newCell1DIndices;
@@ -539,13 +538,14 @@ namespace Gedim
     {
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& point = it->second;
 
-      point.Vertex2DIds.remove_if([activeMesh2DData](unsigned int& cell0DIndex){
-        return activeMesh2DData.OldCell0DToNewCell0D.find(cell0DIndex) == activeMesh2DData.OldCell0DToNewCell0D.end();
-      });
-      for_each(point.Vertex2DIds.begin(), point.Vertex2DIds.end(),
-               [activeMesh2DData](unsigned int& s) {
-        s = activeMesh2DData.OldCell0DToNewCell0D.at(s);
-      });
+      set<unsigned int> newVertex2DIds;
+      for (const auto& vertexId : point.Vertex2DIds)
+      {
+        if (activeMesh2DData.OldCell0DToNewCell0D.find(vertexId) != activeMesh2DData.OldCell0DToNewCell0D.end())
+          newVertex2DIds.insert(activeMesh2DData.OldCell0DToNewCell0D.at(vertexId));
+      }
+      point.Vertex2DIds.clear();
+      point.Vertex2DIds = newVertex2DIds;
 
       set<unsigned int> newEdge2DIds;
       for (const auto& edgeId : point.Edge2DIds)
@@ -623,7 +623,7 @@ namespace Gedim
       Output::Assert(!found);
 
       conformPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::Original;
-      conformPoint.Vertex2DIds.push_back(meshCell0DIndex);
+      conformPoint.Vertex2DIds.insert(meshCell0DIndex);
       conformPoint.Edge2DIds.insert(cell1DOneIndex);
       conformPoint.Edge2DIds.insert(cell1DTwoIndex);
 

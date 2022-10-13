@@ -28,7 +28,7 @@ namespace Gedim
 
               set<unsigned int> Cell2DIds = {};
               set<unsigned int> Edge2DIds = {};
-              list<unsigned int> Vertex2DIds = {};
+              set<unsigned int> Vertex2DIds = {};
               Types Type;
           };
 

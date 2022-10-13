@@ -312,6 +312,7 @@ namespace Gedim
         {
           const unsigned int eO = convexMesh.Cell2DVertex(p, v);
           const unsigned int eE = convexMesh.Cell2DVertex(p, (v + 1) % convexMesh.Cell2DNumberVertices(p));
+          Output::Assert(convexMesh.Cell1DExists(eO, eE) || convexMesh.Cell1DExists(eE, eO));
           const unsigned int edgeFromVertices = convexMesh.Cell1DExists(eO, eE) ? convexMesh.Cell1DByExtremes(eO, eE) :
                                                                                   convexMesh.Cell1DByExtremes(eE, eO);
           Output::Assert(convexMesh.Cell2DEdge(p, v) == edgeFromVertices);
