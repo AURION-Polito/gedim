@@ -240,26 +240,18 @@ namespace GedimUnitTesting
         segmentMesh.Segments[10].Points = vector<double> { 4.3798874569320156e-01, 6.6913757867999368e-01 };
         segmentMesh.Segments[11].Points = vector<double> { 6.6913757867999368e-01, 1.0000000000000000e+00 };
 
-        segmentMesh.Segments[0].Cell2DIds.push_back(3);
-        segmentMesh.Segments[0].Cell2DIds.push_back(3);
-        segmentMesh.Segments[1].Cell2DIds.push_back(3);
-        segmentMesh.Segments[1].Cell2DIds.push_back(3);
-        segmentMesh.Segments[2].Cell2DIds.push_back(3);
-        segmentMesh.Segments[2].Cell2DIds.push_back(3);
-        segmentMesh.Segments[3].Cell2DIds.push_back(3);
-        segmentMesh.Segments[3].Cell2DIds.push_back(3);
-        segmentMesh.Segments[4].Cell2DIds.push_back(3);
-        segmentMesh.Segments[4].Cell2DIds.push_back(3);
-        segmentMesh.Segments[5].Cell2DIds.push_back(3);
-        segmentMesh.Segments[5].Cell2DIds.push_back(3);
-        segmentMesh.Segments[6].Cell2DIds.push_back(3);
-        segmentMesh.Segments[7].Cell2DIds.push_back(3);
-        segmentMesh.Segments[8].Cell2DIds.push_back(4);
-        segmentMesh.Segments[8].Cell2DIds.push_back(4);
-        segmentMesh.Segments[9].Cell2DIds.push_back(4);
-        segmentMesh.Segments[9].Cell2DIds.push_back(4);
-        segmentMesh.Segments[10].Cell2DIds.push_back(4);
-        segmentMesh.Segments[11].Cell2DIds.push_back(4);
+        segmentMesh.Segments[0].Cell2DIds.insert(3);
+        segmentMesh.Segments[1].Cell2DIds.insert(3);
+        segmentMesh.Segments[2].Cell2DIds.insert(3);
+        segmentMesh.Segments[3].Cell2DIds.insert(3);
+        segmentMesh.Segments[4].Cell2DIds.insert(3);
+        segmentMesh.Segments[5].Cell2DIds.insert(3);
+        segmentMesh.Segments[6].Cell2DIds.insert(3);
+        segmentMesh.Segments[7].Cell2DIds.insert(3);
+        segmentMesh.Segments[8].Cell2DIds.insert(4);
+        segmentMesh.Segments[9].Cell2DIds.insert(4);
+        segmentMesh.Segments[10].Cell2DIds.insert(4);
+        segmentMesh.Segments[11].Cell2DIds.insert(4);
 
         Gedim::ConformerMeshPolygon::ConformMesh segmentConformMeshInfos;
 

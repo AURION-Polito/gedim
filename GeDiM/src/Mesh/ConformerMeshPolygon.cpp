@@ -1572,13 +1572,4 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void ConformerMeshPolygon::AddMissingMesh1DCell0Ds(const Eigen::Vector3d& segmentOrigin,
-                                                     const Eigen::Vector3d& segmentTangent,
-                                                     const vector<double>& newCoordinates,
-                                                     IMeshDAO& mesh2D,
-                                                     ConformerMeshSegment::ConformMesh& mesh1D) const
-  {
-
-  }
-  // ***************************************************************************
 }
