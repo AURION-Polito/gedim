@@ -577,6 +577,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -613,6 +614,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -737,6 +739,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -776,6 +779,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -905,6 +909,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -948,6 +953,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -1073,6 +1079,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -1104,6 +1111,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -1222,6 +1230,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -1253,6 +1262,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -1372,6 +1382,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -1403,6 +1414,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));
@@ -1522,6 +1534,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
+                                                                  segmentOneTangent,
                                                                   conformMeshOne,
                                                                   fractureMeshOne,
                                                                   fractureConformedMeshOne));
@@ -1551,6 +1564,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
+                                                                  segmentTwoTangent,
                                                                   conformMeshTwo,
                                                                   fractureMeshTwo,
                                                                   fractureConformedMeshTwo));

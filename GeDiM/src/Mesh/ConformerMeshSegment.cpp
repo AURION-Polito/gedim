@@ -169,7 +169,8 @@ namespace Gedim
                        intersectionPoint.Cell2DIds.end(),
                        intersectionPointNext.Cell2DIds.begin(),
                        intersectionPointNext.Cell2DIds.end(),
-                       back_inserter(meshSegment.Cell2DIds));
+                       std::inserter(meshSegment.Cell2DIds,
+                                     meshSegment.Cell2DIds.begin()));
       itPoint++;
       itPointNext++;
     }
@@ -321,7 +322,7 @@ namespace Gedim
       {
         unsigned int segmentCell2D;
         is >>segmentCell2D;
-        segment.Cell2DIds.push_back(segmentCell2D);
+        segment.Cell2DIds.insert(segmentCell2D);
       }
     }
   }
@@ -524,7 +525,7 @@ namespace Gedim
         }
 
         for (const unsigned int& nc : newCell2DIndices)
-          segment.Cell2DIds.push_back(nc);
+          segment.Cell2DIds.insert(nc);
       }
     }
   }
@@ -579,23 +580,25 @@ namespace Gedim
       segment.Edge2DIds.clear();
       segment.Edge2DIds = newEdge2DIds;
 
-      segment.Cell2DIds.remove_if([activeMesh2DData](unsigned int cell1DIndex){
-        return activeMesh2DData.OldCell2DToNewCell2D.find(cell1DIndex) == activeMesh2DData.OldCell2DToNewCell2D.end();
-      });
-      for_each(segment.Cell2DIds.begin(), segment.Cell2DIds.end(),
-               [activeMesh2DData](unsigned int& s) {
-        s = activeMesh2DData.OldCell2DToNewCell2D.at(s);
-      });
+      set<unsigned int> newCell2DIds;
+      for (const auto& cell2DIndex : segment.Cell2DIds)
+      {
+        if (activeMesh2DData.OldCell2DToNewCell2D.find(cell2DIndex) != activeMesh2DData.OldCell2DToNewCell2D.end())
+          newCell2DIds.insert(activeMesh2DData.OldCell2DToNewCell2D.at(cell2DIndex));
+      }
+      segment.Cell2DIds.clear();
+      segment.Cell2DIds = newCell2DIds;
     }
   }
   // ***************************************************************************
-  void ConformerMeshSegment::AddMissingMesh2DCell0Ds(const Vector3d& segmentOrigin,
-                                                     const Vector3d& segmentTangent,
-                                                     const double& segmentSquaredLength,
-                                                     const Gedim::IMeshDAO& mesh2D,
-                                                     ConformMesh& conformedMesh) const
+  vector<double> ConformerMeshSegment::AddMissingMesh2DCell0Ds(const Vector3d& segmentOrigin,
+                                                               const Vector3d& segmentTangent,
+                                                               const double& segmentSquaredLength,
+                                                               const Gedim::IMeshDAO& mesh2D,
+                                                               ConformMesh& conformedMesh) const
   {
-    bool newCoordinatesCreated = false;
+    list<double> newCoordinatesCreated;
+
     for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
     {
       if (segment.Edge2DIds.size() == 1)
@@ -638,15 +641,18 @@ namespace Gedim
       if (mesh2D.Cell1DHasNeighbourCell2D(cell1DTwoIndex, 1))
         conformPoint.Cell2DIds.insert(mesh2D.Cell1DNeighbourCell2D(cell1DTwoIndex, 1));
 
-      newCoordinatesCreated = true;
+      newCoordinatesCreated.push_back(curvilinearCoordinate);
     }
 
-    if (newCoordinatesCreated)
+    if (newCoordinatesCreated.size() > 0)
     {
       // recreate conform mesh segments
       conformedMesh.Segments.clear();
       CreateConformSegments(conformedMesh);
     }
+
+    return vector<double>(newCoordinatesCreated.begin(),
+                          newCoordinatesCreated.end());
   }
   // ***************************************************************************
 }

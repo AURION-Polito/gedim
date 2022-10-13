@@ -114,12 +114,14 @@ namespace Gedim
 
       void CreateConformMeshGeneralized(const Eigen::Vector3d& segmentOrigin,
                                         const Eigen::Vector3d& segmentEnd,
+                                        const Eigen::Vector3d& segmentTangent,
                                         ConformerMeshSegment::ConformMesh& mesh1D,
                                         Gedim::IMeshDAO& mesh2D,
                                         ConformerMeshPolygon::ConformMesh& meshConformedInformation);
 
       void CreateConformMeshOnlyOnEdges(const Eigen::Vector3d& segmentOrigin,
                                         const Eigen::Vector3d& segmentEnd,
+                                        const Eigen::Vector3d& segmentTangent,
                                         ConformerMeshSegment::ConformMesh& mesh1D,
                                         Gedim::IMeshDAO& mesh2D,
                                         ConformerMeshPolygon::ConformMesh& meshConformedInformation);
@@ -135,9 +137,22 @@ namespace Gedim
       /// \param mesh2DConformed the resulting conformed mesh
       void CreateConformMesh(const Eigen::Vector3d& segmentOrigin,
                              const Eigen::Vector3d& segmentEnd,
+                             const Eigen::Vector3d& segmentTangent,
                              ConformerMeshSegment::ConformMesh& mesh1D,
                              Gedim::IMeshDAO& mesh2D,
                              ConformerMeshPolygon::ConformMesh& meshConformedInformation);
+
+      /// \brief Add Missing Mesh1D Cell0Ds in Mesh2D
+      /// \param segmentOrigin the segment origin
+      /// \param segmentTangent the segment tangent
+      /// \param newCoordinates the new coordinates to add
+      /// \param mesh2D the mesh2D to be updated
+      /// \param mesh1D the mesh1D conformed
+      void AddMissingMesh1DCell0Ds(const Eigen::Vector3d& segmentOrigin,
+                                   const Eigen::Vector3d& segmentTangent,
+                                   const vector<double>& newCoordinates,
+                                   Gedim::IMeshDAO& mesh2D,
+                                   ConformerMeshSegment::ConformMesh& mesh1D) const;
   };
 }
 

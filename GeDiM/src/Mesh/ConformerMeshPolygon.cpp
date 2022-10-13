@@ -631,7 +631,7 @@ namespace Gedim
         ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points.at(segment.Points[0]);
 
         origin.Cell2DIds.insert(c);
-        segment.Cell2DIds.push_back(c);
+        segment.Cell2DIds.insert(c);
       }
       endCell0DMesh1D.Cell2DIds.insert(c);
 
@@ -883,7 +883,7 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
       ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
 
-      cell1DMesh1D.Cell2DIds.push_back(newCell2DMesh2DId);
+      cell1DMesh1D.Cell2DIds.insert(newCell2DMesh2DId);
       originCell0DMesh1D.Cell2DIds.insert(newCell2DMesh2DId);
       if (i == cell1DMesh1DIds.size() - 1)
         endCell0DMesh1D.Cell2DIds.insert(newCell2DMesh2DId);
@@ -1085,7 +1085,7 @@ namespace Gedim
         const double& originCurvilinearCoordinate = edgeListDirection ? segment.Points[0] : segment.Points[1];
         ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
 
-        segment.Cell2DIds.push_back(c);
+        segment.Cell2DIds.insert(c);
         origin.Cell2DIds.insert(c);
       }
       if (edgeListDirection)
@@ -1284,7 +1284,7 @@ namespace Gedim
         const double& originCurvilinearCoordinate = edgeListDirection ? segment.Points[0] : segment.Points[1];
         ConformerMeshSegment::ConformMesh::ConformMeshPoint& origin = mesh1D.Points[originCurvilinearCoordinate];
 
-        segment.Cell2DIds.push_back(c);
+        segment.Cell2DIds.insert(c);
         origin.Cell2DIds.insert(c);
       }
       if (edgeListDirection)
@@ -1388,7 +1388,7 @@ namespace Gedim
             if (find(segment.Cell2DIds.begin(), segment.Cell2DIds.end(), cell2DNeigh) == segment.Cell2DIds.end())
               continue;
 
-            segment.Cell2DIds.push_back(c);
+            segment.Cell2DIds.insert(c);
           }
         }
       }
@@ -1397,12 +1397,11 @@ namespace Gedim
   // ***************************************************************************
   void ConformerMeshPolygon::CreateConformMeshGeneralized(const Eigen::Vector3d& segmentOrigin,
                                                           const Eigen::Vector3d& segmentEnd,
+                                                          const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
                                                           IMeshDAO& mesh2D,
                                                           ConformMesh& meshConformedInformation)
   {
-    const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
-
     // check starting and end of segment if inside Cell2DMesh2D
     CheckSegmentOriginAndEndIntersections(segmentOrigin,
                                           segmentEnd,
@@ -1415,16 +1414,14 @@ namespace Gedim
       const ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment1D = mesh1D.Segments[numVisitedCell1DMesh1D];
       Output::Assert(segment1D.Cell2DIds.size() > 0);
 
-      unsigned int cell2DId = segment1D.Cell2DIds.back();
+      unsigned int cell2DId = *segment1D.Cell2DIds.rbegin();
       list<unsigned int> cell1DMesh1DIds;
       do
       {
         cell1DMesh1DIds.push_back(numVisitedCell1DMesh1D++);
       }
       while (numVisitedCell1DMesh1D < mesh1D.Segments.size() &&
-             find(mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.begin(),
-                  mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end(),
-                  cell2DId) !=
+             mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.find(cell2DId) !=
              mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
 
       // generate cell2D mesh2D maps
@@ -1497,19 +1494,18 @@ namespace Gedim
   // ***************************************************************************
   void ConformerMeshPolygon::CreateConformMeshOnlyOnEdges(const Eigen::Vector3d& segmentOrigin,
                                                           const Eigen::Vector3d& segmentEnd,
+                                                          const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
                                                           IMeshDAO& mesh2D,
                                                           ConformMesh& meshConformedInformation)
   {
-    const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
-
     unsigned int numVisitedCell1DMesh1D = 0;
     while (numVisitedCell1DMesh1D < mesh1D.Segments.size())
     {
       const ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment1D = mesh1D.Segments[numVisitedCell1DMesh1D];
       Output::Assert(segment1D.Cell2DIds.size() > 0);
 
-      unsigned int cell2DId = segment1D.Cell2DIds.back();
+      unsigned int cell2DId = *segment1D.Cell2DIds.rbegin();
 
       list<unsigned int> cell1DMesh1DIds;
       do
@@ -1517,9 +1513,7 @@ namespace Gedim
         cell1DMesh1DIds.push_back(numVisitedCell1DMesh1D++);
       }
       while (numVisitedCell1DMesh1D < mesh1D.Segments.size() &&
-             find(mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.begin(),
-                  mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end(),
-                  cell2DId) !=
+             mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.find(cell2DId) !=
              mesh1D.Segments[numVisitedCell1DMesh1D].Cell2DIds.end());
 
       if (mesh2D.Cell2DHasUpdatedCell2Ds(cell2DId))
@@ -1552,6 +1546,7 @@ namespace Gedim
   // ***************************************************************************
   void ConformerMeshPolygon::CreateConformMesh(const Vector3d& segmentOrigin,
                                                const Vector3d& segmentEnd,
+                                               const Vector3d& segmentTangent,
                                                ConformerMeshSegment::ConformMesh& mesh1D,
                                                Gedim::IMeshDAO& mesh2D,
                                                ConformerMeshPolygon::ConformMesh& meshConformedInformation)
@@ -1561,18 +1556,29 @@ namespace Gedim
       case ConformerMeshPolygonConfiguration::Types::Generalized:
         return CreateConformMeshGeneralized(segmentOrigin,
                                             segmentEnd,
+                                            segmentTangent,
                                             mesh1D,
                                             mesh2D,
                                             meshConformedInformation);
       case ConformerMeshPolygonConfiguration::Types::OnlyOnEdges:
         return CreateConformMeshOnlyOnEdges(segmentOrigin,
                                             segmentEnd,
+                                            segmentTangent,
                                             mesh1D,
                                             mesh2D,
                                             meshConformedInformation);
       default:
         throw runtime_error("Unmanaged type");
     }
+  }
+  // ***************************************************************************
+  void ConformerMeshPolygon::AddMissingMesh1DCell0Ds(const Eigen::Vector3d& segmentOrigin,
+                                                     const Eigen::Vector3d& segmentTangent,
+                                                     const vector<double>& newCoordinates,
+                                                     IMeshDAO& mesh2D,
+                                                     ConformerMeshSegment::ConformMesh& mesh1D) const
+  {
+
   }
   // ***************************************************************************
 }

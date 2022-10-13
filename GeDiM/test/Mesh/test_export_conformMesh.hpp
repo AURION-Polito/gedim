@@ -82,6 +82,7 @@ namespace GedimUnitTesting
 
         ASSERT_NO_THROW(conformMeshPolygon.CreateConformMesh(segmentOrigin,
                                                              segmentEnd,
+                                                             segmentTangent,
                                                              conformMesh,
                                                              domainMesh,
                                                              domainConformedMeshData));
@@ -171,8 +172,10 @@ namespace GedimUnitTesting
         GedimUnitTesting::MashMatrices_2D_CleanTest_Mock mockOriginalMesh;
         Gedim::MeshMatricesDAO domainMesh(mockOriginalMesh.Mesh);
 
-        Eigen::Vector3d segmentOrigin(1.7745275237876366e+00, 2.5306770050657718e-01, 0.0000000000000000e+00);
-        Eigen::Vector3d segmentEnd(3.5355337963926114e+00, 1.7400074306985638e+00, 0.0000000000000000e+00);
+        const Eigen::Vector3d segmentOrigin(1.7745275237876366e+00, 2.5306770050657718e-01, 0.0000000000000000e+00);
+        const Eigen::Vector3d segmentEnd(3.5355337963926114e+00, 1.7400074306985638e+00, 0.0000000000000000e+00);
+        const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                                segmentEnd);
 
         Gedim::ConformerMeshSegment::ConformMesh segmentMesh;
 
@@ -263,6 +266,7 @@ namespace GedimUnitTesting
         Gedim::ConformerMeshPolygon conformerMeshDomain(geometryUtilities);
         conformerMeshDomain.CreateConformMesh(segmentOrigin,
                                               segmentEnd,
+                                              segmentTangent,
                                               segmentMesh,
                                               domainMesh,
                                               segmentConformMeshInfos);
