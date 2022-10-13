@@ -162,7 +162,8 @@ namespace Gedim
                        intersectionPoint.Edge2DIds.end(),
                        intersectionPointNext.Edge2DIds.begin(),
                        intersectionPointNext.Edge2DIds.end(),
-                       back_inserter(meshSegment.Edge2DIds));
+                       std::inserter(meshSegment.Edge2DIds,
+                                     meshSegment.Edge2DIds.begin()));
       // fill the mesh 2D cells
       set_intersection(intersectionPoint.Cell2DIds.begin(),
                        intersectionPoint.Cell2DIds.end(),
@@ -311,7 +312,7 @@ namespace Gedim
       {
         unsigned int segmentEdge;
         is >>segmentEdge;
-        segment.Edge2DIds.push_back(segmentEdge);
+        segment.Edge2DIds.insert(segmentEdge);
       }
 
       unsigned int segmentCell2DSize = 0;
@@ -506,7 +507,7 @@ namespace Gedim
         }
 
         for (const unsigned int& ne : newCell1DIndices)
-          segment.Edge2DIds.push_back(ne);
+          segment.Edge2DIds.insert(ne);
       }
 
       {
@@ -569,13 +570,14 @@ namespace Gedim
     // update segments
     for (ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : conformedMesh.Segments)
     {
-      segment.Edge2DIds.remove_if([activeMesh2DData](unsigned int cell0DIndex){
-        return activeMesh2DData.OldCell1DToNewCell1D.find(cell0DIndex) == activeMesh2DData.OldCell1DToNewCell1D.end();
-      });
-      for_each(segment.Edge2DIds.begin(), segment.Edge2DIds.end(),
-               [activeMesh2DData](unsigned int& s) {
-        s = activeMesh2DData.OldCell1DToNewCell1D.at(s);
-      });
+      set<unsigned int> newEdge2DIds;
+      for (const auto& edgeId : segment.Edge2DIds)
+      {
+        if (activeMesh2DData.OldCell1DToNewCell1D.find(edgeId) != activeMesh2DData.OldCell1DToNewCell1D.end())
+          newEdge2DIds.insert(activeMesh2DData.OldCell1DToNewCell1D.at(edgeId));
+      }
+      segment.Edge2DIds.clear();
+      segment.Edge2DIds = newEdge2DIds;
 
       segment.Cell2DIds.remove_if([activeMesh2DData](unsigned int cell1DIndex){
         return activeMesh2DData.OldCell2DToNewCell2D.find(cell1DIndex) == activeMesh2DData.OldCell2DToNewCell2D.end();
@@ -601,8 +603,8 @@ namespace Gedim
 
       Output::Assert(segment.Edge2DIds.size() == 2);
       // add missing Cell0D point
-      const unsigned int cell1DOneIndex = segment.Edge2DIds.front();
-      const unsigned int cell1DTwoIndex = segment.Edge2DIds.back();
+      const unsigned int cell1DOneIndex = *segment.Edge2DIds.begin();
+      const unsigned int cell1DTwoIndex = *segment.Edge2DIds.rbegin();
       const unsigned int meshCell0DIndex = mesh2D.Cell1DOrigin(cell1DOneIndex) ==
                                            mesh2D.Cell1DOrigin(cell1DTwoIndex) ||
                                            mesh2D.Cell1DOrigin(cell1DOneIndex) ==

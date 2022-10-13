@@ -547,7 +547,7 @@ namespace Gedim
                *endCell0DMesh1D.Vertex2DIds.begin() == mesh2D.Cell1DEnd(e)))
           {
             for (const unsigned int& mesh1DCell1DId : cell1DMesh1DIds)
-              mesh1D.Segments[mesh1DCell1DId].Edge2DIds.push_back(e);
+              mesh1D.Segments[mesh1DCell1DId].Edge2DIds.insert(e);
           }
         }
       }
@@ -564,7 +564,7 @@ namespace Gedim
         }
 
         for (const unsigned int& mesh1DCell1DId : cell1DMesh1DIds)
-          mesh1D.Segments[mesh1DCell1DId].Edge2DIds.push_back(e);
+          mesh1D.Segments[mesh1DCell1DId].Edge2DIds.insert(e);
       }
 
       cell2DMesh2DEdgesMap.insert(pair<unsigned int, unsigned int>(e, ne));
@@ -670,7 +670,7 @@ namespace Gedim
       ConformerMeshSegment::ConformMesh::ConformMeshSegment& cell1DMesh1D = mesh1D.Segments[cell1DMesh1DId];
 
       Output::Assert(cell1DMesh1D.Edge2DIds.size() == 1);
-      const unsigned int cell1DMesh2DToUpdate = cell1DMesh1D.Edge2DIds.back();
+      const unsigned int cell1DMesh2DToUpdate = *cell1DMesh1D.Edge2DIds.rbegin();
 
       const double originCurvilinearCoordinate = cell1DMesh1D.Points[0];
       const double endCurvilinearCoordinate = cell1DMesh1D.Points[1];
@@ -779,7 +779,7 @@ namespace Gedim
 
         origin.Edge2DIds.insert(newCell1DMesh2DId);
         end.Edge2DIds.insert(newCell1DMesh2DId);
-        cell1DMesh1D.Edge2DIds.push_back(newCell1DMesh2DId);
+        cell1DMesh1D.Edge2DIds.insert(newCell1DMesh2DId);
 
         const unsigned int originCell1D = *origin.Vertex2DIds.rbegin();
         const unsigned int endCell1D = *end.Vertex2DIds.rbegin();
@@ -921,7 +921,7 @@ namespace Gedim
     const unsigned int originSegmentMesh2DCell0D = *mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.rbegin();
     const unsigned int endSegmentMesh2DCell0D = *mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.rbegin();
 
-    unsigned int cell1DMesh2DToUpdate = originSegment.Edge2DIds.back();
+    unsigned int cell1DMesh2DToUpdate = *originSegment.Edge2DIds.rbegin();
 
     Output::Assert(!mesh2D.Cell1DHasUpdatedCell1Ds(cell1DMesh2DToUpdate));
 
@@ -967,7 +967,7 @@ namespace Gedim
       }
 
       ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment = mesh1D.Segments[cell1DMesh1DId];
-      if (segment.Edge2DIds.back() != cell1DMesh2DToUpdate)
+      if (*segment.Edge2DIds.rbegin() != cell1DMesh2DToUpdate)
         throw runtime_error("Something goes wrong with update of " + to_string(cell1DMesh2DToUpdate) + " cell1DMesh2D in cell1DMesh1D " +to_string(cell1DMesh1DId));
 
       // insert only Cell1DMesh1D origin
@@ -997,7 +997,7 @@ namespace Gedim
     for (const unsigned int& cell1DMesh1DId : cell1DMesh1DIdsRedirected)
     {
       ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment = mesh1D.Segments[cell1DMesh1DId];
-      if (segment.Edge2DIds.back() != cell1DMesh2DToUpdate)
+      if (*segment.Edge2DIds.rbegin() != cell1DMesh2DToUpdate)
         throw runtime_error("Something goes wrong with update of " + to_string(cell1DMesh2DToUpdate) + " cell1DMesh2D in cell1DMesh1D " +to_string(cell1DMesh1DId));
 
       // add new Cell1Ds on Mesh2D
@@ -1014,7 +1014,7 @@ namespace Gedim
 
       origin.Edge2DIds.insert(e);
       end.Edge2DIds.insert(e);
-      segment.Edge2DIds.push_back(e);
+      segment.Edge2DIds.insert(e);
 
       // update mesh2D
       mesh2D.Cell1DSetState(cell1DMesh2DToUpdate, false);
@@ -1120,7 +1120,7 @@ namespace Gedim
     const unsigned int originSegmentMesh2DCell0D = *mesh1D.Points.at(originSegment.Points[0]).Vertex2DIds.rbegin();
     const unsigned int endSegmentMesh2DCell0D = *mesh1D.Points.at(endSegment.Points[1]).Vertex2DIds.rbegin();
 
-    unsigned int cell1DMesh2DToUpdate = originSegment.Edge2DIds.back();
+    unsigned int cell1DMesh2DToUpdate = *originSegment.Edge2DIds.rbegin();
 
     Output::Assert(!mesh2D.Cell1DHasUpdatedCell1Ds(cell1DMesh2DToUpdate));
 
@@ -1166,7 +1166,7 @@ namespace Gedim
       }
 
       ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment = mesh1D.Segments[cell1DMesh1DId];
-      if (segment.Edge2DIds.back() != cell1DMesh2DToUpdate)
+      if (*segment.Edge2DIds.rbegin() != cell1DMesh2DToUpdate)
         throw runtime_error("Something goes wrong with update of " + to_string(cell1DMesh2DToUpdate) + " cell1DMesh2D in cell1DMesh1D " +to_string(cell1DMesh1DId));
 
       // insert only Cell1DMesh1D origin
@@ -1196,7 +1196,7 @@ namespace Gedim
     for (const unsigned int& cell1DMesh1DId : cell1DMesh1DIdsRedirected)
     {
       ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment = mesh1D.Segments[cell1DMesh1DId];
-      if (segment.Edge2DIds.back() != cell1DMesh2DToUpdate)
+      if (*segment.Edge2DIds.rbegin() != cell1DMesh2DToUpdate)
         throw runtime_error("Something goes wrong with update of " + to_string(cell1DMesh2DToUpdate) + " cell1DMesh2D in cell1DMesh1D " +to_string(cell1DMesh1DId));
 
       // add new Cell1Ds on Mesh2D
@@ -1213,7 +1213,7 @@ namespace Gedim
 
       origin.Edge2DIds.insert(e);
       end.Edge2DIds.insert(e);
-      segment.Edge2DIds.push_back(e);
+      segment.Edge2DIds.insert(e);
 
       // update mesh2D
       mesh2D.Cell1DSetState(cell1DMesh2DToUpdate, false);
