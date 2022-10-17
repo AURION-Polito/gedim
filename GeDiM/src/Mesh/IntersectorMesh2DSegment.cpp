@@ -559,23 +559,45 @@ namespace Gedim
           intersectionPointNext.Vertex2DIds.size() > 0 &&
           intersectionPoint.Vertex2DIds == intersectionPointNext.Vertex2DIds)
       {
+        const double avgCoordinate = (curvilinearCoordinatePoint + curvilinearCoordinatePointNext) / 2.0;
+        Output::Assert(!_geometryUtilities.IsValue1DPositive(abs(curvilinearCoordinatePoint - avgCoordinate)));
+        Output::Assert(!_geometryUtilities.IsValue1DPositive(abs(curvilinearCoordinatePointNext - avgCoordinate)));
+
+        IntersectionMesh::IntersectionMeshPoint avgPoint;
+        avgPoint.Vertex2DIds = intersectionPoint.Vertex2DIds;
+        avgPoint.Edge2DIds = intersectionPoint.Edge2DIds;
+        avgPoint.Cell2DIds = intersectionPoint.Cell2DIds;
+
         // unify the Cell1Ds and Cell2Ds
         std::merge(intersectionPoint.Edge2DIds.begin(),
                    intersectionPoint.Edge2DIds.end(),
                    intersectionPointNext.Edge2DIds.begin(),
                    intersectionPointNext.Edge2DIds.end(),
-                   std::inserter(smoothedPoints.at(curvilinearCoordinatePoint).Edge2DIds,
-                                 smoothedPoints.at(curvilinearCoordinatePoint).Edge2DIds.begin()));
+                   std::inserter(avgPoint.Edge2DIds,
+                                 avgPoint.Edge2DIds.begin()));
 
         std::merge(intersectionPoint.Cell2DIds.begin(),
                    intersectionPoint.Cell2DIds.end(),
                    intersectionPointNext.Cell2DIds.begin(),
                    intersectionPointNext.Cell2DIds.end(),
-                   std::inserter(smoothedPoints.at(curvilinearCoordinatePoint).Cell2DIds,
-                                 smoothedPoints.at(curvilinearCoordinatePoint).Cell2DIds.begin()));
+                   std::inserter(avgPoint.Cell2DIds,
+                                 avgPoint.Cell2DIds.begin()));
 
-        itPoint++;
+        smoothedPoints.erase(curvilinearCoordinatePoint);
+        result.Points.erase(curvilinearCoordinatePoint);
+        result.Points.erase(curvilinearCoordinatePointNext);
+        result.Points.insert(make_pair(avgCoordinate, avgPoint));
+        smoothedPoints.insert(make_pair(avgCoordinate, avgPoint));
+
+        itPoint = result.Points.begin();
+        itPointNext = result.Points.begin();
         itPointNext++;
+        for (unsigned int s = 0; s <= p; s++)
+        {
+          itPoint++;
+          itPointNext++;
+        }
+
 
         continue;
       }
