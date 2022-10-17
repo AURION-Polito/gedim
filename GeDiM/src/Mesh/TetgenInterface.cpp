@@ -107,7 +107,7 @@ namespace Gedim
       point_list[3 * v + 1] = point(1);
       point_list[3 * v + 2] = point(2);
 
-      point_markerlist[v] = v;
+      point_markerlist[v] = v + 1;
     }
 
     if(numberOfConstrainedPoints > 0)
@@ -120,7 +120,7 @@ namespace Gedim
         point_list[3 * (localOffset + j) + 2] = constrainedPoints(2, j);
 
         point_markerlist[(localOffset + j)] = numberOfVertices +
-                                              j;
+                                              j + 1;
       }
     }
 
@@ -136,7 +136,7 @@ namespace Gedim
 
       edge_markerlist[e]= numberOfVertices +
                           numberOfConstrainedPoints +
-                          e;
+                          e + 1;
     }
 
     for (unsigned int f = 0; f < numberOfFaces; f++)
@@ -166,7 +166,7 @@ namespace Gedim
       face_markerlist[f] = numberOfVertices +
                            numberOfConstrainedPoints +
                            numberOfEdges +
-                           f;
+                           f + 1;
     }
 
     if(constrainedFaces.size() > 0)
@@ -198,7 +198,7 @@ namespace Gedim
                                                 numberOfConstrainedPoints +
                                                 numberOfEdges +
                                                 numberOfFaces +
-                                                numFac;
+                                                numFac + 1;
       }
     }
   }
@@ -294,6 +294,8 @@ namespace Gedim
 
         mesh.Cell2DInsertVertex(f, v, vertexId);
         mesh.Cell2DInsertEdge(f, v, edgeId);
+        if (mesh.Cell1DMarker(edgeId) == 0)
+          mesh.Cell1DSetMarker(edgeId, tetgenOutput.trifacemarkerlist[f]);
       }
 
       mesh.Cell2DSetId(f, f);
@@ -360,7 +362,7 @@ namespace Gedim
 
       mesh.Cell3DSetId(c, c);
       mesh.Cell3DSetState(c, true);
-      mesh.Cell3DSetMarker(c, c);
+      mesh.Cell3DSetMarker(c, 0);
     }
   }
   // ***************************************************************************
