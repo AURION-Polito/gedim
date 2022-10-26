@@ -371,8 +371,8 @@ namespace GedimUnitTesting {
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
         polygonVertices.col(1)<< 0.5, 0.0, 0.0;
         polygonVertices.col(2)<< 1.0, 0.0, 0.0;
-        polygonVertices.col(3)<< 0.0, 0.5, 0.0;
-        polygonVertices.col(4)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(4)<< 0.0, 0.5, 0.0;
         const double polygonArea = 0.5;
         const Eigen::Vector3d polygonCentroid(1.0 / 3.0, 1.0 / 3.0, 0.0);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
