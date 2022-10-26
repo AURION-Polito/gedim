@@ -217,6 +217,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(1.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,
@@ -233,6 +238,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(1.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,
@@ -249,6 +259,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(0.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
@@ -265,6 +280,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(0.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
@@ -281,6 +301,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(0.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
@@ -297,6 +322,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(0.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
@@ -313,6 +343,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = Eigen::Vector3d(lineTangent.y(), -lineTangent.x(), 0.0);
+
+        ASSERT_DOUBLE_EQ(0.0, geometryUtilities.PointLineDistance(point,
+                                                                  lineOrigin,
+                                                                  normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_TRUE(geometryUtilities.IsPointOnLine(point,
@@ -329,6 +364,11 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d lineTangent = geometryUtilities.SegmentTangent(lineOrigin,
                                                                              lineEnd);
         const double lineTangentSquaredLength = lineTangent.norm();
+        const Eigen::Vector3d normalToLine = lineTangent.cross(point - lineOrigin).cross(lineTangent);
+
+        ASSERT_DOUBLE_EQ(5.3803393896716170e+00, geometryUtilities.PointLineDistance(point,
+                                                                                     lineOrigin,
+                                                                                     normalToLine));
 
         Gedim::GeometryUtilities::PointSegmentPositionTypes result;
         ASSERT_FALSE(geometryUtilities.IsPointOnLine(point,

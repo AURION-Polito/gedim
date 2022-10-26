@@ -840,10 +840,18 @@ namespace Gedim
                                                   const Eigen::Vector3d& point) const;
 
 
-
-      double PointLineDistance(const Eigen::Vector3d& point,
-                               const Eigen::Vector3d& pointOnLine,
-                               const Eigen::Vector3d& edgeNormal) const;
+      /// \brief Compute the distance between a point and a line
+      /// \param point a point P
+      /// \param lineOrigin the line origin O
+      /// \param normalToLine a normal vector n to the line, in the same plane of P and the line
+      /// \return the distance d
+      /// \note The distance is computed as d = n^T * (P - O) / ||n||
+      inline double PointLineDistance(const Eigen::Vector3d& point,
+                                      const Eigen::Vector3d& lineOrigin,
+                                      const Eigen::Vector3d& normalToLine) const
+      {
+        return abs(normalToLine.dot(point - lineOrigin)) / normalToLine.norm();
+      }
 
 
       /// \param points the points to test, size 3 x numPoints

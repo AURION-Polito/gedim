@@ -36,20 +36,6 @@ namespace Gedim
     return maxDistance;
   }
   // ***************************************************************************
-  double GeometryUtilities::PointLineDistance(const Eigen::Vector3d& point,
-                                              const Eigen::Vector3d& pointOnLine,
-                                              const Eigen::Vector3d& edgeNormal) const
-  {
-
-    const Vector3d vectorDifference = point - pointOnLine;
-    double distance = abs(edgeNormal.dot(vectorDifference)) / edgeNormal.norm();
-    if (IsValue1DZero(distance))
-      return 0.0;
-    else
-      return distance;
-
-  }
-  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::FindPointInPoints(const Eigen::MatrixXd& points,
                                                             const Eigen::Vector3d& point) const
   {
