@@ -107,15 +107,15 @@ namespace Gedim
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
 
     double inRadius = numeric_limits<double>::max();
-    unsigned int numEdges = polygonVertices.cols();
+    const unsigned int numEdges = polygonVertices.cols();
 
-    for(unsigned int e = 0; e < numEdges; e++)
+    for (unsigned int e = 0; e < numEdges; e++)
     {
-      double inRadiusTemp = PointLineDistance(polygonCentroid,
-                                              polygonVertices.col(e),
-                                              polygonEdgeNormals.col(e));
+      const double inRadiusTemp = PointLineDistance(polygonCentroid,
+                                                    polygonVertices.col(e),
+                                                    polygonEdgeNormals.col(e));
 
-      if(inRadiusTemp < inRadius)
+      if (inRadiusTemp < inRadius)
         inRadius = inRadiusTemp;
     }
 

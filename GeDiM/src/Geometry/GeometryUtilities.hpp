@@ -1389,11 +1389,17 @@ namespace Gedim
       }
 
 
-
+      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param polygonCentroid the polygon centroid
+      /// \param polygonEdgeNormals the polygon edge normals outgoing the polygon, size 3 x numEdges
+      /// \return the polygon in radius, as the minimum distance between the polygon centroid and the edges
       double PolygonInRadius(const Eigen::MatrixXd& polygonVertices,
                              const Eigen::Vector3d& polygonCentroid,
                              const Eigen::MatrixXd& polygonEdgeNormals) const;
 
+      /// \param polygonDiameter the polygon diameter
+      /// \param polygonInRadius the polygon in radius
+      /// \return the polygon aspect ratio, defined as the ratio bewteen the in and out diameter
       inline double PolygonAspectRatio(const double& polygonDiameter,
                                        const double& polygonInRadius) const
       {
