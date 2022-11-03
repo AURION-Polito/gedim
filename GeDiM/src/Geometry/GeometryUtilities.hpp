@@ -1457,11 +1457,8 @@ namespace Gedim
       /// \return the resulting translation vector t which translates 2D points to 3D points
       /// \note to rotate some point P from 2D to 3D use Q * P + t
       /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
-      inline Eigen::Vector3d PlaneTranslation(const Eigen::Vector3d& planeNormal,
-                                              const Eigen::Vector3d& planeOrigin) const
-      {
-        return planeOrigin;
-      }
+      inline Eigen::Vector3d PlaneTranslation(const Eigen::Vector3d& planeOrigin) const
+      { return planeOrigin; }
 
       /// \brief Rotate Points P using rotation matrix Q and translation t: Q * P + t
       /// \param points the points (size 3 x numPoints)

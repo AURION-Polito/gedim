@@ -26,6 +26,14 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 Message(STATUS "Gedim Build configuration: " ${CMAKE_BUILD_TYPE})
 
+# IMPOSE WARNINGS ON DEBUG
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic-errors")
+
+# IMPOSE CXX FLAGS FOR WINDOWS
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+endif (WIN32)
+
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_INSTALL_DIR} CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
 Message(STATUS "Gedim Library will be installed in: " ${CMAKE_INSTALL_PREFIX})
 

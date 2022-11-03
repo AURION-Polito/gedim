@@ -241,7 +241,7 @@ namespace Gedim
   // ***************************************************************************
   template <typename T>
   void GeometryToPolyData<T>::AddSolution(const unsigned int& solutionPosition,
-                                          void* vtkDoubleArrayPointer) const
+                                          vtkNew<vtkDoubleArray>& vtkSolution) const
   {
     if (solutionPosition >= numberSolutions)
       throw runtime_error("");
@@ -249,14 +249,13 @@ namespace Gedim
     const unsigned int& solutionSize = solutionSizes[solutionPosition];
     const double* solution = solutions[solutionPosition];
 
-    if (solutionSize == 0 || solution == NULL || vtkDoubleArrayPointer == NULL)
+    if (solutionSize == 0 || solution == NULL)
       throw runtime_error("");
 
 #if ENABLE_VTK == 1
-    vtkDoubleArray& vtkSolution = *(vtkDoubleArray*)vtkDoubleArrayPointer;
-    vtkSolution.SetNumberOfValues(solutionSize);
+    vtkSolution->SetNumberOfValues(solutionSize);
     for (unsigned int p = 0; p < solutionSize; p++)
-      vtkSolution.SetValue(p, solution[p]);
+      vtkSolution->SetValue(p, solution[p]);
 #endif // ENABLE_VTK
   }
   // ***************************************************************************
@@ -266,14 +265,9 @@ namespace Gedim
   {
     if (numberSolutions > 0)
     {
-      std::vector<vtkSmartPointer<vtkDoubleArray>> vtkDoubleArrayPointers;
-      vtkDoubleArrayPointers.reserve(numberSolutions);
-
       for (unsigned int s = 0; s < numberSolutions; s++)
       {
-        vtkDoubleArrayPointers.push_back(vtkNew<vtkDoubleArray>());
-
-        vtkDoubleArray* vtkSolution = (vtkDoubleArray*)vtkDoubleArrayPointers.back();
+        vtkNew<vtkDoubleArray> vtkSolution;
 
         const string& solutionLabel = solutionLabels[s];
         VTPProperty::Formats solutionFormat = solutionFormats[s];
@@ -401,24 +395,25 @@ namespace Gedim
     points->Allocate(numPoints);
     faces->Allocate(numFaces);
 
-    vtkIdType pointIds[numPoints];
+    vector<vtkIdType> pointIds(numPoints);
     for (unsigned int i = 0 ; i < numPoints; i++)
     {
       AddPoint(geometry.Vertices.col(i),
                points);
-      pointIds[i] = i;
+
+      pointIds[i] = static_cast<vtkIdType>(i);
     }
 
     for (unsigned int f = 0; f < numFaces; f++)
     {
       const unsigned int numFaceVertices = geometry.Faces[f].cols();
       faces->InsertNextId(numFaceVertices);
-      for (int v = 0; v < numFaceVertices; v++)
+      for (unsigned int v = 0; v < numFaceVertices; v++)
         faces->InsertNextId(geometry.Faces[f](0, v));
     }
 
     polyData->SetPoints(points);
-    polyData->InsertNextCell(VTK_POLYHEDRON, numPoints, pointIds, numFaces, faces->GetPointer(0));
+    polyData->InsertNextCell(VTK_POLYHEDRON, numPoints, pointIds.data(), numFaces, faces->GetPointer(0));
 
     AppendSolution(polyData);
 

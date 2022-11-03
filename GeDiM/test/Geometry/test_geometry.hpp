@@ -67,7 +67,7 @@ namespace GedimUnitTesting {
       // check IsLengthPositive
       {
         ASSERT_FALSE(geometryUtilities.IsValue1DPositive(0.0));
-				ASSERT_FALSE(geometryUtilities.IsValue1DPositive(geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(geometryUtilitiesConfig.Tolerance));
         ASSERT_FALSE(geometryUtilities.IsValue1DPositive(-1.0));
         ASSERT_TRUE(geometryUtilities.IsValue1DPositive(2 * geometryUtilitiesConfig.Tolerance));
         ASSERT_TRUE(geometryUtilities.IsValue1DPositive(10.0));
@@ -76,8 +76,8 @@ namespace GedimUnitTesting {
       // check IsAreaPositive
       {
         ASSERT_FALSE(geometryUtilities.IsValue2DPositive(0.0));
-				ASSERT_TRUE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance));
-				ASSERT_FALSE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+        ASSERT_TRUE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
         ASSERT_FALSE(geometryUtilities.IsValue2DPositive(-1.0));
         ASSERT_TRUE(geometryUtilities.IsValue2DPositive(10.0));
       }
@@ -85,9 +85,9 @@ namespace GedimUnitTesting {
       // check IsLengthPositive
       {
         ASSERT_FALSE(geometryUtilities.IsValue3DPositive(0.0));
-				ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance));
-				ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
-				ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+        ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance));
+        ASSERT_TRUE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
+        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
         ASSERT_FALSE(geometryUtilities.IsValue3DPositive(-1.0));
         ASSERT_TRUE(geometryUtilities.IsValue3DPositive(10.0));
       }
@@ -111,15 +111,14 @@ namespace GedimUnitTesting {
         const Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
         const Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
-                                                                                  planeOrigin);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
         const Eigen::Vector3d planeOrigin2D = geometryUtilities.RotatePointsFrom3DTo2D(planeOrigin,
-                                                                                     planeRotationMatrix.transpose(),
-                                                                                     planeTranslation);
+                                                                                       planeRotationMatrix.transpose(),
+                                                                                       planeTranslation);
 
         const Eigen::Vector3d point2D = geometryUtilities.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 3.0),
-                                                                               planeRotationMatrix.transpose(),
-                                                                               planeTranslation);
+                                                                                 planeRotationMatrix.transpose(),
+                                                                                 planeTranslation);
 
 
         ASSERT_DOUBLE_EQ(planeRotationMatrix(0, 0), 1.0);
@@ -142,14 +141,13 @@ namespace GedimUnitTesting {
         planeNormal.normalize();
         const Eigen::Vector3d planeOrigin(1.0, 2.0, 3.0);
         const Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
-        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeNormal,
-                                                                                  planeOrigin);
+        const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
         const Eigen::Vector3d planeOrigin2D = geometryUtilities.RotatePointsFrom3DTo2D(planeOrigin,
-                                                                                     planeRotationMatrix.transpose(),
-                                                                                     planeTranslation);
+                                                                                       planeRotationMatrix.transpose(),
+                                                                                       planeTranslation);
         const Eigen::Vector3d point2D = geometryUtilities.RotatePointsFrom3DTo2D(Eigen::Vector3d(0.0, 0.0, 6.0),
-                                                                               planeRotationMatrix.transpose(),
-                                                                               planeTranslation);
+                                                                                 planeRotationMatrix.transpose(),
+                                                                                 planeTranslation);
 
         ASSERT_DOUBLE_EQ(planeRotationMatrix(0, 0), -7.0710678118654757e-01);
         ASSERT_DOUBLE_EQ(planeRotationMatrix(1, 1), -4.0824829046386307e-01);
@@ -208,7 +206,7 @@ namespace GedimUnitTesting {
         result.col(3)<< 0.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                convexHull), result);
+                                                  convexHull), result);
       }
     }
     catch (const exception& exception)
@@ -298,7 +296,7 @@ namespace GedimUnitTesting {
         result.col(4)<< 30.0, 60.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                convexHull), result);
+                                                  convexHull), result);
       }
     }
     catch (const exception& exception)
@@ -329,7 +327,7 @@ namespace GedimUnitTesting {
         result.col(1)<< 1.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                unalignedPoints), result);
+                                                  unalignedPoints), result);
       }
 
       // check triangle points
@@ -348,7 +346,7 @@ namespace GedimUnitTesting {
         result.col(2)<< 0.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                unalignedPoints), result);
+                                                  unalignedPoints), result);
       }
 
       // check triangle with aligned points
@@ -368,7 +366,7 @@ namespace GedimUnitTesting {
         result.col(2)<< 0.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                unalignedPoints), result);
+                                                  unalignedPoints), result);
       }
 
       // check polygon with aligned points

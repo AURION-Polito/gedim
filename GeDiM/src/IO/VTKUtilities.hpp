@@ -183,10 +183,9 @@ namespace Gedim
       void AddPolygon(const Eigen::VectorXi& faceVerticesIds,
                       vtkNew<vtkCellArray>& faces) const;
       void AppendSolution(vtkDataSet* polyData) const;
-#endif
-
       void AddSolution(const unsigned int& solutionPosition,
-                       void* vtkDoubleArrayPointer) const;
+                       vtkNew<vtkDoubleArray>& vtkDoubleArrayPointer) const;
+#endif
 
     public:
       GeometryToPolyData(const T& geometry);
