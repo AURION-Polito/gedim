@@ -73,8 +73,6 @@ namespace Gedim
     Vector3d pointDirection = (point - segmentOrigin).normalized();
     double pointDirectionSquaredNorm = (point - segmentOrigin).squaredNorm();
 
-    PointSegmentPositionTypes result;
-
     // check if point is on line
     if (IsValue2DZero(pointDirectionSquaredNorm) ||
         IsValue2DZero(pointDirection.cross(segmentTangent).squaredNorm()))

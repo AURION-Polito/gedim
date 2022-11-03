@@ -148,8 +148,8 @@ namespace Gedim
       bool Cell0DUpdatedCell0Ds(const unsigned int& cell0DIndex,
                                 list<unsigned int>& updatedCell0DIds) const;
 
-      inline void Cell0DSetId(const unsigned int& cell0DIndex,
-                              const unsigned int& id) { return; }
+      inline void Cell0DSetId(const unsigned int& ,
+                              const unsigned int& ) { return; }
       inline unsigned int Cell0DId(const unsigned int& cell0DIndex) const { return cell0DIndex; }
       inline void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell1Ds);
@@ -234,18 +234,18 @@ namespace Gedim
         _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
             neighbourIndex] = _mesh.NumberCell2D;
       }
-      inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
-                                                   const unsigned int& numberNeighbourCell3Ds) { return; }
-      inline void Cell0DInsertNeighbourCell3D(const unsigned int& cell0DIndex,
-                                              const unsigned int& neighbourIndex,
-                                              const unsigned int& neigbourCell3DIndex) { throw std::runtime_error("Not implemented"); }
-      inline unsigned int Cell0DNumberNeighbourCell3D(const unsigned int& cell0DIndex) const { return 0; }
-      inline unsigned int Cell0DNeighbourCell3D(const unsigned int& cell0DIndex,
-                                                const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline bool Cell0DHasNeighbourCell3D(const unsigned int& cell0DIndex,
-                                           const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline void Cell0DResetNeighbourCell3D(const unsigned int& cell0DIndex,
-                                             const unsigned int& neighbourIndex)
+      inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& ,
+                                                   const unsigned int& ) { return; }
+      inline void Cell0DInsertNeighbourCell3D(const unsigned int& ,
+                                              const unsigned int& ,
+                                              const unsigned int& ) { throw std::runtime_error("Not implemented"); }
+      inline unsigned int Cell0DNumberNeighbourCell3D(const unsigned int& ) const { return 0; }
+      inline unsigned int Cell0DNeighbourCell3D(const unsigned int& ,
+                                                const unsigned int& ) const { throw std::runtime_error("Not implemented"); }
+      inline bool Cell0DHasNeighbourCell3D(const unsigned int& ,
+                                           const unsigned int& ) const { throw std::runtime_error("Not implemented"); }
+      inline void Cell0DResetNeighbourCell3D(const unsigned int& ,
+                                             const unsigned int& )
       {
         throw std::runtime_error("Not implemented");
       }
@@ -460,20 +460,23 @@ namespace Gedim
                                 list<unsigned int>& updatedCell1DIds) const;
       void Cell1DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
 
-      inline void Cell1DSetId(const unsigned int& cell1DIndex,
-                              const unsigned int& id) { return; }
+      inline void Cell1DSetId(const unsigned int& ,
+                              const unsigned int& ) { return; }
       inline unsigned int Cell1DId(const unsigned int& cell1DIndex) const { return cell1DIndex; }
-      inline void Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
-                                                   const unsigned int& numberNeighbourCell3Ds) {  return; }
-      inline void Cell1DInsertNeighbourCell3D(const unsigned int& cell1DIndex,
-                                              const unsigned int& neighbourIndex, const unsigned int& neigbourCell3DIndex) { throw std::runtime_error("Not implemented"); }
-      inline unsigned int Cell1DNumberNeighbourCell3D(const unsigned int& cell1DIndex) const { return 0; }
-      inline unsigned int Cell1DNeighbourCell3D(const unsigned int& cell1DIndex,
-                                                const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline bool Cell1DHasNeighbourCell3D(const unsigned int& cell1DIndex,
-                                           const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline void Cell1DResetNeighbourCell3D(const unsigned int& cell1DIndex,
-                                             const unsigned int& neighbourIndex)
+      inline void Cell1DInitializeNeighbourCell3Ds(const unsigned int& ,
+                                                   const unsigned int& ) { }
+      inline void Cell1DInsertNeighbourCell3D(const unsigned int& ,
+                                              const unsigned int& ,
+                                              const unsigned int& )
+      { throw std::runtime_error("Not implemented"); }
+      inline unsigned int Cell1DNumberNeighbourCell3D(const unsigned int& ) const { return 0; }
+      inline unsigned int Cell1DNeighbourCell3D(const unsigned int& ,
+                                                const unsigned int& ) const { throw std::runtime_error("Not implemented"); }
+      inline bool Cell1DHasNeighbourCell3D(const unsigned int& ,
+                                           const unsigned int& ) const
+      { throw std::runtime_error("Not implemented"); }
+      inline void Cell1DResetNeighbourCell3D(const unsigned int& ,
+                                             const unsigned int& )
       {
         throw std::runtime_error("Not implemented");
       }
@@ -661,21 +664,24 @@ namespace Gedim
       bool Cell2DUpdatedCell2Ds(const unsigned int& cell2DIndex,
                                 list<unsigned int>& updatedCell2DIds) const;
 
-      inline void Cell2DSetId(const unsigned int& cell2DIndex,
-                              const unsigned int& id) { return; }
+      inline void Cell2DSetId(const unsigned int& ,
+                              const unsigned int& ) { return; }
       inline unsigned int Cell2DId(const unsigned int& cell2DIndex) const { return cell2DIndex; }
-      inline void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
-                                                   const unsigned int& numberNeighbourCell3Ds) { return; }
-      inline void Cell2DInsertNeighbourCell3D(const unsigned int& cell2DIndex,
-                                              const unsigned int& neighbourIndex,
-                                              const unsigned int& neigbourCell3DIndex) { throw std::runtime_error("Not implemented"); }
-      inline unsigned int Cell2DNumberNeighbourCell3D(const unsigned int& cell2DIndex) const { return 0; }
-      inline unsigned int Cell2DNeighbourCell3D(const unsigned int& cell2DIndex,
-                                                const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline bool Cell2DHasNeighbourCell3D(const unsigned int& cell2DIndex,
-                                           const unsigned int& neighbourIndex) const { throw std::runtime_error("Not implemented"); }
-      inline void Cell2DResetNeighbourCell3D(const unsigned int& cell2DIndex,
-                                             const unsigned int& neighbourIndex)
+      inline void Cell2DInitializeNeighbourCell3Ds(const unsigned int& ,
+                                                   const unsigned int& ) { }
+      inline void Cell2DInsertNeighbourCell3D(const unsigned int& ,
+                                              const unsigned int& ,
+                                              const unsigned int& )
+      { throw std::runtime_error("Not implemented"); }
+      inline unsigned int Cell2DNumberNeighbourCell3D(const unsigned int& ) const { return 0; }
+      inline unsigned int Cell2DNeighbourCell3D(const unsigned int& ,
+                                                const unsigned int& ) const
+      { throw std::runtime_error("Not implemented"); }
+      inline bool Cell2DHasNeighbourCell3D(const unsigned int& ,
+                                           const unsigned int& ) const
+      { throw std::runtime_error("Not implemented"); }
+      inline void Cell2DResetNeighbourCell3D(const unsigned int& ,
+                                             const unsigned int& )
       {
         throw std::runtime_error("Not implemented");
       }
@@ -911,8 +917,8 @@ namespace Gedim
       bool Cell3DUpdatedCell3Ds(const unsigned int& cell3DIndex,
                                 list<unsigned int>& updatedCell3DIds) const;
 
-      inline void Cell3DSetId(const unsigned int& cell3DIndex,
-                              const unsigned int& id) { return; }
+      inline void Cell3DSetId(const unsigned int& ,
+                              const unsigned int& ) { }
       inline unsigned int Cell3DId(const unsigned int& cell3DIndex) const { return cell3DIndex; }
 
       void Cell3DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);

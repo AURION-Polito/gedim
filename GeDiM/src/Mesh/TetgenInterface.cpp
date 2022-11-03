@@ -15,7 +15,7 @@ namespace Gedim
   }
   // ***************************************************************************
   void TetgenInterface::DeleteTetgenStructure(tetgenio& tetgenInput,
-                                              tetgenio& tetgenOutput) const
+                                              tetgenio& ) const
   {
     delete[] tetgenInput.pointlist; tetgenInput.pointlist = NULL;
     delete[] tetgenInput.pointmarkerlist; tetgenInput.pointmarkerlist = NULL;

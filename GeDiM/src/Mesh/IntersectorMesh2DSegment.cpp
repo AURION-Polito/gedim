@@ -189,7 +189,7 @@ namespace Gedim
   // ***************************************************************************
   void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d& segmentOrigin,
                                                           const Vector3d& segmentEnd,
-                                                          const Vector3d& segmentTangent,
+                                                          const Vector3d& ,
                                                           const Vector3d& segmentBarycenter,
                                                           const double& segmentLength,
                                                           IntersectorMesh2DSegment::IntersectionMesh& result)
@@ -472,17 +472,16 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d& segmentOrigin,
-                                                     const Vector3d& segmentEnd,
+  void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d& ,
+                                                     const Vector3d& ,
                                                      IntersectorMesh2DSegment::IntersectionMesh& result)
   {
-    const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
+    //const Vector3d segmentTangent = _geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     for (map<double, IntersectionMesh::IntersectionMeshPoint>::iterator itPoint = result.Points.begin();
          itPoint != result.Points.end();
          itPoint++)
     {
-      const double& curvilinearCoordinatePoint = itPoint->first;
       IntersectionMesh::IntersectionMeshPoint& intersectionPoint = itPoint->second;
 
       // Extract active edges in the mesh

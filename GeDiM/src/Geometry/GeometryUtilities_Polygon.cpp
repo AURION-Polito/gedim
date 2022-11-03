@@ -225,7 +225,7 @@ namespace Gedim
   }
   // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
-                                                                              const Eigen::Vector3d& internalPoint) const
+                                                                              const Eigen::Vector3d& ) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
 
@@ -247,7 +247,7 @@ namespace Gedim
   GeometryUtilities::PolygonDivisionByAngleQuadrantResult GeometryUtilities::PolygonOutsideCircleDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
                                                                                                                          const Eigen::MatrixXd& polygonEdgeTangents,
                                                                                                                          const Eigen::Vector3d& circleCenter,
-                                                                                                                         const double& circleRadius,
+                                                                                                                         const double& ,
                                                                                                                          const unsigned int& curvedEdgeIndex) const
   {
     PolygonDivisionByAngleQuadrantResult result;
@@ -398,7 +398,7 @@ namespace Gedim
       list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
       subPolygon.push_back(curvedEdgeEndIndex);
       unsigned int vertexIndex = (curvedEdgeEndIndex + 1) % numPolygonVertices;
-      while (vertexIndex != curvedEdgeEndEdgeIntersectionIndex)
+      while (static_cast<int>(vertexIndex) != curvedEdgeEndEdgeIntersectionIndex)
       {
         subPolygon.push_back(vertexIndex);
         vertexIndex = (vertexIndex + 1) % numPolygonVertices;
@@ -449,7 +449,7 @@ namespace Gedim
   GeometryUtilities::PolygonDivisionByAngleQuadrantResult GeometryUtilities::PolygonInsideCircleDivisionByAngleQuadrant(const Eigen::MatrixXd& polygonVertices,
                                                                                                                         const Eigen::MatrixXd& polygonEdgeTangents,
                                                                                                                         const Eigen::Vector3d& circleCenter,
-                                                                                                                        const double& circleRadius,
+                                                                                                                        const double& ,
                                                                                                                         const unsigned int& curvedEdgeIndex) const
   {
     PolygonDivisionByAngleQuadrantResult result;
@@ -600,7 +600,7 @@ namespace Gedim
       list<unsigned int>& subPolygon = subPolygons[subPolygonCounter];
       subPolygon.push_back(curvedEdgeEndIndex);
       unsigned int vertexIndex = (curvedEdgeEndIndex + 1) % numPolygonVertices;
-      while (vertexIndex != curvedEdgeEndEdgeIntersectionIndex)
+      while (static_cast<int>(vertexIndex) != curvedEdgeEndEdgeIntersectionIndex)
       {
         subPolygon.push_back(vertexIndex);
         vertexIndex = (vertexIndex + 1) % numPolygonVertices;
@@ -649,7 +649,7 @@ namespace Gedim
   }
   // ***************************************************************************
   GeometryUtilities::PolygonDivisionByCircleResult GeometryUtilities::PolygonDivisionByCircle(const Eigen::MatrixXd& polygonVertices,
-                                                                                              const Eigen::MatrixXd& polygonEdgeTangents,
+                                                                                              const Eigen::MatrixXd& ,
                                                                                               const Eigen::Vector3d& circleCenter,
                                                                                               const double& circleRadius,
                                                                                               const unsigned int& curvedEdgeIndex) const
@@ -666,9 +666,7 @@ namespace Gedim
       newCoordinates.push_back(polygonVertices.col(p));
     newCoordinates.push_back(circleCenter);
 
-    const unsigned int curvedEdgeOriginIndex = curvedEdgeIndex;
     const unsigned int curvedEdgeEndIndex = (curvedEdgeIndex + 1) % numPolygonVertices;
-    const Vector3d& curvedEdgeOrigin = polygonVertices.col(curvedEdgeOriginIndex);
     const Vector3d& curvedEdgeEnd = polygonVertices.col(curvedEdgeEndIndex);
 
     // intersects all the lines from circleCenter to each vertex not belonging to curved edge
@@ -684,7 +682,6 @@ namespace Gedim
 
       const Eigen::Vector3d& edgeOrigin = polygonVertices.col(originEdgeIndex);
       const Eigen::Vector3d& edgeEnd = polygonVertices.col(endEdgeIndex);
-      const Eigen::Vector3d& edgeTangent = polygonEdgeTangents.col(edgeNumber);
 
       // check if the edge is aligned to the angle quadrant
       if (PointIsAligned(edgeOrigin,
@@ -918,8 +915,6 @@ namespace Gedim
 
     const unsigned int curvedEdgeOriginIndex = curvedEdgeIndex;
     const unsigned int curvedEdgeEndIndex = (curvedEdgeIndex + 1) % numPolygonVertices;
-    const Vector3d& curvedEdgeOrigin = polygonVertices.col(curvedEdgeOriginIndex);
-    const Vector3d& curvedEdgeEnd = polygonVertices.col(curvedEdgeEndIndex);
 
     // intersects all the lines from circleCenter to each vertex not belonging to curved edge
     unsigned int edgeNumber = curvedEdgeEndIndex;
@@ -1063,7 +1058,7 @@ namespace Gedim
     Output::Assert(PointsAre2D(polygonVertices) && polygonVertices.cols() > 2);
 
     const unsigned int& numVertices = polygonVertices.cols();
-    double area = 0.0;
+
     Eigen::VectorXd xPoints(numVertices + 1);
     Eigen::VectorXd yPoints(numVertices + 1);
     xPoints<< polygonVertices.row(0).transpose(), polygonVertices(0, 0);
@@ -1075,7 +1070,7 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,
                                                                                          const Eigen::Vector3d& circleCenter,
-                                                                                         const double& circleRadius,
+                                                                                         const double& ,
                                                                                          const vector<PointCirclePositionResult>& vertexPositions,
                                                                                          const IntersectionPolygonCircleResult& polygonCircleIntersections) const
   {

@@ -124,7 +124,7 @@ namespace Gedim
     mesh.Compress();
   }
   // ***************************************************************************
-  void MeshUtilities::FillMesh1D(const GeometryUtilities& geometryUtilities,
+  void MeshUtilities::FillMesh1D(const GeometryUtilities&,
                                  const Vector3d& segmentOrigin,
                                  const Vector3d& segmentTangent,
                                  const vector<double>& coordinates,
@@ -1738,7 +1738,7 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void MeshUtilities::ExportCell2DToVTU(const IMeshDAO& mesh,
+  void MeshUtilities::ExportCell2DToVTU(const IMeshDAO&,
                                         const unsigned int& cell2DIndex,
                                         const Eigen::MatrixXd& cell2DVertices,
                                         const vector<Eigen::Matrix3d>& cell2DTriangulations,

@@ -122,7 +122,6 @@ namespace Gedim
       const double& curvilinearCoordinatePoint = itPoint->first;
       const double& curvilinearCoordinatePointNext = itPointNext->first;
       const UnionMesh::UnionMeshPoint& intersectionPoint = itPoint->second;
-      const UnionMesh::UnionMeshPoint& intersectionPointNext = itPointNext->second;
 
       // fill origin and end of segment
       UnionMesh::UnionMeshSegment& meshSegment = result.Segments[p];
@@ -138,21 +137,21 @@ namespace Gedim
       {
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::First:
           meshIndices[p][0]++;
-        break;
+          break;
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::Second:
           meshIndices[p][1]++;
-        break;
+          break;
         case Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types::Both:
           meshIndices[p][0]++;
           meshIndices[p][1]++;
-        break;
+          break;
         default:
           throw runtime_error("Unmanaged intersectionPoint.Type");
       }
 
-      if ((meshIndices[p][0] + 1) >= curvilinearCoordinatesMeshOne.size())
+      if ((meshIndices[p][0] + 1) >= static_cast<int>(curvilinearCoordinatesMeshOne.size()))
         meshIndices[p][0] = -1;
-      if ((meshIndices[p][1] + 1) >= curvilinearCoordinatesMeshTwo.size())
+      if ((meshIndices[p][1] + 1) >= static_cast<int>(curvilinearCoordinatesMeshTwo.size()))
         meshIndices[p][1] = -1;
 
       meshSegment.MeshIndices.resize(2);

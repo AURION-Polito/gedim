@@ -786,8 +786,8 @@ namespace Gedim
 	}
 	// ***************************************************************************
 	GeometryUtilities::SplitPolygonWithCircleResult GeometryUtilities::SplitPolygonWithCircle(const Eigen::MatrixXd& polygonVertices,
-																																														const Eigen::Vector3d& circleCenter,
-																																														const double& circleRadius,
+                                                                                            const Eigen::Vector3d& ,
+                                                                                            const double& ,
 																																														const vector<PointCirclePositionResult>& vertexPositions,
 																																														const IntersectionPolygonCircleResult& polygonCircleIntersections,
 																																														const PolygonCirclePositionTypes& polygonCirclePosition) const

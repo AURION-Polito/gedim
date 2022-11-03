@@ -694,7 +694,7 @@ namespace Gedim
                                                                                                        const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                                        const Eigen::Vector3d& segmentOrigin,
                                                                                                        const Eigen::Vector3d& segmentEnd,
-                                                                                                       const Eigen::Vector3d& segmentTangent,
+                                                                                                       const Eigen::Vector3d& ,
                                                                                                        const IntersectionPolyhedronLineResult& polyhedronLineIntersections) const
   {
     IntersectionPolyhedronLineResult result;

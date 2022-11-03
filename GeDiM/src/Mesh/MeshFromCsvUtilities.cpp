@@ -947,7 +947,6 @@ namespace Gedim
       {
         cell1DNeighbours.resize(numCell1DNeighbours);
 
-        Cell1D cell1D;
         for (unsigned int e = 0; e < numCell1DNeighbours; e++)
         {
           MeshFromCsvUtilities::Cell1DNeighbours& cell1D = cell1DNeighbours[e];

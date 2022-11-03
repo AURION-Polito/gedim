@@ -814,7 +814,6 @@ namespace Gedim
     }
 
     // create new cell2Dmesh2D
-    unsigned int nc = 0;
     list<unsigned int> newCell2DMesh2DVertices, newCell2DMesh2DEdges;
     for (unsigned int e = 0; e < mesh2D.Cell2DNumberEdges(cell2DMesh2DId); e++)
     {
@@ -900,15 +899,6 @@ namespace Gedim
     // nothing to do
     if (cell1DMesh1DIds.size() < 2)
       return;
-
-    ConformerMeshSegment::ConformMesh::ConformMeshSegment& firstCell1DMesh1D = mesh1D.Segments[cell1DMesh1DIds.front()];
-    ConformerMeshSegment::ConformMesh::ConformMeshSegment& lastCell1DMesh1D = mesh1D.Segments[cell1DMesh1DIds.back()];
-
-    const double originCurvilinearCoordinate = firstCell1DMesh1D.Points[0];
-    const double endCurvilinearCoordinate = lastCell1DMesh1D.Points[1];
-
-    ConformerMeshSegment::ConformMesh::ConformMeshPoint& originCell0DMesh1D = mesh1D.Points[originCurvilinearCoordinate];
-    ConformerMeshSegment::ConformMesh::ConformMeshPoint& endCell0DMesh1D = mesh1D.Points[endCurvilinearCoordinate];
 
     list<unsigned int> cell2DMesh2DsToUpdate;
     mesh2D.Cell2DUpdatedCell2Ds(cell2DMesh2DId,
@@ -1400,7 +1390,7 @@ namespace Gedim
                                                           const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
                                                           IMeshDAO& mesh2D,
-                                                          ConformMesh& meshConformedInformation)
+                                                          ConformMesh& )
   {
     // check starting and end of segment if inside Cell2DMesh2D
     CheckSegmentOriginAndEndIntersections(segmentOrigin,
@@ -1493,11 +1483,11 @@ namespace Gedim
   }
   // ***************************************************************************
   void ConformerMeshPolygon::CreateConformMeshOnlyOnEdges(const Eigen::Vector3d& segmentOrigin,
-                                                          const Eigen::Vector3d& segmentEnd,
+                                                          const Eigen::Vector3d& ,
                                                           const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
                                                           IMeshDAO& mesh2D,
-                                                          ConformMesh& meshConformedInformation)
+                                                          ConformMesh& )
   {
     unsigned int numVisitedCell1DMesh1D = 0;
     while (numVisitedCell1DMesh1D < mesh1D.Segments.size())

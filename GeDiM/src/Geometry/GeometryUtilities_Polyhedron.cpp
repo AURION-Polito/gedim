@@ -264,7 +264,7 @@ namespace Gedim
     return facesVertices;
   }
   // ***************************************************************************
-  vector<vector<bool>> GeometryUtilities::PolyhedronFaceEdgeDirections(const Eigen::MatrixXd& polyhedronVertices,
+  vector<vector<bool>> GeometryUtilities::PolyhedronFaceEdgeDirections(const Eigen::MatrixXd& ,
                                                                        const Eigen::MatrixXi& polyhedronEdges,
                                                                        const vector<Eigen::MatrixXi>& polyhedronFaces) const
   {
@@ -281,8 +281,8 @@ namespace Gedim
     return facesEdgeDirections;
   }
   // ***************************************************************************
-  vector<MatrixXd> GeometryUtilities::PolyhedronFaceEdgeTangents(const Eigen::MatrixXd& polyhedronVertices,
-                                                                 const Eigen::MatrixXi& polyhedronEdges,
+  vector<MatrixXd> GeometryUtilities::PolyhedronFaceEdgeTangents(const Eigen::MatrixXd& ,
+                                                                 const Eigen::MatrixXi& ,
                                                                  const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                  const vector<vector<bool>>& polyhedronFaceEdgeDirections,
                                                                  const Eigen::MatrixXd& polyhedronEdgeTangents) const
@@ -447,7 +447,7 @@ namespace Gedim
     return faceTriangulationsPoints;
   }
   // ***************************************************************************
-  vector<vector<unsigned int>> GeometryUtilities::PolyhedronFaceTriangulationsByInternalPoint(const Eigen::MatrixXd& polyhedronVertices,
+  vector<vector<unsigned int>> GeometryUtilities::PolyhedronFaceTriangulationsByInternalPoint(const Eigen::MatrixXd& ,
                                                                                               const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                               const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                                                               const vector<Eigen::Vector3d>& polyhedronFaceInternalPoints) const
@@ -466,7 +466,7 @@ namespace Gedim
   vector<unsigned int> GeometryUtilities::PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
                                                                                      const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                      const vector<vector<unsigned int>>& polyhedronFaceTriangulations,
-                                                                                     const Eigen::Vector3d& polyhedronInternalPoint) const
+                                                                                     const Eigen::Vector3d& ) const
   {
     list<unsigned int> tetrahedronList;
 
@@ -492,7 +492,7 @@ namespace Gedim
                                                                                      const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                      const vector<vector<unsigned int> >& polyhedronFaceTriangulations,
                                                                                      const vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
-                                                                                     const Eigen::Vector3d& polyhedronInternalPoint) const
+                                                                                     const Eigen::Vector3d& ) const
   {
     list<unsigned int> tetrahedronList;
 
@@ -555,7 +555,7 @@ namespace Gedim
     return tetra;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::PolyhedronCoordinateSystem(const Eigen::MatrixXd& polyhedronVertices,
+  vector<unsigned int> GeometryUtilities::PolyhedronCoordinateSystem(const Eigen::MatrixXd& ,
                                                                      const Eigen::MatrixXi& polyhedronEdges)
   {
     vector<unsigned int> coordinateSystem(4);
