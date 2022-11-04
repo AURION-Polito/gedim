@@ -322,7 +322,7 @@ namespace Gedim
     vector<unsigned int> pointsOnPlaneIndicesVector = vector<unsigned int>(pointsOnPlaneIndices.begin(),
                                                                            pointsOnPlaneIndices.end());
     Eigen::MatrixXd pointsOnPlane3D(3, pointsOnPlaneIndicesVector.size());
-    unsigned int p = 0;
+
     for (unsigned int p = 0; p < pointsOnPlaneIndicesVector.size(); p++)
     {
       const unsigned int pointOnPlaneIndex = pointsOnPlaneIndicesVector[p];
