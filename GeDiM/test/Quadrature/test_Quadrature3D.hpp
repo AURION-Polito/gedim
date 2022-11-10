@@ -144,6 +144,47 @@ namespace UnitTesting
     }
   }
 
+  TEST(TestQuadrature3D, TestQuadrature_Gauss3D_PositiveWeights_Tetrahedron_XToN)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      unsigned int minOrder = 0;
+      unsigned int maxOrder = 8;
+
+      for (unsigned int numOrd = 0; numOrd < maxOrder; numOrd++)
+      {
+        Eigen::MatrixXd points;
+        Eigen::VectorXd weights;
+
+        Gedim::Quadrature_Gauss3D_Tetrahedron_PositiveWeights::FillPointsAndWeights(2 * numOrd,
+                                                                                    points,
+                                                                                    weights);
+
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0 / 6.0, weights.sum()));
+
+        for(unsigned int ord = 0; ord <= 2 * numOrd; ord++)
+        {
+          Eigen::VectorXd pointsX = (points.row(0));
+          Eigen::VectorXd pointsXPow = (pointsX.array()).pow(ord);
+          double result = pointsXPow.dot(weights);
+
+          double expectedResult =  1.0 / ((ord+1) * (ord+2) * (ord+3));
+
+          ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(expectedResult, result));
+        }
+      }
+    }
+    catch (const std::exception& exception)
+    {
+      std::cerr<< exception.what()<< std::endl;
+      FAIL();
+    }
+  }
+
   TEST(TestQuadrature3D, TestQuadrature_Gauss3D_PositiveWeights_Tetrahedron_YToN)
   {
     try
