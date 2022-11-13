@@ -8,6 +8,8 @@
 #include "test_geometry_polyhedron.hpp"
 #include "test_geometry_split.hpp"
 #include "test_geometry_splitPolyhedron.hpp"
+#include "test_LAPACK_utilities.hpp"
+#include "test_Eigen.hpp"
 #include "test_map.hpp"
 #include "test_mesh.hpp"
 #include "test_meshUtilities.hpp"

@@ -1,4 +1,5 @@
 # INCLUDE SUB DIRECTORIES
+add_subdirectory(Algebra)
 add_subdirectory(Common)
 add_subdirectory(IO)
 add_subdirectory(Mesh)

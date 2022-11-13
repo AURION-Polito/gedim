@@ -56,6 +56,12 @@ endif()
 ## Eigen3
 find_package(Eigen3 CONFIG REQUIRED)
 
+## Blas
+find_package(BLAS REQUIRED)
+
+## Lapack
+find_package(LAPACK REQUIRED)
+
 ## VTK
 find_package(VTK CONFIG REQUIRED)
 
@@ -68,6 +74,7 @@ find_package(tetgen CONFIG REQUIRED)
 # Insert Sources
 ###############################################################################################
 add_subdirectory(Geometry)
+add_subdirectory(Algebra)
 add_subdirectory(Mesh)
 add_subdirectory(IO)
 add_subdirectory(Quadrature)
