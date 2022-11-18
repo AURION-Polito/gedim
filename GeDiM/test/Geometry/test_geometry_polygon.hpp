@@ -1860,7 +1860,7 @@ namespace GedimUnitTesting
       Gedim::Output::CreateFolder(exportFolder);
 
       const Eigen::Vector3d center(0.0, 0.0, 0.0);
-      const std::vector<double> axisLengths = { 1.0, 1.0 };
+      const std::vector<double> axisLengths = { 0.5, 0.25 };
       const unsigned int resolution = 2;
 
       const Eigen::MatrixXd ellipse = geometryUtilities.CreateEllipse(axisLengths.at(0),
@@ -1874,10 +1874,10 @@ namespace GedimUnitTesting
       vtuExporter.AddPolygon(ellipse);
       vtuExporter.Export(exportFolder + "/Ellipse_1.vtu");
 
-      ASSERT_EQ((Eigen::MatrixXd(3, 4)<<
-                 +1.0, +0.0, -1.0, +0.0,
-                 +0.0, +1.0, +0.0, -1.0,
-                 +0.0, +0.0, +0.0, +0.0).finished(),
+      ASSERT_EQ((Eigen::MatrixXd(3, 12)<<
+                 5.0000000000000000e-01,  3.3333333333333331e-01,  1.6666666666666666e-01,  0.0000000000000000e+00, -1.6666666666666666e-01, -3.3333333333333331e-01, -5.0000000000000000e-01, -3.3333333333333331e-01, -1.6666666666666666e-01,  0.0000000000000000e+00,  1.6666666666666666e-01,  3.3333333333333331e-01,
+                 0.0000000000000000e+00,  1.8633899812498247e-01,  2.3570226039551584e-01,  2.5000000000000000e-01,  2.3570226039551584e-01,  1.8633899812498247e-01,  0.0000000000000000e+00, -1.8633899812498247e-01, -2.3570226039551584e-01, -2.5000000000000000e-01, -2.3570226039551584e-01, -1.8633899812498247e-01,
+                 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00).finished(),
                 ellipse);
     }
     catch (const exception& exception)

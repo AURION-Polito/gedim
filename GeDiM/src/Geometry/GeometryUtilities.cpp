@@ -232,16 +232,16 @@ namespace Gedim
     vertices.col(2 * (numInternalPoints + 1))<< Vector3d(-axisMajorLength, 0.0, 0.0);
     vertices.col(3 * (numInternalPoints + 1))<< Vector3d(0.0, -axisMinorLength, 0.0);
 
-    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
-      vertices.col(v + 1)<< Vector3d(ellipseXPoints[v], ellipseYPoints[v], 0.0);
+    for (unsigned int v = 0; v < numInternalPoints; v++)
+      vertices.col(v + 1)<< Vector3d(ellipseXPoints[numInternalPoints - 1 - v], ellipseYPoints[numInternalPoints - 1 - v], 0.0);
 
-    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+    for (unsigned int v = 0; v < numInternalPoints; v++)
       vertices.col(numInternalPoints + 1 + v + 1)<< Vector3d(-ellipseXPoints[v], ellipseYPoints[v], 0.0);
 
-    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
-      vertices.col(2 * (numInternalPoints + 1) + v + 1)<< Vector3d(-ellipseXPoints[v], -ellipseYPoints[v], 0.0);
+    for (unsigned int v = 0; v < numInternalPoints; v++)
+      vertices.col(2 * (numInternalPoints + 1) + v + 1)<< Vector3d(-ellipseXPoints[numInternalPoints - 1 - v], -ellipseYPoints[numInternalPoints - 1 - v], 0.0);
 
-    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+    for (unsigned int v = 0; v < numInternalPoints; v++)
       vertices.col(3 * (numInternalPoints + 1) + v + 1)<< Vector3d(ellipseXPoints[v], -ellipseYPoints[v], 0.0);
 
     return vertices;
