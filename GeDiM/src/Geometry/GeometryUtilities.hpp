@@ -1573,6 +1573,18 @@ namespace Gedim
       std::vector<Eigen::Matrix3d> ExtractTriangulationPointsByInternalPoint(const Eigen::MatrixXd& points,
                                                                              const Eigen::Vector3d& internalPoint,
                                                                              const std::vector<unsigned int>& pointsTriangulation) const;
+
+      /// \brief Create Ellipse 2D approximation with polygon 2D
+      /// \param center the ellipse center
+      /// \param axisMajor the ellipse axis major
+      /// \param axisMinor the ellipse axis minor
+      /// \param resolution the number of points on each ellipse quadrant
+      /// \return the polygon which approximate the ellipse
+      Eigen::MatrixXd CreateEllipse(const Eigen::Vector3d& center,
+                                    const double& axisMajor,
+                                    const double& axisMinor,
+                                    const unsigned int& resolution) const;
+
       /// \brief Create a triangle with points
       Eigen::MatrixXd CreateTriangle(const Eigen::Vector3d& p1,
                                      const Eigen::Vector3d& p2,

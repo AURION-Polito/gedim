@@ -195,6 +195,25 @@ namespace Gedim
     return triangulations;
   }
   // ***************************************************************************
+  MatrixXd GeometryUtilities::CreateEllipse(const Eigen::Vector3d& center,
+                                            const double& axisMajor,
+                                            const double& axisMinor,
+                                            const unsigned int& resolution) const
+  {
+    Eigen::MatrixXd vertices;
+
+    vector<double> ellipseXPoints = EquispaceCoordinates(resolution,
+                                                         0.0,
+                                                         axisMajor,
+                                                         false);
+
+    cerr<< "ellipseXPoints: "<< ellipseXPoints<< endl;
+
+
+
+    return vertices;
+  }
+  // ***************************************************************************
   MatrixXd GeometryUtilities::CreateTriangle(const Eigen::Vector3d& p1,
                                              const Eigen::Vector3d& p2,
                                              const Eigen::Vector3d& p3) const
