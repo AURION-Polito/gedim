@@ -22,7 +22,9 @@ namespace Gedim
     Output::Assert(IsValue1DPositive(step) &&
                    Compare1DValues(step, 1.0) != CompareTypes::SecondBeforeFirst);
 
-    return EquispaceCoordinates(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0, insertExtremes);
+    return insertExtremes ?
+          EquispaceCoordinates(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0, true) :
+          EquispaceCoordinates(static_cast<unsigned int>(1.0 / step + 0.5) - 1, 0.0, 1.0, false);
   }
   // ***************************************************************************
   std::vector<double> GeometryUtilities::EquispaceCoordinates(const unsigned int& size,
@@ -30,9 +32,17 @@ namespace Gedim
                                                               const double& end,
                                                               const bool& insertExtremes) const
   {
-    VectorXd generated = VectorXd::LinSpaced(size,
-                                             origin,
-                                             end);
+    if (size == 0)
+      return { };
+    else if (size == 1 && insertExtremes)
+      throw invalid_argument("size is not valid with false insertExtremes");
+
+    const VectorXd generated = insertExtremes ? VectorXd::LinSpaced(size,
+                                                                    origin,
+                                                                    end) :
+                                                VectorXd::LinSpaced(size + 2,
+                                                                    origin,
+                                                                    end);
 
     vector<double> coordinates;
     if (insertExtremes)
@@ -195,21 +205,44 @@ namespace Gedim
     return triangulations;
   }
   // ***************************************************************************
-  MatrixXd GeometryUtilities::CreateEllipse(const Eigen::Vector3d& center,
-                                            const double& axisMajor,
-                                            const double& axisMinor,
+  MatrixXd GeometryUtilities::CreateEllipse(const double& axisMajorLength,
+                                            const double& axisMinorLength,
                                             const unsigned int& resolution) const
   {
-    Eigen::MatrixXd vertices;
+    const vector<double> ellipseXPoints = EquispaceCoordinates(resolution,
+                                                               0.0,
+                                                               axisMajorLength,
+                                                               false);
+    const unsigned int numInternalPoints = ellipseXPoints.size();
+    vector<double> ellipseYPoints(numInternalPoints, 0.0);
 
-    vector<double> ellipseXPoints = EquispaceCoordinates(resolution,
-                                                         0.0,
-                                                         axisMajor,
-                                                         false);
+    for (unsigned int p = 0; p < numInternalPoints; p++)
+    {
+      ellipseYPoints[p] =  axisMinorLength * sqrt(1.0 -
+                                                  ellipseXPoints.at(p) *
+                                                  ellipseXPoints.at(p) /
+                                                  (axisMajorLength *
+                                                   axisMajorLength));
+    }
 
-    cerr<< "ellipseXPoints: "<< ellipseXPoints<< endl;
+    Eigen::MatrixXd vertices(3, 4 + 4 * numInternalPoints);
 
+    vertices.col(0)<< Vector3d(axisMajorLength, 0.0, 0.0);
+    vertices.col(numInternalPoints + 1)<< Vector3d(0.0, axisMinorLength, 0.0);
+    vertices.col(2 * (numInternalPoints + 1))<< Vector3d(-axisMajorLength, 0.0, 0.0);
+    vertices.col(3 * (numInternalPoints + 1))<< Vector3d(0.0, -axisMinorLength, 0.0);
 
+    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+      vertices.col(v + 1)<< Vector3d(ellipseXPoints[v], ellipseYPoints[v], 0.0);
+
+    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+      vertices.col(numInternalPoints + 1 + v + 1)<< Vector3d(-ellipseXPoints[v], ellipseYPoints[v], 0.0);
+
+    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+      vertices.col(2 * (numInternalPoints + 1) + v + 1)<< Vector3d(-ellipseXPoints[v], -ellipseYPoints[v], 0.0);
+
+    for (unsigned int v = 0; v < ellipseXPoints.size(); v++)
+      vertices.col(3 * (numInternalPoints + 1) + v + 1)<< Vector3d(ellipseXPoints[v], -ellipseYPoints[v], 0.0);
 
     return vertices;
   }

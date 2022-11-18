@@ -797,6 +797,7 @@ namespace Gedim
       /// \param end the ending curvilinear coordinate
       /// \param insertExtremes if true keeps the extremes
       /// \return equispaced curvilinear coordinates in the interval [origin, end]
+      /// \note if size < 2 then size will be considered as 2
       std::vector<double> EquispaceCoordinates(const unsigned int& size,
                                                const double& origin,
                                                const double& end,
@@ -853,6 +854,12 @@ namespace Gedim
         return abs(normalToLine.dot(point - lineOrigin)) / normalToLine.norm();
       }
 
+      /// \param point the point
+      /// \return true if the point is 2D (z == 0)
+      inline bool PointIs2D(const Eigen::Vector3d& point) const
+      {
+        return PointsAre2D(point);
+      }
 
       /// \param points the points to test, size 3 x numPoints
       /// \return true if the points are 2D (z == 0)
@@ -1574,15 +1581,14 @@ namespace Gedim
                                                                              const Eigen::Vector3d& internalPoint,
                                                                              const std::vector<unsigned int>& pointsTriangulation) const;
 
-      /// \brief Create Ellipse 2D approximation with polygon 2D
-      /// \param center the ellipse center
-      /// \param axisMajor the ellipse axis major
-      /// \param axisMinor the ellipse axis minor
+      /// \brief Create 2D Ellipse approximation with 2D polygon
+      /// \param axisMajorLength the ellipse axis major length
+      /// \param axisMinorLength the ellipse axis minor length
       /// \param resolution the number of points on each ellipse quadrant
       /// \return the polygon which approximate the ellipse
-      Eigen::MatrixXd CreateEllipse(const Eigen::Vector3d& center,
-                                    const double& axisMajor,
-                                    const double& axisMinor,
+      /// \note the ellipse is centered in the origin and parallel to xy-axis
+      Eigen::MatrixXd CreateEllipse(const double& axisMajorLength,
+                                    const double& axisMinorLength,
                                     const unsigned int& resolution) const;
 
       /// \brief Create a triangle with points

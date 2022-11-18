@@ -6,12 +6,13 @@
 #include <gmock/gmock-matchers.h>
 
 #include "GeometryUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 using namespace testing;
 using namespace std;
 
-namespace GedimUnitTesting {
-
+namespace GedimUnitTesting
+{
   TEST(TestGeometryUtilities, TestPolygonNormal)
   {
     try
@@ -1840,6 +1841,44 @@ namespace GedimUnitTesting {
                                                                                                                 vertexPositions,
                                                                                                                 polygonCircleIntersections);
         ASSERT_EQ(position, Gedim::GeometryUtilities::PolygonCirclePositionTypes::CirclePolygonMultipleIntersections);}
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestCreateEllipse)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      std::string exportFolder = "./Export/TestCreateEllipse";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      const Eigen::Vector3d center(0.0, 0.0, 0.0);
+      const std::vector<double> axisLengths = { 1.0, 1.0 };
+      const unsigned int resolution = 2;
+
+      const Eigen::MatrixXd ellipse = geometryUtilities.CreateEllipse(axisLengths.at(0),
+                                                                      axisLengths.at(1),
+                                                                      resolution);
+
+      cerr.precision(16);
+      cerr<< scientific<< ellipse<< endl;
+
+      Gedim::VTKUtilities vtuExporter;
+      vtuExporter.AddPolygon(ellipse);
+      vtuExporter.Export(exportFolder + "/Ellipse_1.vtu");
+
+      ASSERT_EQ((Eigen::MatrixXd(3, 4)<<
+                 +1.0, +0.0, -1.0, +0.0,
+                 +0.0, +1.0, +0.0, -1.0,
+                 +0.0, +0.0, +0.0, +0.0).finished(),
+                ellipse);
     }
     catch (const exception& exception)
     {

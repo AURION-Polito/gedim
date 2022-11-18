@@ -19,6 +19,13 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(2, 0.0, 1.0, true), vector<double>({ 0.0, 1.0 }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(0, 0.0, 1.0, false), vector<double>({ }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(3, 0.0, 1.0, true), vector<double>({ 0.0, 0.5, 1.0 }));
+      ASSERT_EQ(geometryUtilities.EquispaceCoordinates(1, 0.0, 1.0, false), vector<double>({ 0.5 }));
+      ASSERT_THROW(geometryUtilities.EquispaceCoordinates(1, 0.0, 1.0, true),
+                   invalid_argument);
+
       ASSERT_EQ(geometryUtilities.EquispaceCoordinates(1.0, true), vector<double>({ 0.0, 1.0 }));
       ASSERT_EQ(geometryUtilities.EquispaceCoordinates(1.0, false), vector<double>({ }));
       ASSERT_EQ(geometryUtilities.EquispaceCoordinates(0.5, true), vector<double>({ 0.0, 0.5, 1.0 }));
