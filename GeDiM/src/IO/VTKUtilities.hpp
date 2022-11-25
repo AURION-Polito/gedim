@@ -91,7 +91,7 @@ namespace Gedim
       Formats Format;
 
       unsigned int Size;
-      double* Data;
+      const double* Data;
   };
 
   class IGeometryToPolyData

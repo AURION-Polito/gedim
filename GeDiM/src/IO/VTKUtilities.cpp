@@ -196,9 +196,6 @@ namespace Gedim
       vtkNew<vtkDoubleArray> vtkSolution;
 
       vtkSolution->SetName(property.Label.c_str());
-      vtkSolution->SetArray(property.Data,
-                            property.Size,
-                            1);
 
       switch (property.Format)
       {
@@ -218,9 +215,9 @@ namespace Gedim
           throw runtime_error("Solution Format not supported");
       }
 
-      //      vtkSolution->SetNumberOfValues(property.Size);
-      //      for (unsigned int p = 0; p < property.Size; p++)
-      //        vtkSolution->SetValue(p, property.Data[p]);
+      vtkSolution->SetNumberOfValues(property.Size);
+      for (unsigned int p = 0; p < property.Size; p++)
+        vtkSolution->SetValue(p, property.Data[p]);
     }
   }
   // ***************************************************************************
