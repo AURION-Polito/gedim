@@ -16,26 +16,9 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  void VTKUtilities::AddToExportData(IGeometryToPolyData& polyData,
-                                     const vector<VTPProperty>& properties)
+  void VTKUtilities::AddToExportData(IGeometryToPolyData& polyData)
   {
 #if ENABLE_VTK == 1
-    if (properties.size() > 0)
-    {
-      polyData.InitializeSolutions(properties.size());
-      unsigned int p = 0;
-      for (const VTPProperty& property : properties)
-      {
-        polyData.SetSolutionOptions(p,
-                                    property.Label,
-                                    property.Format);
-        polyData.AddSolution(p,
-                             property.Size,
-                             property.Data);
-        p++;
-      }
-    }
-
     polyData.Convert(exportData);
 #endif
   }
@@ -45,9 +28,9 @@ namespace Gedim
   {
 #if ENABLE_VTK == 1
     const VTPPoint vtpPoint(point);
-    GeometryToPolyData<VTPPoint> polyData(vtpPoint);
-    AddToExportData(polyData,
-                    properties);
+    GeometryToPolyData<VTPPoint> polyData(vtpPoint,
+                                          properties);
+    AddToExportData(polyData);
 #endif
   }
   // ***************************************************************************
@@ -60,9 +43,9 @@ namespace Gedim
     const Eigen::VectorXi edge =  (Eigen::VectorXi(2)<< 0, 1).finished();
     const VTPSegment vtpSegment(vertices,
                                 edge);
-    GeometryToPolyData<VTPSegment> polyData(vtpSegment);
-    AddToExportData(polyData,
-                    properties);
+    GeometryToPolyData<VTPSegment> polyData(vtpSegment,
+                                            properties);
+    AddToExportData(polyData);
 #endif
   }
   // ***************************************************************************
@@ -73,9 +56,9 @@ namespace Gedim
     const Eigen::VectorXi edge =  (Eigen::VectorXi(2)<< 0, 1).finished();
     const VTPSegment vtpSegment(vertices,
                                 edge);
-    GeometryToPolyData<VTPSegment> polyData(vtpSegment);
-    AddToExportData(polyData,
-                    properties);
+    GeometryToPolyData<VTPSegment> polyData(vtpSegment,
+                                            properties);
+    AddToExportData(polyData);
 #endif
   }
   // ***************************************************************************
@@ -98,9 +81,9 @@ namespace Gedim
     const VTPPolygon vtpPolygon(vertices,
                                 edges,
                                 face);
-    GeometryToPolyData<VTPPolygon> polyData(vtpPolygon);
-    AddToExportData(polyData,
-                    properties);
+    GeometryToPolyData<VTPPolygon> polyData(vtpPolygon,
+                                            properties);
+    AddToExportData(polyData);
 #endif
   }
   // ***************************************************************************
@@ -113,9 +96,9 @@ namespace Gedim
     const VTPPolyhedron vtpPolyhedron(vertices,
                                       edges,
                                       faces);
-    GeometryToPolyData<VTPPolyhedron> polyData(vtpPolyhedron);
-    AddToExportData(polyData,
-                    properties);
+    GeometryToPolyData<VTPPolyhedron> polyData(vtpPolyhedron,
+                                               properties);
+    AddToExportData(polyData);
 #endif
   }
   // ***************************************************************************
@@ -154,51 +137,15 @@ namespace Gedim
   template class GeometryToPolyData<VTPPolyhedron>;
   // ***************************************************************************
   template <typename T>
-  GeometryToPolyData<T>::GeometryToPolyData(const T& geometry) :
-    geometry(geometry)
+  GeometryToPolyData<T>::GeometryToPolyData(const T& geometry,
+                                            const std::vector<VTPProperty>& properties) :
+    geometry(geometry),
+    properties(properties)
   {
-    numberSolutions = 0;
   }
   template <typename T>
   GeometryToPolyData<T>::~GeometryToPolyData()
   {
-  }
-  // ***************************************************************************
-  template <typename T>
-  void GeometryToPolyData<T>::InitializeSolutions(const unsigned int& _numberSolutions)
-  {
-    Output::Assert(_numberSolutions > 0);
-    numberSolutions = _numberSolutions;
-
-    solutionLabels.resize(numberSolutions, "Solution");
-    solutionFormats.resize(numberSolutions, VTPProperty::Formats::Points);
-    solutionSizes.resize(numberSolutions, 0);
-    solutions.resize(numberSolutions, NULL);
-  }
-  // ***************************************************************************
-  template <typename T>
-  void GeometryToPolyData<T>::SetSolutionOptions(const unsigned int& solutionPosition,
-                                                 const string& solutionLabel,
-                                                 const VTPProperty::Formats& format)
-  {
-    Output::Assert(solutionPosition < numberSolutions);
-
-    solutionLabels[solutionPosition] = solutionLabel;
-    solutionFormats[solutionPosition] = format;
-  }
-  // ***************************************************************************
-  template <typename T>
-  void GeometryToPolyData<T>::AddSolution(const unsigned int& solutionPosition,
-                                          const unsigned int& solutionSize,
-                                          const double* solution)
-  {
-    Output::Assert(solutionPosition < solutionLabels.size());
-
-    if (solutions[solutionPosition] != NULL)
-      throw runtime_error("Solution " + to_string(solutionPosition) + " already inserted");
-
-    solutions[solutionPosition] = solution;
-    solutionSizes[solutionPosition] = solutionSize;
   }
   // ***************************************************************************
 #if ENABLE_VTK == 1
@@ -237,68 +184,46 @@ namespace Gedim
     for (unsigned int fp = 0 ; fp < faceVerticesIds.size(); fp++)
       faces->InsertCellPoint(faceVerticesIds[fp]);
   }
-#endif
   // ***************************************************************************
-  template <typename T>
-  void GeometryToPolyData<T>::AddSolution(const unsigned int& solutionPosition,
-                                          vtkNew<vtkDoubleArray>& vtkSolution) const
-  {
-    if (solutionPosition >= numberSolutions)
-      throw runtime_error("");
-
-    const unsigned int& solutionSize = solutionSizes[solutionPosition];
-    const double* solution = solutions[solutionPosition];
-
-    if (solutionSize == 0 || solution == NULL)
-      throw runtime_error("");
-
-#if ENABLE_VTK == 1
-    vtkSolution->SetNumberOfValues(solutionSize);
-    for (unsigned int p = 0; p < solutionSize; p++)
-      vtkSolution->SetValue(p, solution[p]);
-#endif // ENABLE_VTK
-  }
-  // ***************************************************************************
-#if ENABLE_VTK == 1
   template<typename T>
   void GeometryToPolyData<T>::AppendSolution(vtkDataSet* polyData) const
   {
-    if (numberSolutions > 0)
+
+    for (unsigned int s = 0; s < properties.size(); s++)
     {
-      for (unsigned int s = 0; s < numberSolutions; s++)
+      const VTPProperty& property = properties.at(s);
+
+      vtkNew<vtkDoubleArray> vtkSolution;
+
+      vtkSolution->SetName(property.Label.c_str());
+      vtkSolution->SetArray(property.Data,
+                            property.Size,
+                            1);
+
+      switch (property.Format)
       {
-        vtkNew<vtkDoubleArray> vtkSolution;
+        case VTPProperty::Formats::Points:
+          polyData->GetPointData()->AddArray(vtkSolution);
 
-        const string& solutionLabel = solutionLabels[s];
-        VTPProperty::Formats solutionFormat = solutionFormats[s];
+          if (s == 0)
+            polyData->GetPointData()->SetActiveScalars(property.Label.c_str());
+          break;
+        case VTPProperty::Formats::Cells:
+          polyData->GetCellData()->AddArray(vtkSolution);
 
-        vtkSolution->SetName(solutionLabel.c_str());
-
-        switch (solutionFormat)
-        {
-          case VTPProperty::Formats::Points:
-            polyData->GetPointData()->AddArray(vtkSolution);
-
-            if (s == 0)
-              polyData->GetPointData()->SetActiveScalars(solutionLabel.c_str());
-            break;
-          case VTPProperty::Formats::Cells:
-            polyData->GetCellData()->AddArray(vtkSolution);
-
-            if (s == 0)
-              polyData->GetCellData()->SetActiveScalars(solutionLabel.c_str());
-            break;
-          default:
-            throw runtime_error("Solution Format not supported");
-        }
-
-        AddSolution(s, vtkSolution);
+          if (s == 0)
+            polyData->GetCellData()->SetActiveScalars(property.Label.c_str());
+          break;
+        default:
+          throw runtime_error("Solution Format not supported");
       }
+
+      //      vtkSolution->SetNumberOfValues(property.Size);
+      //      for (unsigned int p = 0; p < property.Size; p++)
+      //        vtkSolution->SetValue(p, property.Data[p]);
     }
   }
-#endif // ENABLE_VTK
   // ***************************************************************************
-#if ENABLE_VTK == 1
   template <>
   void GeometryToPolyData<VTPPoint>::Convert(vtkNew<vtkAppendFilter>& exportData) const
   {

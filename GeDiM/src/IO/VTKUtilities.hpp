@@ -91,21 +91,13 @@ namespace Gedim
       Formats Format;
 
       unsigned int Size;
-      const double* Data;
+      double* Data;
   };
 
   class IGeometryToPolyData
   {
     public:
       virtual ~IGeometryToPolyData() { }
-
-      virtual void InitializeSolutions(const unsigned int& _numberSolutions) = 0;
-      virtual void SetSolutionOptions(const unsigned int& solutionPosition,
-                                      const std::string& solutionLabel,
-                                      const VTPProperty::Formats& format) = 0;
-      virtual void AddSolution(const unsigned int& solutionPosition,
-                               const unsigned int& solutionSize,
-                               const double* solution) = 0;
 
 #if ENABLE_VTK == 1
       virtual void Convert(vtkNew<vtkAppendFilter>& exportData) const = 0;
@@ -129,8 +121,7 @@ namespace Gedim
       vtkNew<vtkAppendFilter> exportData;
 #endif
 
-      void AddToExportData(IGeometryToPolyData& polyData,
-                           const std::vector<VTPProperty>& properties);
+      void AddToExportData(IGeometryToPolyData& polyData);
 
     public:
       VTKUtilities();
@@ -165,12 +156,7 @@ namespace Gedim
   {
     protected:
       const T& geometry;
-
-      unsigned int numberSolutions;
-      std::vector<VTPProperty::Formats> solutionFormats;
-      std::vector<std::string> solutionLabels;
-      std::vector<unsigned int> solutionSizes;
-      std::vector<const double*> solutions;
+      const std::vector<VTPProperty>& properties;
 
 #if ENABLE_VTK == 1
       void AddPoint(const Eigen::Vector3d& point,
@@ -183,21 +169,12 @@ namespace Gedim
       void AddPolygon(const Eigen::VectorXi& faceVerticesIds,
                       vtkNew<vtkCellArray>& faces) const;
       void AppendSolution(vtkDataSet* polyData) const;
-      void AddSolution(const unsigned int& solutionPosition,
-                       vtkNew<vtkDoubleArray>& vtkDoubleArrayPointer) const;
 #endif
 
     public:
-      GeometryToPolyData(const T& geometry);
+      GeometryToPolyData(const T& geometry,
+                         const std::vector<VTPProperty>& properties);
       ~GeometryToPolyData();
-
-      void InitializeSolutions(const unsigned int& _numberSolutions);
-      void SetSolutionOptions(const unsigned int& solutionPosition,
-                              const std::string& solutionLabel,
-                              const VTPProperty::Formats& format = VTPProperty::Formats::Points);
-      void AddSolution(const unsigned int& solutionPosition,
-                       const unsigned int& solutionSize,
-                       const double* solution);
 
 #if ENABLE_VTK == 1
       void Convert(vtkNew<vtkAppendFilter>& exportData) const;
