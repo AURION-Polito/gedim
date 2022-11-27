@@ -75,15 +75,19 @@ namespace GedimUnitTesting
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
-        double polygonArea = 1.0 / 2.0;
+        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
+        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
+        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
 
-        Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
+        const double polygonArea = 1.0 / 2.0;
+
+        const Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(barycenter[1], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(barycenter[2], 0.0);
 
-        Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
-                                                                     polygonArea);
+        const Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
+                                                                           polygonArea);
         ASSERT_DOUBLE_EQ(centroid[0], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroid[1], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroid[2], 0.0);
@@ -108,6 +112,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
+
+        const double areaByIntegral = geometryUtilities.PolygonAreaByIntegral(polygonVertices,
+                                                                              edgeLengths,
+                                                                              edgeTangents,
+                                                                              edgeNormals);
+
+        ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
+
+        const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
+                                                                                               edgeLengths,
+                                                                                               edgeTangents,
+                                                                                               edgeNormals,
+                                                                                               polygonArea);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[0], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[1], 1.0 / 3.0);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[2], 0.0);
       }
     }
     catch (const exception& exception)
@@ -131,7 +151,10 @@ namespace GedimUnitTesting
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 1.0, 1.0, 0.0;
         polygonVertices.col(3)<< 0.0, 1.0, 0.0;
-        double polygonArea = 1.0;
+        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
+        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
+        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
+        const double polygonArea = 1.0;
 
         Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 1.0 / 2.0);
@@ -164,6 +187,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 1.0 / 2.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 2.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
+
+        const double areaByIntegral = geometryUtilities.PolygonAreaByIntegral(polygonVertices,
+                                                                              edgeLengths,
+                                                                              edgeTangents,
+                                                                              edgeNormals);
+
+        ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
+
+        const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
+                                                                                               edgeLengths,
+                                                                                               edgeTangents,
+                                                                                               edgeNormals,
+                                                                                               polygonArea);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[0], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[1], 1.0 / 2.0);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[2], 0.0);
       }
     }
     catch (const exception& exception)
@@ -186,7 +225,11 @@ namespace GedimUnitTesting
         polygonVertices.setZero(3, 3);
         polygonVertices.row(0) << -1.0, +5.0, +4.0;
         polygonVertices.row(1) << -2.0, -1.0, +5.0;
-        double polygonArea = 1.850000000000000e+01;
+        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
+        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
+        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
+
+        const double polygonArea = 1.850000000000000e+01;
 
         Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 2.666666666666667e+00);
@@ -219,6 +262,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 2.666666666666667e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 6.666666666666665e-01);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
+
+        const double areaByIntegral = geometryUtilities.PolygonAreaByIntegral(polygonVertices,
+                                                                              edgeLengths,
+                                                                              edgeTangents,
+                                                                              edgeNormals);
+
+        ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
+
+        const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
+                                                                                               edgeLengths,
+                                                                                               edgeTangents,
+                                                                                               edgeNormals,
+                                                                                               polygonArea);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[0], 2.666666666666667e+00);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[1], 6.666666666666665e-01);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[2], 0.0);
       }
     }
     catch (const exception& exception)
@@ -241,7 +300,10 @@ namespace GedimUnitTesting
         polygonVertices.setZero(3, 4);
         polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
         polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
-        double polygonArea = 1.511000000000000e+01;
+        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
+        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
+        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
+        const double polygonArea = 1.511000000000000e+01;
 
         Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 3.100000000000000e+00);
@@ -274,6 +336,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
+
+        const double areaByIntegral = geometryUtilities.PolygonAreaByIntegral(polygonVertices,
+                                                                              edgeLengths,
+                                                                              edgeTangents,
+                                                                              edgeNormals);
+
+        ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
+
+        const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
+                                                                                               edgeLengths,
+                                                                                               edgeTangents,
+                                                                                               edgeNormals,
+                                                                                               polygonArea);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[2], 0.0);
       }
     }
     catch (const exception& exception)
@@ -296,7 +374,10 @@ namespace GedimUnitTesting
         polygonVertices.setZero(3, 6);
         polygonVertices.row(0) << 1.000000000000000e+00, 3.000000000000000e+00, 5.700000000000000e+00, 5.000000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00;
         polygonVertices.row(1) << 2.500000000000000e+00, 1.010638297872341e+00, -1.000000000000000e+00, 2.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00;
-        double polygonArea = 1.511000000000000e+01;
+        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
+        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
+        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
+        const double polygonArea = 1.511000000000000e+01;
 
         Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 3.400000000000000e+00);
@@ -329,6 +410,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[0], 3.338451356717406e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
+
+        const double areaByIntegral = geometryUtilities.PolygonAreaByIntegral(polygonVertices,
+                                                                              edgeLengths,
+                                                                              edgeTangents,
+                                                                              edgeNormals);
+
+        ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
+
+        const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
+                                                                                               edgeLengths,
+                                                                                               edgeTangents,
+                                                                                               edgeNormals,
+                                                                                               polygonArea);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[0], 3.338451356717406e+00);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[1], 2.617008603573792e+00);
+        ASSERT_DOUBLE_EQ(centroidByIntegral[2], 0.0);
       }
     }
     catch (const exception& exception)
@@ -351,7 +448,7 @@ namespace GedimUnitTesting
         polygonVertices.setZero(3, 6);
         polygonVertices.row(0) << 1.000000000000000e+00, 5.700000000000000e+00, 2.500000000000000e+00, 4.300000000000000e+00, 1.400000000000000e+00, 2.000000000000000e+00;
         polygonVertices.row(1) << 2.500000000000000e+00, -1.000000000000000e+00, 3.000000000000000e+00, 5.000000000000000e+00, 4.900000000000000e+00, 3.000000000000000e+00;
-        double polygonArea = 7.210000000000001e+00;
+        const double polygonArea = 7.210000000000001e+00;
 
         Eigen::Vector3d barycenter = geometryUtilities.PolygonBarycenter(polygonVertices);
         ASSERT_DOUBLE_EQ(barycenter[0], 2.816666666666666e+00);

@@ -1395,12 +1395,31 @@ namespace Gedim
         return subPolygonCentroids * subPolygonAreas / polygonArea;
       }
 
-      void PolygonCentroidAndAreaByIntegral(const Eigen::MatrixXd& polygonVertices,
-                                            const Eigen::VectorXd& edgeLengths,
-                                            const Eigen::MatrixXd& edgeTangents,
-                                            const Eigen::MatrixXd& edgeNormals,
-                                            double& polygonArea,
-                                            Eigen::Vector3d& centroid) const;
+      /// \brief Polygon Area By Integral on edges
+      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param edgeLengths the edge lengths, size numEdges
+      /// \param edgeTangents the edge tangents, size 3 x numEdges
+      /// \param edgeNormals the edge outgoint normals, size 3 x numEdges
+      /// \return the polygon area
+      /// \note the area is computed as integral_edges x dot n_x with gauss formula on edges of order 1
+      double PolygonAreaByIntegral(const Eigen::MatrixXd& polygonVertices,
+                                   const Eigen::VectorXd& edgeLengths,
+                                   const Eigen::MatrixXd& edgeTangents,
+                                   const Eigen::MatrixXd& edgeNormals) const;
+
+      /// \brief Polygon Area By Integral on edges
+      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param edgeLengths the edge lengths, size numEdges
+      /// \param edgeTangents the edge tangents, size 3 x numEdges
+      /// \param edgeNormals the edge outgoint normals, size 3 x numEdges
+      /// \param polygonArea the polygon area
+      /// \return the polygon centroid
+      /// \note the area is computed as integral_edges (x^2, y^2) dot n with gauss formula on edges of order 2
+      Eigen::Vector3d PolygonCentroidByIntegral(const Eigen::MatrixXd& polygonVertices,
+                                                const Eigen::VectorXd& edgeLengths,
+                                                const Eigen::MatrixXd& edgeTangents,
+                                                const Eigen::MatrixXd& edgeNormals,
+                                                const double& polygonArea) const;
 
       /// \param polygonVertices the polygon vertices, size 3 x numVertices
       /// \param polygonCentroid the polygon centroid
@@ -1833,7 +1852,7 @@ namespace Gedim
       std::vector<unsigned int> PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
                                                                            const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                            const std::vector<std::vector<unsigned int>>& polyhedronFaceTriangulations,
-                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;    
+                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;
 
       /// \brief Polyhedron Tetrahedrons By Face Triangulations with face internal points
       /// \param polyhedronVertices the polyhedron vertices
