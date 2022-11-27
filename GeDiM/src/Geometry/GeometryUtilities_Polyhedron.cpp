@@ -181,7 +181,7 @@ namespace Gedim
                                                         const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices,
                                                         const double& polyhedronVolume) const
   {
-    Eigen::Vector3d centroid;
+    Eigen::Vector3d centroid = Eigen::Vector3d::Zero(3);
     const unsigned int numFaces = polyhedronFaceRotatedTriangulationPoints.size();
 
     Eigen::Matrix3d quadraturePoints;

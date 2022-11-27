@@ -1027,7 +1027,7 @@ namespace Gedim
   // ***************************************************************************
   vector<unsigned int> MeshMatricesDAO::Cell3DFaces(const unsigned int& cell3DIndex) const
   {
-    const unsigned int numFaces = Cell2DNumberEdges(cell3DIndex);
+    const unsigned int numFaces = Cell3DNumberFaces(cell3DIndex);
 
     vector<unsigned int> faces(numFaces);
     for (unsigned int f = 0; f < numFaces; f++)

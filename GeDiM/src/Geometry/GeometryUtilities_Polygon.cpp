@@ -1,6 +1,8 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
 
+#include "Quadrature/Quadrature_Gauss1D.hpp"
+
 using namespace std;
 using namespace Eigen;
 
@@ -98,6 +100,92 @@ namespace Gedim
     centroid /= 6.0 * polygonArea;
 
     return centroid;
+  }
+  // ***************************************************************************
+  void GeometryUtilities::PolygonCentroidAndAreaByIntegral(const Eigen::MatrixXd& polygonVertices,
+                                                           const Eigen::VectorXd& edgeLengths,
+                                                           const Eigen::MatrixXd& edgeTangents,
+                                                           const Eigen::MatrixXd& edgeNormals,
+                                                           double& polygonArea,
+                                                           Eigen::Vector3d& centroid) const
+  {
+    Gedim::Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+    Gedim::Output::Assert(edgeLengths.size() == polygonVertices.cols());
+    Output::Assert(edgeTangents.rows() == 3 && edgeTangents.cols() == polygonVertices.cols());
+    Output::Assert(edgeNormals.rows() == 3 && edgeNormals.cols() == polygonVertices.cols());
+
+
+    /// Formula: Applicazione del teorema della divergenza
+    centroid.setZero();
+
+    const unsigned int numEdges = polygonVertices.cols();
+
+    Eigen::MatrixXd referenceSegmentPoints;
+    Eigen::VectorXd referenceSegmentWeights;
+
+    Quadrature_Gauss1D::FillPointsAndWeights(2,
+                                             referenceSegmentPoints,
+                                             referenceSegmentWeights);
+
+
+    const unsigned int numEdgeInternalQuadraturePoints = referenceSegmentPoints.cols();
+    const unsigned int numQuadraturePoints = numEdges * numEdgeInternalQuadraturePoints;
+
+    MatrixXd quadraturePoints;
+    quadraturePoints.resize(3, numQuadraturePoints);
+    MatrixXd quadratureWeightsTimesNormal;
+    quadratureWeightsTimesNormal.resize(2, numQuadraturePoints);
+
+    // offset used below to set edge-internal quadrature points and weights.
+    unsigned int edgeInternalPointsOffset = 0;
+    for(unsigned int i = 0; i < numEdges; ++i)
+    {
+      const double absMapDeterminant = std::abs(edgeLengths[i]);
+      VectorXd outNormalTimesAbsMapDeterminant = edgeNormals.col(i) * absMapDeterminant;
+
+      // map edge internal quadrature points
+      const Vector3d& edgeTangent = edgeTangents.col(i);
+
+      MatrixXd edgeInternalQuadraturePoints(3, numEdgeInternalQuadraturePoints);
+      for (unsigned int q = 0; q < numEdgeInternalQuadraturePoints; q++)
+      {
+        edgeInternalQuadraturePoints.col(q) = polygonVertices.col(i) +
+                                              referenceSegmentPoints(0, q) *
+                                              edgeTangent;
+      }
+
+      quadraturePoints.block(0,
+                             edgeInternalPointsOffset,
+                             3,
+                             numEdgeInternalQuadraturePoints) =
+          edgeInternalQuadraturePoints;
+
+
+      MatrixXd edgeInternalWeightsTimesNormal =
+          referenceSegmentWeights * outNormalTimesAbsMapDeterminant.transpose();
+      for(unsigned int d = 0; d < 2; ++d)
+      {
+        quadratureWeightsTimesNormal.row(d).segment(edgeInternalPointsOffset,
+                                                numEdgeInternalQuadraturePoints) =
+            edgeInternalWeightsTimesNormal.col(d);
+      }
+
+      edgeInternalPointsOffset += numEdgeInternalQuadraturePoints;
+
+    }
+
+    polygonArea = quadraturePoints.row(0).dot(quadratureWeightsTimesNormal.row(0));
+
+    if(numEdges <= 4)
+      centroid = PolygonBarycenter(polygonVertices);
+    else
+    {
+      centroid(0) = quadraturePoints.row(0) * quadratureWeightsTimesNormal.row(0).asDiagonal() * quadraturePoints.row(0).transpose();
+      centroid(1) = quadraturePoints.row(1) * quadratureWeightsTimesNormal.row(1).asDiagonal() * quadraturePoints.row(1).transpose();
+
+      centroid *= 0.5 / polygonArea;
+    }
+
   }
   // ***************************************************************************
   double GeometryUtilities::PolygonInRadius(const Eigen::MatrixXd& polygonVertices,
