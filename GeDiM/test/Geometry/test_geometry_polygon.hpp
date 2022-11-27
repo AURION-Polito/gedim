@@ -62,7 +62,7 @@ namespace GedimUnitTesting
     }
   }
 
-  TEST(TestGeometryUtilities, TestPolygonCentroid)
+  TEST(TestGeometryUtilities, TestPolygonCentroid_ReferenceTriangle)
   {
     try
     {
@@ -109,6 +109,20 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 3.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonCentroid_ReferenceQuadrilateral)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check area of reference quadrilateral 2D
       {
@@ -151,6 +165,20 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 1.0 / 2.0);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonCentroid_GenericTriangle)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check area of generic triangle 2D
       {
@@ -192,6 +220,20 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 6.666666666666665e-01);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonCentroid_GenericQuadrilateral)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check area of generic quadrilateral 2D
       {
@@ -233,8 +275,22 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 
-      // check area of generic quadrilateral 2D with aligned points
+  TEST(TestGeometryUtilities, TestPolygonCentroid_GenericQuadrilateralAlignedEdges)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check area of generic quadrilateral 2D with aligned edges
       {
         Eigen::MatrixXd polygonVertices;
         polygonVertices.setZero(3, 6);
@@ -274,6 +330,20 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(centroidWithTriangles[1], 2.617008603573792e+00);
         ASSERT_DOUBLE_EQ(centroidWithTriangles[2], 0.0);
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonCentroid_ConcavePolygon)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check area of generic concave 2D polygon
       {
@@ -1866,9 +1936,6 @@ namespace GedimUnitTesting
       const Eigen::MatrixXd ellipse = geometryUtilities.CreateEllipse(axisLengths.at(0),
                                                                       axisLengths.at(1),
                                                                       resolution);
-
-      cerr.precision(16);
-      cerr<< scientific<< ellipse<< endl;
 
       Gedim::VTKUtilities vtuExporter;
       vtuExporter.AddPolygon(ellipse);
