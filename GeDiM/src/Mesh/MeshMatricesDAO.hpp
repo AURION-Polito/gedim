@@ -148,9 +148,6 @@ namespace Gedim
       bool Cell0DUpdatedCell0Ds(const unsigned int& cell0DIndex,
                                 list<unsigned int>& updatedCell0DIds) const;
 
-      inline void Cell0DSetId(const unsigned int& ,
-                              const unsigned int& ) { return; }
-      inline unsigned int Cell0DId(const unsigned int& cell0DIndex) const { return cell0DIndex; }
       inline void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell1Ds);
       inline void Cell0DInsertNeighbourCell1D(const unsigned int& cell0DIndex,
@@ -460,9 +457,6 @@ namespace Gedim
                                 list<unsigned int>& updatedCell1DIds) const;
       void Cell1DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
 
-      inline void Cell1DSetId(const unsigned int& ,
-                              const unsigned int& ) { return; }
-      inline unsigned int Cell1DId(const unsigned int& cell1DIndex) const { return cell1DIndex; }
       inline void Cell1DInitializeNeighbourCell3Ds(const unsigned int& ,
                                                    const unsigned int& ) { }
       inline void Cell1DInsertNeighbourCell3D(const unsigned int& ,
@@ -664,9 +658,6 @@ namespace Gedim
       bool Cell2DUpdatedCell2Ds(const unsigned int& cell2DIndex,
                                 list<unsigned int>& updatedCell2DIds) const;
 
-      inline void Cell2DSetId(const unsigned int& ,
-                              const unsigned int& ) { return; }
-      inline unsigned int Cell2DId(const unsigned int& cell2DIndex) const { return cell2DIndex; }
       inline void Cell2DInitializeNeighbourCell3Ds(const unsigned int& ,
                                                    const unsigned int& ) { }
       inline void Cell2DInsertNeighbourCell3D(const unsigned int& ,
@@ -916,10 +907,6 @@ namespace Gedim
                                      const unsigned int& updatedCell3DIdex);
       bool Cell3DUpdatedCell3Ds(const unsigned int& cell3DIndex,
                                 list<unsigned int>& updatedCell3DIds) const;
-
-      inline void Cell3DSetId(const unsigned int& ,
-                              const unsigned int& ) { }
-      inline unsigned int Cell3DId(const unsigned int& cell3DIndex) const { return cell3DIndex; }
 
       void Cell3DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell3DAddDoubleProperty(const string& propertyId);

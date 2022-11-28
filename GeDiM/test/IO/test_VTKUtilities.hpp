@@ -233,8 +233,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell0DId(g));
-      vector<double> marker(1, mesh.Cell0DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(1, mesh.Cell0DMarker(g));
 
       vtpUtilities.AddPoint(mesh.Cell0DCoordinates(g),
                             {
@@ -269,8 +269,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell1DId(g));
-      vector<double> marker(2, mesh.Cell1DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(2, mesh.Cell1DMarker(g));
 
       vtpUtilities.AddSegment(mesh.Cell1DCoordinates(g),
                               {
@@ -305,8 +305,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell2DId(g));
-      vector<double> marker(mesh.Cell2DNumberVertices(g), mesh.Cell2DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(mesh.Cell2DNumberVertices(g), mesh.Cell2DMarker(g));
 
       vtpUtilities.AddPolygon(mesh.Cell2DVerticesCoordinates(g),
                               {
@@ -341,8 +341,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell0DId(g));
-      vector<double> marker(1, mesh.Cell0DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(1, mesh.Cell0DMarker(g));
 
       vtpUtilities.AddPoint(mesh.Cell0DCoordinates(g),
                             {
@@ -377,8 +377,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell1DId(g));
-      vector<double> marker(1, mesh.Cell1DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(1, mesh.Cell1DMarker(g));
 
       vtpUtilities.AddSegment(mesh.Cell1DCoordinates(g),
                               {
@@ -413,8 +413,8 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
     {
-      vector<double> id(1, mesh.Cell2DId(g));
-      vector<double> marker(1, mesh.Cell2DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(1, mesh.Cell2DMarker(g));
 
       vtpUtilities.AddPolygon(mesh.Cell2DVerticesCoordinates(g),
                               {
@@ -453,10 +453,9 @@ namespace GedimUnitTesting
       const Gedim::GeometryUtilities::Polyhedron polyhedron = meshUtilities.MeshCell3DToPolyhedron(mesh,
                                                                                                    g);
 
-      vector<double> id(1,
-                        mesh.Cell3DId(g));
-      vector<double> marker(polyhedron.Vertices.cols(),
-                            mesh.Cell3DMarker(g));
+      const vector<double> id(1, g);
+      const vector<double> marker(polyhedron.Vertices.cols(),
+                                  mesh.Cell3DMarker(g));
 
       vtpUtilities.AddPolyhedron(polyhedron.Vertices,
                                  polyhedron.Edges,

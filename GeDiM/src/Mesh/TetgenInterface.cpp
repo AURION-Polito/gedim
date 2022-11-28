@@ -246,7 +246,6 @@ namespace Gedim
     /// <li> Set Cell0Ds
     for (unsigned int p = 0; p < numberOfPointsMesh; p++)
     {
-      mesh.Cell0DSetId(p, p);
       mesh.Cell0DSetState(p, true);
       mesh.Cell0DInsertCoordinates(p,
                                    Vector3d(tetgenOutput.pointlist[3 * p],
@@ -258,7 +257,6 @@ namespace Gedim
     /// <li> Set Cell1Ds
     for(unsigned int e = 0; e < numberOfEgdesMesh; e++)
     {
-      mesh.Cell1DSetId(e, e);
       mesh.Cell1DInsertExtremes(e,
                                 tetgenOutput.edgelist[2 * e + 0],
           tetgenOutput.edgelist[2 * e + 1]);
@@ -298,7 +296,6 @@ namespace Gedim
           mesh.Cell1DSetMarker(edgeId, tetgenOutput.trifacemarkerlist[f]);
       }
 
-      mesh.Cell2DSetId(f, f);
       mesh.Cell2DSetState(f, true);
       mesh.Cell2DSetMarker(f,
                            tetgenOutput.trifacemarkerlist[f]);
@@ -360,7 +357,6 @@ namespace Gedim
         }
       }
 
-      mesh.Cell3DSetId(c, c);
       mesh.Cell3DSetState(c, true);
       mesh.Cell3DSetMarker(c, 0);
     }

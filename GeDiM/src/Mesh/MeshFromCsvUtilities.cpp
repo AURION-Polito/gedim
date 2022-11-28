@@ -69,7 +69,6 @@ namespace Gedim
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
       const Cell0D& cell0D = cell0Ds[v];
-      mesh.Cell0DSetId(v, cell0D.Id);
       mesh.Cell0DSetMarker(v, cell0D.Marker);
       mesh.Cell0DSetState(v, cell0D.Active);
     }
@@ -77,7 +76,6 @@ namespace Gedim
     for (unsigned int e = 0; e < numCell1Ds; e++)
     {
       const Cell1D& cell1D = cell1Ds[e];
-      mesh.Cell1DSetId(e, cell1D.Id);
       mesh.Cell1DSetMarker(e, cell1D.Marker);
       mesh.Cell1DSetState(e, cell1D.Active);
     }
@@ -85,7 +83,6 @@ namespace Gedim
     for (unsigned int f = 0; f < numCell2Ds; f++)
     {
       const Cell2D& cell2D = cell2Ds[f];
-      mesh.Cell2DSetId(f, cell2D.Id);
       mesh.Cell2DSetMarker(f, cell2D.Marker);
       mesh.Cell2DSetState(f, cell2D.Active);
     }
@@ -104,7 +101,6 @@ namespace Gedim
     {
       const Cell0D& cell0D = cell0Ds[v];
 
-      mesh.Cell0DSetId(v, cell0D.Id);
       mesh.Cell0DSetMarker(v, cell0D.Marker);
       mesh.Cell0DSetState(v, cell0D.Active);
       mesh.Cell0DInsertCoordinates(v, Vector3d(cell0D.X, cell0D.Y, cell0D.Z));
@@ -124,7 +120,6 @@ namespace Gedim
     {
       const Cell1D& cell1D = cell1Ds[e];
 
-      mesh.Cell1DSetId(e, cell1D.Id);
       mesh.Cell1DSetMarker(e, cell1D.Marker);
       mesh.Cell1DSetState(e, cell1D.Active);
       mesh.Cell1DInsertExtremes(e,
@@ -146,7 +141,6 @@ namespace Gedim
     {
       const Cell2D& cell2D = cell2Ds[f];
 
-      mesh.Cell2DSetId(f, cell2D.Id);
       mesh.Cell2DSetMarker(f, cell2D.Marker);
       mesh.Cell2DSetState(f, cell2D.Active);
 
@@ -177,7 +171,6 @@ namespace Gedim
     {
       const Cell3D& cell3D = cell3Ds[c];
 
-      mesh.Cell3DSetId(c, cell3D.Id);
       mesh.Cell3DSetMarker(c, cell3D.Marker);
       mesh.Cell3DSetState(c, cell3D.Active);
 
@@ -1116,7 +1109,7 @@ namespace Gedim
     fileCell0Ds<< "Z"<< endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-      fileCell0Ds<< scientific<< mesh.Cell0DId(v)<< separator;
+      fileCell0Ds<< scientific<< v<< separator;
       fileCell0Ds<< scientific<< mesh.Cell0DMarker(v)<< separator;
       fileCell0Ds<< scientific<< mesh.Cell0DIsActive(v)<< separator;
       fileCell0Ds<< scientific<< mesh.Cell0DCoordinateX(v)<< separator;
@@ -1148,7 +1141,7 @@ namespace Gedim
     fileCell1Ds<< "End"<< endl;
     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
     {
-      fileCell1Ds<< scientific<< mesh.Cell1DId(e)<< separator;
+      fileCell1Ds<< scientific<< e<< separator;
       fileCell1Ds<< scientific<< mesh.Cell1DMarker(e)<< separator;
       fileCell1Ds<< scientific<< mesh.Cell1DIsActive(e)<< separator;
       fileCell1Ds<< scientific<< mesh.Cell1DOrigin(e)<< separator;
@@ -1181,7 +1174,7 @@ namespace Gedim
     fileCell2Ds<< "Edges"<< endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-      fileCell2Ds<< scientific<< mesh.Cell2DId(f)<< separator;
+      fileCell2Ds<< scientific<< f<< separator;
       fileCell2Ds<< scientific<< mesh.Cell2DMarker(f)<< separator;
       fileCell2Ds<< scientific<< mesh.Cell2DIsActive(f)<< separator;
 
@@ -1224,7 +1217,7 @@ namespace Gedim
     fileCell3Ds<< "Faces"<< endl;
     for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
     {
-      fileCell3Ds<< scientific<< mesh.Cell3DId(c)<< separator;
+      fileCell3Ds<< scientific<< c<< separator;
       fileCell3Ds<< scientific<< mesh.Cell3DMarker(c)<< separator;
       fileCell3Ds<< scientific<< mesh.Cell3DIsActive(c)<< separator;
 
@@ -1302,7 +1295,7 @@ namespace Gedim
     fileCell0DProperties<< "PropertyValues"<< endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-      fileCell0DProperties<< scientific<< mesh.Cell0DId(v)<< separator;
+      fileCell0DProperties<< scientific<< v<< separator;
 
       fileCell0DProperties<< scientific<< mesh.Cell0DDoublePropertySize(v, propertyIndex);
       for (unsigned int n = 0; n < mesh.Cell0DDoublePropertySize(v, propertyIndex); n++)
@@ -1368,7 +1361,7 @@ namespace Gedim
     fileCell1DProperties<< "PropertyValues"<< endl;
     for (unsigned int v = 0; v < mesh.Cell1DTotalNumber(); v++)
     {
-      fileCell1DProperties<< scientific<< mesh.Cell1DId(v)<< separator;
+      fileCell1DProperties<< scientific<< v<< separator;
 
       fileCell1DProperties<< scientific<< mesh.Cell1DDoublePropertySize(v, propertyIndex);
       for (unsigned int n = 0; n < mesh.Cell1DDoublePropertySize(v, propertyIndex); n++)
@@ -1434,7 +1427,7 @@ namespace Gedim
     fileCell2DProperties<< "PropertyValues"<< endl;
     for (unsigned int v = 0; v < mesh.Cell2DTotalNumber(); v++)
     {
-      fileCell2DProperties<< scientific<< mesh.Cell2DId(v)<< separator;
+      fileCell2DProperties<< scientific<< v<< separator;
 
       fileCell2DProperties<< scientific<< mesh.Cell2DDoublePropertySize(v, propertyIndex);
       for (unsigned int n = 0; n < mesh.Cell2DDoublePropertySize(v, propertyIndex); n++)
@@ -1500,7 +1493,7 @@ namespace Gedim
     fileCell3DProperties<< "PropertyValues"<< endl;
     for (unsigned int v = 0; v < mesh.Cell3DTotalNumber(); v++)
     {
-      fileCell3DProperties<< scientific<< mesh.Cell3DId(v)<< separator;
+      fileCell3DProperties<< scientific<< v<< separator;
 
       fileCell3DProperties<< scientific<< mesh.Cell3DDoublePropertySize(v, propertyIndex);
       for (unsigned int n = 0; n < mesh.Cell3DDoublePropertySize(v, propertyIndex); n++)
@@ -1533,7 +1526,7 @@ namespace Gedim
     fileCell0DNeighbours<< "3DNeighbours"<< endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-      fileCell0DNeighbours<< scientific<< mesh.Cell0DId(v)<< separator;
+      fileCell0DNeighbours<< scientific<< v<< separator;
 
       fileCell0DNeighbours<< scientific<< mesh.Cell0DNumberNeighbourCell1D(v);
       for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell1D(v); n++)
@@ -1574,7 +1567,7 @@ namespace Gedim
     fileCell1DNeighbours<< "3DNeighbours"<< endl;
     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
     {
-      fileCell1DNeighbours<< scientific<< mesh.Cell1DId(e)<< separator;
+      fileCell1DNeighbours<< scientific<< e<< separator;
 
       fileCell1DNeighbours<< scientific<< mesh.Cell1DNumberNeighbourCell2D(e);
       for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
@@ -1608,7 +1601,7 @@ namespace Gedim
     fileCell2DNeighbours<< "3DNeighbours"<< endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-      fileCell2DNeighbours<< scientific<< mesh.Cell2DId(f)<< separator;
+      fileCell2DNeighbours<< scientific<< f<< separator;
 
       fileCell2DNeighbours<< scientific<< mesh.Cell2DNumberNeighbourCell3D(f);
       for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(f); n++)
@@ -1637,7 +1630,7 @@ namespace Gedim
     fileCell2DSubDivisions<< "SubDivisions"<< endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-      fileCell2DSubDivisions<< scientific<< mesh.Cell2DId(f)<< separator;
+      fileCell2DSubDivisions<< scientific<< f<< separator;
 
       fileCell2DSubDivisions<< scientific<< mesh.Cell2DNumberSubDivision(f);
       for (unsigned int n = 0; n < mesh.Cell2DNumberSubDivision(f); n++)

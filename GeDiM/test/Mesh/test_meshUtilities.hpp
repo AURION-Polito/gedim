@@ -9,6 +9,7 @@
 
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
+#include "MeshMatrices_2D_4Cells_Mock.hpp"
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
 #include "MeshUtilities.hpp"
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
@@ -196,6 +197,62 @@ namespace GedimUnitTesting
               cell0DCoordinates);
     EXPECT_EQ(meshDao.Cell1DExtremes(),
               cell1DExtremes);
+  }
+
+  TEST(TestMeshUtilities, TestFillMesh2D_TriangularMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO expectedMesh(mockMesh.Mesh);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 5)<<
+                                      0.0000000000000000e+00,0.0000000000000000e+00,0.0000000000000000e+00,
+                                      1.0000000000000000e+00,0.0000000000000000e+00,0.0000000000000000e+00,
+                                      1.0000000000000000e+00,1.0000000000000000e+00,0.0000000000000000e+00,
+                                      0.0000000000000000e+00,1.0000000000000000e+00,0.0000000000000000e+00,
+                                      5.0000000000000000e-01,5.0000000000000000e-01,0.0000000000000000e+00).finished();
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 8)<<
+                                   1, 2, 4, 3, 0, 4, 2, 0,
+                                   2, 4, 1, 0, 4, 3, 3, 1).finished();
+
+    vector<Eigen::MatrixXi> triangles(4, Eigen::MatrixXi(2, 3));
+    triangles[0] = (Eigen::MatrixXi(2, 3)<<
+                    1,2,4,
+                    0,1,2).finished();
+    triangles[1] = (Eigen::MatrixXi(2, 3)<<
+                    3,0,4,
+                    3,4,5).finished();
+    triangles[2] = (Eigen::MatrixXi(2, 3)<<
+                    4,2,3,
+                    1,6,5).finished();
+    triangles[3] = (Eigen::MatrixXi(2, 3)<<
+                    0,1,4,
+                    7,2,4).finished();
+
+    meshUtilities.FillMesh2D(vertices,
+                             edges,
+                             triangles,
+                             meshDao);
+
+    ASSERT_EQ(expectedMesh.Cell0DCoordinates(),
+              meshDao.Cell0DCoordinates());
+    ASSERT_EQ(expectedMesh.Cell1DExtremes(),
+              meshDao.Cell1DExtremes());
+    for (unsigned int c = 0; c < 4; c++)
+    {
+      ASSERT_EQ(expectedMesh.Cell2DVertices(c),
+                meshDao.Cell2DVertices(c));
+      ASSERT_EQ(expectedMesh.Cell2DEdges(c),
+                meshDao.Cell2DEdges(c));
+    }
+
   }
 
   TEST(TestMeshUtilities, TestCreateTriangleMesh)
@@ -405,7 +462,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Cell2DsVertices, expectedResult.Cell2DsVertices);
   }
 
-  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_Convex)
+  TEST(TestMeshUtilities, TestFillMesh1DGeometricData_Convex)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);

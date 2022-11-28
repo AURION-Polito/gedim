@@ -139,7 +139,6 @@ namespace Gedim
     mesh.Cell0DsInitialize(numCell0Ds);
     for (unsigned int c = 0; c < numCell0Ds; c++)
     {
-      mesh.Cell0DSetId(c, c);
       mesh.Cell0DSetState(c, true);
       mesh.Cell0DInsertCoordinates(c, segmentOrigin + coordinates[c] * segmentTangent);
     }
@@ -150,7 +149,6 @@ namespace Gedim
     mesh.Cell1DsInitialize(numCell1Ds);
     for (unsigned int e = 0; e < numCell1Ds; e++)
     {
-      mesh.Cell1DSetId(e, e);
       mesh.Cell1DInsertExtremes(e,
                                 e,
                                 e + 1);
@@ -172,7 +170,6 @@ namespace Gedim
     mesh.Cell0DsInitialize(numCell0Ds);
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
-      mesh.Cell0DSetId(v, v);
       mesh.Cell0DSetState(v, true);
       mesh.Cell0DInsertCoordinates(v, cell0Ds.col(v));
     }
@@ -183,7 +180,6 @@ namespace Gedim
     mesh.Cell1DsInitialize(numCell1Ds);
     for (int e = 0; e < cell1Ds.cols(); e++)
     {
-      mesh.Cell1DSetId(e, e);
       mesh.Cell1DInsertExtremes(e,
                                 cell1Ds(0, e),
                                 cell1Ds(1, e));
@@ -207,7 +203,6 @@ namespace Gedim
       for (unsigned int e = 0; e < numVertices; e++)
         mesh.Cell2DInsertEdge(f, e, polygon(1, e));
 
-      mesh.Cell2DSetId(f, f);
       mesh.Cell2DSetState(f, true);
     }
   }
@@ -396,7 +391,6 @@ namespace Gedim
     mesh.Cell0DsInitialize(numCell0Ds);
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
-      mesh.Cell0DSetId(v, v);
       mesh.Cell0DSetState(v, true);
       mesh.Cell0DInsertCoordinates(v, polygonVertices.col(v));
       mesh.Cell0DSetMarker(v, vertexMarkers[v]);
@@ -407,7 +401,6 @@ namespace Gedim
     mesh.Cell1DsInitialize(numCell1Ds);
     for (unsigned int e = 0; e < numPolygonVertices; e++)
     {
-      mesh.Cell1DSetId(e, e);
       mesh.Cell1DInsertExtremes(e,
                                 e,
                                 (e + 1) % numPolygonVertices);
@@ -427,7 +420,6 @@ namespace Gedim
     for (unsigned int e = 0; e < numPolygonVertices; e++)
       mesh.Cell2DInsertEdge(0, e, e);
 
-    mesh.Cell2DSetId(0, 0);
     mesh.Cell2DSetState(0, true);
     mesh.Cell2DSetMarker(0, 0);
 
@@ -463,7 +455,6 @@ namespace Gedim
     mesh.Cell0DsInitialize(numCell0Ds);
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
-      mesh.Cell0DSetId(v, v);
       mesh.Cell0DSetState(v, true);
       mesh.Cell0DInsertCoordinates(v, polyhedronVertices.col(v));
       mesh.Cell0DSetMarker(v, vertexMarkers[v]);
@@ -474,7 +465,6 @@ namespace Gedim
     mesh.Cell1DsInitialize(numCell1Ds);
     for (unsigned int e = 0; e < numCell1Ds; e++)
     {
-      mesh.Cell1DSetId(e, e);
       mesh.Cell1DInsertExtremes(e,
                                 polyhedronEdges(0, e),
                                 polyhedronEdges(1, e));
@@ -497,7 +487,6 @@ namespace Gedim
       for (unsigned int e = 0; e < numCell2DVertices; e++)
         mesh.Cell2DInsertEdge(f, e, polyhedronFaces.at(f)(1, e));
 
-      mesh.Cell2DSetId(f, f);
       mesh.Cell2DSetState(f, true);
       mesh.Cell2DSetMarker(f, faceMarkers[f]);
     }
@@ -517,7 +506,6 @@ namespace Gedim
     for (unsigned int f = 0; f < numFaces; f++)
       mesh.Cell3DInsertFace(0, f, f);
 
-    mesh.Cell3DSetId(0, 0);
     mesh.Cell3DSetState(0, true);
     mesh.Cell3DSetMarker(0, 0);
   }
@@ -989,7 +977,6 @@ namespace Gedim
                                     8 * (b == 0 && h != 0 && h != (numHeightPoints - 1)) +
                                     6 * (b == (numBasePoints - 1) && h != 0 && h != (numHeightPoints - 1));
 
-        mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
         mesh.Cell0DSetState(cell0DIndex, true);
         mesh.Cell0DInsertCoordinates(cell0DIndex,
                                      coordinate);
@@ -1014,7 +1001,6 @@ namespace Gedim
         const unsigned int marker = 5 * (h == 0) +
                                     7 * (h == (numHeightPoints - 1));
 
-        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
         mesh.Cell1DInsertExtremes(cell1DIndex,
                                   cell1DOrigin,
                                   cell1DEnd);
@@ -1037,7 +1023,6 @@ namespace Gedim
         const unsigned int marker = 8 * (b == 0) +
                                     6 * (b == (numBasePoints - 1));
 
-        mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
         mesh.Cell1DInsertExtremes(cell1DIndex,
                                   cell1DOrigin,
                                   cell1DEnd);
@@ -1071,7 +1056,6 @@ namespace Gedim
         mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
         mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
 
-        mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
         mesh.Cell2DSetState(cell2DIndex, true);
 
         mesh.Cell2DSetMarker(cell2DIndex, 0);
@@ -1151,7 +1135,6 @@ namespace Gedim
                                       25 * (l != 0 && l  != (numLengthPoints - 1) && h == 0  && w != 0 && w != (numWidthPoints - 1)) +
                                       26 * (l != 0 && l != (numLengthPoints - 1) &&  h == (numHeightPoints -1) && w != 0 && w != (numWidthPoints - 1));
 
-          mesh.Cell0DSetId(cell0DIndex, cell0DIndex);
           mesh.Cell0DSetState(cell0DIndex, true);
           mesh.Cell0DInsertCoordinates(cell0DIndex,
                                        coordinate);
@@ -1185,7 +1168,6 @@ namespace Gedim
                                        25 * (h == 0  && w != 0 && w != (numWidthPoints - 1)) +
                                        26 * (h == (numHeightPoints -1) && w != 0 && w != (numWidthPoints - 1));
 
-          mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
           mesh.Cell1DInsertExtremes(cell1DIndex,
                                     cell1DOrigin,
                                     cell1DEnd);
@@ -1217,7 +1199,6 @@ namespace Gedim
                                       23 * (l == 0 && w != 0 && w != (numWidthPoints - 1)) +
                                       24 * (l == (numLengthPoints - 1) && w != 0 && w != (numWidthPoints - 1));
 
-          mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
           mesh.Cell1DInsertExtremes(cell1DIndex,
                                     cell1DOrigin,
                                     cell1DEnd);
@@ -1249,7 +1230,6 @@ namespace Gedim
                                       25 * (l != 0 && l  != (numLengthPoints - 1) && h == 0) +
                                       26 * (l != 0 && l != (numLengthPoints - 1) &&  h == (numHeightPoints -1));
 
-          mesh.Cell1DSetId(cell1DIndex, cell1DIndex);
           mesh.Cell1DInsertExtremes(cell1DIndex,
                                     cell1DOrigin,
                                     cell1DEnd);
@@ -1288,7 +1268,6 @@ namespace Gedim
           mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
           mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
 
-          mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
           mesh.Cell2DSetState(cell2DIndex, true);
 
           const unsigned int marker = 21 * (w == 0) +
@@ -1330,7 +1309,6 @@ namespace Gedim
           mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
           mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
 
-          mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
           mesh.Cell2DSetState(cell2DIndex, true);
 
           const unsigned int marker = 25 * (h == 0) +
@@ -1376,7 +1354,6 @@ namespace Gedim
           mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
           mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
 
-          mesh.Cell2DSetId(cell2DIndex, cell2DIndex);
           mesh.Cell2DSetState(cell2DIndex, true);
 
           const unsigned int marker = 23 * (l == 0) +
@@ -1455,7 +1432,6 @@ namespace Gedim
           mesh.Cell3DAddEdges(cell3DIndex, cell3DEdges);
           mesh.Cell3DAddFaces(cell3DIndex, cell3DFaces);
 
-          mesh.Cell3DSetId(cell3DIndex, cell3DIndex);
           mesh.Cell3DSetState(cell3DIndex, true);
 
           mesh.Cell3DSetMarker(cell3DIndex, 0);
@@ -1542,8 +1518,8 @@ namespace Gedim
       {
         vector<VTPProperty> properties(2 + mesh.Cell0DNumberDoubleProperties());
 
-        vector<double> id(1, mesh.Cell0DId(g));
-        vector<double> marker(1, mesh.Cell0DMarker(g));
+        const vector<double> id(1, g);
+        const vector<double> marker(1, mesh.Cell0DMarker(g));
         vector<vector<double>> propertyValues(mesh.Cell0DNumberDoubleProperties());
 
         properties[0] = {
@@ -1591,8 +1567,8 @@ namespace Gedim
       {
         vector<VTPProperty> properties(2 + mesh.Cell1DNumberDoubleProperties());
 
-        vector<double> id(1, mesh.Cell1DId(g));
-        vector<double> marker(1, mesh.Cell1DMarker(g));
+        const vector<double> id(1, g);
+        const vector<double> marker(1, mesh.Cell1DMarker(g));
         vector<vector<double>> propertyValues(mesh.Cell1DNumberDoubleProperties());
 
         properties[0] = {
@@ -1641,8 +1617,8 @@ namespace Gedim
       {
         vector<VTPProperty> properties(2 + mesh.Cell2DNumberDoubleProperties());
 
-        vector<double> id(1, mesh.Cell2DId(g));
-        vector<double> marker(1, mesh.Cell2DMarker(g));
+        const vector<double> id(1, g);
+        const vector<double> marker(1, mesh.Cell2DMarker(g));
         vector<vector<double>> propertyValues(mesh.Cell2DNumberDoubleProperties());
 
         properties[0] = {
@@ -1693,8 +1669,8 @@ namespace Gedim
 
         vector<VTPProperty> properties(2 + mesh.Cell3DNumberDoubleProperties());
 
-        vector<double> id(1, mesh.Cell3DId(g));
-        vector<double> marker(1, mesh.Cell3DMarker(g));
+        const vector<double> id(1, g);
+        const vector<double> marker(1, mesh.Cell3DMarker(g));
         vector<vector<double>> propertyValues(mesh.Cell3DNumberDoubleProperties());
 
         properties[0] = {
