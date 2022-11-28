@@ -305,19 +305,12 @@ namespace Gedim
       void Cell1DsInitialize(const unsigned int& numberCell1Ds);
       unsigned int Cell1DAppend(const unsigned int& numberCell1Ds);
       void Cell1DRemove(const unsigned int& cell1DIndex);
-      inline void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
+      void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
                                        const unsigned int& originCell0DIndex,
-                                       const unsigned int& endCell0DIndex)
-      {
-        Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
-        Gedim::Output::Assert(originCell0DIndex < Cell0DTotalNumber());
-        Gedim::Output::Assert(endCell0DIndex < Cell0DTotalNumber());
-        _mesh.Cell1DVertices[2 * cell1DIndex] = originCell0DIndex;
-        _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
-        _mesh.Cell1DAdjacency.insert(originCell0DIndex,
-                                     endCell0DIndex) = cell1DIndex + 1;
-        _mesh.Cell1DAdjacency.makeCompressed();
-      }
+                                       const unsigned int& endCell0DIndex);
+
+      void Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes);
+
       Eigen::MatrixXi Cell1DExtremes() const;
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()

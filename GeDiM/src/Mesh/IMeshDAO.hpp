@@ -251,13 +251,18 @@ namespace Gedim
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \note the cell1D is removed and no integrity check in the mesh are performed
       virtual void Cell1DRemove(const unsigned int& cell1DIndex) = 0;
-      /// \brief Set the Cell1D Origin
+      /// \brief Set the Cell1D Origin and End
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param originCell0DIndex the Cell0D index of Cell1D origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D index of Cell1D end from 0 to Cell0DTotalNumber()
       virtual void Cell1DInsertExtremes(const unsigned int& cell1DIndex,
                                         const unsigned int& originCell0DIndex,
                                         const unsigned int& endCell0DIndex) = 0;
+
+      /// \brief Set the Cell1D Extremes for the whole mesh edges
+      /// \param cell1DExtremes the origin and end indices of all the edges, size 2 x Cell1DTotalNumber()
+      virtual void Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes) = 0;
+
       /// \return true if Cell1D (origin->end) exists, false otherwise
       /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()

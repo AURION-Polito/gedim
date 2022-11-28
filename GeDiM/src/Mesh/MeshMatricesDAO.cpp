@@ -434,6 +434,44 @@ namespace Gedim
                                     cell1DIndex + 1);
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DInsertExtremes(const unsigned int& cell1DIndex,
+                                             const unsigned int& originCell0DIndex,
+                                             const unsigned int& endCell0DIndex)
+  {
+    Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
+    Gedim::Output::Assert(originCell0DIndex < Cell0DTotalNumber());
+    Gedim::Output::Assert(endCell0DIndex < Cell0DTotalNumber());
+    _mesh.Cell1DVertices[2 * cell1DIndex] = originCell0DIndex;
+    _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
+    _mesh.Cell1DAdjacency.insert(originCell0DIndex,
+                                 endCell0DIndex) = cell1DIndex + 1;
+    _mesh.Cell1DAdjacency.makeCompressed();
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes)
+  {
+    Gedim::Output::Assert(cell1DExtremes.rows() == 2 &&
+                          cell1DExtremes.cols() == Cell1DTotalNumber());
+
+    std::list<Eigen::Triplet<unsigned int>> triplets;
+    for (unsigned int cell1DIndex = 0; cell1DIndex < Cell1DTotalNumber(); cell1DIndex++)
+    {
+      const unsigned int& originCell0DIndex = cell1DExtremes(0, cell1DIndex);
+      const unsigned int& endCell0DIndex = cell1DExtremes(1, cell1DIndex);
+
+      Gedim::Output::Assert(originCell0DIndex < Cell0DTotalNumber());
+      Gedim::Output::Assert(endCell0DIndex < Cell0DTotalNumber());
+      _mesh.Cell1DVertices[2 * cell1DIndex] = originCell0DIndex;
+      _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
+      triplets.push_back(Eigen::Triplet<unsigned int>(originCell0DIndex,
+                                                      endCell0DIndex,
+                                                      cell1DIndex + 1));
+    }
+    _mesh.Cell1DAdjacency.setFromTriplets(triplets.begin(),
+                                          triplets.end());
+    _mesh.Cell1DAdjacency.makeCompressed();
+  }
+  // ***************************************************************************
   Eigen::MatrixXi MeshMatricesDAO::Cell1DExtremes() const
   {
     Eigen::MatrixXi extremes(2, _mesh.NumberCell1D);

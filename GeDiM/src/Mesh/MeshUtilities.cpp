@@ -168,23 +168,17 @@ namespace Gedim
     Output::Assert(cell0Ds.rows() == 3);
     const unsigned int& numCell0Ds = cell0Ds.cols();
     mesh.Cell0DsInitialize(numCell0Ds);
+    mesh.Cell0DsInsertCoordinates(cell0Ds);
     for (unsigned int v = 0; v < numCell0Ds; v++)
-    {
       mesh.Cell0DSetState(v, true);
-      mesh.Cell0DInsertCoordinates(v, cell0Ds.col(v));
-    }
 
     // Create Cell1Ds
     Output::Assert(cell1Ds.rows() == 2);
     unsigned int numCell1Ds = cell1Ds.cols();
     mesh.Cell1DsInitialize(numCell1Ds);
+    mesh.Cell1DsInsertExtremes(cell1Ds);
     for (int e = 0; e < cell1Ds.cols(); e++)
-    {
-      mesh.Cell1DInsertExtremes(e,
-                                cell1Ds(0, e),
-                                cell1Ds(1, e));
       mesh.Cell1DSetState(e, true);
-    }
 
     // Create Cell2Ds
     const unsigned int& numCell2Ds = cell2Ds.size();

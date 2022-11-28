@@ -53,7 +53,7 @@ namespace Gedim
                                 const std::vector<VTPProperty>& properties)
   {
 #if ENABLE_VTK == 1
-    const Eigen::VectorXi edge =  (Eigen::VectorXi(2)<< 0, 1).finished();
+    const Eigen::VectorXi edge = (Eigen::VectorXi(2)<< 0, 1).finished();
     const VTPSegment vtpSegment(vertices,
                                 edge);
     GeometryToPolyData<VTPSegment> polyData(vtpSegment,
