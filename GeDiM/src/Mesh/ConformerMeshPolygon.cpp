@@ -57,6 +57,11 @@ namespace Gedim
                                                                    ConformerMeshSegment::ConformMesh& mesh1D,
                                                                    const Gedim::IMeshDAO& mesh2DReader)
   {
+    const Eigen::Vector3d segmentBarycenter = _geometryUtilities.SegmentBarycenter(segmentOrigin,
+                                                                                   segmentEnd);
+    const double segmentLength = _geometryUtilities.SegmentLength(segmentOrigin,
+                                                                  segmentEnd);
+
     const double originCurvilinearCoordinate = mesh1D.Segments[0].Points[0];
     const double endCurvilinearCoordinate = mesh1D.Segments[mesh1D.Segments.size() - 1].Points[1];
 
@@ -84,6 +89,17 @@ namespace Gedim
         const unsigned int edgeEndId = mesh2DReader.Cell1DEnd(edgeId);
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
+
+        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
+                                                                                    edgeEnd);
+        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
+                                                                   edgeEnd);
+
+        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
+                                                          segmentBarycenter,
+                                                          edgeLength,
+                                                          segmentLength))
+          continue;
 
         GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
                                                                                                                    segmentEnd,
@@ -154,6 +170,17 @@ namespace Gedim
         const unsigned int edgeEndId = mesh2DReader.Cell1DEnd(edgeId);
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
+
+        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
+                                                                                    edgeEnd);
+        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
+                                                                   edgeEnd);
+
+        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
+                                                          segmentBarycenter,
+                                                          edgeLength,
+                                                          segmentLength))
+          continue;
 
         GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
                                                                                                                    segmentEnd,
