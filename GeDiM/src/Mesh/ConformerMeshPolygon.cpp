@@ -90,16 +90,16 @@ namespace Gedim
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
 
-        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
-                                                                                    edgeEnd);
-        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
-                                                                   edgeEnd);
+        //        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
+        //                                                                                    edgeEnd);
+        //        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
+        //                                                                   edgeEnd);
 
-        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
-                                                          segmentBarycenter,
-                                                          edgeLength,
-                                                          segmentLength))
-          continue;
+        //        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
+        //                                                          segmentBarycenter,
+        //                                                          edgeLength,
+        //                                                          segmentLength))
+        //          continue;
 
         GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
                                                                                                                    segmentEnd,
@@ -171,16 +171,16 @@ namespace Gedim
         Vector3d edgeOrigin = mesh2DReader.Cell0DCoordinates(edgeOriginId);
         Vector3d edgeEnd = mesh2DReader.Cell0DCoordinates(edgeEndId);
 
-        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
-                                                                                    edgeEnd);
-        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
-                                                                   edgeEnd);
+        //        const Eigen::Vector3d edgeBarycenter = _geometryUtilities.SegmentBarycenter(edgeOrigin,
+        //                                                                                    edgeEnd);
+        //        const double edgeLength = _geometryUtilities.SegmentLength(edgeOrigin,
+        //                                                                   edgeEnd);
 
-        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
-                                                          segmentBarycenter,
-                                                          edgeLength,
-                                                          segmentLength))
-          continue;
+        //        if (_geometryUtilities.CheckNoSpheresIntersection(edgeBarycenter,
+        //                                                          segmentBarycenter,
+        //                                                          edgeLength,
+        //                                                          segmentLength))
+        //          continue;
 
         GeometryUtilities::IntersectionSegmentSegmentResult result = _geometryUtilities.IntersectionSegmentSegment(segmentOrigin,
                                                                                                                    segmentEnd,
