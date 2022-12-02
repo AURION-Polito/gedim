@@ -239,10 +239,6 @@ namespace GedimUnitTesting
                              triangles,
                              meshDao);
 
-    {using namespace Gedim;
-      cerr<< mesh.Cell1DAdjacency<< endl;
-    }
-
     ASSERT_EQ(expectedMesh.Cell0DCoordinates(),
               meshDao.Cell0DCoordinates());
     ASSERT_EQ(expectedMesh.Cell1DExtremes(),
