@@ -1534,18 +1534,16 @@ namespace Gedim
 
       for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
       {
+        propertyValues[p].resize(mesh.Cell0DTotalNumber());
         for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
         {
-          propertyValues[p].resize(mesh.Cell0DDoublePropertySize(g, p));
-          for (unsigned int v = 0; v < mesh.Cell0DDoublePropertySize(g, p); v++)
-            propertyValues[p][v] = mesh.Cell0DDoublePropertyValue(g, p, v);
+          propertyValues[p][g] = mesh.Cell0DDoublePropertySize(g, p) == 1 ? mesh.Cell0DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
         }
-
-        Output::Assert(propertyValues[p].size() == 1);
 
         properties[2 + p] = {
           mesh.Cell0DDoublePropertyId(p),
-          propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
+          Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
           propertyValues[p].data()
         };
@@ -1588,19 +1586,16 @@ namespace Gedim
 
       for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
       {
+        propertyValues[p].resize(mesh.Cell1DTotalNumber());
         for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
         {
-          propertyValues[p].resize(mesh.Cell1DDoublePropertySize(g, p));
-          for (unsigned int v = 0; v < mesh.Cell1DDoublePropertySize(g, p); v++)
-            propertyValues[p][v] = mesh.Cell1DDoublePropertyValue(g, p, v);
-
-          Output::Assert(propertyValues[p].size() == 1 ||
-                         propertyValues[p].size() == 2);
+          propertyValues[p][g] = mesh.Cell1DDoublePropertySize(g, p) == 1 ? mesh.Cell1DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
         }
 
         properties[2 + p] = {
           mesh.Cell1DDoublePropertyId(p),
-          propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
+          Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
           propertyValues[p].data()
         };
