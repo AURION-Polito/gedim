@@ -37,6 +37,15 @@ namespace Gedim
       { }
   };
 
+  struct VTPPoints final
+  {
+      const Eigen::MatrixXd& Points;
+
+      VTPPoints(const Eigen::MatrixXd& points) :
+        Points(points)
+      { }
+  };
+
   struct VTPSegment final
   {
       const Eigen::MatrixXd& Vertices;
@@ -163,8 +172,12 @@ namespace Gedim
 #if ENABLE_VTK == 1
       void AddPoint(const Eigen::Vector3d& point,
                     vtkNew<vtkPoints>& points) const;
+      void AddPoints(const Eigen::MatrixXd& points,
+                     vtkNew<vtkPoints>& vtkPoints) const;
       void AddVertex(const unsigned int& pointId,
                      vtkNew<vtkCellArray>& vertices) const;
+      void AddVertices(const std::vector<unsigned int>& pointIds,
+                       vtkNew<vtkCellArray>& vertices) const;
       void AddLine(const unsigned int& originId,
                    const unsigned int& endId,
                    vtkNew<vtkCellArray>& lines) const;

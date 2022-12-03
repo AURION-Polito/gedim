@@ -3,6 +3,8 @@
 #include "IOUtilities.hpp"
 #include "CommonUtilities.hpp"
 
+#include <numeric>
+
 using namespace std;
 using namespace Eigen;
 
@@ -43,7 +45,10 @@ namespace Gedim
                                const std::vector<VTPProperty>& properties)
   {
 #if ENABLE_VTK == 1
-
+    const VTPPoints vtpPoints(points);
+    GeometryToPolyData<VTPPoints> polyData(vtpPoints,
+                                           properties);
+    AddToExportData(polyData);
 #else
     Utilities::Unused(points);
     Utilities::Unused(properties);
@@ -192,12 +197,35 @@ namespace Gedim
                             point(2));
   }
   // ***************************************************************************
+  template<typename T>
+  void GeometryToPolyData<T>::AddPoints(const Eigen::MatrixXd& points,
+                                        vtkNew<vtkPoints>& vtkPoints) const
+  {
+    for (unsigned int p = 0; p < points.cols(); p++)
+    {
+      vtkPoints->InsertNextPoint(points(0, p),
+                                 points(1, p),
+                                 points(2, p));
+    }
+  }
+  // ***************************************************************************
   template <typename T>
   void GeometryToPolyData<T>::AddVertex(const unsigned int& pointId,
                                         vtkNew<vtkCellArray>& vertices) const
   {
     vertices->InsertNextCell(1);
     vertices->InsertCellPoint(pointId);
+  }
+  // ***************************************************************************
+  template<typename T>
+  void GeometryToPolyData<T>::AddVertices(const std::vector<unsigned int>& pointIds,
+                                          vtkNew<vtkCellArray>& vertices) const
+  {
+    for (unsigned int p = 0; p < pointIds.size(); p++)
+    {
+      vertices->InsertNextCell(1);
+      vertices->InsertCellPoint(pointIds.at(p));
+    }
   }
   // ***************************************************************************
   template <typename T>
@@ -274,6 +302,34 @@ namespace Gedim
              points);
     AddVertex(0,
               vertices);
+
+    AppendSolution(polyData);
+
+    exportData->AddInputData(polyData);
+  }
+  // ***************************************************************************
+  template <>
+  void GeometryToPolyData<VTPPoints>::Convert(vtkNew<vtkAppendFilter>& exportData) const
+  {
+    vtkNew<vtkPolyData> polyData;
+
+    vtkNew<vtkPoints> points;
+    vtkNew<vtkCellArray> vertices;
+
+    const unsigned int numberTotalPoints = geometry.Points.cols();
+    points->Allocate(numberTotalPoints);
+    vertices->Allocate(numberTotalPoints);
+
+    polyData->SetPoints(points);
+    polyData->SetVerts(vertices);
+
+    AddPoints(geometry.Points,
+              points);
+
+    std::vector<unsigned int> pointIds(numberTotalPoints);
+    std::iota(pointIds.begin(), pointIds.end(), 0);
+    AddVertices(pointIds,
+                vertices);
 
     AppendSolution(polyData);
 

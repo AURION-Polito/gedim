@@ -56,6 +56,53 @@ namespace GedimUnitTesting
     vtpUtilities.Export(exportFolder + "/Geometry0D.vtu",
                         Gedim::VTKUtilities::Ascii);
   }
+  TEST(TestVTPUtilities, VTPUtilities_Test0Ds)
+  {
+    const unsigned int numGeometries = 3;
+
+    Gedim::VTKUtilities vtpUtilities;
+
+    // Export to VTK
+    for (unsigned int g = 0; g < numGeometries; g++)
+    {
+      Eigen::MatrixXd geometry = (Eigen::MatrixXd(3, 4)<< 0.0, 1.0, 1.0, 0.0,
+                                  0.0, 0.0, 1.0, 1.0,
+                                  2.0 + g, 2.0 + g, 2.0 + g, 2.0 + g).finished();
+
+      vector<double> id(4);
+      id[0] = 1 + g;
+      id[1] = 2 + g;
+      id[2] = 3 + g;
+      id[3] = 4 + g;
+      vector<double> data(4);
+      data[0] = 10 + g;
+      data[1] = 20 + g;
+      data[2] = 30 + g;
+      data[3] = 40 + g;
+
+      vtpUtilities.AddPoints(geometry,
+                             {
+                               {
+                                 "Id",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(id.size()),
+                                 id.data()
+                               },
+                               {
+                                 "Data",
+                                 Gedim::VTPProperty::Formats::Points,
+                                 static_cast<unsigned int>(data.size()),
+                                 data.data()
+                               }
+                             });
+    }
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Geometry0Ds.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
   // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_Test1D)
   {
