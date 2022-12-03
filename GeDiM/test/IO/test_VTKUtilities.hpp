@@ -503,7 +503,7 @@ namespace GedimUnitTesting
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
-  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell1Ds)
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_SingleSegments_Cell1Ds)
   {
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
@@ -535,7 +535,46 @@ namespace GedimUnitTesting
     std::string exportFolder = "./Export/TestVTPUtilities";
     Gedim::Output::CreateFolder(exportFolder);
 
-    vtpUtilities.Export(exportFolder + "/Mesh3D_Cell1Ds.vtu",
+    vtpUtilities.Export(exportFolder + "/Mesh3D_SingleSegments_Cell1Ds.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
+  // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_GlobalSegments_Cell1Ds)
+  {
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+    Gedim::VTKUtilities vtpUtilities;
+
+    vector<double> id(mesh.Cell1DTotalNumber());
+    vector<double> marker(mesh.Cell1DTotalNumber());
+
+    // Export to VTK
+    for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
+    {
+      id[g] = g;
+      marker[g] = mesh.Cell1DMarker(g);
+    }
+
+    vtpUtilities.AddSegments(mesh.Cell0DsCoordinates(),
+                             mesh.Cell1DsExtremes(),
+                             {
+                               {
+                                 "Id",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(id.size()),
+                                 id.data()
+                               },
+                               {
+                                 "Marker",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(marker.size()),
+                                 marker.data()
+                               }
+                             });
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Mesh3D_GlobalSegments_Cell1Ds.vtu",
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************

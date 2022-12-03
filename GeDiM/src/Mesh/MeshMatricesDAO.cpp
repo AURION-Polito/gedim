@@ -472,7 +472,7 @@ namespace Gedim
     _mesh.Cell1DAdjacency.makeCompressed();
   }
   // ***************************************************************************
-  Eigen::MatrixXi MeshMatricesDAO::Cell1DExtremes() const
+  Eigen::MatrixXi MeshMatricesDAO::Cell1DsExtremes() const
   {
     Eigen::MatrixXi extremes(2, _mesh.NumberCell1D);
 

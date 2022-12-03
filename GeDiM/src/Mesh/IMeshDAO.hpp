@@ -270,7 +270,7 @@ namespace Gedim
                                 const unsigned int& endCell0DIndex) const = 0;
 
       /// \return the extrems as Eigen MatrixXi of cell1Ds, size 2xCell1DTotalNumber()
-      virtual Eigen::MatrixXi Cell1DExtremes() const = 0;
+      virtual Eigen::MatrixXi Cell1DsExtremes() const = 0;
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       virtual Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const = 0;

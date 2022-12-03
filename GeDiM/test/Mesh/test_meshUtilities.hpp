@@ -195,7 +195,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
     EXPECT_EQ(meshDao.Cell0DsCoordinates(),
               cell0DCoordinates);
-    EXPECT_EQ(meshDao.Cell1DExtremes(),
+    EXPECT_EQ(meshDao.Cell1DsExtremes(),
               cell1DExtremes);
   }
 
@@ -241,8 +241,8 @@ namespace GedimUnitTesting
 
     ASSERT_EQ(expectedMesh.Cell0DsCoordinates(),
               meshDao.Cell0DsCoordinates());
-    ASSERT_EQ(expectedMesh.Cell1DExtremes(),
-              meshDao.Cell1DExtremes());
+    ASSERT_EQ(expectedMesh.Cell1DsExtremes(),
+              meshDao.Cell1DsExtremes());
     for (unsigned int c = 0; c < 4; c++)
     {
       ASSERT_EQ(expectedMesh.Cell2DVertices(c),
@@ -304,8 +304,8 @@ namespace GedimUnitTesting
               meshDao.Cell2DTotalNumber());
     EXPECT_EQ(expectedMesh.Cell0DsCoordinates(),
               meshDao.Cell0DsCoordinates());
-    EXPECT_EQ(expectedMesh.Cell1DExtremes(),
-              meshDao.Cell1DExtremes());
+    EXPECT_EQ(expectedMesh.Cell1DsExtremes(),
+              meshDao.Cell1DsExtremes());
 
     const vector<unsigned int> cell0DMarkers = { 11, 12, 13, 14 };
     const vector<unsigned int> cell1DMarkers = { 15, 16, 17, 18 };

@@ -311,7 +311,7 @@ namespace Gedim
 
       void Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes);
 
-      Eigen::MatrixXi Cell1DExtremes() const;
+      Eigen::MatrixXi Cell1DsExtremes() const;
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       inline Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const
