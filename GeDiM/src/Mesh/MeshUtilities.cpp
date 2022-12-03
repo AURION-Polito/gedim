@@ -1507,79 +1507,88 @@ namespace Gedim
     // Export Cell0Ds
     if (mesh.Cell0DTotalNumber() > 0)
     {
-      Gedim::VTKUtilities vtpUtilities;
+      vector<double> id(mesh.Cell0DTotalNumber());
+      vector<double> marker(mesh.Cell0DTotalNumber());
+
       for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
       {
-        vector<VTPProperty> properties(2 + mesh.Cell0DNumberDoubleProperties());
+        id[g] = g;
+        marker[g] = mesh.Cell0DMarker(g);
+      }
 
-        const vector<double> id(1, g);
-        const vector<double> marker(1, mesh.Cell0DMarker(g));
-        vector<vector<double>> propertyValues(mesh.Cell0DNumberDoubleProperties());
+      vector<VTPProperty> properties(2 + mesh.Cell0DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell0DNumberDoubleProperties());
 
-        properties[0] = {
-          "Id",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(id.size()),
-          id.data()
-        };
+      properties[0] = {
+        "Id",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(id.size()),
+        id.data()
+      };
+      properties[1] = {
+        "Marker",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(marker.size()),
+        marker.data()
+      };
 
-        properties[1] = {
-          "Marker",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(marker.size()),
-          marker.data()
-        };
-
-        for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
+      for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
+      {
+        for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
         {
           propertyValues[p].resize(mesh.Cell0DDoublePropertySize(g, p));
           for (unsigned int v = 0; v < mesh.Cell0DDoublePropertySize(g, p); v++)
             propertyValues[p][v] = mesh.Cell0DDoublePropertyValue(g, p, v);
-
-          Output::Assert(propertyValues[p].size() == 1);
-
-          properties[2 + p] = {
-            mesh.Cell0DDoublePropertyId(p),
-            propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
-            static_cast<unsigned int>(propertyValues[p].size()),
-            propertyValues[p].data()
-          };
         }
 
-        vtpUtilities.AddPoint(mesh.Cell0DCoordinates(g),
-                              properties);
+        Output::Assert(propertyValues[p].size() == 1);
+
+        properties[2 + p] = {
+          mesh.Cell0DDoublePropertyId(p),
+          propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
+          static_cast<unsigned int>(propertyValues[p].size()),
+          propertyValues[p].data()
+        };
       }
 
+      Gedim::VTKUtilities vtpUtilities;
+      vtpUtilities.AddPoints(mesh.Cell0DsCoordinates(),
+                             properties);
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell0Ds.vtu");
     }
 
     // Export Cell1Ds
     if (mesh.Cell1DTotalNumber() > 0)
     {
-      Gedim::VTKUtilities vtpUtilities;
+      vector<double> id(mesh.Cell1DTotalNumber());
+      vector<double> marker(mesh.Cell1DTotalNumber());
+
       for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
       {
-        vector<VTPProperty> properties(2 + mesh.Cell1DNumberDoubleProperties());
+        id[g] = g;
+        marker[g] = mesh.Cell1DMarker(g);
+      }
 
-        const vector<double> id(1, g);
-        const vector<double> marker(1, mesh.Cell1DMarker(g));
-        vector<vector<double>> propertyValues(mesh.Cell1DNumberDoubleProperties());
+      vector<VTPProperty> properties(2 + mesh.Cell1DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell1DNumberDoubleProperties());
 
-        properties[0] = {
-          "Id",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(id.size()),
-          id.data()
-        };
+      properties[0] = {
+        "Id",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(id.size()),
+        id.data()
+      };
 
-        properties[1] = {
-          "Marker",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(marker.size()),
-          marker.data()
-        };
+      properties[1] = {
+        "Marker",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(marker.size()),
+        marker.data()
+      };
 
-        for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
+      for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
+      {
+        for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
         {
           propertyValues[p].resize(mesh.Cell1DDoublePropertySize(g, p));
           for (unsigned int v = 0; v < mesh.Cell1DDoublePropertySize(g, p); v++)
@@ -1587,19 +1596,20 @@ namespace Gedim
 
           Output::Assert(propertyValues[p].size() == 1 ||
                          propertyValues[p].size() == 2);
-
-          properties[2 + p] = {
-            mesh.Cell1DDoublePropertyId(p),
-            propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
-            static_cast<unsigned int>(propertyValues[p].size()),
-            propertyValues[p].data()
-          };
         }
 
-        vtpUtilities.AddSegment(mesh.Cell1DCoordinates(g),
-                                properties);
+        properties[2 + p] = {
+          mesh.Cell1DDoublePropertyId(p),
+          propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
+          static_cast<unsigned int>(propertyValues[p].size()),
+          propertyValues[p].data()
+        };
       }
 
+      Gedim::VTKUtilities vtpUtilities;
+      vtpUtilities.AddSegments(mesh.Cell0DsCoordinates(),
+                               mesh.Cell1DsExtremes(),
+                               properties);
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell1Ds.vtu");
     }
 

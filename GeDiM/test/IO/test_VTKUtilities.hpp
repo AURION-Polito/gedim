@@ -657,6 +657,21 @@ namespace GedimUnitTesting
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_ExportMesh)
+  {
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+    Gedim::VTKUtilities vtpUtilities;
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    meshUtilities.ExportMeshToVTU(mesh,
+                                  exportFolder,
+                                  "ExportMesh");
+  }
+  // ***************************************************************************
 }
 
 #endif // __TEST_VTPUtilities_H
