@@ -20,6 +20,8 @@ namespace Gedim
   {
 #if ENABLE_VTK == 1
     polyData.Convert(exportData);
+#else
+    Utilities::Unused(polyData);
 #endif
   }
   // ***************************************************************************
@@ -31,6 +33,20 @@ namespace Gedim
     GeometryToPolyData<VTPPoint> polyData(vtpPoint,
                                           properties);
     AddToExportData(polyData);
+#else
+    Utilities::Unused(point);
+    Utilities::Unused(properties);
+#endif
+  }
+  // ***************************************************************************
+  void VTKUtilities::AddPoints(const Eigen::MatrixXd& points,
+                               const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+
+#else
+    Utilities::Unused(points);
+    Utilities::Unused(properties);
 #endif
   }
   // ***************************************************************************
@@ -46,6 +62,10 @@ namespace Gedim
     GeometryToPolyData<VTPSegment> polyData(vtpSegment,
                                             properties);
     AddToExportData(polyData);
+#else
+    Utilities::Unused(origin);
+    Utilities::Unused(end);
+    Utilities::Unused(properties);
 #endif
   }
   // ***************************************************************************
@@ -59,6 +79,9 @@ namespace Gedim
     GeometryToPolyData<VTPSegment> polyData(vtpSegment,
                                             properties);
     AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
 #endif
   }
   // ***************************************************************************
@@ -84,6 +107,9 @@ namespace Gedim
     GeometryToPolyData<VTPPolygon> polyData(vtpPolygon,
                                             properties);
     AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
 #endif
   }
   // ***************************************************************************
@@ -99,6 +125,11 @@ namespace Gedim
     GeometryToPolyData<VTPPolyhedron> polyData(vtpPolyhedron,
                                                properties);
     AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(edges);
+    Utilities::Unused(faces);
+    Utilities::Unused(properties);
 #endif
   }
   // ***************************************************************************
@@ -128,6 +159,9 @@ namespace Gedim
     }
 
     writer->Write();
+#else
+    Utilities::Unused(filePath);
+    Utilities::Unused(format);
 #endif
   }
   // ***************************************************************************
