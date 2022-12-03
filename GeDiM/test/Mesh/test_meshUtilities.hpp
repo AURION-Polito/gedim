@@ -193,7 +193,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 15);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 22);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
-    EXPECT_EQ(meshDao.Cell0DCoordinates(),
+    EXPECT_EQ(meshDao.Cell0DsCoordinates(),
               cell0DCoordinates);
     EXPECT_EQ(meshDao.Cell1DExtremes(),
               cell1DExtremes);
@@ -239,8 +239,8 @@ namespace GedimUnitTesting
                              triangles,
                              meshDao);
 
-    ASSERT_EQ(expectedMesh.Cell0DCoordinates(),
-              meshDao.Cell0DCoordinates());
+    ASSERT_EQ(expectedMesh.Cell0DsCoordinates(),
+              meshDao.Cell0DsCoordinates());
     ASSERT_EQ(expectedMesh.Cell1DExtremes(),
               meshDao.Cell1DExtremes());
     for (unsigned int c = 0; c < 4; c++)
@@ -302,8 +302,8 @@ namespace GedimUnitTesting
               meshDao.Cell1DTotalNumber());
     EXPECT_EQ(expectedMesh.Cell2DTotalNumber(),
               meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(expectedMesh.Cell0DCoordinates(),
-              meshDao.Cell0DCoordinates());
+    EXPECT_EQ(expectedMesh.Cell0DsCoordinates(),
+              meshDao.Cell0DsCoordinates());
     EXPECT_EQ(expectedMesh.Cell1DExtremes(),
               meshDao.Cell1DExtremes());
 

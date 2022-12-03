@@ -209,7 +209,7 @@ namespace Gedim
 
     // check Cell0D are 2D
     if (configuration.Cell0D_CheckCoordinates2D)
-      Output::Assert(geometryUtilities.PointsAre2D(convexMesh.Cell0DCoordinates()));
+      Output::Assert(geometryUtilities.PointsAre2D(convexMesh.Cell0DsCoordinates()));
 
     // check Cell0D duplications
     if (configuration.Cell0D_CheckDuplications)

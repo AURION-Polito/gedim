@@ -64,7 +64,7 @@ namespace Gedim
       /// \return the coordinates as Eigen Vector3d of cell0D, size 3x1
       virtual Eigen::Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const = 0;
       /// \return the coordinates as Eigen MatrixXd of cell0D, size 3xCell0DTotalNumber()
-      virtual Eigen::MatrixXd Cell0DCoordinates() const = 0;
+      virtual Eigen::MatrixXd Cell0DsCoordinates() const = 0;
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return if the cell0D is active
       virtual bool Cell0DIsActive(const unsigned int& cell0DIndex) const = 0;

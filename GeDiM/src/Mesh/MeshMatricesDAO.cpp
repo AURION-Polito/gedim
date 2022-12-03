@@ -250,7 +250,7 @@ namespace Gedim
       Cell0DInsertCoordinates(c, coordinates.col(c));
   }
   // ***************************************************************************
-  MatrixXd MeshMatricesDAO::Cell0DCoordinates() const
+  MatrixXd MeshMatricesDAO::Cell0DsCoordinates() const
   {
     MatrixXd coordinates(3, Cell0DTotalNumber());
     for (unsigned int v = 0; v < Cell0DTotalNumber(); v++)
