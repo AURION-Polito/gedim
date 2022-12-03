@@ -58,6 +58,18 @@ namespace Gedim
       { }
   };
 
+  struct VTPSegments final
+  {
+      const Eigen::MatrixXd& Vertices;
+      const Eigen::MatrixXi& Edges;
+
+      VTPSegments(const Eigen::MatrixXd& vertices,
+                  const Eigen::MatrixXi& edges) :
+        Vertices(vertices),
+        Edges(edges)
+      { }
+  };
+
   struct VTPPolygon final
   {
       const Eigen::MatrixXd& Vertices;
@@ -148,6 +160,9 @@ namespace Gedim
       void AddSegment(const Eigen::MatrixXd& vertices,
                       const Eigen::VectorXi& edge,
                       const std::vector<VTPProperty>& properties = {});
+      void AddSegments(const Eigen::MatrixXd& vertices,
+                       const Eigen::MatrixXi& edges,
+                       const std::vector<VTPProperty>& properties = {});
       void AddPolygon(const Eigen::MatrixXd& vertices,
                       const std::vector<VTPProperty>& properties = {});
       void AddPolygon(const Eigen::MatrixXd& vertices,
@@ -181,6 +196,8 @@ namespace Gedim
       void AddLine(const unsigned int& originId,
                    const unsigned int& endId,
                    vtkNew<vtkCellArray>& lines) const;
+      void AddLines(const Eigen::MatrixXi& edges,
+                    vtkNew<vtkCellArray>& lines) const;
       void AddPolygon(const Eigen::VectorXi& faceVerticesIds,
                       vtkNew<vtkCellArray>& faces) const;
       void AppendSolution(vtkDataSet* polyData) const;

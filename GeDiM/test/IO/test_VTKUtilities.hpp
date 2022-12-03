@@ -148,6 +148,55 @@ namespace GedimUnitTesting
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_Test1Ds)
+  {
+    const unsigned int numGeometries = 3;
+
+    Gedim::VTKUtilities vtpUtilities;
+
+    // Export to VTK
+    for (unsigned int g = 0; g < numGeometries; g++)
+    {
+      const Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 4)<< 0.0, 1.0, 1.0, 0.0,
+                                        0.0, 0.0, 1.0, 1.0,
+                                        2.0 + g, 2.0 + g, 2.0 + g, 2.0 + g).finished();
+      const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 5)<< 0, 1, 2, 3, 0,
+                                     1, 2, 3, 0, 2).finished();
+
+      vector<double> id(5);
+      vector<double> data(4);
+
+      for (unsigned int e = 0; e < 4; e++)
+        id[e] = 10.8 + g + e;
+
+      for (unsigned int v = 0; v < 4; v++)
+        data[v] = 10.8 + g + v;
+
+      vtpUtilities.AddSegments(vertices,
+                               edges,
+                               {
+                                 {
+                                   "Id",
+                                   Gedim::VTPProperty::Formats::Cells,
+                                   static_cast<unsigned int>(id.size()),
+                                   id.data()
+                                 },
+                                 {
+                                   "Data",
+                                   Gedim::VTPProperty::Formats::Points,
+                                   static_cast<unsigned int>(data.size()),
+                                   data.data()
+                                 }
+                               });
+    }
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Geometry1Ds.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
+  // ***************************************************************************
   TEST(TestVTPUtilities, VTPUtilities_Test2D)
   {
     const unsigned int numGeometries = 4;

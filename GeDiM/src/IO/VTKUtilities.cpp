@@ -90,6 +90,38 @@ namespace Gedim
 #endif
   }
   // ***************************************************************************
+  void VTKUtilities::AddSegment(const Eigen::MatrixXd& vertices,
+                                const Eigen::VectorXi& edge,
+                                const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+    const VTPSegment vtpSegment(vertices,
+                                edge);
+    GeometryToPolyData<VTPSegment> polyData(vtpSegment,
+                                            properties);
+    AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
+#endif
+  }
+  // ***************************************************************************
+  void VTKUtilities::AddSegments(const Eigen::MatrixXd& vertices,
+                                 const Eigen::MatrixXi& edges,
+                                 const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+    const VTPSegments vtpSegments(vertices,
+                                  edges);
+    GeometryToPolyData<VTPSegments> polyData(vtpSegments,
+                                             properties);
+    AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
+#endif
+  }
+  // ***************************************************************************
   void VTKUtilities::AddPolygon(const Eigen::MatrixXd& vertices,
                                 const std::vector<VTPProperty>& properties)
   {
@@ -238,6 +270,18 @@ namespace Gedim
     lines->InsertCellPoint(endId);
   }
   // ***************************************************************************
+  template<typename T>
+  void GeometryToPolyData<T>::AddLines(const Eigen::MatrixXi& edges,
+                                       vtkNew<vtkCellArray>& lines) const
+  {
+    for (unsigned int l = 0; l < edges.cols(); l++)
+    {
+      lines->InsertNextCell(2);
+      lines->InsertCellPoint(edges(0, l));
+      lines->InsertCellPoint(edges(1, l));
+    }
+  }
+  // ***************************************************************************
   template <typename T>
   void GeometryToPolyData<T>::AddPolygon(const Eigen::VectorXi& faceVerticesIds,
                                          vtkNew<vtkCellArray>& faces) const
@@ -346,6 +390,7 @@ namespace Gedim
 
     const unsigned int numberTotalPoints = 2;
     points->Allocate(numberTotalPoints);
+    lines->Allocate(1);
 
     polyData->SetPoints(points);
     polyData->SetLines(lines);
@@ -358,6 +403,31 @@ namespace Gedim
     AddLine(geometry.Edge(0),
             geometry.Edge(1),
             lines);
+
+    AppendSolution(polyData);
+
+    exportData->AddInputData(polyData);
+  }
+  // ***************************************************************************
+  template <>
+  void GeometryToPolyData<VTPSegments>::Convert(vtkNew<vtkAppendFilter>& exportData) const
+  {
+    vtkNew<vtkPolyData> polyData;
+
+    vtkNew<vtkPoints> points;
+    vtkNew<vtkCellArray> lines;
+
+    points->Allocate(geometry.Vertices.cols());
+    lines->Allocate(geometry.Edges.cols());
+
+    polyData->SetPoints(points);
+    polyData->SetLines(lines);
+
+    AddPoints(geometry.Vertices,
+              points);
+
+    AddLines(geometry.Edges,
+             lines);
 
     AppendSolution(polyData);
 
