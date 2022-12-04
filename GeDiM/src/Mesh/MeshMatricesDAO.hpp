@@ -582,6 +582,7 @@ namespace Gedim
       }
 
       vector<unsigned int> Cell2DVertices(const unsigned int& cell2DIndex) const;
+      std::vector<std::vector<unsigned int>> Cell2DsVertices() const;
 
       inline unsigned int Cell2DVertex(const unsigned int& cell2DIndex,
                                        const unsigned int& vertexIndex) const

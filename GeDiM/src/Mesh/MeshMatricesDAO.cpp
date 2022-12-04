@@ -729,6 +729,16 @@ namespace Gedim
     return vertices;
   }
   // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell2DsVertices() const
+  {
+    vector<std::vector<unsigned int>> polygonVertices(Cell2DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell2DTotalNumber(); p++)
+      polygonVertices[p] = Cell2DVertices(p);
+
+    return polygonVertices;
+  }
+  // ***************************************************************************
   MatrixXd MeshMatricesDAO::Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const
   {
     MatrixXd coordinates(3, Cell2DNumberVertices(cell2DIndex));

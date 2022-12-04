@@ -522,6 +522,8 @@ namespace Gedim
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the number of edges of Cell2D
       virtual unsigned int Cell2DNumberEdges(const unsigned int& cell2DIndex ) const = 0;
+      /// \return the Cell0D index collections of all Cell2Ds, size Cell2DTotalNumber() x Cell2DNumberVertices(cell2DIndex)
+      virtual std::vector<std::vector<unsigned int>> Cell2DsVertices() const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the Cell0D index collections of Cell2D from 0 to Cell0DTotalNumber(), size Cell2DNumberVertices(cell2DIndex)
       virtual std::vector<unsigned int> Cell2DVertices(const unsigned int& cell2DIndex) const = 0;
