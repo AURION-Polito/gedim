@@ -196,6 +196,9 @@ namespace Gedim
       void AddPolyhedron(const Eigen::MatrixXd& vertices,
                          const std::vector<std::vector<unsigned int>>& polyhedronFaces,
                          const std::vector<VTPProperty>& properties = {});
+      void AddPolyhedrons(const Eigen::MatrixXd& vertices,
+                          const std::vector<std::vector<std::vector<unsigned int>>>& polyhedronsFaces,
+                          const std::vector<VTPProperty>& properties = {});
 
       void Export(const std::string& filePath,
                   const ExportFormats& format = ExportFormats::Binary) const;
