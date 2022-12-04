@@ -801,7 +801,7 @@ namespace GedimUnitTesting
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
-  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_Cell3Ds)
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_SinglePolyhedrons_Cell3Ds)
   {
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
@@ -839,7 +839,47 @@ namespace GedimUnitTesting
     std::string exportFolder = "./Export/TestVTPUtilities";
     Gedim::Output::CreateFolder(exportFolder);
 
-    vtpUtilities.Export(exportFolder + "/Mesh3D_Cell3Ds.vtu",
+    vtpUtilities.Export(exportFolder + "/Mesh3D_SinglePolyhedrons_Cell3Ds.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
+  // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_GlobalPolyhedrons_Cell3Ds)
+  {
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+    Gedim::VTKUtilities vtpUtilities;
+    Gedim::MeshUtilities meshUtilities;
+
+    // Export to VTK
+    vector<double> id(mesh.Cell3DTotalNumber());
+    vector<double> marker(mesh.Cell3DTotalNumber());
+    for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
+    {
+      id[g] = g;
+      marker[g] = mesh.Cell3DMarker(g);
+    }
+
+    vtpUtilities.AddPolyhedrons(mesh.Cell0DsCoordinates(),
+                                mesh.Cell3DsFacesVertices(),
+                                {
+                                  {
+                                    "Id",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(id.size()),
+                                    id.data()
+                                  },
+                                  {
+                                    "Marker",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(marker.size()),
+                                    marker.data()
+                                  }
+                                });
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Mesh3D_GlobalPolyhedrons_Cell3Ds.vtu",
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************
