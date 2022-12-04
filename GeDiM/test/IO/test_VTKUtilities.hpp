@@ -732,16 +732,15 @@ namespace GedimUnitTesting
     // Export to VTK
     for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
     {
-      const Gedim::GeometryUtilities::Polyhedron polyhedron = meshUtilities.MeshCell3DToPolyhedron(mesh,
-                                                                                                   g);
+      const Gedim::MeshUtilities::VTPPolyhedron polyhedron = meshUtilities.MeshCell3DToVTPPolyhedron(mesh,
+                                                                                                     g);
 
       const vector<double> id(1, g);
       const vector<double> marker(polyhedron.Vertices.cols(),
                                   mesh.Cell3DMarker(g));
 
       vtpUtilities.AddPolyhedron(polyhedron.Vertices,
-                                 polyhedron.Edges,
-                                 polyhedron.Faces,
+                                 polyhedron.PolyhedronFaces,
                                  {
                                    {
                                      "Id",

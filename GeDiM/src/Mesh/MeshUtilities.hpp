@@ -83,6 +83,12 @@ namespace Gedim
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DNormals; ///< faces edge normals
       };
 
+      struct VTPPolyhedron final
+      {
+          Eigen::MatrixXd Vertices; /// size 3xnumVertices
+          std::vector<std::vector<unsigned int>> PolyhedronFaces; /// size numFaces x numFaceVertices
+      };
+
     public:
       MeshUtilities();
       ~MeshUtilities();
@@ -272,6 +278,13 @@ namespace Gedim
       /// \return polyhedron from mesh 3D cell
       GeometryUtilities::Polyhedron MeshCell3DToPolyhedron(const IMeshDAO& mesh,
                                                            const unsigned int& cell3DIndex) const;
+
+      /// \brief Convert a mesh cell3D to a VTP polydheron
+      /// \param mesh a mesh
+      /// \param cell3DIndex the cell3D index
+      /// \return VTP polyhedron from mesh 3D cell
+      MeshUtilities::VTPPolyhedron MeshCell3DToVTPPolyhedron(const IMeshDAO& mesh,
+                                                             const unsigned int& cell3DIndex) const;
 
   };
 

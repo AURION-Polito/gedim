@@ -97,15 +97,24 @@ namespace Gedim
   struct VTPPolyhedron final
   {
       const Eigen::MatrixXd& Vertices; /// size 3xnumVertices
-      const Eigen::MatrixXi& Edges; /// size 2xnumEdges
-      const std::vector<Eigen::MatrixXi>& Faces; /// size numFacesx2xnumFaceVertices
+      const std::vector<std::vector<unsigned int>>& PolyhedronFaces; /// size numFaces x numFaceVertices
 
       VTPPolyhedron(const Eigen::MatrixXd& vertices,
-                    const Eigen::MatrixXi& edges,
-                    const std::vector<Eigen::MatrixXi>& faces) :
+                    const std::vector<std::vector<unsigned int>>& faces) :
         Vertices(vertices),
-        Edges(edges),
-        Faces(faces)
+        PolyhedronFaces(faces)
+      { }
+  };
+
+  struct VTPPolyhedrons final
+  {
+      const Eigen::MatrixXd& Vertices; /// size 3xnumVertices
+      const std::vector<std::vector<std::vector<unsigned int>>>& PolyhedronsFaces; /// size numPolyhedrons x numPolyhedronFaces x numPolyhedronFaceVertices
+
+      VTPPolyhedrons(const Eigen::MatrixXd& vertices,
+                     const std::vector<std::vector<std::vector<unsigned int>>>& polyhedronsFaces) :
+        Vertices(vertices),
+        PolyhedronsFaces(polyhedronsFaces)
       { }
   };
 
@@ -183,6 +192,9 @@ namespace Gedim
       void AddPolyhedron(const Eigen::MatrixXd& vertices,
                          const Eigen::MatrixXi& edges,
                          const std::vector<Eigen::MatrixXi>& faces,
+                         const std::vector<VTPProperty>& properties = {});
+      void AddPolyhedron(const Eigen::MatrixXd& vertices,
+                         const std::vector<std::vector<unsigned int>>& polyhedronFaces,
                          const std::vector<VTPProperty>& properties = {});
 
       void Export(const std::string& filePath,

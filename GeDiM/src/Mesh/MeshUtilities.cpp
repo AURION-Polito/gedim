@@ -1667,7 +1667,7 @@ namespace Gedim
       Gedim::VTKUtilities vtpUtilities;
       for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
       {
-        const Gedim::GeometryUtilities::Polyhedron cell3D = MeshCell3DToPolyhedron(mesh, g);
+        const MeshUtilities::VTPPolyhedron cell3D = MeshCell3DToVTPPolyhedron(mesh, g);
 
         vector<VTPProperty> properties(2 + mesh.Cell3DNumberDoubleProperties());
 
@@ -1707,8 +1707,7 @@ namespace Gedim
         }
 
         vtpUtilities.AddPolyhedron(cell3D.Vertices,
-                                   cell3D.Edges,
-                                   cell3D.Faces,
+                                   cell3D.PolyhedronFaces,
                                    properties);
       }
 
@@ -1832,6 +1831,40 @@ namespace Gedim
     }
 
     return polyhedron;
+  }
+  // ***************************************************************************
+  MeshUtilities::VTPPolyhedron MeshUtilities::MeshCell3DToVTPPolyhedron(const IMeshDAO& mesh,
+                                                                        const unsigned int& cell3DIndex) const
+  {
+    VTPPolyhedron vtpPolyhedron;
+
+    unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
+
+    vtpPolyhedron.Vertices = mesh.Cell3DVerticesCoordinates(cell3DIndex);
+    vtpPolyhedron.PolyhedronFaces.resize(mesh.Cell3DNumberFaces(cell3DIndex));
+
+    for (unsigned int v = 0; v < vtpPolyhedron.Vertices.cols(); v++)
+    {
+      cell0DIndexToVertexIndex.insert(make_pair(mesh.Cell3DVertex(cell3DIndex,
+                                                                  v),
+                                                v));
+    }
+
+    for (unsigned int f = 0; f < vtpPolyhedron.PolyhedronFaces.size(); f++)
+    {
+      const unsigned int cell2DIndex = mesh.Cell3DFace(cell3DIndex,
+                                                       f);
+      const unsigned int numFaceVertices = mesh.Cell2DNumberVertices(cell2DIndex);
+
+      vtpPolyhedron.PolyhedronFaces[f].resize(numFaceVertices);
+      for (unsigned int v = 0; v < numFaceVertices; v++)
+      {
+        vtpPolyhedron.PolyhedronFaces[f][v] = cell0DIndexToVertexIndex.at(mesh.Cell2DVertex(cell2DIndex,
+                                                                                            v));
+      }
+    }
+
+    return vtpPolyhedron;
   }
   // ***************************************************************************
 }

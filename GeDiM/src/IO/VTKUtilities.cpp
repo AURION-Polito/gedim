@@ -178,9 +178,36 @@ namespace Gedim
                                    const std::vector<VTPProperty>& properties)
   {
 #if ENABLE_VTK == 1
+    Utilities::Unused(edges);
+
+    std::vector<vector<unsigned int>> polyhedronFaces(faces.size());
+    for (unsigned int f = 0; f < faces.size(); f++)
+    {
+      polyhedronFaces[f].resize(faces[f].cols());
+      for (unsigned int v = 0; v < faces[f].cols(); v++)
+        polyhedronFaces[f][v] = faces[f](0, v);
+    }
+
     const VTPPolyhedron vtpPolyhedron(vertices,
-                                      edges,
-                                      faces);
+                                      polyhedronFaces);
+    GeometryToPolyData<VTPPolyhedron> polyData(vtpPolyhedron,
+                                               properties);
+    AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(edges);
+    Utilities::Unused(faces);
+    Utilities::Unused(properties);
+#endif
+  }
+  // ***************************************************************************
+  void VTKUtilities::AddPolyhedron(const Eigen::MatrixXd& vertices,
+                                   const std::vector<std::vector<unsigned int>>& polyhedronFaces,
+                                   const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+    const VTPPolyhedron vtpPolyhedron(vertices,
+                                      polyhedronFaces);
     GeometryToPolyData<VTPPolyhedron> polyData(vtpPolyhedron,
                                                properties);
     AddToExportData(polyData);
@@ -526,32 +553,23 @@ namespace Gedim
     vtkNew<vtkUnstructuredGrid> polyData;
 
     vtkNew<vtkPoints> points;
-    vtkNew<vtkIdList> faces;
+    vtkNew<vtkCellArray> faces;
 
     const unsigned int numPoints = geometry.Vertices.cols();
-    unsigned int numFaces = geometry.Faces.size();
+    unsigned int numFaces = geometry.PolyhedronFaces.size();
     points->Allocate(numPoints);
     faces->Allocate(numFaces);
 
-    vector<vtkIdType> pointIds(numPoints);
-    for (unsigned int i = 0 ; i < numPoints; i++)
-    {
-      AddPoint(geometry.Vertices.col(i),
-               points);
-
-      pointIds[i] = static_cast<vtkIdType>(i);
-    }
-
-    for (unsigned int f = 0; f < numFaces; f++)
-    {
-      const unsigned int numFaceVertices = geometry.Faces[f].cols();
-      faces->InsertNextId(numFaceVertices);
-      for (unsigned int v = 0; v < numFaceVertices; v++)
-        faces->InsertNextId(geometry.Faces[f](0, v));
-    }
-
     polyData->SetPoints(points);
-    polyData->InsertNextCell(VTK_POLYHEDRON, numPoints, pointIds.data(), numFaces, faces->GetPointer(0));
+
+    AddPoints(geometry.Vertices,
+              points);
+    AddPolygons(geometry.PolyhedronFaces,
+                faces);
+
+    vtkNew<vtkIdTypeArray> legacyFaces;
+    faces->ExportLegacyFormat(legacyFaces);
+    polyData->InsertNextCell(VTK_POLYHEDRON, numFaces, legacyFaces->GetPointer(0));
 
     AppendSolution(polyData);
 
