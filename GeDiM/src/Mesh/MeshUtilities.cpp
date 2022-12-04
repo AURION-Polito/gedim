@@ -1611,50 +1611,53 @@ namespace Gedim
     // Export Cell2Ds
     if (mesh.Cell2DTotalNumber() > 0)
     {
-      Gedim::VTKUtilities vtpUtilities;
+      vector<double> id(mesh.Cell2DTotalNumber());
+      vector<double> marker(mesh.Cell2DTotalNumber());
+
       for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
       {
-        vector<VTPProperty> properties(2 + mesh.Cell2DNumberDoubleProperties());
-
-        const vector<double> id(1, g);
-        const vector<double> marker(1, mesh.Cell2DMarker(g));
-        vector<vector<double>> propertyValues(mesh.Cell2DNumberDoubleProperties());
-
-        properties[0] = {
-          "Id",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(id.size()),
-          id.data()
-        };
-
-        properties[1] = {
-          "Marker",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(marker.size()),
-          marker.data()
-        };
-
-        for (unsigned int p = 0; p < mesh.Cell2DNumberDoubleProperties(); p++)
-        {
-          propertyValues[p].resize(mesh.Cell2DDoublePropertySize(g, p));
-          for (unsigned int v = 0; v < mesh.Cell2DDoublePropertySize(g, p); v++)
-            propertyValues[p][v] = mesh.Cell2DDoublePropertyValue(g, p, v);
-
-          Output::Assert(propertyValues[p].size() == 1 ||
-                         propertyValues[p].size() == mesh.Cell2DNumberVertices(g));
-
-          properties[2 + p] = {
-            mesh.Cell2DDoublePropertyId(p),
-            propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
-            static_cast<unsigned int>(propertyValues[p].size()),
-            propertyValues[p].data()
-          };
-        }
-
-        vtpUtilities.AddPolygon(mesh.Cell2DVerticesCoordinates(g),
-                                properties);
+        id[g] = g;
+        marker[g] = mesh.Cell2DMarker(g);
       }
 
+      vector<VTPProperty> properties(2 + mesh.Cell2DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell2DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(id.size()),
+        id.data()
+      };
+
+      properties[1] = {
+        "Marker",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(marker.size()),
+        marker.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell2DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell2DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell2DDoublePropertySize(g, p) == 1 ? mesh.Cell2DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[2 + p] = {
+          mesh.Cell2DDoublePropertyId(p),
+          Gedim::VTPProperty::Formats::Cells,
+          static_cast<unsigned int>(propertyValues[p].size()),
+          propertyValues[p].data()
+        };
+      }
+
+      Gedim::VTKUtilities vtpUtilities;
+      vtpUtilities.AddPolygons(mesh.Cell0DsCoordinates(),
+                               mesh.Cell2DsVertices(),
+                               properties);
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell2Ds.vtu");
     }
 
