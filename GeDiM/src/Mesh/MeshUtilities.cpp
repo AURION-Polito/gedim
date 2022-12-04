@@ -1664,53 +1664,53 @@ namespace Gedim
     // Export Cell3Ds
     if (mesh.Cell3DTotalNumber() > 0)
     {
-      Gedim::VTKUtilities vtpUtilities;
+      vector<double> id(mesh.Cell3DTotalNumber());
+      vector<double> marker(mesh.Cell3DTotalNumber());
+
       for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
       {
-        const MeshUtilities::VTPPolyhedron cell3D = MeshCell3DToVTPPolyhedron(mesh, g);
-
-        vector<VTPProperty> properties(2 + mesh.Cell3DNumberDoubleProperties());
-
-        const vector<double> id(1, g);
-        const vector<double> marker(1, mesh.Cell3DMarker(g));
-        vector<vector<double>> propertyValues(mesh.Cell3DNumberDoubleProperties());
-
-        properties[0] = {
-          "Id",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(id.size()),
-          id.data()
-        };
-
-        properties[1] = {
-          "Marker",
-          Gedim::VTPProperty::Formats::Cells,
-          static_cast<unsigned int>(marker.size()),
-          marker.data()
-        };
-
-        for (unsigned int p = 0; p < mesh.Cell3DNumberDoubleProperties(); p++)
-        {
-          propertyValues[p].resize(mesh.Cell3DDoublePropertySize(g, p));
-          for (unsigned int v = 0; v < mesh.Cell3DDoublePropertySize(g, p); v++)
-            propertyValues[p][v] = mesh.Cell3DDoublePropertyValue(g, p, v);
-
-          Output::Assert(propertyValues[p].size() == 1 ||
-                         propertyValues[p].size() == mesh.Cell3DNumberVertices(g));
-
-          properties[2 + p] = {
-            mesh.Cell3DDoublePropertyId(p),
-            propertyValues[p].size() == 1 ? Gedim::VTPProperty::Formats::Cells : Gedim::VTPProperty::Formats::Points,
-            static_cast<unsigned int>(propertyValues[p].size()),
-            propertyValues[p].data()
-          };
-        }
-
-        vtpUtilities.AddPolyhedron(cell3D.Vertices,
-                                   cell3D.PolyhedronFaces,
-                                   properties);
+        id[g] = g;
+        marker[g] = mesh.Cell3DMarker(g);
       }
 
+      vector<VTPProperty> properties(2 + mesh.Cell3DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell3DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(id.size()),
+        id.data()
+      };
+
+      properties[1] = {
+        "Marker",
+        Gedim::VTPProperty::Formats::Cells,
+        static_cast<unsigned int>(marker.size()),
+        marker.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell3DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell3DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell3DDoublePropertySize(g, p) == 1 ? mesh.Cell3DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[2 + p] = {
+          mesh.Cell3DDoublePropertyId(p),
+          Gedim::VTPProperty::Formats::Cells,
+          static_cast<unsigned int>(propertyValues[p].size()),
+          propertyValues[p].data()
+        };
+      }
+
+      Gedim::VTKUtilities vtpUtilities;
+      vtpUtilities.AddPolyhedrons(mesh.Cell0DsCoordinates(),
+                                  mesh.Cell3DsFacesVertices(),
+                                  properties);
       vtpUtilities.Export(exportFolder + "/" + fileName + "_Cell3Ds.vtu");
     }
   }
