@@ -126,23 +126,45 @@ namespace Gedim
                                 const std::vector<VTPProperty>& properties)
   {
 #if ENABLE_VTK == 1
-    Eigen::MatrixXi edges(2, vertices.cols());
-    for (unsigned int v = 0; v < vertices.cols(); v++)
-      edges.col(v)<< v, (v + 1) % vertices.cols();
-
-    Eigen::MatrixXi face(2, vertices.cols());
-    face.row(0)<< Eigen::VectorXi::LinSpaced(vertices.cols(),
-                                             0.0,
-                                             vertices.cols() - 1).transpose();
-    face.row(1)<< Eigen::VectorXi::LinSpaced(vertices.cols(),
-                                             0.0,
-                                             vertices.cols() - 1).transpose();
+    std::vector<unsigned int> polygon(vertices.cols());
+    std::iota(polygon.begin(), polygon.end(), 0);
 
     const VTPPolygon vtpPolygon(vertices,
-                                edges,
-                                face);
+                                polygon);
     GeometryToPolyData<VTPPolygon> polyData(vtpPolygon,
                                             properties);
+    AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
+#endif
+  }
+
+  void VTKUtilities::AddPolygon(const Eigen::MatrixXd& vertices,
+                                const std::vector<unsigned int>& polygon,
+                                const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+    const VTPPolygon vtpPolygon(vertices,
+                                polygon);
+    GeometryToPolyData<VTPPolygon> polyData(vtpPolygon,
+                                            properties);
+    AddToExportData(polyData);
+#else
+    Utilities::Unused(vertices);
+    Utilities::Unused(properties);
+#endif
+  }
+  // ***************************************************************************
+  void VTKUtilities::AddPolygons(const Eigen::MatrixXd& vertices,
+                                 const std::vector<std::vector<unsigned int>>& polygons,
+                                 const std::vector<VTPProperty>& properties)
+  {
+#if ENABLE_VTK == 1
+    const VTPPolygons vtpPolygons(vertices,
+                                  polygons);
+    GeometryToPolyData<VTPPolygons> polyData(vtpPolygons,
+                                             properties);
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
@@ -283,12 +305,24 @@ namespace Gedim
   }
   // ***************************************************************************
   template <typename T>
-  void GeometryToPolyData<T>::AddPolygon(const Eigen::VectorXi& faceVerticesIds,
+  void GeometryToPolyData<T>::AddPolygon(const vector<unsigned int>& faceVerticesIds,
                                          vtkNew<vtkCellArray>& faces) const
   {
     faces->InsertNextCell(faceVerticesIds.size());
     for (unsigned int fp = 0 ; fp < faceVerticesIds.size(); fp++)
       faces->InsertCellPoint(faceVerticesIds[fp]);
+  }
+  // ***************************************************************************
+  template<typename T>
+  void GeometryToPolyData<T>::AddPolygons(const std::vector<std::vector<unsigned int>>& facesVerticesIds,
+                                          vtkNew<vtkCellArray>& faces) const
+  {
+    for (unsigned int f = 0; f < facesVerticesIds.size(); f++)
+    {
+      faces->InsertNextCell(facesVerticesIds[f].size());
+      for (unsigned int fp = 0 ; fp < facesVerticesIds[f].size(); fp++)
+        faces->InsertCellPoint(facesVerticesIds[f][fp]);
+    }
   }
   // ***************************************************************************
   template<typename T>
@@ -450,14 +484,36 @@ namespace Gedim
     polyData->SetPoints(points);
     polyData->SetPolys(faces);
 
-    for (unsigned int i = 0 ; i < geometry.Vertices.cols(); i++)
-    {
-      AddPoint(geometry.Vertices.col(i),
-               points);
-    }
-
-    AddPolygon(geometry.Face.row(0).transpose(),
+    AddPoints(geometry.Vertices,
+              points);
+    AddPolygon(geometry.Polygon,
                faces);
+
+    AppendSolution(polyData);
+
+    exportData->AddInputData(polyData);
+  }
+  // ***************************************************************************
+  template <>
+  void GeometryToPolyData<VTPPolygons>::Convert(vtkNew<vtkAppendFilter>& exportData) const
+  {
+    vtkNew<vtkPolyData> polyData;
+
+    vtkNew<vtkPoints> points;
+    vtkNew<vtkCellArray> faces;
+
+    const unsigned int numberTotalPoints = geometry.Vertices.cols();
+    unsigned int numberTotalFaces = geometry.Polygons.size();
+    points->Allocate(numberTotalPoints);
+    faces->Allocate(numberTotalFaces);
+
+    polyData->SetPoints(points);
+    polyData->SetPolys(faces);
+
+    AddPoints(geometry.Vertices,
+              points);
+    AddPolygons(geometry.Polygons,
+                faces);
 
     AppendSolution(polyData);
 

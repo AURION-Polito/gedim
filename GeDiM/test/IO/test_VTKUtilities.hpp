@@ -201,14 +201,13 @@ namespace GedimUnitTesting
   {
     const unsigned int numGeometries = 4;
 
-
-    double angle = M_PI / 4.0; // 45 degrees
+    const double angle = M_PI / 4.0; // 45 degrees
     Eigen::Matrix3d rotationMatrix;
     rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
     rotationMatrix.row(1) << 0.0, 1.0, 0.0;
     rotationMatrix.row(2) << -sin(angle), 0.0, cos(angle);
 
-    Eigen::Vector3d translation(0.0, 2.0, 0.0);
+    const Eigen::Vector3d translation(0.0, 2.0, 0.0);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -255,6 +254,76 @@ namespace GedimUnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     vtpUtilities.Export(exportFolder + "/Geometry2D.vtu",
+                        Gedim::VTKUtilities::Ascii);
+  }
+  // ***************************************************************************
+  TEST(TestVTPUtilities, VTPUtilities_Test2Ds)
+  {
+    const unsigned int numGeometries = 4;
+
+    const double angle = M_PI / 4.0; // 45 degrees
+    Eigen::Matrix3d rotationMatrix;
+    rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
+    rotationMatrix.row(1) << 0.0, 1.0, 0.0;
+    rotationMatrix.row(2) << -sin(angle), 0.0, cos(angle);
+
+    const Eigen::Vector3d translation(0.0, 2.0, 0.0);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::VTKUtilities vtpUtilities;
+
+    // Export to VTK
+    for (unsigned int g = 0; g < numGeometries; g++)
+    {
+      Eigen::MatrixXd vertices(3, 4);
+      vertices.col(0)<< 0.0 + g, 0.0 + g, 0.0;
+      vertices.col(1)<< 1.0 + g, 0.0 + g, 0.0;
+      vertices.col(2)<< 1.0 + g, 1.0 + g, 0.0;
+      vertices.col(3)<< 0.0 + g, 1.0 + g, 0.0;
+
+      vertices = geometryUtilities.RotatePointsFrom2DTo3D(vertices,
+                                                          rotationMatrix,
+                                                          translation);
+
+      vector<vector<unsigned int>> polygons =
+      {
+        { 0, 1, 2 },
+        { 0, 2, 3 }
+      };
+
+      vector<double> id(polygons.size());
+      vector<double> data(vertices.cols());
+
+      for (unsigned int f = 0; f < id.size(); f++)
+        id[f] = 1 + g + f;
+
+      for (unsigned int v = 0; v < vertices.cols(); v++)
+        data[v] = 10.8 + g + v;
+
+      vtpUtilities.AddPolygons(vertices,
+                               polygons,
+                               {
+                                 {
+                                   "Id",
+                                   Gedim::VTPProperty::Formats::Cells,
+                                   static_cast<unsigned int>(id.size()),
+                                   id.data()
+                                 },
+                                 {
+                                   "Data",
+                                   Gedim::VTPProperty::Formats::Points,
+                                   static_cast<unsigned int>(data.size()),
+                                   data.data()
+                                 }
+                               });
+    }
+
+    std::string exportFolder = "./Export/TestVTPUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    vtpUtilities.Export(exportFolder + "/Geometry2Ds.vtu",
                         Gedim::VTKUtilities::Ascii);
   }
   // ***************************************************************************

@@ -73,15 +73,24 @@ namespace Gedim
   struct VTPPolygon final
   {
       const Eigen::MatrixXd& Vertices;
-      const Eigen::MatrixXi& Edges;
-      const Eigen::MatrixXi& Face;
+      const std::vector<unsigned int>& Polygon;
 
       VTPPolygon(const Eigen::MatrixXd& vertices,
-                 const Eigen::MatrixXi& edges,
-                 const Eigen::MatrixXi& face) :
+                 const std::vector<unsigned int>& polygon) :
         Vertices(vertices),
-        Edges(edges),
-        Face(face)
+        Polygon(polygon)
+      { }
+  };
+
+  struct VTPPolygons final
+  {
+      const Eigen::MatrixXd& Vertices;
+      const std::vector<std::vector<unsigned int>>& Polygons;
+
+      VTPPolygons(const Eigen::MatrixXd& vertices,
+                  const std::vector<std::vector<unsigned int>>& polygons) :
+        Vertices(vertices),
+        Polygons(polygons)
       { }
   };
 
@@ -166,8 +175,11 @@ namespace Gedim
       void AddPolygon(const Eigen::MatrixXd& vertices,
                       const std::vector<VTPProperty>& properties = {});
       void AddPolygon(const Eigen::MatrixXd& vertices,
-                      const Eigen::MatrixXi& edges,
+                      const std::vector<unsigned int>& polygon,
                       const std::vector<VTPProperty>& properties = {});
+      void AddPolygons(const Eigen::MatrixXd& vertices,
+                       const std::vector<std::vector<unsigned int>>& polygons,
+                       const std::vector<VTPProperty>& properties = {});
       void AddPolyhedron(const Eigen::MatrixXd& vertices,
                          const Eigen::MatrixXi& edges,
                          const std::vector<Eigen::MatrixXi>& faces,
@@ -198,8 +210,10 @@ namespace Gedim
                    vtkNew<vtkCellArray>& lines) const;
       void AddLines(const Eigen::MatrixXi& edges,
                     vtkNew<vtkCellArray>& lines) const;
-      void AddPolygon(const Eigen::VectorXi& faceVerticesIds,
+      void AddPolygon(const std::vector<unsigned int>& faceVerticesIds,
                       vtkNew<vtkCellArray>& faces) const;
+      void AddPolygons(const std::vector<std::vector<unsigned int>>& facesVerticesIds,
+                       vtkNew<vtkCellArray>& faces) const;
       void AppendSolution(vtkDataSet* polyData) const;
 #endif
 
