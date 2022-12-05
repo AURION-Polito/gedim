@@ -410,6 +410,16 @@ namespace Gedim
       }
     }
 
+    if (configuration.Cell1D_CheckMeasure)
+    {
+      for (unsigned int e = 0; e < convexMesh.Cell1DTotalNumber(); e++)
+      {
+        Output::Assert(geometryUtilities.IsValue1DPositive(
+                         geometryUtilities.SegmentLength(convexMesh.Cell1DOriginCoordinates(e),
+                                                         convexMesh.Cell1DEndCoordinates(e))));
+      }
+    }
+
     if (configuration.Cell2D_CheckEdges)
     {
       for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
@@ -474,6 +484,25 @@ namespace Gedim
 
         Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
                                                          convexHullVertices));
+      }
+    }
+
+    if (configuration.Cell2D_CheckMeasure)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+      {
+        const Eigen::MatrixXd cell2DVertices3D = convexMesh.Cell2DVerticesCoordinates(p);
+        const Eigen::Vector3d cell2DNormal = geometryUtilities.PolygonNormal(cell2DVertices3D);
+        const Eigen::Vector3d cell2DTranslation = geometryUtilities.PolygonTranslation(cell2DVertices3D);
+        const Eigen::Matrix3d cell2DRotationMatrix = geometryUtilities.PolygonRotationMatrix(cell2DVertices3D,
+                                                                                             cell2DNormal,
+                                                                                             cell2DTranslation);
+        const Eigen::MatrixXd cell2DVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(cell2DVertices3D,
+                                                                                          cell2DRotationMatrix.transpose(),
+                                                                                          cell2DTranslation);
+
+        Output::Assert(geometryUtilities.IsValue2DPositive(
+                         geometryUtilities.PolygonArea(cell2DVertices2D)));
       }
     }
 
