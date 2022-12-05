@@ -34,6 +34,7 @@ namespace Gedim
           bool Cell2D_CheckMeasure = true;
           bool Cell3D_CheckDuplications = true;
           bool Cell3D_CheckConvexity = true;
+          bool Cell3D_CheckMeasure = true;
       };
 
       struct ExtractActiveMeshData final
