@@ -1208,14 +1208,14 @@ namespace GedimUnitTesting
     }
   }
 
-  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Convex)
+  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Tetrahedron)
   {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Convex";
+      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Tetrahedron";
       Gedim::Output::CreateFolder(exportFolder);
 
       // check convex polyhedron
@@ -1224,6 +1224,59 @@ namespace GedimUnitTesting
                                                                                                               Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                               Eigen::Vector3d(0.0, 0.0, 1.0),
                                                                                                               Eigen::Vector3d(0.0, 1.0, 0.0));
+
+        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
+                                                polyhedron.Edges,
+                                                polyhedron.Faces,
+                                                exportFolder);
+
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                          polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
+
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronFaceNormals);
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                        polyhedronFaceNormals,
+                                                                                                                        polyhedronFaceTranslations);
+
+        const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                                 polyhedronFaceTranslations,
+                                                                                                                 polyhedronFaceRotationMatrices);
+
+        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                         polyhedronFace2DVertices,
+                                                         polyhedronFaceBarycenters,
+                                                         polyhedronFaceNormals,
+                                                         polyhedronFaceNormalDirections,
+                                                         polyhedronBarycenter));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Cube)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Cube";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      // check convex polyhedron
+      {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                       1.0);
 
         geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
                                                 polyhedron.Edges,

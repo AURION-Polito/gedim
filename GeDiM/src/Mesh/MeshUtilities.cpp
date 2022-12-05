@@ -539,6 +539,33 @@ namespace Gedim
       }
     }
 
+
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell3DTotalNumber(); p++)
+      {
+        GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(convexMesh,
+                                                                          p);
+
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                          polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
+
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronFaceNormals);
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                        polyhedronFaceNormals,
+                                                                                                                        polyhedronFaceTranslations);
+
+        const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                                 polyhedronFaceTranslations,
+                                                                                                                 polyhedronFaceRotationMatrices);
+      }
+    }
+
     if (configuration.Cell3D_CheckConvexity)
     {
       for (unsigned int p = 0; p < convexMesh.Cell3DTotalNumber(); p++)
@@ -563,6 +590,18 @@ namespace Gedim
         const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
                                                                                                                  polyhedronFaceTranslations,
                                                                                                                  polyhedronFaceRotationMatrices);
+
+        const GeometryUtilities::PointPolyhedronPositionResult polyhedronBarycenterPosition = geometryUtilities.PointPolyhedronPosition(polyhedronBarycenter,
+                                                                                                                                        polyhedron.Faces,
+                                                                                                                                        polyhedronFace3DVertices,
+                                                                                                                                        polyhedronFace2DVertices,
+                                                                                                                                        polyhedronFaceNormals,
+                                                                                                                                        polyhedronFaceNormalDirections,
+                                                                                                                                        polyhedronFaceTranslations,
+                                                                                                                                        polyhedronFaceRotationMatrices);
+
+        Output::Assert(polyhedronBarycenterPosition.Type ==
+                       GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
 
         Output::Assert(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
                                                             polyhedronFace2DVertices,

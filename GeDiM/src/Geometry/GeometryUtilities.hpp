@@ -1810,6 +1810,7 @@ namespace Gedim
       /// \param polyhedronFaceNormalDirections the normal outgoing direction
       /// \param pointInsidePolyhedron a point inside polyhedron
       /// \return true if polyhedron is convex, false otherwise
+      /// \warning still not working
       bool PolyhedronIsConvex(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                               const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                               const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,

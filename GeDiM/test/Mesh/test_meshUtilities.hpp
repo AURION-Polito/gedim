@@ -17,6 +17,9 @@
 #include "MeshMatrices_3D_1Cells_Mock.hpp"
 #include "MeshMatrices_3D_68Cells_Mock.hpp"
 
+#include "MeshFromCsvUtilities.hpp"
+#include "MeshDAOImporterFromCsv.hpp"
+
 using namespace testing;
 using namespace std;
 

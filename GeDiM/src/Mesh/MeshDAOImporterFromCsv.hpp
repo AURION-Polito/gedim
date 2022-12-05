@@ -18,10 +18,10 @@ namespace Gedim
       MeshDAOImporterFromCsv(const MeshFromCsvUtilities& utilities);
       ~MeshDAOImporterFromCsv();
 
-      void Import(MeshFromCsvUtilities::Configuration& configuration,
+      void Import(const MeshFromCsvUtilities::Configuration& configuration,
                   IMeshDAO& mesh);
 
-      void ImportMesh2D(MeshFromCsvUtilities::Configuration& configuration,
+      void ImportMesh2D(const MeshFromCsvUtilities::Configuration& configuration,
                         IMeshDAO& mesh);
   };
 

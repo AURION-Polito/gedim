@@ -14,7 +14,7 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  void MeshDAOImporterFromCsv::Import(MeshFromCsvUtilities::Configuration& configuration,
+  void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration& configuration,
                                       IMeshDAO& mesh)
   {
     Gedim::FileReader csvCell0DsFile(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension);
@@ -113,7 +113,7 @@ namespace Gedim
     mesh.Compress();
   }
   // ***************************************************************************
-  void MeshDAOImporterFromCsv::ImportMesh2D(MeshFromCsvUtilities::Configuration& configuration,
+  void MeshDAOImporterFromCsv::ImportMesh2D(const MeshFromCsvUtilities::Configuration& configuration,
                                             IMeshDAO& mesh)
   {
     Gedim::FileReader csvCell0DsFile(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension);

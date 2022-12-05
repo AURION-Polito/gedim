@@ -417,11 +417,11 @@ namespace Gedim
             switch (intersection.SingleIntersection.Type)
             {
               case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
-                continue;
-              case PointSegmentPositionTypes::OnSegmentOrigin:
-              case PointSegmentPositionTypes::InsideSegment:
-              case PointSegmentPositionTypes::OnSegmentEnd:
               case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+              case PointSegmentPositionTypes::OnSegmentOrigin:
+              case PointSegmentPositionTypes::OnSegmentEnd:
+                continue;
+              case PointSegmentPositionTypes::InsideSegment:
                 return false;
               default:
                 throw runtime_error("intersection.SingleIntersection.Type not expected");
