@@ -21,6 +21,17 @@ namespace Gedim
           bool Cell2D_CheckConvexity = true;
       };
 
+      struct CheckMesh3DConfiguration final
+      {
+          bool Cell0D_CheckDuplications = true;
+          bool Cell1D_CheckDuplications = true;
+          bool Cell2D_CheckEdges = true;
+          bool Cell2D_CheckDuplications = true;
+          bool Cell2D_CheckConvexity = true;
+          bool Cell3D_CheckDuplications = true;
+          bool Cell3D_CheckConvexity = true;
+      };
+
       struct ExtractActiveMeshData final
       {
           std::map<unsigned int, unsigned int> OldCell0DToNewCell0D; ///< each pair is {old Cell0D index, new Cell0D index}
@@ -122,6 +133,13 @@ namespace Gedim
       /// \param geometryUtilities the geometry utilities
       /// \param convexMesh a convex 2D mesh
       void CheckMesh2D(const CheckMesh2DConfiguration& configuration,
+                       const GeometryUtilities& geometryUtilities,
+                       const IMeshDAO& convexMesh) const;
+
+      /// \brief Check Mesh3D correctness
+      /// \param geometryUtilities the geometry utilities
+      /// \param convexMesh a convex 3D mesh
+      void CheckMesh3D(const CheckMesh3DConfiguration& configuration,
                        const GeometryUtilities& geometryUtilities,
                        const IMeshDAO& convexMesh) const;
 

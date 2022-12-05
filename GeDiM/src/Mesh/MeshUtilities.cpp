@@ -353,6 +353,112 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration& configuration,
+                                  const GeometryUtilities& geometryUtilities,
+                                  const IMeshDAO& convexMesh) const
+  {
+    Output::Assert(convexMesh.Dimension() == 3);
+
+    // check Cell0D duplications
+    if (configuration.Cell0D_CheckDuplications)
+    {
+      for (unsigned int p1 = 0; p1 < convexMesh.Cell0DTotalNumber(); p1++)
+      {
+        for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell0DTotalNumber(); p2++)
+        {
+          Output::Assert(!geometryUtilities.PointsAreCoincident(convexMesh.Cell0DCoordinates(p1),
+                                                                convexMesh.Cell0DCoordinates(p2)));
+        }
+      }
+    }
+
+    if (configuration.Cell1D_CheckDuplications)
+    {
+      for (unsigned int e1 = 0; e1 < convexMesh.Cell1DTotalNumber(); e1++)
+      {
+        Output::Assert(convexMesh.Cell1DExists(convexMesh.Cell1DOrigin(e1),
+                                               convexMesh.Cell1DEnd(e1)));
+        Output::Assert(!convexMesh.Cell1DExists(convexMesh.Cell1DEnd(e1),
+                                                convexMesh.Cell1DOrigin(e1)));
+
+        for (unsigned int e2 = e1 + 1; e2 < convexMesh.Cell1DTotalNumber(); e2++)
+        {
+          Output::Assert(!(convexMesh.Cell1DOrigin(e1) == convexMesh.Cell1DOrigin(e2) &&
+                           convexMesh.Cell1DEnd(e1) == convexMesh.Cell1DEnd(e2)));
+          Output::Assert(!(convexMesh.Cell1DEnd(e1) == convexMesh.Cell1DOrigin(e2) &&
+                           convexMesh.Cell1DOrigin(e1) == convexMesh.Cell1DEnd(e2)));
+        }
+      }
+    }
+
+    if (configuration.Cell2D_CheckEdges)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+      {
+        for (unsigned int v = 0; v < convexMesh.Cell2DNumberVertices(p); v++)
+        {
+          const unsigned int eO = convexMesh.Cell2DVertex(p, v);
+          const unsigned int eE = convexMesh.Cell2DVertex(p, (v + 1) % convexMesh.Cell2DNumberVertices(p));
+          Output::Assert(convexMesh.Cell1DExists(eO, eE) || convexMesh.Cell1DExists(eE, eO));
+          const unsigned int edgeFromVertices = convexMesh.Cell1DExists(eO, eE) ? convexMesh.Cell1DByExtremes(eO, eE) :
+                                                                                  convexMesh.Cell1DByExtremes(eE, eO);
+          Output::Assert(convexMesh.Cell2DEdge(p, v) == edgeFromVertices);
+        }
+      }
+    }
+
+    if (configuration.Cell2D_CheckDuplications)
+    {
+      for (unsigned int p1 = 0; p1 < convexMesh.Cell2DTotalNumber(); p1++)
+      {
+        vector<unsigned int> cell2D1Vertices = convexMesh.Cell2DVertices(p1);
+        sort(cell2D1Vertices.begin(), cell2D1Vertices.end());
+        vector<unsigned int> cell2D1Edges = convexMesh.Cell2DEdges(p1);
+        sort(cell2D1Edges.begin(), cell2D1Edges.end());
+
+        for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell2DTotalNumber(); p2++)
+        {
+          vector<unsigned int> cell2D2Vertices = convexMesh.Cell2DVertices(p2);
+          sort(cell2D2Vertices.begin(), cell2D2Vertices.end());
+          vector<unsigned int> cell2D2Edges = convexMesh.Cell2DEdges(p2);
+          sort(cell2D2Edges.begin(), cell2D2Edges.end());
+
+          Output::Assert(cell2D1Vertices.size() != cell2D2Vertices.size() || !equal(cell2D1Vertices.begin(),
+                                                                                    cell2D1Vertices.end(),
+                                                                                    cell2D2Vertices.begin()));
+          Output::Assert(cell2D1Edges.size() != cell2D2Edges.size() || !equal(cell2D1Edges.begin(),
+                                                                              cell2D1Edges.end(),
+                                                                              cell2D2Edges.begin()));
+        }
+      }
+
+      if (configuration.Cell2D_CheckConvexity)
+      {
+        for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+        {
+          const Eigen::MatrixXd cell2DVertices3D = convexMesh.Cell2DVerticesCoordinates(p);
+          const Eigen::Vector3d cell2DNormal = geometryUtilities.PolygonNormal(cell2DVertices3D);
+          const Eigen::Vector3d cell2DTranslation = geometryUtilities.PolygonTranslation(cell2DVertices3D);
+          const Eigen::Matrix3d cell2DRotationMatrix = geometryUtilities.PolygonRotationMatrix(cell2DVertices3D,
+                                                                                               cell2DNormal,
+                                                                                               cell2DTranslation);
+          const Eigen::MatrixXd cell2DVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(cell2DVertices3D,
+                                                                                            cell2DRotationMatrix.transpose(),
+                                                                                            cell2DTranslation);
+          const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices2D);
+          const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices2D,
+                                                                                                convexCell2DUnalignedVerticesFilter);
+          const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+          const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
+                                                                                     convexHull);
+
+          Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
+                                                           convexHullVertices));
+        }
+      }
+    }
+  }
+  // ***************************************************************************
   void MeshUtilities::Mesh1DFromSegment(const GeometryUtilities& geometryUtilities,
                                         const Eigen::MatrixXd& segmentVertices,
                                         const vector<unsigned int> vertexMarkers,
