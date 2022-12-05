@@ -293,6 +293,16 @@ namespace Gedim
       }
     }
 
+    if (configuration.Cell1D_CheckMeasure)
+    {
+      for (unsigned int e = 0; e < convexMesh.Cell1DTotalNumber(); e++)
+      {
+        Output::Assert(geometryUtilities.IsValue1DPositive(
+                         geometryUtilities.SegmentLength(convexMesh.Cell1DOriginCoordinates(e),
+                                                         convexMesh.Cell1DEndCoordinates(e))));
+      }
+    }
+
     if (configuration.Cell2D_CheckEdges)
     {
       for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
@@ -349,6 +359,15 @@ namespace Gedim
 
         Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
                                                          convexHullVertices));
+      }
+    }
+
+    if (configuration.Cell2D_CheckMeasure)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
+      {
+        Output::Assert(geometryUtilities.IsValue2DPositive(
+                         geometryUtilities.PolygonArea(convexMesh.Cell2DVerticesCoordinates(p))));
       }
     }
   }

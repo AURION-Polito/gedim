@@ -16,9 +16,11 @@ namespace Gedim
           bool Cell0D_CheckDuplications = true;
           bool Cell1D_CheckDuplications = true;
           bool Cell1D_CheckNeighbours = true;
+          bool Cell1D_CheckMeasure = true;
           bool Cell2D_CheckEdges = true;
           bool Cell2D_CheckDuplications = true;
           bool Cell2D_CheckConvexity = true;
+          bool Cell2D_CheckMeasure = true;
       };
 
       struct CheckMesh3DConfiguration final
