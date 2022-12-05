@@ -753,7 +753,7 @@ namespace Gedim
 
     vector<unsigned int> edges(numEdges);
     for (unsigned int e = 0; e < numEdges; e++)
-      edges[e] = _mesh.Cell2DEdges[_mesh.NumberCell2DEdges[cell2DIndex] + e];;
+      edges[e] = _mesh.Cell2DEdges[_mesh.NumberCell2DEdges[cell2DIndex] + e];
 
     return edges;
   }
@@ -987,6 +987,17 @@ namespace Gedim
                        facesCell0DIndices[e]);
   }
   // ***************************************************************************
+  std::vector<unsigned int> MeshMatricesDAO::Cell3DVertices(const unsigned int& cell3DIndex) const
+  {
+    const unsigned int numVertices = Cell3DNumberVertices(cell3DIndex);
+
+    vector<unsigned int> vertices(numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+      vertices[v] = _mesh.Cell3DVertices[_mesh.NumberCell3DVertices[cell3DIndex] + v];
+
+    return vertices;
+  }
+  // ***************************************************************************
   MatrixXd MeshMatricesDAO::Cell3DVerticesCoordinates(const unsigned int& cell3DIndex) const
   {
     MatrixXd coordinates(3, Cell3DNumberVertices(cell3DIndex));
@@ -1068,7 +1079,7 @@ namespace Gedim
 
     vector<unsigned int> edges(numEdges);
     for (unsigned int e = 0; e < numEdges; e++)
-      edges[e] = _mesh.Cell3DEdges[_mesh.NumberCell3DEdges[cell3DIndex] + e];;
+      edges[e] = _mesh.Cell3DEdges[_mesh.NumberCell3DEdges[cell3DIndex] + e];
 
     return edges;
   }
@@ -1079,7 +1090,7 @@ namespace Gedim
 
     vector<unsigned int> faces(numFaces);
     for (unsigned int f = 0; f < numFaces; f++)
-      faces[f] = _mesh.Cell3DFaces[_mesh.NumberCell3DFaces[cell3DIndex] + f];;
+      faces[f] = _mesh.Cell3DFaces[_mesh.NumberCell3DFaces[cell3DIndex] + f];
 
     return faces;
   }

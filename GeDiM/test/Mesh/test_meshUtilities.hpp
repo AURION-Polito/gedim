@@ -15,7 +15,7 @@
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_3D_1Cells_Mock.hpp"
-#include "MeshMatrices_3D_329Cells_Mock.hpp"
+#include "MeshMatrices_3D_68Cells_Mock.hpp"
 
 using namespace testing;
 using namespace std;
@@ -387,7 +387,7 @@ namespace GedimUnitTesting
     geometryUtilitiesConfig.Tolerance = 1e-12;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mesh;
+    GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     Gedim::MeshUtilities meshUtilities;
 

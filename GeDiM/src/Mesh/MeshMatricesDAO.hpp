@@ -835,6 +835,7 @@ namespace Gedim
         return _mesh.NumberCell3DFaces[cell3DIndex + 1] -
             _mesh.NumberCell3DFaces[cell3DIndex];
       }
+      std::vector<unsigned int> Cell3DVertices(const unsigned int& cell3DIndex) const;
       inline unsigned int Cell3DVertex(const unsigned int& cell3DIndex,
                                        const unsigned int& vertexIndex) const
       {

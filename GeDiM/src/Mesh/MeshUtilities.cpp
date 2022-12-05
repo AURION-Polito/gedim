@@ -333,22 +333,22 @@ namespace Gedim
                                                                               cell2D2Edges.begin()));
         }
       }
+    }
 
-      if (configuration.Cell2D_CheckConvexity)
+    if (configuration.Cell2D_CheckConvexity)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
       {
-        for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
-        {
-          const Eigen::MatrixXd cell2DVertices = convexMesh.Cell2DVerticesCoordinates(p);
-          const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
-          const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices,
-                                                                                                convexCell2DUnalignedVerticesFilter);
-          const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
-          const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
-                                                                                     convexHull);
+        const Eigen::MatrixXd cell2DVertices = convexMesh.Cell2DVerticesCoordinates(p);
+        const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
+        const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices,
+                                                                                              convexCell2DUnalignedVerticesFilter);
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
+                                                                                   convexHull);
 
-          Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
-                                                           convexHullVertices));
-        }
+        Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
+                                                         convexHullVertices));
       }
     }
   }
@@ -431,29 +431,62 @@ namespace Gedim
                                                                               cell2D2Edges.begin()));
         }
       }
+    }
 
-      if (configuration.Cell2D_CheckConvexity)
+    if (configuration.Cell2D_CheckConvexity)
+    {
+      for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
       {
-        for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
-        {
-          const Eigen::MatrixXd cell2DVertices3D = convexMesh.Cell2DVerticesCoordinates(p);
-          const Eigen::Vector3d cell2DNormal = geometryUtilities.PolygonNormal(cell2DVertices3D);
-          const Eigen::Vector3d cell2DTranslation = geometryUtilities.PolygonTranslation(cell2DVertices3D);
-          const Eigen::Matrix3d cell2DRotationMatrix = geometryUtilities.PolygonRotationMatrix(cell2DVertices3D,
-                                                                                               cell2DNormal,
-                                                                                               cell2DTranslation);
-          const Eigen::MatrixXd cell2DVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(cell2DVertices3D,
-                                                                                            cell2DRotationMatrix.transpose(),
-                                                                                            cell2DTranslation);
-          const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices2D);
-          const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices2D,
-                                                                                                convexCell2DUnalignedVerticesFilter);
-          const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
-          const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
-                                                                                     convexHull);
+        const Eigen::MatrixXd cell2DVertices3D = convexMesh.Cell2DVerticesCoordinates(p);
+        const Eigen::Vector3d cell2DNormal = geometryUtilities.PolygonNormal(cell2DVertices3D);
+        const Eigen::Vector3d cell2DTranslation = geometryUtilities.PolygonTranslation(cell2DVertices3D);
+        const Eigen::Matrix3d cell2DRotationMatrix = geometryUtilities.PolygonRotationMatrix(cell2DVertices3D,
+                                                                                             cell2DNormal,
+                                                                                             cell2DTranslation);
+        const Eigen::MatrixXd cell2DVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(cell2DVertices3D,
+                                                                                          cell2DRotationMatrix.transpose(),
+                                                                                          cell2DTranslation);
+        const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices2D);
+        const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(cell2DVertices2D,
+                                                                                              convexCell2DUnalignedVerticesFilter);
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+        const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices,
+                                                                                   convexHull);
 
-          Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
-                                                           convexHullVertices));
+        Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices,
+                                                         convexHullVertices));
+      }
+    }
+
+    if (configuration.Cell3D_CheckDuplications)
+    {
+      for (unsigned int p1 = 0; p1 < convexMesh.Cell3DTotalNumber(); p1++)
+      {
+        vector<unsigned int> cell3D1Vertices = convexMesh.Cell3DVertices(p1);
+        sort(cell3D1Vertices.begin(), cell3D1Vertices.end());
+        vector<unsigned int> cell3D1Edges = convexMesh.Cell3DEdges(p1);
+        sort(cell3D1Edges.begin(), cell3D1Edges.end());
+        vector<unsigned int> cell3D1Faces = convexMesh.Cell3DFaces(p1);
+        sort(cell3D1Faces.begin(), cell3D1Faces.end());
+
+        for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell3DTotalNumber(); p2++)
+        {
+          vector<unsigned int> cell3D2Vertices = convexMesh.Cell3DVertices(p2);
+          sort(cell3D2Vertices.begin(), cell3D2Vertices.end());
+          vector<unsigned int> cell3D2Edges = convexMesh.Cell3DEdges(p2);
+          sort(cell3D2Edges.begin(), cell3D2Edges.end());
+          vector<unsigned int> cell3D2Faces = convexMesh.Cell3DFaces(p2);
+          sort(cell3D2Faces.begin(), cell3D2Faces.end());
+
+          Output::Assert(cell3D1Vertices.size() != cell3D2Vertices.size() || !equal(cell3D1Vertices.begin(),
+                                                                                    cell3D1Vertices.end(),
+                                                                                    cell3D2Vertices.begin()));
+          Output::Assert(cell3D1Edges.size() != cell3D2Edges.size() || !equal(cell3D1Edges.begin(),
+                                                                              cell3D1Edges.end(),
+                                                                              cell3D2Edges.begin()));
+          Output::Assert(cell3D1Faces.size() != cell3D2Faces.size() || !equal(cell3D1Faces.begin(),
+                                                                              cell3D1Faces.end(),
+                                                                              cell3D2Faces.begin()));
         }
       }
     }

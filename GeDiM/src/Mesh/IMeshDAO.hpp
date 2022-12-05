@@ -515,13 +515,13 @@ namespace Gedim
       virtual void Cell2DSetState(const unsigned int& cell2DIndex,
                                   const bool& state) = 0;
       /// \return the total number of Cell2Ds
-      virtual unsigned int Cell2DTotalNumber( ) const = 0;
+      virtual unsigned int Cell2DTotalNumber() const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the number of vertices of Cell2D
       virtual unsigned int Cell2DNumberVertices(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the number of edges of Cell2D
-      virtual unsigned int Cell2DNumberEdges(const unsigned int& cell2DIndex ) const = 0;
+      virtual unsigned int Cell2DNumberEdges(const unsigned int& cell2DIndex) const = 0;
       /// \return the Cell0D index collections of all Cell2Ds, size Cell2DTotalNumber() x Cell2DNumberVertices(cell2DIndex)
       virtual std::vector<std::vector<unsigned int>> Cell2DsVertices() const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
@@ -550,7 +550,7 @@ namespace Gedim
                                       const unsigned int& edgeIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the cell2D marker
-      virtual unsigned int Cell2DMarker(const unsigned int& cell2DIndex ) const = 0;
+      virtual unsigned int Cell2DMarker(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return if the cell2D is active
       virtual bool Cell2DIsActive(const unsigned int& cell2DIndex) const = 0;
@@ -772,21 +772,24 @@ namespace Gedim
       virtual void Cell3DSetState(const unsigned int& cell3DIndex,
                                   const bool& state) = 0;
       /// \return the total number of Cell3Ds
-      virtual unsigned int Cell3DTotalNumber( ) const = 0;
+      virtual unsigned int Cell3DTotalNumber() const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the number of vertices of Cell3D
-      virtual unsigned int Cell3DNumberVertices(const unsigned int& cell3DIndex ) const = 0;
+      virtual unsigned int Cell3DNumberVertices(const unsigned int& cell3DIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the number of edges of Cell3D
-      virtual unsigned int Cell3DNumberEdges(const unsigned int& cell3DIndex ) const = 0;
+      virtual unsigned int Cell3DNumberEdges(const unsigned int& cell3DIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the number of faces of Cell3D
-      virtual unsigned int Cell3DNumberFaces(const unsigned int& cell3DIndex ) const = 0;
+      virtual unsigned int Cell3DNumberFaces(const unsigned int& cell3DIndex) const = 0;
+      /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
+      /// \return the Cell0D index collections of Cell3D from 0 to Cell0DTotalNumber(), size Cell3DNumberVertices(cell3DIndex)
+      virtual std::vector<unsigned int> Cell3DVertices(const unsigned int& cell3DIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \param vertexIndex the index of cell0D vertex from 0 to NumberCell3DVertices(cell3DIndex)
       /// \return the Cell0D index of vertex of Cell3D from 0 to Cell0DTotalNumber()
       virtual unsigned int Cell3DVertex(const unsigned int& cell3DIndex,
-                                        const unsigned int& vertexIndex ) const = 0;
+                                        const unsigned int& vertexIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \param vertexIndex the index of cell0D vertex from 0 to NumberCell3DVertices(cell3DIndex)
       /// \return the Cell0D coordinates of vertex of Cell3D, size 3 x 1
@@ -804,7 +807,7 @@ namespace Gedim
       /// \param edgeIndex the index of cell1D edge from 0 to NumberCell3DEdges(edgeIndex)
       /// \return the Cell1D index of edge of Cell3D from 0 to Cell1DTotalNumber()
       virtual unsigned int Cell3DEdge(const unsigned int& cell3DIndex,
-                                      const unsigned int& edgeIndex ) const = 0;
+                                      const unsigned int& edgeIndex) const = 0;
 
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the Cell2D index collections of Cell3D from 0 to Cell2DTotalNumber(), size Cell3DNumberFaces(cell3DIndex)
@@ -817,10 +820,10 @@ namespace Gedim
       /// \param faceIndex the index of cell2D face from 0 to NumberCell3DFaces(cell3DIndex)
       /// \return the Cell2D index of face of Cell3D from 0 to Cell2DTotalNumber()
       virtual unsigned int Cell3DFace(const unsigned int& cell3DIndex,
-                                      const unsigned int& faceIndex ) const = 0;
+                                      const unsigned int& faceIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the cell3D marker
-      virtual unsigned int Cell3DMarker(const unsigned int& cell3DIndex ) const = 0;
+      virtual unsigned int Cell3DMarker(const unsigned int& cell3DIndex) const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return if the cell3D is active
       virtual bool Cell3DIsActive(const unsigned int& cell3DIndex) const = 0;
