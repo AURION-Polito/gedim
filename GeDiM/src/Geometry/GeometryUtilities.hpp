@@ -1130,6 +1130,7 @@ namespace Gedim
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param result the resulting position
+      /// \warning works only in 2D
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
 

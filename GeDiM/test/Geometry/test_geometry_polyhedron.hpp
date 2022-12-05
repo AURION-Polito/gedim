@@ -1262,6 +1262,94 @@ namespace GedimUnitTesting
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Concave)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Concave";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      // check concave polyhedron
+      {
+        Gedim::GeometryUtilities::Polyhedron polyhedron;
+
+        // create vertices
+        polyhedron.Vertices.resize(3, 5);
+        polyhedron.Vertices.col(0) << 0.0, 0.0, 0.0;
+        polyhedron.Vertices.col(1) << 1.0, 0.0, 0.0;
+        polyhedron.Vertices.col(2) << 0.0, 1.0, 0.0;
+        polyhedron.Vertices.col(3) << 0.0, 0.0, 1.0;
+        polyhedron.Vertices.col(4) << 0.25, 0.25, 0.25;
+
+        // create edges
+        polyhedron.Edges.resize(2, 9);
+        polyhedron.Edges.col(0) << 0, 1;
+        polyhedron.Edges.col(1) << 0, 2;
+        polyhedron.Edges.col(2) << 1, 2;
+        polyhedron.Edges.col(3) << 0, 3;
+        polyhedron.Edges.col(4) << 1, 3;
+        polyhedron.Edges.col(5) << 2, 3;
+        polyhedron.Edges.col(6) << 1, 4;
+        polyhedron.Edges.col(7) << 2, 4;
+        polyhedron.Edges.col(8) << 3, 4;
+
+        // create faces
+        polyhedron.Faces.resize(6, Eigen::MatrixXi::Zero(2, 3));
+        polyhedron.Faces[0].row(0)<< 0, 1, 2;
+        polyhedron.Faces[1].row(0)<< 0, 1, 3;
+        polyhedron.Faces[2].row(0)<< 0, 2, 3;
+        polyhedron.Faces[3].row(0)<< 1, 2, 4;
+        polyhedron.Faces[4].row(0)<< 2, 3, 4;
+        polyhedron.Faces[5].row(0)<< 3, 1, 4;
+
+        polyhedron.Faces[0].row(1)<< 0, 2, 1;
+        polyhedron.Faces[1].row(1)<< 0, 4, 3;
+        polyhedron.Faces[2].row(1)<< 1, 5, 3;
+        polyhedron.Faces[3].row(1)<< 2, 7, 6;
+        polyhedron.Faces[4].row(1)<< 5, 8, 7;
+        polyhedron.Faces[5].row(1)<< 4, 6, 8;
+
+        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
+                                                polyhedron.Edges,
+                                                polyhedron.Faces,
+                                                exportFolder);
+
+        const Eigen::Vector3d polyhedronPointInside(0.125, 0.125, 0.125);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                          polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
+
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                             polyhedronPointInside,
+                                                                                                             polyhedronFaceNormals);
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                        polyhedronFaceNormals,
+                                                                                                                        polyhedronFaceTranslations);
+
+        const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                                 polyhedronFaceTranslations,
+                                                                                                                 polyhedronFaceRotationMatrices);
+
+        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                         polyhedronFace2DVertices,
+                                                         polyhedronFaceBarycenters,
+                                                         polyhedronFaceNormals,
+                                                         polyhedronFaceNormalDirections,
+                                                         polyhedronPointInside));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POLYHEDRON_H

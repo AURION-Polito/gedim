@@ -379,8 +379,6 @@ namespace Gedim
     /// check convexity with the intersections between the faces and
     /// a line starting from the polyhedron internal point
     /// to each face internal point.
-    bool isConvex = true;
-
     const unsigned int numPolyhedronFaces = polyhedronFaceVertices.size();
 
     for (unsigned int f1 = 0; f1 < numPolyhedronFaces; f1++)
@@ -407,12 +405,36 @@ namespace Gedim
                                                                                      faceNormal,
                                                                                      polyhedronFaceVertices[f2].col(0));
 
-        cerr<< "Face "<< f1<< " to face f2 "<< f2<< endl;
-        cerr<< "Intersection "<< static_cast<unsigned int>(intersection.Type)<< endl;
+        switch (intersection.Type)
+        {
+          case IntersectionSegmentPlaneResult::Types::NoIntersection:
+            continue;
+          case IntersectionSegmentPlaneResult::Types::SingleIntersection:
+          {
+            if (intersection.SingleIntersection.Type == PointSegmentPositionTypes::OnSegmentLineBeforeOrigin)
+              continue;
+
+            switch (intersection.SingleIntersection.Type)
+            {
+              case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+                continue;
+              case PointSegmentPositionTypes::OnSegmentOrigin:
+              case PointSegmentPositionTypes::InsideSegment:
+              case PointSegmentPositionTypes::OnSegmentEnd:
+              case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+                return false;
+              default:
+                throw runtime_error("intersection.SingleIntersection.Type not expected");
+            }
+          }
+            break;
+          default:
+            throw runtime_error("Intersection not expected");
+        }
       }
     }
 
-    return isConvex;
+    return true;
   }
   // ***************************************************************************
   vector<bool> GeometryUtilities::PolyhedronFaceNormalDirections(const vector<Eigen::MatrixXd>& polyhedronFaceVertices,
