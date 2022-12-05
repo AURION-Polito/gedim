@@ -1248,12 +1248,12 @@ namespace GedimUnitTesting
                                                                                                                  polyhedronFaceTranslations,
                                                                                                                  polyhedronFaceRotationMatrices);
 
-        ASSERT_FALSE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
-                                                          polyhedronFace2DVertices,
-                                                          polyhedronFaceBarycenters,
-                                                          polyhedronFaceNormals,
-                                                          polyhedronFaceNormalDirections,
-                                                          polyhedronBarycenter));
+        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                         polyhedronFace2DVertices,
+                                                         polyhedronFaceBarycenters,
+                                                         polyhedronFaceNormals,
+                                                         polyhedronFaceNormalDirections,
+                                                         polyhedronBarycenter));
       }
     }
     catch (const exception& exception)
@@ -1336,12 +1336,12 @@ namespace GedimUnitTesting
                                                                                                                  polyhedronFaceTranslations,
                                                                                                                  polyhedronFaceRotationMatrices);
 
-        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
-                                                         polyhedronFace2DVertices,
-                                                         polyhedronFaceBarycenters,
-                                                         polyhedronFaceNormals,
-                                                         polyhedronFaceNormalDirections,
-                                                         polyhedronPointInside));
+        ASSERT_FALSE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                          polyhedronFace2DVertices,
+                                                          polyhedronFaceBarycenters,
+                                                          polyhedronFaceNormals,
+                                                          polyhedronFaceNormalDirections,
+                                                          polyhedronPointInside));
       }
     }
     catch (const exception& exception)
