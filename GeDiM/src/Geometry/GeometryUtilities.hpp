@@ -1802,6 +1802,20 @@ namespace Gedim
       /// \return for each polyhedron face the barycenter
       std::vector<Eigen::Vector3d> PolyhedronFaceBarycenter(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
+      /// \brief Check if Polyhedron is Convex
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \param polyhedronFaceInternalPoints the polyhedron face internal points
+      /// \param polyhedronFaceNormals the normal of each face
+      /// \param polyhedronFaceNormalDirections the normal outgoing direction
+      /// \param pointInsidePolyhedron a point inside polyhedron
+      /// \return true if polyhedron is convex, false otherwise
+      bool PolyhedronIsConvex(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                              const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
+                              const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
+                              const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                              const std::vector<bool>& polyhedronFaceNormalDirections,
+                              const Eigen::Vector3d& polyhedronInternalPoint) const;
+
       /// \brief Compute Polyhedron Face Normal Directions
       /// \param polyhedronFaceVertices the polyhedron faces vertices
       /// \param pointInsidePolyhedron a point inside polyhedron
@@ -1892,6 +1906,16 @@ namespace Gedim
       /// \return the four vertices indices forming a coordinate system for the polyhedron, size 1x4
       std::vector<unsigned int> PolyhedronCoordinateSystem(const Eigen::MatrixXd& polyhedronVertices,
                                                            const Eigen::MatrixXi& polyhedronEdges);
+
+      /// \brief Export Polyhedron To VTU
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronEdges the polyhedron edges
+      /// \param polyhedronFaces the polyhedron faces
+      /// \param exportFolder the folder in which to export
+      void ExportPolyhedronToVTU(const Eigen::MatrixXd& polyhedronVertices,
+                                 const Eigen::MatrixXi& polyhedronEdges,
+                                 const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                 const std::string& exportFolder) const;
   };
 }
 

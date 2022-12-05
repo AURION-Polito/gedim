@@ -1207,6 +1207,61 @@ namespace GedimUnitTesting
       ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.z(), 1.0 / 4.0));
     }
   }
+
+  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Convex)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Convex";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      // check convex polyhedron
+      {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                              Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                                              Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                                                                              Eigen::Vector3d(0.0, 1.0, 0.0));
+
+        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
+                                                polyhedron.Edges,
+                                                polyhedron.Faces,
+                                                exportFolder);
+
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                          polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
+
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronFaceNormals);
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                        polyhedronFaceNormals,
+                                                                                                                        polyhedronFaceTranslations);
+
+        const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                                 polyhedronFaceTranslations,
+                                                                                                                 polyhedronFaceRotationMatrices);
+
+        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                         polyhedronFace2DVertices,
+                                                         polyhedronFaceBarycenters,
+                                                         polyhedronFaceNormals,
+                                                         polyhedronFaceNormalDirections,
+                                                         polyhedronBarycenter));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POLYHEDRON_H
