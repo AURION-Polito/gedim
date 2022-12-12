@@ -40,7 +40,8 @@ namespace Gedim
                                    const Eigen::MatrixXi& polyhedronEdges,
                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                    const double& maxTetrahedronVolume,
-                                   IMeshDAO& mesh) const
+                                   IMeshDAO& mesh,
+                                   const std::string& tetgenOptions) const
   {
     tetgenio* tetgenInput = new tetgenio();
     tetgenio* tetgenOutput = new tetgenio();
@@ -51,7 +52,8 @@ namespace Gedim
                       *tetgenInput);
     CreateTetgenOutput(maxTetrahedronVolume,
                        *tetgenInput,
-                       *tetgenOutput);
+                       *tetgenOutput,
+                       tetgenOptions);
 
     ConvertTetgenOutputToMeshDAO(*tetgenOutput,
                                  mesh);

@@ -254,13 +254,15 @@ namespace Gedim
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
       /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
       /// \param maxTetrahedronVolume the maximum tetrahedron area
+      /// \param options mesh options, see https://wias-berlin.de/software/tetgen/1.5/doc/manual/manual005.html#cmd-q
       /// \note markers on border are set as { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 * numVertices } for cell1Ds
-      /// \note use triangle library
+      /// \note use tetgen library
       void CreateTetrahedralMesh(const Eigen::MatrixXd& polyhedronVertices,
                                  const Eigen::MatrixXi& polyhedronEdges,
                                  const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                  const double& maxTetrahedronVolume,
-                                 IMeshDAO& mesh) const;
+                                 IMeshDAO& mesh,
+                                 const std::string& options = "Qpqfezna") const;
 
       /// \brief Change Polygon Mesh Markers from { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 * numVertices } for cell1Ds to cell0DMarkers and cell1DMarkers
       /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices

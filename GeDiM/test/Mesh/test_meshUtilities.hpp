@@ -349,7 +349,8 @@ namespace GedimUnitTesting
                                         polyhedron.Edges,
                                         polyhedron.Faces,
                                         0.03,
-                                        meshDao);
+                                        meshDao,
+                                        "Qpqfezna");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMesh";
     Gedim::Output::CreateFolder(exportFolder);

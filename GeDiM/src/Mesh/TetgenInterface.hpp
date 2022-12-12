@@ -12,10 +12,6 @@ namespace Gedim
   class TetgenInterface final
   {
     protected:
-
-      std::string tetgenOptions;
-
-
       void CreateTetgenInput(const Eigen::MatrixXd& polyhedronVertices,
                              const Eigen::MatrixXi& polyhedronEdges,
                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -40,7 +36,8 @@ namespace Gedim
                       const Eigen::MatrixXi& polyhedronEdges,
                       const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                       const double& maxTetrahedronVolume,
-                      IMeshDAO& mesh) const;
+                      IMeshDAO& mesh,
+                      const std::string& tetgenOptions = "Qpqfezna") const;
 
       void ExportTetgenOutput(const std::string& nameFolder,
                               const std::string& nameFile,
