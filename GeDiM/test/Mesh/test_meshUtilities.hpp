@@ -275,7 +275,8 @@ namespace GedimUnitTesting
 
     meshUtilities.CreateTriangularMesh(polygon,
                                        0.033,
-                                       meshDao);
+                                       meshDao,
+                                       "-QDzpqnea");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMesh";
     Gedim::Output::CreateFolder(exportFolder);

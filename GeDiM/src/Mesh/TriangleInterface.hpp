@@ -32,7 +32,8 @@ namespace Gedim
 
       void CreateMesh(const Eigen::MatrixXd& polygonVertices,
                       const double& maxTriangleArea,
-                      IMeshDAO& mesh) const;
+                      IMeshDAO& mesh,
+                      const std::string& triangleOptions = "-QDzpqnea") const;
 
   };
 }
