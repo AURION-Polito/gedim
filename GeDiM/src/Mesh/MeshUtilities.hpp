@@ -243,11 +243,13 @@ namespace Gedim
       /// \brief Crete triangular mesh on 2D polygon
       /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices
       /// \param maxTriangleArea the maximum triangular area
+      /// \param options mesh options, see https://www.cs.cmu.edu/~quake/triangle.switch.html
       /// \note markers on border are set as { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 * numVertices } for cell1Ds
       /// \note use triangle library
       void CreateTriangularMesh(const Eigen::MatrixXd& polygonVertices,
                                 const double& maxTriangleArea,
-                                IMeshDAO& mesh) const;
+                                IMeshDAO& mesh,
+                                const std::string& options = "-QDzpqnea") const;
 
       /// \brief Crete tetrahedral mesh on 3D polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices

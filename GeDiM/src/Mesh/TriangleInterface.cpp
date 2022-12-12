@@ -142,7 +142,8 @@ namespace Gedim
   // ***************************************************************************
   void TriangleInterface::CreateMesh(const Eigen::MatrixXd& polygonVertices,
                                      const double& maxTriangleArea,
-                                     IMeshDAO& mesh) const
+                                     IMeshDAO& mesh,
+                                     const string& triangleOptions) const
   {
     struct triangulateio* triangleInput = new triangulateio();
     struct triangulateio* triangleOutput = new triangulateio();
@@ -151,7 +152,8 @@ namespace Gedim
                         *triangleInput);
     CreateTriangleOutput(maxTriangleArea,
                          *triangleInput,
-                         *triangleOutput);
+                         *triangleOutput,
+                         triangleOptions);
 
     /// <li>	Fill mesh structures
     unsigned int numberOfCell2Ds = triangleOutput->numberoftriangles;
