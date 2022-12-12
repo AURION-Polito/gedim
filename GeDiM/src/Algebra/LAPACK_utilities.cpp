@@ -1,36 +1,79 @@
 #include "LAPACK_utilities.hpp"
+#include "Macro.hpp"
 
 ///  DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A.
 /// ( Double precision, simple driver)
-extern "C" void dgesvd_(const char* JOBU, const char* JOBVT, const int* M,const int* N,
-                        const double* A, const int* LDA, double* S, double* U,
-                        const int* LDU, double* VT, const int*	LDVT,
-                        double*	WORK, const int* LWORK, int* INFO);
+extern "C" void dgesvd_(const char* JOBU,
+                        const char* JOBVT,
+                        const int* M,
+                        const int* N,
+                        double* A,
+                        const int* LDA,
+                        double* S,
+                        double* U,
+                        const int* LDU,
+                        double* VT,
+                        const int*	LDVT,
+                        double*	WORK,
+                        const int* LWORK,
+                        int* INFO);
 
 ///  DGGEV computes for a pair of N-by-N real nonsymmetric matrices (A,B)
 /// the generalized eigenvalues, and optionally, the left and/or right
 /// generalized eigenvectors.
-extern "C" void dggev_(const char* JOBVL, const char* JOBVR, const int* N,
-                       const double* A, const int* LDA, const double* B, const int* LDB,
-                       double* ALPHAR, double* ALPHAI, double* BETA,
-                       double* VL, const int* LDVL, double* VR, const int* LDVR,
-                       double* WORK, const int* LWORK, int* INFO);
+extern "C" void dggev_(const char* JOBVL,
+                       const char* JOBVR,
+                       const int* N,
+                       double* A,
+                       const int* LDA,
+                       double* B,
+                       const int* LDB,
+                       double* ALPHAR,
+                       double* ALPHAI,
+                       double* BETA,
+                       double* VL,
+                       const int* LDVL,
+                       double* VR,
+                       const int* LDVR,
+                       double* WORK,
+                       const int* LWORK,
+                       int* INFO);
 
 ///  DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A.
 /// ( Double precision, Divide and conquer driver)
-extern "C" void dgesdd_(const char* JOBZ, const int* M, const int* N,
-                        const double* A, const int* LDA, double* S, double* U,
-                        const int*  LDU, double* VT, const int* LDVT,
-                        double* WORK, const int* LWORK, int* IWORK, int* INFO);
+extern "C" void dgesdd_(const char* JOBZ,
+                        const int* M,
+                        const int* N,
+                        double* A,
+                        const int* LDA,
+                        double* S,
+                        double* U,
+                        const int*  LDU,
+                        double* VT,
+                        const int* LDVT,
+                        double* WORK,
+                        const int* LWORK,
+                        int* IWORK,
+                        int* INFO);
 
 /// SSYEV computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A.
-extern "C" void dsyev_(const char* JOBZ, const char* 	UPLO, const int* 	N,
-                       double* A, const int* 	LDA, double* D,
-                       double* WORK, const int* LWORK, int* INFO);
+extern "C" void dsyev_(const char* JOBZ,
+                       const char* UPLO,
+                       const int* N,
+                       double* A,
+                       const int* LDA,
+                       double* D,
+                       double* WORK,
+                       const int* LWORK,
+                       int* INFO);
 
 ///  DTRTRI computes the inverse of a real upper or lower triangular matrix A.
-extern "C" void dtrtri_(	const char* 	UPLO, const char* 	DIAG, const int* 	N,
-                          double* A, const int* 	LDA, int* 	INFO );
+extern "C" void dtrtri_(const char* UPLO,
+                        const char* DIAG,
+                        const int* N,
+                        double* A,
+                        const int* LDA,
+                        int* 	INFO );
 
 namespace LAPACK_utilities
 {
@@ -63,52 +106,53 @@ namespace LAPACK_utilities
   }
   // ***************************************************************************
   /// Extract the upper triangular matrix of matrix X. If i > 0, it returns the elements on and above the ith diagonal of A.
-  void triu(const Eigen::MatrixXd& X,
-            const unsigned int& i,
-            Eigen::MatrixXd& A)
+  Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
+                       const unsigned int& i)
   {
     unsigned int m = X.rows();
     unsigned int n = X.cols();
 
-    A = Eigen::MatrixXd::Zero(m, n);
+    Eigen::MatrixXd A = Eigen::MatrixXd::Zero(m, n);
 
     for (unsigned int yy = 0; yy < m - i; yy++)
     {
       for(unsigned int jj = i + yy; jj < n; jj++)
         A(yy, jj) = X(yy, jj);
     }
+
+    return A;
   }
   // ***************************************************************************
   /// Given A = U * S * V' returns only S and V'
-  void svd(const Eigen::MatrixXd A,
+  void svd(Eigen::MatrixXd A,
            Eigen::MatrixXd& V,
            Eigen::VectorXd& S)
   {
-    char JOBU = 'N'; //all M columns of U are returned in array U
+    char JOBU = 'N'; // all M columns of U are returned in array U
     char JOBVT = 'A'; // all N rows of V**T are returned in the array VT;
 
     int M = A.rows(); // The number of rows of the input matrix A.
     int N = A.cols(); // The number of columns of the input matrix A.
 
-    V.resize(N,N);
-    S.resize(std::min(M,N));
+    V.resize(N, N);
+    S.resize(std::min(M, N));
 
-    int LDA = M;
-    int LDU = 1;
-    int LDVT = N;
+    const int LDA = M;
+    const int LDU = 1;
+    const int LDVT = N;
 
     double WORKDUMMY;
     int LWORK = -1; // Request optimum work size.
     int INFO = 0;
 
-    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), 0, &LDU, V.data(), &LDVT, &WORKDUMMY, &LWORK, &INFO);
+    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, V.data(), &LDVT, &WORKDUMMY, &LWORK, &INFO);
 
     LWORK = int(WORKDUMMY) + 32;
     Eigen::VectorXd WORK(LWORK);
 
-    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), 0, &LDU, V.data(), &LDVT, WORK.data(), &LWORK, &INFO);
+    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, V.data(), &LDVT, WORK.data(), &LWORK, &INFO);
 
-    if(INFO != 0)
+    if (INFO != 0)
       throw std::runtime_error("Error occurs in svd");
 
     WORK.resize(0);
@@ -143,7 +187,7 @@ namespace LAPACK_utilities
 
     int N = A.cols(); // The number of columns/rows of the input matrix A.
 
-    LAPACK_utilities::triu(A,0,R);
+    R = LAPACK_utilities::triu(A,0);
 
     Eigen::MatrixXd X = R;
 
@@ -167,7 +211,7 @@ namespace LAPACK_utilities
   }
   // ***************************************************************************
   /// Given A = U * S * V' returns only S
-  Eigen::VectorXd svd(const Eigen::MatrixXd A)
+  Eigen::VectorXd svd(Eigen::MatrixXd A)
   {
     const char JOBU = 'N'; //no columns of U are returned in array U
     const char JOBVT = 'N'; // no rows of V**T are returned in the array VT;
@@ -185,12 +229,12 @@ namespace LAPACK_utilities
     int LWORK = -1; // Request optimum work size.
     int INFO = 0;
 
-    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), 0, &LDU, 0, &LDVT, &WORKDUMMY, &LWORK, &INFO);
+    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, nullptr, &LDVT, &WORKDUMMY, &LWORK, &INFO);
 
     LWORK = int(WORKDUMMY) + 32;
     Eigen::VectorXd WORK(LWORK);
 
-    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), 0, &LDU, 0, &LDVT, WORK.data(), &LWORK, &INFO);
+    dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, nullptr, &LDVT, WORK.data(), &LWORK, &INFO);
 
     if(INFO != 0)
       throw std::runtime_error("Error occurs in svd");

@@ -6,12 +6,12 @@
 namespace LAPACK_utilities
 {
   /// Compute SVD: A = U * S * V'. It returns and computes only S and V'
-  void svd(const Eigen::MatrixXd A,
+  void svd(Eigen::MatrixXd A,
            Eigen::MatrixXd& V,
            Eigen::VectorXd& S);
 
   /// Compute SVD: A = U * S * V'. It returns and computes only S
-  Eigen::VectorXd svd(const Eigen::MatrixXd A);
+  Eigen::VectorXd svd(Eigen::MatrixXd A);
 
   /// \brief Compute condition number in norm 2 given singular values
   /// \param s the singular values of matrix
@@ -24,9 +24,8 @@ namespace LAPACK_utilities
            Eigen::MatrixXd& R);
 
   /// Extract upper triangular part of matrix X
-  void triu(const Eigen::MatrixXd& X,
-            const unsigned int& i,
-            Eigen::MatrixXd& A);
+  Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
+                       const unsigned int& i);
 
   /// Compute eigenvalues and eigenvectors of A = R *  D * R'
   void eig(const Eigen::MatrixXd A,
