@@ -8,6 +8,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_LUSolver.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_CholeskySolver.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_Utilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_LUSolver.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_CholeskySolver.hpp)
 
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/LAPACK_utilities.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_Array.cpp)
@@ -16,6 +17,7 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_LUSolver.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_CholeskySolver.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_Utilities.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_LUSolver.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_CholeskySolver.cpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 
