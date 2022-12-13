@@ -7,7 +7,7 @@
 
 #include "Macro.hpp"
 
-#ifdef ENABLE_MKL
+#if ENABLE_MKL
 
 #include "Pardiso_LUSolver.hpp"
 #include "Pardiso_CholeskySolver.hpp"
