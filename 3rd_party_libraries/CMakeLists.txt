@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(Gedim_3rd_party_libraries VERSION 1.0)
+project(Gedim_3rd_party_libraries LANGUAGES CXX C VERSION 1.0)
+
+# Set C++ Standard
+###########################################################################################
+set(CMAKE_CXX_STANDARD 11 FORCE)
+set(CMAKE_CXX_STANDARD_REQUIRED ON FORCE)
 
 # Create variables
 ################################################################################
