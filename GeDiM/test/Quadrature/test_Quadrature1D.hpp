@@ -16,11 +16,11 @@ namespace UnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-15;
+      geometryUtilitiesConfig.Tolerance = 1.0e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       unsigned int minOrder = 0;
-      unsigned int maxOrder = 15;
+      unsigned int maxOrder = 43;
 
       Eigen::VectorXi quadratureOrders = Eigen::VectorXi::LinSpaced(maxOrder + 1,minOrder,maxOrder);
       Eigen::VectorXi orderMax = Eigen::VectorXi::LinSpaced(maxOrder + 1,minOrder,maxOrder);
@@ -42,14 +42,13 @@ namespace UnitTesting
           Eigen::VectorXd pointsXPow = (pointsX.array()).pow(ord);
           double result = pointsXPow.dot(weights);
           double expectedResult = 1.0 / (ord + 1.0);
-
           ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(expectedResult, result));
         }
       }
     }
     catch (const std::exception& exception)
     {
-      std::cerr<< exception.what()<< std::endl;
+      std::cerr << exception.what() << std::endl;
       FAIL();
     }
   }

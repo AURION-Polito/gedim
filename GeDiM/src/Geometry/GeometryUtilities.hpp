@@ -1868,7 +1868,7 @@ namespace Gedim
       std::vector<unsigned int> PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
                                                                            const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                            const std::vector<std::vector<unsigned int>>& polyhedronFaceTriangulations,
-                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;
+                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;    
 
       /// \brief Polyhedron Tetrahedrons By Face Triangulations with face internal points
       /// \param polyhedronVertices the polyhedron vertices

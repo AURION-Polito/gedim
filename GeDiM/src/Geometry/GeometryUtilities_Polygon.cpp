@@ -110,6 +110,7 @@ namespace Gedim
     Output::Assert(edgeTangents.rows() == 3 && edgeTangents.cols() == polygonVertices.cols());
     Output::Assert(edgeNormals.rows() == 3 && edgeNormals.cols() == polygonVertices.cols());
 
+
     // quadrature on reference segment [0,1] of order 1
     const double referenceSegmentPoints = 5.0000000000000000e-01;
     const double referenceSegmentWeights = 1.0000000000000000e+00;
@@ -145,7 +146,11 @@ namespace Gedim
     return quadraturePoints.row(0).dot(quadratureWeightsTimesNormal.row(0));
   }
   // ***************************************************************************
-  Vector3d GeometryUtilities::PolygonCentroidByIntegral(const Eigen::MatrixXd& polygonVertices, const Eigen::VectorXd& edgeLengths, const Eigen::MatrixXd& edgeTangents, const Eigen::MatrixXd& edgeNormals, const double& polygonArea) const
+  Vector3d GeometryUtilities::PolygonCentroidByIntegral(const Eigen::MatrixXd& polygonVertices,
+                                                        const Eigen::VectorXd& edgeLengths,
+                                                        const Eigen::MatrixXd& edgeTangents,
+                                                        const Eigen::MatrixXd& edgeNormals,
+                                                        const double& polygonArea) const
   {
     Gedim::Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
     Gedim::Output::Assert(edgeLengths.size() == polygonVertices.cols());
