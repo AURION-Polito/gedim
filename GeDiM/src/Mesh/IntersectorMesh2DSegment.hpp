@@ -5,8 +5,6 @@
 #include "IMeshDAO.hpp"
 #include "GeometryUtilities.hpp"
 
-using namespace std;
-
 namespace Gedim
 {
   class IntersectorMesh2DSegment final
@@ -16,25 +14,25 @@ namespace Gedim
       {
           struct IntersectionMeshPoint final
           {
-              set<unsigned int> Cell2DIds = {};
-              set<unsigned int> Edge2DIds = {};
-              set<unsigned int> Vertex2DIds = {};
+              std::set<unsigned int> Cell2DIds = {};
+              std::set<unsigned int> Edge2DIds = {};
+              std::set<unsigned int> Vertex2DIds = {};
           };
 
           struct IntersectionMeshSegment final
           {
-              vector<double> Points = {};
-              set<unsigned int> Cell2DIds = {};
-              set<unsigned int> Edge2DIds = {};
+              std::vector<double> Points = {};
+              std::set<unsigned int> Cell2DIds = {};
+              std::set<unsigned int> Edge2DIds = {};
           };
 
-          map<double, IntersectionMeshPoint> Points;
-          vector<IntersectionMeshSegment> Segments;
+          std::map<double, IntersectionMeshPoint> Points;
+          std::vector<IntersectionMeshSegment> Segments;
       };
 
       /// \brief convert IntersectionMesh to Curvilinear Coordinates vector
       static void ToCurvilinearCoordinates(const IntersectionMesh& intersectingMesh,
-                                           vector<double>& curvilinearCoordinates);
+                                           std::vector<double>& curvilinearCoordinates);
 
       static void ToString(const IntersectionMesh& intersectingMesh);
 

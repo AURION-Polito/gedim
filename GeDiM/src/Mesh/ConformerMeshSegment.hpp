@@ -26,28 +26,28 @@ namespace Gedim
                 External = 3 ///< other points not inherith from intersection mesh
               };
 
-              set<unsigned int> Cell2DIds = {};
-              set<unsigned int> Edge2DIds = {};
-              set<unsigned int> Vertex2DIds = {};
+              std::set<unsigned int> Cell2DIds = {};
+              std::set<unsigned int> Edge2DIds = {};
+              std::set<unsigned int> Vertex2DIds = {};
               Types Type;
           };
 
           struct ConformMeshSegment final
           {
-              vector<double> Points = {};
-              set<unsigned int> Cell2DIds = {};
-              set<unsigned int> Edge2DIds = {};
+              std::vector<double> Points = {};
+              std::set<unsigned int> Cell2DIds = {};
+              std::set<unsigned int> Edge2DIds = {};
           };
 
-          map<double, ConformMeshPoint> Points;
-          vector<ConformMeshSegment> Segments;
+          std::map<double, ConformMeshPoint> Points;
+          std::vector<ConformMeshSegment> Segments;
       };
 
       /// \brief convert IntersectionMesh to Curvilinear Coordinates vector
       static void ToCurvilinearCoordinates(const ConformMesh& conformMesh,
-                                           vector<double>& curvilinearCoordinates);
+                                           std::vector<double>& curvilinearCoordinates);
 
-      static string ToString(const ConformMesh& conformMesh);
+      static std::string ToString(const ConformMesh& conformMesh);
 
       static void CreateConformSegments(ConformMesh& result);
 
@@ -109,11 +109,11 @@ namespace Gedim
       /// \param conformedMesh the resulting conformed mesh
       /// \note the mesh2D shall be made by only active elements
       /// \return the list of coordinates added
-      vector<double> AddMissingMesh2DCell0Ds(const Eigen::Vector3d& segmentOrigin,
-                                             const Eigen::Vector3d& segmentTangent,
-                                             const double& segmentSquaredLength,
-                                             const Gedim::IMeshDAO& mesh2D,
-                                             ConformMesh& conformedMesh) const;
+      std::vector<double> AddMissingMesh2DCell0Ds(const Eigen::Vector3d& segmentOrigin,
+                                                  const Eigen::Vector3d& segmentTangent,
+                                                  const double& segmentSquaredLength,
+                                                  const Gedim::IMeshDAO& mesh2D,
+                                                  ConformMesh& conformedMesh) const;
   };
 }
 

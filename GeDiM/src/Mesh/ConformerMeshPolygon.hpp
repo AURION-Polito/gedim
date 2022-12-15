@@ -9,8 +9,6 @@
 #include "MeshMatrices.hpp"
 #include "ConformerMeshSegment.hpp"
 
-using namespace std;
-
 namespace Gedim
 {
   class ConformerMeshPolygon final
@@ -43,59 +41,59 @@ namespace Gedim
 
       void Cell2DMesh2DListCell1DToListCell0D(const Gedim::IMeshDAO& mesh2DReader,
                                               const unsigned int& cell1DMesh2DId,
-                                              const list<unsigned int>& cell1DMesh2DUpdated,
-                                              vector<unsigned int>& cell0DMesh2Ds,
-                                              vector<unsigned int>& cell1DMesh2Ds);
+                                              const std::list<unsigned int>& cell1DMesh2DUpdated,
+                                              std::vector<unsigned int>& cell0DMesh2Ds,
+                                              std::vector<unsigned int>& cell1DMesh2Ds);
       void Cell2DMesh2DUpdatedPointsAndEdges(const Gedim::IMeshDAO& mesh2DReader,
                                              const unsigned int& cell2DMesh2DId,
                                              const unsigned int& oldCell1DMesh2DId,
-                                             const vector<unsigned int>& cell0DMesh2DUpdated,
-                                             const vector<unsigned int>& cell1DMesh2DUpdated,
-                                             vector<unsigned int>& cell2DMesh2DNewVertices,
-                                             vector<unsigned int>& cell2DMesh2DNewEdges);
+                                             const std::vector<unsigned int>& cell0DMesh2DUpdated,
+                                             const std::vector<unsigned int>& cell1DMesh2DUpdated,
+                                             std::vector<unsigned int>& cell2DMesh2DNewVertices,
+                                             std::vector<unsigned int>& cell2DMesh2DNewEdges);
 
       void Cell2DMesh2DToMaps(const Gedim::IMeshDAO& mesh2DReader,
                               const unsigned int& cell2DMesh2DId,
-                              map<unsigned int, unsigned int>& verticesMap,
-                              map<unsigned int, unsigned int>& edgesMap);
+                              std::map<unsigned int, unsigned int>& verticesMap,
+                              std::map<unsigned int, unsigned int>& edgesMap);
 
-      void Cell2DMesh2DToSplitInput(const list<unsigned int> cell1DMesh1DIds,
+      void Cell2DMesh2DToSplitInput(const std::list<unsigned int> cell1DMesh1DIds,
                                     const ConformerMeshSegment::ConformMesh& mesh1D,
                                     const Gedim::IMeshDAO& mesh2D,
                                     const unsigned int& cell2DMesh2DId,
-                                    const map<unsigned int, unsigned int>& cell2DMesh2DVerticesMap,
-                                    const map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
+                                    const std::map<unsigned int, unsigned int>& cell2DMesh2DVerticesMap,
+                                    const std::map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
                                     Gedim::GeometryUtilities::SplitPolygonInput& splitInput);
 
       void SplitCell2DMesh2D(const Eigen::Vector3d& segmentOrigin,
                              const Eigen::Vector3d& segmentTangent,
-                             const list<unsigned int> cell1DMesh1DIds,
+                             const std::list<unsigned int> cell1DMesh1DIds,
                              ConformerMeshSegment::ConformMesh& mesh1D,
                              Gedim::IMeshDAO& mesh2D,
                              const unsigned int& cell2DMesh2DId,
-                             map<unsigned int, unsigned int>& cell2DMesh2DVerticesMap,
-                             map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
+                             std::map<unsigned int, unsigned int>& cell2DMesh2DVerticesMap,
+                             std::map<unsigned int, unsigned int>& cell2DMesh2DEdgesMap,
                              const Gedim::GeometryUtilities::SplitPolygonWithSegmentResult& splitResult);
 
       void UpdateCell2DMesh2DWithSegmentOnEdges(const Eigen::Vector3d& segmentOrigin,
                                                 const Eigen::Vector3d& segmentTangent,
                                                 ConformerMeshSegment::ConformMesh& mesh1D,
                                                 Gedim::IMeshDAO& mesh2D,
-                                                const vector<unsigned int>& cell1DMesh1DIds,
+                                                const std::vector<unsigned int>& cell1DMesh1DIds,
                                                 const unsigned int& cell2DMesh2DId);
 
       void InsertCell2DMesh2DMiddleEdgesPolygonUpdate(const Eigen::Vector3d& segmentOrigin,
                                                       const Eigen::Vector3d& segmentTangent,
                                                       ConformerMeshSegment::ConformMesh& mesh1D,
                                                       Gedim::IMeshDAO& mesh2D,
-                                                      const list<unsigned int>& cell1DMesh1DIds,
+                                                      const std::list<unsigned int>& cell1DMesh1DIds,
                                                       const unsigned int& cell2DMesh2DId);
 
       void InsertCell2DMesh2DMiddleEdgesPolygonCreation(const Eigen::Vector3d& segmentOrigin,
                                                         const Eigen::Vector3d& segmentTangent,
                                                         ConformerMeshSegment::ConformMesh& mesh1D,
                                                         Gedim::IMeshDAO& mesh2D,
-                                                        const list<unsigned int> cell1DMesh1DIds,
+                                                        const std::list<unsigned int> cell1DMesh1DIds,
                                                         const unsigned int& cell2DMesh2DId);
 
       void UpdateCell2DNeighbours(ConformerMeshSegment::ConformMesh& mesh1D,
@@ -109,8 +107,8 @@ namespace Gedim
       /// \return true if the father cell is a leaf, false otherwise
       /// \note works for Cell1D and Cell2D
       bool GetLeafCells(const unsigned int& fatherCellId,
-                        const map<unsigned int, set<unsigned int> >& mesh2DUpdatedCellIds,
-                        list<unsigned int>& newCellIds);
+                        const std::map<unsigned int, std::set<unsigned int> >& mesh2DUpdatedCellIds,
+                        std::list<unsigned int>& newCellIds);
 
       void CreateConformMeshGeneralized(const Eigen::Vector3d& segmentOrigin,
                                         const Eigen::Vector3d& segmentEnd,
