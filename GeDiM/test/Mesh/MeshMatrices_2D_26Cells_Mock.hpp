@@ -3,8 +3,6 @@
 
 #include "MeshMatrices.hpp"
 
-using namespace std;
-
 namespace GedimUnitTesting
 {
   /// \brief Mesh generated with Triangle with parameter 0.033
