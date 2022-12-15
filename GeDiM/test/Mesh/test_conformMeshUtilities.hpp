@@ -21,7 +21,6 @@ using namespace std;
 
 namespace GedimUnitTesting
 {
-
   TEST(TestConformMeshUtilities, TestConformMeshSingleSegment)
   {
     
