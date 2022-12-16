@@ -1024,6 +1024,17 @@ namespace Gedim
                                                                   const Eigen::Vector3d& secondSegmentOrigin,
                                                                   const Eigen::Vector3d& secondSegmentEnd) const;
 
+      /// \brief Compute the intersection between a collection of segments
+      /// \param segmentsVertices the segments vertices
+      /// \param segmentsTangent the segments tangent
+      /// \param segmentsBarycenter the segments barycenter
+      /// \param segmentsLength the segments length
+      /// \return for each segment the list of intersections curvilinear coordinate
+      std::vector<std::list<double>> IntersectionsBetweenSegments(const std::vector<Eigen::MatrixXd>& segmentsVertices,
+                                                                  const std::vector<Eigen::Vector3d>& segmentsTangent,
+                                                                  const std::vector<Eigen::Vector3d>& segmentsBarycenter,
+                                                                  const std::vector<double>& segmentsLength) const;
+
       /// \brief Compute the intersection between the a segment and a circle
       /// \param segmentOrigin first segment origin
       /// \param segmentEnd first segment end
@@ -1868,7 +1879,7 @@ namespace Gedim
       std::vector<unsigned int> PolyhedronTetrahedronsByFaceTriangulations(const Eigen::MatrixXd& polyhedronVertices,
                                                                            const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                            const std::vector<std::vector<unsigned int>>& polyhedronFaceTriangulations,
-                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;    
+                                                                           const Eigen::Vector3d& polyhedronInternalPoint) const;
 
       /// \brief Polyhedron Tetrahedrons By Face Triangulations with face internal points
       /// \param polyhedronVertices the polyhedron vertices

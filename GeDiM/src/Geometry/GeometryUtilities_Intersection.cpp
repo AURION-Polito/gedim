@@ -1,4 +1,5 @@
 #include "IOUtilities.hpp"
+#include "CommonUtilities.hpp"
 #include "GeometryUtilities.hpp"
 #include <cmath>
 
@@ -208,6 +209,52 @@ namespace Gedim
     }
 
     return result;
+  }
+  // ***************************************************************************
+  std::vector<std::list<double>> GeometryUtilities::IntersectionsBetweenSegments(const std::vector<Eigen::MatrixXd>& segmentsVertices,
+                                                                                 const std::vector<Eigen::Vector3d>& segmentsTangent,
+                                                                                 const std::vector<Eigen::Vector3d>& segmentsBarycenter,
+                                                                                 const std::vector<double>& segmentsLength) const
+  {
+    Utilities::Unused(segmentsTangent);
+
+    const unsigned int numSegments = segmentsVertices.size();
+    std::vector<std::list<double>> intersections(numSegments);
+
+    for (unsigned int s1 = 0; s1 < numSegments; s1++)
+    {
+      const Eigen::MatrixXd& segmentOne = segmentsVertices[s1];
+      const Eigen::Vector3d& segmentOneBarycenter = segmentsBarycenter[s1];
+      const double& segmentOneLength = segmentsLength[s1];
+
+      for (unsigned int s2 = s1 + 1; s2 < numSegments; s2++)
+      {
+        const Eigen::MatrixXd& segmentTwo = segmentsVertices[s2];
+        const Eigen::Vector3d& segmentTwoBarycenter = segmentsBarycenter[s2];
+        const double& segmentTwoLength = segmentsLength[s2];
+
+        if (CheckNoSpheresIntersection(segmentOneBarycenter,
+                                       segmentTwoBarycenter,
+                                       segmentOneLength,
+                                       segmentTwoLength))
+          continue;
+
+        const Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result =
+            IntersectionSegmentSegment(segmentOne.col(0),
+                                       segmentOne.col(1),
+                                       segmentTwo.col(0),
+                                       segmentTwo.col(1));
+
+        if (result.IntersectionSegmentsType !=
+            Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
+          continue;
+
+        intersections[s1].push_back(result.FirstSegmentIntersections[0].CurvilinearCoordinate);
+        intersections[s2].push_back(result.SecondSegmentIntersections[0].CurvilinearCoordinate);
+      }
+    }
+
+    return intersections;
   }
   // ***************************************************************************
   GeometryUtilities::IntersectionSegmentPlaneResult GeometryUtilities::IntersectionSegmentPlane(const Eigen::Vector3d& segmentOrigin,

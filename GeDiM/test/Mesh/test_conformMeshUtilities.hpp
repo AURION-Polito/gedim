@@ -53,7 +53,6 @@ namespace GedimUnitTesting
       std::vector<Eigen::Vector3d> segmentsBarycenter(numSegments);
       std::vector<double> segmentsLength(numSegments);
       std::vector<double> segmentsSquaredLength(numSegments);
-      vector<list<double>> segmentsAdditionalPoints(numSegments);
 
       segmentsVertices[0].col(0)<< 0.1, 0.1, 0.0;
       segmentsVertices[0].col(1)<< 0.9, 0.7, 0.0;
@@ -83,37 +82,10 @@ namespace GedimUnitTesting
       }
 
       // compute segment intersections
-      for (unsigned int s1 = 0; s1 < numSegments; s1++)
-      {
-        const Eigen::MatrixXd& segmentOne = segmentsVertices[s1];
-        const Eigen::Vector3d& segmentOneBarycenter = segmentsBarycenter[s1];
-        const double& segmentOneLength = segmentsLength[s1];
-
-        for (unsigned int s2 = s1 + 1; s2 < numSegments; s2++)
-        {
-          const Eigen::MatrixXd& segmentTwo = segmentsVertices[s2];
-          const Eigen::Vector3d& segmentTwoBarycenter = segmentsBarycenter[s2];
-          const double& segmentTwoLength = segmentsLength[s2];
-
-          if (geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
-                                                           segmentTwoBarycenter,
-                                                           segmentOneLength,
-                                                           segmentTwoLength))
-            continue;
-
-          Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result =
-              geometryUtilities.IntersectionSegmentSegment(segmentOne.col(0),
-                                                           segmentOne.col(1),
-                                                           segmentTwo.col(0),
-                                                           segmentTwo.col(1));
-          if (result.IntersectionSegmentsType !=
-              Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
-            continue;
-
-          segmentsAdditionalPoints[s1].push_back(result.FirstSegmentIntersections[0].CurvilinearCoordinate);
-          segmentsAdditionalPoints[s2].push_back(result.SecondSegmentIntersections[0].CurvilinearCoordinate);
-        }
-      }
+      const vector<list<double>> segmentsAdditionalPoints = geometryUtilities.IntersectionsBetweenSegments(segmentsVertices,
+                                                                                                           segmentsTangent,
+                                                                                                           segmentsBarycenter,
+                                                                                                           segmentsLength);
 
       std::vector<Gedim::IntersectorMesh2DSegment::IntersectionMesh> segmentsIntersectionMesh(numSegments);
       std::vector<std::vector<double>> segmentsCurvilinearCoordinatesMesh(numSegments);
@@ -137,19 +109,17 @@ namespace GedimUnitTesting
                                                             Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::Generalized,
                                                             options);
 
-      segmentsAdditionalPoints.clear();
       segmentsUnionMesh.clear();
       segmentsIntersectionMesh.clear();
       segmentsCurvilinearCoordinatesMesh.clear();
       segmentsConformMesh.clear();
 
-      segmentsAdditionalPoints.resize(numSegments);
       segmentsUnionMesh.resize(numSegments);
       segmentsIntersectionMesh.resize(numSegments);
       segmentsCurvilinearCoordinatesMesh.resize(numSegments);
       segmentsConformMesh.resize(numSegments);
 
-      conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
+      conformMeshUtilities.ComputeConformedMeshWithSegments(vector<list<double>>(numSegments),
                                                             segmentsVertices,
                                                             segmentsTangent,
                                                             segmentsBarycenter,
@@ -228,7 +198,6 @@ namespace GedimUnitTesting
       std::vector<Eigen::Vector3d> segmentsBarycenter(numSegments);
       std::vector<double> segmentsLength(numSegments);
       std::vector<double> segmentsSquaredLength(numSegments);
-      vector<list<double>> segmentsAdditionalPoints(numSegments);
 
       // random segments
       srand(112233);
@@ -272,37 +241,11 @@ namespace GedimUnitTesting
       }
 
       // compute segment intersections
-      for (unsigned int s1 = 0; s1 < numSegments; s1++)
-      {
-        const Eigen::MatrixXd& segmentOne = segmentsVertices[s1];
-        const Eigen::Vector3d& segmentOneBarycenter = segmentsBarycenter[s1];
-        const double& segmentOneLength = segmentsLength[s1];
+      const vector<list<double>> segmentsAdditionalPoints = geometryUtilities.IntersectionsBetweenSegments(segmentsVertices,
+                                                                                                           segmentsTangent,
+                                                                                                           segmentsBarycenter,
+                                                                                                           segmentsLength);
 
-        for (unsigned int s2 = s1 + 1; s2 < numSegments; s2++)
-        {
-          const Eigen::MatrixXd& segmentTwo = segmentsVertices[s2];
-          const Eigen::Vector3d& segmentTwoBarycenter = segmentsBarycenter[s2];
-          const double& segmentTwoLength = segmentsLength[s2];
-
-          if (geometryUtilities.CheckNoSpheresIntersection(segmentOneBarycenter,
-                                                           segmentTwoBarycenter,
-                                                           segmentOneLength,
-                                                           segmentTwoLength))
-            continue;
-
-          Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result =
-              geometryUtilities.IntersectionSegmentSegment(segmentOne.col(0),
-                                                           segmentOne.col(1),
-                                                           segmentTwo.col(0),
-                                                           segmentTwo.col(1));
-          if (result.IntersectionSegmentsType !=
-              Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection)
-            continue;
-
-          segmentsAdditionalPoints[s1].push_back(result.FirstSegmentIntersections[0].CurvilinearCoordinate);
-          segmentsAdditionalPoints[s2].push_back(result.SecondSegmentIntersections[0].CurvilinearCoordinate);
-        }
-      }
 
       std::vector<Gedim::IntersectorMesh2DSegment::IntersectionMesh> segmentsIntersectionMesh(numSegments);
       std::vector<std::vector<double>> segmentsCurvilinearCoordinatesMesh(numSegments);
@@ -326,19 +269,17 @@ namespace GedimUnitTesting
                                                             Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::Generalized,
                                                             options);
 
-      segmentsAdditionalPoints.clear();
       segmentsUnionMesh.clear();
       segmentsIntersectionMesh.clear();
       segmentsCurvilinearCoordinatesMesh.clear();
       segmentsConformMesh.clear();
 
-      segmentsAdditionalPoints.resize(numSegments);
       segmentsUnionMesh.resize(numSegments);
       segmentsIntersectionMesh.resize(numSegments);
       segmentsCurvilinearCoordinatesMesh.resize(numSegments);
       segmentsConformMesh.resize(numSegments);
 
-      conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
+      conformMeshUtilities.ComputeConformedMeshWithSegments(vector<list<double>>(numSegments),
                                                             segmentsVertices,
                                                             segmentsTangent,
                                                             segmentsBarycenter,
