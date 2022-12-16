@@ -162,78 +162,58 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void ConformMeshUtilities::AddConformedMeshProperties(IMeshDAO& networkMesh) const
+  void ConformMeshUtilities::AddConformedMeshProperties(const std::vector<ConformerMeshSegment::ConformMesh>& segmentsConformMesh,
+                                                        IMeshDAO& conformedMesh) const
   {
-    networkMesh.Cell0DInitializeDoubleProperties(1);
-    networkMesh.Cell0DAddDoubleProperty("marked");
-    networkMesh.Cell1DInitializeDoubleProperties(2);
-    networkMesh.Cell1DAddDoubleProperty("marked");
-    networkMesh.Cell1DAddDoubleProperty("interface");
+    conformedMesh.Cell0DInitializeDoubleProperties(1);
+    conformedMesh.Cell0DAddDoubleProperty("marked");
+    conformedMesh.Cell1DInitializeDoubleProperties(2);
+    conformedMesh.Cell1DAddDoubleProperty("marked");
+    conformedMesh.Cell1DAddDoubleProperty("segment");
 
-    for (unsigned int c = 0; c < networkMesh.Cell0DTotalNumber(); c++)
+    for (unsigned int c = 0; c < conformedMesh.Cell0DTotalNumber(); c++)
     {
-      for (unsigned int p = 0; p < networkMesh.Cell0DNumberDoubleProperties(); p++)
+      for (unsigned int p = 0; p < conformedMesh.Cell0DNumberDoubleProperties(); p++)
       {
-        networkMesh.Cell0DInitializeDoublePropertyValues(c, p, 1);
-        networkMesh.Cell0DInsertDoublePropertyValue(c, p, 0, 0.0);
+        conformedMesh.Cell0DInitializeDoublePropertyValues(c, p, 1);
+        conformedMesh.Cell0DInsertDoublePropertyValue(c, p, 0, 0.0);
       }
     }
-    for (unsigned int e = 0; e < networkMesh.Cell1DTotalNumber(); e++)
+    for (unsigned int e = 0; e < conformedMesh.Cell1DTotalNumber(); e++)
     {
-      for (unsigned int p = 0; p < networkMesh.Cell1DNumberDoubleProperties(); p++)
+      for (unsigned int p = 0; p < conformedMesh.Cell1DNumberDoubleProperties(); p++)
       {
-        networkMesh.Cell1DInitializeDoublePropertyValues(e, p, 1);
-        networkMesh.Cell1DInsertDoublePropertyValue(e, p, 0, 0.0);
-      }
-    }
-    for (unsigned int f = 0; f < networkMesh.Cell2DTotalNumber(); f++)
-    {
-      for (unsigned int p = 0; p < networkMesh.Cell2DNumberDoubleProperties(); p++)
-      {
-        networkMesh.Cell2DInitializeDoublePropertyValues(f, p, 1);
-        networkMesh.Cell2DInsertDoublePropertyValue(f, p, 0, 0.0);
+        conformedMesh.Cell1DInitializeDoublePropertyValues(e, p, 1);
+        conformedMesh.Cell1DInsertDoublePropertyValue(e, p, 0, 0.0);
       }
     }
 
-    //    if (networkMeshInformation.InterfacesCell0DsToNetworkCell0Ds.size() > 0 &&
-    //        networkMeshInformation.InterfacesCell1DsToNetworkCell1Ds.size() > 0)
-    //    {
-    //      const unsigned int numInterfaces = networkMeshInformation.InterfacesCell0DsToNetworkCell0Ds.size();
+    for (unsigned int s = 0; s < segmentsConformMesh.size(); s++)
+    {
+      const ConformerMeshSegment::ConformMesh& segmentConformMesh = segmentsConformMesh[s];
 
-    //      for (unsigned int i = 0; i < numInterfaces; i++)
-    //      {
-    //        const unsigned int interfaceId = i;
+      for (const auto& point : segmentConformMesh.Points)
+      {
+        Output::Assert(point.second.Vertex2DIds.size() == 1);
+        conformedMesh.Cell0DInsertDoublePropertyValue(*point.second.Vertex2DIds.begin(),
+                                                      0,
+                                                      0,
+                                                      1.0);
+      }
 
-    //        for (map<unsigned int, unsigned int>::const_iterator cell1D_it = networkMeshInformation.InterfacesCell1DsToNetworkCell1Ds[i].begin();
-    //             cell1D_it != networkMeshInformation.InterfacesCell1DsToNetworkCell1Ds[i].end();
-    //             cell1D_it++)
-    //        {
-    //          const unsigned int networkCell1DId = cell1D_it->second;
-
-    //          networkMesh.Cell1DInsertDoublePropertyValue(networkCell1DId,
-    //                                                      0,
-    //                                                      0,
-    //                                                      1.0);
-    //          networkMesh.Cell1DInsertDoublePropertyValue(networkCell1DId,
-    //                                                      1,
-    //                                                      0,
-    //                                                      interfaceId + 1);
-
-    //        }
-
-    //        for (map<double, unsigned int>::const_iterator cell0D_it = networkMeshInformation.InterfacesCell0DsToNetworkCell0Ds[i].begin();
-    //             cell0D_it != networkMeshInformation.InterfacesCell0DsToNetworkCell0Ds[i].end();
-    //             cell0D_it++)
-    //        {
-    //          const unsigned int networkCell0DId = cell0D_it->second;
-
-    //          networkMesh.Cell0DInsertDoublePropertyValue(networkCell0DId,
-    //                                                      0,
-    //                                                      0,
-    //                                                      1.0);
-    //        }
-    //      }
-    //    }
+      for (const ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : segmentConformMesh.Segments)
+      {
+        Output::Assert(segment.Edge2DIds.size() == 1);
+        conformedMesh.Cell1DInsertDoublePropertyValue(*segment.Edge2DIds.begin(),
+                                                      0,
+                                                      0,
+                                                      1.0);
+        conformedMesh.Cell1DInsertDoublePropertyValue(*segment.Edge2DIds.begin(),
+                                                      1,
+                                                      0,
+                                                      s + 1);
+      }
+    }
   }
   // ***************************************************************************
 }

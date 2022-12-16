@@ -41,7 +41,8 @@ namespace Gedim
                                             const ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types& conformDomainMeshType,
                                             const ComputeDomainConformedMeshOptions& options) const;
 
-      void AddConformedMeshProperties(IMeshDAO& networkMesh) const;
+      void AddConformedMeshProperties(const std::vector<ConformerMeshSegment::ConformMesh>& segmentsConformMesh,
+                                      IMeshDAO& conformedMesh) const;
   };
 }
 

@@ -123,18 +123,18 @@ namespace GedimUnitTesting
       options.VtkExportFolder = exportFolder;
 
       conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
-                                                      segmentsVertices,
-                                                      segmentsTangent,
-                                                      segmentsBarycenter,
-                                                      segmentsLength,
-                                                      segmentsSquaredLength,
-                                                      meshDAO,
-                                                      segmentsIntersectionMesh,
-                                                      segmentsCurvilinearCoordinatesMesh,
-                                                      segmentsUnionMesh,
-                                                      segmentsConformMesh,
-                                                      Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::Generalized,
-                                                      options);
+                                                            segmentsVertices,
+                                                            segmentsTangent,
+                                                            segmentsBarycenter,
+                                                            segmentsLength,
+                                                            segmentsSquaredLength,
+                                                            meshDAO,
+                                                            segmentsIntersectionMesh,
+                                                            segmentsCurvilinearCoordinatesMesh,
+                                                            segmentsUnionMesh,
+                                                            segmentsConformMesh,
+                                                            Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::Generalized,
+                                                            options);
 
       segmentsAdditionalPoints.clear();
       segmentsUnionMesh.clear();
@@ -149,18 +149,18 @@ namespace GedimUnitTesting
       segmentsConformMesh.resize(numSegments);
 
       conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
-                                                      segmentsVertices,
-                                                      segmentsTangent,
-                                                      segmentsBarycenter,
-                                                      segmentsLength,
-                                                      segmentsSquaredLength,
-                                                      meshDAO,
-                                                      segmentsIntersectionMesh,
-                                                      segmentsCurvilinearCoordinatesMesh,
-                                                      segmentsUnionMesh,
-                                                      segmentsConformMesh,
-                                                      Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::OnlyOnEdges,
-                                                      options);
+                                                            segmentsVertices,
+                                                            segmentsTangent,
+                                                            segmentsBarycenter,
+                                                            segmentsLength,
+                                                            segmentsSquaredLength,
+                                                            meshDAO,
+                                                            segmentsIntersectionMesh,
+                                                            segmentsCurvilinearCoordinatesMesh,
+                                                            segmentsUnionMesh,
+                                                            segmentsConformMesh,
+                                                            Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::OnlyOnEdges,
+                                                            options);
 
       // check meshes 1D
       for (unsigned int i = 0; i < numSegments; i++)
@@ -177,6 +177,9 @@ namespace GedimUnitTesting
       meshUtilities.CheckMesh2D(config,
                                 geometryUtilities,
                                 meshDAO);
+
+      conformMeshUtilities.AddConformedMeshProperties(segmentsConformMesh,
+                                                      meshDAO);
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,
