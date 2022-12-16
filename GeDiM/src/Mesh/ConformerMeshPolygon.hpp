@@ -14,11 +14,10 @@ namespace Gedim
   class ConformerMeshPolygon final
   {
     public:
-      struct ConformMesh final {
-      };
-
-      struct ConformerMeshPolygonConfiguration final {
-          enum struct Types {
+      struct ConformerMeshPolygonConfiguration final
+      {
+          enum struct Types
+          {
             Generalized = 0, // conform checking the intersection types
             OnlyOnEdges = 1 // mesh 2D is already conform on edges, check only vertices
           };
@@ -114,15 +113,13 @@ namespace Gedim
                                         const Eigen::Vector3d& segmentEnd,
                                         const Eigen::Vector3d& segmentTangent,
                                         ConformerMeshSegment::ConformMesh& mesh1D,
-                                        Gedim::IMeshDAO& mesh2D,
-                                        ConformerMeshPolygon::ConformMesh& meshConformedInformation);
+                                        Gedim::IMeshDAO& mesh2D);
 
       void CreateConformMeshOnlyOnEdges(const Eigen::Vector3d& segmentOrigin,
                                         const Eigen::Vector3d& segmentEnd,
                                         const Eigen::Vector3d& segmentTangent,
                                         ConformerMeshSegment::ConformMesh& mesh1D,
-                                        Gedim::IMeshDAO& mesh2D,
-                                        ConformerMeshPolygon::ConformMesh& meshConformedInformation);
+                                        Gedim::IMeshDAO& mesh2D);
 
     public:
       ConformerMeshPolygon(const Gedim::GeometryUtilities& geometryUtilities);
@@ -137,8 +134,7 @@ namespace Gedim
                              const Eigen::Vector3d& segmentEnd,
                              const Eigen::Vector3d& segmentTangent,
                              ConformerMeshSegment::ConformMesh& mesh1D,
-                             Gedim::IMeshDAO& mesh2D,
-                             ConformerMeshPolygon::ConformMesh& meshConformedInformation);
+                             Gedim::IMeshDAO& mesh2D);
   };
 }
 

@@ -573,14 +573,12 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         meshUtilities.ExportMeshToVTU(fractureMeshOne,
                                       exportFolder,
@@ -610,14 +608,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -727,7 +723,6 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         std::string exportFolder = "./Export/TestConformMesh2D/TestFivePointsMesh";
         Gedim::Output::CreateFolder(exportFolder);
@@ -741,8 +736,7 @@ namespace GedimUnitTesting
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         meshUtilities.ExportMeshToVTU(fractureMeshOne,
                                       exportFolder,
@@ -775,14 +769,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -898,7 +890,6 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         std::string exportFolder = "./Export/TestConformMesh2D/TestTwentysixPointsMesh";
         Gedim::Output::CreateFolder(exportFolder);
@@ -911,8 +902,7 @@ namespace GedimUnitTesting
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         meshUtilities.ExportMeshToVTU(fractureMeshOne,
                                       exportFolder,
@@ -949,14 +939,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -1075,14 +1063,12 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
         meshUtilities.CheckMesh2D(config,
@@ -1107,14 +1093,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -1226,14 +1210,12 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
         meshUtilities.CheckMesh2D(config,
@@ -1258,14 +1240,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -1378,14 +1358,12 @@ namespace GedimUnitTesting
                                                                 conformMeshOne));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
         meshUtilities.CheckMesh2D(config,
@@ -1410,14 +1388,12 @@ namespace GedimUnitTesting
                                                                 conformMeshTwo));
 
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         config.Cell0D_CheckCoordinates2D = true;
         config.Cell0D_CheckDuplications = true;
@@ -1530,14 +1506,12 @@ namespace GedimUnitTesting
         conformerMeshPolygonOneConfig.Type = Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::OnlyOnEdges;
         Gedim::ConformerMeshPolygon conformerMeshPolygonOne(geometryUtilities,
                                                             conformerMeshPolygonOneConfig);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshOne;
 
         ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin,
                                                                   segmentOneEnd,
                                                                   segmentOneTangent,
                                                                   conformMeshOne,
-                                                                  fractureMeshOne,
-                                                                  fractureConformedMeshOne));
+                                                                  fractureMeshOne));
 
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell0D, 5);
         EXPECT_EQ(mockMeshOne.Mesh.NumberCell1D, 7);
@@ -1560,14 +1534,12 @@ namespace GedimUnitTesting
         conformerMeshPolygonTwoConfig.Type = Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::OnlyOnEdges;
         Gedim::ConformerMeshPolygon conformerMeshPolygonTwo(geometryUtilities,
                                                             conformerMeshPolygonTwoConfig);
-        Gedim::ConformerMeshPolygon::ConformMesh fractureConformedMeshTwo;
 
         ASSERT_NO_THROW(conformerMeshPolygonTwo.CreateConformMesh(segmentTwoOrigin,
                                                                   segmentTwoEnd,
                                                                   segmentTwoTangent,
                                                                   conformMeshTwo,
-                                                                  fractureMeshTwo,
-                                                                  fractureConformedMeshTwo));
+                                                                  fractureMeshTwo));
 
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell0D, 5);
         EXPECT_EQ(mockMeshTwo.Mesh.NumberCell1D, 8);

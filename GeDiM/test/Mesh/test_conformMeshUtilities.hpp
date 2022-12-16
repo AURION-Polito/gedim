@@ -31,7 +31,7 @@ namespace GedimUnitTesting
       Gedim::Output::CreateFolder(exportFolder);
 
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -118,12 +118,11 @@ namespace GedimUnitTesting
       std::vector<std::vector<double>> segmentsCurvilinearCoordinatesMesh(numSegments);
       std::vector<Gedim::UnionMeshSegment::UnionMesh> segmentsUnionMesh(numSegments);
       std::vector<Gedim::ConformerMeshSegment::ConformMesh> segmentsConformMesh(numSegments);
-      std::vector<Gedim::ConformerMeshPolygon::ConformMesh> segmentsConformMeshInfo(numSegments);
       Gedim::ConformMeshUtilities::ComputeDomainConformedMeshOptions options;
       options.PrintStatus = true;
       options.VtkExportFolder = exportFolder;
 
-      conformMeshUtilities.ComputeDomainConformedMesh(segmentsAdditionalPoints,
+      conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
                                                       segmentsVertices,
                                                       segmentsTangent,
                                                       segmentsBarycenter,
@@ -134,23 +133,22 @@ namespace GedimUnitTesting
                                                       segmentsCurvilinearCoordinatesMesh,
                                                       segmentsUnionMesh,
                                                       segmentsConformMesh,
-                                                      segmentsConformMeshInfo,
                                                       Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::Generalized,
                                                       options);
 
+      segmentsAdditionalPoints.clear();
       segmentsUnionMesh.clear();
       segmentsIntersectionMesh.clear();
       segmentsCurvilinearCoordinatesMesh.clear();
       segmentsConformMesh.clear();
-      segmentsConformMeshInfo.clear();
 
+      segmentsAdditionalPoints.resize(numSegments);
       segmentsUnionMesh.resize(numSegments);
       segmentsIntersectionMesh.resize(numSegments);
       segmentsCurvilinearCoordinatesMesh.resize(numSegments);
       segmentsConformMesh.resize(numSegments);
-      segmentsConformMeshInfo.resize(numSegments);
 
-      conformMeshUtilities.ComputeDomainConformedMesh(segmentsAdditionalPoints,
+      conformMeshUtilities.ComputeConformedMeshWithSegments(segmentsAdditionalPoints,
                                                       segmentsVertices,
                                                       segmentsTangent,
                                                       segmentsBarycenter,
@@ -161,9 +159,24 @@ namespace GedimUnitTesting
                                                       segmentsCurvilinearCoordinatesMesh,
                                                       segmentsUnionMesh,
                                                       segmentsConformMesh,
-                                                      segmentsConformMeshInfo,
                                                       Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration::Types::OnlyOnEdges,
                                                       options);
+
+      // check meshes 1D
+      for (unsigned int i = 0; i < numSegments; i++)
+      {
+        for (const auto& point : segmentsConformMesh[i].Points)
+          Gedim::Output::Assert(point.second.Vertex2DIds.size() == 1);
+
+        for (const auto& segment : segmentsConformMesh[i].Segments)
+          Gedim::Output::Assert(segment.Edge2DIds.size() == 1);
+      }
+
+      // check meshes 2D
+      Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+      meshUtilities.CheckMesh2D(config,
+                                geometryUtilities,
+                                meshDAO);
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,

@@ -321,6 +321,25 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.SecondSegmentIntersections[0].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin);
         ASSERT_EQ(result.SecondSegmentIntersections[1].Type, Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment);
       }
+
+      // check parallel intersection
+      {
+        Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+        geometryUtilitiesConfig.Tolerance = 1.0e-13;
+        Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+        Eigen::Vector3d segmentOneOrigin(5.5647058823529416e-01, 4.4235294117647062e-01, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentOneEnd(   5.5714285714285716e-01, 4.4285714285714284e-01, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentTwoOrigin(1.0000000000000001e-01, 1.0000000000000001e-01, 0.0000000000000000e+00);
+        Eigen::Vector3d segmentTwoEnd(   9.0000000000000002e-01, 6.9999999999999996e-01, 0.0000000000000000e+00);
+
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
+                                                                                                                         segmentOneEnd,
+                                                                                                                         segmentTwoOrigin,
+                                                                                                                         segmentTwoEnd);
+        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarParallel);
+        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections);
+      }
     }
     catch (const exception& exception)
     {

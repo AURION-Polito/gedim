@@ -1389,8 +1389,7 @@ namespace Gedim
                                                           const Eigen::Vector3d& segmentEnd,
                                                           const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
-                                                          IMeshDAO& mesh2D,
-                                                          ConformMesh& )
+                                                          IMeshDAO& mesh2D)
   {
     // check starting and end of segment if inside Cell2DMesh2D
     CheckSegmentOriginAndEndIntersections(segmentOrigin,
@@ -1486,8 +1485,7 @@ namespace Gedim
                                                           const Eigen::Vector3d& ,
                                                           const Eigen::Vector3d& segmentTangent,
                                                           ConformerMeshSegment::ConformMesh& mesh1D,
-                                                          IMeshDAO& mesh2D,
-                                                          ConformMesh& )
+                                                          IMeshDAO& mesh2D)
   {
     unsigned int numVisitedCell1DMesh1D = 0;
     while (numVisitedCell1DMesh1D < mesh1D.Segments.size())
@@ -1538,8 +1536,7 @@ namespace Gedim
                                                const Vector3d& segmentEnd,
                                                const Vector3d& segmentTangent,
                                                ConformerMeshSegment::ConformMesh& mesh1D,
-                                               Gedim::IMeshDAO& mesh2D,
-                                               ConformerMeshPolygon::ConformMesh& meshConformedInformation)
+                                               Gedim::IMeshDAO& mesh2D)
   {
     switch (configuration.Type)
     {
@@ -1548,15 +1545,13 @@ namespace Gedim
                                             segmentEnd,
                                             segmentTangent,
                                             mesh1D,
-                                            mesh2D,
-                                            meshConformedInformation);
+                                            mesh2D);
       case ConformerMeshPolygonConfiguration::Types::OnlyOnEdges:
         return CreateConformMeshOnlyOnEdges(segmentOrigin,
                                             segmentEnd,
                                             segmentTangent,
                                             mesh1D,
-                                            mesh2D,
-                                            meshConformedInformation);
+                                            mesh2D);
       default:
         throw runtime_error("Unmanaged type");
     }

@@ -78,14 +78,12 @@ namespace GedimUnitTesting
 
         // Conform the mesh 2D
         Gedim::ConformerMeshPolygon conformMeshPolygon(geometryUtilities);
-        Gedim::ConformerMeshPolygon::ConformMesh domainConformedMeshData;
 
         ASSERT_NO_THROW(conformMeshPolygon.CreateConformMesh(segmentOrigin,
                                                              segmentEnd,
                                                              segmentTangent,
                                                              conformMesh,
-                                                             domainMesh,
-                                                             domainConformedMeshData));
+                                                             domainMesh));
 
         // Clean mesh 2D
         Gedim::MeshUtilities meshUtilities;
@@ -253,15 +251,12 @@ namespace GedimUnitTesting
         segmentMesh.Segments[10].Cell2DIds.insert(4);
         segmentMesh.Segments[11].Cell2DIds.insert(4);
 
-        Gedim::ConformerMeshPolygon::ConformMesh segmentConformMeshInfos;
-
         Gedim::ConformerMeshPolygon conformerMeshDomain(geometryUtilities);
         conformerMeshDomain.CreateConformMesh(segmentOrigin,
                                               segmentEnd,
                                               segmentTangent,
                                               segmentMesh,
-                                              domainMesh,
-                                              segmentConformMeshInfos);
+                                              domainMesh);
 
         // Clean mesh 2D
         Gedim::MeshUtilities meshUtilities;
