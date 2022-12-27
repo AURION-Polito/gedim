@@ -11,7 +11,10 @@ namespace Gedim
     MapTriangleData result;
 
     result.B = B(vertices);
+    result.BInv = result.B.inverse();
     result.b = b(vertices);
+    result.DetB = result.B.determinant();
+    result.DetBInv = result.BInv.determinant();
 
     return result;
   }
@@ -26,20 +29,6 @@ namespace Gedim
       jacb.block(0, 3 * p, 3, 3) = mapData.B;
 
     return jacb;
-  }
-  // ***************************************************************************
-  VectorXd MapTriangle::DetJ(const MapTriangleData& mapData,
-                             const MatrixXd& x) const
-  {
-    const MatrixXd jacb = J(mapData,
-                            x);
-
-    const unsigned int numPoints = x.cols();
-    VectorXd detJacb(numPoints);
-    for (unsigned int p = 0; p < numPoints; p++)
-      detJacb[p] = jacb.block(0, 3 * p, 3, 3).determinant();
-
-    return detJacb;
   }
   // ***************************************************************************
 }

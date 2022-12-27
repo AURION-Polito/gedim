@@ -11,7 +11,10 @@ namespace Gedim
       struct MapTriangleData final
       {
           Eigen::Matrix3d B;
+          Eigen::Matrix3d BInv;
           Eigen::Vector3d b;
+          double DetB;
+          double DetBInv;
       };
 
     private:
@@ -45,29 +48,40 @@ namespace Gedim
       MapTriangleData Compute(const Eigen::Matrix3d& vertices) const;
 
       /// Map from the triangle reference element [0,1]x[0,1] to the polygon x = F(x_r) = B * x_r + b
-      /// vertices the triangle to map vertices, size 3 x 3
-      /// x points in reference triangle, size 3 x numPoints
-      /// \return the mapped points, size 3 x numPoints
+      /// \param mapData the map data
+      /// \param x points in reference triangle, size 3 x numPoints
+      /// \return the mapped polygon points, size 3 x numPoints
       inline Eigen::MatrixXd F(const MapTriangleData& mapData,
                                const Eigen::MatrixXd& x) const
       { return (mapData.B * x).colwise() + mapData.b; }
+      /// Map from the polygon x to the triangle reference element [0,1]x[0,1] x_r = F^-1(x_r) = B^-1 * (x - b)
+      /// \param mapData the map data
+      /// \param x points in polygon, size 3 x numPoints
+      /// \return the mapped reference points, size 3 x numPoints
+      inline Eigen::MatrixXd FInv(const MapTriangleData& mapData,
+                                  const Eigen::MatrixXd& x) const
+      { return mapData.BInv * (x.colwise() - mapData.b); }
       /// Compute the jacobian matrix of the transformation F
-      /// x matrix of points between 0.0 and 1.0, size 2 x numPoints
-      /// \return the B matrix for each points, size 2 x (2 * numPoints)
+      /// \param mapData the map data
+      /// \param x points in reference triangle, size 3 x numPoints
+      /// \return the B matrix for each points, size 3 x (3 * numPoints)
       Eigen::MatrixXd J(const MapTriangleData& mapData,
                         const Eigen::MatrixXd& x) const;
       /// Compute the determinant of the jacobian matrix of the trasformation
-      /// x matrix of points between 0.0 and 1.0, size 2 x numPoints
+      /// \param mapData the map data
+      /// \param x points in reference triangle, size 3 x numPoints
       /// \return the determinant of Jacobian matrix for each points, size 1 x numPoints
-      Eigen::VectorXd DetJ(const MapTriangleData& mapData,
-                           const Eigen::MatrixXd& x) const;
+      inline Eigen::VectorXd DetJ(const MapTriangleData& mapData,
+                                  const Eigen::MatrixXd& x) const
+      { return Eigen::VectorXd::Constant(x.cols(), mapData.DetB); }
 
       /// Compute the determinant of the jacobian matrix of the trasformation
-      /// \param mapData the map data computed
+      /// \param mapData the map data
+      /// \param x points in reference triangle, size 3 x numPoints
       /// \return the determinant of Jacobian matrix
       inline double DetJ(const MapTriangleData& mapData) const
       {
-        return mapData.B.determinant();
+        return mapData.DetB;
       };
   };
 }

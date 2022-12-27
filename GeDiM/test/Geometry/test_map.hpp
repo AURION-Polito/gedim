@@ -126,8 +126,8 @@ namespace GedimUnitTesting
     points.row(0)<< 3.333333333333330e-01, 4.701420641051151e-01, 4.701420641051151e-01, 5.971587178976985e-02, 1.012865073234563e-01, 1.012865073234563e-01, 7.974269853530873e-01;
     points.row(1)<< 3.333333333333330e-01, 4.701420641051151e-01, 5.971587178976985e-02, 4.701420641051151e-01, 1.012865073234563e-01, 7.974269853530873e-01, 1.012865073234563e-01;
 
-    Eigen::MatrixXd mappedPoints = mapping.F(mapData,
-                                             points);
+    const Eigen::MatrixXd mappedPoints = mapping.F(mapData,
+                                                   points);
 
     Eigen::MatrixXd expectedPoints;
     expectedPoints.setZero(3, 7);
@@ -135,6 +135,11 @@ namespace GedimUnitTesting
     expectedPoints.row(1)<< 6.666666666666639e-01, 1.761136512840920e+00, -1.111846833366496e+00, 1.350710320525575e+00, -1.189707941412349e+00, 3.683275404795067e+00, -4.935674633827185e-01;
 
     ASSERT_TRUE((expectedPoints - mappedPoints).norm() < 1e-14);
+
+    const Eigen::MatrixXd originalPoints = mapping.FInv(mapData,
+                                                        mappedPoints);
+
+    ASSERT_TRUE((points - originalPoints).norm() < 1e-14);
 
     Eigen::VectorXd weights(7);
     weights<< 1.125000000000000e-01, 6.619707639425310e-02, 6.619707639425310e-02, 6.619707639425310e-02, 6.296959027241358e-02, 6.296959027241358e-02, 6.296959027241358e-02;
