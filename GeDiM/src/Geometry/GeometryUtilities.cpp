@@ -92,24 +92,9 @@ namespace Gedim
     return Q;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points) const
+  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points,
+                                                     const bool& includeCollinear) const
   {
-    // pseudocode
-    // // S is the set of points
-    // // P will be the set of points which form the convex hull. Final set size is i.
-    // pointOnHull = leftmost point in S // which is guaranteed to be part of the CH(S)
-    // i := 0
-    // repeat
-    //     P[i] := pointOnHull
-    //     endpoint := S[0]      // initial endpoint for a candidate edge on the hull
-    //     for j from 0 to |S| do
-    //         // endpoint == pointOnHull is a rare case and can happen only when j == 1 and a better endpoint has not yet been set for the loop
-    //         if (endpoint == pointOnHull) or (S[j] is on right of line from P[i] to endpoint) then
-    //             endpoint := S[j]   // found greater right turn, update endpoint
-    //     i := i + 1
-    //     pointOnHull = endpoint
-    // until endpoint = P[0]      // wrapped around to first hull point
-
     Output::Assert(points.rows() == 3 && PointsAre2D(points));
 
     list<unsigned int> convexHull;
@@ -118,86 +103,204 @@ namespace Gedim
     if (numPoints == 1)
       return vector<unsigned int> { 0 };
 
-    unsigned int leftMost = 0;
-    for (unsigned int p = 1; p < numPoints; p++)
+    struct pt
     {
-      if (points(0, p) < points(0, leftMost))
-        leftMost = p;
-    }
+        double x;
+        double y;
+        unsigned int id;
+    };
 
-    if (numPoints == 2)
-      return vector<unsigned int> { leftMost, (leftMost + 1) % 2 };
-
-    list<unsigned int> elements;
+    vector<pt> structPoints(numPoints);
     for (unsigned int p = 0; p < numPoints; p++)
-    {
-      if (p == leftMost)
-        continue;
+      structPoints[p] = { points.col(p).x(), points.col(p).y(), p };
 
-      elements.push_back(p);
+    cerr<< "begin structPoints "<< structPoints.size()<< endl;
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      cerr<< "x "<< structPoints[p].x<< " y "<< structPoints[p].y<< " index "<< structPoints[p].id<< endl;
+
+    pt p0 = *min_element(structPoints.begin(),
+                         structPoints.end(), [](pt a, pt b)
+    { return make_pair(a.y, a.x) < make_pair(b.y, b.x); });
+
+    sort(structPoints.begin(),
+         structPoints.end(),
+         [&p0, this](const pt& a, const pt& b)
+    {
+      const double orientation = p0.x * (a.y - b.y) +
+                                 a.x * (b.y - p0.y) +
+                                 b.x * (p0.y - a.y); // < 0 clockwise, > 0 counter-clockwise
+
+      if (IsValue1DZero(orientation))
+        return IsValue1DGreater((p0.x-b.x) * (p0.x-b.x) +
+                                (p0.y-b.y) * (p0.y-b.y),
+                                (p0.x-a.x) * (p0.x-a.x) +
+                                (p0.y-a.y) * (p0.y-a.y));
+      return IsValue1DNegative(orientation);
+    });
+
+    cerr<< "after sort "<< structPoints.size()<< endl;
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      cerr<< "x "<< structPoints[p].x<< " y "<< structPoints[p].y<< " index "<< structPoints[p].id<< endl;
+
+    if (includeCollinear)
+    {
+      int i = (int)structPoints.size() - 1;
+
+      while (i >= 0 &&
+             IsValue1DZero(p0.x * (structPoints[i].y - structPoints.back().y) +
+                           structPoints[i].x * (structPoints.back().y - p0.y) +
+                           structPoints.back().x * (p0.y - structPoints[i].y)))
+        i--;
+      reverse(structPoints.begin() + i + 1,
+              structPoints.end());
     }
 
-    unsigned int pointOnHull = leftMost;
-    list<unsigned int>::iterator itSelected = elements.begin();
-    do
+    cerr<< "after includeCollinear "<< structPoints.size()<< endl;
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      cerr<< "x "<< structPoints[p].x<< " y "<< structPoints[p].y<< " index "<< structPoints[p].id<< endl;
+
+
+    vector<pt> st;
+    for (int i = 0; i < (int)structPoints.size(); i++)
     {
-      convexHull.push_back(pointOnHull);
-
-      itSelected = elements.begin();
-      for (list<unsigned int>::iterator it = elements.begin();
-           it != elements.end();
-           it++)
+      while (st.size() > 1)
       {
-        if (it == itSelected)
-          continue;
+        double orientation = st[st.size()-2].x * (st.back().y - structPoints[i].y) +
+                             st.back().x * (structPoints[i].y - st[st.size()-2].y) +
+            structPoints[i].x*(st[st.size()-2].y - st.back().y); // < 0 clockwise, > 0 counter-clockwise
 
-        const  GeometryUtilities::PointSegmentPositionTypes pointPosition =  PointSegmentPosition(points.col(*it),
-                                                                                                  points.col(pointOnHull),
-                                                                                                  points.col(*itSelected));
+        if (IsValue1DNegative(orientation) || (includeCollinear && IsValue1DZero(orientation)))
+          break;
 
-        Output::Assert(pointPosition != GeometryUtilities::PointSegmentPositionTypes::Unknown);
-        if (pointPosition == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
-        {
-          itSelected = it;
-        }
+        st.pop_back();
       }
 
-      if (itSelected != elements.end())
-      {
-        if (convexHull.size() == 1)
-        {
-          pointOnHull = *itSelected;
-          elements.erase(itSelected);
-        }
-        else
-        {
-          // check position of selected point
-          const  GeometryUtilities::PointSegmentPositionTypes pointPosition =  PointSegmentPosition(points.col(*itSelected),
-                                                                                                    points.col(convexHull.front()),
-                                                                                                    points.col(convexHull.back()));
-
-          Output::Assert(pointPosition != GeometryUtilities::PointSegmentPositionTypes::Unknown);
-
-          if (pointPosition == GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment ||
-              pointPosition == GeometryUtilities::PointSegmentPositionTypes::InsideSegment ||
-              pointPosition == GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd)
-          {
-            pointOnHull = *itSelected;
-            elements.erase(itSelected);
-          }
-          else
-          {
-            // point is inside the convex hull, nothing to do more
-            break;
-          }
-        }
-      }
+      st.push_back(structPoints[i]);
     }
-    while (itSelected != elements.end());
 
-    return vector<unsigned int>(convexHull.begin(), convexHull.end());
+    structPoints = st;
+
+    cerr<< "after st "<< structPoints.size()<< endl;
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      cerr<< "x "<< structPoints[p].x<< " y "<< structPoints[p].y<< " index "<< structPoints[p].id<< endl;
+
+    vector<unsigned int> result(structPoints.size());
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      result[result.size() - 1 - p] = structPoints[p].id;
+
+    return result;
   }
   // ***************************************************************************
+  //  vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points) const
+  //  {
+  //    // pseudocode
+  //    // // S is the set of points
+  //    // // P will be the set of points which form the convex hull. Final set size is i.
+  //    // pointOnHull = leftmost point in S // which is guaranteed to be part of the CH(S)
+  //    // i := 0
+  //    // repeat
+  //    //     P[i] := pointOnHull
+  //    //     endpoint := S[0]      // initial endpoint for a candidate edge on the hull
+  //    //     for j from 0 to |S| do
+  //    //         // endpoint == pointOnHull is a rare case and can happen only when j == 1 and a better endpoint has not yet been set for the loop
+  //    //         if (endpoint == pointOnHull) or (S[j] is on right of line from P[i] to endpoint) then
+  //    //             endpoint := S[j]   // found greater right turn, update endpoint
+  //    //     i := i + 1
+  //    //     pointOnHull = endpoint
+  //    // until endpoint = P[0]      // wrapped around to first hull point
+
+  //    Output::Assert(points.rows() == 3 && PointsAre2D(points));
+
+  //    list<unsigned int> convexHull;
+  //    const unsigned int numPoints = points.cols();
+
+  //    if (numPoints == 1)
+  //      return vector<unsigned int> { 0 };
+
+  //    unsigned int leftMost = 0;
+  //    for (unsigned int p = 1; p < numPoints; p++)
+  //    {
+  //      if (points(0, p) < points(0, leftMost))
+  //        leftMost = p;
+  //    }
+
+  //    if (numPoints == 2)
+  //      return vector<unsigned int> { leftMost, (leftMost + 1) % 2 };
+
+  //    list<unsigned int> elements;
+  //    for (unsigned int p = 0; p < numPoints; p++)
+  //    {
+  //      if (p == leftMost)
+  //        continue;
+
+  //      elements.push_back(p);
+  //    }
+
+  //    unsigned int pointOnHull = leftMost;
+  //    list<unsigned int>::iterator itSelected = elements.begin();
+  //    do
+  //    {
+  //      convexHull.push_back(pointOnHull);
+
+  //      itSelected = elements.begin();
+  //      for (list<unsigned int>::iterator it = elements.begin();
+  //           it != elements.end();
+  //           it++)
+  //      {
+  //        if (it == itSelected)
+  //          continue;
+
+  //        const  GeometryUtilities::PointSegmentPositionTypes pointPosition =  PointSegmentPosition(points.col(*it),
+  //                                                                                                  points.col(pointOnHull),
+  //                                                                                                  points.col(*itSelected));
+
+  //        Output::Assert(pointPosition != GeometryUtilities::PointSegmentPositionTypes::Unknown);
+  //        if (pointPosition == GeometryUtilities::PointSegmentPositionTypes::RightTheSegment)
+  //        {
+  //          itSelected = it;
+  //        }
+  //      }
+
+  //      if (itSelected != elements.end())
+  //      {
+  //        if (convexHull.size() == 1)
+  //        {
+  //          cerr<< "Selected point "<< *itSelected<< endl;
+  //          pointOnHull = *itSelected;
+  //          elements.erase(itSelected);
+  //        }
+  //        else
+  //        {
+  //          // check position of selected point
+  //          const  GeometryUtilities::PointSegmentPositionTypes pointPosition =  PointSegmentPosition(points.col(*itSelected),
+  //                                                                                                    points.col(convexHull.front()),
+  //                                                                                                    points.col(convexHull.back()));
+
+  //          Output::Assert(pointPosition != GeometryUtilities::PointSegmentPositionTypes::Unknown);
+
+  //          if (pointPosition == GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment ||
+  //              pointPosition == GeometryUtilities::PointSegmentPositionTypes::InsideSegment ||
+  //              pointPosition == GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd)
+  //          {
+  //            cerr<< "Selected point "<< *itSelected<< " ";
+  //            cerr<< "from "<< convexHull.front()<< " to "<< convexHull.back()<< " ";
+  //            cerr<< "position "<< static_cast<unsigned int>(pointPosition)<< endl;
+  //            pointOnHull = *itSelected;
+  //            elements.erase(itSelected);
+  //          }
+  //          else
+  //          {
+  //            // point is inside the convex hull, nothing to do more
+  //            break;
+  //          }
+  //        }
+  //      }
+  //    }
+  //    while (itSelected != elements.end());
+
+  //    return vector<unsigned int>(convexHull.begin(), convexHull.end());
+  //  }
+  //  // ***************************************************************************
   MatrixXd GeometryUtilities::ExtractPoints(const Eigen::MatrixXd& points,
                                             const vector<unsigned int>& filter) const
   {

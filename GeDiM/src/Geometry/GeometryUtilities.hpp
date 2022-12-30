@@ -1547,8 +1547,10 @@ namespace Gedim
       /// \brief Compute the Convex Hull of 2D points
       /// \param points the points, size 3 x numPoints
       /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
+      /// \note works in 2D, use the Graham_scan algorithm https://en.wikipedia.org/wiki/Graham_scan
       /// \note works in 2D, use the Gift wrapping algorithm (see https://en.wikipedia.org/wiki/Gift_wrapping_algorithm)
-      std::vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points) const;
+      std::vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points,
+                                           const bool& includeCollinear = true) const;
 
       /// \brief Check if a set of points are aligned to a line identified by a segment
       /// \param segmentOrigin segment origin of the line

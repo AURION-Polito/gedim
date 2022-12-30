@@ -204,17 +204,32 @@ namespace GedimUnitTesting {
         points.col(2)<< 0.0, 1.0, 0.0;
         points.col(3)<< 1.0, 0.0, 0.0;
 
-        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
-        ASSERT_EQ(convexHull, vector<unsigned int>({ 1, 3, 0, 2 }));
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullSimple";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true), vector<unsigned int>({ 3, 0, 2, 1 }));
+
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
+                                                                             false);
+        ASSERT_EQ(convexHull, vector<unsigned int>({ 3, 0, 2, 1 }));
 
         Eigen::MatrixXd result(3, 4);
-        result.col(0)<< 0.0, 0.0, 0.0;
-        result.col(1)<< 1.0, 0.0, 0.0;
-        result.col(2)<< 1.0, 1.0, 0.0;
-        result.col(3)<< 0.0, 1.0, 0.0;
+        result.col(0)<< 1.0, 0.0, 0.0;
+        result.col(1)<< 1.0, 1.0, 0.0;
+        result.col(2)<< 0.0, 1.0, 0.0;
+        result.col(3)<< 0.0, 0.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
-                                                  convexHull), result);
+                                                  convexHull),
+                  result);
       }
     }
     catch (const exception& exception)
@@ -238,8 +253,24 @@ namespace GedimUnitTesting {
         points.row(1)<< 5.6250000000000000e-01, 4.6875000000000000e-01, 3.7500000000000000e-01, 5.0000000000000000e-01;
         points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
-        ASSERT_EQ(convexHull, vector<unsigned int>({ 2, 3, 0, 1 }));
+
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullAlignedPointsTriangle";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 3, 0, 1, 2 }));
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               false),
+                  vector<unsigned int>({ 3, 0, 2 }));
       }
     }
     catch (const exception& exception)
@@ -248,6 +279,48 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestConvexHullAlignedPointsComplex)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-8;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check convex hull with aligned points
+      {
+        Eigen::MatrixXd points(3, 18);
+        points.row(0)<<  1.2650197256191551e+00,  1.3782588006692693e+00,  1.1184005223219973e+00, -1.3721111050731167e+00, -9.4149702132107227e-01,  8.9851956878071104e-01,  6.2474052134467728e-01,  3.5034522993506145e-01, -8.0268853816983121e-02,  1.3219401586714059e+00,  1.1991445662442497e+00,  9.0633765187383031e-01,  5.1623832622660615e-01, -1.1797432590280781e+00, -8.5212137603137417e-01, -5.1088293756902770e-01, -4.2680644441357352e-01,  4.7440403040444640e-02;
+        points.row(1)<< -1.6608770940506723e-01, -3.1496800230770616e-01,  2.6678876884798780e-02, -3.4075398667518408e-01,  3.5530787956298826e-03,  3.1576584401563135e-01,  6.7571495835486162e-01,  1.0364742752080718e+00,  6.9216720973725776e-01, -5.0127316971953617e-01, -7.4890217875693998e-01, -1.0850595490090997e+00, -1.3161657776692475e+00, -7.7910540801792716e-01, -1.1281340298707281e+00,  3.4786014426644385e-01, -1.3478248875774901e+00, -1.4129911964895994e+00;
+        points.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullAlignedPointsComplex";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 12, 11, 10, 9, 1, 0, 2, 5, 6, 7, 8, 15, 4, 3, 13, 14, 16, 17 }));
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               false),
+                  vector<unsigned int>({ 12, 11, 10, 9, 1, 7, 3, 13, 14, 16, 17 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
 
   TEST(TestGeometryUtilities, TestConvexHullAlignedPointsSquare)
   {
@@ -263,8 +336,22 @@ namespace GedimUnitTesting {
         points.row(1)<< 1.0000000000000000e+00, 7.5000000000000000e-01, 3.7500000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00;
         points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
 
-        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
-        ASSERT_EQ(convexHull, vector<unsigned int>({ 0, 1, 2, 3, 4 }));
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullAlignedPointsSquare";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 4, 0, 1, 2, 3 }));
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               false),
+                  vector<unsigned int>({ 4, 0, 1, 3 }));
       }
     }
     catch (const exception& exception)
@@ -293,23 +380,18 @@ namespace GedimUnitTesting {
           const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullAlignedPointsSquareTwo";
           Gedim::Output::CreateFolder(exportFolder);
 
-          const vector<double> pointIds = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 };
           Gedim::VTKUtilities exporter;
-          exporter.AddPoints(points,
-                             {
-                               {
-                                 "Id",
-                                 Gedim::VTPProperty::Formats::Cells,
-                                 static_cast<unsigned int>(pointIds.size()),
-                                 pointIds.data()
-                               }
-                             });
+          exporter.AddPoints(points);
           exporter.Export(exportFolder +
                           "/Points.vtu");
         }
 
-        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
-        ASSERT_EQ(convexHull, vector<unsigned int>({ 1, 2, 3, 4, 0 }));
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 4, 0, 1, 2, 3  }));
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               false),
+                  vector<unsigned int>({ 4, 0, 1, 3  }));
       }
     }
     catch (const exception& exception)
@@ -342,22 +424,18 @@ namespace GedimUnitTesting {
           const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullComplex";
           Gedim::Output::CreateFolder(exportFolder);
 
-          const vector<double> pointIds = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 };
           Gedim::VTKUtilities exporter;
-          exporter.AddPoints(points,
-                             {
-                               {
-                                 "Id",
-                                 Gedim::VTPProperty::Formats::Cells,
-                                 static_cast<unsigned int>(pointIds.size()),
-                                 pointIds.data()
-                               }
-                             });
+          exporter.AddPoints(points);
           exporter.Export(exportFolder +
                           "/Points.vtu");
         }
 
-        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points);
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 6, 0, 5, 3, 1 }));
+
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
+                                                                       false);
         ASSERT_EQ(convexHull, vector<unsigned int>({ 6, 0, 5, 3, 1 }));
 
         Eigen::MatrixXd result(3, 5);
