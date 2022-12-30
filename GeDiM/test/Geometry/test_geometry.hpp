@@ -432,18 +432,18 @@ namespace GedimUnitTesting {
 
         ASSERT_EQ(geometryUtilities.ConvexHull(points,
                                                true),
-                  vector<unsigned int>({ 6, 0, 5, 3, 1 }));
+                  vector<unsigned int>({ 5, 3, 1, 6, 0 }));
 
         vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
                                                                        false);
-        ASSERT_EQ(convexHull, vector<unsigned int>({ 6, 0, 5, 3, 1 }));
+        ASSERT_EQ(convexHull, vector<unsigned int>({ 5, 3, 1, 6, 0 }));
 
         Eigen::MatrixXd result(3, 5);
-        result.col(0)<< 0.0, 30.0, 0.0;
-        result.col(1)<< 20.0, 0.0, 0.0;
-        result.col(2)<< 50.0, 10.0, 0.0;
-        result.col(3)<< 70.0, 30.0, 0.0;
-        result.col(4)<< 30.0, 60.0, 0.0;
+        result.col(0)<< 50.0, 10.0, 0.0;
+        result.col(1)<< 70.0, 30.0, 0.0;
+        result.col(2)<< 30.0, 60.0, 0.0;
+        result.col(3)<< 0.0, 30.0, 0.0;
+        result.col(4)<< 20.0, 0.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                   convexHull), result);
