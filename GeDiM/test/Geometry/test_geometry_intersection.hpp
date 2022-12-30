@@ -6,6 +6,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include "GeometryUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 using namespace testing;
 using namespace std;
@@ -691,6 +692,48 @@ namespace GedimUnitTesting {
 
         Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(v1,v2,v3,v4);
 
+        const string exportFolder = "./Export/TestIntersectionPolyhedronPlane/TriangularIntersectionWithReferenceTetra";
+        Gedim::Output::CreateFolder(exportFolder);
+
+        {
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(polyhedron.Vertices);
+          exporter.Export(exportFolder +
+                          "/Vertices.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+          exporter.AddSegments(polyhedron.Vertices,
+                               polyhedron.Edges);
+          exporter.Export(exportFolder +
+                          "/Edges.vtu");
+        }
+
+        {
+          vector<vector<unsigned int>> faces(polyhedron.Faces.size());
+          for (unsigned int f = 0; f < faces.size(); f++)
+          {
+            faces[f].resize(polyhedron.Faces[f].cols());
+            for (unsigned int v = 0; v < polyhedron.Faces[f].cols(); v++)
+              faces[f][v] = polyhedron.Faces[f](0, v);
+          }
+          Gedim::VTKUtilities exporter;
+          exporter.AddPolygons(polyhedron.Vertices,
+                               faces);
+          exporter.Export(exportFolder +
+                          "/Faces.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+          exporter.AddPolyhedron(polyhedron.Vertices,
+                                 polyhedron.Edges,
+                                 polyhedron.Faces);
+          exporter.Export(exportFolder +
+                          "/Polyhedron.vtu");
+        }
+
         Eigen::Vector3d planeNormal(0.0, 0.0, 1.0);
         Eigen::Vector3d planeOrigin(0.0, 0.0, 0.25);
         Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal).transpose();
@@ -708,15 +751,15 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.Intersections.size(), 3);
         ASSERT_EQ(result.IntersectionCoordinates.rows(), 3);
         ASSERT_EQ(result.IntersectionCoordinates.cols(), 3);
-        ASSERT_EQ(result.Intersections.at(0).EdgeId, 3);
+        ASSERT_EQ(result.Intersections.at(0).EdgeId, 4);
         ASSERT_EQ(result.Intersections.at(0).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
-        ASSERT_EQ(result.Intersections.at(1).EdgeId, 4);
+        ASSERT_EQ(result.Intersections.at(1).EdgeId, 5);
         ASSERT_EQ(result.Intersections.at(1).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
-        ASSERT_EQ(result.Intersections.at(2).EdgeId, 5);
+        ASSERT_EQ(result.Intersections.at(2).EdgeId, 3);
         ASSERT_EQ(result.Intersections.at(2).Type, Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge);
-        ASSERT_EQ(result.IntersectionCoordinates.col(0), Eigen::Vector3d(0.0, 0.0, 0.25));
-        ASSERT_EQ(result.IntersectionCoordinates.col(1), Eigen::Vector3d(0.75, 0.0, 0.25));
-        ASSERT_EQ(result.IntersectionCoordinates.col(2), Eigen::Vector3d(0.0, 0.75, 0.25));
+        ASSERT_EQ(result.IntersectionCoordinates.col(0), Eigen::Vector3d(0.75, 0.0, 0.25));
+        ASSERT_EQ(result.IntersectionCoordinates.col(1), Eigen::Vector3d(0.0, 0.75, 0.25));
+        ASSERT_EQ(result.IntersectionCoordinates.col(2), Eigen::Vector3d(0.0, 0.0, 0.25));
       }
 
       // test intersection with generic tetrahedron and generic plane
