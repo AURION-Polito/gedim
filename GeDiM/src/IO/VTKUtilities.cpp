@@ -102,6 +102,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
+    Utilities::Unused(edge);
     Utilities::Unused(properties);
 #endif
   }
@@ -118,6 +119,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
+    Utilities::Unused(edges);
     Utilities::Unused(properties);
 #endif
   }
@@ -152,6 +154,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
+    Utilities::Unused(polygon);
     Utilities::Unused(properties);
 #endif
   }
@@ -168,6 +171,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
+    Utilities::Unused(polygons);
     Utilities::Unused(properties);
 #endif
   }
@@ -213,8 +217,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
-    Utilities::Unused(edges);
-    Utilities::Unused(faces);
+    Utilities::Unused(polyhedronFaces);
     Utilities::Unused(properties);
 #endif
   }
@@ -230,8 +233,7 @@ namespace Gedim
     AddToExportData(polyData);
 #else
     Utilities::Unused(vertices);
-    Utilities::Unused(edges);
-    Utilities::Unused(faces);
+    Utilities::Unused(polyhedronsFaces);
     Utilities::Unused(properties);
 #endif
   }
