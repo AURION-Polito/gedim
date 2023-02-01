@@ -37,7 +37,11 @@ namespace Gedim
       inline void SetSize(const unsigned int& numCols) { _vector.setZero(numCols); }
       inline void SetSizes(const unsigned int& numCols,
                            const unsigned int& = 0) { return SetSize(numCols); }
+
       inline unsigned int Size() const { return _vector.size(); }
+      inline const double* Data() const { return _vector.data(); }
+      inline double* Data() { return _vector.data(); }
+
       inline void SetValue(const int& i,
                            const double& val)
       { _vector[i] = val; }

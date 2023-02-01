@@ -25,6 +25,10 @@ namespace Gedim
                             const unsigned int& numLocalCols) = 0;
       /// \return the size of the array
       virtual unsigned int Size() const = 0;
+      /// \return the const pointer of the array
+      virtual const double* Data() const = 0;
+      /// \return the pointer of the array
+      virtual double* Data() = 0;
       /// \brief Put zero-values in the Array
       virtual void Zeros() = 0;
       /// \brief Put one-values in the Array
