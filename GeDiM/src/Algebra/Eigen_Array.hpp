@@ -129,6 +129,9 @@ namespace Gedim
       inline double Norm() const
       { return _vector.norm(); }
 
+      inline double Dot(const IArray& v) const
+      { return _vector.dot(Cast(v)); }
+
       inline void Copy(const IArray& v)
       { _vector = Cast(v); }
   };

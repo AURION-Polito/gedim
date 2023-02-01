@@ -77,6 +77,8 @@ namespace Gedim
 
       /// \return the \em l2 norm of array
       virtual double Norm() const = 0;
+      /// \return the dot product
+      virtual double Dot(const IArray& v) const = 0;
 
       /// \brief Copy the content of vector v inside this
       virtual void Copy(const IArray& v) = 0;
