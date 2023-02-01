@@ -30,7 +30,7 @@ namespace Gedim
       operator const Eigen_ArrayType&() const { return _vector; }
       inline Eigen_ArrayType& Cast(IArray& v)
       { return (Eigen_ArrayType&)static_cast<Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
-      inline const Eigen_ArrayType& Cast(const IArray& v)
+      inline const Eigen_ArrayType& Cast(const IArray& v) const
       { return (const Eigen_ArrayType&)static_cast<const Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
 
       inline void Create() {  }
