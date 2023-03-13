@@ -633,6 +633,7 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
     meshUtilities.ExportMeshToVTU(meshDAO,
                                   exportFolder,
@@ -655,9 +656,17 @@ namespace GedimUnitTesting
                                                                                   meshDAO);
 
       EXPECT_EQ(std::vector<unsigned int>({ 4, 5 }), newCell1DsIndex);
-      EXPECT_EQ(false, meshDAO.Cell1DIsActive(3));
-      EXPECT_EQ(true, meshDAO.Cell1DIsActive(4));
-      EXPECT_EQ(true, meshDAO.Cell1DIsActive(5));
+      EXPECT_FALSE(meshDAO.Cell1DIsActive(3));
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(4));
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(5));
+      EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(4));
+      EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(5));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(4));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(5));
+      std::list<unsigned int> updatedCell1Ds;
+      EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3,
+                                               updatedCell1Ds));
+      EXPECT_EQ(std::list<unsigned int>({4, 5}), updatedCell1Ds);
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,
