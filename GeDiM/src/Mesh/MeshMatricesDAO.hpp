@@ -563,7 +563,9 @@ namespace Gedim
       void Cell2DAddVertices(const unsigned int& cell2DIndex,
                              const std::vector<unsigned int>& verticesCell0DIndices);
       void Cell2DAddEdges(const unsigned int& cell2DIndex,
-                          const std::vector<unsigned int>& edgesCell0DIndices);
+                          const std::vector<unsigned int>& edgesCell1DIndices);
+      void Cell2DAddVerticesAndEdges(const unsigned int& cell2DIndex,
+                                     const Eigen::MatrixXi& verticesAndEdgesIndices);
 
       inline unsigned int Cell2DTotalNumber() const
       { return _mesh.NumberCell2D; }

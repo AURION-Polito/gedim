@@ -500,10 +500,18 @@ namespace Gedim
                                     const unsigned int& edgeCell1DIndex) = 0;
       /// \brief Add the Cell2D edges
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
-      /// \param edgesCell0DIndices the Cell1D edges indices from 0 to Cell1DTotalNumber()
+      /// \param edgesCell1DIndices the Cell1D edges indices from 0 to Cell1DTotalNumber()
       /// \note No itialization is necessary
       virtual void Cell2DAddEdges(const unsigned int& cell2DIndex,
-                                  const std::vector<unsigned int>& edgesCell0DIndices) = 0;
+                                  const std::vector<unsigned int>& edgesCell1DIndices) = 0;
+
+      /// \brief Cell2D Add Vertices And Edges
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param verticesAndEdgesIndices the matrix of Cell0Ds and Cell1Ds indices
+      /// \note No itialization is necessary
+      virtual void Cell2DAddVerticesAndEdges(const unsigned int& cell2DIndex,
+                                             const Eigen::MatrixXi& verticesAndEdgesIndices) = 0;
+
       /// \brief Set the Cell2D Marker
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param marker the marker of the Cell2D

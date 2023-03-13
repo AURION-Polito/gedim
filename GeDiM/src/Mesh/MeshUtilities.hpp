@@ -321,6 +321,24 @@ namespace Gedim
                                                const std::vector<unsigned int>& numberOfAddedVerticesForEachRectangle,
                                                const GeometryUtilities& geometryUtilities,
                                                IMeshDAO& mesh) const;
+
+      /// \brief Split cell2D into subcells
+      /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
+      /// \param subCell1Ds the list of sub-cells 1D mesh vertices indices, size 2 x numSubCells)
+      /// \param mesh the mesh to update
+      /// \return the list of new cell1Ds indices, from 0 to Cell1DTotalNumber()
+      std::vector<unsigned int> SplitCell1D(const unsigned int& cell1DIndex,
+                                            const Eigen::MatrixXi subCell1Ds,
+                                            IMeshDAO& mesh) const;
+
+      /// \brief Split cell2D into subcells
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param subCell2Ds the list of sub-cells 2D mesh vertices and edges indices, size numSubCells x (2 x numVertices)
+      /// \param mesh the mesh to update
+      /// \return the list of new cell2Ds indices, from 0 to Cell2DTotalNumber()
+      std::vector<unsigned int> SplitCell2D(const unsigned int& cell2DIndex,
+                                            const std::vector<Eigen::MatrixXi> subCell2Ds,
+                                            IMeshDAO& mesh) const;
   };
 
 }

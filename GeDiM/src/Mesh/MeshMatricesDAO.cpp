@@ -708,14 +708,33 @@ namespace Gedim
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DAddEdges(const unsigned int& cell2DIndex,
-                                       const vector<unsigned int>& edgesCell0DIndices)
+                                       const vector<unsigned int>& edgesCell1DIndices)
   {
     Cell2DInitializeEdges(cell2DIndex,
-                          edgesCell0DIndices.size());
-    for (unsigned int e = 0; e < edgesCell0DIndices.size(); e++)
+                          edgesCell1DIndices.size());
+    for (unsigned int e = 0; e < edgesCell1DIndices.size(); e++)
       Cell2DInsertEdge(cell2DIndex,
                        e,
-                       edgesCell0DIndices[e]);
+                       edgesCell1DIndices[e]);
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell2DAddVerticesAndEdges(const unsigned int& cell2DIndex,
+                                                  const Eigen::MatrixXi& verticesAndEdgesIndices)
+  {
+    Cell2DInitializeVertices(cell2DIndex,
+                             verticesAndEdgesIndices.cols());
+    Cell2DInitializeEdges(cell2DIndex,
+                          verticesAndEdgesIndices.cols());
+
+    for (unsigned int v = 0; v < verticesAndEdgesIndices.cols(); v++)
+    {
+      Cell2DInsertVertex(cell2DIndex,
+                         v,
+                         verticesAndEdgesIndices(0, v));
+      Cell2DInsertEdge(cell2DIndex,
+                       v,
+                       verticesAndEdgesIndices(1, v));
+    }
   }
   // ***************************************************************************
   vector<unsigned int> MeshMatricesDAO::Cell2DVertices(const unsigned int& cell2DIndex) const

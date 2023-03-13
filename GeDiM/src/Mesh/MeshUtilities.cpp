@@ -1393,12 +1393,12 @@ namespace Gedim
 
       const unsigned int numCell1Ds = ceil((numHeightPoints * 0.5)) *
                                       (numBasePoints - 1) * (numberOfAddedVerticesForEachRectangle[0] + 1)
-                                      + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
-                                      * ( numberOfAddedVerticesForEachRectangle[1] + 1)
-                                      + (numHeightPoints / 2) * (numBasePoints - 1) *
-                                      (numberOfAddedVerticesForEachRectangle[2] + 1)
-                                      + (numBasePoints / 2) * (numHeightPoints - 1) *
-                                      (numberOfAddedVerticesForEachRectangle[3] + 1);
+          + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
+          * ( numberOfAddedVerticesForEachRectangle[1] + 1)
+          + (numHeightPoints / 2) * (numBasePoints - 1) *
+          (numberOfAddedVerticesForEachRectangle[2] + 1)
+          + (numBasePoints / 2) * (numHeightPoints - 1) *
+          (numberOfAddedVerticesForEachRectangle[3] + 1);
 
       const unsigned int numCell2Ds = (numBasePoints - 1) * (numHeightPoints - 1);
 
@@ -1443,9 +1443,9 @@ namespace Gedim
         {
 
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[0],
-                                                                                         baseMeshCurvilinearCoordinates[b],
-                                                                                         baseMeshCurvilinearCoordinates[b+1],
-                                                                                         false);
+              baseMeshCurvilinearCoordinates[b],
+              baseMeshCurvilinearCoordinates[b+1],
+              false);
           for (unsigned int s = 0; s < numberOfAddedVerticesForEachRectangle[0]; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1473,9 +1473,9 @@ namespace Gedim
         {
 
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[1],
-                                                                                         heightMeshCurvilinearCoordinates[h],
-                                                                                         heightMeshCurvilinearCoordinates[h+1],
-                                                                                         false);
+              heightMeshCurvilinearCoordinates[h],
+              heightMeshCurvilinearCoordinates[h+1],
+              false);
           for (unsigned int s = 0; s < numberOfAddedVerticesForEachRectangle[1]; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1501,9 +1501,9 @@ namespace Gedim
         {
 
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[2],
-                                                                                         baseMeshCurvilinearCoordinates[b],
-                                                                                         baseMeshCurvilinearCoordinates[b+1],
-                                                                                         false);
+              baseMeshCurvilinearCoordinates[b],
+              baseMeshCurvilinearCoordinates[b+1],
+              false);
           for (unsigned int s = 0; s < numberOfAddedVerticesForEachRectangle[2]; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1531,9 +1531,9 @@ namespace Gedim
         {
 
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[3],
-                                                                                         heightMeshCurvilinearCoordinates[h],
-                                                                                         heightMeshCurvilinearCoordinates[h+1],
-                                                                                         false);
+              heightMeshCurvilinearCoordinates[h],
+              heightMeshCurvilinearCoordinates[h+1],
+              false);
           for (unsigned int s = 0; s < numberOfAddedVerticesForEachRectangle[3]; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1760,8 +1760,8 @@ namespace Gedim
                                          + (numHeightPoints / 2) * (numBasePoints - 1) *
                                          (numberOfAddedVerticesForEachRectangle[2] + 1);
       unsigned int cell1DVerticalOddH = cell1DVerticalEvenH
-                                              + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
-                                              * ( numberOfAddedVerticesForEachRectangle[1] + 1);
+                                        + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
+                                        * ( numberOfAddedVerticesForEachRectangle[1] + 1);
 
       for (unsigned int h = 0; h < numHeightPoints - 1; h++)
       {
@@ -1931,6 +1931,81 @@ namespace Gedim
         }
       }
     }
+  }
+  // ***************************************************************************
+  std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int& cell1DIndex,
+                                                       const Eigen::MatrixXi subCell1Ds,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numSubCells = subCell1Ds.size();
+    unsigned int newCell1DsStartingIndex = mesh.Cell1DAppend(numSubCells);
+
+    vector<unsigned int> newCell1DsIndex(numSubCells);
+
+    for (unsigned int c = 0; c < numSubCells; c++)
+    {
+      newCell1DsIndex[c] = newCell1DsStartingIndex + c;
+
+      const unsigned int& newCell1DIndex = newCell1DsIndex[c];
+
+      mesh.Cell1DInsertExtremes(newCell1DIndex,
+                                subCell1Ds(0, c),
+                                subCell1Ds(1, c));
+
+      mesh.Cell2DSetMarker(newCell1DIndex, mesh.Cell2DMarker(cell1DIndex));
+      mesh.Cell2DSetState(newCell1DIndex, true);
+      mesh.Cell2DSetState(newCell1DIndex, false);
+
+      mesh.Cell2DInsertUpdatedCell2D(cell1DIndex,
+                                     newCell1DIndex);
+
+      const unsigned int numCell1DNumberNeighbourCell2D = mesh.Cell1DNumberNeighbourCell2D(cell1DIndex);
+      if (numCell1DNumberNeighbourCell2D == 0)
+        continue;
+
+      mesh.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex,
+                                            numCell1DNumberNeighbourCell2D);
+
+      for (unsigned int n = 0; n < numCell1DNumberNeighbourCell2D; n++)
+      {
+        if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, n))
+          continue;
+
+        mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
+                                         n,
+                                         mesh.Cell1DNeighbourCell2D(cell1DIndex,
+                                                                    n));
+      }
+    }
+
+    return newCell1DsIndex;
+  }
+  // ***************************************************************************
+  std::vector<unsigned int> MeshUtilities::SplitCell2D(const unsigned int& cell2DIndex,
+                                                       const std::vector<Eigen::MatrixXi> subCell2Ds,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numSubCells = subCell2Ds.size();
+    unsigned int newCell2DsStartingIndex = mesh.Cell2DAppend(numSubCells);
+
+    vector<unsigned int> newCell2DsIndex(numSubCells);
+
+    for (unsigned int c = 0; c < numSubCells; c++)
+    {
+      newCell2DsIndex[c] = newCell2DsStartingIndex + c;
+
+      const unsigned int& newCell2DIndex = newCell2DsIndex[c];
+      mesh.Cell2DAddVerticesAndEdges(newCell2DIndex,
+                                     subCell2Ds[c]);
+
+      mesh.Cell2DSetMarker(newCell2DIndex, mesh.Cell2DMarker(cell2DIndex));
+      mesh.Cell2DSetState(newCell2DIndex, true);
+      mesh.Cell2DSetState(cell2DIndex, false);
+
+      mesh.Cell2DInsertUpdatedCell2D(cell2DIndex, newCell2DIndex);
+    }
+
+    return newCell2DsIndex;
   }
   // ***************************************************************************
   void MeshUtilities::CreateParallelepipedMesh(const Eigen::Vector3d& parallelepipedOrigin,
