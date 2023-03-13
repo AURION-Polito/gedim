@@ -702,10 +702,61 @@ namespace GedimUnitTesting
     }
 
     // second refine
+    {
+      const unsigned int newCell1DIndex = meshDAO.Cell1DAppend(1);
+      meshDAO.Cell1DInsertExtremes(newCell1DIndex, 4, 0);
+      meshDAO.Cell1DSetMarker(newCell1DIndex, 0);
+      meshDAO.Cell1DSetState(newCell1DIndex, true);
+      meshDAO.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
+      EXPECT_EQ(6, newCell1DIndex);
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(6));
+      EXPECT_EQ(0, meshDAO.Cell1DMarker(6));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(6));
 
-    meshUtilities.ExportMeshToVTU(meshDAO,
-                                  exportFolder,
-                                  "Mesh_R2");
+      vector<Eigen::MatrixXi> subCells(2);
+
+      subCells[0].resize(2, 3);
+      subCells[0].row(0)<< 0, 4, 3;
+      subCells[0].row(1)<< 6, 5, 0;
+
+      subCells[1].resize(2, 4);
+      subCells[1].row(0)<< 0, 1, 2, 4;
+      subCells[1].row(1)<< 1, 2, 4, 6;
+
+      const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(1,
+                                                                                  subCells,
+                                                                                  meshDAO);
+      EXPECT_EQ(std::vector<unsigned int>({ 2, 3 }), newCell2DsIndex);
+      EXPECT_FALSE(meshDAO.Cell2DIsActive(1));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(2));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(3));
+      EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(2));
+      EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(3));
+      std::list<unsigned int> updatedCell2Ds;
+      EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(1,
+                                                updatedCell2Ds));
+      EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(2));
+      EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(3));
+      EXPECT_EQ(std::list<unsigned int>({2, 3}), updatedCell2Ds);
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(0, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(1, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(2, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(4, 1));
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(5, 1));
+
+      meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex,
+                                          0,
+                                          2); // right
+      meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex,
+                                          1,
+                                          3); // left
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(6, 0));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(6, 1));
+
+      meshUtilities.ExportMeshToVTU(meshDAO,
+                                    exportFolder,
+                                    "Mesh_R2");
+    }
   }
 }
 
