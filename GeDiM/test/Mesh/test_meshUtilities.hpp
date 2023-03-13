@@ -662,11 +662,39 @@ namespace GedimUnitTesting
       EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(4));
       EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(5));
       EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(4));
+      EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(4, 0));
+      EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(4, 1));
+      EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(4, 1));
       EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(5));
+      EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(5, 0));
+      EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(5, 1));
+      EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(5, 1));
       std::list<unsigned int> updatedCell1Ds;
       EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3,
-                                               updatedCell1Ds));
+                                                updatedCell1Ds));
       EXPECT_EQ(std::list<unsigned int>({4, 5}), updatedCell1Ds);
+
+      Eigen::MatrixXi subCell(2, 5);
+      subCell.row(0)<< 0, 1, 2, 4, 3;
+      subCell.row(1)<< 1, 2, 4, 5, 0;
+
+      const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(0,
+                                                                                  { subCell },
+                                                                                  meshDAO);
+      EXPECT_EQ(std::vector<unsigned int>({ 1 }), newCell2DsIndex);
+      EXPECT_FALSE(meshDAO.Cell2DIsActive(0));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(1));
+      EXPECT_EQ(meshDAO.Cell2DMarker(0), meshDAO.Cell2DMarker(1));
+      std::list<unsigned int> updatedCell2Ds;
+      EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(0,
+                                                updatedCell2Ds));
+      EXPECT_EQ(0, meshDAO.Cell2DOriginalCell2D(1));
+      EXPECT_EQ(std::list<unsigned int>({1}), updatedCell2Ds);
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(0, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(1, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(2, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(4, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(5, 1));
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,

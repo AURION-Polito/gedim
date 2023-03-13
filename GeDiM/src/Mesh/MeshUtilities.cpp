@@ -2006,9 +2006,9 @@ namespace Gedim
 
       mesh.Cell2DInsertUpdatedCell2D(cell2DIndex, newCell2DIndex);
 
-      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(newCell2DIndex); e++)
       {
-        const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, e);
+        const unsigned int cell1DIndex = mesh.Cell2DEdge(newCell2DIndex, e);
 
         for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
         {
