@@ -655,6 +655,9 @@ namespace GedimUnitTesting
                                                                                   meshDAO);
 
       EXPECT_EQ(std::vector<unsigned int>({ 4, 5 }), newCell1DsIndex);
+      EXPECT_EQ(false, meshDAO.Cell1DIsActive(3));
+      EXPECT_EQ(true, meshDAO.Cell1DIsActive(4));
+      EXPECT_EQ(true, meshDAO.Cell1DIsActive(5));
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,

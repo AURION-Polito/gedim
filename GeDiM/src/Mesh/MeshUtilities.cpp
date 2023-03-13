@@ -1940,6 +1940,8 @@ namespace Gedim
     const unsigned int numSubCells = subCell1Ds.cols();
     unsigned int newCell1DsStartingIndex = mesh.Cell1DAppend(numSubCells);
 
+    mesh.Cell1DSetState(cell1DIndex, false);
+
     vector<unsigned int> newCell1DsIndex(numSubCells);
 
     for (unsigned int c = 0; c < numSubCells; c++)
@@ -1954,7 +1956,6 @@ namespace Gedim
 
       mesh.Cell1DSetMarker(newCell1DIndex, mesh.Cell1DMarker(cell1DIndex));
       mesh.Cell1DSetState(newCell1DIndex, true);
-      mesh.Cell1DSetState(newCell1DIndex, false);
 
       mesh.Cell1DInsertUpdatedCell1D(cell1DIndex,
                                      newCell1DIndex);
@@ -1990,6 +1991,8 @@ namespace Gedim
 
     vector<unsigned int> newCell2DsIndex(numSubCells);
 
+    mesh.Cell2DSetState(cell2DIndex, false);
+
     for (unsigned int c = 0; c < numSubCells; c++)
     {
       newCell2DsIndex[c] = newCell2DsStartingIndex + c;
@@ -2000,7 +2003,6 @@ namespace Gedim
 
       mesh.Cell2DSetMarker(newCell2DIndex, mesh.Cell2DMarker(cell2DIndex));
       mesh.Cell2DSetState(newCell2DIndex, true);
-      mesh.Cell2DSetState(cell2DIndex, false);
 
       mesh.Cell2DInsertUpdatedCell2D(cell2DIndex, newCell2DIndex);
 
