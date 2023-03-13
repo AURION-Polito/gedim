@@ -619,6 +619,54 @@ namespace GedimUnitTesting
     EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
     EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
   }
+
+  TEST(TestMeshUtilities, TestRefineMesh2D)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestRefineMesh2D/";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "Mesh_R0");
+
+    // first refine
+    {
+      const unsigned int newCell0DIndex = meshDAO.Cell0DAppend(1);
+      meshDAO.Cell0DInsertCoordinates(newCell0DIndex, Eigen::Vector3d(0.5, 1.0, 0.0));
+      meshDAO.Cell0DSetMarker(newCell0DIndex, meshDAO.Cell1DMarker(3));
+      meshDAO.Cell0DSetState(newCell0DIndex, true);
+
+      EXPECT_EQ(4, newCell0DIndex);
+
+      Eigen::MatrixXi newCell1DsExtreme(2, 2);
+      newCell1DsExtreme.col(0)<< 2, 4;
+      newCell1DsExtreme.col(1)<< 4, 3;
+      const std::vector<unsigned int> newCell1DsIndex = meshUtilities.SplitCell1D(3,
+                                                                                  newCell1DsExtreme,
+                                                                                  meshDAO);
+
+      EXPECT_EQ(std::vector<unsigned int>({ 4, 5 }), newCell1DsIndex);
+
+      meshUtilities.ExportMeshToVTU(meshDAO,
+                                    exportFolder,
+                                    "Mesh_R1");
+    }
+
+    // second refine
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "Mesh_R2");
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES_H

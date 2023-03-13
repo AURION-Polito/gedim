@@ -1937,7 +1937,7 @@ namespace Gedim
                                                        const Eigen::MatrixXi subCell1Ds,
                                                        IMeshDAO& mesh) const
   {
-    const unsigned int numSubCells = subCell1Ds.size();
+    const unsigned int numSubCells = subCell1Ds.cols();
     unsigned int newCell1DsStartingIndex = mesh.Cell1DAppend(numSubCells);
 
     vector<unsigned int> newCell1DsIndex(numSubCells);
@@ -1952,11 +1952,11 @@ namespace Gedim
                                 subCell1Ds(0, c),
                                 subCell1Ds(1, c));
 
-      mesh.Cell2DSetMarker(newCell1DIndex, mesh.Cell2DMarker(cell1DIndex));
-      mesh.Cell2DSetState(newCell1DIndex, true);
-      mesh.Cell2DSetState(newCell1DIndex, false);
+      mesh.Cell1DSetMarker(newCell1DIndex, mesh.Cell1DMarker(cell1DIndex));
+      mesh.Cell1DSetState(newCell1DIndex, true);
+      mesh.Cell1DSetState(newCell1DIndex, false);
 
-      mesh.Cell2DInsertUpdatedCell2D(cell1DIndex,
+      mesh.Cell1DInsertUpdatedCell1D(cell1DIndex,
                                      newCell1DIndex);
 
       const unsigned int numCell1DNumberNeighbourCell2D = mesh.Cell1DNumberNeighbourCell2D(cell1DIndex);
@@ -2003,6 +2003,22 @@ namespace Gedim
       mesh.Cell2DSetState(cell2DIndex, false);
 
       mesh.Cell2DInsertUpdatedCell2D(cell2DIndex, newCell2DIndex);
+
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
+      {
+        const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, e);
+
+        for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
+        {
+          if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, n))
+            continue;
+
+          if (mesh.Cell1DNeighbourCell2D(cell1DIndex, n) == cell2DIndex)
+            mesh.Cell1DInsertNeighbourCell2D(cell1DIndex,
+                                             n,
+                                             newCell2DIndex);
+        }
+      }
     }
 
     return newCell2DsIndex;
