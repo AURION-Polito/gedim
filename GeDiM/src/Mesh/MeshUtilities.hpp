@@ -8,7 +8,8 @@ namespace Gedim
 {
   /// \brief MeshUtilities
   /// \copyright See top level LICENSE file for details.
-  class MeshUtilities final {
+  class MeshUtilities final
+  {
     public:
       struct CheckMesh2DConfiguration final
       {

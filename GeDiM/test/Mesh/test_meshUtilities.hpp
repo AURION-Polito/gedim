@@ -757,6 +757,15 @@ namespace GedimUnitTesting
                                     exportFolder,
                                     "Mesh_R2");
     }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+    meshUtilities.ExtractActiveMesh(meshDAO,
+                                    extractionData);
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "Mesh_Final");
+
   }
 }
 
