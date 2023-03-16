@@ -9,6 +9,32 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
+  bool GeometryUtilities::AreLineCoplanar(const Eigen::Vector3d& firstLineOrigin,
+                                          const Eigen::Vector3d& firstLineTangent,
+                                          const Eigen::Vector3d& secondLineOrigin,
+                                          const Eigen::Vector3d& secondLineTangent) const
+  {
+    // coplanarity check: (x3-x1).dot((x2-x1) x (x4-x1)) = det([x3-x1; x2-x1; x4-x1]) = 0
+    // see https://en.wikipedia.org/wiki/Coplanarity
+    Matrix3d coplanarMatrix;
+    coplanarMatrix.col(0)<< (secondLineOrigin - firstLineOrigin).normalized();
+    coplanarMatrix.col(1)<< firstLineTangent.normalized();
+    coplanarMatrix.col(2)<< (secondLineOrigin + secondLineTangent - firstLineOrigin).normalized();
+
+    // Check non-coplanarity of segments: (x3-x1) != 0 && (x4-x1) != 0 && (x3-x2) != 0 && (x4-x2) != 0 && nDotRhs != 0
+    if (IsValue2DPositive((secondLineOrigin - firstLineOrigin).squaredNorm()) &&
+        IsValue2DPositive((secondLineOrigin + secondLineTangent - firstLineOrigin).squaredNorm()) &&
+        IsValue2DPositive((secondLineOrigin - firstLineOrigin - firstLineTangent).squaredNorm()) &&
+        IsValue2DPositive((secondLineOrigin + secondLineTangent - firstLineOrigin - firstLineTangent).squaredNorm()) &&
+        IsValue1DPositive(abs(coplanarMatrix.determinant())))
+    {
+      // segments are not on the same plane
+      return false;
+    }
+
+    return true;
+  }
+  // ***************************************************************************
   GeometryUtilities::IntersectionSegmentSegmentResult GeometryUtilities::IntersectionSegmentSegment(const Vector3d& firstSegmentOrigin,
                                                                                                     const Vector3d& firstSegmentEnd,
                                                                                                     const Vector3d& secondSegmentOrigin,
@@ -27,19 +53,11 @@ namespace Gedim
     Gedim::Output::Assert(IsValue2DPositive(t1.squaredNorm()));
     Gedim::Output::Assert(IsValue2DPositive(t2.squaredNorm()));
 
-    // coplanarity check: (x3-x1).dot((x2-x1) x (x4-x1)) = det([x3-x1; x2-x1; x4-x1]) = 0
-    // see https://en.wikipedia.org/wiki/Coplanarity
-    Matrix3d coplanarMatrix;
-    coplanarMatrix.col(0)<< (secondSegmentOrigin - firstSegmentOrigin).normalized();
-    coplanarMatrix.col(1)<< t1.normalized();
-    coplanarMatrix.col(2)<< (secondSegmentEnd - firstSegmentOrigin).normalized();
-
     // Check non-coplanarity of segments: (x3-x1) != 0 && (x4-x1) != 0 && (x3-x2) != 0 && (x4-x2) != 0 && nDotRhs != 0
-    if (IsValue2DPositive((secondSegmentOrigin - firstSegmentOrigin).squaredNorm()) &&
-        IsValue2DPositive((secondSegmentEnd - firstSegmentOrigin).squaredNorm()) &&
-        IsValue2DPositive((secondSegmentOrigin - firstSegmentEnd).squaredNorm()) &&
-        IsValue2DPositive((secondSegmentEnd - firstSegmentEnd).squaredNorm()) &&
-        IsValue1DPositive(abs(coplanarMatrix.determinant())))
+    if (!AreLineCoplanar(firstSegmentOrigin,
+                         t1,
+                         secondSegmentOrigin,
+                         t2))
     {
       // segments are not on the same plane
       result.IntersectionLinesType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::OnDifferentPlanes;

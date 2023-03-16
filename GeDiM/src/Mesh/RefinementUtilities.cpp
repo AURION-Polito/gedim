@@ -132,4 +132,12 @@ namespace Gedim
                                    mesh);
   }
   // ***************************************************************************
+  void RefinementUtilities::RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
+                                                           const Eigen::Vector3d& lineTangent,
+                                                           const Eigen::Vector3d& lineOrigin,
+                                                           IMeshDAO& mesh) const
+  {
+
+  }
+  // ***************************************************************************
 }

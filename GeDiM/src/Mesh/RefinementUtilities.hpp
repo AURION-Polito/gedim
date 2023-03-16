@@ -44,6 +44,12 @@ namespace Gedim
                                        const Eigen::VectorXd& cell2DEdgesLength,
                                        const std::vector<bool>& cell2DEdgesDirection,
                                        IMeshDAO& mesh) const;
+
+      /// \brief Refine Polygon Cell2D By Direction
+      void RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
+                                          const Eigen::Vector3d& lineTangent,
+                                          const Eigen::Vector3d& lineOrigin,
+                                          IMeshDAO& mesh) const;
   };
 
 }

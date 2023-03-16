@@ -1012,6 +1012,16 @@ namespace Gedim
                                 firstSphereDiameter + secondSphereDiameter);
       }
 
+      /// \param firstLineOrigin first line origin
+      /// \param firstLineTangent first line tangent
+      /// \param secondLineOrigin second line origin
+      /// \param secondLineTangent second line tangent
+      /// \return line coplanarity
+      bool AreLineCoplanar(const Eigen::Vector3d& firstLineOrigin,
+                           const Eigen::Vector3d& firstLineTangent,
+                           const Eigen::Vector3d& secondLineOrigin,
+                           const Eigen::Vector3d& secondLineTangent) const;
+
       /// \brief Compute the intersection between the two segments
       /// \param firstSegmentOrigin first segment origin
       /// \param firstSegmentEnd first segment end
