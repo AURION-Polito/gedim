@@ -24,6 +24,7 @@
 #include "test_Quadrature3D.hpp"
 #include "test_conformMeshUtilities.hpp"
 #include "test_refinementUtilities.hpp"
+#include "test_CommonUtilities.hpp"
 
 #include <gtest/gtest.h>
 
