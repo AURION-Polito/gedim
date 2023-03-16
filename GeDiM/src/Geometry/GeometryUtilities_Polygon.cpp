@@ -1282,8 +1282,8 @@ namespace Gedim
                                                                                              lineOrigin,
                                                                                              lineOrigin + lineTangent);
 
-      if (intersectionResult.IntersectionLinesType !=
-          IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting)
+      if (intersectionResult.IntersectionLinesType ==
+          IntersectionSegmentSegmentResult::IntersectionLineTypes::OnDifferentPlanes)
         continue;
 
       switch (intersectionResult.IntersectionSegmentsType)

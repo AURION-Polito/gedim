@@ -2056,6 +2056,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       Eigen::Matrix3d polygonVertices;
@@ -2101,6 +2102,29 @@ namespace GedimUnitTesting
                   result.EdgeIntersections[2].Index);
         ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel,
                   result.EdgeIntersections[2].Type);
+      }
+
+      {
+        // line inside
+        const Gedim::GeometryUtilities::LinePolygonPositionResult result = geometryUtilities.LinePolygonPosition(Eigen::Vector3d(0.0, 1.0, 0.0),
+                                                                                                                 Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                                                                                 polygonVertices);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Intersecting,
+                  result.Type);
+        ASSERT_EQ(2,
+                  result.EdgeIntersections.size());
+        ASSERT_DOUBLE_EQ(0.5,
+                         result.EdgeIntersections[0].CurvilinearCoordinate);
+        ASSERT_EQ(0,
+                  result.EdgeIntersections[0].Index);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge,
+                  result.EdgeIntersections[0].Type);
+        ASSERT_DOUBLE_EQ(0.5,
+                         result.EdgeIntersections[1].CurvilinearCoordinate);
+        ASSERT_EQ(1,
+                  result.EdgeIntersections[1].Index);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge,
+                  result.EdgeIntersections[1].Type);
       }
 
     }
