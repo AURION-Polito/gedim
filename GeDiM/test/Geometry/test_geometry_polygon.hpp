@@ -2050,6 +2050,66 @@ namespace GedimUnitTesting
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestLinePolygonPosition_ReferenceTriangle)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      Eigen::Matrix3d polygonVertices;
+      polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+      polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+      polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+      {
+        // line outside
+        const Gedim::GeometryUtilities::LinePolygonPositionResult result = geometryUtilities.LinePolygonPosition(Eigen::Vector3d(0.0, 1.0, 0.0),
+                                                                                                                 Eigen::Vector3d(-1.0, 0.0, 0.0),
+                                                                                                                 polygonVertices);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Outside,
+                  result.Type);
+        ASSERT_EQ(0,
+                  result.EdgeIntersections.size());
+      }
+
+      {
+        // line parallel
+        const Gedim::GeometryUtilities::LinePolygonPositionResult result = geometryUtilities.LinePolygonPosition(Eigen::Vector3d(0.0, 1.0, 0.0),
+                                                                                                                 Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                                 polygonVertices);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Intersecting,
+                  result.Type);
+        ASSERT_EQ(3,
+                  result.EdgeIntersections.size());
+        ASSERT_DOUBLE_EQ(0.0,
+                         result.EdgeIntersections[0].CurvilinearCoordinate);
+        ASSERT_EQ(0,
+                  result.EdgeIntersections[0].Index);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin,
+                  result.EdgeIntersections[0].Type);
+        ASSERT_DOUBLE_EQ(1.0,
+                         result.EdgeIntersections[1].CurvilinearCoordinate);
+        ASSERT_EQ(1,
+                  result.EdgeIntersections[1].Index);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd,
+                  result.EdgeIntersections[1].Type);
+        ASSERT_DOUBLE_EQ(0.0,
+                         result.EdgeIntersections[2].CurvilinearCoordinate);
+        ASSERT_EQ(2,
+                  result.EdgeIntersections[2].Index);
+        ASSERT_EQ(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel,
+                  result.EdgeIntersections[2].Type);
+      }
+
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POLYGON_H

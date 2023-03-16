@@ -1267,8 +1267,10 @@ namespace Gedim
   {
     LinePolygonPositionResult result;
 
+    result.Type = LinePolygonPositionResult::Types::Outside;
+
     const unsigned int numVertices = polygonVertices.cols();
-    list<LinePolygonPositionResult::Intersection> intersections;
+    list<LinePolygonPositionResult::EdgeIntersection> edgeIntersections;
 
     for (unsigned int e = 0; e < numVertices; e++)
     {
@@ -1290,11 +1292,11 @@ namespace Gedim
           continue;
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections:
         {
-          result.Type = LinePolygonPositionResult::Types::IntersectingParallel;
-          intersections.push_back(LinePolygonPositionResult::Intersection());
-          LinePolygonPositionResult::Intersection& intersection = intersections.back();
-          intersection.Type = LinePolygonPositionResult::Intersection::Types::Edge;
-          intersection.Index = e;
+          result.Type = LinePolygonPositionResult::Types::Intersecting;
+          edgeIntersections.push_back(LinePolygonPositionResult::EdgeIntersection());
+          LinePolygonPositionResult::EdgeIntersection& edgeIntersection = edgeIntersections.back();
+          edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::Parallel;
+          edgeIntersection.Index = e;
           continue;
         }
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection:
@@ -1313,12 +1315,18 @@ namespace Gedim
             case PointSegmentPositionTypes::OnSegmentEnd:
             {
               result.Type = LinePolygonPositionResult::Types::Intersecting;
-              intersections.push_back(LinePolygonPositionResult::Intersection());
-              LinePolygonPositionResult::Intersection& intersection = intersections.back();
-              intersection.Type = LinePolygonPositionResult::Intersection::Types::Edge;
-              intersection.Index = e;
-              intersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
-                  continue;
+              edgeIntersections.push_back(LinePolygonPositionResult::EdgeIntersection());
+              LinePolygonPositionResult::EdgeIntersection& edgeIntersection = edgeIntersections.back();
+              edgeIntersection.Index = e;
+              edgeIntersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
+
+              if (position.Type == PointSegmentPositionTypes::OnSegmentOrigin)
+                edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin;
+              else if (position.Type == PointSegmentPositionTypes::OnSegmentEnd)
+                edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd;
+              else
+                edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge;
+              continue;
             }
               break;
             default:
@@ -1330,8 +1338,8 @@ namespace Gedim
       }
     }
 
-    result.Intersections = vector<LinePolygonPositionResult::Intersection>(intersections.begin(),
-                                                                           intersections.end());
+    result.EdgeIntersections = vector<LinePolygonPositionResult::EdgeIntersection>(edgeIntersections.begin(),
+                                                                                   edgeIntersections.end());
 
     return result;
   }
