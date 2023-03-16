@@ -88,7 +88,7 @@ namespace Gedim
     mesh.Cell0DSetState(newCell0DIndex, true);
 
     // Split max edge into sub-edges
-    Eigen::MatrixXi newCell1DsExtreme(2, 3);
+    Eigen::MatrixXi newCell1DsExtreme(2, 2);
     newCell1DsExtreme.col(0)<< cell1DOriginIndex, newCell0DIndex;
     newCell1DsExtreme.col(1)<< newCell0DIndex, cell1DEndIndex;
     const std::vector<unsigned int> splitCell1DsIndex = meshUtilities.SplitCell1D(cell1DMaxIndex,
