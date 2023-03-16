@@ -1,6 +1,4 @@
 #include "CommonUtilities.hpp"
-#include <numeric>
-#include <algorithm>
 
 using namespace std;
 
@@ -62,17 +60,6 @@ namespace Gedim
     randomNumbers.resize(n);
 
     return randomNumbers;
-  }
-  // ***************************************************************************
-  template<typename T>
-  std::vector<unsigned int> Utilities::SortArrayIndices(const std::vector<T>& array)
-  {
-    vector<unsigned int> indices(array.size());
-    std::iota(begin(indices), end(indices), 0);
-
-    std::sort(indices.begin(), indices.end(), [&array](int a, int b) { return (array.at(a) < array.at(b)); });
-
-    return indices;
   }
   // ***************************************************************************
 }

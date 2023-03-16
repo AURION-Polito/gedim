@@ -59,9 +59,9 @@ namespace GedimUnitTesting
                                   "Mesh_Refined");
   }
 
-  TEST(TestRefinementUtilities, TestRefineTriangles_Random)
+  TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
   {
-    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTriangles_Random";
+    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTriangles_ByArea";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -79,15 +79,27 @@ namespace GedimUnitTesting
                                   "Mesh_Original");
 
     const unsigned int seed = 10;
-    const unsigned int maxRefinements = 10;
+    const unsigned int maxRefinements = 5;
 
     for (unsigned int r = 0; r < maxRefinements; r++)
     {
       Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
-      std::vector<unsigned int> cell2DsToRefineIndex = Gedim::Utilities::SortArrayIndices(meshGeometricData.Cell2DsAreas);
-      cell2DsToRefineIndex.resize(0.5 * meshDAO.Cell2DTotalNumber());
+      const std::vector<bool>& activeCell2Ds = mockMesh.Mesh.ActiveCell2D;
+      std::vector<double> activeCell2DsArea(meshDAO.Cell2DTotalNumber(), 0.0);
+      unsigned int numActiveCell2Ds = 0;
+      for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+      {
+        if (!activeCell2Ds[c])
+          continue;
 
+        activeCell2DsArea[c] = meshGeometricData.Cell2DsAreas[c];
+        numActiveCell2Ds++;
+      }
+
+      std::vector<unsigned int> cell2DsToRefineIndex = Gedim::Utilities::SortArrayIndices(activeCell2DsArea);
+      std::reverse(cell2DsToRefineIndex.begin(), cell2DsToRefineIndex.end());
+      cell2DsToRefineIndex.resize(0.5 * numActiveCell2Ds);
 
       for (unsigned int c = 0; c < cell2DsToRefineIndex.size(); c++)
       {
@@ -103,6 +115,18 @@ namespace GedimUnitTesting
                                     "Mesh_R" +
                                     to_string(r));
     }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+    meshUtilities.ExtractActiveMesh(meshDAO,
+                                    extractionData);
+
+    EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(48, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(28, meshDAO.Cell2DTotalNumber());
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "Mesh_Refined");
   }
 }
 
