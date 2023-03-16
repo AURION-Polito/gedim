@@ -50,6 +50,10 @@ namespace GedimUnitTesting
     meshUtilities.ExtractActiveMesh(meshDAO,
                                     extractionData);
 
+    EXPECT_EQ(5, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(4, meshDAO.Cell2DTotalNumber());
+
     meshUtilities.ExportMeshToVTU(meshDAO,
                                   exportFolder,
                                   "Mesh_Refined");
