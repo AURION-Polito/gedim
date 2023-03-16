@@ -534,6 +534,34 @@ namespace Gedim
           Types Type = Types::Unknown;
       };
 
+      struct LinePolygonPositionResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            Outside = 1,
+            IntersectingParallel = 2,
+            Intersecting = 3
+          };
+
+          struct Intersection final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                Vertex = 1,
+                Edge = 2
+              };
+
+              Types Type = Intersection::Types::Unknown;
+              unsigned int Index = 0;
+              double CurvilinearCoordinate = 0.0;
+          };
+
+          std::vector<Intersection> Intersections = { };
+          Types Type = Types::Unknown;
+      };
+
       struct PointPolyhedronPositionResult final
       {
           enum struct Types
@@ -1155,6 +1183,10 @@ namespace Gedim
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
 
+      LinePolygonPositionResult LinePolygonPosition(const Eigen::Vector3d& lineTangent,
+                                                    const Eigen::Vector3d& lineOrigin,
+                                                    const Eigen::MatrixXd& polygonVertices,
+                                                    const Eigen::MatrixXd& polygonEdgeTangents) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point

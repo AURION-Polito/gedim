@@ -1261,4 +1261,79 @@ namespace Gedim
     throw runtime_error("PolygonCirclePosition failed");
   }
   // ***************************************************************************
+  GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosition(const Eigen::Vector3d& lineTangent,
+                                                                                      const Eigen::Vector3d& lineOrigin,
+                                                                                      const Eigen::MatrixXd& polygonVertices) const
+  {
+    LinePolygonPositionResult result;
+
+    const unsigned int numVertices = polygonVertices.cols();
+    list<LinePolygonPositionResult::Intersection> intersections;
+
+    for (unsigned int e = 0; e < numVertices; e++)
+    {
+      const Eigen::VectorXd edgeOrigin = polygonVertices.col(e);
+      const Eigen::VectorXd edgeEnd = polygonVertices.col((e + 1) % numVertices);
+
+      const IntersectionSegmentSegmentResult intersectionResult = IntersectionSegmentSegment(edgeOrigin,
+                                                                                             edgeEnd,
+                                                                                             lineOrigin,
+                                                                                             lineOrigin + lineTangent);
+
+      if (intersectionResult.IntersectionLinesType !=
+          IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting)
+        continue;
+
+      switch (intersectionResult.IntersectionSegmentsType)
+      {
+        case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection:
+          continue;
+        case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections:
+        {
+          result.Type = LinePolygonPositionResult::Types::IntersectingParallel;
+          intersections.push_back(LinePolygonPositionResult::Intersection());
+          LinePolygonPositionResult::Intersection& intersection = intersections.back();
+          intersection.Type = LinePolygonPositionResult::Intersection::Types::Edge;
+          intersection.Index = e;
+          continue;
+        }
+        case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection:
+        {
+          const IntersectionSegmentSegmentResult::IntersectionPosition& position = intersectionResult.FirstSegmentIntersections[0];
+
+          switch (position.Type)
+          {
+            case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+            case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+            case PointSegmentPositionTypes::LeftTheSegment:
+            case PointSegmentPositionTypes::RightTheSegment:
+              continue;
+            case PointSegmentPositionTypes::OnSegmentOrigin:
+            case PointSegmentPositionTypes::InsideSegment:
+            case PointSegmentPositionTypes::OnSegmentEnd:
+            {
+              result.Type = LinePolygonPositionResult::Types::Intersecting;
+              intersections.push_back(LinePolygonPositionResult::Intersection());
+              LinePolygonPositionResult::Intersection& intersection = intersections.back();
+              intersection.Type = LinePolygonPositionResult::Intersection::Types::Edge;
+              intersection.Index = e;
+              intersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
+                  continue;
+            }
+              break;
+            default:
+              throw runtime_error("Unknown IntersectionPosition");
+          }
+        }
+        default:
+          throw runtime_error("Unknown IntersectionSegmentsType");
+      }
+    }
+
+    result.Intersections = vector<LinePolygonPositionResult::Intersection>(intersections.begin(),
+                                                                           intersections.end());
+
+    return result;
+  }
+  // ***************************************************************************
 }
