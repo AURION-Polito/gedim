@@ -1286,10 +1286,14 @@ namespace Gedim
           IntersectionSegmentSegmentResult::IntersectionLineTypes::OnDifferentPlanes)
         continue;
 
+      if (intersectionResult.IntersectionLinesType ==
+          IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarParallel &&
+          intersectionResult.IntersectionSegmentsType ==
+          IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection)
+        continue;
+
       switch (intersectionResult.IntersectionSegmentsType)
       {
-        case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection:
-          continue;
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections:
         {
           result.Type = LinePolygonPositionResult::Types::Intersecting;
@@ -1299,6 +1303,7 @@ namespace Gedim
           edgeIntersection.Index = e;
           continue;
         }
+        case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection:
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection:
         {
           const IntersectionSegmentSegmentResult::IntersectionPosition& position = intersectionResult.FirstSegmentIntersections[0];

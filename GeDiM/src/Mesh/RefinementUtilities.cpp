@@ -133,10 +133,105 @@ namespace Gedim
   }
   // ***************************************************************************
   void RefinementUtilities::RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
+                                                           const Eigen::MatrixXd& cell2DVertices,
                                                            const Eigen::Vector3d& lineTangent,
                                                            const Eigen::Vector3d& lineOrigin,
+                                                           const std::vector<double>& cell1DsQualityParameter,
+                                                           const Eigen::VectorXd& cell2DEdgesLength,
+                                                           const std::vector<bool>& cell2DEdgesDirection,
                                                            IMeshDAO& mesh) const
   {
+    if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
+      return;
+
+    GeometryUtilities::LinePolygonPositionResult result = geometryUtilities.LinePolygonPosition(lineTangent,
+                                                                                                lineOrigin,
+                                                                                                cell2DVertices);
+    Output::Assert(result.Type != GeometryUtilities::LinePolygonPositionResult::Types::Unknown);
+
+    if (result.Type != GeometryUtilities::LinePolygonPositionResult::Types::Intersecting)
+      return;
+
+    if (result.EdgeIntersections.size() < 2)
+      throw std::runtime_error("Not enough intersections found");
+
+    const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionOne = result.EdgeIntersections[0];
+    Output::Assert(edgeIntersectionOne.Type != GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Unknown);
+    if (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel)
+      return;
+
+    const unsigned int cell1DIndexOne = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionOne.Index);
+
+    GeometryUtilities::LinePolygonPositionResult::EdgeIntersection* findEdgeIntersectionTwo = nullptr;
+
+    for (unsigned int i = 1; i < result.EdgeIntersections.size(); i++)
+    {
+      const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionTwo = result.EdgeIntersections[i];
+
+      switch (edgeIntersectionTwo.Type)
+      {
+        case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel:
+          return;
+        case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge:
+          findEdgeIntersectionTwo = &result.EdgeIntersections[i];
+          break;
+        case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin:
+          if (mesh.Cell1DOrigin(cell1DIndexOne) != mesh.Cell1DOrigin(edgeIntersectionTwo.Index) &&
+              mesh.Cell1DEnd(cell1DIndexOne) != mesh.Cell1DOrigin(edgeIntersectionTwo.Index))
+            findEdgeIntersectionTwo = &result.EdgeIntersections[i];
+          break;
+        case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd:
+          if (mesh.Cell1DOrigin(cell1DIndexOne) != mesh.Cell1DEnd(edgeIntersectionTwo.Index) &&
+              mesh.Cell1DEnd(cell1DIndexOne) != mesh.Cell1DEnd(edgeIntersectionTwo.Index))
+            findEdgeIntersectionTwo = &result.EdgeIntersections[i];
+          break;
+        default:
+          throw std::runtime_error("Unmanaged edgeIntersectionTwo.Type");
+      }
+
+      if (findEdgeIntersectionTwo != nullptr)
+        break;
+    }
+
+    if (findEdgeIntersectionTwo == nullptr)
+      throw std::runtime_error("Second edge intersection not found");
+
+    const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionTwo = *findEdgeIntersectionTwo;
+
+    const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionTwo.Index);
+
+    const bool createNewVertexOne =
+        (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
+        geometryUtilities.IsValue1DGreater(cell2DEdgesLength[edgeIntersectionOne.Index], cell1DsQualityParameter[cell1DIndexOne]);
+    const bool createNewVertexTwo =
+        (edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
+        geometryUtilities.IsValue1DGreater(cell2DEdgesLength[edgeIntersectionTwo.Index], cell1DsQualityParameter[cell1DIndexTwo]);
+
+    unsigned int cell0DIndexOne = 0;
+    unsigned int cell0DIndexTwo = 0;
+
+    if (createNewVertexOne)
+    {
+      // Add new mesh vertex, middle point of edge one
+      cell0DIndexOne = mesh.Cell0DAppend(1);
+      mesh.Cell0DInsertCoordinates(cell0DIndexOne,
+                                   0.5 * (mesh.Cell0DCoordinates(cell1DIndexOne) +
+                                          mesh.Cell0DCoordinates(cell1DIndexOne)));
+      mesh.Cell0DSetMarker(cell0DIndexOne, mesh.Cell1DMarker(cell1DIndexOne));
+      mesh.Cell0DSetState(cell0DIndexOne, true);
+    }
+
+    if (createNewVertexTwo)
+    {
+      // Add new mesh vertex, middle point of edge one
+      cell0DIndexTwo = mesh.Cell0DAppend(1);
+      mesh.Cell0DInsertCoordinates(cell0DIndexTwo,
+                                   0.5 * (mesh.Cell0DCoordinates(cell1DIndexTwo) +
+                                          mesh.Cell0DCoordinates(cell1DIndexTwo)));
+      mesh.Cell0DSetMarker(cell0DIndexTwo, mesh.Cell1DMarker(cell1DIndexTwo));
+      mesh.Cell0DSetState(cell0DIndexTwo, true);
+    }
+
 
   }
   // ***************************************************************************
