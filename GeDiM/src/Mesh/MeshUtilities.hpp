@@ -49,6 +49,12 @@ namespace Gedim
           std::map<unsigned int, unsigned int> NewCell3DToOldCell3D; ///< each pair is {new Cell3D index, old Cell3D index}
       };
 
+      struct ComputeMesh2DCell1DsResult final
+      {
+          Eigen::MatrixXi Cell1Ds; /// Cell1Ds vertices, size 2 x Cell1DTotalNumber()
+          std::vector<Eigen::MatrixXi> Cell2Ds; ///< Cell2Ds vertices and edges, size Cell2DTotalNumber()x2xCell2DNumberVertices()
+      };
+
       struct MeshGeometricData1D final
       {
           std::vector<Eigen::MatrixXd> Cell1DsVertices; ///< cell1D vertices coordinates
@@ -125,7 +131,7 @@ namespace Gedim
                       const std::vector<double>& coordinates,
                       IMeshDAO& mesh) const;
 
-      /// \brief Fill a Mesh 2D with vertices and polygons
+      /// \brief Fill a Mesh 2D with vertices, edges and polygons
       /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
       /// \param cell1Ds the origin and end as Eigen MatrixXd of cell1Ds, size 2xCell1DTotalNumber()
       /// \param cell2Ds the vertices and edges indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()x2xCell2DNumberVertices()
@@ -133,6 +139,13 @@ namespace Gedim
                       const Eigen::MatrixXi& cell1Ds,
                       const std::vector<Eigen::MatrixXi>& cell2Ds,
                       IMeshDAO& mesh) const;
+
+      /// \brief Compute edges in a Mesh 2D with vertices and polygons
+      /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
+      /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()xCell2DNumberVertices()
+      /// \return the Cell1Ds data
+      ComputeMesh2DCell1DsResult ComputeMesh2DCell1Ds(const Eigen::MatrixXd& cell0Ds,
+                                                      const std::vector<Eigen::VectorXi>& cell2Ds) const;
 
       /// \brief Check Mesh2D correctness
       /// \param geometryUtilities the geometry utilities

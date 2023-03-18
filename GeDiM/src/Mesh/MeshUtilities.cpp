@@ -201,6 +201,81 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  MeshUtilities::ComputeMesh2DCell1DsResult MeshUtilities::ComputeMesh2DCell1Ds(const Eigen::MatrixXd& cell0Ds,
+                                                                                const std::vector<Eigen::VectorXi>& cell2Ds) const
+  {
+    ComputeMesh2DCell1DsResult result;
+
+    const unsigned int numVertices = cell0Ds.cols();
+    const unsigned int numCell2Ds = cell2Ds.size();
+
+    Eigen::SparseMatrix<unsigned int> edges;
+    edges.resize(numVertices,
+                 numVertices);
+
+    std::list<Eigen::Triplet<unsigned int>> triplets;
+    for (unsigned int c = 0; c < numCell2Ds; c++)
+    {
+      const Eigen::VectorXi& cell2DVertices = cell2Ds.at(c);
+      const unsigned int& numCell2DVertices = cell2DVertices.size();
+
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[v];
+        const unsigned int end = cell2DVertices[(v + 1) % numCell2DVertices];
+        triplets.push_back(Eigen::Triplet<unsigned int>(origin, end, 1));
+        triplets.push_back(Eigen::Triplet<unsigned int>(end, origin, 1));
+      }
+    }
+
+    edges.setFromTriplets(triplets.begin(), triplets.end());
+    edges.makeCompressed();
+
+    unsigned int numEdges = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+      {
+        if (it.row() < it.col())
+          it.valueRef() = 1 + numEdges++;
+      }
+    }
+
+    result.Cell1Ds.resize(2, numEdges);
+
+    numEdges = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+      {
+        if (it.row() < it.col())
+          result.Cell1Ds.col(numEdges++)<< it.row(), it.col();
+      }
+    }
+
+    result.Cell2Ds.resize(numCell2Ds);
+
+    for (unsigned int c = 0; c < numCell2Ds; c++)
+    {
+      Eigen::MatrixXi& cell2D = result.Cell2Ds.at(c);
+      const Eigen::VectorXi& cell2DVertices = cell2Ds.at(c);
+      const unsigned int& numCell2DVertices = cell2DVertices.size();
+
+      cell2D.resize(2, numCell2DVertices);
+
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[v];
+        const unsigned int end = cell2DVertices[(v + 1) % numVertices];
+
+        cell2D(0, v) = origin;
+        cell2D(1, v) = (origin < end) ? edges.coeff(origin, end) - 1 : edges.coeff(end, origin) - 1;
+      }
+    }
+
+    return result;
+  }
+  // ***************************************************************************
   void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration& configuration,
                                   const GeometryUtilities& geometryUtilities,
                                   const IMeshDAO& convexMesh) const
@@ -1453,7 +1528,7 @@ namespace Gedim
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedNodesToFirstNEdges,
                                                                                          baseMeshCurvilinearCoordinates[b],
                                                                                          baseMeshCurvilinearCoordinates[b+1],
-                                                                                         false);
+              false);
           for (unsigned int s = 0; s < numberOfAddedNodesToFirstNEdges; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1488,7 +1563,7 @@ namespace Gedim
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedNodesTolastEdges,
                                                                                          heightMeshCurvilinearCoordinates[h],
                                                                                          heightMeshCurvilinearCoordinates[h+1],
-                                                                                         false);
+              false);
           for (unsigned int s = 0; s < numberOfAddedNodesTolastEdges; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1521,7 +1596,7 @@ namespace Gedim
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedNodesTolastEdges,
                                                                                          baseMeshCurvilinearCoordinates[b],
                                                                                          baseMeshCurvilinearCoordinates[b+1],
-                                                                                         false);
+              false);
           for (unsigned int s = 0; s < numberOfAddedNodesTolastEdges; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1556,7 +1631,7 @@ namespace Gedim
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedNodesTolastEdges,
                                                                                          heightMeshCurvilinearCoordinates[h],
                                                                                          heightMeshCurvilinearCoordinates[h+1],
-                                                                                         false);
+              false);
           for (unsigned int s = 0; s < numberOfAddedNodesTolastEdges; s++)
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
@@ -1800,8 +1875,8 @@ namespace Gedim
                                          + (numHeightPoints / 2) * (numBasePoints - 1) *
                                          (numberOfAddedNodesToFirstNEdges * (N >= 3) + (numberOfAddedNodesToFirstNEdges - 1) * (N < 3) + 1);
       unsigned int cell1DVerticalOddH = cell1DVerticalEvenH
-                                              + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
-                                              * ( numberOfAddedNodesToFirstNEdges * (N >= 2) + (numberOfAddedNodesToFirstNEdges - 1) * (N < 2) + 1);
+                                        + ceil(numBasePoints * 0.5) * (numHeightPoints - 1)
+                                        * ( numberOfAddedNodesToFirstNEdges * (N >= 2) + (numberOfAddedNodesToFirstNEdges - 1) * (N < 2) + 1);
 
       for (unsigned int h = 0; h < numHeightPoints - 1; h++)
       {
