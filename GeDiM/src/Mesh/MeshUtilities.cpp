@@ -266,7 +266,7 @@ namespace Gedim
       for (unsigned int v = 0; v < numCell2DVertices; v++)
       {
         const unsigned int origin = cell2DVertices[v];
-        const unsigned int end = cell2DVertices[(v + 1) % numVertices];
+        const unsigned int end = cell2DVertices[(v + 1) % numCell2DVertices];
 
         cell2D(0, v) = origin;
         cell2D(1, v) = (origin < end) ? edges.coeff(origin, end) - 1 : edges.coeff(end, origin) - 1;
