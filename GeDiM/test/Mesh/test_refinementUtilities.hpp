@@ -205,8 +205,8 @@ namespace GedimUnitTesting
                                                           meshGeometricData.Cell2DsEdgeLengths[1].minCoeff() };
     const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), cell2DsQualityParameter[0]);
 
-    const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 1.0, 0.0).normalized();
-    const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
+    const Eigen::Vector3d lineTangent = Eigen::Vector3d(-1.0, 0.5, 0.0).normalized();
+    const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
     refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
