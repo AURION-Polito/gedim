@@ -175,14 +175,14 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh_Refined");
 
-    EXPECT_EQ(5, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(4, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(4, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(5, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(2, meshDAO.Cell2DTotalNumber());
   }
 
-  TEST(TestRefinementUtilities, TestRefinePolygons_OneNewVertex)
+  TEST(TestRefinementUtilities, TestRefinePolygons_NewVertexOne)
   {
-    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefinePolygons_OneNewVertex";
+    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefinePolygons_NewVertexOne";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -207,7 +207,7 @@ namespace GedimUnitTesting
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 1.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
-    const unsigned int cell2DToRefineIndex = 0;
+    const unsigned int cell2DToRefineIndex = 1;
 
     refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
                                                        meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],

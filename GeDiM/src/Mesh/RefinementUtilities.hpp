@@ -20,6 +20,14 @@ namespace Gedim
                                       const unsigned int& fromVertex,
                                       const unsigned int& toVertex,
                                       IMeshDAO& mesh) const;
+      void SplitPolygon_NewVertexFrom(const unsigned int& cell2DIndex,
+                                      const unsigned int cell2DNumVertices,
+                                      const unsigned int& fromEdge,
+                                      const unsigned int& toVertex,
+                                      const unsigned int& fromNewCell0DIndex,
+                                      const std::vector<unsigned int>& fromSplitCell1DsIndex,
+                                      const bool& fromEdgeDirection,
+                                      IMeshDAO& mesh) const;
 
       /// \brief Split Triangle From Four Vertices
       /// \param cell2DIndex the cell2D to split
