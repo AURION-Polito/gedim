@@ -15,6 +15,12 @@ namespace Gedim
       const GeometryUtilities& geometryUtilities;
       const MeshUtilities& meshUtilities;
 
+      void SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
+                                      const unsigned int cell2DNumVertices,
+                                      const unsigned int& fromVertex,
+                                      const unsigned int& toVertex,
+                                      IMeshDAO& mesh) const;
+
       /// \brief Split Triangle From Four Vertices
       /// \param cell2DIndex the cell2D to split
       /// \param splitCell1DsIndex the new cell1Ds index
