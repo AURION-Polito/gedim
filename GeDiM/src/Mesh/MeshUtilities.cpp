@@ -203,6 +203,81 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  MeshUtilities::ComputeMesh2DCell1DsResult MeshUtilities::ComputeMesh2DCell1Ds(const Eigen::MatrixXd& cell0Ds,
+                                                                                const std::vector<Eigen::VectorXi>& cell2Ds) const
+  {
+    ComputeMesh2DCell1DsResult result;
+
+    const unsigned int numVertices = cell0Ds.cols();
+    const unsigned int numCell2Ds = cell2Ds.size();
+
+    Eigen::SparseMatrix<unsigned int> edges;
+    edges.resize(numVertices,
+                 numVertices);
+
+    std::list<Eigen::Triplet<unsigned int>> triplets;
+    for (unsigned int c = 0; c < numCell2Ds; c++)
+    {
+      const Eigen::VectorXi& cell2DVertices = cell2Ds.at(c);
+      const unsigned int& numCell2DVertices = cell2DVertices.size();
+
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[v];
+        const unsigned int end = cell2DVertices[(v + 1) % numCell2DVertices];
+        triplets.push_back(Eigen::Triplet<unsigned int>(origin, end, 1));
+        triplets.push_back(Eigen::Triplet<unsigned int>(end, origin, 1));
+      }
+    }
+
+    edges.setFromTriplets(triplets.begin(), triplets.end());
+    edges.makeCompressed();
+
+    unsigned int numEdges = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+      {
+        if (it.row() < it.col())
+          it.valueRef() = 1 + numEdges++;
+      }
+    }
+
+    result.Cell1Ds.resize(2, numEdges);
+
+    numEdges = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+      {
+        if (it.row() < it.col())
+          result.Cell1Ds.col(numEdges++)<< it.row(), it.col();
+      }
+    }
+
+    result.Cell2Ds.resize(numCell2Ds);
+
+    for (unsigned int c = 0; c < numCell2Ds; c++)
+    {
+      Eigen::MatrixXi& cell2D = result.Cell2Ds.at(c);
+      const Eigen::VectorXi& cell2DVertices = cell2Ds.at(c);
+      const unsigned int& numCell2DVertices = cell2DVertices.size();
+
+      cell2D.resize(2, numCell2DVertices);
+
+      for (unsigned int v = 0; v < numCell2DVertices; v++)
+      {
+        const unsigned int origin = cell2DVertices[v];
+        const unsigned int end = cell2DVertices[(v + 1) % numCell2DVertices];
+
+        cell2D(0, v) = origin;
+        cell2D(1, v) = (origin < end) ? edges.coeff(origin, end) - 1 : edges.coeff(end, origin) - 1;
+      }
+    }
+
+    return result;
+  }
+  // ***************************************************************************
   void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration& configuration,
                                   const GeometryUtilities& geometryUtilities,
                                   const IMeshDAO& convexMesh) const
@@ -1447,6 +1522,7 @@ namespace Gedim
               baseMeshCurvilinearCoordinates[b+1],
               false);
           for (unsigned int s = 0; s < numberOfAddedVerticesForEachRectangle[0]; s++)
+
           {
             const Eigen::Vector3d coordinate = rectangleOrigin +
                                                curvilinearPoints[s] * rectangleBaseTangent +
@@ -1499,7 +1575,6 @@ namespace Gedim
       {
         for (unsigned int b = 0; b < (numBasePoints - 1); b++)
         {
-
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[2],
               baseMeshCurvilinearCoordinates[b],
               baseMeshCurvilinearCoordinates[b+1],
@@ -1529,7 +1604,6 @@ namespace Gedim
       {
         for (unsigned int b = 1; b < numBasePoints; b = b + 2)
         {
-
           std::vector<double> curvilinearPoints = geometryUtilities.EquispaceCoordinates(numberOfAddedVerticesForEachRectangle[3],
               heightMeshCurvilinearCoordinates[h],
               heightMeshCurvilinearCoordinates[h+1],

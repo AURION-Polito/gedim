@@ -1303,6 +1303,7 @@ namespace Gedim
           edgeIntersection.Index = e;
           continue;
         }
+          break;
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection:
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection:
         {
@@ -1314,7 +1315,10 @@ namespace Gedim
             case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
             case PointSegmentPositionTypes::LeftTheSegment:
             case PointSegmentPositionTypes::RightTheSegment:
+            {
               continue;
+            }
+              break;
             case PointSegmentPositionTypes::OnSegmentOrigin:
             case PointSegmentPositionTypes::InsideSegment:
             case PointSegmentPositionTypes::OnSegmentEnd:
@@ -1338,6 +1342,7 @@ namespace Gedim
               throw runtime_error("Unknown IntersectionPosition");
           }
         }
+          break;
         default:
           throw runtime_error("Unknown IntersectionSegmentsType");
       }
