@@ -203,7 +203,7 @@ namespace GedimUnitTesting
                                                                                                         meshDAO);
     const std::vector<double> cell2DsQualityParameter = { meshGeometricData.Cell2DsEdgeLengths[0].minCoeff(),
                                                           meshGeometricData.Cell2DsEdgeLengths[1].minCoeff() };
-    const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), cell2DsQualityParameter[0]);
+    const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), 0.0);
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-1.0, 0.5, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.5, 0.0);
