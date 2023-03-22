@@ -36,6 +36,17 @@ namespace Gedim
                                     const std::vector<unsigned int>& toSplitCell1DsIndex,
                                     const bool& toEdgeDirection,
                                     IMeshDAO& mesh) const;
+      void SplitPolygon_NewVertices(const unsigned int& cell2DIndex,
+                                    const unsigned int cell2DNumVertices,
+                                    const unsigned int& fromEdge,
+                                    const unsigned int& toEdge,
+                                    const unsigned int& fromNewCell0DIndex,
+                                    const unsigned int& toNewCell0DIndex,
+                                    const std::vector<unsigned int>& fromSplitCell1DsIndex,
+                                    const std::vector<unsigned int>& toSplitCell1DsIndex,
+                                    const bool& fromEdgeDirection,
+                                    const bool& toEdgeDirection,
+                                    IMeshDAO& mesh) const;
 
       /// \brief Split Triangle From Four Vertices
       /// \param cell2DIndex the cell2D to split
