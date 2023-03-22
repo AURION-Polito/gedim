@@ -11,6 +11,13 @@ namespace Gedim
   /// \copyright See top level LICENSE file for details.
   class RefinementUtilities final
   {
+    public:
+      struct MaxEdgeDirection final
+      {
+          unsigned int MaxEdgeIndex = 0;
+          unsigned int OppositeVertexIndex = 0;
+      };
+
     private:
       const GeometryUtilities& geometryUtilities;
       const MeshUtilities& meshUtilities;
@@ -69,14 +76,17 @@ namespace Gedim
                           const MeshUtilities& meshUtilities);
       ~RefinementUtilities();
 
-      /// \brief Refine Triangle Cell2D By Max Edge
+      MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength);
+      /// \brief Refine Triangle Cell2D By Edge
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
-      /// \param cell2DEdgeLengths the cell2D edge lenghts
+      /// \param edgeIndex the edge local index to split
+      /// \param oppositeVertexIndex the vertex opposite to edge local index
       /// \param mesh the mesh to be updated
-      void RefineTriangleCellByMaxEdge(const unsigned int& cell2DIndex,
-                                       const Eigen::VectorXd& cell2DEdgesLength,
-                                       const std::vector<bool>& cell2DEdgesDirection,
-                                       IMeshDAO& mesh) const;
+      void RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
+                                    const unsigned int& edgeIndex,
+                                    const unsigned int& oppositeVertexIndex,
+                                    const std::vector<bool>& cell2DEdgesDirection,
+                                    IMeshDAO& mesh) const;
 
       /// \brief Refine Polygon Cell2D By Direction
       void RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,

@@ -42,10 +42,15 @@ namespace GedimUnitTesting
 
     const unsigned int cell2DToRefineIndex = 0;
 
-    refinementUtilities.RefineTriangleCellByMaxEdge(cell2DToRefineIndex,
-                                                    meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                    meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                    meshDAO);
+    const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
+    EXPECT_EQ(2, direction.MaxEdgeIndex);
+    EXPECT_EQ(1, direction.OppositeVertexIndex);
+
+    refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
+                                                 direction.MaxEdgeIndex,
+                                                 direction.OppositeVertexIndex,
+                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                 meshDAO);
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO,
@@ -105,10 +110,14 @@ namespace GedimUnitTesting
       for (unsigned int c = 0; c < cell2DsToRefineIndex.size(); c++)
       {
         const unsigned int cell2DToRefineIndex = cell2DsToRefineIndex[c];
-        refinementUtilities.RefineTriangleCellByMaxEdge(cell2DToRefineIndex,
-                                                        meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                        meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                        meshDAO);
+
+        const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
+
+        refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
+                                                     direction.MaxEdgeIndex,
+                                                     direction.OppositeVertexIndex,
+                                                     meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                     meshDAO);
       }
 
       meshUtilities.ExportMeshToVTU(meshDAO,
@@ -120,6 +129,11 @@ namespace GedimUnitTesting
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO,
                                     extractionData);
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
+    meshUtilities.CheckMesh2D(checkConfig,
+                              geometryUtilities,
+                              meshDAO);
 
     EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(48, meshDAO.Cell1DTotalNumber());

@@ -336,24 +336,31 @@ namespace Gedim
                                      newCell2DsIndex[0]); // left
   }
   // ***************************************************************************
-  void RefinementUtilities::RefineTriangleCellByMaxEdge(const unsigned int& cell2DIndex,
-                                                        const Eigen::VectorXd& cell2DEdgesLength,
-                                                        const std::vector<bool>& cell2DEdgesDirection,
-                                                        IMeshDAO& mesh) const
+  RefinementUtilities::MaxEdgeDirection RefinementUtilities::ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength)
   {
-    Gedim::Output::Assert(cell2DEdgesLength.size() == 3);
+    MaxEdgeDirection result;
 
+    Eigen::VectorXd::Index maxEdgeLocalIndex;
+    edgesLength.maxCoeff(&maxEdgeLocalIndex);
+    result.MaxEdgeIndex = maxEdgeLocalIndex;
+    result.OppositeVertexIndex = (maxEdgeLocalIndex + 2) % 3;
+
+    return result;
+  }
+  // ***************************************************************************
+  void RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
+                                                     const unsigned int& edgeIndex,
+                                                     const unsigned int& oppositeVertexIndex,
+                                                     const std::vector<bool>& cell2DEdgesDirection,
+                                                     IMeshDAO& mesh) const
+  {
     if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
       return;
 
-    Eigen::VectorXd::Index maxEdgeLocalIndex;
-    cell2DEdgesLength.maxCoeff(&maxEdgeLocalIndex);
-    const unsigned int oppositeVertexIndex = (maxEdgeLocalIndex + 2) % 3;
-
     // Add new mesh vertex, middle point of edge
     const unsigned int cell0DOppositeIndex = mesh.Cell2DVertex(cell2DIndex, oppositeVertexIndex);
-    const unsigned int cell1DMaxIndex = mesh.Cell2DEdge(cell2DIndex, maxEdgeLocalIndex);
-    const bool cell1DDirection = cell2DEdgesDirection[maxEdgeLocalIndex];
+    const unsigned int cell1DMaxIndex = mesh.Cell2DEdge(cell2DIndex, edgeIndex);
+    const bool cell1DDirection = cell2DEdgesDirection[edgeIndex];
     const unsigned int cell1DOriginIndex = mesh.Cell1DOrigin(cell1DMaxIndex);
     const unsigned int cell1DEndIndex = mesh.Cell1DEnd(cell1DMaxIndex);
 
