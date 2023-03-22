@@ -345,17 +345,8 @@ namespace Gedim
       return;
 
     const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, neighIndex);
-    unsigned int neighEdgeIndex = 3;
-    for (unsigned int e = 0; e < 3; e++)
-    {
-      if (mesh.Cell2DEdge(neighCell2DIndex, e) == cell1DIndex)
-      {
-        neighEdgeIndex = e;
-        break;
-      }
-    }
-
-    Gedim::Output::Assert(neighEdgeIndex < 3);
+    const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex,
+                                                            cell1DIndex);
     const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
     SplitPolygon_NewVertexTo(neighCell2DIndex,
