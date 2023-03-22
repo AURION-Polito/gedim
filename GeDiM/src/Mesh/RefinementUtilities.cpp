@@ -14,14 +14,17 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  void RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
-                                                       const unsigned int cell2DNumVertices,
-                                                       const unsigned int& fromVertex,
-                                                       const unsigned int& toVertex,
-                                                       IMeshDAO& mesh) const
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
+                                                                                           const unsigned int cell2DNumVertices,
+                                                                                           const unsigned int& fromVertex,
+                                                                                           const unsigned int& toVertex,
+                                                                                           IMeshDAO& mesh) const
   {
+    SplitPolygon_Result result;
+
     // Create new cell1D from vertex to vertex
-    const unsigned int newCell1DIndex = mesh.Cell1DAppend(1);
+    result.NewCell1DIndex = mesh.Cell1DAppend(1);
+    const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
                               mesh.Cell2DVertex(cell2DIndex, toVertex),
                               mesh.Cell2DVertex(cell2DIndex, fromVertex));
@@ -62,29 +65,34 @@ namespace Gedim
     subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
     subCells[1](1, v) = newCell1DIndex;
 
-    const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
-                                                                                subCells,
-                                                                                mesh);
+    result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
+                                                       subCells,
+                                                       mesh);
 
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
-                                     newCell2DsIndex[1]); // right
+                                     result.NewCell2DsIndex[1]); // right
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      1,
-                                     newCell2DsIndex[0]); // left
+                                     result.NewCell2DsIndex[0]); // left
+
+    return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::SplitPolygon_NewVertexFrom(const unsigned int& cell2DIndex,
-                                                       const unsigned int cell2DNumVertices,
-                                                       const unsigned int& fromEdge,
-                                                       const unsigned int& toVertex,
-                                                       const unsigned int& fromNewCell0DIndex,
-                                                       const std::vector<unsigned int>& fromSplitCell1DsIndex,
-                                                       const bool& fromEdgeDirection,
-                                                       IMeshDAO& mesh) const
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexFrom(const unsigned int& cell2DIndex,
+                                                                                           const unsigned int cell2DNumVertices,
+                                                                                           const unsigned int& fromEdge,
+                                                                                           const unsigned int& toVertex,
+                                                                                           const unsigned int& fromNewCell0DIndex,
+                                                                                           const std::vector<unsigned int>& fromSplitCell1DsIndex,
+                                                                                           const bool& fromEdgeDirection,
+                                                                                           IMeshDAO& mesh) const
   {
+    SplitPolygon_Result result;
+
     // Create new cell1D from new vertex to vertex
-    const unsigned int newCell1DIndex = mesh.Cell1DAppend(1);
+    result.NewCell1DIndex = mesh.Cell1DAppend(1);
+    const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
                               mesh.Cell2DVertex(cell2DIndex, toVertex),
                               fromNewCell0DIndex);
@@ -131,29 +139,34 @@ namespace Gedim
     subCells[1](0, v) = fromNewCell0DIndex;
     subCells[1](1, v) = newCell1DIndex;
 
-    const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
-                                                                                subCells,
-                                                                                mesh);
+    result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
+                                                       subCells,
+                                                       mesh);
 
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
-                                     newCell2DsIndex[1]); // right
+                                     result.NewCell2DsIndex[1]); // right
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      1,
-                                     newCell2DsIndex[0]); // left
+                                     result.NewCell2DsIndex[0]); // left
+
+    return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::SplitPolygon_NewVertexTo(const unsigned int& cell2DIndex,
-                                                     const unsigned int cell2DNumVertices,
-                                                     const unsigned int& fromVertex,
-                                                     const unsigned int& toEdge,
-                                                     const unsigned int& toNewCell0DIndex,
-                                                     const std::vector<unsigned int>& toSplitCell1DsIndex,
-                                                     const bool& toEdgeDirection,
-                                                     IMeshDAO& mesh) const
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexTo(const unsigned int& cell2DIndex,
+                                                                                         const unsigned int cell2DNumVertices,
+                                                                                         const unsigned int& fromVertex,
+                                                                                         const unsigned int& toEdge,
+                                                                                         const unsigned int& toNewCell0DIndex,
+                                                                                         const std::vector<unsigned int>& toSplitCell1DsIndex,
+                                                                                         const bool& toEdgeDirection,
+                                                                                         IMeshDAO& mesh) const
   {
-    // Create new cell1D from vertex to vertex
-    const unsigned int newCell1DIndex = mesh.Cell1DAppend(1);
+    SplitPolygon_Result result;
+
+    // Create new cell1D from vertex to new vertex
+    result.NewCell1DIndex = mesh.Cell1DAppend(1);
+    const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
                               toNewCell0DIndex,
                               mesh.Cell2DVertex(cell2DIndex, fromVertex));
@@ -200,32 +213,37 @@ namespace Gedim
     subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
     subCells[1](1, v) = newCell1DIndex;
 
-    const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
-                                                                                subCells,
-                                                                                mesh);
+    result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
+                                                       subCells,
+                                                       mesh);
 
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
-                                     newCell2DsIndex[1]); // right
+                                     result.NewCell2DsIndex[1]); // right
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      1,
-                                     newCell2DsIndex[0]); // left
+                                     result.NewCell2DsIndex[0]); // left
+
+    return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::SplitPolygon_NewVertices(const unsigned int& cell2DIndex,
-                                                     const unsigned int cell2DNumVertices,
-                                                     const unsigned int& fromEdge,
-                                                     const unsigned int& toEdge,
-                                                     const unsigned int& fromNewCell0DIndex,
-                                                     const unsigned int& toNewCell0DIndex,
-                                                     const std::vector<unsigned int>& fromSplitCell1DsIndex,
-                                                     const std::vector<unsigned int>& toSplitCell1DsIndex,
-                                                     const bool& fromEdgeDirection,
-                                                     const bool& toEdgeDirection,
-                                                     IMeshDAO& mesh) const
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertices(const unsigned int& cell2DIndex,
+                                                                                         const unsigned int cell2DNumVertices,
+                                                                                         const unsigned int& fromEdge,
+                                                                                         const unsigned int& toEdge,
+                                                                                         const unsigned int& fromNewCell0DIndex,
+                                                                                         const unsigned int& toNewCell0DIndex,
+                                                                                         const std::vector<unsigned int>& fromSplitCell1DsIndex,
+                                                                                         const std::vector<unsigned int>& toSplitCell1DsIndex,
+                                                                                         const bool& fromEdgeDirection,
+                                                                                         const bool& toEdgeDirection,
+                                                                                         IMeshDAO& mesh) const
   {
-    // Create new cell1D from vertex to vertex
-    const unsigned int newCell1DIndex = mesh.Cell1DAppend(1);
+    SplitPolygon_Result result;
+
+    // Create new cell1D from new vertex to new vertex
+    result.NewCell1DIndex = mesh.Cell1DAppend(1);
+    const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
                               toNewCell0DIndex,
                               fromNewCell0DIndex);
@@ -278,16 +296,18 @@ namespace Gedim
     subCells[1](0, v) = fromNewCell0DIndex;
     subCells[1](1, v) = newCell1DIndex;
 
-    const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
-                                                                                subCells,
-                                                                                mesh);
+    result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
+                                                       subCells,
+                                                       mesh);
 
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
-                                     newCell2DsIndex[1]); // right
+                                     result.NewCell2DsIndex[1]); // right
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      1,
-                                     newCell2DsIndex[0]); // left
+                                     result.NewCell2DsIndex[0]); // left
+
+    return result;
   }
   // ***************************************************************************
   RefinementUtilities::MaxEdgeDirection RefinementUtilities::ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength)
@@ -302,14 +322,16 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
-                                                     const unsigned int& edgeIndex,
-                                                     const unsigned int& oppositeVertexIndex,
-                                                     const std::vector<bool>& cell2DEdgesDirection,
-                                                     IMeshDAO& mesh) const
+  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
+                                                                                          const unsigned int& edgeIndex,
+                                                                                          const unsigned int& oppositeVertexIndex,
+                                                                                          const std::vector<bool>& cell2DEdgesDirection,
+                                                                                          IMeshDAO& mesh) const
   {
+    RefinePolygon_Result result;
+
     if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
-      return;
+      return result;
 
     // Add new mesh vertex, middle point of edge
     const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, edgeIndex);
@@ -342,7 +364,7 @@ namespace Gedim
     // update neighbour cell
     const unsigned int neighIndex = cell1DDirection ? 0 : 1;
     if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, neighIndex))
-      return;
+      return result;
 
     const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, neighIndex);
     const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex,
@@ -357,16 +379,18 @@ namespace Gedim
                              splitCell1DsIndex,
                              !cell1DDirection,
                              mesh);
+
+    return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
-                                                           const Eigen::MatrixXd& cell2DVertices,
-                                                           const Eigen::Vector3d& lineTangent,
-                                                           const Eigen::Vector3d& lineOrigin,
-                                                           const std::vector<double>& cell1DsQualityParameter,
-                                                           const Eigen::VectorXd& cell2DEdgesLength,
-                                                           const std::vector<bool>& cell2DEdgesDirection,
-                                                           IMeshDAO& mesh) const
+  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
+                                                                                                const Eigen::MatrixXd& cell2DVertices,
+                                                                                                const Eigen::Vector3d& lineTangent,
+                                                                                                const Eigen::Vector3d& lineOrigin,
+                                                                                                const std::vector<double>& cell1DsQualityParameter,
+                                                                                                const Eigen::VectorXd& cell2DEdgesLength,
+                                                                                                const std::vector<bool>& cell2DEdgesDirection,
+                                                                                                IMeshDAO& mesh) const
   {
     if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
       return;
