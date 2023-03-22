@@ -328,8 +328,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh_Refined");
 
-    EXPECT_EQ(5, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(7, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(6, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(3, meshDAO.Cell2DTotalNumber());
   }
 }
