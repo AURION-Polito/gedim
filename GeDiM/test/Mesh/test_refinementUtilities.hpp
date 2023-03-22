@@ -53,10 +53,35 @@ namespace GedimUnitTesting
                                                                                                                  meshDAO);
     EXPECT_EQ(std::vector<unsigned int>({ 4 }),
               result.NewCell0DsIndex);
-    EXPECT_EQ(std::vector<unsigned int>({ 5, 6, 7 }),
-              result.NewCell1DsIndex);
+    EXPECT_EQ(2,
+              result.NewCell1DsIndex.size());
+    EXPECT_EQ(Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated,
+              result.NewCell1DsIndex[0].Type);
+    EXPECT_EQ(std::vector<unsigned int>({ 5, 6 }),
+              result.NewCell1DsIndex[0].NewCell1DsIndex);
+    EXPECT_EQ(2,
+              result.NewCell1DsIndex[0].OriginalCell1DIndex);
+    EXPECT_EQ(4,
+              result.NewCell1DsIndex[0].NewCell0DIndex);
+    EXPECT_EQ(Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::New,
+              result.NewCell1DsIndex[1].Type);
+    EXPECT_EQ(std::vector<unsigned int>({ 7 }),
+              result.NewCell1DsIndex[1].NewCell1DsIndex);
     EXPECT_EQ(std::vector<unsigned int>({ 2, 3 }),
               result.NewCell2DsIndex);
+
+    for (unsigned int e = 0; e < result.NewCell1DsIndex.size(); e++)
+    {
+      if (result.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
+        continue;
+
+      refinementUtilities.RefineTriangleCellByEdge_UpdateNeighbours(cell2DToRefineIndex,
+                                                                    result.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                    result.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                    result.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                    meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(direction.MaxEdgeIndex),
+                                                                    meshDAO);
+    }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO,

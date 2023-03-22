@@ -362,29 +362,34 @@ namespace Gedim
                                                                      mesh);
 
     result.NewCell0DsIndex = { newCell0DIndex };
-    result.NewCell1DsIndex = { splitCell1DsIndex[0],
-                               splitCell1DsIndex[1],
-                               splitResult.NewCell1DIndex };
-    result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
+    result.NewCell1DsIndex.resize(2);
+    result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+    result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DsIndex;
+    result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndex;
+    result.NewCell1DsIndex[0].NewCell0DIndex = newCell0DIndex;
+    result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+    result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
 
-//    // update neighbour cell
-//    const unsigned int neighIndex = cell1DDirection ? 0 : 1;
-//    if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, neighIndex))
-//      return result;
+    result.NewCell2DsIndex = { splitResult.NewCell2DsIndex };
 
-//    const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, neighIndex);
-//    const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex,
-//                                                            cell1DIndex);
-//    const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
+    //    // update neighbour cell
+    //    const unsigned int neighIndex = cell1DDirection ? 0 : 1;
+    //    if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, neighIndex))
+    //      return result;
 
-//    SplitPolygon_NewVertexTo(neighCell2DIndex,
-//                             3,
-//                             neighOppositeVertexIndex,
-//                             neighEdgeIndex,
-//                             newCell0DIndex,
-//                             splitCell1DsIndex,
-//                             !cell1DDirection,
-//                             mesh);
+    //    const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, neighIndex);
+    //    const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex,
+    //                                                            cell1DIndex);
+    //    const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
+
+    //    SplitPolygon_NewVertexTo(neighCell2DIndex,
+    //                             3,
+    //                             neighOppositeVertexIndex,
+    //                             neighEdgeIndex,
+    //                             newCell0DIndex,
+    //                             splitCell1DsIndex,
+    //                             !cell1DDirection,
+    //                             mesh);
 
     return result;
   }
@@ -404,6 +409,9 @@ namespace Gedim
 
       const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, n);
       if (neighCell2DIndex == cell2DIndex)
+        continue;
+
+      if (mesh.Cell2DHasUpdatedCell2Ds(neighCell2DIndex))
         continue;
 
       const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex,
@@ -579,7 +587,10 @@ namespace Gedim
                                                                          toVertex,
                                                                          mesh);
 
-      result.NewCell1DsIndex = { splitResult.NewCell1DIndex };
+      result.NewCell1DsIndex.resize(1);
+      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+      result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
     else if (createNewVertexOne && !createNewVertexTwo)
@@ -604,9 +615,15 @@ namespace Gedim
                                                                          mesh);
 
       result.NewCell0DsIndex = { newCell0DIndexOne };
-      result.NewCell1DsIndex = { splitCell1DsIndexOne[0],
-                                 splitCell1DsIndexOne[1],
-                                 splitResult.NewCell1DIndex };
+
+      result.NewCell1DsIndex.resize(2);
+      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+      result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DsIndexOne;
+      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
+      result.NewCell1DsIndex[0].NewCell0DIndex = newCell0DIndexOne;
+      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+      result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
     else if (!createNewVertexOne && createNewVertexTwo)
@@ -630,9 +647,15 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
       result.NewCell0DsIndex = { newCell0DIndexTwo };
-      result.NewCell1DsIndex = { splitCell1DsIndexTwo[0],
-                                 splitCell1DsIndexTwo[1],
-                                 splitResult.NewCell1DIndex };
+
+      result.NewCell1DsIndex.resize(2);
+      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+      result.NewCell1DsIndex[0].NewCell1DsIndex =splitCell1DsIndexTwo;
+      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexTwo;
+      result.NewCell1DsIndex[0].NewCell0DIndex = newCell0DIndexTwo;
+      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+      result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
     else
@@ -653,11 +676,19 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
       result.NewCell0DsIndex = { newCell0DIndexOne, newCell0DIndexTwo };
-      result.NewCell1DsIndex = { splitCell1DsIndexOne[0],
-                                 splitCell1DsIndexOne[1],
-                                 splitCell1DsIndexTwo[0],
-                                 splitCell1DsIndexTwo[1],
-                                 splitResult.NewCell1DIndex };
+
+      result.NewCell1DsIndex.resize(3);
+      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+      result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DsIndexOne;
+      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
+      result.NewCell1DsIndex[0].NewCell0DIndex = newCell0DIndexOne;
+      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+      result.NewCell1DsIndex[1].NewCell1DsIndex = splitCell1DsIndexTwo;
+      result.NewCell1DsIndex[1].OriginalCell1DIndex = cell1DIndexTwo;
+      result.NewCell1DsIndex[1].NewCell0DIndex = newCell0DIndexTwo;
+      result.NewCell1DsIndex[2].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+      result.NewCell1DsIndex[2].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
 

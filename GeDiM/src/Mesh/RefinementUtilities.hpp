@@ -28,8 +28,17 @@ namespace Gedim
       {
           struct RefinedCell1D final
           {
-              unsigned int OriginalCell1DIndex;
-              unsigned int
+              enum struct Types
+              {
+                Unknown = 0,
+                Updated = 1,
+                New = 2
+              };
+
+              Types Type = Types::Unknown;
+              std::vector<unsigned int> NewCell1DsIndex = {};
+              unsigned int OriginalCell1DIndex = 0;
+              unsigned int NewCell0DIndex = 0;
           };
 
           std::vector<unsigned int> NewCell0DsIndex = {};
