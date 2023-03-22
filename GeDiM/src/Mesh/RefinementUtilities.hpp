@@ -26,8 +26,14 @@ namespace Gedim
 
       struct RefinePolygon_Result final
       {
+          struct RefinedCell1D final
+          {
+              unsigned int OriginalCell1DIndex;
+              unsigned int
+          };
+
           std::vector<unsigned int> NewCell0DsIndex = {};
-          std::vector<unsigned int> NewCell1DsIndex = {};
+          std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
 
@@ -85,6 +91,20 @@ namespace Gedim
                                                     const unsigned int& oppositeVertexIndex,
                                                     const std::vector<bool>& cell2DEdgesDirection,
                                                     IMeshDAO& mesh) const;
+
+      /// \brief Update Cell1D neighbours of refined triangle by edge with refine by edge
+      /// \param cell2DIndex the index of Cell2D refined, from 0 to Cell2DTotalNumber()
+      /// \param cell1DIndex the index of Cell1D splitted by the refinement, from 0 to Cell1DTotalNumber()
+      /// \param newCell0DIndex the index of Cell0D created by the cell1D splitting process, from 0 to Cell0DTotalNumber()
+      /// \param splitCell1DsIndex the indices of the new Cell1Ds created by the splitting process, from 0 to Cell1DTotalNumber()
+      /// \param cell2DEdgeDirection the direction of the Cell1D splitted in the Cell2D
+      /// \param mesh the mesh to be updated
+      void RefineTriangleCellByEdge_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                     const unsigned int& cell1DIndex,
+                                                     const unsigned int& newCell0DIndex,
+                                                     const std::vector<unsigned int>& splitCell1DsIndex,
+                                                     const bool& cell2DEdgeDirection,
+                                                     IMeshDAO& mesh) const;
 
       /// \brief Refine Polygon Cell2D By Direction
       RefinePolygon_Result RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,

@@ -46,11 +46,17 @@ namespace GedimUnitTesting
     EXPECT_EQ(2, direction.MaxEdgeIndex);
     EXPECT_EQ(1, direction.OppositeVertexIndex);
 
-    refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
-                                                 direction.MaxEdgeIndex,
-                                                 direction.OppositeVertexIndex,
-                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                 meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result result = refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
+                                                                                                                 direction.MaxEdgeIndex,
+                                                                                                                 direction.OppositeVertexIndex,
+                                                                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                 meshDAO);
+    EXPECT_EQ(std::vector<unsigned int>({ 4 }),
+              result.NewCell0DsIndex);
+    EXPECT_EQ(std::vector<unsigned int>({ 5, 6, 7 }),
+              result.NewCell1DsIndex);
+    EXPECT_EQ(std::vector<unsigned int>({ 2, 3 }),
+              result.NewCell2DsIndex);
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO,
