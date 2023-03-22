@@ -737,17 +737,6 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  vector<unsigned int> MeshMatricesDAO::Cell2DVertices(const unsigned int& cell2DIndex) const
-  {
-    const unsigned int numVertices = Cell2DNumberVertices(cell2DIndex);
-
-    vector<unsigned int> vertices(numVertices);
-    for (unsigned int v = 0; v < numVertices; v++)
-      vertices[v] = _mesh.Cell2DVertices[_mesh.NumberCell2DVertices[cell2DIndex] + v];
-
-    return vertices;
-  }
-  // ***************************************************************************
   std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell2DsVertices() const
   {
     vector<std::vector<unsigned int>> polygonVertices(Cell2DTotalNumber());
@@ -766,15 +755,30 @@ namespace Gedim
     return coordinates;
   }
   // ***************************************************************************
-  vector<unsigned int> MeshMatricesDAO::Cell2DEdges(const unsigned int& cell2DIndex) const
+  unsigned int MeshMatricesDAO::Cell2DFindVertex(const unsigned int& cell2DIndex,
+                                                 const unsigned int& cell0DIndex) const
   {
-    const unsigned int numEdges = Cell2DNumberEdges(cell2DIndex);
-
-    vector<unsigned int> edges(numEdges);
-    for (unsigned int e = 0; e < numEdges; e++)
-      edges[e] = _mesh.Cell2DEdges[_mesh.NumberCell2DEdges[cell2DIndex] + e];
-
-    return edges;
+    const vector<unsigned int> vertices = Cell2DVertices(cell2DIndex);
+    const vector<unsigned int>::const_iterator it = std::find(vertices.begin(),
+                                                              vertices.end(),
+                                                              cell0DIndex);
+    if (it != vertices.end())
+      return std::distance(vertices.begin(), it);
+    else
+      throw runtime_error("Vertex not found");
+  }
+  // ***************************************************************************
+  unsigned int MeshMatricesDAO::Cell2DFindEdge(const unsigned int& cell2DIndex,
+                                               const unsigned int& cell1DIndex) const
+  {
+    const vector<unsigned int> edges = Cell2DEdges(cell2DIndex);
+    const vector<unsigned int>::const_iterator it = std::find(edges.begin(),
+                                                              edges.end(),
+                                                              cell1DIndex);
+    if (it != edges.end())
+      return std::distance(edges.begin(), it);
+    else
+      throw runtime_error("Edge not found");
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInsertUpdatedCell2D(const unsigned int& cell2DIndex,

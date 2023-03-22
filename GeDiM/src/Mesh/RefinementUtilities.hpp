@@ -55,21 +55,6 @@ namespace Gedim
                                     const bool& toEdgeDirection,
                                     IMeshDAO& mesh) const;
 
-      /// \brief Split Triangle From Four Vertices
-      /// \param cell2DIndex the cell2D to split
-      /// \param splitCell1DsIndex the new cell1Ds index
-      /// \param cell1DDirection the original cell1D direction
-      /// \param oppositeVertexIndex the vertex opposite to cell1D
-      /// \param cell0DOppositeIndex the mesh cell0D index opposite to cell1D
-      /// \param newCell0DIndex the new cell0D index
-      /// \param mesh the mesh
-      void SplitTriangle_FromFourVertices(const unsigned int& cell2DIndex,
-                                          const std::vector<unsigned int>& splitCell1DsIndex,
-                                          const bool& cell1DDirection,
-                                          const unsigned int& oppositeVertexIndex,
-                                          const unsigned int& cell0DOppositeIndex,
-                                          const unsigned int& newCell0DIndex,
-                                          IMeshDAO& mesh) const;
 
     public:
       RefinementUtilities(const GeometryUtilities& geometryUtilities,
