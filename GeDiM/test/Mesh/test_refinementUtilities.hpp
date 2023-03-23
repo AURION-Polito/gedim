@@ -492,13 +492,13 @@ namespace GedimUnitTesting
       {
         const unsigned int cell2DToRefineIndex = cell2DsToRefineIndex[c];
 
-        const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 1.0, 0.0).normalized();
-        const Eigen::Vector3d lineOrigin = meshGeometricData.Cell2DsCentroids.at(cell2DToRefineIndex);
+        const Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxDiameterDirection(meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
+                                                                                                                              meshGeometricData.Cell2DsCentroids.at(cell2DToRefineIndex));
 
-        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
                                                                                                                                  meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                                 lineTangent,
-                                                                                                                                 lineOrigin,
+                                                                                                                                 direction.LineTangent,
+                                                                                                                                 direction.LineOrigin,
                                                                                                                                  cell1DsQualityParameter,
                                                                                                                                  meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),

@@ -850,6 +850,10 @@ namespace Gedim
                                      const Eigen::Vector3d& point) const;
 
       /// \param points the point collection, size 3 x numPoints
+      /// \return the distances between the points collected in matrix, size numPoints x numPoints.
+      Eigen::MatrixXd PointsDistance(const Eigen::MatrixXd& points) const;
+
+      /// \param points the point collection, size 3 x numPoints
       /// \return the maximum distance between the points.
       double PointsMaxDistance(const Eigen::MatrixXd& points) const;
 

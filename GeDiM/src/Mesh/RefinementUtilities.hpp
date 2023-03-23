@@ -18,6 +18,12 @@ namespace Gedim
           unsigned int OppositeVertexIndex = 0;
       };
 
+      struct PolygonDirection final
+      {
+          Eigen::Vector3d LineOrigin;
+          Eigen::Vector3d LineTangent;
+      };
+
       struct SplitPolygon_Result final
       {
           unsigned int NewCell1DIndex = 0;
@@ -89,7 +95,10 @@ namespace Gedim
                                                    const bool& toEdgeDirection,
                                                    IMeshDAO& mesh) const;
 
-      MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength);
+      MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
+
+      PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
+                                                          const Eigen::Vector3d& centroid) const;
 
       /// \brief Refine Triangle Cell2D By Edge
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()

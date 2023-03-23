@@ -13,6 +13,29 @@ namespace Gedim
     return (points.colwise() - point).colwise().norm();
   }
   // ***************************************************************************
+  Eigen::MatrixXd GeometryUtilities::PointsDistance(const Eigen::MatrixXd& points) const
+  {
+    Output::Assert(points.rows() == 3);
+
+    const unsigned int& numPoints = points.cols();
+
+    Eigen::MatrixXd distances = Eigen::MatrixXd::Constant(numPoints,
+                                                          numPoints,
+                                                          -1.0);
+
+    for (unsigned int v = 0; v < numPoints; v++)
+    {
+      const Eigen::Vector3d& vertexOne = points.col(v);
+      for (unsigned int w = v + 1; w < numPoints; w++)
+      {
+        const Eigen::Vector3d& vertexTwo = points.col(w);
+        distances(v, w) = PointDistance(vertexOne, vertexTwo);
+      }
+    }
+
+    return distances;
+  }
+  // ***************************************************************************
   double GeometryUtilities::PointsMaxDistance(const Eigen::MatrixXd& points) const
   {
     Output::Assert(points.rows() == 3);

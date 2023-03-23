@@ -310,7 +310,7 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::MaxEdgeDirection RefinementUtilities::ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength)
+  RefinementUtilities::MaxEdgeDirection RefinementUtilities::ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const
   {
     MaxEdgeDirection result;
 
@@ -318,6 +318,21 @@ namespace Gedim
     edgesLength.maxCoeff(&maxEdgeLocalIndex);
     result.MaxEdgeIndex = maxEdgeLocalIndex;
     result.OppositeVertexIndex = (maxEdgeLocalIndex + 2) % 3;
+
+    return result;
+  }
+  // ***************************************************************************
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
+                                                                                                const Eigen::Vector3d& centroid) const
+  {
+    PolygonDirection result;
+
+    const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(vertices);
+    Eigen::MatrixXd::Index row, col;
+    const double minDistance = (distances.array() > 0.0).minCoeff(&row, &col);
+
+    result.LineTangent = Eigen::Vector3d::Zero();
+    result.LineOrigin = centroid;
 
     return result;
   }
