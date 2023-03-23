@@ -39,6 +39,7 @@ namespace Gedim
               std::vector<unsigned int> NewCell1DsIndex = {};
               unsigned int OriginalCell1DIndex = 0;
               unsigned int NewCell0DIndex = 0;
+              unsigned int OriginalCell2DEdgeIndex = 0;
           };
 
           std::vector<unsigned int> NewCell0DsIndex = {};
@@ -124,6 +125,13 @@ namespace Gedim
                                                           const Eigen::VectorXd& cell2DEdgesLength,
                                                           const std::vector<bool>& cell2DEdgesDirection,
                                                           IMeshDAO& mesh) const;
+
+      void RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                           const unsigned int& cell1DIndex,
+                                                           const unsigned int& newCell0DIndex,
+                                                           const std::vector<unsigned int>& splitCell1DsIndex,
+                                                           const bool& cell2DEdgeDirection,
+                                                           IMeshDAO& mesh) const;
   };
 
 }
