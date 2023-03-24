@@ -327,11 +327,17 @@ namespace Gedim
   {
     PolygonDirection result;
 
-    const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(vertices);
-    Eigen::MatrixXd::Index row, col;
-    const double minDistance = (distances.array() > 0.0).minCoeff(&row, &col);
+    const std::vector<unsigned int> convexHull = geometryUtilities.ConvexHull(vertices, false);
+    const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(vertices,
+                                                                               convexHull);
 
-    result.LineTangent = Eigen::Vector3d::Zero();
+    const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(convexHullVertices);
+    Eigen::MatrixXd::Index row, col;
+    distances.maxCoeff(&row, &col); // get vertex indices of maximum distance in the polygon
+    Gedim::Output::Assert(col != row);
+
+    result.LineTangent = geometryUtilities.SegmentNormal(convexHullVertices.col(row),
+                                                         convexHullVertices.col(col));
     result.LineOrigin = centroid;
 
     return result;
