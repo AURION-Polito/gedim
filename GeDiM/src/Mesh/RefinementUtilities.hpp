@@ -24,6 +24,12 @@ namespace Gedim
           Eigen::Vector3d LineTangent;
       };
 
+      struct MeshQuality final
+      {
+          std::vector<double> Cell2DsQuality;
+          std::vector<double> Cell1DsQuality;
+      };
+
       struct SplitPolygon_Result final
       {
           unsigned int NewCell1DIndex = 0;
@@ -96,6 +102,10 @@ namespace Gedim
                                                    IMeshDAO& mesh) const;
 
       MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
+
+      MeshQuality ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
+                                                  const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
+                                                  const std::vector<double>& cell2DsInRadius) const;
 
       PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                           const Eigen::Vector3d& centroid) const;

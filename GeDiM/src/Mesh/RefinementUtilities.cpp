@@ -322,6 +322,42 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  RefinementUtilities::MeshQuality RefinementUtilities::ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
+                                                                                        const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
+                                                                                        const std::vector<double>& cell2DsInRadius) const
+  {
+    MeshQuality result;
+
+    result.Cell2DsQuality.resize(mesh.Cell2DTotalNumber(), 0.0);
+    for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)
+    {
+      if (!mesh.Cell2DIsActive(c))
+        continue;
+
+      result.Cell2DsQuality[c] = std::min(cell2DsEdgesLength[c].minCoeff(),
+                                          2.0 * cell2DsInRadius[c]);
+    }
+
+    result.Cell1DsQuality.resize(mesh.Cell1DTotalNumber(), 0.0);
+    for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
+    {
+      if (!mesh.Cell1DIsActive(e))
+        continue;
+
+      for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
+      {
+        if (!mesh.Cell1DHasNeighbourCell2D(e, n))
+          continue;
+
+        const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(e, n);
+        if (result.Cell1DsQuality[e] < result.Cell2DsQuality[neighCell2DIndex])
+          result.Cell1DsQuality[e] = result.Cell2DsQuality[neighCell2DIndex];
+      }
+    }
+
+    return result;
+  }
+  // ***************************************************************************
   RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                                                                 const Eigen::Vector3d& centroid) const
   {

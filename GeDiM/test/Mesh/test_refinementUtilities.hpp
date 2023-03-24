@@ -469,9 +469,32 @@ namespace GedimUnitTesting
     {
       Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
-      const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), 0.0);
+
 
       const std::vector<bool>& activeCell2Ds = mockMesh.Mesh.ActiveCell2D;
+
+      std::vector<double> cell2DsInRadius(meshDAO.Cell2DTotalNumber(), 0.0);
+      for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+      {
+        if (!activeCell2Ds[c])
+          continue;
+
+        cell2DsInRadius[c] = geometryUtilities.PolygonInRadius(meshGeometricData.Cell2DsVertices[c],
+                                                               meshGeometricData.Cell2DsCentroids[c],
+                                                               meshGeometricData.Cell2DsEdgeNormals[c]);
+      }
+
+      Gedim::RefinementUtilities::MeshQuality meshQuality = refinementUtilities.ComputeMeshQualityForRefinement(meshDAO,
+                                                                                                                meshGeometricData.Cell2DsEdgeLengths,
+                                                                                                                cell2DsInRadius);
+
+      {
+        using namespace Gedim;
+        cerr.precision(2);
+        cerr<< scientific<< "Cell2DsQuality "<< meshQuality.Cell2DsQuality<< endl;
+        cerr<< scientific<< "Cell1DsQuality "<< meshQuality.Cell1DsQuality<< endl;
+      }
+
       std::vector<double> activeCell2DsArea(meshDAO.Cell2DTotalNumber(), 0.0);
       unsigned int numActiveCell2Ds = 0;
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
@@ -496,13 +519,13 @@ namespace GedimUnitTesting
                                                                                                                               meshGeometricData.Cell2DsCentroids.at(cell2DToRefineIndex));
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                                 meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                                 direction.LineTangent,
-                                                                                                                                 direction.LineOrigin,
-                                                                                                                                 cell1DsQualityParameter,
-                                                                                                                                 meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                                 meshDAO);
+                                                                                                                                  meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                                  direction.LineTangent,
+                                                                                                                                  direction.LineOrigin,
+                                                                                                                                  meshQuality.Cell1DsQuality,
+                                                                                                                                  meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                                  meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
         {
