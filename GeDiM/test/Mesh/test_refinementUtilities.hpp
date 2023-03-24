@@ -475,6 +475,7 @@ namespace GedimUnitTesting
                                       baseCoordinates,
                                       heightCoordinates,
                                       meshDAO);
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
     meshUtilities.ExportMeshToVTU(meshDAO,
                                   exportFolder,
