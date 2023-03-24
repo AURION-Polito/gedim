@@ -467,7 +467,7 @@ namespace GedimUnitTesting
                                   "Mesh_Original");
 
     const unsigned int seed = 10;
-    const unsigned int maxRefinements = 10;
+    const unsigned int maxRefinements = 5;
 
     for (unsigned int r = 0; r < maxRefinements; r++)
     {

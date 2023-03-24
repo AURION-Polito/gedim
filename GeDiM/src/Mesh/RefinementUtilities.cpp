@@ -637,11 +637,6 @@ namespace Gedim
                                                                          toVertex,
                                                                          mesh);
 
-      if (splitResult.NewCell1DIndex == 42)
-      {
-        std::cerr<< "HERE 1"<< std::endl;
-      }
-
       result.NewCell1DsIndex.resize(1);
       result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
       result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
@@ -668,11 +663,6 @@ namespace Gedim
                                                                          splitCell1DsIndexOne,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
                                                                          mesh);
-
-      if (splitResult.NewCell1DIndex == 42)
-      {
-        std::cerr<< "HERE 2"<< std::endl;
-      }
 
       result.NewCell0DsIndex = { newCell0DIndexOne };
 
@@ -708,11 +698,6 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
 
-      if (splitResult.NewCell1DIndex == 42)
-      {
-        std::cerr<< "HERE 3"<< std::endl;
-      }
-
       result.NewCell0DsIndex = { newCell0DIndexTwo };
 
       result.NewCell1DsIndex.resize(2);
@@ -743,11 +728,6 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionOne.Index),
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
-
-      if (splitResult.NewCell1DIndex == 42)
-      {
-        std::cerr<< "HERE 4"<< std::endl;
-      }
 
 
       result.NewCell0DsIndex = { newCell0DIndexOne, newCell0DIndexTwo };
