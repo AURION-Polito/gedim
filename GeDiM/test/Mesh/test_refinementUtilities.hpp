@@ -50,6 +50,7 @@ namespace GedimUnitTesting
                                                                                                                  direction.MaxEdgeIndex,
                                                                                                                  direction.OppositeVertexIndex,
                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                 meshGeometricData.Cell2DsAreas,
                                                                                                                  meshDAO);
     EXPECT_EQ(std::vector<unsigned int>({ 4 }),
               result.NewCell0DsIndex);
@@ -148,6 +149,7 @@ namespace GedimUnitTesting
                                                                                                                            direction.MaxEdgeIndex,
                                                                                                                            direction.OppositeVertexIndex,
                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                           meshGeometricData.Cell2DsAreas,
                                                                                                                            meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
@@ -560,8 +562,8 @@ namespace GedimUnitTesting
                               geometryUtilities,
                               meshDAO);
 
-    EXPECT_EQ(18, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(26, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(10, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(18, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(9, meshDAO.Cell2DTotalNumber());
   }
 }

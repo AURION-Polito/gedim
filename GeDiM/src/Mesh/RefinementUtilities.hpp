@@ -119,6 +119,7 @@ namespace Gedim
                                                     const unsigned int& edgeIndex,
                                                     const unsigned int& oppositeVertexIndex,
                                                     const std::vector<bool>& cell2DEdgesDirection,
+                                                    const std::vector<double>& cell2DsArea,
                                                     IMeshDAO& mesh) const;
 
       /// \brief Update Cell1D neighbours of refined triangle by edge with refine by edge
