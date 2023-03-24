@@ -383,7 +383,8 @@ namespace Gedim
                                                                                           const unsigned int& edgeIndex,
                                                                                           const unsigned int& oppositeVertexIndex,
                                                                                           const std::vector<bool>& cell2DEdgesDirection,
-                                                                                          const std::vector<double>& cell2DsArea,
+                                                                                          const double& cell2DArea,
+                                                                                          const Eigen::VectorXd& cell2DEdgesLength,
                                                                                           IMeshDAO& mesh) const
   {
     RefinePolygon_Result result;
@@ -391,24 +392,13 @@ namespace Gedim
     if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
       return result;
 
-    // Check if the cell refinement creates null cell2Ds
-    if (geometryUtilities.IsValue2DZero(cell2DsArea.at(cell2DIndex) / 2.0))
+    // Check if the cell refinement creates null cell2Ds or cell1Ds
+    if (geometryUtilities.IsValue2DZero(cell2DArea / 2.0) ||
+        geometryUtilities.IsValue1DZero(cell2DEdgesLength[edgeIndex] / 2.0))
       return result;
 
-    const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, edgeIndex);
-
-    for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
-    {
-      if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, n))
-        continue;
-
-      const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, n);
-
-      if (geometryUtilities.IsValue2DZero(cell2DsArea.at(neighCell2DIndex) / 2.0))
-        return result;
-    }
-
     // Add new mesh vertex, middle point of edge
+    const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, edgeIndex);
     const bool cell1DDirection = cell2DEdgesDirection[edgeIndex];
     const unsigned int cell1DOriginIndex = mesh.Cell1DOrigin(cell1DIndex);
     const unsigned int cell1DEndIndex = mesh.Cell1DEnd(cell1DIndex);

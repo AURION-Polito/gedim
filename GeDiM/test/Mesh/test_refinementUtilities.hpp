@@ -50,7 +50,8 @@ namespace GedimUnitTesting
                                                                                                                  direction.MaxEdgeIndex,
                                                                                                                  direction.OppositeVertexIndex,
                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                 meshGeometricData.Cell2DsAreas,
+                                                                                                                 meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                 meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                  meshDAO);
     EXPECT_EQ(std::vector<unsigned int>({ 4 }),
               result.NewCell0DsIndex);
@@ -149,7 +150,8 @@ namespace GedimUnitTesting
                                                                                                                            direction.MaxEdgeIndex,
                                                                                                                            direction.OppositeVertexIndex,
                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2DsAreas,
+                                                                                                                           meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                           meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                            meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
@@ -176,6 +178,10 @@ namespace GedimUnitTesting
     meshUtilities.ExtractActiveMesh(meshDAO,
                                     extractionData);
 
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "Mesh_Refined");
+
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig,
                               geometryUtilities,
@@ -184,10 +190,6 @@ namespace GedimUnitTesting
     EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(48, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(28, meshDAO.Cell2DTotalNumber());
-
-    meshUtilities.ExportMeshToVTU(meshDAO,
-                                  exportFolder,
-                                  "Mesh_Refined");
   }
 
   TEST(TestRefinementUtilities, TestRefinePolygons_NoNewVertices)
@@ -465,7 +467,7 @@ namespace GedimUnitTesting
                                   "Mesh_Original");
 
     const unsigned int seed = 10;
-    const unsigned int maxRefinements = 5;
+    const unsigned int maxRefinements = 20;
 
     for (unsigned int r = 0; r < maxRefinements; r++)
     {
@@ -489,13 +491,6 @@ namespace GedimUnitTesting
       Gedim::RefinementUtilities::MeshQuality meshQuality = refinementUtilities.ComputeMeshQualityForRefinement(meshDAO,
                                                                                                                 meshGeometricData.Cell2DsEdgeLengths,
                                                                                                                 cell2DsInRadius);
-
-      {
-        using namespace Gedim;
-        cerr.precision(2);
-        cerr<< scientific<< "Cell2DsQuality "<< meshQuality.Cell2DsQuality<< endl;
-        cerr<< scientific<< "Cell1DsQuality "<< meshQuality.Cell1DsQuality<< endl;
-      }
 
       std::vector<double> activeCell2DsArea(meshDAO.Cell2DTotalNumber(), 0.0);
       unsigned int numActiveCell2Ds = 0;
