@@ -479,7 +479,8 @@ namespace Gedim
                                                                                                 const Eigen::MatrixXd& cell2DVertices,
                                                                                                 const Eigen::Vector3d& lineTangent,
                                                                                                 const Eigen::Vector3d& lineOrigin,
-                                                                                                const std::vector<double>& cell1DsQualityParameter,
+                                                                                                const std::vector<double>& cell1DsQuality,
+                                                                                                const double& cell1DsQualityWeight,
                                                                                                 const Eigen::VectorXd& cell2DEdgesLength,
                                                                                                 const std::vector<bool>& cell2DEdgesDirection,
                                                                                                 IMeshDAO& mesh) const
@@ -559,10 +560,12 @@ namespace Gedim
 
     const bool createNewVertexOne =
         (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
-        geometryUtilities.IsValue1DGreater(cell2DEdgesLength[edgeIntersectionOne.Index], cell1DsQualityParameter[cell1DIndexOne]);
+        geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersectionOne.Index],
+        cell1DsQualityWeight * cell1DsQuality[cell1DIndexOne]);
     const bool createNewVertexTwo =
         (edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
-        geometryUtilities.IsValue1DGreater(cell2DEdgesLength[edgeIntersectionTwo.Index], cell1DsQualityParameter[cell1DIndexTwo]);
+        geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersectionTwo.Index],
+        cell1DsQualityWeight * cell1DsQuality[cell1DIndexTwo]);
 
     unsigned int newCell0DIndexOne = 0;
     unsigned int newCell0DIndexTwo = 0;

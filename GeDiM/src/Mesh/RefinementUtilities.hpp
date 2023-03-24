@@ -142,7 +142,8 @@ namespace Gedim
                                                           const Eigen::MatrixXd& cell2DVertices,
                                                           const Eigen::Vector3d& lineTangent,
                                                           const Eigen::Vector3d& lineOrigin,
-                                                          const std::vector<double>& cell1DsQualityParameter,
+                                                          const std::vector<double>& cell1DsQuality,
+                                                          const double& cell1DsQualityWeight,
                                                           const Eigen::VectorXd& cell2DEdgesLength,
                                                           const std::vector<bool>& cell2DEdgesDirection,
                                                           IMeshDAO& mesh) const;
