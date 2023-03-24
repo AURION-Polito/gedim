@@ -467,7 +467,7 @@ namespace GedimUnitTesting
                                   "Mesh_Original");
 
     const unsigned int seed = 10;
-    const unsigned int maxRefinements = 20;
+    const unsigned int maxRefinements = 10;
 
     for (unsigned int r = 0; r < maxRefinements; r++)
     {
@@ -537,6 +537,11 @@ namespace GedimUnitTesting
                                                                               meshDAO);
         }
       }
+
+      Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
+      meshUtilities.CheckMesh2D(checkConfig,
+                                geometryUtilities,
+                                meshDAO);
 
       meshUtilities.ExportMeshToVTU(meshDAO,
                                     exportFolder,

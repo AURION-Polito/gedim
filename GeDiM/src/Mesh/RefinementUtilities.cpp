@@ -525,16 +525,20 @@ namespace Gedim
         case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin:
         {
           const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionTwo.Index);
-          if (mesh.Cell1DOrigin(cell1DIndexOne) != mesh.Cell1DOrigin(cell1DIndexTwo) &&
-              mesh.Cell1DEnd(cell1DIndexOne) != mesh.Cell1DOrigin(cell1DIndexTwo))
+          const unsigned int cell1DOriginIndex = cell2DEdgesDirection[edgeIntersectionTwo.Index] ? mesh.Cell1DOrigin(cell1DIndexTwo) :
+                                                                                                   mesh.Cell1DEnd(cell1DIndexTwo);
+          if (mesh.Cell1DOrigin(cell1DIndexOne) != cell1DOriginIndex &&
+              mesh.Cell1DEnd(cell1DIndexOne) != cell1DOriginIndex)
             findEdgeIntersectionTwo = &linePolygonPosition.EdgeIntersections[i];
         }
           break;
         case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd:
         {
           const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionTwo.Index);
-          if (mesh.Cell1DOrigin(cell1DIndexOne) != mesh.Cell1DEnd(cell1DIndexTwo) &&
-              mesh.Cell1DEnd(cell1DIndexOne) != mesh.Cell1DEnd(cell1DIndexTwo))
+          const unsigned int cell1DEndIndex = cell2DEdgesDirection[edgeIntersectionTwo.Index] ? mesh.Cell1DOrigin(cell1DIndexTwo) :
+                                                                                                mesh.Cell1DEnd(cell1DIndexTwo);
+          if (mesh.Cell1DOrigin(cell1DIndexOne) != cell1DEndIndex &&
+              mesh.Cell1DEnd(cell1DIndexOne) != cell1DEndIndex)
             findEdgeIntersectionTwo = &linePolygonPosition.EdgeIntersections[i];
         }
           break;
@@ -633,6 +637,11 @@ namespace Gedim
                                                                          toVertex,
                                                                          mesh);
 
+      if (splitResult.NewCell1DIndex == 42)
+      {
+        std::cerr<< "HERE 1"<< std::endl;
+      }
+
       result.NewCell1DsIndex.resize(1);
       result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
       result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
@@ -659,6 +668,11 @@ namespace Gedim
                                                                          splitCell1DsIndexOne,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
                                                                          mesh);
+
+      if (splitResult.NewCell1DIndex == 42)
+      {
+        std::cerr<< "HERE 2"<< std::endl;
+      }
 
       result.NewCell0DsIndex = { newCell0DIndexOne };
 
@@ -693,6 +707,12 @@ namespace Gedim
                                                                        splitCell1DsIndexTwo,
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
+
+      if (splitResult.NewCell1DIndex == 42)
+      {
+        std::cerr<< "HERE 3"<< std::endl;
+      }
+
       result.NewCell0DsIndex = { newCell0DIndexTwo };
 
       result.NewCell1DsIndex.resize(2);
@@ -723,6 +743,13 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionOne.Index),
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
+
+      if (splitResult.NewCell1DIndex == 42)
+      {
+        std::cerr<< "HERE 4"<< std::endl;
+      }
+
+
       result.NewCell0DsIndex = { newCell0DIndexOne, newCell0DIndexTwo };
 
       result.NewCell1DsIndex.resize(3);
