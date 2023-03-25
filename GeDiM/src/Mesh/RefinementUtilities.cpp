@@ -629,12 +629,15 @@ namespace Gedim
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
+      const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionOne.Index) +
+                                                      cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices));
+
       if (geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
                                            cell2DVertices.col(toVertex),
-                                           cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices)) ||
-          geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
+                                           middleCoordinate) ||
+          geometryUtilities.PointIsAligned(cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices),
                                            cell2DVertices.col(toVertex),
-                                           cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
+                                           middleCoordinate))
         return result;
 
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
@@ -671,12 +674,15 @@ namespace Gedim
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
 
+      const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
+                                                      cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
+
       if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
                                            cell2DVertices.col(edgeIntersectionTwo.Index),
-                                           cell2DVertices.col((fromVertex + 1) % cell2DNumVertices)) ||
+                                           middleCoordinate) ||
           geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
-                                           cell2DVertices.col(edgeIntersectionTwo.Index),
-                                           cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices)))
+                                           cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
+                                           middleCoordinate))
         return result;
 
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
