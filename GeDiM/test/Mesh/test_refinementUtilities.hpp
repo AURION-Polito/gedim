@@ -757,8 +757,8 @@ namespace GedimUnitTesting
                                   "Mesh_Original");
 
     const unsigned int seed = 10;
-    const unsigned int maxRefinements = 5;
-    const double cell1DsQualityWeight = 1.0;
+    const unsigned int maxRefinements = 6;
+    const double cell1DsQualityWeight = 0.25;
 
     for (unsigned int r = 0; r < maxRefinements; r++)
     {
@@ -803,8 +803,14 @@ namespace GedimUnitTesting
       {
         const unsigned int cell2DToRefineIndex = cell2DsToRefineIndex[c];
 
-        const Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxDiameterDirection(meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
+        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxDiameterDirection(meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
                                                                                                                               meshGeometricData.Cell2DsCentroids.at(cell2DToRefineIndex));
+
+        if (r == 0)
+        {
+          direction.LineOrigin = Eigen::Vector3d(0.0, 0.25, 0.0);
+          direction.LineTangent = Eigen::Vector3d(1.0, 0.5, 0.0);
+        }
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
                                                                                                                                   meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
@@ -854,9 +860,9 @@ namespace GedimUnitTesting
                               geometryUtilities,
                               meshDAO);
 
-    EXPECT_EQ(10, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(18, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(9, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(19, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(29, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(11, meshDAO.Cell2DTotalNumber());
   }
 }
 
