@@ -455,9 +455,9 @@ namespace GedimUnitTesting
     EXPECT_EQ(3, meshDAO.Cell2DTotalNumber());
   }
 
-  TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality)
+  TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NoNewVertices)
   {
-    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefinePolygons_CheckQuality";
+    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefinePolygons_CheckQuality_NoNewVertices";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -544,8 +544,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh_Refined");
 
-    EXPECT_EQ(6, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(8, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(10, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(3, meshDAO.Cell2DTotalNumber());
   }
 

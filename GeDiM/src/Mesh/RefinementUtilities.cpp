@@ -525,7 +525,8 @@ namespace Gedim
     if (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel)
       return result;
 
-    const unsigned int cell1DIndexOne = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionOne.Index);
+    const unsigned int cell1DIndexOne = mesh.Cell2DEdge(cell2DIndex,
+                                                        edgeIntersectionOne.Index);
 
     GeometryUtilities::LinePolygonPositionResult::EdgeIntersection* findEdgeIntersectionTwo = nullptr;
 
@@ -573,7 +574,8 @@ namespace Gedim
 
     const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionTwo = *findEdgeIntersectionTwo;
 
-    const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex, edgeIntersectionTwo.Index);
+    const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex,
+                                                        edgeIntersectionTwo.Index);
 
     const bool createNewVertexOne =
         (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
@@ -627,8 +629,13 @@ namespace Gedim
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
-      //if (mesh.Cell1DExists(, toVertex))
-      //  return result;
+      if (geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
+                                           cell2DVertices.col(toVertex),
+                                           cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices)) ||
+          geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
+                                           cell2DVertices.col(toVertex),
+                                           cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
+        return result;
 
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
                                                                         mesh);
@@ -663,6 +670,14 @@ namespace Gedim
       const unsigned int fromVertex = edgeIntersectionOne.CurvilinearCoordinate <= 0.5 ?
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+
+      if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                           cell2DVertices.col(edgeIntersectionTwo.Index),
+                                           cell2DVertices.col((fromVertex + 1) % cell2DNumVertices)) ||
+          geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                           cell2DVertices.col(edgeIntersectionTwo.Index),
+                                           cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices)))
+        return result;
 
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
