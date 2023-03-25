@@ -439,8 +439,7 @@ namespace Gedim
                                              const unsigned int& endCell0DIndex)
   {
     Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
-    Gedim::Output::Assert(originCell0DIndex < Cell0DTotalNumber());
-    Gedim::Output::Assert(endCell0DIndex < Cell0DTotalNumber());
+    Gedim::Output::Assert(!Cell1DExists(originCell0DIndex, endCell0DIndex));
     _mesh.Cell1DVertices[2 * cell1DIndex] = originCell0DIndex;
     _mesh.Cell1DVertices[2 * cell1DIndex + 1] = endCell0DIndex;
     _mesh.Cell1DAdjacency.insert(originCell0DIndex,

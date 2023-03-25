@@ -30,6 +30,12 @@ namespace Gedim
           std::vector<double> Cell1DsQuality;
       };
 
+      struct SplitCell1D_Result final
+      {
+          unsigned int NewCell0DIndex = 0;
+          std::vector<unsigned int> NewCell1DsIndex = {};
+      };
+
       struct SplitPolygon_Result final
       {
           unsigned int NewCell1DIndex = 0;
@@ -67,6 +73,9 @@ namespace Gedim
       RefinementUtilities(const GeometryUtilities& geometryUtilities,
                           const MeshUtilities& meshUtilities);
       ~RefinementUtilities();
+
+      SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
+                                                 IMeshDAO& mesh) const;
 
       SplitPolygon_Result SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
