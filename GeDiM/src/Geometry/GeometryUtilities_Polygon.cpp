@@ -1218,9 +1218,9 @@ namespace Gedim
     // Compute Inertia Matrix
     Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
 
-    inertia(0, 0) = ((polygonQuadraturePoints.row(0).array() - polygonCentroid.x()).square() *
+    inertia(0, 0) = ((polygonQuadraturePoints.row(1).array() - polygonCentroid.y()).square() *
                      polygonQuadratureWeights.transpose().array()).sum();
-    inertia(1, 1) = ((polygonQuadraturePoints.row(1).array() - polygonCentroid.y()).square() *
+    inertia(1, 1) = ((polygonQuadraturePoints.row(0).array() - polygonCentroid.x()).square() *
                      polygonQuadratureWeights.transpose().array()).sum();
     inertia(0, 1) = - ((polygonQuadraturePoints.row(0).array() - polygonCentroid.x()) *
                        (polygonQuadraturePoints.row(1).array() - polygonCentroid.y()) *

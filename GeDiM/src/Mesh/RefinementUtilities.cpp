@@ -408,6 +408,23 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
+                                                                                               const Eigen::Matrix3d& inertia) const
+  {
+     PolygonDirection result;
+
+     // get maximux direction of inertia tensor
+     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
+     if (eigensolver.info() != Eigen::Success)
+       throw std::runtime_error("Inertia not correct");
+
+     result.LineTangent.setZero();
+     result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
+     result.LineOrigin = centroid;
+
+     return result;
+  }
+  // ***************************************************************************
   RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
                                                                                           const unsigned int& edgeIndex,
                                                                                           const unsigned int& oppositeVertexIndex,

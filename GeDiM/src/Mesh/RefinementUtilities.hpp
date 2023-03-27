@@ -118,6 +118,8 @@ namespace Gedim
 
       PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                           const Eigen::Vector3d& centroid) const;
+      PolygonDirection ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
+                                                         const Eigen::Matrix3d& inertia) const;
 
       /// \brief Refine Triangle Cell2D By Edge
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
