@@ -504,9 +504,6 @@ namespace GedimUnitTesting
         polygonVertices.col(0)<< 0.0, 0.0, 0.0;
         polygonVertices.col(1)<< 1.0, 0.0, 0.0;
         polygonVertices.col(2)<< 0.0, 1.0, 0.0;
-        const Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
-        const Eigen::MatrixXd edgeTangents = geometryUtilities.PolygonEdgeTangents(polygonVertices);
-        const Eigen::MatrixXd edgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
 
         const double polygonArea = 1.0 / 2.0;
         const Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
@@ -515,22 +512,56 @@ namespace GedimUnitTesting
         const vector<unsigned int> polygonTriangulation = { 0, 1, 2 };
 
         const vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
-                                                                                                          polygonTriangulation);
-
-        {
-          using namespace Gedim;
-          cout.precision(16);
-          cout<< scientific<< polygonVertices.row(0)<< endl;
-          cout<< scientific<< polygonVertices.row(1)<< endl;
-        }
+                                                                                                                polygonTriangulation);
 
         const Eigen::Matrix3d polygonInertia = geometryUtilities.PolygonInertia(centroid,
                                                                                 polygonTriangulationPoints);
 
-        ASSERT_DOUBLE_EQ(polygonInertia(0, 0), +1.0 / 36.0);
-        ASSERT_DOUBLE_EQ(polygonInertia(1, 1), +1.0 / 36.0);
-        ASSERT_DOUBLE_EQ(polygonInertia(0, 1), +1.0 / 72.0);
-        ASSERT_DOUBLE_EQ(polygonInertia(1, 0), +1.0 / 72.0);
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(0, 0), +1.0 / 36.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(1, 1), +1.0 / 36.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(0, 1), +1.0 / 72.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(1, 0), +1.0 / 72.0));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonInertia_ReferenceQuadrilateral)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check inertia of reference triangle 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.0, 1.0, 0.0;
+
+        const double polygonArea = 1.0;
+        const Eigen::Vector3d centroid = geometryUtilities.PolygonCentroid(polygonVertices,
+                                                                           polygonArea);
+
+        const vector<unsigned int> polygonTriangulation = { 0, 1, 2, 0, 2, 3 };
+
+        const vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
+                                                                                                                polygonTriangulation);
+
+        const Eigen::Matrix3d polygonInertia = geometryUtilities.PolygonInertia(centroid,
+                                                                                polygonTriangulationPoints);
+
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(0, 0), +1.0 / 12.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(1, 1), +1.0 / 12.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(0, 1), +0.0));
+        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polygonInertia(1, 0), +0.0));
       }
     }
     catch (const exception& exception)
