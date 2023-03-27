@@ -324,6 +324,12 @@ namespace Gedim
       /// \return if the cell1D is active
       virtual bool Cell1DIsActive(const unsigned int& cell1DIndex) const = 0;
 
+      /// \param updatedCell1DIndex the updated cell1D index, from 0 to Cell1DTotalNumber()
+      /// \return true if has an original cell, false otherwise (the original cell is itself)
+      virtual bool Cell1DHasOriginalCell1D(const unsigned int& updatedCell1DIndex) const = 0;
+      /// \param updatedCell1DIndex the updated cell1D index, from 0 to Cell1DTotalNumber()
+      /// \return the original cell1D index, from 0 to Cell1DTotalNumber()
+      virtual unsigned int Cell1DOriginalCell1D(const unsigned int& updatedCell1DIndex) const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return if the cell1D has new cell1Ds associated
       virtual bool Cell1DHasUpdatedCell1Ds(const unsigned int& cell1DIndex) const = 0;

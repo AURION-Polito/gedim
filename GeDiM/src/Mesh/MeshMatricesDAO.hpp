@@ -437,6 +437,16 @@ namespace Gedim
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         return _mesh.ActiveCell1D[cell1DIndex];
       }
+      inline bool Cell1DHasOriginalCell1D(const unsigned int& updatedCell1DIndex) const
+      {
+        Gedim::Output::Assert(updatedCell1DIndex < Cell1DTotalNumber());
+        return _mesh.Cell1DOriginalCell1Ds.at(updatedCell1DIndex) < _mesh.NumberCell1D;
+      }
+      inline unsigned int Cell1DOriginalCell1D(const unsigned int& updatedCell1DIndex) const
+      {
+        Gedim::Output::Assert(updatedCell1DIndex < Cell1DTotalNumber());
+        return _mesh.Cell1DOriginalCell1Ds.at(updatedCell1DIndex);
+      }
       inline bool Cell1DHasUpdatedCell1Ds(const unsigned int& cell1DIndex) const
       {
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
