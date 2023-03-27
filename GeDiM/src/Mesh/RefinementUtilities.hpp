@@ -4,6 +4,7 @@
 #include "IMeshDAO.hpp"
 #include "GeometryUtilities.hpp"
 #include "MeshUtilities.hpp"
+#include <numeric>
 
 namespace Gedim
 {
@@ -65,6 +66,19 @@ namespace Gedim
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
 
+      struct Cell2Ds_GeometricData
+      {
+          std::vector<Eigen::MatrixXd> Vertices;
+          std::vector<double> Area;
+          std::vector<Eigen::Vector3d> Centroid;
+          std::vector<std::vector<bool>> EdgesDirection;
+          std::vector<Eigen::MatrixXd> EdgesNormal;
+          std::vector<Eigen::VectorXd> EdgesLength;
+          std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
+          std::vector<Eigen::Matrix3d> Inertia;
+          std::vector<double> InRadius;
+      };
+
     private:
       const GeometryUtilities& geometryUtilities;
       const MeshUtilities& meshUtilities;
@@ -111,6 +125,14 @@ namespace Gedim
                                                    IMeshDAO& mesh) const;
 
       MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
+
+      /// Compute the geometric data for all the mesh
+      Cell2Ds_GeometricData InitializeCell2DsGeometricData(const IMeshDAO& mesh) const;
+
+      /// \brief Update the geometric data for only cell2Ds
+      void ComputeCell2DsGeometricData(const IMeshDAO& mesh,
+                                       const std::vector<unsigned int>& cell2DsIndex,
+                                       Cell2Ds_GeometricData& geometricData) const;
 
       MeshQuality ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
                                                   const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
@@ -159,12 +181,12 @@ namespace Gedim
                                                           const std::vector<bool>& cell2DEdgesDirection,
                                                           IMeshDAO& mesh) const;
 
-      void RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
-                                                           const unsigned int& cell1DIndex,
-                                                           const unsigned int& newCell0DIndex,
-                                                           const std::vector<unsigned int>& splitCell1DsIndex,
-                                                           const bool& cell2DEdgeDirection,
-                                                           IMeshDAO& mesh) const;
+      std::vector<unsigned int> RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                                                const unsigned int& cell1DIndex,
+                                                                                const unsigned int& newCell0DIndex,
+                                                                                const std::vector<unsigned int>& splitCell1DsIndex,
+                                                                                const bool& cell2DEdgeDirection,
+                                                                                IMeshDAO& mesh) const;
   };
 
 }

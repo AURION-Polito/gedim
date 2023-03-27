@@ -351,6 +351,97 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::InitializeCell2DsGeometricData(const IMeshDAO& mesh) const
+  {
+    Cell2Ds_GeometricData geometricData;
+
+    std::vector<unsigned int> cell2DsIndex(mesh.Cell2DTotalNumber());
+    std::iota(std::begin(cell2DsIndex), std::end(cell2DsIndex), 0);
+
+    ComputeCell2DsGeometricData(mesh,
+                                cell2DsIndex,
+                                geometricData);
+
+    return geometricData;
+  }
+  // ***************************************************************************
+  void RefinementUtilities::ComputeCell2DsGeometricData(const IMeshDAO& mesh,
+                                                        const std::vector<unsigned int>& cell2DsIndex,
+                                                        Cell2Ds_GeometricData& geometricData) const
+  {
+    geometricData.Vertices.resize(mesh.Cell2DTotalNumber());
+    geometricData.Area.resize(mesh.Cell2DTotalNumber());
+    geometricData.Centroid.resize(mesh.Cell2DTotalNumber());
+    geometricData.EdgesDirection.resize(mesh.Cell2DTotalNumber());
+    geometricData.EdgesNormal.resize(mesh.Cell2DTotalNumber());
+    geometricData.EdgesLength.resize(mesh.Cell2DTotalNumber());
+    geometricData.Triangulations.resize(mesh.Cell2DTotalNumber());
+    geometricData.Inertia.resize(mesh.Cell2DTotalNumber());
+    geometricData.InRadius.resize(mesh.Cell2DTotalNumber());
+
+    for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
+    {
+      const unsigned int cell2DIndex = cell2DsIndex.at(c);
+
+      Eigen::MatrixXd& convexCell2DVertices = geometricData.Vertices.at(cell2DIndex);
+      double& convexCell2DArea = geometricData.Area.at(cell2DIndex);
+      std::vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = geometricData.Triangulations.at(cell2DIndex);
+      Eigen::Vector3d& convexCell2DCentroid = geometricData.Centroid.at(cell2DIndex);
+
+      convexCell2DVertices = mesh.Cell2DVerticesCoordinates(cell2DIndex);
+
+      // compute original cell2D triangulation
+      const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+      const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
+                                                                                            convexCell2DUnalignedVerticesFilter);
+
+      const std::vector<unsigned int> convexCell2DTriangulationFiltered = geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
+      std::vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+      for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
+        convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
+
+      convexCell2DTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(convexCell2DVertices,
+                                                                                     convexCell2DTriangulation);
+
+      const unsigned int& numTriangles = convexCell2DTriangulationPoints.size();
+
+      // compute original cell2D area and centroids
+      Eigen::VectorXd convexCell2DTriangulationAreas(numTriangles);
+      Eigen::MatrixXd convexCell2DTriangulationCentroids(3, numTriangles);
+      for (unsigned int cct = 0; cct < numTriangles; cct++)
+      {
+        convexCell2DTriangulationAreas[cct] = geometryUtilities.PolygonArea(convexCell2DTriangulationPoints[cct]);
+        convexCell2DTriangulationCentroids.col(cct) = geometryUtilities.PolygonBarycenter(convexCell2DTriangulationPoints[cct]);
+      }
+
+      convexCell2DArea = convexCell2DTriangulationAreas.sum();
+      convexCell2DCentroid = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
+                                                               convexCell2DTriangulationAreas,
+                                                               convexCell2DArea);
+
+      geometricData.EdgesDirection[cell2DIndex].resize(mesh.Cell2DNumberEdges(cell2DIndex));
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
+      {
+        const unsigned int origin = mesh.Cell2DVertex(cell2DIndex, e);
+        const unsigned int end = mesh.Cell2DVertex(cell2DIndex,
+                                                   (e + 1) % mesh.Cell2DNumberEdges(cell2DIndex));
+
+        geometricData.EdgesDirection[cell2DIndex][e] = mesh.Cell1DExists(origin,
+                                                                         end);
+      }
+
+      geometricData.EdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DVertices);
+      geometricData.EdgesNormal[cell2DIndex] = geometryUtilities.PolygonEdgeNormals(convexCell2DVertices);
+      geometricData.InRadius[cell2DIndex] = geometryUtilities.PolygonInRadius(convexCell2DVertices,
+                                                                              convexCell2DCentroid,
+                                                                              geometricData.EdgesNormal[cell2DIndex]);
+      geometricData.Inertia[cell2DIndex] = geometryUtilities.PolygonInertia(convexCell2DCentroid,
+                                                                            convexCell2DTriangulationPoints);
+    }
+
+    return;
+  }
+  // ***************************************************************************
   RefinementUtilities::MeshQuality RefinementUtilities::ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
                                                                                         const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                                         const std::vector<double>& cell2DsInRadius) const
@@ -392,17 +483,17 @@ namespace Gedim
   {
     PolygonDirection result;
 
-    const std::vector<unsigned int> convexHull = geometryUtilities.ConvexHull(vertices, false);
-    const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(vertices,
-                                                                               convexHull);
+    const std::vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(vertices);
+    const Eigen::MatrixXd unalignedVertices = geometryUtilities.ExtractPoints(vertices,
+                                                                              unalignedPoints);
 
-    const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(convexHullVertices);
+    const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(unalignedVertices);
     Eigen::MatrixXd::Index row, col;
     distances.maxCoeff(&row, &col); // get vertex indices of maximum distance in the polygon
     Gedim::Output::Assert(col != row);
 
-    result.LineTangent = geometryUtilities.SegmentNormal(convexHullVertices.col(row),
-                                                         convexHullVertices.col(col));
+    result.LineTangent = geometryUtilities.SegmentNormal(unalignedVertices.col(row),
+                                                         unalignedVertices.col(col));
     result.LineOrigin = centroid;
 
     return result;
@@ -411,18 +502,18 @@ namespace Gedim
   RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
                                                                                                const Eigen::Matrix3d& inertia) const
   {
-     PolygonDirection result;
+    PolygonDirection result;
 
-     // get maximux direction of inertia tensor
-     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
-     if (eigensolver.info() != Eigen::Success)
-       throw std::runtime_error("Inertia not correct");
+    // get maximux direction of inertia tensor
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
+    if (eigensolver.info() != Eigen::Success)
+      throw std::runtime_error("Inertia not correct");
 
-     result.LineTangent.setZero();
-     result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
-     result.LineOrigin = centroid;
+    result.LineTangent.setZero();
+    result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
+    result.LineOrigin = centroid;
 
-     return result;
+    return result;
   }
   // ***************************************************************************
   RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
@@ -775,13 +866,15 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
-                                                                            const unsigned int& cell1DIndex,
-                                                                            const unsigned int& newCell0DIndex,
-                                                                            const std::vector<unsigned int>& splitCell1DsIndex,
-                                                                            const bool& cell2DEdgeDirection,
-                                                                            IMeshDAO& mesh) const
+  std::vector<unsigned int> RefinementUtilities::RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                                                                 const unsigned int& cell1DIndex,
+                                                                                                 const unsigned int& newCell0DIndex,
+                                                                                                 const std::vector<unsigned int>& splitCell1DsIndex,
+                                                                                                 const bool& cell2DEdgeDirection,
+                                                                                                 IMeshDAO& mesh) const
   {
+    std::list<unsigned int> newCell2DsIndex;
+
     // update neighbour cells
     for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
     {
@@ -823,10 +916,12 @@ namespace Gedim
         ne++;
       }
 
-      meshUtilities.SplitCell2D(neighCell2DIndex,
-                                subCells,
-                                mesh);
+      newCell2DsIndex.push_back(meshUtilities.SplitCell2D(neighCell2DIndex,
+                                                          subCells,
+                                                          mesh)[0]);
     }
+
+    return std::vector<unsigned int>(newCell2DsIndex.begin(), newCell2DsIndex.end());
   }
   // ***************************************************************************
 }
