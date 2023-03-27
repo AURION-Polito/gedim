@@ -34,6 +34,7 @@ namespace GedimUnitTesting
                                 2,3 };
         Mesh.Cell1DMarkers = { 8,5,0,6,7 };
         Mesh.ActiveCell1D = { 1,1,1,1,1 };
+        Mesh.Cell1DOriginalCell1Ds = { 5,5,5,5,5 };
         Mesh.Cell1DAdjacency.resize(4, 4);
         Mesh.Cell1DAdjacency.reserve(5);
         Mesh.Cell1DAdjacency.insert(3, 0) = 1;
