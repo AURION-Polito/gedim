@@ -195,6 +195,13 @@ namespace Gedim
       void RefinePolygonCell_UpdateGeometricData(const IMeshDAO& mesh,
                                                  const std::vector<unsigned int>& cell2DsIndex,
                                                  Cell2Ds_GeometricData& geometricData) const;
+
+      bool RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell2DIndex,
+                                             const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
+                                             const Eigen::VectorXd& cell2DEdgesLength,
+                                             const double& cell1DsQualityWeight,
+                                             const double& cell1DQuality,
+                                             const IMeshDAO& mesh) const;
   };
 
 }

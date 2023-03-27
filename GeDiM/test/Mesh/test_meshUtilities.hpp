@@ -669,8 +669,8 @@ namespace GedimUnitTesting
       EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(5, 0));
       EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(5, 1));
       EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(5, 1));
-      EXPECT_EQ(3, meshDAO.Cell2DOriginalCell2D(4));
-      EXPECT_EQ(3, meshDAO.Cell2DOriginalCell2D(5));
+      EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(4));
+      EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(5));
       std::list<unsigned int> updatedCell1Ds;
       EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3,
                                                 updatedCell1Ds));

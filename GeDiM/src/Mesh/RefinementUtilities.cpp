@@ -462,6 +462,26 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  bool RefinementUtilities::RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell2DIndex,
+                                                              const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
+                                                              const Eigen::VectorXd& cell2DEdgesLength,
+                                                              const double& cell1DsQualityWeight,
+                                                              const double& cell1DQuality,
+                                                              const IMeshDAO& mesh) const
+  {
+    // check if edge is part of aligned edges
+    const bool isAlignedEdge = false;
+
+    // check if the edge intersection is inside edge
+    const bool isInsideIntersection = (edgeIntersection.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
+
+    // check if the edge quality is enough
+    const bool isQualityEnough = geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersection.Index],
+        cell1DsQualityWeight * cell1DQuality);
+
+    return !isAlignedEdge && isInsideIntersection && isQualityEnough;
+  }
+  // ***************************************************************************
   RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                                                                 const Eigen::Vector3d& centroid) const
   {
@@ -669,15 +689,18 @@ namespace Gedim
     const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex,
                                                         edgeIntersectionTwo.Index);
 
-    const bool createNewVertexOne =
-        (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
-        geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersectionOne.Index],
-        cell1DsQualityWeight * cell1DsQuality[cell1DIndexOne]);
-    const bool createNewVertexTwo =
-        (edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge) &&
-        geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersectionTwo.Index],
-        cell1DsQualityWeight * cell1DsQuality[cell1DIndexTwo]);
-
+    const bool createNewVertexOne = RefinePolygonCell_IsCell1DToSplit(cell2DIndex,
+                                                                      edgeIntersectionOne,
+                                                                      cell2DEdgesLength,
+                                                                      cell1DsQualityWeight,
+                                                                      cell1DsQuality[cell1DIndexOne],
+                                                                      mesh);
+    const bool createNewVertexTwo = RefinePolygonCell_IsCell1DToSplit(cell2DIndex,
+                                                                      edgeIntersectionTwo,
+                                                                      cell2DEdgesLength,
+                                                                      cell1DsQualityWeight,
+                                                                      cell1DsQuality[cell1DIndexTwo],
+                                                                      mesh);
     if (!createNewVertexOne && !createNewVertexTwo)
     {
       // no new vertices
