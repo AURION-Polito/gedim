@@ -1,5 +1,6 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include "MapTriangle.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -1169,6 +1170,64 @@ namespace Gedim
 
     return 0.5 * (xPoints.segment(0, numVertices).dot(yPoints.segment(1, numVertices)) -
                   xPoints.segment(1, numVertices).dot(yPoints.segment(0, numVertices)));
+  }
+  // ***************************************************************************
+  Matrix3d GeometryUtilities::PolygonInertia(const Eigen::Vector3d& polygonCentroid,
+                                             const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints) const
+  {
+    // Create reference quadrature points
+    Eigen::Matrix3d referencePoints = Eigen::Matrix3d::Zero();
+    referencePoints(0,0) = 6.666666666666666297e-01;
+    referencePoints(1,0) = 1.666666666666666574e-01;
+    referencePoints(0,1) = 1.666666666666666574e-01;
+    referencePoints(1,1) = 6.666666666666666297e-01;
+    referencePoints(0,2) = 1.666666666666666574e-01;
+    referencePoints(1,2) = 1.666666666666666574e-01;
+    Eigen::Vector3d referenceWeights;
+    referenceWeights[0] = 1.666666666666666574e-01;
+    referenceWeights[1] = 1.666666666666666574e-01;
+    referenceWeights[2] = 1.666666666666666574e-01;
+
+    // Create polygon quadrature points
+    const unsigned int numPolygonTriangles = polygonTriangulationPoints.size();
+
+    const unsigned int numTriangleQuadraturePoints = referencePoints.cols();
+    const unsigned int numPolygonQuadraturePoints = numPolygonTriangles * numTriangleQuadraturePoints;
+
+    Eigen::MatrixXd polygonQuadraturePoints = Eigen::MatrixXd::Zero(3, numPolygonQuadraturePoints);
+    Eigen::VectorXd polygonQuadratureWeights = Eigen::VectorXd::Zero(numPolygonQuadraturePoints);
+
+    Gedim::MapTriangle mapTriangle;
+
+    for (unsigned int t = 0; t < numPolygonTriangles; t++)
+    {
+      const Eigen::Matrix3d& triangleVertices = polygonTriangulationPoints[t];
+
+      Gedim::MapTriangle::MapTriangleData mapData = mapTriangle.Compute(triangleVertices);
+      polygonQuadraturePoints.block(0,
+                                    numTriangleQuadraturePoints * t,
+                                    3,
+                                    numTriangleQuadraturePoints) = mapTriangle.F(mapData,
+                                                                                 referencePoints);
+      polygonQuadratureWeights.segment(numTriangleQuadraturePoints * t,
+                                       numTriangleQuadraturePoints) = referenceWeights *
+                                                                      abs(mapData.DetB);
+
+    }
+
+    // Compute Inertia Matrix
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+
+    inertia(0, 0) = ((polygonQuadraturePoints.row(0).array() - polygonCentroid.x()).square() *
+                     polygonQuadratureWeights.transpose().array()).sum();
+    inertia(1, 1) = ((polygonQuadraturePoints.row(1).array() - polygonCentroid.y()).square() *
+                     polygonQuadratureWeights.transpose().array()).sum();
+    inertia(0, 1) = - ((polygonQuadraturePoints.row(0).array() - polygonCentroid.x()) *
+                       (polygonQuadraturePoints.row(1).array() - polygonCentroid.y()) *
+                       polygonQuadratureWeights.transpose().array()).sum();
+    inertia(1, 0) = inertia(0, 1);
+
+    return inertia;
   }
   // ***************************************************************************
   GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePosition(const Eigen::MatrixXd& polygonVertices,

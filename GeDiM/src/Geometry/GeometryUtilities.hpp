@@ -1329,6 +1329,13 @@ namespace Gedim
       /// \warning works only for convex polygons
       double PolygonArea(const Eigen::MatrixXd& polygonVertices) const;
 
+
+      /// \param polygonCentroid the centroid
+      /// \param polygonTriangulationPoints the internal polygon sub-triangulation
+      /// \return the polygon intertia tensor \int_E (x-x_C)^2
+      Eigen::Matrix3d PolygonInertia(const Eigen::Vector3d& polygonCentroid,
+                                     const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints) const;
+
       /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
       /// \param input the input data
       /// \param result the resulting split
