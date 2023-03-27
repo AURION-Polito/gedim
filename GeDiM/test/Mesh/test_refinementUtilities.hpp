@@ -1135,7 +1135,16 @@ namespace GedimUnitTesting
         {
           std::list<unsigned int> cell2DsToUpdateGeometricData;
 
-          const unsigned int cell2DToRefineIndex = cell2DsToRefineIndex[c];
+          std::list<unsigned int> updatedCell2Ds;
+          meshDAO.Cell2DUpdatedCell2Ds(cell2DsToRefineIndex[c],
+                                       updatedCell2Ds);
+
+          if (updatedCell2Ds.size() > 1)
+            continue;
+
+          const unsigned int cell2DToRefineIndex = updatedCell2Ds.size() == 0 ?
+                                                     cell2DsToRefineIndex[c] :
+                                                     updatedCell2Ds.front();
 
           Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Centroid.at(cell2DToRefineIndex),
                                                                                                                          meshGeometricData.Inertia.at(cell2DToRefineIndex));
