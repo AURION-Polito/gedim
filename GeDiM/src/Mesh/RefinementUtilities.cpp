@@ -351,23 +351,23 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::InitializeCell2DsGeometricData(const IMeshDAO& mesh) const
+  RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const IMeshDAO& mesh) const
   {
     Cell2Ds_GeometricData geometricData;
 
     std::vector<unsigned int> cell2DsIndex(mesh.Cell2DTotalNumber());
     std::iota(std::begin(cell2DsIndex), std::end(cell2DsIndex), 0);
 
-    ComputeCell2DsGeometricData(mesh,
-                                cell2DsIndex,
-                                geometricData);
+    RefinePolygonCell_UpdateGeometricData(mesh,
+                                          cell2DsIndex,
+                                          geometricData);
 
     return geometricData;
   }
   // ***************************************************************************
-  void RefinementUtilities::ComputeCell2DsGeometricData(const IMeshDAO& mesh,
-                                                        const std::vector<unsigned int>& cell2DsIndex,
-                                                        Cell2Ds_GeometricData& geometricData) const
+  void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const IMeshDAO& mesh,
+                                                                  const std::vector<unsigned int>& cell2DsIndex,
+                                                                  Cell2Ds_GeometricData& geometricData) const
   {
     geometricData.Vertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Area.resize(mesh.Cell2DTotalNumber());
@@ -516,13 +516,13 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCellByEdge(const unsigned int& cell2DIndex,
-                                                                                          const unsigned int& edgeIndex,
-                                                                                          const unsigned int& oppositeVertexIndex,
-                                                                                          const std::vector<bool>& cell2DEdgesDirection,
-                                                                                          const double& cell2DArea,
-                                                                                          const Eigen::VectorXd& cell2DEdgesLength,
-                                                                                          IMeshDAO& mesh) const
+  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCell_ByEdge(const unsigned int& cell2DIndex,
+                                                                                           const unsigned int& edgeIndex,
+                                                                                           const unsigned int& oppositeVertexIndex,
+                                                                                           const std::vector<bool>& cell2DEdgesDirection,
+                                                                                           const double& cell2DArea,
+                                                                                           const Eigen::VectorXd& cell2DEdgesLength,
+                                                                                           IMeshDAO& mesh) const
   {
     RefinePolygon_Result result;
 
@@ -565,12 +565,12 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void RefinementUtilities::RefineTriangleCellByEdge_UpdateNeighbours(const unsigned int& cell2DIndex,
-                                                                      const unsigned int& cell1DIndex,
-                                                                      const unsigned int& newCell0DIndex,
-                                                                      const std::vector<unsigned int>& splitCell1DsIndex,
-                                                                      const bool& cell2DEdgeDirection,
-                                                                      IMeshDAO& mesh) const
+  void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                                const unsigned int& cell1DIndex,
+                                                                const unsigned int& newCell0DIndex,
+                                                                const std::vector<unsigned int>& splitCell1DsIndex,
+                                                                const bool& cell2DEdgeDirection,
+                                                                IMeshDAO& mesh) const
   {
     // update neighbour cells
     for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
@@ -600,15 +600,15 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonalCellByDirection(const unsigned int& cell2DIndex,
-                                                                                                const Eigen::MatrixXd& cell2DVertices,
-                                                                                                const Eigen::Vector3d& lineTangent,
-                                                                                                const Eigen::Vector3d& lineOrigin,
-                                                                                                const std::vector<double>& cell1DsQuality,
-                                                                                                const double& cell1DsQualityWeight,
-                                                                                                const Eigen::VectorXd& cell2DEdgesLength,
-                                                                                                const std::vector<bool>& cell2DEdgesDirection,
-                                                                                                IMeshDAO& mesh) const
+  RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
+                                                                                               const Eigen::MatrixXd& cell2DVertices,
+                                                                                               const Eigen::Vector3d& lineTangent,
+                                                                                               const Eigen::Vector3d& lineOrigin,
+                                                                                               const std::vector<double>& cell1DsQuality,
+                                                                                               const double& cell1DsQualityWeight,
+                                                                                               const Eigen::VectorXd& cell2DEdgesLength,
+                                                                                               const std::vector<bool>& cell2DEdgesDirection,
+                                                                                               IMeshDAO& mesh) const
   {
     RefinePolygon_Result result;
 
@@ -866,12 +866,12 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  std::vector<unsigned int> RefinementUtilities::RefinePolygonalCellByDirection_UpdateNeighbours(const unsigned int& cell2DIndex,
-                                                                                                 const unsigned int& cell1DIndex,
-                                                                                                 const unsigned int& newCell0DIndex,
-                                                                                                 const std::vector<unsigned int>& splitCell1DsIndex,
-                                                                                                 const bool& cell2DEdgeDirection,
-                                                                                                 IMeshDAO& mesh) const
+  std::vector<unsigned int> RefinementUtilities::RefinePolygonCell_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                                                    const unsigned int& cell1DIndex,
+                                                                                    const unsigned int& newCell0DIndex,
+                                                                                    const std::vector<unsigned int>& splitCell1DsIndex,
+                                                                                    const bool& cell2DEdgeDirection,
+                                                                                    IMeshDAO& mesh) const
   {
     std::list<unsigned int> newCell2DsIndex;
 

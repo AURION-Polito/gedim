@@ -47,13 +47,13 @@ namespace GedimUnitTesting
     EXPECT_EQ(2, direction.MaxEdgeIndex);
     EXPECT_EQ(1, direction.OppositeVertexIndex);
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result result = refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
-                                                                                                                 direction.MaxEdgeIndex,
-                                                                                                                 direction.OppositeVertexIndex,
-                                                                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                 meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
-                                                                                                                 meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                 meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result result = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+                                                                                                                  direction.MaxEdgeIndex,
+                                                                                                                  direction.OppositeVertexIndex,
+                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                  meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                  meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                  meshDAO);
     EXPECT_EQ(std::vector<unsigned int>({ 4 }),
               result.NewCell0DsIndex);
     EXPECT_EQ(2,
@@ -78,12 +78,12 @@ namespace GedimUnitTesting
       if (result.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefineTriangleCellByEdge_UpdateNeighbours(cell2DToRefineIndex,
-                                                                    result.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                    result.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                    result.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                    meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(result.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                    meshDAO);
+      refinementUtilities.RefineTriangleCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                              result.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                              result.NewCell1DsIndex[e].NewCell0DIndex,
+                                                              result.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                              meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(result.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                              meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -147,25 +147,25 @@ namespace GedimUnitTesting
 
         const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
 
-        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefineTriangleCellByEdge(cell2DToRefineIndex,
-                                                                                                                           direction.MaxEdgeIndex,
-                                                                                                                           direction.OppositeVertexIndex,
-                                                                                                                           meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                           meshDAO);
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+                                                                                                                            direction.MaxEdgeIndex,
+                                                                                                                            direction.OppositeVertexIndex,
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
         {
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
-          refinementUtilities.RefineTriangleCellByEdge_UpdateNeighbours(cell2DToRefineIndex,
-                                                                        refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                        refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                        refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                        meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                        meshDAO);
+          refinementUtilities.RefineTriangleCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                  refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                  refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                  refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                  meshDAO);
         }
       }
 
@@ -222,27 +222,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
     const unsigned int cell2DToRefineIndex = 0;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             cell1DsQualityParameter,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            cell1DsQualityParameter,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -288,27 +288,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             cell1DsQualityParameter,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            cell1DsQualityParameter,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -354,27 +354,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             cell1DsQualityParameter,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            cell1DsQualityParameter,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -420,27 +420,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             cell1DsQualityParameter,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            cell1DsQualityParameter,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -514,27 +514,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             meshQuality.Cell1DsQuality,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            meshQuality.Cell1DsQuality,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -608,27 +608,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.55, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             meshQuality.Cell1DsQuality,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            meshQuality.Cell1DsQuality,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -702,27 +702,27 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.51, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
-    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                             lineTangent,
-                                                                                                                             lineOrigin,
-                                                                                                                             meshQuality.Cell1DsQuality,
-                                                                                                                             cell1DsQualityWeight,
-                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                             meshDAO);
+    const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                            lineTangent,
+                                                                                                                            lineOrigin,
+                                                                                                                            meshQuality.Cell1DsQuality,
+                                                                                                                            cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                            meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                            meshDAO);
 
     for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
     {
       if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
-      refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                          refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                          refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                          meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                          meshDAO);
+      refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshDAO);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -813,27 +813,27 @@ namespace GedimUnitTesting
           direction.LineTangent = Eigen::Vector3d(1.0, 0.5, 0.0);
         }
 
-        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                                  meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                                  direction.LineTangent,
-                                                                                                                                  direction.LineOrigin,
-                                                                                                                                  meshQuality.Cell1DsQuality,
-                                                                                                                                  cell1DsQualityWeight,
-                                                                                                                                  meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                                  meshDAO);
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                 meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                                 direction.LineTangent,
+                                                                                                                                 direction.LineOrigin,
+                                                                                                                                 meshQuality.Cell1DsQuality,
+                                                                                                                                 cell1DsQualityWeight,
+                                                                                                                                 meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                                 meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
         {
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
-          refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                              meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                              meshDAO);
+          refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                 refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                 refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                 refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                 meshDAO);
         }
       }
 
@@ -944,27 +944,27 @@ namespace GedimUnitTesting
           direction.LineTangent = Eigen::Vector3d(1.0, 0.5, 0.0);
         }
 
-        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                                  meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
-                                                                                                                                  direction.LineTangent,
-                                                                                                                                  direction.LineOrigin,
-                                                                                                                                  meshQuality.Cell1DsQuality,
-                                                                                                                                  cell1DsQualityWeight,
-                                                                                                                                  meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
-                                                                                                                                  meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
-                                                                                                                                  meshDAO);
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                 meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
+                                                                                                                                 direction.LineTangent,
+                                                                                                                                 direction.LineOrigin,
+                                                                                                                                 meshQuality.Cell1DsQuality,
+                                                                                                                                 cell1DsQualityWeight,
+                                                                                                                                 meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
+                                                                                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
+                                                                                                                                 meshDAO);
 
         for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
         {
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
-          refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                              meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                              meshDAO);
+          refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                 refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                 refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                 refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                 meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                 meshDAO);
         }
       }
 
@@ -1107,7 +1107,7 @@ namespace GedimUnitTesting
       const unsigned int maxRefinements = 6;
       const double cell1DsQualityWeight = 0.25;
 
-      Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.InitializeCell2DsGeometricData(meshDAO);
+      Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
       for (unsigned int r = 0; r < maxRefinements; r++)
       {
@@ -1149,15 +1149,15 @@ namespace GedimUnitTesting
           Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Centroid.at(cell2DToRefineIndex),
                                                                                                                          meshGeometricData.Inertia.at(cell2DToRefineIndex));
 
-          const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonalCellByDirection(cell2DToRefineIndex,
-                                                                                                                                   meshGeometricData.Vertices.at(cell2DToRefineIndex),
-                                                                                                                                   direction.LineTangent,
-                                                                                                                                   direction.LineOrigin,
-                                                                                                                                   meshQuality.Cell1DsQuality,
-                                                                                                                                   cell1DsQualityWeight,
-                                                                                                                                   meshGeometricData.EdgesLength.at(cell2DToRefineIndex),
-                                                                                                                                   meshGeometricData.EdgesDirection.at(cell2DToRefineIndex),
-                                                                                                                                   meshDAO);
+          const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                  meshGeometricData.Vertices.at(cell2DToRefineIndex),
+                                                                                                                                  direction.LineTangent,
+                                                                                                                                  direction.LineOrigin,
+                                                                                                                                  meshQuality.Cell1DsQuality,
+                                                                                                                                  cell1DsQualityWeight,
+                                                                                                                                  meshGeometricData.EdgesLength.at(cell2DToRefineIndex),
+                                                                                                                                  meshGeometricData.EdgesDirection.at(cell2DToRefineIndex),
+                                                                                                                                  meshDAO);
           for (unsigned int rnc = 0; rnc < refineResult.NewCell2DsIndex.size(); rnc++)
             cell2DsToUpdateGeometricData.push_back(refineResult.NewCell2DsIndex[rnc]);
 
@@ -1166,20 +1166,20 @@ namespace GedimUnitTesting
             if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
               continue;
 
-            const std::vector<unsigned int> newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonalCellByDirection_UpdateNeighbours(cell2DToRefineIndex,
-                                                                                                                                            refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                                                                                            refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                                                                                            refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                                            meshGeometricData.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                                                                                            meshDAO);
+            const std::vector<unsigned int> newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                                                                               refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                                                                               refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                                                                               refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                                                                               meshGeometricData.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                               meshDAO);
             for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.size(); rnc++)
               cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex[rnc]);
           }
 
-          refinementUtilities.ComputeCell2DsGeometricData(meshDAO,
-                                                          std::vector<unsigned int>(cell2DsToUpdateGeometricData.begin(),
-                                                                                    cell2DsToUpdateGeometricData.end()),
-                                                          meshGeometricData);
+          refinementUtilities.RefinePolygonCell_UpdateGeometricData(meshDAO,
+                                                                    std::vector<unsigned int>(cell2DsToUpdateGeometricData.begin(),
+                                                                                              cell2DsToUpdateGeometricData.end()),
+                                                                    meshGeometricData);
         }
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
@@ -1206,9 +1206,9 @@ namespace GedimUnitTesting
                                 geometryUtilities,
                                 meshDAO);
 
-      EXPECT_EQ(40, meshDAO.Cell0DTotalNumber());
-      EXPECT_EQ(57, meshDAO.Cell1DTotalNumber());
-      EXPECT_EQ(18, meshDAO.Cell2DTotalNumber());
+      EXPECT_EQ(88, meshDAO.Cell0DTotalNumber());
+      EXPECT_EQ(129, meshDAO.Cell1DTotalNumber());
+      EXPECT_EQ(42, meshDAO.Cell2DTotalNumber());
     }
     catch (const exception& exception)
     {
