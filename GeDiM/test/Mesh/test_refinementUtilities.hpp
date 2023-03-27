@@ -708,7 +708,7 @@ namespace GedimUnitTesting
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
-    const double cell1DsQualityWeight = 0.25;
+    const double cell1DsQualityWeight = 0.5;
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
@@ -783,6 +783,11 @@ namespace GedimUnitTesting
           for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.size(); rnc++)
             cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex[rnc]);
         }
+
+        refinementUtilities.RefinePolygonCell_UpdateGeometricData(meshDAO,
+                                                                  std::vector<unsigned int>(cell2DsToUpdateGeometricData.begin(),
+                                                                                            cell2DsToUpdateGeometricData.end()),
+                                                                  meshGeometricData);
       }
 
       Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
@@ -809,9 +814,9 @@ namespace GedimUnitTesting
                               geometryUtilities,
                               meshDAO);
 
-    EXPECT_EQ(19, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(29, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(11, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(12, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(24, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(13, meshDAO.Cell2DTotalNumber());
   }
 
   TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxInertia)
@@ -835,7 +840,7 @@ namespace GedimUnitTesting
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
-    const double cell1DsQualityWeight = 0.25;
+    const double cell1DsQualityWeight = 0.5;
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
@@ -941,9 +946,9 @@ namespace GedimUnitTesting
                               geometryUtilities,
                               meshDAO);
 
-    EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(32, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(12, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(12, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(24, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(13, meshDAO.Cell2DTotalNumber());
   }
 
   TEST(TestRefinementUtilities, TestRefineMeshTwoSegments_ByArea_MaxInertia)
