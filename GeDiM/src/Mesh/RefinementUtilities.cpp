@@ -462,24 +462,51 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  bool RefinementUtilities::RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell2DIndex,
+  bool RefinementUtilities::RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
+                                                              const unsigned int& cell2DIndex,
+                                                              const unsigned int& cell2DNumVertices,
                                                               const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
                                                               const Eigen::VectorXd& cell2DEdgesLength,
                                                               const double& cell1DsQualityWeight,
                                                               const double& cell1DQuality,
                                                               const IMeshDAO& mesh) const
   {
-    // check if edge is part of aligned edges
-    const bool isAlignedEdge = false;
-
     // check if the edge intersection is inside edge
     const bool isInsideIntersection = (edgeIntersection.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
+
+    if (!isInsideIntersection)
+      return false;
 
     // check if the edge quality is enough
     const bool isQualityEnough = geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersection.Index],
         cell1DsQualityWeight * cell1DQuality);
 
-    return !isAlignedEdge && isInsideIntersection && isQualityEnough;
+    if (!isQualityEnough)
+      return false;
+
+    // check if edge is part of aligned edges
+    if (mesh.Cell1DHasOriginalCell1D(cell1DIndex))
+    {
+      const unsigned int originalCell1DIndex = mesh.Cell1DOriginalCell1D(cell1DIndex);
+
+      // check previous edge
+      const unsigned int previousCell1DIndex = edgeIntersection.Index == 0 ? mesh.Cell2DEdge(cell2DIndex,
+                                                                                             cell2DNumVertices - 1) :
+                                                                             mesh.Cell2DEdge(cell2DIndex,
+                                                                                             edgeIntersection.Index - 1);
+      if (mesh.Cell1DHasOriginalCell1D(previousCell1DIndex) &&
+          originalCell1DIndex == mesh.Cell1DOriginalCell1D(previousCell1DIndex))
+        return false;
+
+      // check next edge
+      const unsigned int nextCell1DIndex = mesh.Cell2DEdge(cell2DIndex,
+                                                           (edgeIntersection.Index + 1) % cell2DNumVertices);
+      if (mesh.Cell1DHasOriginalCell1D(nextCell1DIndex) &&
+          originalCell1DIndex == mesh.Cell1DOriginalCell1D(nextCell1DIndex))
+        return false;
+    }
+
+    return true;
   }
   // ***************************************************************************
   RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
@@ -689,13 +716,17 @@ namespace Gedim
     const unsigned int cell1DIndexTwo = mesh.Cell2DEdge(cell2DIndex,
                                                         edgeIntersectionTwo.Index);
 
-    const bool createNewVertexOne = RefinePolygonCell_IsCell1DToSplit(cell2DIndex,
+    const bool createNewVertexOne = RefinePolygonCell_IsCell1DToSplit(cell1DIndexOne,
+                                                                      cell2DIndex,
+                                                                      cell2DNumVertices,
                                                                       edgeIntersectionOne,
                                                                       cell2DEdgesLength,
                                                                       cell1DsQualityWeight,
                                                                       cell1DsQuality[cell1DIndexOne],
                                                                       mesh);
-    const bool createNewVertexTwo = RefinePolygonCell_IsCell1DToSplit(cell2DIndex,
+    const bool createNewVertexTwo = RefinePolygonCell_IsCell1DToSplit(cell1DIndexTwo,
+                                                                      cell2DIndex,
+                                                                      cell2DNumVertices,
                                                                       edgeIntersectionTwo,
                                                                       cell2DEdgesLength,
                                                                       cell1DsQualityWeight,
