@@ -991,9 +991,9 @@ namespace GedimUnitTesting
                               geometryUtilities,
                               meshDAO);
 
-    EXPECT_EQ(19, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(29, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(11, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
+    EXPECT_EQ(32, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(12, meshDAO.Cell2DTotalNumber());
   }
 }
 
