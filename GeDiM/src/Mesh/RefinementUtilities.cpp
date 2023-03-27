@@ -369,24 +369,27 @@ namespace Gedim
                                                                   const std::vector<unsigned int>& cell2DsIndex,
                                                                   Cell2Ds_GeometricData& geometricData) const
   {
-    geometricData.Vertices.resize(mesh.Cell2DTotalNumber());
-    geometricData.Area.resize(mesh.Cell2DTotalNumber());
-    geometricData.Centroid.resize(mesh.Cell2DTotalNumber());
-    geometricData.EdgesDirection.resize(mesh.Cell2DTotalNumber());
-    geometricData.EdgesNormal.resize(mesh.Cell2DTotalNumber());
-    geometricData.EdgesLength.resize(mesh.Cell2DTotalNumber());
-    geometricData.Triangulations.resize(mesh.Cell2DTotalNumber());
-    geometricData.Inertia.resize(mesh.Cell2DTotalNumber());
-    geometricData.InRadius.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell1Ds.Quality.resize(mesh.Cell1DTotalNumber());
+
+    geometricData.Cell2Ds.Vertices.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Area.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Centroid.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.EdgesDirection.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.EdgesNormal.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.EdgesLength.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Triangulations.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Inertia.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.InRadius.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
 
     for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
     {
       const unsigned int cell2DIndex = cell2DsIndex.at(c);
 
-      Eigen::MatrixXd& convexCell2DVertices = geometricData.Vertices.at(cell2DIndex);
-      double& convexCell2DArea = geometricData.Area.at(cell2DIndex);
-      std::vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = geometricData.Triangulations.at(cell2DIndex);
-      Eigen::Vector3d& convexCell2DCentroid = geometricData.Centroid.at(cell2DIndex);
+      Eigen::MatrixXd& convexCell2DVertices = geometricData.Cell2Ds.Vertices.at(cell2DIndex);
+      double& convexCell2DArea = geometricData.Cell2Ds.Area.at(cell2DIndex);
+      std::vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = geometricData.Cell2Ds.Triangulations.at(cell2DIndex);
+      Eigen::Vector3d& convexCell2DCentroid = geometricData.Cell2Ds.Centroid.at(cell2DIndex);
 
       convexCell2DVertices = mesh.Cell2DVerticesCoordinates(cell2DIndex);
 
@@ -419,63 +422,44 @@ namespace Gedim
                                                                convexCell2DTriangulationAreas,
                                                                convexCell2DArea);
 
-      geometricData.EdgesDirection[cell2DIndex].resize(mesh.Cell2DNumberEdges(cell2DIndex));
+      geometricData.Cell2Ds.EdgesDirection[cell2DIndex].resize(mesh.Cell2DNumberEdges(cell2DIndex));
       for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
       {
         const unsigned int origin = mesh.Cell2DVertex(cell2DIndex, e);
         const unsigned int end = mesh.Cell2DVertex(cell2DIndex,
                                                    (e + 1) % mesh.Cell2DNumberEdges(cell2DIndex));
 
-        geometricData.EdgesDirection[cell2DIndex][e] = mesh.Cell1DExists(origin,
-                                                                         end);
+        geometricData.Cell2Ds.EdgesDirection[cell2DIndex][e] = mesh.Cell1DExists(origin,
+                                                                                 end);
       }
 
-      geometricData.EdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DVertices);
-      geometricData.EdgesNormal[cell2DIndex] = geometryUtilities.PolygonEdgeNormals(convexCell2DVertices);
-      geometricData.InRadius[cell2DIndex] = geometryUtilities.PolygonInRadius(convexCell2DVertices,
-                                                                              convexCell2DCentroid,
-                                                                              geometricData.EdgesNormal[cell2DIndex]);
-      geometricData.Inertia[cell2DIndex] = geometryUtilities.PolygonInertia(convexCell2DCentroid,
-                                                                            convexCell2DTriangulationPoints);
-    }
+      geometricData.Cell2Ds.EdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DVertices);
+      geometricData.Cell2Ds.EdgesNormal[cell2DIndex] = geometryUtilities.PolygonEdgeNormals(convexCell2DVertices);
+      geometricData.Cell2Ds.InRadius[cell2DIndex] = geometryUtilities.PolygonInRadius(convexCell2DVertices,
+                                                                                      convexCell2DCentroid,
+                                                                                      geometricData.Cell2Ds.EdgesNormal[cell2DIndex]);
+      geometricData.Cell2Ds.Inertia[cell2DIndex] = geometryUtilities.PolygonInertia(convexCell2DCentroid,
+                                                                                    convexCell2DTriangulationPoints);
 
-    return;
-  }
-  // ***************************************************************************
-  RefinementUtilities::MeshQuality RefinementUtilities::ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
-                                                                                        const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
-                                                                                        const std::vector<double>& cell2DsInRadius) const
-  {
-    MeshQuality result;
+      geometricData.Cell2Ds.Quality[cell2DIndex] = std::min(geometricData.Cell2Ds.EdgesLength[cell2DIndex].minCoeff(),
+                                                            2.0 * geometricData.Cell2Ds.InRadius[cell2DIndex]);
 
-    result.Cell2DsQuality.resize(mesh.Cell2DTotalNumber(), 0.0);
-    for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)
-    {
-      if (!mesh.Cell2DIsActive(c))
-        continue;
-
-      result.Cell2DsQuality[c] = std::min(cell2DsEdgesLength[c].minCoeff(),
-                                          2.0 * cell2DsInRadius[c]);
-    }
-
-    result.Cell1DsQuality.resize(mesh.Cell1DTotalNumber(), 0.0);
-    for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
-    {
-      if (!mesh.Cell1DIsActive(e))
-        continue;
-
-      for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
       {
-        if (!mesh.Cell1DHasNeighbourCell2D(e, n))
-          continue;
+        const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, e);
+        geometricData.Cell1Ds.Quality[cell1DIndex] = 0.0;
 
-        const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(e, n);
-        if (result.Cell1DsQuality[e] < result.Cell2DsQuality[neighCell2DIndex])
-          result.Cell1DsQuality[e] = result.Cell2DsQuality[neighCell2DIndex];
+        for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
+        {
+          if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, n))
+            continue;
+
+          const unsigned int neighCell2DIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, n);
+          if (geometricData.Cell1Ds.Quality[cell1DIndex] < geometricData.Cell2Ds.Quality[neighCell2DIndex])
+            geometricData.Cell1Ds.Quality[cell1DIndex] = geometricData.Cell2Ds.Quality[neighCell2DIndex];
+        }
       }
     }
-
-    return result;
   }
   // ***************************************************************************
   RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,

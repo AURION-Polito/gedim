@@ -66,17 +66,29 @@ namespace Gedim
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
 
-      struct Cell2Ds_GeometricData
+      struct Cell2Ds_GeometricData final
       {
-          std::vector<Eigen::MatrixXd> Vertices;
-          std::vector<double> Area;
-          std::vector<Eigen::Vector3d> Centroid;
-          std::vector<std::vector<bool>> EdgesDirection;
-          std::vector<Eigen::MatrixXd> EdgesNormal;
-          std::vector<Eigen::VectorXd> EdgesLength;
-          std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
-          std::vector<Eigen::Matrix3d> Inertia;
-          std::vector<double> InRadius;
+          struct Cell2D_GeometricData final
+          {
+              std::vector<Eigen::MatrixXd> Vertices;
+              std::vector<double> Area;
+              std::vector<Eigen::Vector3d> Centroid;
+              std::vector<std::vector<bool>> EdgesDirection;
+              std::vector<Eigen::MatrixXd> EdgesNormal;
+              std::vector<Eigen::VectorXd> EdgesLength;
+              std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
+              std::vector<Eigen::Matrix3d> Inertia;
+              std::vector<double> InRadius;
+              std::vector<double> Quality;
+          };
+
+          struct Cell1D_GeometricData final
+          {
+              std::vector<double> Quality;
+          };
+
+          Cell1D_GeometricData Cell1Ds;
+          Cell2D_GeometricData Cell2Ds;
       };
 
     private:
@@ -125,10 +137,6 @@ namespace Gedim
                                                    IMeshDAO& mesh) const;
 
       MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
-
-      MeshQuality ComputeMeshQualityForRefinement(const IMeshDAO& mesh,
-                                                  const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
-                                                  const std::vector<double>& cell2DsInRadius) const;
 
       PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                           const Eigen::Vector3d& centroid) const;
