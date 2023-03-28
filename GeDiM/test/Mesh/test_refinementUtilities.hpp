@@ -241,7 +241,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2DsEdgeDirections,
                                                              meshDAO);
     }
 
@@ -307,7 +307,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2DsEdgeDirections,
                                                              meshDAO);
     }
 
@@ -373,7 +373,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2DsEdgeDirections,
                                                              meshDAO);
     }
 
@@ -439,7 +439,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2DsEdgeDirections,
                                                              meshDAO);
     }
 
@@ -516,7 +516,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2Ds.EdgesDirection,
                                                              meshDAO);
     }
 
@@ -593,7 +593,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2Ds.EdgesDirection,
                                                              meshDAO);
     }
 
@@ -670,7 +670,7 @@ namespace GedimUnitTesting
                                                              refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                              refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                             meshGeometricData.Cell2Ds.EdgesDirection,
                                                              meshDAO);
     }
 
@@ -778,7 +778,7 @@ namespace GedimUnitTesting
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection,
                                                                                                                                                                     meshDAO);
           for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
             cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
@@ -910,7 +910,7 @@ namespace GedimUnitTesting
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                                                                                                                                     refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection,
                                                                                                                                                                     meshDAO);
           for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
             cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
@@ -1120,7 +1120,7 @@ namespace GedimUnitTesting
                                                                                                                                                                       refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                                                                                                                                       refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                                                                                                                                       refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                                                                      meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                      meshGeometricData.Cell2Ds.EdgesDirection,
                                                                                                                                                                       meshDAO);
             for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
               cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);

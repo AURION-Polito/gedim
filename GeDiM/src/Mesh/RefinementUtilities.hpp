@@ -196,7 +196,7 @@ namespace Gedim
                                                                               const unsigned int& cell1DIndex,
                                                                               const unsigned int& newCell0DIndex,
                                                                               const std::vector<unsigned int>& splitCell1DsIndex,
-                                                                              const bool& cell2DEdgeDirection,
+                                                                              const std::vector<std::vector<bool>>& cell2DsEdgesDirection,
                                                                               IMeshDAO& mesh) const;
 
       /// Compute the geometric data for all the mesh
