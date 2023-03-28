@@ -66,6 +66,17 @@ namespace Gedim
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
 
+      struct RefinePolygon_UpdateNeighbour_Result final
+      {
+          struct UpdatedCell2D final
+          {
+              unsigned int OriginalCell2DIndex = 0;
+              unsigned int NewCell2DIndex = 0;
+          };
+
+          std::vector<UpdatedCell2D> UpdatedCell2Ds = {};
+      };
+
       struct Cell2Ds_GeometricData final
       {
           struct Cell2D_GeometricData final
@@ -181,12 +192,12 @@ namespace Gedim
                                                          const std::vector<bool>& cell2DEdgesDirection,
                                                          IMeshDAO& mesh) const;
 
-      std::vector<unsigned int> RefinePolygonCell_UpdateNeighbours(const unsigned int& cell2DIndex,
-                                                                   const unsigned int& cell1DIndex,
-                                                                   const unsigned int& newCell0DIndex,
-                                                                   const std::vector<unsigned int>& splitCell1DsIndex,
-                                                                   const bool& cell2DEdgeDirection,
-                                                                   IMeshDAO& mesh) const;
+      RefinePolygon_UpdateNeighbour_Result RefinePolygonCell_UpdateNeighbours(const unsigned int& cell2DIndex,
+                                                                              const unsigned int& cell1DIndex,
+                                                                              const unsigned int& newCell0DIndex,
+                                                                              const std::vector<unsigned int>& splitCell1DsIndex,
+                                                                              const bool& cell2DEdgeDirection,
+                                                                              IMeshDAO& mesh) const;
 
       /// Compute the geometric data for all the mesh
       Cell2Ds_GeometricData RefinePolygonCell_InitializeGeometricData(const IMeshDAO& mesh) const;

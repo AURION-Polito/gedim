@@ -774,14 +774,14 @@ namespace GedimUnitTesting
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
-          const std::vector<unsigned int> newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                                                                             meshDAO);
-          for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.size(); rnc++)
-            cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex[rnc]);
+          const Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                    meshDAO);
+          for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
+            cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
         }
 
         refinementUtilities.RefinePolygonCell_UpdateGeometricData(meshDAO,
@@ -906,14 +906,14 @@ namespace GedimUnitTesting
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
-          const std::vector<unsigned int> newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                                                                             refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                                                                             meshDAO);
-          for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.size(); rnc++)
-            cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex[rnc]);
+          const Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                                                                                                                    refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                                                                                                                    meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                    meshDAO);
+          for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
+            cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
         }
 
         refinementUtilities.RefinePolygonCell_UpdateGeometricData(meshDAO,
@@ -1116,14 +1116,14 @@ namespace GedimUnitTesting
             if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
               continue;
 
-            const std::vector<unsigned int> newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
-                                                                                                                               refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                                                                               refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                                                                               refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                                                               meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                                                                                               meshDAO);
-            for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.size(); rnc++)
-              cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex[rnc]);
+            const Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result newNeighboursCell2DsIndex = refinementUtilities.RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                                                                                                                                      refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                                                                                                                                      refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                                                                                                                                      refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                                                                                                                                      meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                                                                                                                      meshDAO);
+            for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
+              cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
           }
 
           refinementUtilities.RefinePolygonCell_UpdateGeometricData(meshDAO,
