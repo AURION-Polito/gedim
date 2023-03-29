@@ -351,6 +351,20 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxEdgeDirection(const Eigen::VectorXd& edgesLength,
+                                                                                            const Eigen::MatrixXd& edgesNormal,
+                                                                                            const Eigen::MatrixXd& vertices,
+                                                                                            const Eigen::Vector3d& centroid) const
+  {
+    PolygonDirection result;
+
+    MaxEdgeDirection direction = ComputeTriangleMaxEdgeDirection(edgesLength);
+    result.LineOrigin = centroid;
+    result.LineTangent = edgesNormal.col(direction.MaxEdgeIndex);
+
+    return result;
+  }
+  // ***************************************************************************
   RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const IMeshDAO& mesh) const
   {
     Cell2Ds_GeometricData geometricData;
@@ -371,6 +385,7 @@ namespace Gedim
   {
     geometricData.Cell1Ds.Quality.resize(mesh.Cell1DTotalNumber());
 
+    geometricData.Cell2Ds.NumUnalignedVertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Vertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Area.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Centroid.resize(mesh.Cell2DTotalNumber());
@@ -395,6 +410,7 @@ namespace Gedim
 
       // compute original cell2D triangulation
       const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+      geometricData.Cell2Ds.NumUnalignedVertices[cell2DIndex] = convexCell2DUnalignedVerticesFilter.size();
       const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
                                                                                             convexCell2DUnalignedVerticesFilter);
 
@@ -732,6 +748,7 @@ namespace Gedim
                                                                       cell1DsQualityWeight,
                                                                       cell1DsQuality[cell1DIndexTwo],
                                                                       mesh);
+
     if (!createNewVertexOne && !createNewVertexTwo)
     {
       // no new vertices

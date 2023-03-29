@@ -81,6 +81,7 @@ namespace Gedim
       {
           struct Cell2D_GeometricData final
           {
+              std::vector<unsigned int> NumUnalignedVertices;
               std::vector<Eigen::MatrixXd> Vertices;
               std::vector<double> Area;
               std::vector<Eigen::Vector3d> Centroid;
@@ -149,6 +150,10 @@ namespace Gedim
 
       MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
 
+      PolygonDirection ComputePolygonMaxEdgeDirection(const Eigen::VectorXd& edgesLength,
+                                                      const Eigen::MatrixXd& edgesNormal,
+                                                      const Eigen::MatrixXd& vertices,
+                                                      const Eigen::Vector3d& centroid) const;
       PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
                                                           const Eigen::Vector3d& centroid) const;
       PolygonDirection ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
