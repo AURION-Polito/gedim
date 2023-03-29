@@ -358,9 +358,10 @@ namespace Gedim
   {
     PolygonDirection result;
 
-    MaxEdgeDirection direction = ComputeTriangleMaxEdgeDirection(edgesLength);
+    Eigen::VectorXd::Index maxEdgeLocalIndex;
+    edgesLength.maxCoeff(&maxEdgeLocalIndex);
     result.LineOrigin = centroid;
-    result.LineTangent = edgesNormal.col(direction.MaxEdgeIndex);
+    result.LineTangent = edgesNormal.col(maxEdgeLocalIndex);
 
     return result;
   }
