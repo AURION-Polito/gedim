@@ -351,21 +351,6 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxEdgeDirection(const Eigen::VectorXd& edgesLength,
-                                                                                            const Eigen::MatrixXd& edgesNormal,
-                                                                                            const Eigen::MatrixXd& vertices,
-                                                                                            const Eigen::Vector3d& centroid) const
-  {
-    PolygonDirection result;
-
-    Eigen::VectorXd::Index maxEdgeLocalIndex;
-    edgesLength.maxCoeff(&maxEdgeLocalIndex);
-    result.LineOrigin = centroid;
-    result.LineTangent = edgesNormal.col(maxEdgeLocalIndex);
-
-    return result;
-  }
-  // ***************************************************************************
   RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const IMeshDAO& mesh) const
   {
     Cell2Ds_GeometricData geometricData;
@@ -386,7 +371,6 @@ namespace Gedim
   {
     geometricData.Cell1Ds.Quality.resize(mesh.Cell1DTotalNumber());
 
-    geometricData.Cell2Ds.NumUnalignedVertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Vertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Area.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Centroid.resize(mesh.Cell2DTotalNumber());
@@ -411,7 +395,6 @@ namespace Gedim
 
       // compute original cell2D triangulation
       const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
-      geometricData.Cell2Ds.NumUnalignedVertices[cell2DIndex] = convexCell2DUnalignedVerticesFilter.size();
       const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
                                                                                             convexCell2DUnalignedVerticesFilter);
 
@@ -451,6 +434,7 @@ namespace Gedim
       }
 
       geometricData.Cell2Ds.EdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DVertices);
+
       geometricData.Cell2Ds.EdgesNormal[cell2DIndex] = geometryUtilities.PolygonEdgeNormals(convexCell2DVertices);
       geometricData.Cell2Ds.InRadius[cell2DIndex] = geometryUtilities.PolygonInRadius(convexCell2DVertices,
                                                                                       convexCell2DCentroid,
@@ -459,7 +443,7 @@ namespace Gedim
                                                                                     convexCell2DTriangulationPoints);
 
       geometricData.Cell2Ds.Quality[cell2DIndex] = std::min(geometricData.Cell2Ds.EdgesLength[cell2DIndex].minCoeff(),
-                                                            2.0 * geometricData.Cell2Ds.InRadius[cell2DIndex]);
+                                                            geometricData.Cell2Ds.InRadius[cell2DIndex]);
 
       for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
       {
