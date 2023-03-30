@@ -492,7 +492,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 0.5;
+    const double cell1DsQualityWeight = 1.0;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 0.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
@@ -569,7 +569,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 0.5;
+    const double cell1DsQualityWeight = 1.0;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-0.5, -0.05, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.55, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
@@ -646,7 +646,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 0.5;
+    const double cell1DsQualityWeight = 1.0;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-0.5, 0.04, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.51, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
