@@ -840,7 +840,7 @@ namespace GedimUnitTesting
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
-    const double cell1DsQualityWeight = 0.5;
+    const double cell1DsQualityWeight = 1.0;
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 

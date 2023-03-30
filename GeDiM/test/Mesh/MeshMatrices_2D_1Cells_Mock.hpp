@@ -39,6 +39,7 @@ namespace GedimUnitTesting
         Mesh.Cell1DAdjacency.insert(0,1) = 2;
         Mesh.Cell1DAdjacency.insert(1,2) = 3;
         Mesh.Cell1DAdjacency.insert(2,3) = 4;
+        Mesh.Cell1DOriginalCell1Ds = { 4,4,4,4 };
         Mesh.NumberCell1DNeighbourCell2D = { 0,2,4,6,8 };
         Mesh.Cell1DNeighbourCell2Ds = { 1,0,1,0,1,0,1,0 };
         Mesh.NumberCell2D = 1;
