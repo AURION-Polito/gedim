@@ -93,6 +93,8 @@ namespace UnitTesting
                                property.data()
                              }
                            });
+
+      exporter.Export(exportFolder + "/Cell1Ds.vtu");
     }
   }
 }
