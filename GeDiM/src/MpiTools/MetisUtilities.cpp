@@ -90,7 +90,7 @@ namespace Gedim
     idx_t nElements = numberElements;
     std::vector<idx_t> xadj(nElements + 1);
     std::vector<idx_t> adjncy(numberConnections);
-    std::vector<idx_t> metisPartition(numberElements);
+    std::vector<idx_t> metisPartition(numberElements, 0);
 
     const NetworkPartitionOptions::PartitionTypes& metisDivisionType = options.PartitionType;
 
@@ -113,6 +113,7 @@ namespace Gedim
     switch (metisDivisionType)
     {
       case NetworkPartitionOptions::PartitionTypes::CutBalancing:
+      {
         metisOptions[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_CUT;
 
         if (options.NodeWeights.size() > 0)
@@ -126,9 +127,10 @@ namespace Gedim
           adjwgt = new idx_t[numberConnections];
           memcpy(adjwgt, options.EdgeWeights.data(), sizeof(idx_t)*numberConnections);
         }
-
+      }
         break;
       case NetworkPartitionOptions::PartitionTypes::VolBalancing:
+      {
         metisOptions[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_VOL;
 
         if (options.NodeWeights.size() > 0)
@@ -136,6 +138,7 @@ namespace Gedim
           v_size = new idx_t[numberElements];
           memcpy(v_size, options.NodeWeights.data(), sizeof(idx_t) * numberElements);
         }
+      }
         break;
       default:
         throw std::runtime_error("MetisDivisionType " +

@@ -10,7 +10,7 @@ message(STATUS "Install Metis release 5.1.0")
 
 ExternalProject_Add(Metis
     GIT_REPOSITORY https://github.com/fvicini/metis.git
-    GIT_TAG 93cb4a6f91714a96408b2ddb2bf1878a7b1bfff9 # release 5.1.1
+    GIT_TAG 30ec18492217ec8e5d675e6c950bb74d94f3dc18 # release 5.1.1
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     SOURCE_DIR ${METIS_SOURCE_DIR}
