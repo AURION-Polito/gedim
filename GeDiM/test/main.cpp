@@ -25,6 +25,7 @@
 #include "test_conformMeshUtilities.hpp"
 #include "test_refinementUtilities.hpp"
 #include "test_CommonUtilities.hpp"
+#include "test_metisUtilities.hpp"
 
 #include <gtest/gtest.h>
 

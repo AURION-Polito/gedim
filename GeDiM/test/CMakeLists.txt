@@ -84,6 +84,7 @@ add_subdirectory(Geometry)
 add_subdirectory(Algebra)
 add_subdirectory(Mesh)
 add_subdirectory(IO)
+add_subdirectory(MpiTools)
 add_subdirectory(Quadrature)
 
 list(APPEND ${GEDIM_LIBRARY_TEST_PUBLIC_HEADERS} ${gedim_test_src_headers})
