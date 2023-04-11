@@ -1,17 +1,13 @@
 #ifndef __GEDIM_IMPIPROCESS_H
 #define __GEDIM_IMPIPROCESS_H
 
-#include "IOUtilities.hpp"
-
-using namespace std;
-
 namespace Gedim
 {
   /// \brief Interface used to implement the MPI process
   /// \copyright See top level LICENSE file for details.
   class IMpiProcess
-	{
-		public:
+  {
+    public:
       virtual ~IMpiProcess() { }
 
       /// \return the rank of the MPI process
@@ -24,7 +20,7 @@ namespace Gedim
       /// \brief Summary of the process
       virtual void Summary() = 0;
 
-	};
+  };
 }
 
 #endif // __GEDIM_IMPIPROCESS_H

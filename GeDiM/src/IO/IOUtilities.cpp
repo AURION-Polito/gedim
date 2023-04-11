@@ -42,7 +42,7 @@
 
 #include <iomanip>
 
-using namespace Gedim;
+using namespace std;
 
 namespace Gedim
 {

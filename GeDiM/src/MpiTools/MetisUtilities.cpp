@@ -1,9 +1,13 @@
-#include "MpiParallelEnvironment.hpp"
-#include "MpiProcess.hpp"
+#include "MetisUtilities.hpp"
 
 namespace Gedim
 {
   // ***************************************************************************
-  std::shared_ptr<IMpiProcess> MpiParallelEnvironment::_process(new MpiProcess(0, 1, true));
+  MetisUtilities::MetisUtilities()
+  {
+  }
+  MetisUtilities::~MetisUtilities()
+  {
+  }
   // ***************************************************************************
 }

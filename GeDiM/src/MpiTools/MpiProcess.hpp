@@ -4,11 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "IOUtilities.hpp"
-
 #include "IMpiProcess.hpp"
-
-using namespace std;
 
 namespace Gedim
 {

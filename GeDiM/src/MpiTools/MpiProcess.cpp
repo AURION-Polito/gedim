@@ -1,5 +1,7 @@
 #include "MpiProcess.hpp"
 
+#include "IOUtilities.hpp"
+
 namespace Gedim
 {
   // ***************************************************************************
@@ -18,7 +20,7 @@ namespace Gedim
   // ***************************************************************************
   void MpiProcess::Summary()
   {
-    string activeLabel = (_isActive ? "Active" : "Not Active");
+    std::string activeLabel = (_isActive ? "Active" : "Not Active");
 
     Output::PrintLine('-', true);
     Output::PrintGenericMessage("Process %d / %d - %s", false, _rank, _numberProcesses, activeLabel.c_str());

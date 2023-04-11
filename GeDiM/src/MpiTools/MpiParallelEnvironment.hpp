@@ -1,7 +1,6 @@
 #ifndef __GEDIM_MPIPARALLELENVIRONMENT_H
 #define __GEDIM_MPIPARALLELENVIRONMENT_H
 
-
 #include <memory>
 #include "IMpiProcess.hpp"
 
@@ -12,7 +11,7 @@ namespace Gedim
   class MpiParallelEnvironment
   {
     protected:
-      static shared_ptr<IMpiProcess> _process;
+      static std::shared_ptr<IMpiProcess> _process;
 
     public:
       static const IMpiProcess& Process() { return *_process; }
