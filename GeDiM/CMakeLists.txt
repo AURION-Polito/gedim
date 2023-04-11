@@ -39,6 +39,7 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_INSTALL_DIR} CACHE 
 Message(STATUS "Gedim Library will be installed in: " ${CMAKE_INSTALL_PREFIX})
 
 set(USE_MPI OFF CACHE BOOL "Enable MPI support")
+set(ENABLE_METIS OFF CACHE BOOL "Enable Metis extension")
 set(ENABLE_VTK OFF CACHE BOOL "Enable VTK extension")
 set(ENABLE_MKL OFF CACHE BOOL "Enable MKL extension")
 set(VERBOSE 3 CACHE STRING "Select verbosity level (0, 1, 2 3 or 4)")
@@ -87,6 +88,12 @@ list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
 if(${ENABLE_VTK})
   find_package(VTK CONFIG REQUIRED)
   list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC ${VTK_LIBRARIES})
+endif()
+
+## METIS
+if(${ENABLE_METIS})
+    find_package(metis CONFIG REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} METIS::metis)
 endif()
 
 # Insert Sources

@@ -11,6 +11,11 @@
 /// - 1 true
 #cmakedefine01 ENABLE_MKL
 
+/// Enable Metis
+/// - 0 false
+/// - 1 true
+#cmakedefine01 ENABLE_METIS
+
 /// Use MPI
 /// - 0 false
 /// - 1 true

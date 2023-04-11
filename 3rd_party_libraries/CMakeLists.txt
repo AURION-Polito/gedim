@@ -19,6 +19,7 @@ option(INSTALL_VTK "Install VTK" OFF)
 option(INSTALL_TRIANGLE "Install triangle" ON)
 option(INSTALL_TETGEN "Install tetgen" ON)
 option(INSTALL_LAPACK "Install Lapack" ON)
+option(INSTALL_METIS "Install Lapack" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
@@ -56,4 +57,9 @@ endif()
 ## tetgen
 if(INSTALL_TETGEN)
 	include(InstallTetgen)
+endif()
+
+## metis
+if(INSTALL_METIS)
+	include(InstallMetis)
 endif()
