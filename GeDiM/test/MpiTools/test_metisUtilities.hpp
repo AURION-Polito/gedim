@@ -116,7 +116,7 @@ namespace UnitTesting
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
     partitionOptions.MasterWeight = 100;
-    partitionOptions.NumberOfParts = 2;
+    partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
                                                                                 network);
