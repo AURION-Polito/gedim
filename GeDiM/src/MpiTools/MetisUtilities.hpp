@@ -2,6 +2,7 @@
 #define __METIS_UTILITIES_H
 
 #include "Eigen/Eigen"
+#include "IMeshDAO.hpp"
 #include <vector>
 
 namespace Gedim
@@ -21,26 +22,29 @@ namespace Gedim
           PartitionTypes PartitionType = PartitionTypes::Unknown;
           unsigned int NumberOfParts = 0;
           unsigned int MasterWeight = 100; ///< 0 de-activated; 100 activated totally
-          std::vector<unsigned int> NodeWeights = {};
-          std::vector<unsigned int> EdgeWeights = {};
       };
 
-      struct NetworkAdjacency final
+      struct Network final
       {
           std::vector<unsigned int> AdjacencyRows;
           std::vector<unsigned int> AdjacencyCols;
+          std::vector<unsigned int> NodeWeights = {};
+          std::vector<unsigned int> EdgeWeights = {};
       };
 
     public:
       MetisUtilities();
       ~MetisUtilities();
 
-      MetisUtilities::NetworkAdjacency GraphToAdjacency(const unsigned int& numVertices,
-                                                        const Eigen::MatrixXi& edges,
-                                                        const bool& undirectEdges) const;
+      MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh) const;
+
+      MetisUtilities::Network Mesh2DToGraph(const unsigned int& numVertices,
+                                            const Eigen::MatrixXi& edges,
+                                            const bool& undirectEdges) const;
+      Eigen::MatrixXi GraphToConnectivityMatrix(const Network& network) const;
 
       std::vector<unsigned int> NetworkPartition(const NetworkPartitionOptions& options,
-                                                 const NetworkAdjacency& adjacency) const;
+                                                 const Network& network) const;
   };
 }
 

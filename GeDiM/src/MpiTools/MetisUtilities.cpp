@@ -18,14 +18,14 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  MetisUtilities::NetworkAdjacency MetisUtilities::GraphToAdjacency(const unsigned int& numVertices,
-                                                                    const Eigen::MatrixXi& edges,
-                                                                    const bool& undirectEdges) const
+  MetisUtilities::Network MetisUtilities::Mesh2DToGraph(const unsigned int& numVertices,
+                                                        const Eigen::MatrixXi& edges,
+                                                        const bool& undirectEdges) const
   {
     const unsigned int& numEdges = edges.cols();
 
-    NetworkAdjacency adjacency;
-    adjacency.AdjacencyRows.resize(numVertices + 1, 0);
+    Network network;
+    network.AdjacencyRows.resize(numVertices + 1, 0);
     std::list<unsigned int> adjacencyCols;
 
     std::vector<std::list<unsigned int>> verticesConnections(numVertices);
@@ -42,26 +42,91 @@ namespace Gedim
       const std::list<unsigned int>& vertexConnections = verticesConnections[v];
       const unsigned int& numberConnections = vertexConnections.size();
 
-      adjacency.AdjacencyRows[v + 1] = adjacency.AdjacencyRows[v] +
-                                       numberConnections;
+      network.AdjacencyRows[v + 1] = network.AdjacencyRows[v] +
+                                     numberConnections;
 
       for (const unsigned int& connection : vertexConnections)
         adjacencyCols.push_back(connection);
     }
 
-    adjacency.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
-                                                        adjacencyCols.end());
+    network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
+                                                      adjacencyCols.end());
 
-    return adjacency;
+    return network;
+  }
+  // ***************************************************************************
+  Eigen::MatrixXi MetisUtilities::GraphToConnectivityMatrix(const MetisUtilities::Network& network) const
+  {
+    Eigen::MatrixXi matrix = Eigen::MatrixXi::Zero(2, network.AdjacencyCols.size());
+    for (unsigned int r = 0; r < network.AdjacencyRows.size() - 1; r++)
+    {
+      for (unsigned int c = network.AdjacencyRows[r]; c < network.AdjacencyRows[r + 1]; c++)
+      {
+        matrix(0, c) = r;
+        matrix(1, c) = network.AdjacencyCols[c];
+      }
+    }
+
+    return matrix;
+  }
+  // ***************************************************************************
+  MetisUtilities::Network MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh) const
+  {
+    Network network;
+
+    const unsigned int numVertices = mesh.Cell2DTotalNumber();
+    network.AdjacencyRows.resize(numVertices + 1, 0);
+    std::list<unsigned int> adjacencyCols;
+
+    std::vector<std::list<unsigned int>> verticesConnections(numVertices);
+    for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
+    {
+      for (unsigned int n1 = 0; n1 < mesh.Cell1DNumberNeighbourCell2D(e); n1++)
+      {
+        if (!mesh.Cell1DHasNeighbourCell2D(e, n1))
+          continue;
+
+        const unsigned int cell2Dn1 = mesh.Cell1DNeighbourCell2D(e, n1);
+
+        for (unsigned int n2 = n1 + 1; n2 < mesh.Cell1DNumberNeighbourCell2D(e); n2++)
+        {
+          if (!mesh.Cell1DHasNeighbourCell2D(e, n2))
+            continue;
+
+          const unsigned int cell2Dn2 = mesh.Cell1DNeighbourCell2D(e, n2);
+
+          verticesConnections[cell2Dn1].push_back(cell2Dn2);
+          verticesConnections[cell2Dn2].push_back(cell2Dn1);
+        }
+
+      }
+    }
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
+      const unsigned int& numberConnections = vertexConnections.size();
+
+      network.AdjacencyRows[v + 1] = network.AdjacencyRows[v] +
+                                     numberConnections;
+
+      for (const unsigned int& connection : vertexConnections)
+        adjacencyCols.push_back(connection);
+    }
+
+    network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
+                                                      adjacencyCols.end());
+
+    return network;
   }
   // ***************************************************************************
   std::vector<unsigned int> MetisUtilities::NetworkPartition(const NetworkPartitionOptions& options,
-                                                             const NetworkAdjacency& adjacency) const
+                                                             const Network& network) const
   {
     /// <ul>
 
     /// <li> Check the number of parts
-    const unsigned int& numberElements = adjacency.AdjacencyRows.size() - 1;
+    const unsigned int& numberElements = network.AdjacencyRows.size() - 1;
     unsigned int numberParts = options.NumberOfParts;
     const unsigned int& masterWeight = options.MasterWeight;
 
@@ -81,7 +146,7 @@ namespace Gedim
     }
 
 #if ENABLE_METIS == 1
-    unsigned int numberConnections = adjacency.AdjacencyCols.size();
+    unsigned int numberConnections = network.AdjacencyCols.size();
 
     /// <li> Initialize METIS Partition
     rstatus_et metisResult = METIS_OK;
@@ -102,10 +167,10 @@ namespace Gedim
 
     /// <li> Build adjncy and xadj for METIS partition
     memcpy(xadj.data(),
-           adjacency.AdjacencyRows.data(),
+           network.AdjacencyRows.data(),
            sizeof(idx_t) * (numberElements + 1));
     memcpy(adjncy.data(),
-           adjacency.AdjacencyCols.data(),
+           network.AdjacencyCols.data(),
            sizeof(idx_t) * numberConnections);
 
     METIS_SetDefaultOptions(metisOptions);
@@ -116,16 +181,16 @@ namespace Gedim
       {
         metisOptions[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_CUT;
 
-        if (options.NodeWeights.size() > 0)
+        if (network.NodeWeights.size() > 0)
         {
           vwgt = new idx_t[numberElements];
-          memcpy(vwgt, options.NodeWeights.data(), sizeof(idx_t) * numberElements);
+          memcpy(vwgt, network.NodeWeights.data(), sizeof(idx_t) * numberElements);
         }
 
-        if (options.EdgeWeights.size() > 0)
+        if (network.EdgeWeights.size() > 0)
         {
           adjwgt = new idx_t[numberConnections];
-          memcpy(adjwgt, options.EdgeWeights.data(), sizeof(idx_t)*numberConnections);
+          memcpy(adjwgt, network.EdgeWeights.data(), sizeof(idx_t)*numberConnections);
         }
       }
         break;
@@ -133,10 +198,10 @@ namespace Gedim
       {
         metisOptions[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_VOL;
 
-        if (options.NodeWeights.size() > 0)
+        if (network.NodeWeights.size() > 0)
         {
           v_size = new idx_t[numberElements];
-          memcpy(v_size, options.NodeWeights.data(), sizeof(idx_t) * numberElements);
+          memcpy(v_size, network.NodeWeights.data(), sizeof(idx_t) * numberElements);
         }
       }
         break;
