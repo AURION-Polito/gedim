@@ -48,7 +48,11 @@ namespace UnitTesting
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
                                                                                 network);
 
+#if ENABLE_METIS == 1
     ASSERT_EQ(std::vector<unsigned int>({ 1, 1, 0, 1, 0, 0 }), partition);
+#else
+    ASSERT_EQ(std::vector<unsigned int>({ 0, 0, 0, 0, 0, 0 }), partition);
+#endif
   }
 
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh2D_Graph)
