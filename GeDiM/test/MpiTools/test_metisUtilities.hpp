@@ -5,7 +5,9 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
+#include "FileTextReader.hpp"
 #include "GeometryUtilities.hpp"
+#include "MeshDAOImporterFromCsv.hpp"
 #include "MeshUtilities.hpp"
 #include "Macro.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -111,7 +113,11 @@ namespace UnitTesting
     const Gedim::MeshUtilities::MeshGeometricData2D geometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
 
-    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh2DToDualGraph(meshDAO);
+    Eigen::MatrixXd weights = Eigen::MatrixXd::Ones(meshDAO.Cell2DTotalNumber(),
+                                                    meshDAO.Cell2DTotalNumber());
+
+    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh2DToDualGraph(meshDAO,
+                                                                                    weights);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
@@ -171,6 +177,131 @@ namespace UnitTesting
                            });
 
       exporter.Export(exportFolder + "/Cell2Ds.vtu");
+    }
+  }
+
+  TEST(TestMetisUtilities, TestNetworkPartition_ImportMesh2D_DualGraph)
+  {
+    GTEST_SKIP();
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_ImportMesh2D_DualGraph";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MetisUtilities metisUtilities;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh);
+
+    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+    meshImporterConfiguration.Folder = "/home/geoscore/Dropbox/Polito/Articles/GE_MESH/Poj_MeshQuality_ToGe/NumericalTests/METIS/SingleDomain/M1";
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+    Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
+    importer.Import(meshImporterConfiguration,
+                    meshDAO);
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "ImportedMesh");
+
+
+    const Gedim::MeshUtilities::MeshGeometricData2D geometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                                                          meshDAO);
+
+    Eigen::MatrixXd weights = Eigen::MatrixXd::Ones(meshDAO.Cell2DTotalNumber(),
+                                                    meshDAO.Cell2DTotalNumber());
+
+    {
+      Gedim::FileReader fileReader("/home/geoscore/Dropbox/Polito/Articles/GE_MESH/Poj_MeshQuality_ToGe/NumericalTests/METIS/SingleDomain/M1/Weights.txt");
+      fileReader.Open();
+
+      std::vector<string> lines;
+      fileReader.GetAllLines(lines);
+      fileReader.Close();
+
+      Gedim::Output::Assert(lines.size() == meshDAO.Cell2DTotalNumber());
+
+      for (unsigned int l = 0; l < lines.size(); l++)
+      {
+        istringstream converter(lines[l]);
+
+        for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+          converter >> weights(l, c);
+      }
+    }
+
+    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh2DToDualGraph(meshDAO,
+                                                                                    weights);
+
+    Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+    partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+    partitionOptions.MasterWeight = 100;
+    partitionOptions.NumberOfParts = 10;
+
+    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                network);
+
+
+    {
+      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell2DTotalNumber());
+      for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+        graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
+
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(network);
+
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      std::vector<double> weights;
+      weights.reserve(network.EdgeWeights.size());
+      weights.assign(network.EdgeWeights.begin(), network.EdgeWeights.end());
+
+      exporter.AddSegments(graphVertices,
+                           graphEdges,
+                           {
+                             {
+                               "Partition",
+                               Gedim::VTPProperty::Formats::Points,
+                               static_cast<unsigned int>(property.size()),
+                               property.data()
+                             },
+                             {
+                               "Weights",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(weights.size()),
+                               weights.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Graph.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell2DsVertices(),
+                           {
+                             {
+                               "Partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(property.size()),
+                               property.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Partitioned.vtu");
     }
   }
 }

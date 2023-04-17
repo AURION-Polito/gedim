@@ -70,7 +70,8 @@ namespace Gedim
     return matrix;
   }
   // ***************************************************************************
-  MetisUtilities::Network MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh) const
+  MetisUtilities::Network MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh,
+                                                            const Eigen::MatrixXd& weights) const
   {
     Network network;
 
@@ -116,6 +117,15 @@ namespace Gedim
 
     network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
                                                       adjacencyCols.end());
+    network.EdgeWeights.resize(network.AdjacencyCols.size());
+
+    int counter = 0;
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
+      for (const unsigned int& connection : vertexConnections)
+        network.EdgeWeights[counter++] = weights(v, connection);
+    }
 
     return network;
   }

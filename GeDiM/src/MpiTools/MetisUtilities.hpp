@@ -36,7 +36,8 @@ namespace Gedim
       MetisUtilities();
       ~MetisUtilities();
 
-      MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh) const;
+      MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh,
+                                                const Eigen::MatrixXd& weights) const;
 
       MetisUtilities::Network Mesh2DToGraph(const unsigned int& numVertices,
                                             const Eigen::MatrixXi& edges,
