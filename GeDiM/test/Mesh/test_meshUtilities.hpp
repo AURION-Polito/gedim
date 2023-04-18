@@ -674,6 +674,7 @@ namespace GedimUnitTesting
       std::list<unsigned int> updatedCell1Ds;
       EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3,
                                                 updatedCell1Ds));
+      updatedCell1Ds.sort();
       EXPECT_EQ(std::list<unsigned int>({4, 5}), updatedCell1Ds);
 
       Eigen::MatrixXi subCell(2, 5);
@@ -737,6 +738,7 @@ namespace GedimUnitTesting
       std::list<unsigned int> updatedCell2Ds;
       EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(1,
                                                 updatedCell2Ds));
+      updatedCell2Ds.sort();
       EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(2));
       EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(3));
       EXPECT_EQ(std::list<unsigned int>({2, 3}), updatedCell2Ds);

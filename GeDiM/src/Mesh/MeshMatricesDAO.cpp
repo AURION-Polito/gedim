@@ -44,11 +44,11 @@ namespace Gedim
   }
   // ***************************************************************************
   template<class Container, class T>
-  void MeshMatricesDAO::AlignMapContainerHigherElements(map<unsigned int, Container>& elements,
+  void MeshMatricesDAO::AlignMapContainerHigherElements(unordered_map<unsigned int, Container>& elements,
                                                         const T& minElement,
                                                         const T& newElementInitialization)
   {
-    map<unsigned int, Container> tempMap;
+    unordered_map<unsigned int, Container> tempMap;
     list<T> elementsToRemove;
     for (auto it = elements.begin(); it != elements.end(); it++)
     {
@@ -265,7 +265,7 @@ namespace Gedim
     Output::Assert(updatedCell0DIdex < Cell0DTotalNumber());
 
     if (!Cell0DHasUpdatedCell0Ds(cell0DIndex))
-      _mesh.UpdatedCell0Ds.insert(pair<unsigned int, set<unsigned int>>(cell0DIndex, {}));
+      _mesh.UpdatedCell0Ds.insert(pair<unsigned int, unordered_set<unsigned int>>(cell0DIndex, {}));
     _mesh.UpdatedCell0Ds.at(cell0DIndex).insert(updatedCell0DIdex);
   }
   // ***************************************************************************
@@ -273,7 +273,7 @@ namespace Gedim
                                              list<unsigned int>& updatedCell0DIds) const
   {
     Output::Assert(cell0DIndex < Cell0DTotalNumber());
-    map<unsigned int, set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell0Ds.find(cell0DIndex);
+    unordered_map<unsigned int, unordered_set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell0Ds.find(cell0DIndex);
 
     if (iter == _mesh.UpdatedCell0Ds.end())
     {
@@ -511,7 +511,7 @@ namespace Gedim
     Output::Assert(updatedCell1DIdex < Cell1DTotalNumber());
 
     if (!Cell1DHasUpdatedCell1Ds(cell1DIndex))
-      _mesh.UpdatedCell1Ds.insert(pair<unsigned int, set<unsigned int>>(cell1DIndex, {}));
+      _mesh.UpdatedCell1Ds.insert(pair<unsigned int, unordered_set<unsigned int>>(cell1DIndex, {}));
     _mesh.UpdatedCell1Ds.at(cell1DIndex).insert(updatedCell1DIdex);
     _mesh.Cell1DOriginalCell1Ds[updatedCell1DIdex] = cell1DIndex;
   }
@@ -520,7 +520,7 @@ namespace Gedim
                                              list<unsigned int>& updatedCell1DIds) const
   {
     Output::Assert(cell1DIndex < Cell1DTotalNumber());
-    map<unsigned int, set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell1Ds.find(cell1DIndex);
+    unordered_map<unsigned int, unordered_set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell1Ds.find(cell1DIndex);
 
     if (iter == _mesh.UpdatedCell1Ds.end())
     {
@@ -798,7 +798,7 @@ namespace Gedim
     Output::Assert(updatedCell2DIdex < Cell2DTotalNumber());
 
     if (!Cell2DHasUpdatedCell2Ds(cell2DIndex))
-      _mesh.UpdatedCell2Ds.insert(pair<unsigned int, set<unsigned int>>(cell2DIndex, {}));
+      _mesh.UpdatedCell2Ds.insert(pair<unsigned int, unordered_set<unsigned int>>(cell2DIndex, {}));
     _mesh.UpdatedCell2Ds.at(cell2DIndex).insert(updatedCell2DIdex);
     _mesh.Cell2DOriginalCell2Ds[updatedCell2DIdex] = cell2DIndex;
   }
@@ -807,7 +807,7 @@ namespace Gedim
                                              list<unsigned int>& updatedCell2DIds) const
   {
     Output::Assert(cell2DIndex < Cell2DTotalNumber());
-    map<unsigned int, set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell2Ds.find(cell2DIndex);
+    unordered_map<unsigned int, unordered_set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell2Ds.find(cell2DIndex);
 
     if (iter == _mesh.UpdatedCell2Ds.end())
     {
@@ -1046,7 +1046,7 @@ namespace Gedim
     Output::Assert(updatedCell3DIdex < Cell3DTotalNumber());
 
     if (!Cell3DHasUpdatedCell3Ds(cell3DIndex))
-      _mesh.UpdatedCell3Ds.insert(pair<unsigned int, set<unsigned int>>(cell3DIndex, {}));
+      _mesh.UpdatedCell3Ds.insert(pair<unsigned int, unordered_set<unsigned int>>(cell3DIndex, {}));
     _mesh.UpdatedCell3Ds.at(cell3DIndex).insert(updatedCell3DIdex);
   }
   // ***************************************************************************
@@ -1054,7 +1054,7 @@ namespace Gedim
                                              list<unsigned int>& updatedCell3DIds) const
   {
     Output::Assert(cell3DIndex < Cell3DTotalNumber());
-    map<unsigned int, set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell3Ds.find(cell3DIndex);
+    unordered_map<unsigned int, unordered_set<unsigned int>>::const_iterator iter = _mesh.UpdatedCell3Ds.find(cell3DIndex);
 
     if (iter == _mesh.UpdatedCell3Ds.end())
     {

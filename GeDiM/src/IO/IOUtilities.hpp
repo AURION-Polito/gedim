@@ -18,6 +18,7 @@
 #define __GEDIM_IOUtilities_H
 
 #include "Macro.hpp"
+#include <unordered_set>
 
 #if USE_MPI == 1
 #include <mpi.h>
@@ -297,6 +298,66 @@ namespace Gedim
 
     return out;
   }
+  /// General print of a unordered_set
+  template <typename T>
+  std::ostream& operator<<(std::ostream& out,
+                           const std::unordered_set<T>& setToPrint)
+  {
+    const int& maxElementToPrint = Output::MaxElementToPrint;
+    const int& startingIndex = Output::StartingIndexToPrint;
+
+    unsigned int sizeList = (maxElementToPrint == 0 || maxElementToPrint > (int)setToPrint.size()) ? setToPrint.size() : maxElementToPrint;
+    unsigned int startIndexList = (startingIndex >= (int)setToPrint.size()) ? 0 : startingIndex;
+    unsigned int counter = 0, elementPrinted = 0;
+
+    out<< "{";
+    for(typename std::unordered_set<T>::const_iterator iterator = setToPrint.begin(); iterator != setToPrint.end(); iterator++)
+    {
+      if (counter >= startIndexList)
+      {
+        out<< (counter != startIndexList ? "," : "")<< *iterator;
+        elementPrinted++;
+      }
+
+      if (elementPrinted >= sizeList)
+        break;
+
+      counter++;
+    }
+    out<< "}";
+
+    return out;
+  }
+  /// General print of a unordered_set
+  template <typename T>
+  std::ostream& operator<<(std::ostream& out,
+                           const std::unordered_set<T*>& setToPrint)
+  {
+    const int& maxElementToPrint = Output::MaxElementToPrint;
+    const int& startingIndex = Output::StartingIndexToPrint;
+
+    unsigned int sizeList = (maxElementToPrint == 0 || maxElementToPrint > (int)setToPrint.size()) ? setToPrint.size() : maxElementToPrint;
+    unsigned int startIndexList = (startingIndex >= (int)setToPrint.size()) ? 0 : startingIndex;
+    unsigned int counter = 0, elementPrinted = 0;
+
+    out<< "{";
+    for(typename std::unordered_set<T*>::const_iterator iterator = setToPrint.begin(); iterator != setToPrint.end(); iterator++)
+    {
+      if (counter >= startIndexList)
+      {
+        out<< (counter != startIndexList ? "," : "")<< **iterator;
+        elementPrinted++;
+      }
+
+      if (elementPrinted >= sizeList)
+        break;
+
+      counter++;
+    }
+    out<< "}";
+
+    return out;
+  }
   /// General print of a set
   template <typename T>
   std::ostream& operator<<(std::ostream& out,
@@ -329,7 +390,8 @@ namespace Gedim
   }
   /// General print of a set
   template <typename T>
-  std::ostream& operator<<(std::ostream& out, const std::set<T*>& setToPrint)
+  std::ostream& operator<<(std::ostream& out,
+                           const std::set<T*>& setToPrint)
   {
     const int& maxElementToPrint = Output::MaxElementToPrint;
     const int& startingIndex = Output::StartingIndexToPrint;

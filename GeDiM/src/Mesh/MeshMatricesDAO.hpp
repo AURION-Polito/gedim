@@ -28,7 +28,7 @@ namespace Gedim
       /// \param minElement the minElement
       /// \param newElementInitialization the new element initialization
       template<class Container, class T>
-      void AlignMapContainerHigherElements(std::map<unsigned int, Container>& elements,
+      void AlignMapContainerHigherElements(std::unordered_map<unsigned int, Container>& elements,
                                            const T& minElement,
                                            const T& newElementInitialization);
 
@@ -642,7 +642,7 @@ namespace Gedim
         return _mesh.Cell2DEdges[_mesh.NumberCell2DEdges[cell2DIndex] + edgeIndex];
       }
       unsigned int Cell2DFindEdge(const unsigned int& cell2DIndex,
-                                                const unsigned int& cell1DIndex) const;
+                                  const unsigned int& cell1DIndex) const;
       inline unsigned int Cell2DMarker(const unsigned int& cell2DIndex) const
       {
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
