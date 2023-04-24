@@ -37,7 +37,8 @@ namespace Gedim
       ~MetisUtilities();
 
       MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh,
-                                                const Eigen::MatrixXd& weights) const;
+                                                const std::vector<bool>& edgeConstrained = {},
+                                                const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
 
       MetisUtilities::Network Mesh2DToGraph(const unsigned int& numVertices,
                                             const Eigen::MatrixXi& edges,
