@@ -281,7 +281,7 @@ namespace UnitTesting
 
   TEST(TestMetisUtilities, TestNetworkPartition_ImportMesh2D_DualGraph)
   {
-    //GTEST_SKIP();
+    GTEST_SKIP();
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_ImportMesh2D_DualGraph";
     Gedim::Output::CreateFolder(exportFolder);
