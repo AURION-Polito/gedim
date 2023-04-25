@@ -747,7 +747,7 @@ namespace GedimUnitTesting
                                                    cell2DsToRefineIndex[c] :
                                                    updatedCell2Ds.front();
 
-        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxDiameterDirection(meshGeometricData.Cell2Ds.Vertices.at(cell2DToRefineIndex),
+        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxDiameterDirection(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
                                                                                                                         meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex));
 
         if (r == 0)
@@ -879,8 +879,10 @@ namespace GedimUnitTesting
                                                    cell2DsToRefineIndex[c] :
                                                    updatedCell2Ds.front();
 
-        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
-                                                                                                                       meshGeometricData.Cell2Ds.Inertia[cell2DToRefineIndex]);
+        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirectionTest(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
+                                                                                                                           meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
+                                                                                                                           meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
+                                                                                                                           meshGeometricData.Cell2Ds.Inertia[cell2DToRefineIndex]);
 
         if (r == 0)
         {
@@ -1096,8 +1098,10 @@ namespace GedimUnitTesting
                                                      cell2DsToRefineIndex[c] :
                                                      updatedCell2Ds.front();
 
-          Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
-                                                                                                                         meshGeometricData.Cell2Ds.Inertia.at(cell2DToRefineIndex));
+          Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirectionTest(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
+                                                                                                                             meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
+                                                                                                                             meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
+                                                                                                                             meshGeometricData.Cell2Ds.Inertia.at(cell2DToRefineIndex));
 
           const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                                   meshGeometricData.Cell2Ds.Vertices.at(cell2DToRefineIndex),
@@ -1156,8 +1160,8 @@ namespace GedimUnitTesting
                                 geometryUtilities,
                                 meshDAO);
 
-      EXPECT_EQ(66, meshDAO.Cell0DTotalNumber());
-      EXPECT_EQ(107, meshDAO.Cell1DTotalNumber());
+      EXPECT_EQ(64, meshDAO.Cell0DTotalNumber());
+      EXPECT_EQ(105, meshDAO.Cell1DTotalNumber());
       EXPECT_EQ(42, meshDAO.Cell2DTotalNumber());
     }
     catch (const exception& exception)

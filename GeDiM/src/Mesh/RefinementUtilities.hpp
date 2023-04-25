@@ -89,6 +89,8 @@ namespace Gedim
               std::vector<Eigen::VectorXd> EdgesLength;
               std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
               std::vector<Eigen::Matrix3d> Inertia;
+              std::vector<Eigen::MatrixXd> UnalignedVertices;
+              std::vector<Eigen::VectorXd> UnalignedEdgesLength;
               std::vector<double> InRadius;
               std::vector<double> Quality;
           };
@@ -149,10 +151,14 @@ namespace Gedim
 
       MaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd& edgesLength) const;
 
-      PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
+      PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd unalignedVertices,
                                                           const Eigen::Vector3d& centroid) const;
       PolygonDirection ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
                                                          const Eigen::Matrix3d& inertia) const;
+      PolygonDirection ComputePolygonMaxInertiaDirectionTest(const Eigen::MatrixXd& unalignedVertices,
+                                                             const Eigen::VectorXd& unalignedEdgesLength,
+                                                             const Eigen::Vector3d& centroid,
+                                                             const Eigen::Matrix3d& inertia) const;
 
       /// \brief Refine Triangle Cell2D By Edge
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()

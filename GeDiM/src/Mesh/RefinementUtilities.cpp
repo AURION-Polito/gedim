@@ -379,6 +379,8 @@ namespace Gedim
     geometricData.Cell2Ds.EdgesLength.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Triangulations.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Inertia.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.UnalignedVertices.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.UnalignedEdgesLength.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.InRadius.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
 
@@ -390,13 +392,14 @@ namespace Gedim
       double& convexCell2DArea = geometricData.Cell2Ds.Area.at(cell2DIndex);
       std::vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = geometricData.Cell2Ds.Triangulations.at(cell2DIndex);
       Eigen::Vector3d& convexCell2DCentroid = geometricData.Cell2Ds.Centroid.at(cell2DIndex);
+      Eigen::MatrixXd& convexCell2DUnalignedVertices = geometricData.Cell2Ds.UnalignedVertices.at(cell2DIndex);
 
       convexCell2DVertices = mesh.Cell2DVerticesCoordinates(cell2DIndex);
 
       // compute original cell2D triangulation
       const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
-      const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
-                                                                                            convexCell2DUnalignedVerticesFilter);
+      convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
+                                                                      convexCell2DUnalignedVerticesFilter);
 
       const std::vector<unsigned int> convexCell2DTriangulationFiltered = geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
       std::vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
@@ -433,6 +436,7 @@ namespace Gedim
                                                                                  end);
       }
 
+      geometricData.Cell2Ds.UnalignedEdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DUnalignedVertices);
       geometricData.Cell2Ds.EdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DVertices);
 
       geometricData.Cell2Ds.EdgesNormal[cell2DIndex] = geometryUtilities.PolygonEdgeNormals(convexCell2DVertices);
@@ -510,14 +514,10 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
-  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd& vertices,
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd unalignedVertices,
                                                                                                 const Eigen::Vector3d& centroid) const
   {
     PolygonDirection result;
-
-    const std::vector<unsigned int> unalignedPoints = geometryUtilities.UnalignedPoints(vertices);
-    const Eigen::MatrixXd unalignedVertices = geometryUtilities.ExtractPoints(vertices,
-                                                                              unalignedPoints);
 
     const Eigen::MatrixXd distances = geometryUtilities.PointsDistance(unalignedVertices);
     Eigen::MatrixXd::Index row, col;
@@ -544,6 +544,39 @@ namespace Gedim
     result.LineTangent.setZero();
     result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
     result.LineOrigin = centroid;
+
+    return result;
+  }
+  // ***************************************************************************
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirectionTest(const Eigen::MatrixXd& unalignedVertices,
+                                                                                                   const Eigen::VectorXd& unalignedEdgesLength,
+                                                                                                   const Eigen::Vector3d& centroid,
+                                                                                                   const Eigen::Matrix3d& inertia) const
+  {
+    PolygonDirection result;
+
+    if (unalignedVertices.cols() == 3)
+    {
+      Eigen::VectorXd::Index maxEdgeLocalIndex;
+      unalignedEdgesLength.maxCoeff(&maxEdgeLocalIndex);
+      const unsigned int oppositeVertexIndex = (maxEdgeLocalIndex + 2) % 3;
+
+      result.LineTangent = geometryUtilities.SegmentTangent(unalignedVertices.col(oppositeVertexIndex),
+                                                            0.5 * (unalignedVertices.col(maxEdgeLocalIndex) +
+                                                                   unalignedVertices.col((maxEdgeLocalIndex + 1) % 3)));
+      result.LineOrigin = unalignedVertices.col(oppositeVertexIndex);
+    }
+    else
+    {
+      // get maximux direction of inertia tensor
+      Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
+      if (eigensolver.info() != Eigen::Success)
+        throw std::runtime_error("Inertia not correct");
+
+      result.LineTangent.setZero();
+      result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
+      result.LineOrigin = centroid;
+    }
 
     return result;
   }
