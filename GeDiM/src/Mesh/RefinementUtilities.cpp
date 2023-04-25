@@ -531,27 +531,10 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirection(const Eigen::Vector3d& centroid,
+  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirection(const Eigen::MatrixXd& unalignedVertices,
+                                                                                               const Eigen::VectorXd& unalignedEdgesLength,
+                                                                                               const Eigen::Vector3d& centroid,
                                                                                                const Eigen::Matrix3d& inertia) const
-  {
-    PolygonDirection result;
-
-    // get maximux direction of inertia tensor
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
-    if (eigensolver.info() != Eigen::Success)
-      throw std::runtime_error("Inertia not correct");
-
-    result.LineTangent.setZero();
-    result.LineTangent.segment(0, 2) = eigensolver.eigenvectors().col(1);
-    result.LineOrigin = centroid;
-
-    return result;
-  }
-  // ***************************************************************************
-  RefinementUtilities::PolygonDirection RefinementUtilities::ComputePolygonMaxInertiaDirectionTest(const Eigen::MatrixXd& unalignedVertices,
-                                                                                                   const Eigen::VectorXd& unalignedEdgesLength,
-                                                                                                   const Eigen::Vector3d& centroid,
-                                                                                                   const Eigen::Matrix3d& inertia) const
   {
     PolygonDirection result;
 

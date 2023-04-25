@@ -879,10 +879,10 @@ namespace GedimUnitTesting
                                                    cell2DsToRefineIndex[c] :
                                                    updatedCell2Ds.front();
 
-        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirectionTest(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
-                                                                                                                           meshGeometricData.Cell2Ds.Inertia[cell2DToRefineIndex]);
+        Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
+                                                                                                                       meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
+                                                                                                                       meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
+                                                                                                                       meshGeometricData.Cell2Ds.Inertia[cell2DToRefineIndex]);
 
         if (r == 0)
         {
@@ -1098,10 +1098,10 @@ namespace GedimUnitTesting
                                                      cell2DsToRefineIndex[c] :
                                                      updatedCell2Ds.front();
 
-          Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirectionTest(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
-                                                                                                                             meshGeometricData.Cell2Ds.Inertia.at(cell2DToRefineIndex));
+          Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
+                                                                                                                         meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
+                                                                                                                         meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
+                                                                                                                         meshGeometricData.Cell2Ds.Inertia.at(cell2DToRefineIndex));
 
           const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                                   meshGeometricData.Cell2Ds.Vertices.at(cell2DToRefineIndex),
