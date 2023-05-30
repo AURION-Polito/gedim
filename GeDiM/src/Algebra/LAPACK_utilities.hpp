@@ -5,6 +5,13 @@
 
 namespace LAPACK_utilities
 {
+
+  /// Compute SVD: A = U * S * V'. It returns U, S and V'
+  void svd(Eigen::MatrixXd A,
+           Eigen::MatrixXd& U,
+           Eigen::MatrixXd& V,
+           Eigen::VectorXd& S);
+
   /// Compute SVD: A = U * S * V'. It returns and computes only S and V'
   void svd(Eigen::MatrixXd A,
            Eigen::MatrixXd& V,

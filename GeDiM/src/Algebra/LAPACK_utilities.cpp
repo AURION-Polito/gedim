@@ -242,4 +242,40 @@ namespace LAPACK_utilities
     return S;
   }
   // ***************************************************************************
+  /// Given A = U * S * V' returns U, S and V'
+  void svd(Eigen::MatrixXd A,
+           Eigen::MatrixXd& U,
+           Eigen::MatrixXd& V,
+           Eigen::VectorXd& S)
+  {
+      char JOBU = 'A'; //all M columns of U are returned in array U
+      char JOBVT = 'A'; // all N rows of V**T are returned in the array VT;
+
+      int M = A.rows(); // The number of rows of the input matrix A.
+      int N = A.cols(); // The number of columns of the input matrix A.
+
+      U.resize(M,M);
+      V.resize(N,N);
+      S.resize(std::min(M,N));
+
+      int LDA = M;
+      int LDU = M;
+      int LDVT = N;
+
+      double WORKDUMMY;
+      int LWORK = -1; // Request optimum work size.
+      int INFO = 0;
+
+      dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), U.data(), &LDU, V.data(), &LDVT, &WORKDUMMY, &LWORK, &INFO);
+
+      LWORK = int(WORKDUMMY) + 32;
+      Eigen::VectorXd WORK(LWORK);
+
+      dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), U.data(), &LDU, V.data(), &LDVT, WORK.data(), &LWORK, &INFO);
+
+      if(INFO != 0)
+        throw std::runtime_error("Error occurs in svd");
+
+  }
+  // ***************************************************************************
 }
