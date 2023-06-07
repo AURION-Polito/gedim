@@ -16,7 +16,7 @@ namespace Gedim
     _matrix.makeCompressed();
     _triplets.clear();
   }
-
+  // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
   void Eigen_SparseArray<Eigen_ArrayType, Eigen_SparseArrayType>::Triplet(const unsigned int& i,
                                                                           const unsigned int& j,
