@@ -422,6 +422,26 @@ namespace GedimUnitTesting
               vector<unsigned int>({ 1,0,1,0,1,0,1,0 }));
   }
 
+  TEST(TestMeshUtilities, TestComputeCell2DCell3DNeighbours)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mesh;
+    mesh.Mesh.NumberCell2DNeighbourCell3D.clear();
+    mesh.Mesh.Cell2DNeighbourCell3Ds.clear();
+    mesh.Mesh.NumberCell2DNeighbourCell3D.resize(mesh.Mesh.NumberCell2D + 1, 0);
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
+    EXPECT_EQ(mesh.Mesh.NumberCell2DNeighbourCell3D,
+              vector<unsigned int>({ 0,1,2,3,4,5 }));
+    EXPECT_EQ(mesh.Mesh.Cell2DNeighbourCell3Ds,
+              vector<unsigned int>({ 1,1,1,1,1,1 }));
+  }
+
   TEST(TestMeshUtilities, TestFillMesh1DGeometricData)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;

@@ -41,6 +41,8 @@ namespace Gedim
       std::vector<unsigned int> NumberCell2DEdges = {}; ///< number of Edges per Cell2D, size 1 x NumberCell2D + 1
       std::vector<unsigned int> Cell2DVertices = {}; ///< Cell2D Vertices indices, size 1 x NumberCell2DVertices[NumberCell2D]
       std::vector<unsigned int> Cell2DEdges = {}; ///< Cell2D Cell1D indices, size 1 x NumberCell2DEdges[NumberCell2D]
+      std::vector<unsigned int> NumberCell2DNeighbourCell3D = {}; ///< Cell2D neighbour Cell3D indices per cell, size  1 x NumberCell2D + 1
+      std::vector<unsigned int> Cell2DNeighbourCell3Ds = {}; ///< Cell2D neighbour Cell3D indices, size 1 x NumberCell2DNeighbourCell3D[NumberCell2D]
       std::vector<unsigned int> Cell2DMarkers = {}; ///< Cell2D markers, size 1 x NumberCell2D (marker)
       std::vector<bool> ActiveCell2D = {}; ///< active Cell2D
       std::vector<unsigned int> NumberCell2DSubdivision = {}; ///< number of sub-division per Cell2D, size 1 x NumberCell2D + 1

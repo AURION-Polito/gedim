@@ -612,6 +612,9 @@ namespace Gedim
       _mesh.NumberCell2DSubdivision[oldNumberCell2Ds + c + 1] = _mesh.NumberCell2DSubdivision[oldNumberCell2Ds];
     }
 
+    for (unsigned c = 0; c < numberCell2Ds; c++)
+      _mesh.NumberCell2DNeighbourCell3D[oldNumberCell2Ds + c + 1] = _mesh.NumberCell2DNeighbourCell3D[oldNumberCell2Ds];
+
     for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
     {
       for (unsigned c = 0; c < numberCell2Ds; c++)
@@ -635,6 +638,14 @@ namespace Gedim
       _mesh.Cell2DDoublePropertySizes[p].erase(std::next(_mesh.Cell2DDoublePropertySizes[p].begin(),
                                                          cell2DIndex));
     }
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell2DNeighbourCell3D,
+                                            _mesh.Cell2DNeighbourCell3Ds,
+                                            _mesh.NumberCell2D,
+                                            cell2DIndex,
+                                            0);
+    _mesh.NumberCell2DNeighbourCell3D.erase(std::next(_mesh.NumberCell2DNeighbourCell3D.begin(),
+                                                      cell2DIndex));
 
     _mesh.UpdatedCell2Ds.erase(cell2DIndex);
 
@@ -824,6 +835,19 @@ namespace Gedim
     return false;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
+                                                         const unsigned int& numberNeighbourCell3Ds)
+  {
+    Output::Assert(cell2DIndex < Cell2DTotalNumber());
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell2DNeighbourCell3D,
+                                            _mesh.Cell2DNeighbourCell3Ds,
+                                            _mesh.NumberCell2D,
+                                            cell2DIndex,
+                                            numberNeighbourCell3Ds,
+                                            _mesh.NumberCell3D);
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties)
   {
     _mesh.Cell2DDoublePropertyIds.reserve(numberDoubleProperties);
@@ -873,6 +897,8 @@ namespace Gedim
   // ***************************************************************************
   void MeshMatricesDAO::Cell3DsInitialize(const unsigned int& numberCell3Ds)
   {
+    unsigned int oldNumberCell3D = _mesh.NumberCell3D;
+
     _mesh.NumberCell3D = numberCell3Ds;
     _mesh.NumberCell3DVertices.resize(_mesh.NumberCell3D + 1, 0);
     _mesh.NumberCell3DEdges.resize(_mesh.NumberCell3D + 1, 0);
@@ -881,6 +907,11 @@ namespace Gedim
     _mesh.ActiveCell3D.resize(_mesh.NumberCell3D, false);
     for (unsigned int p = 0; p < Cell3DNumberDoubleProperties(); p++)
       _mesh.Cell3DDoublePropertySizes[p].resize(_mesh.NumberCell3D + 1, 0);
+
+    // update neighbours
+    AlignContainerElements(_mesh.Cell2DNeighbourCell3Ds,
+                           oldNumberCell3D,
+                           _mesh.NumberCell3D);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell3DAppend(const unsigned int& numberCell3Ds)
@@ -948,6 +979,10 @@ namespace Gedim
     _mesh.Cell3DMarkers.erase(std::next(_mesh.Cell3DMarkers.begin(), cell3DIndex));
     _mesh.ActiveCell3D.erase(std::next(_mesh.ActiveCell3D.begin(), cell3DIndex));
     _mesh.NumberCell3D--;
+
+    AlignContainerHigherElements(_mesh.Cell2DNeighbourCell3Ds,
+                                 cell3DIndex,
+                                 _mesh.NumberCell3D);
 
     AlignMapContainerHigherElements(_mesh.UpdatedCell3Ds,
                                     cell3DIndex,
@@ -1179,6 +1214,8 @@ namespace Gedim
     _mesh.Cell2DVertices.shrink_to_fit();
     _mesh.Cell2DEdges.shrink_to_fit();
     _mesh.Cell2DSubdivision.shrink_to_fit();
+    _mesh.NumberCell2DNeighbourCell3D.shrink_to_fit();
+    _mesh.Cell2DNeighbourCell3Ds.shrink_to_fit();
     _mesh.Cell2DMarkers.shrink_to_fit();
     _mesh.Cell2DOriginalCell2Ds.shrink_to_fit();
     _mesh.ActiveCell2D.shrink_to_fit();
@@ -1275,6 +1312,8 @@ namespace Gedim
     converter<< scientific<< "ActiveCell2D = "<< _mesh.ActiveCell2D<< ";"<< endl;
     converter<< scientific<< "Cell2DOriginalCell2Ds = "<< _mesh.Cell2DOriginalCell2Ds<< ";"<< endl;
     converter<< scientific<< "UpdatedCell2Ds = "<< _mesh.UpdatedCell2Ds<< ";"<< endl;
+    converter<< scientific<< "NumberCell2DNeighbourCell3D = "<< _mesh.NumberCell2DNeighbourCell3D<< ";"<< endl;
+    converter<< scientific<< "Cell2DNeighbourCell3Ds = "<< _mesh.Cell2DNeighbourCell3Ds<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyIds = "<< _mesh.Cell2DDoublePropertyIds<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertyIndices = "<< _mesh.Cell2DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell2DDoublePropertySizes = "<< _mesh.Cell2DDoublePropertySizes<< ";"<< endl;

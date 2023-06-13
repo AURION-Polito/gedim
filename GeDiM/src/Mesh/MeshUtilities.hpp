@@ -231,6 +231,10 @@ namespace Gedim
       /// \param mesh the resulting mesh
       void ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const;
 
+      /// \brief Compute Cell2D Cell3DNeighbours with given mesh data
+      /// \param mesh the resulting mesh
+      void ComputeCell2DCell3DNeighbours(IMeshDAO& mesh) const;
+
       /// \brief Crete rectange Mesh on rectangle base x height
       /// \param rectangleOrigin the rectangle origin point
       /// \param rectangleBaseTangent the rectangle base tangent vector

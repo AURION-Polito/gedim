@@ -1308,6 +1308,32 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::ComputeCell2DCell3DNeighbours(IMeshDAO& mesh) const
+  {
+    // Compute Cell2D neighbours starting from cell3Ds
+    std::vector<std::list<unsigned int>> cell2DsNeighbours(mesh.Cell2DTotalNumber());
+    for (unsigned int c3D = 0; c3D < mesh.Cell3DTotalNumber(); c3D++)
+    {
+      const unsigned int numCell3DFaces = mesh.Cell3DNumberFaces(c3D);
+      for (unsigned int f = 0; f < numCell3DFaces; f++)
+      {
+        const unsigned int cell2D = mesh.Cell3DFace(c3D, f);
+        cell2DsNeighbours[cell2D].push_back(c3D);
+      }
+    }
+
+    for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
+    {
+      mesh.Cell2DInitializeNeighbourCell3Ds(c2D, cell2DsNeighbours[c2D].size());
+
+      unsigned int n = 0;
+      for (const auto& cell3DIndex : cell2DsNeighbours[c2D])
+        mesh.Cell2DInsertNeighbourCell3D(c2D,
+                                         n++,
+                                         cell3DIndex);
+    }
+  }
+  // ***************************************************************************
   void MeshUtilities::CreateRectangleMesh(const Eigen::Vector3d& rectangleOrigin,
                                           const Eigen::Vector3d& rectangleBaseTangent,
                                           const Eigen::Vector3d& rectangleHeightTangent,
