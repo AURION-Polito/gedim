@@ -465,8 +465,8 @@ namespace UnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     {
-      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell2DTotalNumber());
-      for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell3DTotalNumber());
+      for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
       const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(network);
