@@ -437,9 +437,9 @@ namespace GedimUnitTesting
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
     EXPECT_EQ(mesh.Mesh.NumberCell2DNeighbourCell3D,
-              vector<unsigned int>({ 0,1,2,3,4,5 }));
+              vector<unsigned int>({ 0,1,2,3,4,5, 6 }));
     EXPECT_EQ(mesh.Mesh.Cell2DNeighbourCell3Ds,
-              vector<unsigned int>({ 1,1,1,1,1,1 }));
+              vector<unsigned int>({ 0,0,0,0,0,0 }));
   }
 
   TEST(TestMeshUtilities, TestFillMesh1DGeometricData)
