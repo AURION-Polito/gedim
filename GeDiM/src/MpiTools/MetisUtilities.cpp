@@ -18,6 +18,83 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  MetisUtilities::Network MetisUtilities::Mesh3DToDualGraph(const IMeshDAO& mesh,
+                                                            const std::vector<bool>& faceConstrained,
+                                                            const Eigen::SparseMatrix<unsigned int>& weights) const
+  {
+    Network network;
+
+    const unsigned int numVertices = mesh.Cell3DTotalNumber();
+    network.AdjacencyRows.resize(numVertices + 1, 0);
+    std::list<unsigned int> adjacencyCols;
+
+    std::set<std::pair<unsigned int, unsigned int>> constraints;
+
+    std::vector<std::list<unsigned int>> verticesConnections(numVertices);
+    const bool checkConstraints = (faceConstrained.size() == mesh.Cell2DTotalNumber());
+
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
+    {
+      for (unsigned int n1 = 0; n1 < mesh.Cell2DNumberNeighbourCell3D(f); n1++)
+      {
+        if (!mesh.Cell2DHasNeighbourCell3D(f, n1))
+          continue;
+
+        const unsigned int cell3Dn1 = mesh.Cell2DNeighbourCell3D(f, n1);
+
+        for (unsigned int n2 = n1 + 1; n2 < mesh.Cell2DNumberNeighbourCell3D(f); n2++)
+        {
+          if (!mesh.Cell2DHasNeighbourCell3D(f, n2))
+            continue;
+
+          const unsigned int cell3Dn2 = mesh.Cell2DNeighbourCell3D(f, n2);
+
+          verticesConnections[cell3Dn1].push_back(cell3Dn2);
+          verticesConnections[cell3Dn2].push_back(cell3Dn1);
+
+          if (checkConstraints &&
+              faceConstrained[f])
+          {
+            constraints.insert(std::make_pair(cell3Dn1, cell3Dn2));
+            constraints.insert(std::make_pair(cell3Dn2, cell3Dn1));
+          }
+        }
+      }
+    }
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
+      const unsigned int& numberConnections = vertexConnections.size();
+
+      network.AdjacencyRows[v + 1] = network.AdjacencyRows[v] +
+                                     numberConnections;
+
+      for (const unsigned int& connection : vertexConnections)
+        adjacencyCols.push_back(connection);
+    }
+
+    network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
+                                                      adjacencyCols.end());
+    network.EdgeWeights.resize(network.AdjacencyCols.size(), 1);
+
+    int counter = 0;
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
+      for (const unsigned int& connection : vertexConnections)
+      {
+        unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection) : 1;
+        network.EdgeWeights[counter++] =
+            constraints.find(std::make_pair(v, connection)) != constraints.end() ?
+                                                                 1 :
+                                                                 weight + 1;
+      }
+    }
+
+    return network;
+  }
+  // ***************************************************************************
   MetisUtilities::Network MetisUtilities::Mesh2DToGraph(const unsigned int& numVertices,
                                                         const Eigen::MatrixXi& edges,
                                                         const bool& undirectEdges) const

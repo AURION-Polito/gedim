@@ -19,6 +19,8 @@
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
 
+#include "MeshMatrices_3D_22Cells_Mock.hpp"
+
 namespace UnitTesting
 {
   TEST(TestMetisUtilities, TestNetworkPartition)
@@ -428,6 +430,84 @@ namespace UnitTesting
                            });
 
       exporter.Export(exportFolder + "/Partitioned.vtu");
+    }
+  }
+
+  TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MetisUtilities metisUtilities;
+
+    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                          meshDAO);
+
+    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh3DToDualGraph(meshDAO);
+
+    Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+    partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+    partitionOptions.MasterWeight = 100;
+    partitionOptions.NumberOfParts = 3;
+
+    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                network);
+
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    {
+      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell2DTotalNumber());
+      for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
+        graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
+
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(network);
+
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      exporter.AddSegments(graphVertices,
+                           graphEdges,
+                           {
+                             {
+                               "Partition",
+                               Gedim::VTPProperty::Formats::Points,
+                               static_cast<unsigned int>(property.size()),
+                               property.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Graph.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      exporter.AddPolyhedrons(meshDAO.Cell0DsCoordinates(),
+                              meshDAO.Cell3DsFacesVertices(),
+                              {
+                                {
+                                  "Partition",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(property.size()),
+                                  property.data()
+                                }
+                              });
+
+      exporter.Export(exportFolder + "/Cell3Ds.vtu");
     }
   }
 }
