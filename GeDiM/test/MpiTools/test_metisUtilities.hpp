@@ -445,6 +445,8 @@ namespace UnitTesting
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
+
     const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
 

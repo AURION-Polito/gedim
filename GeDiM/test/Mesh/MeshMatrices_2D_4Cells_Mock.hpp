@@ -63,6 +63,8 @@ namespace GedimUnitTesting
                              7,2,4 };
         Mesh.Cell2DMarkers = { 0,0,0,0 };
         Mesh.ActiveCell2D = { 1,1,1,1 };
+        Mesh.NumberCell2DNeighbourCell3D = { 0,0,0,0,0 };
+        Mesh.Cell2DNeighbourCell3Ds = { };
       }
   };
 }

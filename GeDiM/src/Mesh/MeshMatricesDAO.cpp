@@ -583,6 +583,7 @@ namespace Gedim
     _mesh.Cell2DMarkers.resize(_mesh.NumberCell2D, 0);
     _mesh.ActiveCell2D.resize(_mesh.NumberCell2D, false);
     _mesh.Cell2DOriginalCell2Ds.resize(_mesh.NumberCell2D, _mesh.NumberCell2D);
+    _mesh.NumberCell2DNeighbourCell3D.resize(_mesh.NumberCell2D + 1, 0);
     for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
       _mesh.Cell2DDoublePropertySizes[p].resize(_mesh.NumberCell2D + 1, 0);
 

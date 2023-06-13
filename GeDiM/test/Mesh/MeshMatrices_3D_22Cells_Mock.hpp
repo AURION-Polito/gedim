@@ -116,6 +116,8 @@ namespace GedimUnitTesting
         Mesh.Cell2DDoublePropertyIndices = {};
         Mesh.Cell2DDoublePropertySizes = {};
         Mesh.Cell2DDoublePropertyValues = {};
+        Mesh.NumberCell2DNeighbourCell3D = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+        Mesh.Cell2DNeighbourCell3Ds = { };
         Mesh.NumberCell3D = 22;
         Mesh.NumberCell3DVertices = { 0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88 };
         Mesh.Cell3DVertices = { 14,8,10,18,8,13,12,19,8,14,10,16,8,13,9,18,8,1,9,19,13,8,9,19,15,8,14,12,0,8,11,17,8,15,11,17,13,8,14,18,5,12,13,19,8,15,14,16,13,8,12,14,6,13,14,18,12,4,15,17,15,8,11,16,15,8,12,17,7,14,15,16,10,3,11,16,8,10,11,16,9,2,10,18,8,9,10,18 };

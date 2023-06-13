@@ -114,6 +114,8 @@ namespace GedimUnitTesting
         Mesh.Cell2DDoublePropertyIndices = {};
         Mesh.Cell2DDoublePropertySizes = {};
         Mesh.Cell2DDoublePropertyValues = {};
+        Mesh.NumberCell2DNeighbourCell3D = { 0,0,0,0,0,0,0,0 };
+        Mesh.Cell2DNeighbourCell3Ds = { };
         Mesh.NumberCell3D = 0;
         Mesh.NumberCell3DVertices = {};
         Mesh.Cell3DVertices = {};
