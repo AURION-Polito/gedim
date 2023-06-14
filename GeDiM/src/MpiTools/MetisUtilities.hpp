@@ -34,7 +34,7 @@ namespace Gedim
 
       struct MeshToNetwork final
       {
-          std::vector<unsigned int> EdgesCellIndex;
+          std::vector<unsigned int> EdgesMeshCellIndex;
           Network MetisNetwork;
       };
 
@@ -47,9 +47,9 @@ namespace Gedim
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
 
 
-      MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh,
-                                                const std::vector<bool>& edgeConstrained = {},
-                                                const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
+      MetisUtilities::MeshToNetwork Mesh2DToDualGraph(const IMeshDAO& mesh,
+                                                      const std::vector<bool>& edgeConstrained = {},
+                                                      const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
 
       MetisUtilities::Network Mesh2DToGraph(const unsigned int& numVertices,
                                             const Eigen::MatrixXi& edges,

@@ -88,8 +88,8 @@ namespace Gedim
 
     network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
                                                       adjacencyCols.end());
-    meshToNetwork.EdgesCellIndex = std::vector<unsigned int>(adjacencyColsCellIndex.begin(),
-                                                             adjacencyColsCellIndex.end());
+    meshToNetwork.EdgesMeshCellIndex = std::vector<unsigned int>(adjacencyColsCellIndex.begin(),
+                                                                 adjacencyColsCellIndex.end());
 
     const unsigned int& numEdges = network.AdjacencyCols.size();
     network.EdgeWeights.resize(numEdges, 1);
@@ -103,8 +103,8 @@ namespace Gedim
         unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell3DIndex) : 1;
         network.EdgeWeights[counter++] =
             constraints.find(std::make_pair(v, connection.Cell3DIndex)) != constraints.end() ?
-                                                                 1 :
-                                                                 weight + numEdges;
+                                                                             1 :
+                                                                             weight + numEdges;
       }
     }
 
@@ -163,19 +163,28 @@ namespace Gedim
     return matrix;
   }
   // ***************************************************************************
-  MetisUtilities::Network MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh,
-                                                            const std::vector<bool>& edgeConstrained,
-                                                            const Eigen::SparseMatrix<unsigned int>& weights) const
+  MetisUtilities::MeshToNetwork MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh,
+                                                                  const std::vector<bool>& edgeConstrained,
+                                                                  const Eigen::SparseMatrix<unsigned int>& weights) const
   {
-    Network network;
+    MeshToNetwork meshToNetwork;
+
+    Network& network = meshToNetwork.MetisNetwork;
 
     const unsigned int numVertices = mesh.Cell2DTotalNumber();
     network.AdjacencyRows.resize(numVertices + 1, 0);
     std::list<unsigned int> adjacencyCols;
+    std::list<unsigned int> adjacencyColsCellIndex;
 
     std::set<std::pair<unsigned int, unsigned int>> constraints;
 
-    std::vector<std::list<unsigned int>> verticesConnections(numVertices);
+    struct Connection final
+    {
+        unsigned int Cell2DIndex;
+        unsigned int Cell1DIndex;
+    };
+
+    std::vector<std::list<Connection>> verticesConnections(numVertices);
     const bool checkConstraints = (edgeConstrained.size() == mesh.Cell1DTotalNumber());
 
     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
@@ -194,8 +203,8 @@ namespace Gedim
 
           const unsigned int cell2Dn2 = mesh.Cell1DNeighbourCell2D(e, n2);
 
-          verticesConnections[cell2Dn1].push_back(cell2Dn2);
-          verticesConnections[cell2Dn2].push_back(cell2Dn1);
+          verticesConnections[cell2Dn1].push_back(Connection { cell2Dn2, e });
+          verticesConnections[cell2Dn2].push_back(Connection { cell2Dn1, e });
 
           if (checkConstraints &&
               edgeConstrained[e])
@@ -209,14 +218,17 @@ namespace Gedim
 
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
+      const std::list<Connection>& vertexConnections = verticesConnections[v];
       const unsigned int& numberConnections = vertexConnections.size();
 
       network.AdjacencyRows[v + 1] = network.AdjacencyRows[v] +
                                      numberConnections;
 
-      for (const unsigned int& connection : vertexConnections)
-        adjacencyCols.push_back(connection);
+      for (const Connection& connection : vertexConnections)
+      {
+        adjacencyCols.push_back(connection.Cell2DIndex);
+        adjacencyColsCellIndex.push_back(connection.Cell1DIndex);
+      }
     }
 
     network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
@@ -226,18 +238,18 @@ namespace Gedim
     int counter = 0;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      const std::list<unsigned int>& vertexConnections = verticesConnections[v];
-      for (const unsigned int& connection : vertexConnections)
+      const std::list<Connection>& vertexConnections = verticesConnections[v];
+      for (const Connection& connection : vertexConnections)
       {
-        unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection) : 1;
+        unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell2DIndex) : 1;
         network.EdgeWeights[counter++] =
-            constraints.find(std::make_pair(v, connection)) != constraints.end() ?
-                                                                 1 :
-                                                                 weight + 10;
+            constraints.find(std::make_pair(v, connection.Cell2DIndex)) != constraints.end() ?
+                                                                             1 :
+                                                                             weight + 10;
       }
     }
 
-    return network;
+    return meshToNetwork;
   }
   // ***************************************************************************
   std::vector<unsigned int> MetisUtilities::NetworkPartition(const NetworkPartitionOptions& options,
