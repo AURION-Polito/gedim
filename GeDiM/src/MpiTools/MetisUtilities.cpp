@@ -449,6 +449,13 @@ namespace Gedim
       if (!edgesConstrained[e])
         continue;
 
+      if (mesh.Cell1DNumberNeighbourCell2D(e) < 2)
+        continue;
+
+      if (!mesh.Cell1DHasNeighbourCell2D(e, 0) ||
+          !mesh.Cell1DHasNeighbourCell2D(e, 1))
+        continue;
+
       const unsigned int neigh1 = mesh.Cell1DNeighbourCell2D(e,
                                                              0);
       const unsigned int neigh2 = mesh.Cell1DNeighbourCell2D(e,
@@ -475,6 +482,9 @@ namespace Gedim
     for (unsigned int f = 0; f < facesConstrained.size(); f++)
     {
       if (!facesConstrained[f])
+        continue;
+
+      if (mesh.Cell2DNumberNeighbourCell3D(f) < 2)
         continue;
 
       const unsigned int neigh1 = mesh.Cell2DNeighbourCell3D(f,

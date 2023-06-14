@@ -20,6 +20,7 @@
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
 
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
+#include "MeshMatrices_3D_329Cells_Mock.hpp"
 
 namespace UnitTesting
 {
@@ -594,7 +595,7 @@ namespace UnitTesting
 
     Gedim::MetisUtilities metisUtilities;
 
-    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
