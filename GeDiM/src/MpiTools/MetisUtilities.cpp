@@ -233,6 +233,8 @@ namespace Gedim
 
     network.AdjacencyCols = std::vector<unsigned int>(adjacencyCols.begin(),
                                                       adjacencyCols.end());
+    meshToNetwork.EdgesMeshCellIndex = std::vector<unsigned int>(adjacencyColsCellIndex.begin(),
+                                                                 adjacencyColsCellIndex.end());
     network.EdgeWeights.resize(network.AdjacencyCols.size(), 1);
 
     int counter = 0;
