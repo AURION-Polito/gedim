@@ -235,7 +235,9 @@ namespace Gedim
                                                       adjacencyCols.end());
     meshToNetwork.EdgesMeshCellIndex = std::vector<unsigned int>(adjacencyColsCellIndex.begin(),
                                                                  adjacencyColsCellIndex.end());
-    network.EdgeWeights.resize(network.AdjacencyCols.size(), 1);
+
+    const unsigned int& numEdges = network.AdjacencyCols.size();
+    network.EdgeWeights.resize(numEdges, 1);
 
     int counter = 0;
     for (unsigned int v = 0; v < numVertices; v++)
@@ -247,7 +249,7 @@ namespace Gedim
         network.EdgeWeights[counter++] =
             constraints.find(std::make_pair(v, connection.Cell2DIndex)) != constraints.end() ?
                                                                              1 :
-                                                                             weight + 10;
+                                                                             weight + numEdges;
       }
     }
 
