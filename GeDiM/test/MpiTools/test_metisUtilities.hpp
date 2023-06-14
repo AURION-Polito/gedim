@@ -213,13 +213,20 @@ namespace UnitTesting
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
                                                                                 network);
 
+    for (unsigned int e = 0; e < edgeConstrained.size(); e++)
+    {
+      if (!edgeConstrained[e] ||
+          meshDAO.Cell1DNumberNeighbourCell2D(e) < 2)
+        continue;
 
-    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_DualGraph_Weights";
+      ASSERT_NE(partition.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                           0)),
+                partition.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                           1)));
+    }
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_DualGraph_Constraints";
     Gedim::Output::CreateFolder(exportFolder);
-
-    meshUtilities.ExportMeshToVTU(meshDAO,
-                                  exportFolder,
-                                  "Mesh");
 
     {
       Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell2DTotalNumber());
@@ -277,7 +284,39 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Partition.vtu");
+      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> index, constrained;
+      index.resize(meshDAO.Cell1DTotalNumber());
+      constrained.resize(meshDAO.Cell1DTotalNumber());
+      for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
+      {
+        index[e] = e;
+        constrained[e] = edgeConstrained[e] ? 1.0 : 0.0;
+      }
+
+      exporter.AddSegments(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell1DsExtremes(),
+                           {
+                             {
+                               "Index",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(index.size()),
+                               index.data()
+                             },
+                             {
+                               "Constrained",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(constrained.size()),
+                               constrained.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Cell1Ds.vtu");
     }
   }
 
@@ -450,7 +489,7 @@ namespace UnitTesting
     const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
 
-    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh3DToDualGraph(meshDAO);
+    const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
@@ -458,7 +497,7 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                network);
+                                                                                meshToNetwork.MetisNetwork);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph";
@@ -469,7 +508,7 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(network);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
 
       Gedim::VTKUtilities exporter;
 
@@ -510,6 +549,184 @@ namespace UnitTesting
                               });
 
       exporter.Export(exportFolder + "/Cell3Ds.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> index;
+      index.resize(meshDAO.Cell2DTotalNumber());
+      for (unsigned int f = 0; f < meshDAO.Cell2DTotalNumber(); f++)
+        index[f] = f;
+
+      exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell2DsVertices(),
+                           {
+                             {
+                               "Index",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(index.size()),
+                               index.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+    }
+  }
+
+  TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_Constraints)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MetisUtilities metisUtilities;
+
+    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                          meshDAO);
+
+    std::vector<bool> faceConstrained = std::vector<bool>(meshDAO.Cell2DTotalNumber(),
+                                                          false);
+    // faceConstrained[2] = true;
+    // faceConstrained[29] = true;
+
+    const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO,
+                                                                                                faceConstrained);
+
+    Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+    partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+    partitionOptions.MasterWeight = 100;
+    partitionOptions.NumberOfParts = 3;
+
+    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                meshToNetwork.MetisNetwork);
+
+    for (unsigned int e = 0; e < meshToNetwork.MetisNetwork.EdgeWeights.size(); e++)
+    {
+      const unsigned int cell2DIndex = meshToNetwork.EdgesCellIndex[e];
+      const unsigned int neigh1 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
+                                                                0);
+      const unsigned int neigh2 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
+                                                                1);
+
+      cerr<< "Face "<< cell2DIndex<< " ";
+      cerr<< "constrained "<< faceConstrained[cell2DIndex]<< " ";
+      cerr<< "weight "<< meshToNetwork.MetisNetwork.EdgeWeights[e]<< " - ";
+      cerr<< "neigh1 "<< neigh1<< " ";
+      cerr<< "P "<< partition.at(neigh1)<< " ";
+      cerr<< "neigh2 "<< neigh2<< " ";
+      cerr<< "P "<< partition.at(neigh2)<< endl;
+    }
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_Constraints";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    {
+      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell3DTotalNumber());
+      for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
+        graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
+
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      exporter.AddSegments(graphVertices,
+                           graphEdges,
+                           {
+                             {
+                               "Partition",
+                               Gedim::VTPProperty::Formats::Points,
+                               static_cast<unsigned int>(property.size()),
+                               property.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Graph.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(partition.size());
+      property.assign(partition.begin(), partition.end());
+
+      exporter.AddPolyhedrons(meshDAO.Cell0DsCoordinates(),
+                              meshDAO.Cell3DsFacesVertices(),
+                              {
+                                {
+                                  "Partition",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(property.size()),
+                                  property.data()
+                                }
+                              });
+
+      exporter.Export(exportFolder + "/Cell3Ds.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> index, constrained, weight;
+      index.resize(meshDAO.Cell2DTotalNumber());
+      constrained.resize(meshDAO.Cell2DTotalNumber());
+      weight.resize(meshDAO.Cell2DTotalNumber(), 0.0);
+      for (unsigned int f = 0; f < meshDAO.Cell2DTotalNumber(); f++)
+      {
+        index[f] = f;
+        constrained[f] = faceConstrained[f] ? 1.0 : 0.0;
+      }
+
+      for (unsigned int e = 0; e < meshToNetwork.MetisNetwork.EdgeWeights.size(); e++)
+        weight[meshToNetwork.EdgesCellIndex[e]] = meshToNetwork.MetisNetwork.EdgeWeights[e];
+
+      exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell2DsVertices(),
+                           {
+                             {
+                               "Index",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(index.size()),
+                               index.data()
+                             },
+                             {
+                               "Constrained",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(constrained.size()),
+                               constrained.data()
+                             },
+                             {
+                               "Weight",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(weight.size()),
+                               weight.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+    }
+
+    for (unsigned int f = 0; f < faceConstrained.size(); f++)
+    {
+      if (!faceConstrained[f] ||
+          meshDAO.Cell2DNumberNeighbourCell3D(f) < 2)
+        continue;
+
+      ASSERT_NE(partition.at(meshDAO.Cell2DNeighbourCell3D(f,
+                                                           0)),
+                partition.at(meshDAO.Cell2DNeighbourCell3D(f,
+                                                           1)));
     }
   }
 }

@@ -32,13 +32,19 @@ namespace Gedim
           std::vector<unsigned int> EdgeWeights = {};
       };
 
+      struct MeshToNetwork final
+      {
+          std::vector<unsigned int> EdgesCellIndex;
+          Network MetisNetwork;
+      };
+
     public:
       MetisUtilities();
       ~MetisUtilities();
 
-      MetisUtilities::Network Mesh3DToDualGraph(const IMeshDAO& mesh,
-                                                const std::vector<bool>& faceConstrained = {},
-                                                const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
+      MetisUtilities::MeshToNetwork Mesh3DToDualGraph(const IMeshDAO& mesh,
+                                                      const std::vector<bool>& faceConstrained = {},
+                                                      const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
 
 
       MetisUtilities::Network Mesh2DToDualGraph(const IMeshDAO& mesh,
