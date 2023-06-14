@@ -593,8 +593,9 @@ namespace UnitTesting
 
     std::vector<bool> faceConstrained = std::vector<bool>(meshDAO.Cell2DTotalNumber(),
                                                           false);
-    // faceConstrained[2] = true;
-    // faceConstrained[29] = true;
+    faceConstrained[2] = true;
+    faceConstrained[23] = true;
+    faceConstrained[29] = true;
 
     const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO,
                                                                                                 faceConstrained);

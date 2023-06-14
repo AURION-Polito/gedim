@@ -104,7 +104,7 @@ namespace Gedim
         network.EdgeWeights[counter++] =
             constraints.find(std::make_pair(v, connection.Cell3DIndex)) != constraints.end() ?
                                                                  1 :
-                                                                 weight + 1;
+                                                                 weight + numEdges;
       }
     }
 
