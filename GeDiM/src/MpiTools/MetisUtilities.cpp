@@ -19,7 +19,7 @@ namespace Gedim
   }
   // ***************************************************************************
   MetisUtilities::MeshToNetwork MetisUtilities::Mesh3DToDualGraph(const IMeshDAO& mesh,
-                                                                  const std::vector<bool>& faceConstrained,
+                                                                  const std::vector<bool>& facesConstrained,
                                                                   const Eigen::SparseMatrix<unsigned int>& weights) const
   {
     MeshToNetwork meshToNetwork;
@@ -40,7 +40,7 @@ namespace Gedim
     };
 
     std::vector<std::list<Connection>> verticesConnections(numVertices);
-    const bool checkConstraints = (faceConstrained.size() == mesh.Cell2DTotalNumber());
+    const bool checkConstraints = (facesConstrained.size() == mesh.Cell2DTotalNumber());
 
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
@@ -62,7 +62,7 @@ namespace Gedim
           verticesConnections[cell3Dn2].push_back(Connection { cell3Dn1, f });
 
           if (checkConstraints &&
-              faceConstrained[f])
+              facesConstrained[f])
           {
             constraints.insert(std::make_pair(cell3Dn1, cell3Dn2));
             constraints.insert(std::make_pair(cell3Dn2, cell3Dn1));
@@ -415,14 +415,14 @@ namespace Gedim
     unsigned int controlActivation=(masterWeight>0) ? 0 : 1;
     bool control =false;
     unsigned int loop=0;
-    while(!control)
+    while (!control)
     {
-      if(find(partition.begin(),partition.end(),controlActivation)==partition.end())
+      if (find(partition.begin(),partition.end(),controlActivation)==partition.end())
       {
         for (unsigned int p = 0; p < numberElements; p++)
         {
           if(controlActivation<partition[p])
-            partition[p]=partition[p]-1;
+            partition[p] = partition[p] - 1;
         }
       }
       else{
@@ -435,6 +435,34 @@ namespace Gedim
     return partition;
 
     /// </ul>
+  }
+  // ***************************************************************************
+  std::vector<unsigned int> MetisUtilities::Mesh3DPartitionCheckConstraints(const IMeshDAO& mesh,
+                                                                            const std::vector<bool>& facesConstrained,
+                                                                            const std::vector<unsigned int> partition) const
+  {
+    std::vector<unsigned int> fixedPartition = partition;
+    unsigned int numMaxPartition = *std::max_element(begin(fixedPartition), end(fixedPartition));
+
+    for (unsigned int f = 0; f < facesConstrained.size(); f++)
+    {
+      if (!facesConstrained[f])
+        continue;
+
+      const unsigned int neigh1 = mesh.Cell2DNeighbourCell3D(f,
+                                                             0);
+      const unsigned int neigh2 = mesh.Cell2DNeighbourCell3D(f,
+                                                             1);
+
+      if (fixedPartition.at(neigh1) !=
+          fixedPartition.at(neigh2))
+        continue;
+
+      // fix partition
+      fixedPartition[neigh1] = ++numMaxPartition;
+    }
+
+    return fixedPartition;
   }
   // ***************************************************************************
 }

@@ -43,7 +43,7 @@ namespace Gedim
       ~MetisUtilities();
 
       MetisUtilities::MeshToNetwork Mesh3DToDualGraph(const IMeshDAO& mesh,
-                                                      const std::vector<bool>& faceConstrained = {},
+                                                      const std::vector<bool>& facesConstrained = {},
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
 
 
@@ -58,6 +58,10 @@ namespace Gedim
 
       std::vector<unsigned int> NetworkPartition(const NetworkPartitionOptions& options,
                                                  const Network& network) const;
+
+      std::vector<unsigned int> Mesh3DPartitionCheckConstraints(const IMeshDAO& mesh,
+                                                                const std::vector<bool>& facesConstrained,
+                                                                const std::vector<unsigned int> partition) const;
   };
 }
 
