@@ -33,13 +33,14 @@ namespace Gedim
           };
 
           MetisAdjacency Adjacency;
-          std::vector<unsigned int> NodeWeights = {};
-          std::vector<unsigned int> EdgeWeights = {};
+          std::vector<bool> EdgesConstrained;
+          std::vector<unsigned int> NodesWeight = {};
+          std::vector<unsigned int> EdgesWeight = {};
       };
 
       struct MeshToNetwork final
       {
-          std::vector<unsigned int> EdgesMeshCellIndex;
+          std::vector<unsigned int> Edges_MeshCellIndex;
           MetisNetwork Network;
       };
 
@@ -48,10 +49,10 @@ namespace Gedim
       ~MetisUtilities();
 
       MetisUtilities::MeshToNetwork Mesh3DToDualGraph(const IMeshDAO& mesh,
-                                                      const std::vector<bool>& facesConstrained = {},
+                                                      const std::vector<bool>& cell2DsConstrained = {},
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
       MetisUtilities::MeshToNetwork Mesh2DToDualGraph(const IMeshDAO& mesh,
-                                                      const std::vector<bool>& edgesConstrained = {},
+                                                      const std::vector<bool>& cell1DsConstrained = {},
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
       MetisUtilities::MetisNetwork Mesh2DToGraph(const unsigned int& numVertices,
                                                  const Eigen::MatrixXi& edges,
@@ -63,9 +64,13 @@ namespace Gedim
       std::vector<unsigned int> NetworkPartition(const NetworkPartitionOptions& options,
                                                  const MetisNetwork& network) const;
 
+      std::vector<unsigned int> PartitionCheckConstraints(const MetisNetwork& network,
+                                                          const std::vector<unsigned int>& partition) const;
+
+
       std::vector<unsigned int> Mesh2DPartitionCheckConstraints(const IMeshDAO& mesh,
                                                                 const std::vector<bool>& edgesConstrained,
-                                                                const std::vector<unsigned int> partition) const;
+                                                                const std::vector<unsigned int>& partition) const;
 
       std::vector<unsigned int> Mesh3DPartitionCheckConstraints(const IMeshDAO& mesh,
                                                                 const std::vector<bool>& facesConstrained,

@@ -245,9 +245,9 @@ namespace UnitTesting
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
       std::vector<double> weights;
-      weights.reserve(meshToNetwork.Network.EdgeWeights.size());
-      weights.assign(meshToNetwork.Network.EdgeWeights.begin(),
-                     meshToNetwork.Network.EdgeWeights.end());
+      weights.reserve(meshToNetwork.Network.EdgesWeight.size());
+      weights.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                     meshToNetwork.Network.EdgesWeight.end());
 
       Gedim::VTKUtilities exporter;
 
@@ -310,8 +310,8 @@ namespace UnitTesting
         constrained[e] = edgeConstrained[e] ? 1.0 : 0.0;
       }
 
-      for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
-        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgeWeights[e];
+      for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
+        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgesWeight[e];
 
       exporter.AddSegments(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell1DsExtremes(),
@@ -450,9 +450,9 @@ namespace UnitTesting
       property.assign(partition.begin(), partition.end());
 
       std::vector<double> weights;
-      weights.reserve(meshToNetwork.Network.EdgeWeights.size());
-      weights.assign(meshToNetwork.Network.EdgeWeights.begin(),
-                     meshToNetwork.Network.EdgeWeights.end());
+      weights.reserve(meshToNetwork.Network.EdgesWeight.size());
+      weights.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                     meshToNetwork.Network.EdgesWeight.end());
 
       exporter.AddSegments(graphVertices,
                            graphEdges,
@@ -641,7 +641,7 @@ namespace UnitTesting
                                                                                                      facesConstrained,
                                                                                                      partition);
 
-    for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
+    for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
     {
       const unsigned int cell2DIndex = meshToNetwork.EdgesMeshCellIndex[e];
       const unsigned int neigh1 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
@@ -651,7 +651,7 @@ namespace UnitTesting
 
       cerr<< "Face "<< cell2DIndex<< " ";
       cerr<< "constrained "<< facesConstrained[cell2DIndex]<< " ";
-      cerr<< "weight "<< meshToNetwork.Network.EdgeWeights[e]<< " - ";
+      cerr<< "weight "<< meshToNetwork.Network.EdgesWeight[e]<< " - ";
       cerr<< "neigh1 "<< neigh1<< " ";
       cerr<< "P "<< fixed_partition.at(neigh1)<< " ";
       cerr<< "neigh2 "<< neigh2<< " ";
@@ -724,8 +724,8 @@ namespace UnitTesting
         constrained[f] = facesConstrained[f] ? 1.0 : 0.0;
       }
 
-      for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
-        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgeWeights[e];
+      for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
+        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgesWeight[e];
 
       exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell2DsVertices(),
