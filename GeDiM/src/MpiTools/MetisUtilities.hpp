@@ -66,6 +66,8 @@ namespace Gedim
       std::vector<unsigned int> Mesh3DPartitionCheckConstraints(const IMeshDAO& mesh,
                                                                 const std::vector<bool>& facesConstrained,
                                                                 const std::vector<unsigned int> partition) const;
+
+
   };
 }
 
