@@ -545,7 +545,7 @@ namespace Gedim
 
       for (unsigned int cc = 1; cc < connectedComponents.size(); cc++)
       {
-        const unsigned int new_partition = numMaxPartition++;
+        const unsigned int new_partition = ++numMaxPartition;
 
         for (unsigned int v = 0; v < connectedComponents[cc].size(); v++)
         {
