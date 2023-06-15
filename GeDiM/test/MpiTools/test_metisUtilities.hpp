@@ -441,7 +441,7 @@ namespace UnitTesting
 
   TEST(TestMetisUtilities, TestNetworkPartition_ImportMesh2D_DualGraph)
   {
-    GTEST_SKIP();
+    //GTEST_SKIP();
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_ImportMesh2D_DualGraph";
     Gedim::Output::CreateFolder(exportFolder);
@@ -607,6 +607,49 @@ namespace UnitTesting
 
         exporter.Export(exportFolder + "/Graph_Edges.vtu");
       }
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> index, constrained, weight;
+      index.resize(meshDAO.Cell1DTotalNumber());
+      constrained.resize(meshDAO.Cell1DTotalNumber());
+      weight.resize(meshDAO.Cell1DTotalNumber(), 0.0);
+
+      for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
+      {
+        index[e] = e;
+        constrained[e] = cell1DsConstrained[e] ? 1.0 : 0.0;
+      }
+
+      for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
+        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgesWeight[e];
+
+      exporter.AddSegments(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell1DsExtremes(),
+                           {
+                             {
+                               "Index",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(index.size()),
+                               index.data()
+                             },
+                             {
+                               "Constrained",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(constrained.size()),
+                               constrained.data()
+                             },
+                             {
+                               "Weight",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(weight.size()),
+                               weight.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Mesh_Cell1Ds.vtu");
     }
 
     {
