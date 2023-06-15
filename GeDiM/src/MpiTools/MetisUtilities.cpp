@@ -148,28 +148,43 @@ namespace Gedim
     return network;
   }
   // ***************************************************************************
-  Eigen::MatrixXi MetisUtilities::GraphToConnectivityMatrix(const MetisUtilities::MetisNetwork& network) const
-  {
-    Eigen::MatrixXi matrix = Eigen::MatrixXi::Zero(2, network.Adjacency.Cols.size());
-    for (unsigned int r = 0; r < network.Adjacency.Rows.size() - 1; r++)
-    {
-      for (unsigned int c = network.Adjacency.Rows[r]; c < network.Adjacency.Rows[r + 1]; c++)
-      {
-        matrix(0, c) = r;
-        matrix(1, c) = network.Adjacency.Cols[c];
-      }
-    }
-
-    return matrix;
-  }
-  // ***************************************************************************
   MetisUtilities::MetisNetwork::MetisAdjacency MetisUtilities::GraphAdjacencyToMetisAdjacency(const std::vector<std::vector<unsigned int>>& graphAdjacency) const
   {
     MetisNetwork::MetisAdjacency metisAdjacency;
 
+    const unsigned int& numVertices = graphAdjacency.size();
 
+    metisAdjacency.Rows.resize(numVertices + 1, 0);
+    std::list<unsigned int> adjacencyCols;
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      metisAdjacency.Rows[v + 1] = metisAdjacency.Rows[v] + graphAdjacency[v].size();
+
+      for (const unsigned int& adj_v : graphAdjacency[v])
+        adjacencyCols.push_back(adj_v);
+    }
+
+    metisAdjacency.Cols = std::vector<unsigned int>(adjacencyCols.begin(),
+                                                    adjacencyCols.end());
 
     return metisAdjacency;
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MetisUtilities::MetisAdjacencyToGraphAdjacency(const MetisNetwork::MetisAdjacency& metisAdjacency) const
+  {
+    const unsigned int& numVertices = metisAdjacency.Rows.size() - 1;
+    std::vector<std::vector<unsigned int>> graphAdiacency(numVertices);
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const unsigned int numConnections = metisAdjacency.Rows[v + 1] - metisAdjacency.Rows[v];
+      graphAdiacency[v].resize(numConnections);
+      for (unsigned int c = 0; c < numConnections; c++)
+        graphAdiacency[v][c] = metisAdjacency.Cols.at(metisAdjacency.Rows[v] + c);
+    }
+
+    return graphAdiacency;
   }
   // ***************************************************************************
   MetisUtilities::MeshToNetwork MetisUtilities::Mesh2DToDualGraph(const IMeshDAO& mesh,

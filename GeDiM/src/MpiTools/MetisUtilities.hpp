@@ -57,10 +57,8 @@ namespace Gedim
                                                  const Eigen::MatrixXi& edges,
                                                  const bool& undirectEdges) const;
 
-
-
-      Eigen::MatrixXi GraphToConnectivityMatrix(const MetisNetwork& network) const;
       MetisNetwork::MetisAdjacency GraphAdjacencyToMetisAdjacency(const std::vector<std::vector<unsigned int>>& graphAdjacency) const;
+      std::vector<std::vector<unsigned int>> MetisAdjacencyToGraphAdjacency(const MetisNetwork::MetisAdjacency& metisAdjacency) const;
 
       std::vector<unsigned int> NetworkPartition(const NetworkPartitionOptions& options,
                                                  const MetisNetwork& network) const;

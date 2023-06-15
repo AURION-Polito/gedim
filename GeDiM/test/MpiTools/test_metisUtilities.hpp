@@ -7,6 +7,7 @@
 
 #include "FileTextReader.hpp"
 #include "GeometryUtilities.hpp"
+#include "GraphUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "MeshUtilities.hpp"
 #include "Macro.hpp"
@@ -113,6 +114,7 @@ namespace UnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    Gedim::GraphUtilities graphUtilities;
     Gedim::MetisUtilities metisUtilities;
 
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
@@ -140,7 +142,10 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
 
       Gedim::VTKUtilities exporter;
 
@@ -191,6 +196,7 @@ namespace UnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    Gedim::GraphUtilities graphUtilities;
     Gedim::MetisUtilities metisUtilities;
 
     GedimUnitTesting::MeshMatrices_2D_4Cells_Mock mesh;
@@ -234,8 +240,10 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
-
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
       std::vector<double> weights;
       weights.reserve(meshToNetwork.Network.EdgeWeights.size());
       weights.assign(meshToNetwork.Network.EdgeWeights.begin(),
@@ -344,6 +352,7 @@ namespace UnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    Gedim::GraphUtilities graphUtilities;
     Gedim::MetisUtilities metisUtilities;
 
     Gedim::MeshMatrices mesh;
@@ -429,7 +438,10 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
 
       Gedim::VTKUtilities exporter;
 
@@ -491,6 +503,7 @@ namespace UnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    Gedim::GraphUtilities graphUtilities;
     Gedim::MetisUtilities metisUtilities;
 
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
@@ -520,7 +533,10 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
 
       Gedim::VTKUtilities exporter;
 
@@ -593,6 +609,7 @@ namespace UnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    Gedim::GraphUtilities graphUtilities;
     Gedim::MetisUtilities metisUtilities;
 
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mesh;
@@ -649,8 +666,10 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
-
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
