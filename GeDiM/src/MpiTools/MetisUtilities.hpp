@@ -65,9 +65,9 @@ namespace Gedim
                                                  const MetisNetwork& network) const;
 
       std::vector<unsigned int> PartitionCheckConstraints(const MetisNetwork& network,
-                                                          const std::vector<unsigned int>& partition) const;
+                                                          const std::vector<unsigned int>& partitions) const;
       std::vector<unsigned int> PartitionCheckConnectedComponents(const MetisNetwork& network,
-                                                                  const std::vector<unsigned int>& partition) const;
+                                                                  const std::vector<unsigned int>& partitions) const;
   };
 }
 

@@ -475,9 +475,9 @@ namespace Gedim
   }
   // ***************************************************************************
   std::vector<unsigned int> MetisUtilities::PartitionCheckConstraints(const MetisNetwork& network,
-                                                                      const std::vector<unsigned int>& partition) const
+                                                                      const std::vector<unsigned int>& partitions) const
   {
-    std::vector<unsigned int> fixedPartition = partition;
+    std::vector<unsigned int> fixedPartition = partitions;
     unsigned int numMaxPartition = *std::max_element(begin(fixedPartition), end(fixedPartition));
 
     const unsigned int& numVertices = network.Adjacency.Rows.size() - 1;
@@ -505,9 +505,9 @@ namespace Gedim
   }
   // ***************************************************************************
   std::vector<unsigned int> MetisUtilities::PartitionCheckConnectedComponents(const MetisNetwork& network,
-                                                                              const std::vector<unsigned int>& partition) const
+                                                                              const std::vector<unsigned int>& partitions) const
   {
-    std::vector<unsigned int> fixedPartition = partition;
+    std::vector<unsigned int> fixedPartition = partitions;
     GraphUtilities graphUtilities;
 
     const unsigned int& numVertices = network.Adjacency.Rows.size() - 1;
@@ -519,10 +519,11 @@ namespace Gedim
     std::vector<std::unordered_map<unsigned int, unsigned int>> subGraphs_filter(numPartitions);
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      const unsigned int& p = partition[v];
+      const unsigned int& partion = partitions[v];
 
-      subGraphs_vertices[p].push_back(v);
-      subGraphs_filter[p].insert(std::make_pair(v, subGraphs_filter[p].size()));
+      subGraphs_vertices[partion].push_back(v);
+      subGraphs_filter[partion].insert(std::make_pair(v,
+                                                      subGraphs_filter[partion].size()));
     }
 
     const std::vector<std::vector<unsigned int>> graph_adjacency = MetisAdjacencyToGraphAdjacency(network.Adjacency);
