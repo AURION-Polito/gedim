@@ -511,16 +511,16 @@ namespace UnitTesting
       weights.makeCompressed();
     }
 
-    std::vector<bool> edgeIsConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(),
-                                                            false);
+    std::vector<bool> cell1DsConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(),
+                                                             false);
     {
       const unsigned int constrainIndex = meshDAO.Cell1DDoublePropertyIndex("marked");
       for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
-        edgeIsConstrained[e] = meshDAO.Cell1DDoublePropertyValue(e, constrainIndex, 0) == 1.0;
+        cell1DsConstrained[e] = meshDAO.Cell1DDoublePropertyValue(e, constrainIndex, 0) == 1.0;
     }
 
     const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh2DToDualGraph(meshDAO,
-                                                                                                edgeIsConstrained,
+                                                                                                cell1DsConstrained,
                                                                                                 weights);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
