@@ -11,16 +11,6 @@ namespace Gedim
 {
   class GraphUtilities final
   {
-    public:
-      struct Graph final
-      {
-          unsigned int NumVertices;
-          unsigned int NumEdges;
-
-          Eigen::MatrixXi Connectivity;
-          std::vector<std::vector<unsigned int>> Adjacency;
-      };
-
     private:
 
       /// Fills Stack with vertices (in increasing order of finishing

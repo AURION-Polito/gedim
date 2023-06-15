@@ -105,8 +105,7 @@ namespace Gedim
     int counter = 0;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      const std::list<Connection>& vertexConnections = verticesConnections[v];
-      for (const Connection& connection : vertexConnections)
+      for (const Connection& connection : verticesConnections[v])
       {
         unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell3DIndex) : 1;
         network.EdgesWeight[counter++] =
@@ -280,8 +279,7 @@ namespace Gedim
     int counter = 0;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      const std::list<Connection>& vertexConnections = verticesConnections[v];
-      for (const Connection& connection : vertexConnections)
+      for (const Connection& connection : verticesConnections[v])
       {
         unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell2DIndex) : 1;
         network.EdgesWeight[counter++] =

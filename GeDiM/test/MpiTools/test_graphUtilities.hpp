@@ -15,7 +15,6 @@ namespace UnitTesting
     Gedim::GraphUtilities graphUtilities;
 
     // Create a graph given in the above diagram
-    Gedim::GraphUtilities::Graph graph;
     const unsigned int graph_numVertices = 5;
     const unsigned int graph_numEdges = 5;
     Eigen::MatrixXi graph_connectivity_expected(2, graph_numEdges);
@@ -47,7 +46,6 @@ namespace UnitTesting
     Gedim::GraphUtilities graphUtilities;
 
     // Create a graph given in the above diagram
-    Gedim::GraphUtilities::Graph graph;
     const unsigned int graph_numVertices = 7;
     const unsigned int graph_numEdges = 7;
     Eigen::MatrixXi graph_connectivity(2, graph_numEdges);

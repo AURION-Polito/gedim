@@ -205,12 +205,12 @@ namespace UnitTesting
     const Gedim::MeshUtilities::MeshGeometricData2D geometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                           meshDAO);
 
-    std::vector<bool> edgeConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(), false);
-    edgeConstrained[2] = true;
-    edgeConstrained[5] = true;
+    std::vector<bool> cell1DsConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(), false);
+    cell1DsConstrained[2] = true;
+    cell1DsConstrained[5] = true;
 
     const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh2DToDualGraph(meshDAO,
-                                                                                                edgeConstrained);
+                                                                                                cell1DsConstrained);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
@@ -220,9 +220,9 @@ namespace UnitTesting
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
                                                                                 meshToNetwork.Network);
 
-    for (unsigned int e = 0; e < edgeConstrained.size(); e++)
+    for (unsigned int e = 0; e < cell1DsConstrained.size(); e++)
     {
-      if (!edgeConstrained[e] ||
+      if (!cell1DsConstrained[e] ||
           meshDAO.Cell1DNumberNeighbourCell2D(e) < 2)
         continue;
 
@@ -307,7 +307,7 @@ namespace UnitTesting
       for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
       {
         index[e] = e;
-        constrained[e] = edgeConstrained[e] ? 1.0 : 0.0;
+        constrained[e] = cell1DsConstrained[e] ? 1.0 : 0.0;
       }
 
       for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
@@ -639,23 +639,6 @@ namespace UnitTesting
 
     const std::vector<unsigned int> fixed_partition = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
                                                                                                partition);
-
-    for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
-    {
-      const unsigned int cell2DIndex = meshToNetwork.EdgesMeshCellIndex[e];
-      const unsigned int neigh1 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
-                                                                0);
-      const unsigned int neigh2 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
-                                                                1);
-
-      cerr<< "Face "<< cell2DIndex<< " ";
-      cerr<< "constrained "<< cell2DsConstrained[cell2DIndex]<< " ";
-      cerr<< "weight "<< meshToNetwork.Network.EdgesWeight[e]<< " - ";
-      cerr<< "neigh1 "<< neigh1<< " ";
-      cerr<< "P "<< fixed_partition.at(neigh1)<< " ";
-      cerr<< "neigh2 "<< neigh2<< " ";
-      cerr<< "P "<< fixed_partition.at(neigh2)<< endl;
-    }
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_Constraints";
     Gedim::Output::CreateFolder(exportFolder);
