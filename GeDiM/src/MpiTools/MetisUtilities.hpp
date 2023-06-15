@@ -40,7 +40,7 @@ namespace Gedim
 
       struct MeshToNetwork final
       {
-          std::vector<unsigned int> Edges_MeshCellIndex;
+          std::vector<unsigned int> EdgesMeshCellIndex;
           MetisNetwork Network;
       };
 
@@ -66,17 +66,6 @@ namespace Gedim
 
       std::vector<unsigned int> PartitionCheckConstraints(const MetisNetwork& network,
                                                           const std::vector<unsigned int>& partition) const;
-
-
-      std::vector<unsigned int> Mesh2DPartitionCheckConstraints(const IMeshDAO& mesh,
-                                                                const std::vector<bool>& edgesConstrained,
-                                                                const std::vector<unsigned int>& partition) const;
-
-      std::vector<unsigned int> Mesh3DPartitionCheckConstraints(const IMeshDAO& mesh,
-                                                                const std::vector<bool>& facesConstrained,
-                                                                const std::vector<unsigned int> partition) const;
-
-
   };
 }
 
