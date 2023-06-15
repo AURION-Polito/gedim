@@ -477,6 +477,9 @@ namespace Gedim
   std::vector<unsigned int> MetisUtilities::PartitionCheckConstraints(const MetisNetwork& network,
                                                                       const std::vector<unsigned int>& partitions) const
   {
+    if (network.EdgesConstrained.size() == 0)
+      return partitions;
+
     std::vector<unsigned int> fixedPartition = partitions;
     unsigned int numMaxPartition = *std::max_element(begin(fixedPartition), end(fixedPartition));
 
