@@ -50,13 +50,19 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 2;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(network,
+                                                                                                                          fix_constraints_partitions);
 
 #if ENABLE_METIS == 1
-    ASSERT_EQ(std::vector<unsigned int>({ 1, 1, 0, 1, 0, 0 }), partition);
+    ASSERT_EQ(std::vector<unsigned int>({ 1, 1, 0, 1, 0, 0 }), partitions);
 #else
-    ASSERT_EQ(std::vector<unsigned int>({ 0, 0, 0, 0, 0, 0 }), partition);
+    ASSERT_EQ(std::vector<unsigned int>({ 0, 0, 0, 0, 0, 0 }), partitions);
 #endif
   }
 
@@ -78,8 +84,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 2;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(network,
+                                                                                                                          fix_constraints_partitions);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_Graph";
@@ -89,15 +101,16 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
 
       exporter.AddSegments(meshDAO.Cell0DsCoordinates(),
                            edges,
                            {
                              {
-                               "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               "partition",
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
                              }
@@ -130,8 +143,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 3;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.Network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_DualGraph";
@@ -150,17 +169,35 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
-        std::vector<double> property;
-        property.reserve(partition.size());
-        property.assign(partition.begin(), partition.end());
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
         exporter.AddPoints(graphVertices,
                            {
                              {
-                               "Partition",
+                               "partition",
                                Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(property.size()),
-                               property.data()
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
                              }
                            });
 
@@ -194,8 +231,9 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
 
       exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell2DsVertices(),
@@ -240,8 +278,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 2;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.Network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
 
     for (unsigned int e = 0; e < cell1DsConstrained.size(); e++)
     {
@@ -249,10 +293,10 @@ namespace UnitTesting
           meshDAO.Cell1DNumberNeighbourCell2D(e) < 2)
         continue;
 
-      ASSERT_NE(partition.at(meshDAO.Cell1DNeighbourCell2D(e,
-                                                           0)),
-                partition.at(meshDAO.Cell1DNeighbourCell2D(e,
-                                                           1)));
+      ASSERT_NE(fix_connectedComponents_partitions.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                    0)),
+                fix_connectedComponents_partitions.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                    1)));
     }
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_DualGraph_Constraints";
@@ -270,17 +314,36 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
-        std::vector<double> property;
-        property.reserve(partition.size());
-        property.assign(partition.begin(), partition.end());
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
+
 
         exporter.AddPoints(graphVertices,
                            {
                              {
-                               "Partition",
+                               "partition",
                                Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(property.size()),
-                               property.data()
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
                              }
                            });
 
@@ -314,8 +377,9 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
 
       exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell2DsVertices(),
@@ -464,8 +528,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 50;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.Network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
 
 
     {
@@ -481,17 +551,35 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
-        std::vector<double> property;
-        property.reserve(partition.size());
-        property.assign(partition.begin(), partition.end());
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
         exporter.AddPoints(graphVertices,
                            {
                              {
-                               "Partition",
+                               "partition",
                                Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(property.size()),
-                               property.data()
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
                              }
                            });
 
@@ -525,8 +613,9 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
 
       exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell2DsVertices(),
@@ -539,7 +628,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Partitioned.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
   }
 
@@ -568,8 +657,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 3;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.Network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph";
@@ -588,17 +683,35 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
-        std::vector<double> property;
-        property.reserve(partition.size());
-        property.assign(partition.begin(), partition.end());
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
         exporter.AddPoints(graphVertices,
                            {
                              {
-                               "Partition",
+                               "partition",
                                Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(property.size()),
-                               property.data()
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
                              }
                            });
 
@@ -632,8 +745,9 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
 
       exporter.AddPolyhedrons(meshDAO.Cell0DsCoordinates(),
                               meshDAO.Cell3DsFacesVertices(),
@@ -729,17 +843,35 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
-        std::vector<double> property;
-        property.reserve(fix_connectedComponents_partitions.size());
-        property.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
         exporter.AddPoints(graphVertices,
                            {
                              {
-                               "Partition",
+                               "partition",
                                Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(property.size()),
-                               property.data()
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
                              }
                            });
 
