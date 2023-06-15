@@ -1,27 +1,27 @@
 #include "GraphUtilities.hpp"
 
-using namespace std;
-
 namespace Gedim
 {
   // ***************************************************************************
-  void GraphUtilities::DepthFirstSearch(const unsigned int& v,
+  void GraphUtilities::DepthFirstSearch(const unsigned int& vertex,
                                         const std::vector<std::vector<unsigned int> >& graphAdjacency,
-                                        std::vector<bool>& visited) const
+                                        std::vector<bool>& visited,
+                                        std::list<unsigned int>& visitedVertices) const
   {
     // Mark the current node as visited and print it
-    visited[v] = true;
-    cout << v << " ";
+    visited[vertex] = true;
+    visitedVertices.push_back(vertex);
 
     // Recur for all the vertices adjacent to this vertex
-    for (const unsigned int& adj_v : graphAdjacency[v])
+    for (const unsigned int& adj_v : graphAdjacency[vertex])
     {
       if (visited[adj_v])
         continue;
 
       DepthFirstSearch(adj_v,
                        graphAdjacency,
-                       visited);
+                       visited,
+                       visitedVertices);
     }
   }
   // ***************************************************************************
@@ -88,8 +88,6 @@ namespace Gedim
   std::vector<std::vector<unsigned int>> GraphUtilities::ComputeStronglyConnectedComponents(const unsigned int& graphNumVertices,
                                                                                             const std::vector<std::vector<unsigned int> >& graphAdjacency) const
   {
-    std::vector<std::vector<unsigned int>> connectedComponents;
-
     std::stack<int> stack;
 
     // Mark all the vertices as not visited (For first DFS)
@@ -115,6 +113,8 @@ namespace Gedim
     for(unsigned int i = 0; i < graphNumVertices; i++)
       visited[i] = false;
 
+    std::list<std::vector<unsigned int>> connectedComponents;
+
     // Now process all vertices in order defined by Stack
     while (stack.empty() == false)
     {
@@ -126,13 +126,18 @@ namespace Gedim
       if (visited[v])
         continue;
 
+      std::list<unsigned int> connectedComponent;
       DepthFirstSearch(v,
                        graphT_Adjacency,
-                       visited);
-      cout << endl;
+                       visited,
+                       connectedComponent);
+
+      connectedComponents.push_back(std::vector<unsigned int>(connectedComponent.begin(),
+                                                              connectedComponent.end()));
     }
 
-    return connectedComponents;
+    return std::vector<std::vector<unsigned int>>(connectedComponents.begin(),
+                                                  connectedComponents.end());
   }
   // ***************************************************************************
 }

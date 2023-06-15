@@ -46,9 +46,10 @@ namespace Gedim
                                                                                 const std::vector<std::vector<unsigned int> >& graphAdjacency) const;
 
       /// A recursive function to DFS starting from v
-      void DepthFirstSearch(const unsigned int& v,
+      void DepthFirstSearch(const unsigned int& vertex,
                             const std::vector<std::vector<unsigned int>>& graphAdjacency,
-                            std::vector<bool>& visited) const;
+                            std::vector<bool>& visited,
+                            std::list<unsigned int>& visitedVertices) const;
 
       /// \return the reverse (or transpose) of a graph
       std::vector<std::vector<unsigned int>> ComputeAdjacencyTranspose(const unsigned int& graphNumVertices,
