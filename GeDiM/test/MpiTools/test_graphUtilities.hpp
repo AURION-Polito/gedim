@@ -41,6 +41,35 @@ namespace UnitTesting
     ASSERT_EQ(graph_connectivity_expected, graph_connectivity);
   }
   // ***************************************************************************
+  TEST(TestGraphUtilities, TestExtractSubGraph)
+  {
+    Gedim::GraphUtilities graphUtilities;
+
+    // Create a graph given in the above diagram
+    const unsigned int graph_numVertices = 5;
+    const unsigned int graph_numEdges = 5;
+    Eigen::MatrixXi graph_connectivity_expected(2, graph_numEdges);
+
+    graph_connectivity_expected.col(0)<< 0, 2;
+    graph_connectivity_expected.col(1)<< 0, 3;
+    graph_connectivity_expected.col(2)<< 1, 0;
+    graph_connectivity_expected.col(3)<< 2, 1;
+    graph_connectivity_expected.col(4)<< 3, 4;
+
+    const std::vector<std::vector<unsigned int>> graph_adjacency = graphUtilities.GraphConnectivityToGraphAdjacency(graph_numVertices,
+                                                                                                                    graph_connectivity_expected);
+    const std::unordered_map<unsigned int, unsigned int> graph_filter = { {0, 0}, {2, 1}, {3, 2}, {4, 3} };
+
+    const std::vector<std::vector<unsigned int>> subGraph_adjacency = graphUtilities.ExtractSubGraph(graph_adjacency,
+                                                                                                     graph_filter);
+
+    ASSERT_EQ(4, subGraph_adjacency.size());
+    ASSERT_EQ(std::vector<unsigned int>({ 1, 2 }), subGraph_adjacency[0]);
+    ASSERT_EQ(std::vector<unsigned int>({ }), subGraph_adjacency[1]);
+    ASSERT_EQ(std::vector<unsigned int>({ 3 }), subGraph_adjacency[2]);
+    ASSERT_EQ(std::vector<unsigned int>({ }), subGraph_adjacency[3]);
+  }
+  // ***************************************************************************
   TEST(TestGraphUtilities, TestStronglyConnectedComponents)
   {
     Gedim::GraphUtilities graphUtilities;
@@ -61,8 +90,7 @@ namespace UnitTesting
     const std::vector<std::vector<unsigned int>> graph_adjacency = graphUtilities.GraphConnectivityToGraphAdjacency(graph_numVertices,
                                                                                                                     graph_connectivity);
 
-    const std::vector<std::vector<unsigned int>> stronglyConnectedComponents = graphUtilities.ComputeStronglyConnectedComponents(graph_numVertices,
-                                                                                                                                 graph_adjacency);
+    const std::vector<std::vector<unsigned int>> stronglyConnectedComponents = graphUtilities.ComputeStronglyConnectedComponents(graph_adjacency);
 
     ASSERT_EQ(4, stronglyConnectedComponents.size());
     ASSERT_EQ(std::vector<unsigned int>({ 5, 6 }), stronglyConnectedComponents[0]);

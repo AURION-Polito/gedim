@@ -503,4 +503,24 @@ namespace Gedim
     return fixedPartition;
   }
   // ***************************************************************************
+  std::vector<unsigned int> MetisUtilities::PartitionCheckConnectedComponents(const MetisNetwork& network,
+                                                                              const std::vector<unsigned int>& partition) const
+  {
+    std::vector<unsigned int> fixedPartition = partition;
+
+    const unsigned int& numVertices = network.Adjacency.Rows.size() - 1;
+
+    unsigned int numMaxPartition = *std::max_element(begin(fixedPartition), end(fixedPartition));
+    const unsigned int numPartitions = numMaxPartition + 1;
+
+    std::vector<std::unordered_map<unsigned int, unsigned int>> subGraphs_filter(numPartitions);
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const unsigned int& p = partition[v];
+      subGraphs_filter[p].insert(std::make_pair(v, subGraphs_filter[p].size()));
+    }
+
+    return fixedPartition;
+  }
+  // ***************************************************************************
 }

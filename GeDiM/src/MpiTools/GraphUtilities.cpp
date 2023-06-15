@@ -25,10 +25,9 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GraphUtilities::ComputeAdjacencyTranspose(const unsigned int& graphNumVertices,
-                                                                                   const std::vector<std::vector<unsigned int> >& graphAdjacency) const
+  std::vector<std::vector<unsigned int>> GraphUtilities::ComputeAdjacencyTranspose(const std::vector<std::vector<unsigned int> >& graphAdjacency) const
   {
-
+    const unsigned int& graphNumVertices = graphAdjacency.size();
     std::vector<std::vector<unsigned int>> graphT_Adjacency(graphNumVertices);
 
     std::vector<std::list<unsigned int>> adj(graphNumVertices);
@@ -69,6 +68,37 @@ namespace Gedim
     stack.push(v);
   }
   // ***************************************************************************
+  std::vector<std::vector<unsigned int>> GraphUtilities::ExtractSubGraph(const std::vector<std::vector<unsigned int> >& graphAdjacency,
+                                                                         const std::unordered_map<unsigned int, unsigned int>& subGraphFilter) const
+  {
+    const unsigned int& numFilteredVertices = subGraphFilter.size();
+    std::vector<std::vector<unsigned int>> subGraph_Adjacency(numFilteredVertices);
+
+    std::vector<std::list<unsigned int>> filtered_adj(numFilteredVertices);
+    for (const auto& v : subGraphFilter)
+    {
+      const unsigned int original_v = v.first;
+      const unsigned int filtered_v = v.second;
+
+      for (const unsigned int& original_adj_v : graphAdjacency[original_v])
+      {
+        const std::unordered_map<unsigned int, unsigned int>::const_iterator adj_v = subGraphFilter.find(original_adj_v);
+        if (adj_v == subGraphFilter.end())
+          continue;
+
+        const unsigned int filtered_adj_v = adj_v->second;
+        filtered_adj[filtered_v].push_back(filtered_adj_v);
+      }
+    }
+
+    for (unsigned int v = 0; v < numFilteredVertices; v++)
+      subGraph_Adjacency[v] = std::vector<unsigned int>(filtered_adj[v].begin(),
+                                                        filtered_adj[v].end());
+
+
+    return subGraph_Adjacency;
+  }
+  // ***************************************************************************
   std::vector<std::vector<unsigned int>> GraphUtilities::GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
                                                                                            const Eigen::MatrixXi& graphConnectivity) const
   {
@@ -100,10 +130,11 @@ namespace Gedim
     return graphConnectivity;
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GraphUtilities::ComputeStronglyConnectedComponents(const unsigned int& graphNumVertices,
-                                                                                            const std::vector<std::vector<unsigned int> >& graphAdjacency) const
+  std::vector<std::vector<unsigned int>> GraphUtilities::ComputeStronglyConnectedComponents(const std::vector<std::vector<unsigned int> >& graphAdjacency) const
   {
     std::stack<int> stack;
+
+    const unsigned int& graphNumVertices = graphAdjacency.size();
 
     // Mark all the vertices as not visited (For first DFS)
     std::vector<bool> visited(graphNumVertices, false);
@@ -121,8 +152,7 @@ namespace Gedim
     }
 
     // Create a reversed graph
-    const std::vector<std::vector<unsigned int>> graphT_Adjacency = ComputeAdjacencyTranspose(graphNumVertices,
-                                                                                              graphAdjacency);
+    const std::vector<std::vector<unsigned int>> graphT_Adjacency = ComputeAdjacencyTranspose(graphAdjacency);
 
     // Mark all the vertices as not visited (For second DFS)
     for(unsigned int i = 0; i < graphNumVertices; i++)

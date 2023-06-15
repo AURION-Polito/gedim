@@ -634,11 +634,14 @@ namespace UnitTesting
     partitionOptions.MasterWeight = 100;
     partitionOptions.NumberOfParts = 3;
 
-    const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.Network);
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
 
-    const std::vector<unsigned int> fixed_partition = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
-                                                                                               partition);
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_Constraints";
     Gedim::Output::CreateFolder(exportFolder);
@@ -655,8 +658,8 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(fixed_partition.size());
-      property.assign(fixed_partition.begin(), fixed_partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
       exporter.AddSegments(graphVertices,
                            graphEdges,
@@ -676,8 +679,8 @@ namespace UnitTesting
       Gedim::VTKUtilities exporter;
 
       std::vector<double> property;
-      property.reserve(fixed_partition.size());
-      property.assign(fixed_partition.begin(), fixed_partition.end());
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
 
       exporter.AddPolyhedrons(meshDAO.Cell0DsCoordinates(),
                               meshDAO.Cell3DsFacesVertices(),
@@ -741,10 +744,10 @@ namespace UnitTesting
           meshDAO.Cell2DNumberNeighbourCell3D(f) < 2)
         continue;
 
-      ASSERT_NE(fixed_partition.at(meshDAO.Cell2DNeighbourCell3D(f,
-                                                                 0)),
-                fixed_partition.at(meshDAO.Cell2DNeighbourCell3D(f,
-                                                                 1)));
+      ASSERT_NE(fix_connectedComponents_partitions.at(meshDAO.Cell2DNeighbourCell3D(f,
+                                                                                    0)),
+                fix_connectedComponents_partitions.at(meshDAO.Cell2DNeighbourCell3D(f,
+                                                                                    1)));
     }
   }
 }
