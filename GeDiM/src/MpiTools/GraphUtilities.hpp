@@ -35,8 +35,11 @@ namespace Gedim
       GraphUtilities() { };
       ~GraphUtilities() { };
 
-      std::vector<std::vector<unsigned int>> ComputeGraphAdjacency(const unsigned int& graphNumVertices,
-                                                                   const Eigen::MatrixXi graphConnectivity) const;
+      std::vector<std::vector<unsigned int>> GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
+                                                                               const Eigen::MatrixXi& graphConnectivity) const;
+
+      Eigen::MatrixXi GraphAdjacencyToGraphConnectivity(const unsigned int& graphNumEdges,
+                                                        const std::vector<std::vector<unsigned int>>& graphAdjacency) const;
 
       /// \brief Compute the Strongly Connected Components of a direct graph
       /// \param numVertices the numGraphVertices

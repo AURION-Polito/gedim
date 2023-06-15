@@ -69,8 +69,8 @@ namespace Gedim
     stack.push(v);
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GraphUtilities::ComputeGraphAdjacency(const unsigned int& graphNumVertices,
-                                                                               const Eigen::MatrixXi graphConnectivity) const
+  std::vector<std::vector<unsigned int>> GraphUtilities::GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
+                                                                                           const Eigen::MatrixXi& graphConnectivity) const
   {
     std::vector<std::vector<unsigned int>> adjacency(graphNumVertices);
 
@@ -83,6 +83,21 @@ namespace Gedim
                                                adj[v].end());
 
     return adjacency;
+  }
+  // ***************************************************************************
+  Eigen::MatrixXi GraphUtilities::GraphAdjacencyToGraphConnectivity(const unsigned int& graphNumEdges,
+                                                                    const std::vector<std::vector<unsigned int>>& graphAdjacency) const
+  {
+    Eigen::MatrixXi graphConnectivity(2, graphNumEdges);
+
+    unsigned int e = 0;
+    for (unsigned int v = 0; v < graphAdjacency.size(); v++)
+    {
+      for (const unsigned int& adj_v : graphAdjacency[v])
+        graphConnectivity.col(e++)<< v, adj_v;
+    }
+
+    return graphConnectivity;
   }
   // ***************************************************************************
   std::vector<std::vector<unsigned int>> GraphUtilities::ComputeStronglyConnectedComponents(const unsigned int& graphNumVertices,
