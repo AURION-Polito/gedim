@@ -673,6 +673,18 @@ namespace UnitTesting
 
       exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
+
+    for (unsigned int e = 0; e < cell1DsConstrained.size(); e++)
+    {
+      if (!cell1DsConstrained[e] ||
+          meshDAO.Cell1DNumberNeighbourCell2D(e) < 2)
+        continue;
+
+      ASSERT_NE(fix_connectedComponents_partitions.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                    0)),
+                fix_connectedComponents_partitions.at(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                    1)));
+    }
   }
 
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph)
