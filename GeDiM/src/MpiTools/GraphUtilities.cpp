@@ -131,7 +131,7 @@ namespace Gedim
     std::list<std::vector<unsigned int>> connectedComponents;
 
     // Now process all vertices in order defined by Stack
-    while (stack.empty() == false)
+    while (!stack.empty())
     {
       // Pop a vertex from stack
       int v = stack.top();

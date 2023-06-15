@@ -37,12 +37,12 @@ namespace UnitTesting
     edges.col(4)<< 2, 4;
     edges.col(5)<< 2, 5;
 
-    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh2DToGraph(numberVertices,
-                                                                                edges,
-                                                                                true);
+    const Gedim::MetisUtilities::MetisNetwork network = metisUtilities.Mesh2DToGraph(numberVertices,
+                                                                                     edges,
+                                                                                     true);
 
-    ASSERT_EQ(std::vector<unsigned int>({ 0,1,5,8,9,10,12 }), network.AdjacencyRows);
-    ASSERT_EQ(std::vector<unsigned int>({ 1,0,2,3,5,1,4,5,1,2,1,2 }), network.AdjacencyCols);
+    ASSERT_EQ(std::vector<unsigned int>({ 0,1,5,8,9,10,12 }), network.Adjacency.Rows);
+    ASSERT_EQ(std::vector<unsigned int>({ 1,0,2,3,5,1,4,5,1,2,1,2 }), network.Adjacency.Cols);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
@@ -68,9 +68,9 @@ namespace UnitTesting
 
     const Eigen::MatrixXi edges = meshDAO.Cell1DsExtremes();
 
-    const Gedim::MetisUtilities::Network network = metisUtilities.Mesh2DToGraph(meshDAO.Cell0DTotalNumber(),
-                                                                                edges,
-                                                                                true);
+    const Gedim::MetisUtilities::MetisNetwork network = metisUtilities.Mesh2DToGraph(meshDAO.Cell0DTotalNumber(),
+                                                                                     edges,
+                                                                                     true);
 
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
@@ -129,7 +129,7 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.MetisNetwork);
+                                                                                meshToNetwork.Network);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh2D_DualGraph";
@@ -140,7 +140,7 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
 
       Gedim::VTKUtilities exporter;
 
@@ -212,7 +212,7 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 2;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.MetisNetwork);
+                                                                                meshToNetwork.Network);
 
     for (unsigned int e = 0; e < edgeConstrained.size(); e++)
     {
@@ -234,12 +234,12 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
 
       std::vector<double> weights;
-      weights.reserve(meshToNetwork.MetisNetwork.EdgeWeights.size());
-      weights.assign(meshToNetwork.MetisNetwork.EdgeWeights.begin(),
-                     meshToNetwork.MetisNetwork.EdgeWeights.end());
+      weights.reserve(meshToNetwork.Network.EdgeWeights.size());
+      weights.assign(meshToNetwork.Network.EdgeWeights.begin(),
+                     meshToNetwork.Network.EdgeWeights.end());
 
       Gedim::VTKUtilities exporter;
 
@@ -302,8 +302,8 @@ namespace UnitTesting
         constrained[e] = edgeConstrained[e] ? 1.0 : 0.0;
       }
 
-      for (unsigned int e = 0; e < meshToNetwork.MetisNetwork.EdgeWeights.size(); e++)
-        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.MetisNetwork.EdgeWeights[e];
+      for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
+        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgeWeights[e];
 
       exporter.AddSegments(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell1DsExtremes(),
@@ -421,7 +421,7 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 50;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.MetisNetwork);
+                                                                                meshToNetwork.Network);
 
 
     {
@@ -429,7 +429,7 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell2DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell2DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
 
       Gedim::VTKUtilities exporter;
 
@@ -438,9 +438,9 @@ namespace UnitTesting
       property.assign(partition.begin(), partition.end());
 
       std::vector<double> weights;
-      weights.reserve(meshToNetwork.MetisNetwork.EdgeWeights.size());
-      weights.assign(meshToNetwork.MetisNetwork.EdgeWeights.begin(),
-                     meshToNetwork.MetisNetwork.EdgeWeights.end());
+      weights.reserve(meshToNetwork.Network.EdgeWeights.size());
+      weights.assign(meshToNetwork.Network.EdgeWeights.begin(),
+                     meshToNetwork.Network.EdgeWeights.end());
 
       exporter.AddSegments(graphVertices,
                            graphEdges,
@@ -509,7 +509,7 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.MetisNetwork);
+                                                                                meshToNetwork.Network);
 
 
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph";
@@ -520,7 +520,7 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
 
       Gedim::VTKUtilities exporter;
 
@@ -618,13 +618,13 @@ namespace UnitTesting
     partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partition = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                meshToNetwork.MetisNetwork);
+                                                                                meshToNetwork.Network);
 
     const std::vector<unsigned int> fixed_partition = metisUtilities.Mesh3DPartitionCheckConstraints(meshDAO,
                                                                                                      facesConstrained,
                                                                                                      partition);
 
-    for (unsigned int e = 0; e < meshToNetwork.MetisNetwork.EdgeWeights.size(); e++)
+    for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
     {
       const unsigned int cell2DIndex = meshToNetwork.EdgesMeshCellIndex[e];
       const unsigned int neigh1 = meshDAO.Cell2DNeighbourCell3D(cell2DIndex,
@@ -634,7 +634,7 @@ namespace UnitTesting
 
       cerr<< "Face "<< cell2DIndex<< " ";
       cerr<< "constrained "<< facesConstrained[cell2DIndex]<< " ";
-      cerr<< "weight "<< meshToNetwork.MetisNetwork.EdgeWeights[e]<< " - ";
+      cerr<< "weight "<< meshToNetwork.Network.EdgeWeights[e]<< " - ";
       cerr<< "neigh1 "<< neigh1<< " ";
       cerr<< "P "<< fixed_partition.at(neigh1)<< " ";
       cerr<< "neigh2 "<< neigh2<< " ";
@@ -649,7 +649,7 @@ namespace UnitTesting
       for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
         graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
 
-      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.MetisNetwork);
+      const Eigen::MatrixXi graphEdges = metisUtilities.GraphToConnectivityMatrix(meshToNetwork.Network);
 
       Gedim::VTKUtilities exporter;
 
@@ -705,8 +705,8 @@ namespace UnitTesting
         constrained[f] = facesConstrained[f] ? 1.0 : 0.0;
       }
 
-      for (unsigned int e = 0; e < meshToNetwork.MetisNetwork.EdgeWeights.size(); e++)
-        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.MetisNetwork.EdgeWeights[e];
+      for (unsigned int e = 0; e < meshToNetwork.Network.EdgeWeights.size(); e++)
+        weight[meshToNetwork.EdgesMeshCellIndex[e]] = meshToNetwork.Network.EdgeWeights[e];
 
       exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
                            meshDAO.Cell2DsVertices(),

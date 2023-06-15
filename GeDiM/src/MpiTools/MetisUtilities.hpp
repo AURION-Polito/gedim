@@ -24,10 +24,15 @@ namespace Gedim
           unsigned int MasterWeight = 100; ///< 0 de-activated; 100 activated totally
       };
 
-      struct Network final
+      struct MetisNetwork final
       {
-          std::vector<unsigned int> AdjacencyRows;
-          std::vector<unsigned int> AdjacencyCols;
+          struct MetisAdjacency final
+          {
+              std::vector<unsigned int> Rows;
+              std::vector<unsigned int> Cols;
+          };
+
+          MetisAdjacency Adjacency;
           std::vector<unsigned int> NodeWeights = {};
           std::vector<unsigned int> EdgeWeights = {};
       };
@@ -35,7 +40,7 @@ namespace Gedim
       struct MeshToNetwork final
       {
           std::vector<unsigned int> EdgesMeshCellIndex;
-          Network MetisNetwork;
+          MetisNetwork Network;
       };
 
     public:
@@ -45,19 +50,20 @@ namespace Gedim
       MetisUtilities::MeshToNetwork Mesh3DToDualGraph(const IMeshDAO& mesh,
                                                       const std::vector<bool>& facesConstrained = {},
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
-
-
       MetisUtilities::MeshToNetwork Mesh2DToDualGraph(const IMeshDAO& mesh,
                                                       const std::vector<bool>& edgesConstrained = {},
                                                       const Eigen::SparseMatrix<unsigned int>& weights = Eigen::SparseMatrix<unsigned int>()) const;
+      MetisUtilities::MetisNetwork Mesh2DToGraph(const unsigned int& numVertices,
+                                                 const Eigen::MatrixXi& edges,
+                                                 const bool& undirectEdges) const;
 
-      MetisUtilities::Network Mesh2DToGraph(const unsigned int& numVertices,
-                                            const Eigen::MatrixXi& edges,
-                                            const bool& undirectEdges) const;
-      Eigen::MatrixXi GraphToConnectivityMatrix(const Network& network) const;
+
+
+      Eigen::MatrixXi GraphToConnectivityMatrix(const MetisNetwork& network) const;
+      MetisNetwork::MetisAdjacency GraphAdjacencyToMetisAdjacency(const std::vector<std::vector<unsigned int>>& graphAdjacency) const;
 
       std::vector<unsigned int> NetworkPartition(const NetworkPartitionOptions& options,
-                                                 const Network& network) const;
+                                                 const MetisNetwork& network) const;
 
       std::vector<unsigned int> Mesh2DPartitionCheckConstraints(const IMeshDAO& mesh,
                                                                 const std::vector<bool>& edgesConstrained,
