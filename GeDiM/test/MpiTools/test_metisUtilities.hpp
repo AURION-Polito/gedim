@@ -103,7 +103,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell1Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell1Ds.vtu");
     }
   }
 
@@ -147,24 +147,47 @@ namespace UnitTesting
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
 
-      Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-      std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+        std::vector<double> property;
+        property.reserve(partition.size());
+        property.assign(partition.begin(), partition.end());
 
-      exporter.AddSegments(graphVertices,
-                           graphEdges,
+        exporter.AddPoints(graphVertices,
                            {
                              {
                                "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
                              }
                            });
 
-      exporter.Export(exportFolder + "/Graph.vtu");
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
     }
 
     {
@@ -185,7 +208,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
   }
 
@@ -244,35 +267,47 @@ namespace UnitTesting
       const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
-      std::vector<double> weights;
-      weights.reserve(meshToNetwork.Network.EdgesWeight.size());
-      weights.assign(meshToNetwork.Network.EdgesWeight.begin(),
-                     meshToNetwork.Network.EdgesWeight.end());
+      {
+        Gedim::VTKUtilities exporter;
 
-      Gedim::VTKUtilities exporter;
+        std::vector<double> property;
+        property.reserve(partition.size());
+        property.assign(partition.begin(), partition.end());
 
-      std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
-
-      exporter.AddSegments(graphVertices,
-                           graphEdges,
+        exporter.AddPoints(graphVertices,
                            {
                              {
                                "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
-                             },
-                             {
-                               "Weights",
-                               Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(weights.size()),
-                               weights.data()
                              }
                            });
 
-      exporter.Export(exportFolder + "/Graph.vtu");
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
     }
 
     {
@@ -293,7 +328,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
 
     {
@@ -336,7 +371,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell1Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell1Ds.vtu");
     }
   }
 
@@ -443,35 +478,47 @@ namespace UnitTesting
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
 
-      Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-      std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+        std::vector<double> property;
+        property.reserve(partition.size());
+        property.assign(partition.begin(), partition.end());
 
-      std::vector<double> weights;
-      weights.reserve(meshToNetwork.Network.EdgesWeight.size());
-      weights.assign(meshToNetwork.Network.EdgesWeight.begin(),
-                     meshToNetwork.Network.EdgesWeight.end());
-
-      exporter.AddSegments(graphVertices,
-                           graphEdges,
+        exporter.AddPoints(graphVertices,
                            {
                              {
                                "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
-                             },
-                             {
-                               "Weights",
-                               Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(weights.size()),
-                               weights.data()
                              }
                            });
 
-      exporter.Export(exportFolder + "/Graph.vtu");
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
     }
 
     {
@@ -538,24 +585,47 @@ namespace UnitTesting
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
 
-      Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-      std::vector<double> property;
-      property.reserve(partition.size());
-      property.assign(partition.begin(), partition.end());
+        std::vector<double> property;
+        property.reserve(partition.size());
+        property.assign(partition.begin(), partition.end());
 
-      exporter.AddSegments(graphVertices,
-                           graphEdges,
+        exporter.AddPoints(graphVertices,
                            {
                              {
                                "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
                              }
                            });
 
-      exporter.Export(exportFolder + "/Graph.vtu");
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
     }
 
     {
@@ -576,7 +646,7 @@ namespace UnitTesting
                                 }
                               });
 
-      exporter.Export(exportFolder + "/Cell3Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell3Ds.vtu");
     }
 
     {
@@ -598,7 +668,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
   }
 
@@ -655,24 +725,48 @@ namespace UnitTesting
       const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
       const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
                                                                                           graphAdjacency);
-      Gedim::VTKUtilities exporter;
 
-      std::vector<double> property;
-      property.reserve(fix_connectedComponents_partitions.size());
-      property.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
+      {
+        Gedim::VTKUtilities exporter;
 
-      exporter.AddSegments(graphVertices,
-                           graphEdges,
+        std::vector<double> property;
+        property.reserve(fix_connectedComponents_partitions.size());
+        property.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
+
+        exporter.AddPoints(graphVertices,
                            {
                              {
                                "Partition",
-                               Gedim::VTPProperty::Formats::Points,
+                               Gedim::VTPProperty::Formats::Cells,
                                static_cast<unsigned int>(property.size()),
                                property.data()
                              }
                            });
 
-      exporter.Export(exportFolder + "/Graph.vtu");
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
     }
 
     {
@@ -693,7 +787,7 @@ namespace UnitTesting
                                 }
                               });
 
-      exporter.Export(exportFolder + "/Cell3Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell3Ds.vtu");
     }
 
     {
@@ -735,7 +829,7 @@ namespace UnitTesting
                              }
                            });
 
-      exporter.Export(exportFolder + "/Cell2Ds.vtu");
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
 
     for (unsigned int f = 0; f < cell2DsConstrained.size(); f++)
