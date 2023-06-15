@@ -1,5 +1,6 @@
 #include "MetisUtilities.hpp"
 
+#include "GraphUtilities.hpp"
 #include "Macro.hpp"
 
 #include "IOUtilities.hpp"
@@ -507,17 +508,47 @@ namespace Gedim
                                                                               const std::vector<unsigned int>& partition) const
   {
     std::vector<unsigned int> fixedPartition = partition;
+    GraphUtilities graphUtilities;
 
     const unsigned int& numVertices = network.Adjacency.Rows.size() - 1;
 
     unsigned int numMaxPartition = *std::max_element(begin(fixedPartition), end(fixedPartition));
     const unsigned int numPartitions = numMaxPartition + 1;
 
+    std::vector<std::list<unsigned int>> subGraphs_vertices(numPartitions);
     std::vector<std::unordered_map<unsigned int, unsigned int>> subGraphs_filter(numPartitions);
     for (unsigned int v = 0; v < numVertices; v++)
     {
       const unsigned int& p = partition[v];
+
+      subGraphs_vertices[p].push_back(v);
       subGraphs_filter[p].insert(std::make_pair(v, subGraphs_filter[p].size()));
+    }
+
+    const std::vector<std::vector<unsigned int>> graph_adjacency = MetisAdjacencyToGraphAdjacency(network.Adjacency);
+    for (unsigned int p = 0; p < numPartitions; p++)
+    {
+      const std::vector<std::vector<unsigned int>> subGraph_adjacency = graphUtilities.ExtractSubGraph(graph_adjacency,
+                                                                                                       subGraphs_filter[p]);
+
+      const std::vector<std::vector<unsigned int>> connectedComponents = graphUtilities.ComputeStronglyConnectedComponents(subGraph_adjacency);
+
+      if (connectedComponents.size() < 2)
+        continue;
+
+      std::vector<unsigned int> subGraph_vertices(subGraphs_vertices[p].begin(),
+                                                  subGraphs_vertices[p].end());
+
+      for (unsigned int cc = 1; cc < connectedComponents.size(); cc++)
+      {
+        const unsigned int new_partition = numMaxPartition++;
+
+        for (unsigned int v = 0; v < connectedComponents[cc].size(); v++)
+        {
+          const unsigned int& original_v = subGraph_vertices.at(connectedComponents[cc][v]);
+          fixedPartition[original_v] = new_partition;
+        }
+      }
     }
 
     return fixedPartition;
