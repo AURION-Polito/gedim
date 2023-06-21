@@ -258,7 +258,7 @@ namespace Gedim
                                     const std::vector<double>& widthMeshCurvilinearCoordinates,
                                     IMeshDAO& mesh) const;
 
-      /// \brief Crete triangular mesh on 2D polygon
+      /// \brief Create triangular mesh on 2D polygon
       /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices
       /// \param maxTriangleArea the maximum triangular area
       /// \param options mesh options, see https://www.cs.cmu.edu/~quake/triangle.switch.html
@@ -269,7 +269,7 @@ namespace Gedim
                                 IMeshDAO& mesh,
                                 const std::string& options = "-QDzpqnea") const;
 
-      /// \brief Crete tetrahedral mesh on 3D polyhedron
+      /// \brief Create tetrahedral mesh on 3D polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
       /// \param polyhedronFaces the polyhedron face vertices and edges, size numFaces x 2 x numVertices
@@ -283,6 +283,10 @@ namespace Gedim
                                  const double& maxTetrahedronVolume,
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
+
+      /// \brief Import 3D mesh from OVM file
+      void ImportOpenVolumeMesh(IMeshDAO& mesh,
+                                const std::string& ovmFilePath) const;
 
       /// \brief Change Polygon Mesh Markers from { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 * numVertices } for cell1Ds to cell0DMarkers and cell1DMarkers
       /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices

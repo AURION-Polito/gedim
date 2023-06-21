@@ -791,6 +791,36 @@ namespace GedimUnitTesting
                                   "Mesh_Final");
 
   }
+
+  TEST(TestMeshUtilities, TestImportOVMMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ImportOpenVolumeMesh(meshDao,
+                                       "/home/geoscore/Downloads/METIS_TEST/tet_poisson_2.ovm");
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestImportOVMMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ImportedOVMMesh");
+
+    EXPECT_EQ(3,
+              meshDao.Dimension());
+    EXPECT_EQ(381,
+              meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(2189,
+              meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(3384,
+              meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(1575,
+              meshDao.Cell3DTotalNumber());
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES_H

@@ -4,6 +4,7 @@
 #include "TetgenInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "MapTetrahedron.hpp"
+#include "OpenVolumeMeshInterface.hpp"
 
 #include "numeric"
 
@@ -2534,6 +2535,14 @@ namespace Gedim
                                maxTetrahedronVolume,
                                mesh,
                                options);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ImportOpenVolumeMesh(IMeshDAO& mesh,
+                                           const std::string& ovmFilePath) const
+  {
+    OpenVolumeMeshInterface openVolumeMeshInterface;
+    openVolumeMeshInterface.ImportMesh(mesh,
+                                       ovmFilePath);
   }
   // ***************************************************************************
   void MeshUtilities::ChangePolygonMeshMarkers(const Eigen::MatrixXd& polygonVertices,
