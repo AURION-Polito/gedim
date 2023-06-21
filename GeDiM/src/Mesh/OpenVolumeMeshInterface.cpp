@@ -310,7 +310,7 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void OpenVolumeMeshInterface::ImportMesh(const std::string& ovmFilePath,
+  void OpenVolumeMeshInterface::ImportMeshFromFile(const std::string& ovmFilePath,
                                            IMeshDAO& mesh,
                                            std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const
   {
@@ -330,6 +330,23 @@ namespace Gedim
     OVMMeshToMeshDAO(meshImported,
                      mesh,
                      meshCell3DsFacesOrientation);
+  }
+  // ***************************************************************************
+  void OpenVolumeMeshInterface::ExportMeshToFile(const IMeshDAO& mesh,
+                                           const std::vector<std::vector<bool>>& meshCell3DsFacesOrientation,
+                                           const std::string& ovmFilePath) const
+  {
+    const OVMMesh meshToExport = MeshDAOToOVMMesh(mesh,
+                                                  meshCell3DsFacesOrientation);
+    const vector<string> fileLines = OVMMeshToStrings(meshToExport);
+
+    ofstream exportFile(ovmFilePath);
+    if (!exportFile.is_open())
+      throw runtime_error("Unable to export file " + ovmFilePath);
+
+    for (const string& line : fileLines)
+      exportFile << line<< endl;
+    exportFile.close();
   }
   // ***************************************************************************
 }

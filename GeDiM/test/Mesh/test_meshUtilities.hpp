@@ -850,6 +850,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(lines.size(), reconverted_lines.size());
     for (unsigned int l = 0; l < lines.size(); l++)
       ASSERT_EQ(lines[l], reconverted_lines[l]);
+
+    meshUtilities.ExportMeshToOpenVolume(meshDao,
+                                         meshCell3DsFacesOrientation,
+                                         exportFolder + "/hex_parallel_1.ovm");
   }
 }
 

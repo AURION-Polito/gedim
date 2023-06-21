@@ -38,9 +38,13 @@ namespace Gedim
                             IMeshDAO& convertedMesh,
                             std::vector<std::vector<bool>>& convertedMeshCell3DsFacesOrientation) const;
 
-      void ImportMesh(const std::string& ovmFilePath,
-                      IMeshDAO& mesh,
-                      std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const;
+      void ImportMeshFromFile(const std::string& ovmFilePath,
+                              IMeshDAO& mesh,
+                              std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const;
+
+      void ExportMeshToFile(const IMeshDAO& mesh,
+                            const std::vector<std::vector<bool>>& meshCell3DsFacesOrientation,
+                            const std::string& ovmFilePath) const;
 
   };
 }

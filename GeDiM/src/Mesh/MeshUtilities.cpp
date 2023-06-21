@@ -2539,12 +2539,22 @@ namespace Gedim
   // ***************************************************************************
   void MeshUtilities::ImportOpenVolumeMesh(const std::string& ovmFilePath,
                                            IMeshDAO& mesh,
-                                           std::vector<std::vector<bool> >& meshCell3DsFacesOrientation) const
+                                           std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const
   {
     OpenVolumeMeshInterface openVolumeMeshInterface;
-    openVolumeMeshInterface.ImportMesh(ovmFilePath,
-                                       mesh,
-                                       meshCell3DsFacesOrientation);
+    openVolumeMeshInterface.ImportMeshFromFile(ovmFilePath,
+                                               mesh,
+                                               meshCell3DsFacesOrientation);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportMeshToOpenVolume(const IMeshDAO& mesh,
+                                             const std::vector<std::vector<bool>>& meshCell3DsFacesOrientation,
+                                             const std::string& ovmFilePath) const
+  {
+    OpenVolumeMeshInterface openVolumeMeshInterface;
+    openVolumeMeshInterface.ExportMeshToFile(mesh,
+                                             meshCell3DsFacesOrientation,
+                                             ovmFilePath);
   }
   // ***************************************************************************
   void MeshUtilities::ChangePolygonMeshMarkers(const Eigen::MatrixXd& polygonVertices,
