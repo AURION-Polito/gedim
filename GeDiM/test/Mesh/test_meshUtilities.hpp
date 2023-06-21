@@ -806,7 +806,8 @@ namespace GedimUnitTesting
 
     Gedim::OpenVolumeMeshInterface ovmInterface;
 
-    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.StringsToOVMMesh(GedimUnitTesting::OVM_Mesh_Mock::FileLines());
+    const std::vector<string> lines = OVM_Mesh_Mock::FileLines();
+    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.StringsToOVMMesh(lines);
     ovmInterface.OVMMeshToMeshDAO(ovm_mesh,
                                   meshDao,
                                   meshCell3DsFacesOrientation);
@@ -845,7 +846,14 @@ namespace GedimUnitTesting
     }
 
     const std::vector<std::string> reconverted_lines = ovmInterface.OVMMeshToStrings(reconverted_ovm_mesh);
-    ASSERT_EQ(OVM_Mesh_Mock::FileLines(), reconverted_lines);
+
+    {using namespace Gedim;
+      cerr<< reconverted_lines<< endl;
+    }
+
+    ASSERT_EQ(lines.size(), reconverted_lines.size());
+    for (unsigned int l = 0; l < lines.size(); l++)
+      ASSERT_EQ(lines[l], reconverted_lines[l]);
   }
 }
 
