@@ -25,7 +25,8 @@ namespace Gedim
       ~OpenVolumeMeshInterface();
 
       OVMMesh ConvertOVMMesh(const std::vector<std::string>& fileLines) const;
-      void ConvertGedimMesh(const OVMMesh& meshImported,
+      OVMMesh ConvertOVMMesh(const IMeshDAO& originalMesh) const;
+      void ConvertGedimMesh(const OVMMesh& originalMesh,
                             IMeshDAO& convertedMesh) const;
 
       void ImportMesh(IMeshDAO& mesh,

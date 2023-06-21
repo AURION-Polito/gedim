@@ -101,33 +101,72 @@ namespace Gedim
     return mesh;
   }
   // ***************************************************************************
-  void OpenVolumeMeshInterface::ConvertGedimMesh(const OVMMesh& meshImported,
+  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const IMeshDAO& originalMesh) const
+  {
+    OpenVolumeMeshInterface::OVMMesh convertedMesh;
+
+    convertedMesh.NumCell0Ds = originalMesh.Cell0DTotalNumber();
+    convertedMesh.NumCell1Ds = originalMesh.Cell1DTotalNumber();
+    convertedMesh.NumCell2Ds = originalMesh.Cell2DTotalNumber();
+    convertedMesh.NumCell3Ds = originalMesh.Cell3DTotalNumber();
+
+    convertedMesh.Cell0Ds = originalMesh.Cell0DsCoordinates();
+
+    convertedMesh.Cell1Ds.resize(2, 2 * convertedMesh.NumCell1Ds);
+    for (unsigned int e = 0; e < convertedMesh.NumCell1Ds; e++)
+    {
+      const unsigned int edgeOrigin = originalMesh.Cell1DOrigin(e);
+      const unsigned int edgeEnd = originalMesh.Cell1DEnd(e);
+
+      convertedMesh.Cell1Ds.col(2 * e)<< edgeOrigin, edgeEnd;
+      convertedMesh.Cell1Ds.col(2 * e + 1)<< edgeEnd, edgeOrigin;
+    }
+
+    convertedMesh.Cell2Ds.resize(convertedMesh.NumCell2Ds);
+    for (unsigned int f = 0; f < convertedMesh.NumCell2Ds; f++)
+    {
+      const std::vector<unsigned int> vertices = originalMesh.Cell2DVertices(f);
+      const std::vector<unsigned int> edges = originalMesh.Cell2DEdges(f);
+      convertedMesh.Cell2Ds[f].resize(2, vertices.size());
+      for (unsigned int v = 0; v < vertices.size(); v++)
+      {
+        convertedMesh.Cell2Ds[f](0, v) = vertices[v];
+        const bool edgeDirection = (originalMesh.Cell1DOrigin(edges[v]) == vertices[v]);
+        convertedMesh.Cell2Ds[f](1, v) = edgeDirection ? 2 * edges[v] :
+                                                         2 * edges[v] + 1;
+      }
+    }
+
+    return convertedMesh;
+  }
+  // ***************************************************************************
+  void OpenVolumeMeshInterface::ConvertGedimMesh(const OVMMesh& originalMesh,
                                                  IMeshDAO& convertedMesh) const
   {
     convertedMesh.InitializeDimension(3);
 
     // Create Cell0Ds
-    convertedMesh.Cell0DsInitialize(meshImported.NumCell0Ds);
-    convertedMesh.Cell0DsInsertCoordinates(meshImported.Cell0Ds);
-    for (unsigned int v = 0; v < meshImported.NumCell0Ds; v++)
+    convertedMesh.Cell0DsInitialize(originalMesh.NumCell0Ds);
+    convertedMesh.Cell0DsInsertCoordinates(originalMesh.Cell0Ds);
+    for (unsigned int v = 0; v < originalMesh.NumCell0Ds; v++)
       convertedMesh.Cell0DSetState(v, true);
 
     // Create Cell1Ds
-    convertedMesh.Cell1DsInitialize(meshImported.NumCell1Ds);
-    for (unsigned int e = 0; e < meshImported.NumCell1Ds; e++)
+    convertedMesh.Cell1DsInitialize(originalMesh.NumCell1Ds);
+    for (unsigned int e = 0; e < originalMesh.NumCell1Ds; e++)
     {
       const unsigned int ovm_edgeIndex = 2 * e;
       convertedMesh.Cell1DInsertExtremes(e,
-                                         meshImported.Cell1Ds(0, ovm_edgeIndex),
-                                         meshImported.Cell1Ds(1, ovm_edgeIndex));
+                                         originalMesh.Cell1Ds(0, ovm_edgeIndex),
+                                         originalMesh.Cell1Ds(1, ovm_edgeIndex));
       convertedMesh.Cell1DSetState(e, true);
     }
 
     // Create Cell2Ds
-    convertedMesh.Cell2DsInitialize(meshImported.NumCell2Ds);
-    for (unsigned int f = 0; f < meshImported.NumCell2Ds; f++)
+    convertedMesh.Cell2DsInitialize(originalMesh.NumCell2Ds);
+    for (unsigned int f = 0; f < originalMesh.NumCell2Ds; f++)
     {
-      const Eigen::MatrixXi& ovm_face = meshImported.Cell2Ds[f];
+      const Eigen::MatrixXi& ovm_face = originalMesh.Cell2Ds[f];
       const unsigned int& numFaceVertices = ovm_face.cols();
       convertedMesh.Cell2DInitializeVertices(f, numFaceVertices);
       convertedMesh.Cell2DInitializeEdges(f, numFaceVertices);
@@ -146,10 +185,10 @@ namespace Gedim
     }
 
     // Create Cell3Ds
-    convertedMesh.Cell3DsInitialize(meshImported.NumCell3Ds);
-    for (unsigned int p = 0; p < meshImported.NumCell3Ds; p++)
+    convertedMesh.Cell3DsInitialize(originalMesh.NumCell3Ds);
+    for (unsigned int p = 0; p < originalMesh.NumCell3Ds; p++)
     {
-      const vector<unsigned int>& ovm_faces = meshImported.Cell3Ds[p];
+      const vector<unsigned int>& ovm_faces = originalMesh.Cell3Ds[p];
       const unsigned int& numPolyhedronFaces = ovm_faces.size();
 
       std::unordered_set<unsigned int> cell3DVertices, cell3DEdges;

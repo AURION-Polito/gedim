@@ -825,6 +825,8 @@ namespace GedimUnitTesting
               meshDao.Cell2DTotalNumber());
     EXPECT_EQ(1575,
               meshDao.Cell3DTotalNumber());
+
+    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.ConvertOVMMesh(meshDao);
   }
 }
 
