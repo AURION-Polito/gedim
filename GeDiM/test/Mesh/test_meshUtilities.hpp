@@ -800,6 +800,7 @@ namespace GedimUnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
+    std::vector<std::vector<bool>> meshCell3DsFacesOrientation;
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
@@ -807,7 +808,8 @@ namespace GedimUnitTesting
 
     const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.ConvertOVMMesh(GedimUnitTesting::OVM_Mesh_Mock::FileLines());
     ovmInterface.ConvertGedimMesh(ovm_mesh,
-                                  meshDao);
+                                  meshDao,
+                                  meshCell3DsFacesOrientation);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOVMMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -826,7 +828,8 @@ namespace GedimUnitTesting
     EXPECT_EQ(1575,
               meshDao.Cell3DTotalNumber());
 
-    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.ConvertOVMMesh(meshDao);
+    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.ConvertOVMMesh(meshDao,
+                                                                                                     meshCell3DsFacesOrientation);
   }
 }
 

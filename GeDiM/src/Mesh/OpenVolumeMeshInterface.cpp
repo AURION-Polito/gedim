@@ -93,15 +93,21 @@ namespace Gedim
 
       unsigned int numPolyhedronVertices = 0;
       converter >> numPolyhedronVertices;
-      mesh.Cell3Ds[p].resize(numPolyhedronVertices);
+      mesh.Cell3Ds[p].FacesIndex.resize(numPolyhedronVertices);
+      mesh.Cell3Ds[p].FacesOrientation.resize(numPolyhedronVertices);
       for (unsigned int pv = 0; pv < numPolyhedronVertices; pv++)
-        converter >> mesh.Cell3Ds[p][pv];
+      {
+        converter >> mesh.Cell3Ds[p].FacesIndex[pv];
+
+        mesh.Cell3Ds[p].FacesOrientation[pv] = (mesh.Cell3Ds[p].FacesIndex[pv] < mesh.NumCell2Ds);
+      }
     }
 
     return mesh;
   }
   // ***************************************************************************
-  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const IMeshDAO& originalMesh) const
+  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const IMeshDAO& originalMesh,
+                                                                           const std::vector<std::vector<bool>>& cell3DsFacesOrientation) const
   {
     OpenVolumeMeshInterface::OVMMesh convertedMesh;
 
@@ -137,11 +143,27 @@ namespace Gedim
       }
     }
 
+    convertedMesh.Cell3Ds.resize(convertedMesh.NumCell3Ds);
+    for (unsigned int p = 0; p < convertedMesh.NumCell3Ds; p++)
+    {
+      const std::vector<unsigned int> faces = originalMesh.Cell3DFaces(p);
+
+      convertedMesh.Cell3Ds[p].FacesIndex.resize(faces.size());
+      convertedMesh.Cell3Ds[p].FacesOrientation = cell3DsFacesOrientation[p];
+      for (unsigned int fp = 0; fp < faces.size(); fp++)
+      {
+        const bool& faceOrientation = cell3DsFacesOrientation[p][fp];
+        convertedMesh.Cell3Ds[p].FacesIndex[fp] = faceOrientation ? 2 * faces[fp] :
+                                                                    2 * faces[fp] + 1;
+      }
+    }
+
     return convertedMesh;
   }
   // ***************************************************************************
   void OpenVolumeMeshInterface::ConvertGedimMesh(const OVMMesh& originalMesh,
-                                                 IMeshDAO& convertedMesh) const
+                                                 IMeshDAO& convertedMesh,
+                                                 std::vector<std::vector<bool>>& convertedMeshCell3DsFacesOrientation) const
   {
     convertedMesh.InitializeDimension(3);
 
@@ -185,20 +207,22 @@ namespace Gedim
     }
 
     // Create Cell3Ds
+    convertedMeshCell3DsFacesOrientation.resize(originalMesh.NumCell3Ds);
     convertedMesh.Cell3DsInitialize(originalMesh.NumCell3Ds);
     for (unsigned int p = 0; p < originalMesh.NumCell3Ds; p++)
     {
-      const vector<unsigned int>& ovm_faces = originalMesh.Cell3Ds[p];
-      const unsigned int& numPolyhedronFaces = ovm_faces.size();
+      const OVMMesh::Cell3D& ovm_faces = originalMesh.Cell3Ds[p];
+      const unsigned int& numPolyhedronFaces = ovm_faces.FacesIndex.size();
 
       std::unordered_set<unsigned int> cell3DVertices, cell3DEdges;
 
       convertedMesh.Cell3DInitializeFaces(p, numPolyhedronFaces);
+      convertedMeshCell3DsFacesOrientation[p] = ovm_faces.FacesOrientation;
       for (unsigned pf = 0; pf < numPolyhedronFaces; pf++)
       {
-        const unsigned int& ovm_faceIndex = ovm_faces[pf];
-        const unsigned int faceIndex = ovm_faceIndex % 2 == 0 ? ovm_faceIndex / 2 :
-                                                                (ovm_faceIndex - 1) / 2;
+        const unsigned int& ovm_faceIndex = ovm_faces.FacesIndex[pf];
+        const unsigned int faceIndex = ovm_faces.FacesOrientation[pf] ? ovm_faceIndex / 2 :
+                                                                        (ovm_faceIndex - 1) / 2;
 
         for (unsigned int fv = 0; fv < convertedMesh.Cell2DNumberVertices(faceIndex); fv++)
         {
@@ -229,8 +253,9 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void OpenVolumeMeshInterface::ImportMesh(IMeshDAO& mesh,
-                                           const std::string& ovmFilePath) const
+  void OpenVolumeMeshInterface::ImportMesh(const std::string& ovmFilePath,
+                                           IMeshDAO& mesh,
+                                           std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const
   {
     vector<string> fileLines;
 
@@ -246,7 +271,8 @@ namespace Gedim
 
     const OVMMesh meshImported = ConvertOVMMesh(fileLines);
     ConvertGedimMesh(meshImported,
-                     mesh);
+                     mesh,
+                     meshCell3DsFacesOrientation);
   }
   // ***************************************************************************
 }

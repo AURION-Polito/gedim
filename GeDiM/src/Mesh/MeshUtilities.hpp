@@ -285,8 +285,9 @@ namespace Gedim
                                  const std::string& options = "Qpqfezna") const;
 
       /// \brief Import 3D mesh from OVM file
-      void ImportOpenVolumeMesh(IMeshDAO& mesh,
-                                const std::string& ovmFilePath) const;
+      void ImportOpenVolumeMesh(const std::string& ovmFilePath,
+                                IMeshDAO& mesh,
+                                std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const;
 
       /// \brief Change Polygon Mesh Markers from { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 * numVertices } for cell1Ds to cell0DMarkers and cell1DMarkers
       /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices
