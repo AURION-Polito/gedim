@@ -98,8 +98,7 @@ namespace Gedim
       for (unsigned int pv = 0; pv < numPolyhedronVertices; pv++)
       {
         converter >> mesh.Cell3Ds[p].FacesIndex[pv];
-
-        mesh.Cell3Ds[p].FacesOrientation[pv] = (mesh.Cell3Ds[p].FacesIndex[pv] < mesh.NumCell2Ds);
+        mesh.Cell3Ds[p].FacesOrientation[pv] = (mesh.Cell3Ds[p].FacesIndex[pv] % 2 == 0);
       }
     }
 
