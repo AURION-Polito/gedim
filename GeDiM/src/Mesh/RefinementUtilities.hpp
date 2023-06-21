@@ -61,6 +61,17 @@ namespace Gedim
               unsigned int OriginalCell2DEdgeIndex = 0;
           };
 
+          struct Cell1DToSplit final
+          {
+              bool IsIntersectionInside = false;
+              bool IsQualityEnough = false;
+              bool IsAligned = false;
+              bool IsToSplit = false;
+              unsigned int Cell2DEdgeIndex = 0;
+          };
+
+          std::vector<Cell1DToSplit> Cell1DsToSplit = {};
+
           std::vector<unsigned int> NewCell0DsIndex = {};
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
@@ -211,14 +222,14 @@ namespace Gedim
                                                  const std::vector<unsigned int>& cell2DsIndex,
                                                  Cell2Ds_GeometricData& geometricData) const;
 
-      bool RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
-                                             const unsigned int& cell2DIndex,
-                                             const unsigned int& cell2DNumVertices,
-                                             const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
-                                             const Eigen::VectorXd& cell2DEdgesLength,
-                                             const double& cell1DsQualityWeight,
-                                             const double& cell1DQuality,
-                                             const IMeshDAO& mesh) const;
+      RefinePolygon_Result::Cell1DToSplit RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
+                                                                            const unsigned int& cell2DIndex,
+                                                                            const unsigned int& cell2DNumVertices,
+                                                                            const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
+                                                                            const Eigen::VectorXd& cell2DEdgesLength,
+                                                                            const double& cell1DsQualityWeight,
+                                                                            const double& cell1DQuality,
+                                                                            const IMeshDAO& mesh) const;
   };
 
 }
