@@ -13,6 +13,7 @@
 #include "Macro.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MetisUtilities.hpp"
+#include "OpenVolumeMeshInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "IOUtilities.hpp"
 
@@ -22,6 +23,7 @@
 
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
 #include "MeshMatrices_3D_329Cells_Mock.hpp"
+#include "OVM_Mesh_Mock.hpp"
 
 namespace UnitTesting
 {
@@ -1029,6 +1031,164 @@ namespace UnitTesting
                                                                                     0)),
                 fix_connectedComponents_partitions.at(meshDAO.Cell2DNeighbourCell3D(f,
                                                                                     1)));
+    }
+  }
+
+  TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::GraphUtilities graphUtilities;
+    Gedim::MetisUtilities metisUtilities;
+
+    std::vector<std::vector<bool>> meshCell3DsFacesOrientation;
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh);
+
+    meshUtilities.ImportOpenVolumeMesh("/home/geoscore/Downloads/METIS_TEST/tet_poisson_2.ovm",
+                                       meshDAO,
+                                       meshCell3DsFacesOrientation);
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
+    const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                          meshDAO);
+
+    const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO);
+
+    Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+    partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+    partitionOptions.MasterWeight = 100;
+    partitionOptions.NumberOfParts = 400;
+
+    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                 meshToNetwork.Network);
+
+    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                          partitions);
+
+    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                          fix_constraints_partitions);
+
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_OVM";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    {
+      Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell3DTotalNumber());
+      for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
+        graphVertices.col(c)<< geometricData.Cell3DsCentroids[c];
+
+      const unsigned int graphNumEdges = meshToNetwork.Network.Adjacency.Cols.size();
+      const std::vector<std::vector<unsigned int>> graphAdjacency = metisUtilities.MetisAdjacencyToGraphAdjacency(meshToNetwork.Network.Adjacency);
+      const Eigen::MatrixXi graphEdges = graphUtilities.GraphAdjacencyToGraphConnectivity(graphNumEdges,
+                                                                                          graphAdjacency);
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> partition;
+        partition.reserve(partitions.size());
+        partition.assign(partitions.begin(), partitions.end());
+        std::vector<double> fix_constraints_partition;
+        fix_constraints_partition.reserve(fix_constraints_partitions.size());
+        fix_constraints_partition.assign(fix_constraints_partitions.begin(), fix_constraints_partitions.end());
+        std::vector<double> fix_connectedComponents_partition;
+        fix_connectedComponents_partition.reserve(fix_connectedComponents_partitions.size());
+        fix_connectedComponents_partition.assign(fix_connectedComponents_partitions.begin(), fix_connectedComponents_partitions.end());
+
+        exporter.AddPoints(graphVertices,
+                           {
+                             {
+                               "partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(partition.size()),
+                               partition.data()
+                             },
+                             {
+                               "fix_constraints_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_constraints_partition.size()),
+                               fix_constraints_partition.data()
+                             },
+                             {
+                               "fix_connectedComponents_partition",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(fix_connectedComponents_partition.size()),
+                               fix_connectedComponents_partition.data()
+                             }
+                           });
+
+        exporter.Export(exportFolder + "/Graph_Points.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        std::vector<double> property;
+        property.reserve(meshToNetwork.Network.EdgesWeight.size());
+        property.assign(meshToNetwork.Network.EdgesWeight.begin(),
+                        meshToNetwork.Network.EdgesWeight.end());
+
+        exporter.AddSegments(graphVertices,
+                             graphEdges,
+                             {
+                               {
+                                 "Weight",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(property.size()),
+                                 property.data()
+                               }
+                             });
+
+        exporter.Export(exportFolder + "/Graph_Edges.vtu");
+      }
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> property;
+      property.reserve(fix_connectedComponents_partitions.size());
+      property.assign(fix_connectedComponents_partitions.begin(),
+                      fix_connectedComponents_partitions.end());
+
+      exporter.AddPolyhedrons(meshDAO.Cell0DsCoordinates(),
+                              meshDAO.Cell3DsFacesVertices(),
+                              {
+                                {
+                                  "Partition",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(property.size()),
+                                  property.data()
+                                }
+                              });
+
+      exporter.Export(exportFolder + "/Mesh_Cell3Ds.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      std::vector<double> index;
+      index.resize(meshDAO.Cell2DTotalNumber());
+      for (unsigned int f = 0; f < meshDAO.Cell2DTotalNumber(); f++)
+        index[f] = f;
+
+      exporter.AddPolygons(meshDAO.Cell0DsCoordinates(),
+                           meshDAO.Cell2DsVertices(),
+                           {
+                             {
+                               "Index",
+                               Gedim::VTPProperty::Formats::Cells,
+                               static_cast<unsigned int>(index.size()),
+                               index.data()
+                             }
+                           });
+
+      exporter.Export(exportFolder + "/Mesh_Cell2Ds.vtu");
     }
   }
 }
