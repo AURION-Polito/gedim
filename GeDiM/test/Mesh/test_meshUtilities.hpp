@@ -818,15 +818,15 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ImportedOVMMesh");
 
-    EXPECT_EQ(3,
+    ASSERT_EQ(3,
               meshDao.Dimension());
-    EXPECT_EQ(381,
+    ASSERT_EQ(64,
               meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(2189,
+    ASSERT_EQ(144,
               meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(3384,
+    ASSERT_EQ(108,
               meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(1575,
+    ASSERT_EQ(27,
               meshDao.Cell3DTotalNumber());
 
     const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.MeshDAOToOVMMesh(meshDao,
@@ -846,10 +846,6 @@ namespace GedimUnitTesting
     }
 
     const std::vector<std::string> reconverted_lines = ovmInterface.OVMMeshToStrings(reconverted_ovm_mesh);
-
-    {using namespace Gedim;
-      cerr<< reconverted_lines<< endl;
-    }
 
     ASSERT_EQ(lines.size(), reconverted_lines.size());
     for (unsigned int l = 0; l < lines.size(); l++)
