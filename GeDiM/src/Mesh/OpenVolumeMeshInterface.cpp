@@ -14,48 +14,38 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ReadFile(const std::string& ovmFilePath) const
+  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const std::vector<std::string>& fileLines) const
   {
     OVMMesh mesh;
-
-    vector<string> lines;
-
-    FileReader fileReader(ovmFilePath);
-
-    if (!fileReader.Open())
-      throw runtime_error("File " + ovmFilePath + " not found");
-
-    fileReader.GetAllLines(lines);
-    fileReader.Close();
 
     unsigned int lineCounter = 0;
 
     // convert vertices
     lineCounter += 2;
-    Gedim::Output::Assert(lines.size() >= lineCounter);
-    mesh.NumCell0Ds = std::atoi(lines[lineCounter++].c_str());
+    Gedim::Output::Assert(fileLines.size() >= lineCounter);
+    mesh.NumCell0Ds = std::atoi(fileLines[lineCounter++].c_str());
 
-    Gedim::Output::Assert(lines.size() >= lineCounter + mesh.NumCell0Ds);
+    Gedim::Output::Assert(fileLines.size() >= lineCounter + mesh.NumCell0Ds);
 
     mesh.Cell0Ds.resize(3, mesh.NumCell0Ds);
     for (unsigned int v = 0; v < mesh.NumCell0Ds; v++)
     {
-      istringstream converter(lines[lineCounter++]);
+      istringstream converter(fileLines[lineCounter++]);
 
       converter >> mesh.Cell0Ds(0, v)>> mesh.Cell0Ds(1, v)>> mesh.Cell0Ds(2, v);
     }
 
     // convert edges
     lineCounter += 1;
-    Gedim::Output::Assert(lines.size() >= lineCounter);
-    mesh.NumCell1Ds = std::atoi(lines[lineCounter++].c_str());
+    Gedim::Output::Assert(fileLines.size() >= lineCounter);
+    mesh.NumCell1Ds = std::atoi(fileLines[lineCounter++].c_str());
 
-    Gedim::Output::Assert(lines.size() >= lineCounter + mesh.NumCell1Ds);
+    Gedim::Output::Assert(fileLines.size() >= lineCounter + mesh.NumCell1Ds);
 
     mesh.Cell1Ds.resize(2, 2 * mesh.NumCell1Ds);
     for (unsigned int e = 0; e < mesh.NumCell1Ds; e++)
     {
-      istringstream converter(lines[lineCounter++]);
+      istringstream converter(fileLines[lineCounter++]);
 
       unsigned int edgeOrigin, edgeEnd;
       converter >> edgeOrigin>> edgeEnd;
@@ -66,15 +56,15 @@ namespace Gedim
 
     // convert faces
     lineCounter += 1;
-    Gedim::Output::Assert(lines.size() >= lineCounter);
-    mesh.NumCell2Ds = std::atoi(lines[lineCounter++].c_str());
+    Gedim::Output::Assert(fileLines.size() >= lineCounter);
+    mesh.NumCell2Ds = std::atoi(fileLines[lineCounter++].c_str());
 
-    Gedim::Output::Assert(lines.size() >= lineCounter + mesh.NumCell2Ds);
+    Gedim::Output::Assert(fileLines.size() >= lineCounter + mesh.NumCell2Ds);
 
     mesh.Cell2Ds.resize(mesh.NumCell2Ds);
     for (unsigned int f = 0; f < mesh.NumCell2Ds; f++)
     {
-      istringstream converter(lines[lineCounter++]);
+      istringstream converter(fileLines[lineCounter++]);
 
       unsigned int numFaceEdges = 0;
       converter >> numFaceEdges;
@@ -91,15 +81,15 @@ namespace Gedim
 
     // convert polyhedra
     lineCounter += 1;
-    Gedim::Output::Assert(lines.size() >= lineCounter);
-    mesh.NumCell3Ds = std::atoi(lines[lineCounter++].c_str());
+    Gedim::Output::Assert(fileLines.size() >= lineCounter);
+    mesh.NumCell3Ds = std::atoi(fileLines[lineCounter++].c_str());
 
-    Gedim::Output::Assert(lines.size() >= lineCounter + mesh.NumCell3Ds);
+    Gedim::Output::Assert(fileLines.size() >= lineCounter + mesh.NumCell3Ds);
 
     mesh.Cell3Ds.resize(mesh.NumCell3Ds);
     for (unsigned int p = 0; p < mesh.NumCell3Ds; p++)
     {
-      istringstream converter(lines[lineCounter++]);
+      istringstream converter(fileLines[lineCounter++]);
 
       unsigned int numPolyhedronVertices = 0;
       converter >> numPolyhedronVertices;
@@ -111,8 +101,8 @@ namespace Gedim
     return mesh;
   }
   // ***************************************************************************
-  void OpenVolumeMeshInterface::ConvertMesh(const OVMMesh& meshImported,
-                                            IMeshDAO& convertedMesh) const
+  void OpenVolumeMeshInterface::ConvertGedimMesh(const OVMMesh& meshImported,
+                                                 IMeshDAO& convertedMesh) const
   {
     convertedMesh.InitializeDimension(3);
 
@@ -203,9 +193,21 @@ namespace Gedim
   void OpenVolumeMeshInterface::ImportMesh(IMeshDAO& mesh,
                                            const std::string& ovmFilePath) const
   {
-    const OVMMesh meshImported = ReadFile(ovmFilePath);
-    ConvertMesh(meshImported,
-                mesh);
+    vector<string> fileLines;
+
+    {
+      FileReader fileReader(ovmFilePath);
+
+      if (!fileReader.Open())
+        throw runtime_error("File " + ovmFilePath + " not found");
+
+      fileReader.GetAllLines(fileLines);
+      fileReader.Close();
+    }
+
+    const OVMMesh meshImported = ConvertOVMMesh(fileLines);
+    ConvertGedimMesh(meshImported,
+                     mesh);
   }
   // ***************************************************************************
 }

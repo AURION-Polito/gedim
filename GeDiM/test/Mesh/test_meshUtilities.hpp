@@ -16,6 +16,8 @@
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_3D_1Cells_Mock.hpp"
 #include "MeshMatrices_3D_68Cells_Mock.hpp"
+#include "OVM_Mesh_Mock.hpp"
+#include "OpenVolumeMeshInterface.hpp"
 
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
@@ -796,13 +798,16 @@ namespace GedimUnitTesting
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
-    Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ImportOpenVolumeMesh(meshDao,
-                                       "/home/geoscore/Downloads/METIS_TEST/tet_poisson_2.ovm");
+    Gedim::OpenVolumeMeshInterface ovmInterface;
+
+    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.ConvertOVMMesh(GedimUnitTesting::OVM_Mesh_Mock::FileLines());
+    ovmInterface.ConvertGedimMesh(ovm_mesh,
+                                  meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOVMMesh";
     Gedim::Output::CreateFolder(exportFolder);

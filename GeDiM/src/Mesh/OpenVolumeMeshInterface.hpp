@@ -7,7 +7,7 @@ namespace Gedim
 {
   class OpenVolumeMeshInterface final
   {
-    private:
+    public:
       struct OVMMesh final
       {
           unsigned int NumCell0Ds;
@@ -21,13 +21,12 @@ namespace Gedim
           std::vector<std::vector<unsigned int>> Cell3Ds;
       };
 
-      OVMMesh ReadFile(const std::string& ovmFilePath) const;
-      void ConvertMesh(const OVMMesh& meshImported,
-                       IMeshDAO& convertedMesh) const;
-
-    public:
       OpenVolumeMeshInterface();
       ~OpenVolumeMeshInterface();
+
+      OVMMesh ConvertOVMMesh(const std::vector<std::string>& fileLines) const;
+      void ConvertGedimMesh(const OVMMesh& meshImported,
+                            IMeshDAO& convertedMesh) const;
 
       void ImportMesh(IMeshDAO& mesh,
                       const std::string& ovmFilePath) const;
