@@ -119,7 +119,42 @@ namespace Gedim
       stream.precision(16);
       stream<< scientific<< mesh.Cell0Ds(0, v)<< " ";
       stream<< scientific<< mesh.Cell0Ds(1, v)<< " ";
-      stream<< scientific<< mesh.Cell0Ds(2, v)<< endl;
+      stream<< scientific<< mesh.Cell0Ds(2, v);
+
+      lines.push_back(stream.str());
+    }
+
+    lines.push_back("Edges");
+    lines.push_back(to_string(mesh.NumCell1Ds));
+    for (unsigned int e = 0; e < mesh.NumCell1Ds; e++)
+    {
+      ostringstream stream;
+      stream<< mesh.Cell1Ds(0, 2 * e)<< " ";
+      stream<< mesh.Cell1Ds(1, 2 * e);
+
+      lines.push_back(stream.str());
+    }
+
+    lines.push_back("Faces");
+    lines.push_back(to_string(mesh.NumCell2Ds));
+    for (unsigned int f = 0; f < mesh.NumCell2Ds; f++)
+    {
+      ostringstream stream;
+      stream<< mesh.Cell2Ds[f].cols();
+      for (unsigned int fv = 0; fv < mesh.Cell2Ds[f].cols(); fv++)
+        stream<< " "<< mesh.Cell2Ds[f](1, fv);
+
+      lines.push_back(stream.str());
+    }
+
+    lines.push_back("Polyhedra");
+    lines.push_back(to_string(mesh.NumCell3Ds));
+    for (unsigned int p = 0; p < mesh.NumCell3Ds; p++)
+    {
+      ostringstream stream;
+      stream<< mesh.Cell3Ds[p].FacesIndex.size();
+      for (unsigned int pf = 0; pf < mesh.Cell3Ds[p].FacesIndex.size(); pf++)
+        stream<< " "<< mesh.Cell3Ds[p].FacesIndex[pf];
 
       lines.push_back(stream.str());
     }

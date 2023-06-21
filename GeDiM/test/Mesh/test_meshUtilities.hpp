@@ -845,6 +845,7 @@ namespace GedimUnitTesting
     }
 
     const std::vector<std::string> reconverted_lines = ovmInterface.OVMMeshToStrings(reconverted_ovm_mesh);
+    ASSERT_EQ(OVM_Mesh_Mock::FileLines(), reconverted_lines);
   }
 }
 
