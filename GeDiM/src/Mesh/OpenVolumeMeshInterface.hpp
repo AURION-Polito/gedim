@@ -30,10 +30,11 @@ namespace Gedim
       OpenVolumeMeshInterface();
       ~OpenVolumeMeshInterface();
 
-      OVMMesh ConvertOVMMesh(const std::vector<std::string>& fileLines) const;
-      OVMMesh ConvertOVMMesh(const IMeshDAO& originalMesh,
-                             const std::vector<std::vector<bool>>& cell3DsFacesOrientation) const;
-      void ConvertGedimMesh(const OVMMesh& originalMesh,
+      OVMMesh StringsToOVMMesh(const std::vector<std::string>& fileLines) const;
+      std::vector<std::string> OVMMeshToStrings(const OVMMesh& mesh) const;
+      OVMMesh MeshDAOToOVMMesh(const IMeshDAO& originalMesh,
+                               const std::vector<std::vector<bool>>& cell3DsFacesOrientation) const;
+      void OVMMeshToMeshDAO(const OVMMesh& originalMesh,
                             IMeshDAO& convertedMesh,
                             std::vector<std::vector<bool>>& convertedMeshCell3DsFacesOrientation) const;
 

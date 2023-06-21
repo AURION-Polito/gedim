@@ -14,7 +14,7 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const std::vector<std::string>& fileLines) const
+  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::StringsToOVMMesh(const std::vector<std::string>& fileLines) const
   {
     OVMMesh mesh;
 
@@ -106,8 +106,31 @@ namespace Gedim
     return mesh;
   }
   // ***************************************************************************
-  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::ConvertOVMMesh(const IMeshDAO& originalMesh,
-                                                                           const std::vector<std::vector<bool>>& cell3DsFacesOrientation) const
+  std::vector<string> OpenVolumeMeshInterface::OVMMeshToStrings(const OVMMesh& mesh) const
+  {
+    list<string> lines;
+
+    lines.push_back("OVM ASCII");
+
+    lines.push_back("Vertices");
+    lines.push_back(to_string(mesh.NumCell0Ds));
+    for (unsigned int v = 0; v < mesh.NumCell0Ds; v++)
+    {
+      ostringstream stream;
+      stream.precision(16);
+      stream<< scientific<< mesh.Cell0Ds(0, v)<< " ";
+      stream<< scientific<< mesh.Cell0Ds(1, v)<< " ";
+      stream<< scientific<< mesh.Cell0Ds(2, v)<< endl;
+
+      lines.push_back(stream.str());
+    }
+
+    return std::vector<string>(lines.begin(),
+                               lines.end());
+  }
+  // ***************************************************************************
+  OpenVolumeMeshInterface::OVMMesh OpenVolumeMeshInterface::MeshDAOToOVMMesh(const IMeshDAO& originalMesh,
+                                                                             const std::vector<std::vector<bool>>& cell3DsFacesOrientation) const
   {
     OpenVolumeMeshInterface::OVMMesh convertedMesh;
 
@@ -161,7 +184,7 @@ namespace Gedim
     return convertedMesh;
   }
   // ***************************************************************************
-  void OpenVolumeMeshInterface::ConvertGedimMesh(const OVMMesh& originalMesh,
+  void OpenVolumeMeshInterface::OVMMeshToMeshDAO(const OVMMesh& originalMesh,
                                                  IMeshDAO& convertedMesh,
                                                  std::vector<std::vector<bool>>& convertedMeshCell3DsFacesOrientation) const
   {
@@ -269,8 +292,8 @@ namespace Gedim
       fileReader.Close();
     }
 
-    const OVMMesh meshImported = ConvertOVMMesh(fileLines);
-    ConvertGedimMesh(meshImported,
+    const OVMMesh meshImported = StringsToOVMMesh(fileLines);
+    OVMMeshToMeshDAO(meshImported,
                      mesh,
                      meshCell3DsFacesOrientation);
   }

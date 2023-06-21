@@ -806,8 +806,8 @@ namespace GedimUnitTesting
 
     Gedim::OpenVolumeMeshInterface ovmInterface;
 
-    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.ConvertOVMMesh(GedimUnitTesting::OVM_Mesh_Mock::FileLines());
-    ovmInterface.ConvertGedimMesh(ovm_mesh,
+    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.StringsToOVMMesh(GedimUnitTesting::OVM_Mesh_Mock::FileLines());
+    ovmInterface.OVMMeshToMeshDAO(ovm_mesh,
                                   meshDao,
                                   meshCell3DsFacesOrientation);
 
@@ -828,8 +828,23 @@ namespace GedimUnitTesting
     EXPECT_EQ(1575,
               meshDao.Cell3DTotalNumber());
 
-    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.ConvertOVMMesh(meshDao,
-                                                                                                     meshCell3DsFacesOrientation);
+    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.MeshDAOToOVMMesh(meshDao,
+                                                                                                       meshCell3DsFacesOrientation);
+
+    ASSERT_EQ(ovm_mesh.NumCell0Ds, reconverted_ovm_mesh.NumCell0Ds);
+    ASSERT_EQ(ovm_mesh.NumCell1Ds, reconverted_ovm_mesh.NumCell1Ds);
+    ASSERT_EQ(ovm_mesh.NumCell2Ds, reconverted_ovm_mesh.NumCell2Ds);
+    ASSERT_EQ(ovm_mesh.NumCell3Ds, reconverted_ovm_mesh.NumCell3Ds);
+    ASSERT_EQ(ovm_mesh.Cell0Ds, reconverted_ovm_mesh.Cell0Ds);
+    ASSERT_EQ(ovm_mesh.Cell1Ds, reconverted_ovm_mesh.Cell1Ds);
+    ASSERT_EQ(ovm_mesh.Cell2Ds, reconverted_ovm_mesh.Cell2Ds);
+    for (unsigned int p = 0; p < ovm_mesh.NumCell3Ds; p++)
+    {
+      ASSERT_EQ(ovm_mesh.Cell3Ds[p].FacesIndex, reconverted_ovm_mesh.Cell3Ds[p].FacesIndex);
+      ASSERT_EQ(ovm_mesh.Cell3Ds[p].FacesOrientation, reconverted_ovm_mesh.Cell3Ds[p].FacesOrientation);
+    }
+
+    const std::vector<std::string> reconverted_lines = ovmInterface.OVMMeshToStrings(reconverted_ovm_mesh);
   }
 }
 
