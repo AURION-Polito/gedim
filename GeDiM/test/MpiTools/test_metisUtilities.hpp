@@ -1036,6 +1036,8 @@ namespace UnitTesting
 
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
   {
+    GTEST_SKIP();
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -1058,10 +1060,93 @@ namespace UnitTesting
 
     const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO);
 
+    std::vector<unsigned int> numPartions(100), askPartitions(100);
+    for (unsigned int p = 1; p <= 100; p++)
+    {
+      Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+      partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+      partitionOptions.MasterWeight = 100;
+      partitionOptions.NumberOfParts = (meshDAO.Cell3DTotalNumber() * p) / 100;
+
+      askPartitions[p - 1] = partitionOptions.NumberOfParts;
+
+      std::cout<< "Partitioning with "<< askPartitions[p - 1]<< std::endl;
+      const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                                                   meshToNetwork.Network);
+
+      const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                                                            partitions);
+
+      const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                                                            fix_constraints_partitions);
+
+
+      numPartions[p - 1] = (*std::max_element(begin(fix_connectedComponents_partitions),
+                                              end(fix_connectedComponents_partitions)) + 1);
+      std::cout<< "Partitioned with "<< numPartions[p - 1]<< std::endl;
+    }
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_OVM";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    ofstream file(exportFolder + "/data.csv");
+    file<< "askPartions"<< ",";
+    file<< "numPartions"<< endl;
+
+    for (unsigned int p = 1; p <= 100; p++)
+    {
+      file<< askPartitions[p - 1]<< ",";
+      file<< numPartions[p - 1]<< endl;
+    }
+
+    file.close();
+  }
+
+  TEST(TestMetisUtilities, TestNetworkPartition_ExportMesh3D)
+  {
+    GTEST_SKIP();
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::GraphUtilities graphUtilities;
+    Gedim::MetisUtilities metisUtilities;
+
+    std::vector<std::vector<bool>> meshCell3DsFacesOrientation;
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDAO(mesh);
+
+    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+    meshImporterConfiguration.Folder = "/home/geoscore/Downloads/METIS_TEST/conformed";
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+    Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
+    importer.Import(meshImporterConfiguration,
+                    meshDAO);
+
+    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_ExportMesh3D";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    meshUtilities.ExportMeshToVTU(meshDAO,
+                                  exportFolder,
+                                  "ImportedMesh");
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
+    const Gedim::MeshUtilities::MeshGeometricData3D geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                          meshDAO);
+
+
+    meshUtilities.ExportMeshToOpenVolume(meshDAO,
+                                         geometricData.Cell3DsFacesNormalDirections,
+                                         exportFolder + "/mesh3D.ovm");
+
+    const Gedim::MetisUtilities::MeshToNetwork meshToNetwork = metisUtilities.Mesh3DToDualGraph(meshDAO);
+
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
     partitionOptions.MasterWeight = 100;
-    partitionOptions.NumberOfParts = 400;
+    partitionOptions.NumberOfParts = 3;
 
     const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
                                                                                  meshToNetwork.Network);
@@ -1071,10 +1156,6 @@ namespace UnitTesting
 
     const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
                                                                                                                           fix_constraints_partitions);
-
-
-    std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_Mesh3D_DualGraph_OVM";
-    Gedim::Output::CreateFolder(exportFolder);
 
     {
       Eigen::MatrixXd graphVertices = Eigen::MatrixXd::Zero(3, meshDAO.Cell3DTotalNumber());
