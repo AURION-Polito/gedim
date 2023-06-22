@@ -98,6 +98,7 @@ namespace Gedim
               std::vector<std::vector<bool>> EdgesDirection;
               std::vector<Eigen::MatrixXd> EdgesNormal;
               std::vector<Eigen::VectorXd> EdgesLength;
+              std::vector<std::vector<unsigned int>> EdgesAligned;
               std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
               std::vector<Eigen::Matrix3d> Inertia;
               std::vector<Eigen::MatrixXd> UnalignedVertices;
@@ -109,6 +110,7 @@ namespace Gedim
           struct Cell1D_GeometricData final
           {
               std::vector<double> Quality;
+              std::vector<unsigned int> Aligned;
           };
 
           Cell1D_GeometricData Cell1Ds;
@@ -202,6 +204,7 @@ namespace Gedim
                                                          const Eigen::Vector3d& lineTangent,
                                                          const Eigen::Vector3d& lineOrigin,
                                                          const std::vector<double>& cell1DsQuality,
+                                                         const std::vector<unsigned int>& cell1DsAligned,
                                                          const double& cell1DsQualityWeight,
                                                          const Eigen::VectorXd& cell2DEdgesLength,
                                                          const std::vector<bool>& cell2DEdgesDirection,
@@ -229,6 +232,7 @@ namespace Gedim
                                                                             const Eigen::VectorXd& cell2DEdgesLength,
                                                                             const double& cell1DsQualityWeight,
                                                                             const double& cell1DQuality,
+                                                                            const unsigned int& cell1DAligned,
                                                                             const IMeshDAO& mesh) const;
   };
 

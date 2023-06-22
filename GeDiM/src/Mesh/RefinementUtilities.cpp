@@ -474,6 +474,7 @@ namespace Gedim
                                                                                                                   const Eigen::VectorXd& cell2DEdgesLength,
                                                                                                                   const double& cell1DsQualityWeight,
                                                                                                                   const double& cell1DQuality,
+                                                                                                                  const unsigned int& cell1DAligned,
                                                                                                                   const IMeshDAO& mesh) const
   {
     RefinePolygon_Result::Cell1DToSplit result;
@@ -671,6 +672,7 @@ namespace Gedim
                                                                                                const Eigen::Vector3d& lineTangent,
                                                                                                const Eigen::Vector3d& lineOrigin,
                                                                                                const std::vector<double>& cell1DsQuality,
+                                                                                               const std::vector<unsigned int>& cell1DsAligned,
                                                                                                const double& cell1DsQualityWeight,
                                                                                                const Eigen::VectorXd& cell2DEdgesLength,
                                                                                                const std::vector<bool>& cell2DEdgesDirection,
@@ -758,6 +760,7 @@ namespace Gedim
                                                                                                      cell2DEdgesLength,
                                                                                                      cell1DsQualityWeight,
                                                                                                      cell1DsQuality[cell1DIndexOne],
+                                                                                                     cell1DsAligned[cell1DIndexOne],
                                                                                                      mesh);
     const RefinePolygon_Result::Cell1DToSplit createNewVertexTwo = RefinePolygonCell_IsCell1DToSplit(cell1DIndexTwo,
                                                                                                      cell2DIndex,
@@ -766,6 +769,7 @@ namespace Gedim
                                                                                                      cell2DEdgesLength,
                                                                                                      cell1DsQualityWeight,
                                                                                                      cell1DsQuality[cell1DIndexTwo],
+                                                                                                     cell1DsAligned[cell1DIndexTwo],
                                                                                                      mesh);
 
     result.Cell1DsToSplit.reserve(2);
