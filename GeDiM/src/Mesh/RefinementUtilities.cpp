@@ -386,6 +386,7 @@ namespace Gedim
     geometricData.Cell2Ds.EdgesLength.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Triangulations.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Inertia.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.UnalignedVerticesIndex.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.UnalignedVertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.UnalignedEdgesLength.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.InRadius.resize(mesh.Cell2DTotalNumber());
@@ -403,11 +404,12 @@ namespace Gedim
       std::vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = geometricData.Cell2Ds.Triangulations.at(cell2DIndex);
       Eigen::Vector3d& convexCell2DCentroid = geometricData.Cell2Ds.Centroid.at(cell2DIndex);
       Eigen::MatrixXd& convexCell2DUnalignedVertices = geometricData.Cell2Ds.UnalignedVertices.at(cell2DIndex);
+      std::vector<unsigned int>& convexCell2DUnalignedVerticesFilter = geometricData.Cell2Ds.UnalignedVerticesIndex.at(cell2DIndex);
 
       convexCell2DVertices = mesh.Cell2DVerticesCoordinates(cell2DIndex);
 
       // compute original cell2D triangulation
-      const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+      convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
       convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexCell2DVertices,
                                                                       convexCell2DUnalignedVerticesFilter);
 

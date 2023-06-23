@@ -92,25 +92,25 @@ namespace Gedim
       {
           struct Cell2D_GeometricData final
           {
-              std::vector<Eigen::MatrixXd> Vertices;
-              std::vector<double> Area;
-              std::vector<Eigen::Vector3d> Centroid;
-              std::vector<std::vector<bool>> EdgesDirection;
-              std::vector<Eigen::MatrixXd> EdgesNormal;
-              std::vector<Eigen::VectorXd> EdgesLength;
-              std::vector<std::vector<unsigned int>> EdgesAligned;
-              std::vector<std::vector<Eigen::Matrix3d>> Triangulations;
-              std::vector<Eigen::Matrix3d> Inertia;
-              std::vector<Eigen::MatrixXd> UnalignedVertices;
-              std::vector<Eigen::VectorXd> UnalignedEdgesLength;
-              std::vector<double> InRadius;
-              std::vector<double> Quality;
+              std::vector<std::vector<unsigned int>> UnalignedVerticesIndex = {};
+              std::vector<Eigen::MatrixXd> Vertices = {};
+              std::vector<double> Area = {};
+              std::vector<Eigen::Vector3d> Centroid = {};
+              std::vector<std::vector<bool>> EdgesDirection = {};
+              std::vector<Eigen::MatrixXd> EdgesNormal = {};
+              std::vector<Eigen::VectorXd> EdgesLength = {};
+              std::vector<std::vector<Eigen::Matrix3d>> Triangulations = {};
+              std::vector<Eigen::Matrix3d> Inertia = {};
+              std::vector<Eigen::MatrixXd> UnalignedVertices = {};
+              std::vector<Eigen::VectorXd> UnalignedEdgesLength = {};
+              std::vector<double> InRadius = {};
+              std::vector<double> Quality = {};
           };
 
           struct Cell1D_GeometricData final
           {
-              std::vector<double> Quality;
-              std::vector<unsigned int> Aligned;
+              std::vector<double> Quality = {};
+              std::vector<unsigned int> Aligned = {};
           };
 
           Cell1D_GeometricData Cell1Ds;
