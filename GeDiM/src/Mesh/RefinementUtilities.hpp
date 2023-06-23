@@ -232,7 +232,7 @@ namespace Gedim
                                                                             const Eigen::VectorXd& cell2DEdgesLength,
                                                                             const double& cell1DsQualityWeight,
                                                                             const double& cell1DQuality,
-                                                                            const unsigned int& cell1DAligned,
+                                                                            const std::vector<unsigned int>& cell1DsAligned,
                                                                             const IMeshDAO& mesh) const;
   };
 

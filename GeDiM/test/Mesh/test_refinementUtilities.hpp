@@ -217,7 +217,10 @@ namespace GedimUnitTesting
     const std::vector<double> cell2DsQualityParameter = { meshGeometricData.Cell2DsEdgeLengths[0].minCoeff() };
     const double cell1DsQualityWeight = 1.0;
     const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), cell2DsQualityParameter[0]);
-    const std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber(), 0);
+    std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber());
+    std::iota(std::begin(cell1DsAligned),
+              std::end(cell1DsAligned),
+              0);
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 1.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
@@ -285,7 +288,10 @@ namespace GedimUnitTesting
                                                           meshGeometricData.Cell2DsEdgeLengths[1].minCoeff() };
     const double cell1DsQualityWeight = 1.0;
     const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), 0.0);
-    const std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber(), 0);
+    std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber());
+    std::iota(std::begin(cell1DsAligned),
+              std::end(cell1DsAligned),
+              0);
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-1.0, 0.5, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.5, 0.0);
@@ -353,7 +359,10 @@ namespace GedimUnitTesting
                                                           meshGeometricData.Cell2DsEdgeLengths[1].minCoeff() };
     const double cell1DsQualityWeight = 1.0;
     const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), 0.0);
-    const std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber(), 0);
+    std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber());
+    std::iota(std::begin(cell1DsAligned),
+              std::end(cell1DsAligned),
+              0);
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 1.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
@@ -421,7 +430,10 @@ namespace GedimUnitTesting
                                                           meshGeometricData.Cell2DsEdgeLengths[1].minCoeff() };
     const double cell1DsQualityWeight = 1.0;
     const std::vector<double> cell1DsQualityParameter(meshDAO.Cell1DTotalNumber(), 0.0);
-    const std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber(), 0);
+    std::vector<unsigned int> cell1DsAligned(meshDAO.Cell1DTotalNumber());
+    std::iota(std::begin(cell1DsAligned),
+              std::end(cell1DsAligned),
+              0);
 
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(0.5, 0.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
