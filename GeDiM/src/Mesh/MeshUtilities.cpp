@@ -2640,7 +2640,7 @@ namespace Gedim
                                                                             0.0;
         }
 
-        properties[2 + p] = {
+        properties[3 + p] = {
           mesh.Cell0DDoublePropertyId(p),
           Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
@@ -2699,7 +2699,7 @@ namespace Gedim
                                                                             0.0;
         }
 
-        properties[2 + p] = {
+        properties[3 + p] = {
           mesh.Cell1DDoublePropertyId(p),
           Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
@@ -2759,7 +2759,7 @@ namespace Gedim
                                                                             0.0;
         }
 
-        properties[2 + p] = {
+        properties[3 + p] = {
           mesh.Cell2DDoublePropertyId(p),
           Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
@@ -2819,7 +2819,7 @@ namespace Gedim
                                                                             0.0;
         }
 
-        properties[2 + p] = {
+        properties[3 + p] = {
           mesh.Cell3DDoublePropertyId(p),
           Gedim::VTPProperty::Formats::Cells,
           static_cast<unsigned int>(propertyValues[p].size()),
