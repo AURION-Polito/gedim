@@ -509,7 +509,7 @@ namespace Gedim
       return result;
 
     // check if the edge quality is enough
-    result.IsQualityEnough = geometryUtilities.IsValue1DGreater(0.5 * cell2DEdgesLength[edgeIntersection.Index],
+    result.IsQualityEnough = geometryUtilities.IsValue1DGreaterOrEqual(0.5 * cell2DEdgesLength[edgeIntersection.Index],
         cell1DsQualityWeight * cell1DQuality);
 
     if (!result.IsQualityEnough)
@@ -796,10 +796,10 @@ namespace Gedim
         !createNewVertexTwo.IsToSplit)
     {
       // no new vertices
-      const unsigned int fromVertex = edgeIntersectionOne.CurvilinearCoordinate <= 0.5 ?
+      const unsigned int fromVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate) ?
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
-      const unsigned int toVertex = edgeIntersectionTwo.CurvilinearCoordinate <= 0.5 ?
+      const unsigned int toVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate) ?
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
@@ -833,7 +833,7 @@ namespace Gedim
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-      const unsigned int toVertex = edgeIntersectionTwo.CurvilinearCoordinate <= 0.5 ?
+      const unsigned int toVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate) ?
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
@@ -879,7 +879,7 @@ namespace Gedim
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-      const unsigned int fromVertex = edgeIntersectionOne.CurvilinearCoordinate <= 0.5 ?
+      const unsigned int fromVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate) ?
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
 
