@@ -109,10 +109,10 @@ namespace Gedim
       for (const Connection& connection : verticesConnections[v])
       {
         unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell3DIndex) : 1;
-        network.EdgesWeight[counter++] =
-            constraints.find(std::make_pair(v, connection.Cell3DIndex)) != constraints.end() ?
-                                                                             1 :
-                                                                             weight + numEdges;
+        network.EdgesWeight[counter++] = !checkConstraints ? weight :
+                                                             (constraints.find(std::make_pair(v, connection.Cell3DIndex)) != constraints.end() ?
+                                                                                                                               1 :
+                                                                                                                               weight + numEdges);
       }
     }
 
@@ -283,10 +283,10 @@ namespace Gedim
       for (const Connection& connection : verticesConnections[v])
       {
         unsigned int weight = (weights.size() > 0) ? weights.coeff(v, connection.Cell2DIndex) : 1;
-        network.EdgesWeight[counter++] =
-            constraints.find(std::make_pair(v, connection.Cell2DIndex)) != constraints.end() ?
-                                                                             1 :
-                                                                             weight + numEdges;
+        network.EdgesWeight[counter++] = !checkConstraints ? weight :
+                                                             (constraints.find(std::make_pair(v, connection.Cell2DIndex)) != constraints.end() ?
+                                                                                                                               1 :
+                                                                                                                               weight + numEdges);
       }
     }
 
