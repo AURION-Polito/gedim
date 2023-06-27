@@ -333,9 +333,9 @@ namespace Gedim
     const NetworkPartitionOptions::PartitionTypes& metisDivisionType = options.PartitionType;
 
     idx_t nCon = 1;
-    idx_t* vwgt = NULL, *adjwgt = NULL;
-    idx_t* v_size = NULL;
-    real_t* tpwgts = NULL, *ubvec = NULL;
+    idx_t* vwgt = nullptr, *adjwgt = nullptr;
+    idx_t* v_size = nullptr;
+    real_t* tpwgts = nullptr, *ubvec = nullptr;
     idx_t metisOptions[METIS_NOPTIONS];
 
     /// <li> Build adjncy and xadj for METIS partition
@@ -357,13 +357,27 @@ namespace Gedim
         if (network.NodesWeight.size() > 0)
         {
           vwgt = new idx_t[numberElements];
-          memcpy(vwgt, network.NodesWeight.data(), sizeof(idx_t) * numberElements);
+          memcpy(vwgt,
+                 network.NodesWeight.data(),
+                 sizeof(idx_t) * numberElements);
+
+          const idx_t smallestWeight = *std::min_element(vwgt,
+                                                         vwgt + numberElements);
+          if (smallestWeight < 0)
+            throw std::runtime_error("NodesWeight are too large");
         }
 
         if (network.EdgesWeight.size() > 0)
         {
           adjwgt = new idx_t[numberConnections];
-          memcpy(adjwgt, network.EdgesWeight.data(), sizeof(idx_t)*numberConnections);
+          memcpy(adjwgt,
+                 network.EdgesWeight.data(),
+                 sizeof(idx_t) * numberConnections);
+
+          const idx_t smallestWeight = *std::min_element(adjwgt,
+                                                         adjwgt + numberConnections);
+          if (smallestWeight < 0)
+            throw std::runtime_error("EdgesWeight are too large");
         }
       }
         break;
@@ -374,7 +388,14 @@ namespace Gedim
         if (network.NodesWeight.size() > 0)
         {
           v_size = new idx_t[numberElements];
-          memcpy(v_size, network.NodesWeight.data(), sizeof(idx_t) * numberElements);
+          memcpy(v_size,
+                 network.NodesWeight.data(),
+                 sizeof(idx_t) * numberElements);
+
+          const idx_t smallestWeight = *std::min_element(v_size,
+                                                         v_size + numberElements);
+          if (smallestWeight < 0)
+            throw std::runtime_error("NodesWeight are too large");
         }
       }
         break;
@@ -427,14 +448,20 @@ namespace Gedim
     if(objval == 0)
     {
       if (masterWeight == 0)
-        std::fill_n(partition.data(), nElements, 1);
+        std::fill_n(partition.data(),
+                    nElements,
+                    1);
       else
-        std::fill_n(partition.data(), nElements, 0);
+        std::fill_n(partition.data(),
+                    nElements,
+                    0);
     }
     else
     {
       if (masterWeight > 0)
-        memcpy(partition.data(), metisPartition.data(), numberElements * sizeof(unsigned int));
+        memcpy(partition.data(),
+               metisPartition.data(),
+               numberElements * sizeof(unsigned int));
       else
       {
         for (unsigned int p = 0; p < numberElements; p++)
@@ -449,22 +476,24 @@ namespace Gedim
 #endif
 
     // Reordering partition vector
-    unsigned int controlActivation=(masterWeight>0) ? 0 : 1;
+    unsigned int controlActivation=(masterWeight > 0) ? 0 : 1;
     bool control =false;
     unsigned int loop=0;
     while (!control)
     {
-      if (find(partition.begin(),partition.end(),controlActivation)==partition.end())
+      if (find(partition.begin(),
+               partition.end(),
+               controlActivation)==partition.end())
       {
         for (unsigned int p = 0; p < numberElements; p++)
         {
-          if(controlActivation<partition[p])
+          if (controlActivation<partition[p])
             partition[p] = partition[p] - 1;
         }
       }
-      else{
+      else
         controlActivation++;
-      }
+
       loop++;
       control = (loop==numberParts) ? true : false ;
     }
