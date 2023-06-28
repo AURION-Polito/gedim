@@ -512,7 +512,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 1.0;
+    const double cell1DsQualityWeight = 1.1;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(1.0, 0.0, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
@@ -550,8 +550,8 @@ namespace GedimUnitTesting
                                   "Mesh_Refined");
 
     EXPECT_EQ(8, meshDAO.Cell0DTotalNumber());
-    EXPECT_EQ(10, meshDAO.Cell1DTotalNumber());
-    EXPECT_EQ(3, meshDAO.Cell2DTotalNumber());
+    EXPECT_EQ(11, meshDAO.Cell1DTotalNumber());
+    EXPECT_EQ(4, meshDAO.Cell2DTotalNumber());
   }
 
   TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NewVertexOne)
@@ -590,7 +590,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 1.0;
+    const double cell1DsQualityWeight = 1.1;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-0.5, -0.05, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.55, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
@@ -668,7 +668,7 @@ namespace GedimUnitTesting
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
-    const double cell1DsQualityWeight = 1.0;
+    const double cell1DsQualityWeight = 1.1;
     const Eigen::Vector3d lineTangent = Eigen::Vector3d(-0.5, 0.04, 0.0).normalized();
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.51, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
@@ -864,7 +864,7 @@ namespace GedimUnitTesting
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
-    const double cell1DsQualityWeight = 1.0;
+    const double cell1DsQualityWeight = 1.01;
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 
@@ -1086,7 +1086,7 @@ namespace GedimUnitTesting
 
       const unsigned int seed = 10;
       const unsigned int maxRefinements = 6;
-      const double cell1DsQualityWeight = 0.5;
+      const double cell1DsQualityWeight = 0.51;
 
       Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData = refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
 

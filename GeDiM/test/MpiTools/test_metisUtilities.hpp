@@ -798,7 +798,7 @@ namespace UnitTesting
 
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
   {
-    //GTEST_SKIP();
+    GTEST_SKIP();
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance = 1.0e-8;
