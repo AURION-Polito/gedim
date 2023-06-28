@@ -798,7 +798,7 @@ namespace UnitTesting
 
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
   {
-    GTEST_SKIP();
+    //GTEST_SKIP();
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance = 1.0e-8;
@@ -812,7 +812,7 @@ namespace UnitTesting
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDAO(mesh);
 
-    meshUtilities.ImportOpenVolumeMesh("/home/geoscore/Dropbox/Polito/Articles/GE_MESH_3D/NumericalTests/Tet_poisson_2/tet_poisson_2.ovm",
+    meshUtilities.ImportOpenVolumeMesh("/home/geoscore/Dropbox/Polito/Articles/GE_MESH_3D/NumericalTests/Tet_poisson_5/tet_poisson_5.ovm",
                                        meshDAO,
                                        meshCell3DsFacesOrientation);
 
@@ -826,7 +826,7 @@ namespace UnitTesting
     {
       list<Eigen::Triplet<unsigned int>> triplets;
 
-      Gedim::FileReader fileReader("/home/geoscore/Dropbox/Polito/Articles/GE_MESH_3D/NumericalTests/Tet_poisson_2/weights.txt");
+      Gedim::FileReader fileReader("/home/geoscore/Dropbox/Polito/Articles/GE_MESH_3D/NumericalTests/Tet_poisson_5/weights.txt");
       fileReader.Open();
 
       std::vector<string> lines;
