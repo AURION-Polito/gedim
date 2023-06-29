@@ -48,6 +48,23 @@ namespace Gedim
 
         return indices;
       }
+
+      /// \brief  Compute the regression line slope of points (x,y).
+      /// \param  x_begin  Start of x range.
+      /// \param  y_begin  Start of y range.
+      /// \param  n the number of points
+      /// \return  The slope.
+      template<typename _InputIterator>
+      static double Slope(_InputIterator x_begin,
+                          _InputIterator y_begin,
+                          const unsigned int& n)
+      {
+        const auto s_x  = std::accumulate(x_begin, x_begin + n, 0.0);
+        const auto s_y  = std::accumulate(y_begin, y_begin + n, 0.0);
+        const auto s_xx = std::inner_product(x_begin, x_begin + n, x_begin, 0.0);
+        const auto s_xy = std::inner_product(x_begin, x_begin + n, y_begin, 0.0);
+        return (n * s_xy - s_x * s_y) / (n * s_xx - s_x * s_x);
+      }
   };
 }
 
