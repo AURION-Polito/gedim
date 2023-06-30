@@ -103,6 +103,7 @@ namespace Gedim
               std::vector<Eigen::Matrix3d> Inertia = {};
               std::vector<Eigen::MatrixXd> UnalignedVertices = {};
               std::vector<Eigen::VectorXd> UnalignedEdgesLength = {};
+              std::vector<Eigen::VectorXd> CentroidEdgesDistance = {};
               std::vector<double> InRadius = {};
               std::vector<double> Quality = {};
           };

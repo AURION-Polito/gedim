@@ -589,10 +589,12 @@ namespace GedimUnitTesting
                                                                                   polygonArea);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
 
+        const Eigen::VectorXd polygonCentroidEdgesDistance = geometryUtilities.PolygonCentroidEdgesDistance(polygonVertices,
+                                                                                                            polygonCentroid,
+                                                                                                            polygonEdgeNormals);
+
         ASSERT_DOUBLE_EQ(sqrt(1.0 / 18.0),
-                         geometryUtilities.PolygonInRadius(polygonVertices,
-                                                           polygonCentroid,
-                                                           polygonEdgeNormals));
+                         geometryUtilities.PolygonInRadius(polygonCentroidEdgesDistance));
       }
 
       // check in radius of reference quadrilateral 2D
@@ -606,11 +608,12 @@ namespace GedimUnitTesting
         const Eigen::Vector3d polygonCentroid = geometryUtilities.PolygonCentroid(polygonVertices,
                                                                                   polygonArea);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
+        const Eigen::VectorXd polygonCentroidEdgesDistance = geometryUtilities.PolygonCentroidEdgesDistance(polygonVertices,
+                                                                                                            polygonCentroid,
+                                                                                                            polygonEdgeNormals);
 
         ASSERT_DOUBLE_EQ(0.5,
-                         geometryUtilities.PolygonInRadius(polygonVertices,
-                                                           polygonCentroid,
-                                                           polygonEdgeNormals));
+                         geometryUtilities.PolygonInRadius(polygonCentroidEdgesDistance));
       }
 
       // check in radius of reference triangle 2D with aligned edges
@@ -625,10 +628,12 @@ namespace GedimUnitTesting
         const Eigen::Vector3d polygonCentroid(1.0 / 3.0, 1.0 / 3.0, 0.0);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
 
+        const Eigen::VectorXd polygonCentroidEdgesDistance = geometryUtilities.PolygonCentroidEdgesDistance(polygonVertices,
+                                                                                                            polygonCentroid,
+                                                                                                            polygonEdgeNormals);
+
         ASSERT_DOUBLE_EQ(sqrt(1.0 / 18.0),
-                         geometryUtilities.PolygonInRadius(polygonVertices,
-                                                           polygonCentroid,
-                                                           polygonEdgeNormals));
+                         geometryUtilities.PolygonInRadius(polygonCentroidEdgesDistance));
       }
     }
     catch (const exception& exception)
@@ -725,9 +730,11 @@ namespace GedimUnitTesting
         const Eigen::Vector3d polygonCentroid = geometryUtilities.PolygonCentroid(polygonVertices,
                                                                                   polygonArea);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
-        const double polygonInRadius = geometryUtilities.PolygonInRadius(polygonVertices,
-                                                                         polygonCentroid,
-                                                                         polygonEdgeNormals);
+        const Eigen::VectorXd polygonCentroidEdgesDistance = geometryUtilities.PolygonCentroidEdgesDistance(polygonVertices,
+                                                                                                            polygonCentroid,
+                                                                                                            polygonEdgeNormals);
+
+        const double polygonInRadius = geometryUtilities.PolygonInRadius(polygonCentroidEdgesDistance);
         const double polygonDiameter = geometryUtilities.PolygonDiameter(polygonVertices);
 
         ASSERT_DOUBLE_EQ(sqrt(2.0) / (2.0 * sqrt(1.0 / 18.0)),
@@ -746,9 +753,11 @@ namespace GedimUnitTesting
         const Eigen::Vector3d polygonCentroid = geometryUtilities.PolygonCentroid(polygonVertices,
                                                                                   polygonArea);
         const Eigen::MatrixXd polygonEdgeNormals = geometryUtilities.PolygonEdgeNormals(polygonVertices);
-        const double polygonInRadius = geometryUtilities.PolygonInRadius(polygonVertices,
-                                                                         polygonCentroid,
-                                                                         polygonEdgeNormals);
+        const Eigen::VectorXd polygonCentroidEdgesDistance = geometryUtilities.PolygonCentroidEdgesDistance(polygonVertices,
+                                                                                                            polygonCentroid,
+                                                                                                            polygonEdgeNormals);
+
+        const double polygonInRadius = geometryUtilities.PolygonInRadius(polygonCentroidEdgesDistance);
         const double polygonDiameter = geometryUtilities.PolygonDiameter(polygonVertices);
 
         ASSERT_DOUBLE_EQ(sqrt(2.0),
