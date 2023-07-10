@@ -43,6 +43,17 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  bool RefinementUtilities::SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
+                                                   IMeshDAO& mesh) const
+  {
+    Eigen::MatrixXd polygon_vertices(3, newCell2DVertices.size());
+
+    for (unsigned int v = 0; v < newCell2DVertices.size(); v++)
+      polygon_vertices.col(v)<< mesh.Cell0DCoordinates(newCell2DVertices[v]);
+
+    return !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea(polygon_vertices));
+  }
+  // ***************************************************************************
   RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
                                                                                            const unsigned int cell2DNumVertices,
                                                                                            const unsigned int& fromVertex,
@@ -81,6 +92,21 @@ namespace Gedim
         v++;
       }
       subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
+    }
+
+    // Check split areas
+    if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
+    }
+
+    if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
     }
 
     // Create new cell1D from vertex to vertex
@@ -174,6 +200,21 @@ namespace Gedim
 
       v++;
       subCells[1](0, v) = fromNewCell0DIndex;
+    }
+
+    // Check split areas
+    if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
+    }
+
+    if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
     }
 
     // Create new cell1D from new vertex to vertex
@@ -271,6 +312,21 @@ namespace Gedim
         v++;
       }
       subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
+    }
+
+    // Check split areas
+    if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
+    }
+
+    if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
     }
 
     // Create new cell1D from vertex to new vertex
@@ -374,6 +430,21 @@ namespace Gedim
       subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromEdge);
       v++;
       subCells[1](0, v) = fromNewCell0DIndex;
+    }
+
+    // Check split areas
+    if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
+    }
+
+    if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
+                               mesh))
+    {
+      result.Type = SplitPolygon_Result::Types::NoSplit;
+      return result;
     }
 
     // Create new cell1D from new vertex to new vertex

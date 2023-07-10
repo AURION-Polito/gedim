@@ -139,6 +139,9 @@ namespace Gedim
       SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
                                                  IMeshDAO& mesh) const;
 
+      bool SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
+                                  IMeshDAO& mesh) const;
+
       SplitPolygon_Result SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
                                                      const unsigned int& fromVertex,
