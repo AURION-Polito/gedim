@@ -96,14 +96,14 @@ namespace Gedim
 
     // Check split areas
     if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
     }
 
     if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
@@ -204,14 +204,14 @@ namespace Gedim
 
     // Check split areas
     if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
     }
 
     if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
@@ -316,14 +316,14 @@ namespace Gedim
 
     // Check split areas
     if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
     }
 
     if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
@@ -434,14 +434,14 @@ namespace Gedim
 
     // Check split areas
     if (!SplitPolygon_CheckArea(subCells[0].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
     }
 
     if (!SplitPolygon_CheckArea(subCells[1].row(0).transpose(),
-                               mesh))
+                                mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
       return result;
@@ -794,6 +794,15 @@ namespace Gedim
                                                                      splitCell1D.NewCell1DsIndex,
                                                                      cell1DDirection,
                                                                      mesh);
+    switch (splitResult.Type)
+    {
+      case SplitPolygon_Result::Types::Unknown:
+        throw std::runtime_error("Unknown SplitPolygon_Result Type");
+      case SplitPolygon_Result::Types::NoSplit:
+        return result;
+      default:
+        break;
+    }
 
     result.Cell1DsToSplit.resize(1);
     result.Cell1DsToSplit[0].IsIntersectionInside = true;
@@ -995,6 +1004,16 @@ namespace Gedim
                                                                          toVertex,
                                                                          mesh);
 
+      switch (splitResult.Type)
+      {
+        case SplitPolygon_Result::Types::Unknown:
+          throw std::runtime_error("Unknown SplitPolygon_Result Type");
+        case SplitPolygon_Result::Types::NoSplit:
+          return result;
+        default:
+          break;
+      }
+
       result.NewCell1DsIndex.resize(1);
       result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
       result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
@@ -1033,6 +1052,19 @@ namespace Gedim
                                                                          splitCell1DOne.NewCell1DsIndex,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
                                                                          mesh);
+
+      switch (splitResult.Type)
+      {
+        case SplitPolygon_Result::Types::Unknown:
+          throw std::runtime_error("Unknown SplitPolygon_Result Type");
+        case SplitPolygon_Result::Types::NoSplit:
+          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
+          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
+          mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+          return result;
+        default:
+          break;
+      }
 
       result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex };
 
@@ -1080,6 +1112,19 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
 
+      switch (splitResult.Type)
+      {
+        case SplitPolygon_Result::Types::Unknown:
+          throw std::runtime_error("Unknown SplitPolygon_Result Type");
+        case SplitPolygon_Result::Types::NoSplit:
+          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
+          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
+          mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
+          return result;
+        default:
+          break;
+      }
+
       result.NewCell0DsIndex = { splitCell1DTwo.NewCell0DIndex };
 
       result.NewCell1DsIndex.resize(2);
@@ -1117,6 +1162,21 @@ namespace Gedim
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                        mesh);
 
+      switch (splitResult.Type)
+      {
+        case SplitPolygon_Result::Types::Unknown:
+          throw std::runtime_error("Unknown SplitPolygon_Result Type");
+        case SplitPolygon_Result::Types::NoSplit:
+          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
+          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
+          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
+          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
+          mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
+          mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+          return result;
+        default:
+          break;
+      }
 
       result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex,
                                  splitCell1DTwo.NewCell0DIndex };
