@@ -1330,7 +1330,6 @@ namespace Gedim
 
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the polygon area
-      /// \warning works only for convex polygons
       double PolygonArea3D(const Eigen::MatrixXd& polygonVertices) const;
 
 

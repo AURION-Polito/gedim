@@ -788,8 +788,11 @@ namespace GedimUnitTesting
 
         vector<unsigned int> polygonTriangulation = geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices);
 
-        double area = geometryUtilities.PolygonArea(polygonVertices);
+        const double area = geometryUtilities.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 0.5);
+
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area3D, 0.5);
 
         vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                                           polygonTriangulation);
@@ -816,6 +819,9 @@ namespace GedimUnitTesting
         double area = geometryUtilities.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.0);
 
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area3D, 1.0);
+
         vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                                           polygonTriangulation);
 
@@ -839,6 +845,9 @@ namespace GedimUnitTesting
 
         double area = geometryUtilities.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.850000000000000e+01);
+
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area3D, 1.850000000000000e+01);
 
         vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                                           polygonTriangulation);
@@ -864,6 +873,9 @@ namespace GedimUnitTesting
         double area = geometryUtilities.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
 
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area3D, 1.511000000000000e+01);
+
         vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                                           polygonTriangulation);
 
@@ -887,6 +899,9 @@ namespace GedimUnitTesting
 
         double area = geometryUtilities.PolygonArea(polygonVertices);
         ASSERT_DOUBLE_EQ(area, 1.511000000000000e+01);
+
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area3D, 1.511000000000000e+01);
 
         vector<Eigen::Matrix3d> polygonTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                                           polygonTriangulation);
@@ -1031,6 +1046,13 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), 1.0);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), 1.0);
         ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), 1.0);
+
+        const Eigen::MatrixXd polygonVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(polygonVertices,
+                                                                                           rotationMatrix.transpose(),
+                                                                                           translation);
+        const double area2D = geometryUtilities.PolygonArea(polygonVertices2D);
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area2D, area3D);
       }
 
       // check rotation matrix of polygon 3D
@@ -1053,6 +1075,13 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), -7.0710678118654724e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386313e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), 5.7735026918962651e-01);
+
+        const Eigen::MatrixXd polygonVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(polygonVertices,
+                                                                                           rotationMatrix.transpose(),
+                                                                                           translation);
+        const double area2D = geometryUtilities.PolygonArea(polygonVertices2D);
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area2D, area3D);
       }
 
       // check rotation matrix of other polygon 3D
@@ -1074,6 +1103,13 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(rotationMatrix(0, 0), -5.551115123125783e-17);
         ASSERT_DOUBLE_EQ(rotationMatrix(1, 1), -4.0824829046386296e-01);
         ASSERT_DOUBLE_EQ(rotationMatrix(2, 2), -5.7735026918962562e-01);
+
+        const Eigen::MatrixXd polygonVertices2D = geometryUtilities.RotatePointsFrom3DTo2D(polygonVertices,
+                                                                                           rotationMatrix.transpose(),
+                                                                                           translation);
+        const double area2D = geometryUtilities.PolygonArea(polygonVertices2D);
+        const double area3D = geometryUtilities.PolygonArea3D(polygonVertices);
+        ASSERT_DOUBLE_EQ(area2D, area3D);
       }
     }
     catch (const exception& exception)

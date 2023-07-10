@@ -51,7 +51,7 @@ namespace Gedim
     for (unsigned int v = 0; v < newCell2DVertices.size(); v++)
       polygon_vertices.col(v)<< mesh.Cell0DCoordinates(newCell2DVertices[v]);
 
-    return !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea(polygon_vertices));
+    return !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea3D(polygon_vertices));
   }
   // ***************************************************************************
   RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,

@@ -1179,7 +1179,7 @@ namespace Gedim
     const unsigned int& numVertices = polygonVertices.cols();
 
     for (unsigned int v = 0; v < numVertices; v++)
-      crossProduct += polygonVertices.col(v).cross(polygonVertices.col((v + 1) % numVertices));
+      crossProduct += Eigen::Vector3d(polygonVertices.col(v)).cross(Eigen::Vector3d(polygonVertices.col((v + 1) % numVertices)));
 
     return 0.5 * crossProduct.norm();
   }
