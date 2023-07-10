@@ -139,6 +139,43 @@ namespace Gedim
   {
     SplitPolygon_Result result;
 
+    // Create new polygons list
+    std::list<unsigned int> firstPolygonIndices;
+    std::list<unsigned int> secondPolygonIndices;
+
+    for (unsigned int v = 0; ((fromEdge + 1 + v) % cell2DNumVertices) != toVertex; v++)
+      firstPolygonIndices.push_back((fromEdge + 1 + v) % cell2DNumVertices);
+    for (unsigned int v = 0; ((toVertex + v) % cell2DNumVertices) != fromEdge; v++)
+      secondPolygonIndices.push_back((toVertex + v) % cell2DNumVertices);
+
+    // Create sub-cells vertices
+    std::vector<Eigen::MatrixXi> subCells(2);
+    subCells[0].resize(2, firstPolygonIndices.size() + 2);
+    subCells[1].resize(2, secondPolygonIndices.size() + 2);
+
+    {
+      unsigned int v = 0;
+      subCells[0](0, v) = fromNewCell0DIndex;
+      v++;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toVertex);
+
+      v = 0;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromEdge);
+
+      v++;
+      subCells[1](0, v) = fromNewCell0DIndex;
+    }
+
     // Create new cell1D from new vertex to vertex
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
@@ -149,45 +186,29 @@ namespace Gedim
     mesh.Cell1DSetState(newCell1DIndex, true);
     mesh.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
 
-    // Create new polygons list
-    std::list<unsigned int> firstPolygonIndices;
-    std::list<unsigned int> secondPolygonIndices;
-
-    for (unsigned int v = 0; ((fromEdge + 1 + v) % cell2DNumVertices) != toVertex; v++)
-      firstPolygonIndices.push_back((fromEdge + 1 + v) % cell2DNumVertices);
-    for (unsigned int v = 0; ((toVertex + v) % cell2DNumVertices) != fromEdge; v++)
-      secondPolygonIndices.push_back((toVertex + v) % cell2DNumVertices);
-
-    // Split cell2D into sub-cells
-    std::vector<Eigen::MatrixXi> subCells(2);
-
-    subCells[0].resize(2, firstPolygonIndices.size() + 2);
-    unsigned int v = 0;
-    subCells[0](0, v) = fromNewCell0DIndex;
-    subCells[0](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[1] : fromSplitCell1DsIndex[0];
-    v++;
-    for (const unsigned int& index : firstPolygonIndices)
+    // Create sub-cells edges
     {
-      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      unsigned int v = 0;
+      subCells[0](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[1] : fromSplitCell1DsIndex[0];
       v++;
-    }
-    subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toVertex);
-    subCells[0](1, v) = newCell1DIndex;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](1, v) = newCell1DIndex;
 
-    subCells[1].resize(2, secondPolygonIndices.size() + 2);
-    v = 0;
-    for (const unsigned int& index : secondPolygonIndices)
-    {
-      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      v = 0;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[0] : fromSplitCell1DsIndex[1];
       v++;
+
+      subCells[1](1, v) = newCell1DIndex;
     }
-    subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromEdge);
-    subCells[1](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[0] : fromSplitCell1DsIndex[1];
-    v++;
-    subCells[1](0, v) = fromNewCell0DIndex;
-    subCells[1](1, v) = newCell1DIndex;
 
     result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
                                                        subCells,
@@ -216,6 +237,42 @@ namespace Gedim
   {
     SplitPolygon_Result result;
 
+    // Create new polygons list
+    std::list<unsigned int> firstPolygonIndices;
+    std::list<unsigned int> secondPolygonIndices;
+
+    for (unsigned int v = 0; ((fromVertex + v) % cell2DNumVertices) != toEdge; v++)
+      firstPolygonIndices.push_back((fromVertex + v) % cell2DNumVertices);
+    for (unsigned int v = 0; ((toEdge + 1 + v) % cell2DNumVertices) != fromVertex; v++)
+      secondPolygonIndices.push_back((toEdge + 1 + v) % cell2DNumVertices);
+
+    // Create sub-cells vertices
+    std::vector<Eigen::MatrixXi> subCells(2);
+    subCells[0].resize(2, firstPolygonIndices.size() + 2);
+    subCells[1].resize(2, secondPolygonIndices.size() + 2);
+
+    {
+      unsigned int v = 0;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toEdge);
+      v++;
+      subCells[0](0, v) = toNewCell0DIndex;
+
+      v = 0;
+      subCells[1](0, v) = toNewCell0DIndex;
+      v++;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
+    }
+
     // Create new cell1D from vertex to new vertex
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
@@ -226,45 +283,28 @@ namespace Gedim
     mesh.Cell1DSetState(newCell1DIndex, true);
     mesh.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
 
-    // Create new polygons list
-    std::list<unsigned int> firstPolygonIndices;
-    std::list<unsigned int> secondPolygonIndices;
-
-    for (unsigned int v = 0; ((fromVertex + v) % cell2DNumVertices) != toEdge; v++)
-      firstPolygonIndices.push_back((fromVertex + v) % cell2DNumVertices);
-    for (unsigned int v = 0; ((toEdge + 1 + v) % cell2DNumVertices) != fromVertex; v++)
-      secondPolygonIndices.push_back((toEdge + 1 + v) % cell2DNumVertices);
-
-    // Split cell2D into sub-cells
-    std::vector<Eigen::MatrixXi> subCells(2);
-
-    subCells[0].resize(2, firstPolygonIndices.size() + 2);
-    unsigned int v = 0;
-    for (const unsigned int& index : firstPolygonIndices)
+    // Create sub-cells edges
     {
-      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      unsigned int v = 0;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](1, v) = toEdgeDirection ? toSplitCell1DsIndex[0] : toSplitCell1DsIndex[1];
       v++;
-    }
-    subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toEdge);
-    subCells[0](1, v) = toEdgeDirection ? toSplitCell1DsIndex[0] : toSplitCell1DsIndex[1];
-    v++;
-    subCells[0](0, v) = toNewCell0DIndex;
-    subCells[0](1, v) = newCell1DIndex;
+      subCells[0](1, v) = newCell1DIndex;
 
-    subCells[1].resize(2, secondPolygonIndices.size() + 2);
-    v = 0;
-    subCells[1](0, v) = toNewCell0DIndex;
-    subCells[1](1, v) = toEdgeDirection ? toSplitCell1DsIndex[1] : toSplitCell1DsIndex[0];
-    v++;
-    for (const unsigned int& index : secondPolygonIndices)
-    {
-      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      v = 0;
+      subCells[1](1, v) = toEdgeDirection ? toSplitCell1DsIndex[1] : toSplitCell1DsIndex[0];
       v++;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](1, v) = newCell1DIndex;
     }
-    subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
-    subCells[1](1, v) = newCell1DIndex;
 
     result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
                                                        subCells,
@@ -296,6 +336,46 @@ namespace Gedim
   {
     SplitPolygon_Result result;
 
+    // Create new polygons list
+    std::list<unsigned int> firstPolygonIndices;
+    std::list<unsigned int> secondPolygonIndices;
+
+    for (unsigned int v = 0; ((fromEdge + 1 + v) % cell2DNumVertices) != toEdge; v++)
+      firstPolygonIndices.push_back((fromEdge + 1 + v) % cell2DNumVertices);
+    for (unsigned int v = 0; ((toEdge + 1 + v) % cell2DNumVertices) != fromEdge; v++)
+      secondPolygonIndices.push_back((toEdge + 1 + v) % cell2DNumVertices);
+
+    // Create sub-cells vertices
+    std::vector<Eigen::MatrixXi> subCells(2);
+    subCells[0].resize(2, firstPolygonIndices.size() + 3);
+    subCells[1].resize(2, secondPolygonIndices.size() + 3);
+
+    {
+      unsigned int v = 0;
+      subCells[0](0, v) = fromNewCell0DIndex;
+      v++;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toEdge);
+      v++;
+      subCells[0](0, v) = toNewCell0DIndex;
+
+      v = 0;
+      subCells[1](0, v) = toNewCell0DIndex;
+      v++;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromEdge);
+      v++;
+      subCells[1](0, v) = fromNewCell0DIndex;
+    }
+
     // Create new cell1D from new vertex to new vertex
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
@@ -306,51 +386,32 @@ namespace Gedim
     mesh.Cell1DSetState(newCell1DIndex, true);
     mesh.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
 
-    // Create new polygons list
-    std::list<unsigned int> firstPolygonIndices;
-    std::list<unsigned int> secondPolygonIndices;
-
-    for (unsigned int v = 0; ((fromEdge + 1 + v) % cell2DNumVertices) != toEdge; v++)
-      firstPolygonIndices.push_back((fromEdge + 1 + v) % cell2DNumVertices);
-    for (unsigned int v = 0; ((toEdge + 1 + v) % cell2DNumVertices) != fromEdge; v++)
-      secondPolygonIndices.push_back((toEdge + 1 + v) % cell2DNumVertices);
-
-    // Split cell2D into sub-cells
-    std::vector<Eigen::MatrixXi> subCells(2);
-
-    subCells[0].resize(2, firstPolygonIndices.size() + 3);
-    unsigned int v = 0;
-    subCells[0](0, v) = fromNewCell0DIndex;
-    subCells[0](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[1] : fromSplitCell1DsIndex[0];
-    v++;
-    for (const unsigned int& index : firstPolygonIndices)
+    // Create sub-cells edges
     {
-      subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      unsigned int v = 0;
+      subCells[0](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[1] : fromSplitCell1DsIndex[0];
       v++;
-    }
-    subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toEdge);
-    subCells[0](1, v) = toEdgeDirection ? toSplitCell1DsIndex[0] : toSplitCell1DsIndex[1];
-    v++;
-    subCells[0](0, v) = toNewCell0DIndex;
-    subCells[0](1, v) = newCell1DIndex;
+      for (const unsigned int& index : firstPolygonIndices)
+      {
+        subCells[0](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[0](1, v) = toEdgeDirection ? toSplitCell1DsIndex[0] : toSplitCell1DsIndex[1];
+      v++;
+      subCells[0](1, v) = newCell1DIndex;
 
-    subCells[1].resize(2, secondPolygonIndices.size() + 3);
-    v = 0;
-    subCells[1](0, v) = toNewCell0DIndex;
-    subCells[1](1, v) = toEdgeDirection ? toSplitCell1DsIndex[1] : toSplitCell1DsIndex[0];
-    v++;
-    for (const unsigned int& index : secondPolygonIndices)
-    {
-      subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, index);
-      subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+      v = 0;
+      subCells[1](1, v) = toEdgeDirection ? toSplitCell1DsIndex[1] : toSplitCell1DsIndex[0];
       v++;
+      for (const unsigned int& index : secondPolygonIndices)
+      {
+        subCells[1](1, v) = mesh.Cell2DEdge(cell2DIndex, index);
+        v++;
+      }
+      subCells[1](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[0] : fromSplitCell1DsIndex[1];
+      v++;
+      subCells[1](1, v) = newCell1DIndex;
     }
-    subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromEdge);
-    subCells[1](1, v) = fromEdgeDirection ? fromSplitCell1DsIndex[0] : fromSplitCell1DsIndex[1];
-    v++;
-    subCells[1](0, v) = fromNewCell0DIndex;
-    subCells[1](1, v) = newCell1DIndex;
 
     result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
                                                        subCells,
