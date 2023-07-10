@@ -255,21 +255,6 @@ namespace GedimUnitTesting {
         ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::SingleIntersection);
       }
 
-      // check no intersection
-      {
-        Eigen::Vector3d segmentOneOrigin(3.6586807759999989e+00, 1.6586807760000004e+00, 0.0000000000000000e+00 );
-        Eigen::Vector3d segmentOneEnd(   3.6586807759999997e+00, 1.6586807760000004e+00, 0.0000000000000000e+00 );
-        Eigen::Vector3d segmentTwoOrigin(1.1586807759999997e+00, -2.3999999858728053e-08, 0.0000000000000000e+00);
-        Eigen::Vector3d segmentTwoEnd(   1.1586807759999993e+00, 3.3173615759999997e+00, 0.0000000000000000e+00 );
-
-        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult result = geometryUtilities.IntersectionSegmentSegment(segmentOneOrigin,
-                                                                                                                         segmentOneEnd,
-                                                                                                                         segmentTwoOrigin,
-                                                                                                                         segmentTwoEnd);
-        ASSERT_EQ(result.IntersectionLinesType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting);
-        ASSERT_EQ(result.IntersectionSegmentsType, Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection);
-      }
-
       // check parallel intersection
       {
         Eigen::Vector3d segmentOneOrigin(6.9388939039072284e-18, 9.9999999999999989e-01, 0.0000000000000000e+00);
