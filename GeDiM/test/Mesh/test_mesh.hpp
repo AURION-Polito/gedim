@@ -281,10 +281,13 @@ namespace GedimUnitTesting
     ASSERT_EQ(mesh.Mesh.Cell0DMarkers, importedMesh.Cell0DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell0D, importedMesh.ActiveCell0D);
     ASSERT_EQ(mesh.Mesh.Cell0DDoublePropertyIds, importedMesh.Cell0DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.UpdatedCell0Ds, importedMesh.UpdatedCell0Ds);
     ASSERT_EQ(mesh.Mesh.NumberCell1D, importedMesh.NumberCell1D);
     ASSERT_EQ(mesh.Mesh.Cell1DMarkers, importedMesh.Cell1DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell1D, importedMesh.ActiveCell1D);
     ASSERT_EQ(mesh.Mesh.Cell1DDoublePropertyIds, importedMesh.Cell1DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.UpdatedCell1Ds, importedMesh.UpdatedCell1Ds);
+    ASSERT_EQ(mesh.Mesh.Cell1DOriginalCell1Ds, importedMesh.Cell1DOriginalCell1Ds);
     ASSERT_EQ(mesh.Mesh.NumberCell2D, importedMesh.NumberCell2D);
     ASSERT_EQ(mesh.Mesh.NumberCell2DVertices, importedMesh.NumberCell2DVertices);
     ASSERT_EQ(mesh.Mesh.Cell2DVertices, importedMesh.Cell2DVertices);
@@ -295,10 +298,13 @@ namespace GedimUnitTesting
     ASSERT_EQ(mesh.Mesh.Cell2DMarkers, importedMesh.Cell2DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell2D, importedMesh.ActiveCell2D);
     ASSERT_EQ(mesh.Mesh.Cell2DDoublePropertyIds, importedMesh.Cell2DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.UpdatedCell2Ds, importedMesh.UpdatedCell2Ds);
+    ASSERT_EQ(mesh.Mesh.Cell2DOriginalCell2Ds, importedMesh.Cell2DOriginalCell2Ds);
     ASSERT_EQ(mesh.Mesh.NumberCell3D, importedMesh.NumberCell3D);
     ASSERT_EQ(mesh.Mesh.Cell3DMarkers, importedMesh.Cell3DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell3D, importedMesh.ActiveCell3D);
     ASSERT_EQ(mesh.Mesh.Cell3DDoublePropertyIds, importedMesh.Cell3DDoublePropertyIds);
+    ASSERT_EQ(mesh.Mesh.UpdatedCell3Ds, importedMesh.UpdatedCell3Ds);
   }
 
   TEST(TestMesh, MeshDAOImporter2DFromCsv)

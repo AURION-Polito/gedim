@@ -29,6 +29,10 @@ namespace Gedim
     Gedim::FileReader csvCell1DNeighboursFile(configuration.Folder + "/" + configuration.FileCell1DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell2DNeighboursFile(configuration.Folder + "/" + configuration.FileCell2DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell2DSubDivisionsFile(configuration.Folder + "/" + configuration.FileCell2DSubDivisionsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell0DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell0DUpdatedCellsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell1DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell1DUpdatedCellsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell2DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell2DUpdatedCellsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell3DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell3DUpdatedCellsName + "." + configuration.FileExtension);
 
     vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile,
                                                                            configuration.Separator);
@@ -110,6 +114,27 @@ namespace Gedim
     utilities.ConvertCell2DSubDivisions(cell2DSubDivisions,
                                         mesh);
 
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell0DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell1DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell2DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell3DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell3DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    utilities.ConvertCell0DUpdatedCells(cell0DUpdatedCells,
+                                        mesh);
+    utilities.ConvertCell1DUpdatedCells(cell1DUpdatedCells,
+                                        mesh);
+    utilities.ConvertCell2DUpdatedCells(cell2DUpdatedCells,
+                                        mesh);
+    utilities.ConvertCell3DUpdatedCells(cell3DUpdatedCells,
+                                        mesh);
+
     mesh.Compress();
   }
   // ***************************************************************************
@@ -125,6 +150,9 @@ namespace Gedim
     Gedim::FileReader csvCell0DNeighboursFile(configuration.Folder + "/" + configuration.FileCell0DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell1DNeighboursFile(configuration.Folder + "/" + configuration.FileCell1DNeighboursName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell2DSubDivisionsFile(configuration.Folder + "/" + configuration.FileCell2DSubDivisionsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell0DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell0DUpdatedCellsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell1DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell1DUpdatedCellsName + "." + configuration.FileExtension);
+    Gedim::FileReader csvCell2DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell2DUpdatedCellsName + "." + configuration.FileExtension);
 
     vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile,
                                                                            configuration.Separator);
@@ -173,6 +201,22 @@ namespace Gedim
     vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions = utilities.ImportCell2DSubDivision(csvCell2DSubDivisionsFile,
                                                                                                            configuration.Separator);
     utilities.ConvertCell2DSubDivisions(cell2DSubDivisions,
+                                        mesh);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell0DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell1DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell2DUpdatedCellsFile,
+                                                                                                         configuration.Separator);
+
+    utilities.ConvertCell0DUpdatedCells(cell0DUpdatedCells,
+                                        mesh);
+    utilities.ConvertCell1DUpdatedCells(cell1DUpdatedCells,
+                                        mesh);
+    utilities.ConvertCell2DUpdatedCells(cell2DUpdatedCells,
                                         mesh);
 
     mesh.Compress();

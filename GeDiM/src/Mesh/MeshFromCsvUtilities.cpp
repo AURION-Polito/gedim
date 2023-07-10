@@ -484,6 +484,106 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const vector<CellUpdatedCells> cell0DUpdatedCells,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numCellUpdatedCells = cell0DUpdatedCells.size();
+
+    if (numCellUpdatedCells == 0)
+      return;
+
+    for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); c++)
+    {
+      const MeshFromCsvUtilities::CellUpdatedCells& cellUpdatedCells = cell0DUpdatedCells[c];
+
+      const unsigned int numUpdatedCells = cellUpdatedCells.UpdatedCells.size();
+
+      if (numUpdatedCells == 0)
+        continue;
+
+      for (unsigned int nuc = 0; nuc < numUpdatedCells; nuc++)
+      {
+        mesh.Cell0DInsertUpdatedCell0D(cellUpdatedCells.Id,
+                                       cellUpdatedCells.UpdatedCells[nuc]);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const vector<CellUpdatedCells> cell1DUpdatedCells,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numCellUpdatedCells = cell1DUpdatedCells.size();
+
+    if (numCellUpdatedCells == 0)
+      return;
+
+    for (unsigned int c = 0; c < mesh.Cell1DTotalNumber(); c++)
+    {
+      const MeshFromCsvUtilities::CellUpdatedCells& cellUpdatedCells = cell1DUpdatedCells[c];
+
+      const unsigned int numUpdatedCells = cellUpdatedCells.UpdatedCells.size();
+
+      if (numUpdatedCells == 0)
+        continue;
+
+      for (unsigned int nuc = 0; nuc < numUpdatedCells; nuc++)
+      {
+        mesh.Cell1DInsertUpdatedCell1D(cellUpdatedCells.Id,
+                                       cellUpdatedCells.UpdatedCells[nuc]);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const vector<CellUpdatedCells> cell2DUpdatedCells,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numCellUpdatedCells = cell2DUpdatedCells.size();
+
+    if (numCellUpdatedCells == 0)
+      return;
+
+    for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)
+    {
+      const MeshFromCsvUtilities::CellUpdatedCells& cellUpdatedCells = cell2DUpdatedCells[c];
+
+      const unsigned int numUpdatedCells = cellUpdatedCells.UpdatedCells.size();
+
+      if (numUpdatedCells == 0)
+        continue;
+
+      for (unsigned int nuc = 0; nuc < numUpdatedCells; nuc++)
+      {
+        mesh.Cell2DInsertUpdatedCell2D(cellUpdatedCells.Id,
+                                       cellUpdatedCells.UpdatedCells[nuc]);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const vector<CellUpdatedCells> cell3DUpdatedCells,
+                                                       IMeshDAO& mesh) const
+  {
+    const unsigned int numCellUpdatedCells = cell3DUpdatedCells.size();
+
+    if (numCellUpdatedCells == 0)
+      return;
+
+    for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
+    {
+      const MeshFromCsvUtilities::CellUpdatedCells& cellUpdatedCells = cell3DUpdatedCells[c];
+
+      const unsigned int numUpdatedCells = cellUpdatedCells.UpdatedCells.size();
+
+      if (numUpdatedCells == 0)
+        continue;
+
+      for (unsigned int nuc = 0; nuc < numUpdatedCells; nuc++)
+      {
+        mesh.Cell3DInsertUpdatedCell3D(cellUpdatedCells.Id,
+                                       cellUpdatedCells.UpdatedCells[nuc]);
+      }
+    }
+  }
+  // ***************************************************************************
   vector<MeshFromCsvUtilities::Cell0D> MeshFromCsvUtilities::ImportCell0Ds(IFileReader& csvFileReader,
                                                                            const char& separator) const
   {
@@ -797,7 +897,51 @@ namespace Gedim
   vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellUpdatedCells(IFileReader& csvFileReader,
                                                                                               const char& separator) const
   {
+    vector<MeshFromCsvUtilities::CellUpdatedCells> cellsUpdatedCells;
 
+    /// Import cellsUpdatedCells
+    {
+      vector<string> cellsLines;
+
+      if (!csvFileReader.Open())
+        return cellsUpdatedCells;
+
+      csvFileReader.GetAllLines(cellsLines);
+      csvFileReader.Close();
+
+      unsigned int numCellUpdatedCells = cellsLines.size() - 1;
+
+      if (numCellUpdatedCells > 0)
+      {
+        cellsUpdatedCells.resize(numCellUpdatedCells);
+        for (unsigned int p = 0; p < numCellUpdatedCells; p++)
+        {
+          CellUpdatedCells& cellUpdatedCells = cellsUpdatedCells[p];
+
+          istringstream converter(cellsLines[p + 1]);
+
+          char temp;
+          converter >> cellUpdatedCells.Id;
+          if (separator != ' ')
+            converter >> temp;
+
+          unsigned int numUpdatedCells;
+          converter >> numUpdatedCells;
+          if (separator != ' ')
+            converter >> temp;
+
+          cellUpdatedCells.UpdatedCells.resize(numUpdatedCells);
+          for (unsigned int v = 0; v < numUpdatedCells; v++)
+          {
+            converter >> cellUpdatedCells.UpdatedCells[v];
+            if (separator != ' ')
+              converter >> temp;
+          }
+        }
+      }
+    }
+
+    return cellsUpdatedCells;
   }
   // ***************************************************************************
   vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::ImportCellProperty(IFileReader& csvFileReader, const char& separator) const

@@ -206,6 +206,27 @@ namespace Gedim
       void ConvertCell3DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties,
                                          IMeshDAO& mesh) const;
 
+      /// \brief Convert the imported Cell0D updated cells to mesh
+      /// \param cell0DUpdatedCells the container of cell0D updated cells
+      /// \param mesh the mesh
+      void ConvertCell0DUpdatedCells(const vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells,
+                                     IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell1D updated cells to mesh
+      /// \param cell1DUpdatedCells the container of cell1D updated cells
+      /// \param mesh the mesh
+      void ConvertCell1DUpdatedCells(const vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells,
+                                     IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell2D updated cells to mesh
+      /// \param cell2DUpdatedCells the container of cell2D updated cells
+      /// \param mesh the mesh
+      void ConvertCell2DUpdatedCells(const vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells,
+                                     IMeshDAO& mesh) const;
+      /// \brief Convert the imported Cell3D updated cells to mesh
+      /// \param cell3DUpdatedCells the container of cell3D updated cells
+      /// \param mesh the mesh
+      void ConvertCell3DUpdatedCells(const vector<MeshFromCsvUtilities::CellUpdatedCells> cell3DUpdatedCells,
+                                     IMeshDAO& mesh) const;
+
       /// \brief Import Cell0Ds; format: Id, Marker, Active, X, Y, Z
       /// \param csvFileReader the file reader
       /// \param separator the file separator
