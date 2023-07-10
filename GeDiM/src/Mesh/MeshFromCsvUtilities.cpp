@@ -1616,7 +1616,7 @@ namespace Gedim
                                                       const char& separator,
                                                       const IMeshDAO& mesh) const
   {
-    /// Export Cell2D Neigbours
+    /// Export Cell2D SubDivisions
     ofstream fileCell2DSubDivisions;
 
     fileCell2DSubDivisions.open(filePath);
@@ -1639,6 +1639,158 @@ namespace Gedim
     }
 
     fileCell2DSubDivisions.close();
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const string& filePath,
+                                                      const char& separator,
+                                                      const IMeshDAO& mesh) const
+  {
+    /// Export Cell0D Updated Cells
+    ofstream fileCell0DUpdatedCells;
+
+    fileCell0DUpdatedCells.open(filePath);
+    fileCell0DUpdatedCells.precision(16);
+
+    if (fileCell0DUpdatedCells.fail())
+      throw runtime_error("Error on mesh cell0DUpdatedCells file");
+
+    fileCell0DUpdatedCells<< "Id"<< separator;
+    fileCell0DUpdatedCells<< "NumUpdatedCell0Ds"<< separator;
+    fileCell0DUpdatedCells<< "UpdatedCell0Ds"<< endl;
+    for (unsigned int f = 0; f < mesh.Cell0DTotalNumber(); f++)
+    {
+      fileCell0DUpdatedCells<< scientific<< f<< separator;
+
+      if (!mesh.Cell0DHasUpdatedCell0Ds(f))
+      {
+        fileCell0DUpdatedCells<< scientific<< 0<< endl;
+        continue;
+      }
+
+      std::list<unsigned int> updatedCells;
+      mesh.Cell0DUpdatedCell0Ds(f, updatedCells);
+
+      fileCell0DUpdatedCells<< scientific<< updatedCells.size();
+      for (const unsigned int& updatedCell : updatedCells)
+        fileCell0DUpdatedCells<< scientific<< separator<< updatedCell;
+      fileCell0DUpdatedCells<< endl;
+    }
+
+    fileCell0DUpdatedCells.close();
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const string& filePath,
+                                                      const char& separator,
+                                                      const IMeshDAO& mesh) const
+  {
+    /// Export Cell1D Updated Cells
+    ofstream fileCell1DUpdatedCells;
+
+    fileCell1DUpdatedCells.open(filePath);
+    fileCell1DUpdatedCells.precision(16);
+
+    if (fileCell1DUpdatedCells.fail())
+      throw runtime_error("Error on mesh cell1DUpdatedCells file");
+
+    fileCell1DUpdatedCells<< "Id"<< separator;
+    fileCell1DUpdatedCells<< "NumUpdatedCell1Ds"<< separator;
+    fileCell1DUpdatedCells<< "UpdatedCell1Ds"<< endl;
+    for (unsigned int f = 0; f < mesh.Cell1DTotalNumber(); f++)
+    {
+      fileCell1DUpdatedCells<< scientific<< f<< separator;
+
+      if (mesh.Cell1DHasUpdatedCell1Ds(f))
+      {
+        fileCell1DUpdatedCells<< scientific<< 0<< endl;
+        continue;
+      }
+
+      std::list<unsigned int> updatedCells;
+      mesh.Cell1DUpdatedCell1Ds(f, updatedCells);
+
+      fileCell1DUpdatedCells<< scientific<< updatedCells.size();
+      for (const unsigned int& updatedCell : updatedCells)
+        fileCell1DUpdatedCells<< scientific<< separator<< updatedCell;
+      fileCell1DUpdatedCells<< endl;
+    }
+
+    fileCell1DUpdatedCells.close();
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const string& filePath,
+                                                      const char& separator,
+                                                      const IMeshDAO& mesh) const
+  {
+    /// Export Cell2D Updated Cells
+    ofstream fileCell2DUpdatedCells;
+
+    fileCell2DUpdatedCells.open(filePath);
+    fileCell2DUpdatedCells.precision(16);
+
+    if (fileCell2DUpdatedCells.fail())
+      throw runtime_error("Error on mesh cell2DUpdatedCells file");
+
+    fileCell2DUpdatedCells<< "Id"<< separator;
+    fileCell2DUpdatedCells<< "NumUpdatedCell2Ds"<< separator;
+    fileCell2DUpdatedCells<< "UpdatedCell2Ds"<< endl;
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
+    {
+      fileCell2DUpdatedCells<< scientific<< f<< separator;
+
+      if (mesh.Cell2DHasUpdatedCell2Ds(f))
+      {
+        fileCell2DUpdatedCells<< scientific<< 0<< endl;
+        continue;
+      }
+
+      std::list<unsigned int> updatedCells;
+      mesh.Cell2DUpdatedCell2Ds(f, updatedCells);
+
+      fileCell2DUpdatedCells<< scientific<< updatedCells.size();
+      for (const unsigned int& updatedCell : updatedCells)
+        fileCell2DUpdatedCells<< scientific<< separator<< updatedCell;
+      fileCell2DUpdatedCells<< endl;
+    }
+
+    fileCell2DUpdatedCells.close();
+  }
+  // ***************************************************************************
+  void MeshFromCsvUtilities::ExportCell3DUpdatedCells(const string& filePath,
+                                                      const char& separator,
+                                                      const IMeshDAO& mesh) const
+  {
+    /// Export Cell3D Updated Cells
+    ofstream fileCell3DUpdatedCells;
+
+    fileCell3DUpdatedCells.open(filePath);
+    fileCell3DUpdatedCells.precision(16);
+
+    if (fileCell3DUpdatedCells.fail())
+      throw runtime_error("Error on mesh cell3DUpdatedCells file");
+
+    fileCell3DUpdatedCells<< "Id"<< separator;
+    fileCell3DUpdatedCells<< "NumUpdatedCell3Ds"<< separator;
+    fileCell3DUpdatedCells<< "UpdatedCell3Ds"<< endl;
+    for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
+    {
+      fileCell3DUpdatedCells<< scientific<< f<< separator;
+
+      if (mesh.Cell3DHasUpdatedCell3Ds(f))
+      {
+        fileCell3DUpdatedCells<< scientific<< 0<< endl;
+        continue;
+      }
+
+      std::list<unsigned int> updatedCells;
+      mesh.Cell3DUpdatedCell3Ds(f, updatedCells);
+
+      fileCell3DUpdatedCells<< scientific<< updatedCells.size();
+      for (const unsigned int& updatedCell : updatedCells)
+        fileCell3DUpdatedCells<< scientific<< separator<< updatedCell;
+      fileCell3DUpdatedCells<< endl;
+    }
+
+    fileCell3DUpdatedCells.close();
   }
   // ***************************************************************************
 }

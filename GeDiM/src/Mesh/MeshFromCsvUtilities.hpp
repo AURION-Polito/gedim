@@ -28,6 +28,10 @@ namespace Gedim
           string FileCell2DPropertiesName = "Cell2DProperties";
           string FileCell3DPropertiesName = "Cell3DProperties";
           string FileCell2DSubDivisionsName = "Cell2DSubDivisions";
+          string FileCell0DUpdatedCellsName = "Cell0DUpdatedCells";
+          string FileCell1DUpdatedCellsName = "Cell1DUpdatedCells";
+          string FileCell2DUpdatedCellsName = "Cell2DUpdatedCells";
+          string FileCell3DUpdatedCellsName = "Cell3DUpdatedCells";
           char Separator = ';';
           string FileExtension = "csv";
       };
@@ -379,6 +383,35 @@ namespace Gedim
       /// \param separator the file separator
       /// \param mesh the mesh to be exported
       void ExportCell2DSubDivisions(const string& filePath,
+                                    const char& separator,
+                                    const IMeshDAO& mesh) const;
+
+      /// \brief Export Cell0DUpdatedCells; format: Id, NumUpdatedCell0Ds, UpdatedCell0Ds
+      /// \param filePath the path of the file
+      /// \param separator the file separator
+      /// \param mesh the mesh to be exported
+      void ExportCell0DUpdatedCells(const string& filePath,
+                                    const char& separator,
+                                    const IMeshDAO& mesh) const;
+      /// \brief Export Cell1DUpdatedCells; format: Id, NumUpdatedCell1Ds, UpdatedCell1Ds
+      /// \param filePath the path of the file
+      /// \param separator the file separator
+      /// \param mesh the mesh to be exported
+      void ExportCell1DUpdatedCells(const string& filePath,
+                                    const char& separator,
+                                    const IMeshDAO& mesh) const;
+      /// \brief Export Cell2DUpdatedCells; format: Id, NumUpdatedCell2Ds, UpdatedCell2Ds
+      /// \param filePath the path of the file
+      /// \param separator the file separator
+      /// \param mesh the mesh to be exported
+      void ExportCell2DUpdatedCells(const string& filePath,
+                                    const char& separator,
+                                    const IMeshDAO& mesh) const;
+      /// \brief Export Cell3DUpdatedCells; format: Id, NumUpdatedCell3Ds, UpdatedCell3Ds
+      /// \param filePath the path of the file
+      /// \param separator the file separator
+      /// \param mesh the mesh to be exported
+      void ExportCell3DUpdatedCells(const string& filePath,
                                     const char& separator,
                                     const IMeshDAO& mesh) const;
   };

@@ -81,6 +81,27 @@ namespace Gedim
                                        configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
+
+    utilities.ExportCell0DUpdatedCells(configuration.Folder + "/" +
+                                       configuration.FileCell0DUpdatedCellsName + "." +
+                                       configuration.FileExtension,
+                                       configuration.Separator,
+                                       mesh);
+    utilities.ExportCell1DUpdatedCells(configuration.Folder + "/" +
+                                       configuration.FileCell1DUpdatedCellsName + "." +
+                                       configuration.FileExtension,
+                                       configuration.Separator,
+                                       mesh);
+    utilities.ExportCell2DUpdatedCells(configuration.Folder + "/" +
+                                       configuration.FileCell2DUpdatedCellsName + "." +
+                                       configuration.FileExtension,
+                                       configuration.Separator,
+                                       mesh);
+    utilities.ExportCell3DUpdatedCells(configuration.Folder + "/" +
+                                       configuration.FileCell3DUpdatedCellsName + "." +
+                                       configuration.FileExtension,
+                                       configuration.Separator,
+                                       mesh);
   }
   // ***************************************************************************
 }

@@ -249,6 +249,10 @@ namespace GedimUnitTesting
     MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
+    meshDao.Cell0DInsertUpdatedCell0D(1, 0);
+    meshDao.Cell1DInsertUpdatedCell1D(2, 1);
+    meshDao.Cell2DInsertUpdatedCell2D(3, 2);
+
     string exportFolder = "./Export";
     Gedim::Output::CreateFolder(exportFolder);
     exportFolder = exportFolder + "/TestImportExportMesh2D";
