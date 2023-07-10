@@ -1699,7 +1699,7 @@ namespace Gedim
     {
       fileCell1DUpdatedCells<< scientific<< f<< separator;
 
-      if (mesh.Cell1DHasUpdatedCell1Ds(f))
+      if (!mesh.Cell1DHasUpdatedCell1Ds(f))
       {
         fileCell1DUpdatedCells<< scientific<< 0<< endl;
         continue;
@@ -1737,7 +1737,7 @@ namespace Gedim
     {
       fileCell2DUpdatedCells<< scientific<< f<< separator;
 
-      if (mesh.Cell2DHasUpdatedCell2Ds(f))
+      if (!mesh.Cell2DHasUpdatedCell2Ds(f))
       {
         fileCell2DUpdatedCells<< scientific<< 0<< endl;
         continue;
@@ -1775,7 +1775,7 @@ namespace Gedim
     {
       fileCell3DUpdatedCells<< scientific<< f<< separator;
 
-      if (mesh.Cell3DHasUpdatedCell3Ds(f))
+      if (!mesh.Cell3DHasUpdatedCell3Ds(f))
       {
         fileCell3DUpdatedCells<< scientific<< 0<< endl;
         continue;
