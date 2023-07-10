@@ -1170,6 +1170,20 @@ namespace Gedim
                   xPoints.segment(1, numVertices).dot(yPoints.segment(0, numVertices)));
   }
   // ***************************************************************************
+  double GeometryUtilities::PolygonArea3D(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.cols() > 2);
+
+    Eigen::Vector3d crossProduct = Eigen::Vector3d::Zero();
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    for (unsigned int v = 0; v < numVertices; v++)
+      crossProduct += polygonVertices.col(v).cross(polygonVertices.col((v + 1) % numVertices));
+
+    return 0.5 * crossProduct.norm();
+  }
+  // ***************************************************************************
   Matrix3d GeometryUtilities::PolygonInertia(const Eigen::Vector3d& polygonCentroid,
                                              const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints) const
   {

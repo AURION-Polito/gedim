@@ -1326,8 +1326,12 @@ namespace Gedim
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the polygon area
       /// \note the polygon shall be 2D
-      /// \warning works only for convex polygons
       double PolygonArea(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \return the polygon area
+      /// \warning works only for convex polygons
+      double PolygonArea3D(const Eigen::MatrixXd& polygonVertices) const;
 
 
       /// \param polygonCentroid the centroid
