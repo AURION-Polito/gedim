@@ -794,6 +794,12 @@ namespace Gedim
     return cellProperties;
   }
   // ***************************************************************************
+  vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellUpdatedCells(IFileReader& csvFileReader,
+                                                                                              const char& separator) const
+  {
+
+  }
+  // ***************************************************************************
   vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::ImportCellProperty(IFileReader& csvFileReader, const char& separator) const
   {
     vector<MeshFromCsvUtilities::CellDoubleProperty::Value> cellPropertyValues;
@@ -1655,8 +1661,8 @@ namespace Gedim
       throw runtime_error("Error on mesh cell0DUpdatedCells file");
 
     fileCell0DUpdatedCells<< "Id"<< separator;
-    fileCell0DUpdatedCells<< "NumUpdatedCell0Ds"<< separator;
-    fileCell0DUpdatedCells<< "UpdatedCell0Ds"<< endl;
+    fileCell0DUpdatedCells<< "NumUpdatedCells"<< separator;
+    fileCell0DUpdatedCells<< "UpdatedCells"<< endl;
     for (unsigned int f = 0; f < mesh.Cell0DTotalNumber(); f++)
     {
       fileCell0DUpdatedCells<< scientific<< f<< separator;
@@ -1693,8 +1699,8 @@ namespace Gedim
       throw runtime_error("Error on mesh cell1DUpdatedCells file");
 
     fileCell1DUpdatedCells<< "Id"<< separator;
-    fileCell1DUpdatedCells<< "NumUpdatedCell1Ds"<< separator;
-    fileCell1DUpdatedCells<< "UpdatedCell1Ds"<< endl;
+    fileCell1DUpdatedCells<< "NumUpdatedCells"<< separator;
+    fileCell1DUpdatedCells<< "UpdatedCells"<< endl;
     for (unsigned int f = 0; f < mesh.Cell1DTotalNumber(); f++)
     {
       fileCell1DUpdatedCells<< scientific<< f<< separator;
@@ -1731,8 +1737,8 @@ namespace Gedim
       throw runtime_error("Error on mesh cell2DUpdatedCells file");
 
     fileCell2DUpdatedCells<< "Id"<< separator;
-    fileCell2DUpdatedCells<< "NumUpdatedCell2Ds"<< separator;
-    fileCell2DUpdatedCells<< "UpdatedCell2Ds"<< endl;
+    fileCell2DUpdatedCells<< "NumUpdatedCells"<< separator;
+    fileCell2DUpdatedCells<< "UpdatedCells"<< endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
       fileCell2DUpdatedCells<< scientific<< f<< separator;
@@ -1769,8 +1775,8 @@ namespace Gedim
       throw runtime_error("Error on mesh cell3DUpdatedCells file");
 
     fileCell3DUpdatedCells<< "Id"<< separator;
-    fileCell3DUpdatedCells<< "NumUpdatedCell3Ds"<< separator;
-    fileCell3DUpdatedCells<< "UpdatedCell3Ds"<< endl;
+    fileCell3DUpdatedCells<< "NumUpdatedCells"<< separator;
+    fileCell3DUpdatedCells<< "UpdatedCells"<< endl;
     for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
     {
       fileCell3DUpdatedCells<< scientific<< f<< separator;
