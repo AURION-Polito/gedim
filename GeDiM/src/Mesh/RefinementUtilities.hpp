@@ -39,6 +39,14 @@ namespace Gedim
 
       struct SplitPolygon_Result final
       {
+          enum struct Types
+          {
+            Unknown = 0,
+            Split = 1,
+            NoSplit = 2
+          };
+
+          Types Type = Types::Unknown;
           unsigned int NewCell1DIndex = 0;
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
@@ -64,6 +72,7 @@ namespace Gedim
           struct Cell1DToSplit final
           {
               bool IsIntersectionInside = false;
+              bool IsEdgeLengthEnough = false;
               bool IsQualityEnough = false;
               bool IsAligned = false;
               bool IsToSplit = false;
@@ -207,6 +216,7 @@ namespace Gedim
                                                          const std::vector<double>& cell1DsQuality,
                                                          const std::vector<unsigned int>& cell1DsAligned,
                                                          const double& cell1DsQualityWeight,
+                                                         const double& cell2DArea,
                                                          const Eigen::VectorXd& cell2DEdgesLength,
                                                          const std::vector<bool>& cell2DEdgesDirection,
                                                          IMeshDAO& mesh) const;

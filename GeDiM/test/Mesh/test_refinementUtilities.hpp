@@ -233,6 +233,7 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsQualityParameter,
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -304,6 +305,7 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsQualityParameter,
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -375,6 +377,7 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsQualityParameter,
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -446,6 +449,7 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsQualityParameter,
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -524,6 +528,7 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Quality,
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -602,6 +607,7 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Quality,
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -680,6 +686,7 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Quality,
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
+                                                                                                                            meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -786,6 +793,7 @@ namespace GedimUnitTesting
                                                                                                                                  meshGeometricData.Cell1Ds.Quality,
                                                                                                                                  meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                  cell1DsQualityWeight,
+                                                                                                                                 meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                  meshDAO);
@@ -921,6 +929,7 @@ namespace GedimUnitTesting
                                                                                                                                  meshGeometricData.Cell1Ds.Quality,
                                                                                                                                  meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                  cell1DsQualityWeight,
+                                                                                                                                 meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                  meshDAO);
@@ -1135,6 +1144,7 @@ namespace GedimUnitTesting
                                                                                                                                   meshGeometricData.Cell1Ds.Quality,
                                                                                                                                   meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                   cell1DsQualityWeight,
+                                                                                                                                  meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
                                                                                                                                   meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
                                                                                                                                   meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                   meshDAO);
