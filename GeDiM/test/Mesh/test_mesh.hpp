@@ -105,6 +105,8 @@ namespace GedimUnitTesting
     EXPECT_NO_THROW(meshDao.Cell1DAppend(2));
     EXPECT_NO_THROW(meshDao.Cell1DInitializeDoublePropertyValues(2, 0, 1));
     EXPECT_NO_THROW(meshDao.Cell1DInsertDoublePropertyValue(2, 0, 0, 75.2));
+    EXPECT_NO_THROW(meshDao.Cell1DInsertUpdatedCell1D(2, 0));
+    EXPECT_NO_THROW(meshDao.Cell1DInsertUpdatedCell1D(2, 1));
     EXPECT_NO_THROW(meshDao.Cell1DRemove(1));
 
     EXPECT_NO_THROW(meshDao.Cell2DsInitialize(2));

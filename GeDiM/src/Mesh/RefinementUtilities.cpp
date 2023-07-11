@@ -775,8 +775,8 @@ namespace Gedim
       return result;
 
     // Check if the cell refinement creates null cell2Ds or cell1Ds
-    if (geometryUtilities.IsValue2DZero(cell2DArea / 2.0) ||
-        geometryUtilities.IsValue1DZero(cell2DEdgesLength[edgeIndex] / 2.0))
+    if (geometryUtilities.IsValue2DZero(0.5 * cell2DArea) ||
+        geometryUtilities.IsValue1DZero(0.5 * cell2DEdgesLength[edgeIndex]))
       return result;
 
     // Add new mesh vertex, middle point of edge
@@ -879,7 +879,7 @@ namespace Gedim
       return result;
 
     // Check if the cell refinement creates null cell2Ds
-    if (geometryUtilities.IsValue2DZero(cell2DArea / 2.0))
+    if (geometryUtilities.IsValue2DZero(0.5 * cell2DArea))
       return result;
 
     const unsigned int cell2DNumVertices = cell2DVertices.cols();
@@ -1061,6 +1061,7 @@ namespace Gedim
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
           mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+          mesh.Cell1DSetState(cell1DIndexOne, true);
           return result;
         default:
           break;
@@ -1120,6 +1121,7 @@ namespace Gedim
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
           mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
+          mesh.Cell1DSetState(cell1DIndexTwo, true);
           return result;
         default:
           break;
@@ -1173,6 +1175,8 @@ namespace Gedim
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
           mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
           mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+          mesh.Cell1DSetState(cell1DIndexTwo, true);
+          mesh.Cell1DSetState(cell1DIndexOne, true);
           return result;
         default:
           break;
