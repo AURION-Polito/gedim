@@ -799,6 +799,10 @@ namespace Gedim
       case SplitPolygon_Result::Types::Unknown:
         throw std::runtime_error("Unknown SplitPolygon_Result Type");
       case SplitPolygon_Result::Types::NoSplit:
+        mesh.Cell1DRemove(splitCell1D.NewCell1DsIndex[1]);
+        mesh.Cell1DRemove(splitCell1D.NewCell1DsIndex[0]);
+        mesh.Cell0DRemove(splitCell1D.NewCell0DIndex);
+        mesh.Cell1DSetState(cell1DIndex, true);
         return result;
       default:
         break;
