@@ -749,7 +749,16 @@ namespace Gedim
     else
     {
       // get maximux direction of inertia tensor
-      Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(inertia.block(0, 0, 2, 2));
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix2d> eigensolver;
+
+      Eigen::Matrix2d eig_inertia = inertia.block(0, 0, 2, 2);
+      if (eig_inertia.isDiagonal())
+      {
+        eig_inertia(0, 1) = 0.0;
+        eig_inertia(1, 0) = 0.0;
+      }
+
+      eigensolver.computeDirect(eig_inertia);
       if (eigensolver.info() != Eigen::Success)
         throw std::runtime_error("Inertia not correct");
 

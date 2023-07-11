@@ -332,26 +332,24 @@ namespace Gedim
     Output::Assert(points.rows() == 3 && points.cols() > 1);
     const unsigned int& numPoints = points.cols();
 
-    list<unsigned int> unalignedPoints;
+    if (numPoints == 2)
+      return { 0 , 1 };
 
-    unalignedPoints.push_back(0);
-    unalignedPoints.push_back(1);
-    for (unsigned int p = 0; p < numPoints - 2; p++)
+    std::list<unsigned int> unalignedPoints;
+
+    for (unsigned int p = 0; p < numPoints; p++)
     {
-      const unsigned int pointIndexToTest = (p + 2) % numPoints;
-      const Eigen::Vector3d& segmentOrigin = points.col(p);
-      const Eigen::Vector3d& segmentEnd = points.col((p + 1) % numPoints);
-      const Eigen::Vector3d& nextPoint = points.col((p + 2) % numPoints);
+      const Eigen::Vector3d& segmentOrigin = points.col(p == 0 ? numPoints - 1 : p - 1);
+      const Eigen::Vector3d& segmentEnd = points.col(p);
+      const Eigen::Vector3d& nextPoint = points.col((p + 1) % numPoints);
 
-      if (PointIsAligned(segmentOrigin,
-                         segmentEnd,
-                         nextPoint))
-        unalignedPoints.pop_back();
-
-      unalignedPoints.push_back(pointIndexToTest);
+      if (!PointIsAligned(segmentOrigin,
+                          segmentEnd,
+                          nextPoint))
+        unalignedPoints.push_back(p);
     }
 
-    return vector<unsigned int>(unalignedPoints.begin(), unalignedPoints.end());
+    return std::vector<unsigned int>(unalignedPoints.begin(), unalignedPoints.end());
   }
   // ***************************************************************************
 }
