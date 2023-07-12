@@ -705,8 +705,8 @@ namespace Gedim
     // check if the length of the aligned splited edge (|l|) is higher than the mean length (|L|) after the cut
     // |l| / 2 > |L| / (N_aligned + 1)
     if (result.IsAligned &&
-        !geometryUtilities.IsValue1DGreaterOrEqual(2.0 * alignedEdgesLength / double(numAligned + 1),
-                                                   cell2DEdgesLength[edgeIntersection.Index]))
+        !geometryUtilities.IsValue1DGreaterOrEqual(cell2DEdgesLength[edgeIntersection.Index],
+                                                   2.0 * alignedEdgesLength / double(numAligned + 1)))
       return result;
 
     result.IsToSplit = true;
