@@ -685,27 +685,29 @@ namespace Gedim
       return result;
 
     // check if edge is part of aligned edges
-    // check previous edge
-    const unsigned int previousCell1DIndex = edgeIntersection.Index == 0 ? mesh.Cell2DEdge(cell2DIndex,
-                                                                                           cell2DNumVertices - 1) :
-                                                                           mesh.Cell2DEdge(cell2DIndex,
-                                                                                           edgeIntersection.Index - 1);
-    if (cell1DsAligned.at(cell1DIndex) ==
-        cell1DsAligned.at(previousCell1DIndex))
+    const unsigned int aligned = cell1DsAligned.at(cell1DIndex);
+
+    unsigned int numAligned = 0;
+    double alignedEdgesLength = 0.0;
+    for (unsigned int ed = 0; ed < cell2DNumVertices; ed++)
     {
-      result.IsAligned = true;
-      return result;
+      const unsigned int cell1DEdgeIndex = mesh.Cell2DEdge(cell2DIndex, ed);
+
+      if (cell1DsAligned.at(cell1DEdgeIndex) == aligned)
+      {
+        numAligned++;
+        alignedEdgesLength += cell2DEdgesLength[ed];
+      }
     }
 
-    // check next edge
-    const unsigned int nextCell1DIndex = mesh.Cell2DEdge(cell2DIndex,
-                                                         (edgeIntersection.Index + 1) % cell2DNumVertices);
-    if (cell1DsAligned.at(cell1DIndex) ==
-        cell1DsAligned.at(nextCell1DIndex))
-    {
-      result.IsAligned = true;
+    result.IsAligned = (numAligned > 1);
+
+    // check if the length of the aligned splited edge (|l|) is higher than the mean length (|L|) after the cut
+    // |l| / 2 > |L| / (N_aligned + 1)
+    if (result.IsAligned &&
+        !geometryUtilities.IsValue1DGreaterOrEqual(2.0 * alignedEdgesLength / double(numAligned + 1),
+                                                   cell2DEdgesLength[edgeIntersection.Index]))
       return result;
-    }
 
     result.IsToSplit = true;
     return result;
