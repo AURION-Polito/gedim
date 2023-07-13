@@ -194,6 +194,18 @@ namespace Gedim
                                 const std::vector<unsigned int> faceMarkers,
                                 IMeshDAO& mesh) const;
 
+      /// \brief Set the marker on all the mesh 3D elements lyin on the plane
+      /// \param geometryUtilities the geometry utilities
+      /// \param planeNormal the plane normal
+      /// \param planeOrigin the plane origin
+      /// \param marker the marker
+      /// \param mesh the mesh
+      void SetMeshMarkersOnPlane(const GeometryUtilities& geometryUtilities,
+                                 const Eigen::Vector3d& planeNormal,
+                                 const Eigen::Vector3d& planeOrigin,
+                                 const unsigned int& marker,
+                                 IMeshDAO& mesh) const;
+
       /// \brief Extract the mesh Cell2D Roots
       /// \param mesh the mesh
       /// \return the root cell for each cell2D, size 1xCell2DTotalNumber()

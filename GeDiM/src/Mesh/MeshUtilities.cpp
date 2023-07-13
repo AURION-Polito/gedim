@@ -880,6 +880,63 @@ namespace Gedim
     mesh.Cell3DSetMarker(0, 0);
   }
   // ***************************************************************************
+  void MeshUtilities::SetMeshMarkersOnPlane(const GeometryUtilities& geometryUtilities,
+                                            const Eigen::Vector3d& planeNormal,
+                                            const Eigen::Vector3d& planeOrigin,
+                                            const unsigned int& marker,
+                                            IMeshDAO& mesh) const
+  {
+    // set cell0Ds markers
+    std::vector<bool> vertices_on_plane(mesh.Cell0DTotalNumber(),
+                                        false);
+    for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+    {
+      if (geometryUtilities.IsPointOnPlane(mesh.Cell0DCoordinates(v),
+                                           planeNormal,
+                                           planeOrigin))
+      {
+        vertices_on_plane[v] = true;
+        mesh.Cell0DSetMarker(v,
+                             marker);
+      }
+    }
+
+    // set cell1Ds markers
+    for (unsigned int s = 0; s < mesh.Cell1DTotalNumber(); s++)
+    {
+      const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
+
+      if (vertices_on_plane[extremes[0]] &&
+          vertices_on_plane[extremes[1]])
+      {
+        mesh.Cell1DSetMarker(s,
+                             marker);
+      }
+    }
+
+    // set cell2Ds markers
+    for (unsigned int p = 0; p < mesh.Cell2DTotalNumber(); p++)
+    {
+      const vector<unsigned int> extremes = mesh.Cell2DVertices(p);
+
+      bool isOnPlane = true;
+      for (unsigned int v = 0; v < extremes.size(); v++)
+      {
+        if (!vertices_on_plane[extremes[v]])
+        {
+          isOnPlane = false;
+          break;
+        }
+      }
+
+      if (isOnPlane)
+      {
+        mesh.Cell2DSetMarker(p,
+                             marker);
+      }
+    }
+  }
+  // ***************************************************************************
   vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO& mesh) const
   {
     vector<unsigned int> rootCell2Ds(mesh.Cell2DTotalNumber());

@@ -978,6 +978,17 @@ namespace Gedim
                                                  const Eigen::Vector3d& planeNormal,
                                                  const Eigen::Vector3d& planeOrigin) const;
 
+      /// \param point the point
+      /// \param planeNormal the plane normal
+      /// \param planeOrigin the plane origin
+      /// \return true if point is on the plane
+      inline bool IsPointOnPlane(const Eigen::Vector3d& point,
+                                 const Eigen::Vector3d& planeNormal,
+                                 const Eigen::Vector3d& planeOrigin) const
+      { return PointPlanePosition(point,
+                                  planeNormal,
+                                  planeOrigin) == PointPlanePositionTypes::OnPlane; }
+
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
       /// \return the segment length
