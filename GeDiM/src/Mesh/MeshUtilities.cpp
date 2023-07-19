@@ -1432,6 +1432,8 @@ namespace Gedim
                                                                                                                 polyhedronFaceTriangulations);
 
       result.Cell3DsFaces2DTriangulations[c].resize(numFaces);
+      result.Cell3DsFacesAreas[c].resize(numFaces);
+      result.Cell3DsFaces2DCentroids[c].resize(numFaces);
 
       for (unsigned int f = 0; f < numFaces; f++)
       {
@@ -1449,9 +1451,9 @@ namespace Gedim
           const unsigned int convexCell2DIndex = convexCell2DIndices[fc];
 
           const Eigen::MatrixXd convexFaceVertices = convexMesh.Cell2DVerticesCoordinates(convexCell2DIndex);
-          const Eigen::MatrixXd convexFace2DVertices = geometryUtilities.RotatePoints(convexFaceVertices,
-                                                                                      result.Cell3DsFacesRotationMatrices[c][f],
-                                                                                      result.Cell3DsFacesTranslations[c][f]);
+          const Eigen::MatrixXd convexFace2DVertices = geometryUtilities.RotatePointsFrom3DTo2D(convexFaceVertices,
+                                                                                                result.Cell3DsFacesRotationMatrices[c][f].transpose(),
+                                                                                                result.Cell3DsFacesTranslations[c][f]);
 
           const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexFace2DVertices);
           const Eigen::MatrixXd convexCell2DUnalignedVertices = geometryUtilities.ExtractPoints(convexFace2DVertices,
@@ -1483,34 +1485,29 @@ namespace Gedim
                                                                             convexCell2DTriangulationAreas,
                                                                             convexCell2DAreas[fc]);
         }
+
+        result.Cell3DsFaces2DTriangulations[c][f].resize(cell2DTriangulationSize);
+        unsigned int triangulationCounter = 0;
+        for (unsigned int cc = 0; cc < numConvexCell2Ds; cc++)
+        {
+          for (unsigned int cct = 0; cct < convexCell2DTriangulationPoints[cc].size(); cct++)
+            result.Cell3DsFaces2DTriangulations[c][f][triangulationCounter++] =
+                convexCell2DTriangulationPoints[cc][cct];
+        }
+
+        result.Cell3DsFacesAreas[c][f] = convexCell2DAreas.sum();
+        result.Cell3DsFaces2DCentroids[c][f] = geometryUtilities.PolygonCentroid(convexCell2DCentroids,
+                                                                                 convexCell2DAreas,
+                                                                                 result.Cell3DsFacesAreas[c][f]);
       }
 
-      result.Cell3DsFacesAreas[c].resize(numFaces);
       result.Cell3DsFacesDiameters[c].resize(numFaces);
-      result.Cell3DsFaces2DCentroids[c].resize(numFaces);
       result.Cell3DsFacesEdgeLengths[c].resize(numFaces);
       result.Cell3DsFacesEdge2DNormals[c].resize(numFaces);
       result.Cell3DsFacesEdge2DTangents[c].resize(numFaces);
 
       for(unsigned int f = 0; f < numFaces; f++)
       {
-        // Extract original cell2D geometric information
-        const vector<Eigen::Matrix3d>& convexCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
-        const unsigned int& numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
-
-        // compute original cell2D area and centroids
-        Eigen::VectorXd convexCell2DTriangulationAreas(numConvexCell2DTriangulation);
-        Eigen::MatrixXd convexCell2DTriangulationCentroids(3, numConvexCell2DTriangulation);
-        for (unsigned int cct = 0; cct < numConvexCell2DTriangulation; cct++)
-        {
-          convexCell2DTriangulationAreas[cct] = geometryUtilities.PolygonArea(convexCell2DTriangulationPoints[cct]);
-          convexCell2DTriangulationCentroids.col(cct) = geometryUtilities.PolygonBarycenter(convexCell2DTriangulationPoints[cct]);
-        }
-
-        result.Cell3DsFacesAreas[c][f] = convexCell2DTriangulationAreas.sum();
-        result.Cell3DsFaces2DCentroids[c][f] = geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
-                                                                                 convexCell2DTriangulationAreas,
-                                                                                 result.Cell3DsFacesAreas[c][f]);
         result.Cell3DsFacesDiameters[c][f] = geometryUtilities.PolygonDiameter(result.Cell3DsFaces2DVertices[c][f]);
         result.Cell3DsFacesEdgeLengths[c][f] = geometryUtilities.PolygonEdgeLengths(result.Cell3DsFaces2DVertices[c][f]);
         result.Cell3DsFacesEdge2DTangents[c][f] = geometryUtilities.PolygonEdgeTangents(result.Cell3DsFaces2DVertices[c][f]);
