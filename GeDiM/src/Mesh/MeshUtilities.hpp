@@ -239,6 +239,18 @@ namespace Gedim
       MeshGeometricData3D FillMesh3DGeometricData(const GeometryUtilities& geometryUtilities,
                                                   const IMeshDAO& convexMesh) const;
 
+      /// \brief Fill Mesh3D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
+      /// \param mesh the mesh
+      /// \param convexMesh the convex mesh
+      /// \param meshCell2DToConvexCell2DIndices the collection of convex cell2Ds for each mesh cell2D
+      /// \param meshCell3DToConvexCell3DIndices the collection of convex cell3Ds for each mesh cell3D
+      /// \return the MeshGeometricData computed
+      MeshGeometricData3D FillMesh3DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                  const IMeshDAO& mesh,
+                                                  const IMeshDAO& convexMesh,
+                                                  const std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell2DIndices,
+                                                  const std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
+
       /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
       /// \param mesh the resulting mesh
       void ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const;
