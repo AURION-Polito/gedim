@@ -1337,7 +1337,8 @@ namespace Gedim
                                                                             const IMeshDAO& mesh,
                                                                             const IMeshDAO& convexMesh,
                                                                             const std::vector<std::vector<unsigned int> >& meshCell2DToConvexCell2DIndices,
-                                                                            const std::vector<std::vector<unsigned int> >& meshCell3DToConvexCell3DIndices) const
+                                                                            const std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell3DIndices,
+                                                                            const std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const
   {
     MeshGeometricData3D result;
 
@@ -1514,10 +1515,6 @@ namespace Gedim
         result.Cell3DsFacesEdge2DNormals[c][f] = geometryUtilities.PolygonEdgeNormals(result.Cell3DsFaces2DVertices[c][f]);
       }
 
-      result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
-                                                                                                geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
-                                                                                                result.Cell3DsFacesNormals[c]);
-
       unsigned int cell3DTetrahedronsSize = 0;
       std::vector<std::vector<Eigen::MatrixXd>> convexCell3DTetrahedronsPoints(numConvexCell3Ds);
       Eigen::VectorXd convexCell3DsVolume(numConvexCell3Ds);
@@ -1586,6 +1583,26 @@ namespace Gedim
         for (unsigned int cct = 0; cct < convexCell3DTetrahedronsPoints[cc].size(); cct++)
           result.Cell3DsTetrahedronPoints[c][tetraCounter++] =
               convexCell3DTetrahedronsPoints[cc][cct];
+      }
+
+      result.Cell3DsFacesNormalDirections[c].resize(numFaces, true);
+      for (unsigned int f = 0; f < numFaces; f++)
+      {
+        const unsigned int cell2DIndex = mesh.Cell3DFace(c, f);
+
+        const unsigned int cell3DNeighIndex = mesh.Cell2DNumberNeighbourCell3D(cell2DIndex) > 0 &&
+                                              mesh.Cell2DNeighbourCell3D(cell2DIndex, 0) == c ?
+                                                0 : 1;
+
+        const unsigned int convexCell3DIndex = meshCell2DToConvexCell3DIndices[cell2DIndex][cell3DNeighIndex];
+        const unsigned int convexCellIndex = std::distance(meshCell3DToConvexCell3DIndices[c].begin(),
+                                                           std::find(meshCell3DToConvexCell3DIndices[c].begin(),
+                                                                     meshCell3DToConvexCell3DIndices[c].end(),
+                                                                     convexCell3DIndex));
+
+        result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.PolyhedronFaceNormalDirections({ result.Cell3DsFaces3DVertices[c][f] },
+                                                                                                     convexCell3DsCentroid.col(convexCellIndex),
+                                                                                                     { result.Cell3DsFacesNormals[c][f] }).at(0);
       }
     }
 

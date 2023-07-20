@@ -249,6 +249,7 @@ namespace Gedim
                                                   const IMeshDAO& mesh,
                                                   const IMeshDAO& convexMesh,
                                                   const std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell2DIndices,
+                                                  const std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell3DIndices,
                                                   const std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
 
       /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
