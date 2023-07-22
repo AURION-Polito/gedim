@@ -585,8 +585,6 @@ namespace GedimUnitTesting {
                                        7, 4, 1, 2, 6, 7, 5, 6, 5, 3, 0, 1, 7, 4).finished());
         ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1, 7, -1, 1, 5, 6, 4, 10, 9, 2, 3, 0, 11, 8 }));
 
-        {using namespace Gedim;
-          cerr<< result.Faces.Faces<< endl;}
         ASSERT_EQ(result.Faces.Faces.size(), 9);
         ASSERT_EQ(result.Faces.Faces[0], (Eigen::MatrixXi(2, 4)<<
                                           5, 6, 7, 4,
