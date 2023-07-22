@@ -592,26 +592,26 @@ namespace GedimUnitTesting {
                                           5, 6, 7, 4,
                                           4, 5, 1, 6).finished());
         ASSERT_EQ(result.Faces.Faces[1], (Eigen::MatrixXi(2, 4)<<
-                                          6, 5, 1, 2,
-                                          4, 7, 3, 8).finished());
+                                          2, 6, 5, 1,
+                                          7, 4, 8, 3).finished());
         ASSERT_EQ(result.Faces.Faces[2], (Eigen::MatrixXi(2, 3)<<
                                           5, 4, 1,
-                                          6, 2, 7).finished());
+                                          6, 2, 8).finished());
         ASSERT_EQ(result.Faces.Faces[3], (Eigen::MatrixXi(2, 3)<<
                                           6, 7, 2,
-                                          5, 0, 8).finished());
+                                          5, 0, 7).finished());
         ASSERT_EQ(result.Faces.Faces[4], (Eigen::MatrixXi(2, 4)<<
                                           1,  2,  3,  0,
                                           3,  9, 10, 11).finished());
         ASSERT_EQ(result.Faces.Faces[5], (Eigen::MatrixXi(2, 4)<<
-                                          7,  4,  0,  3,
-                                          1, 12, 10, 13).finished());
+                                          3,  7,  4,  0,
+                                          12,  1, 13, 10).finished());
         ASSERT_EQ(result.Faces.Faces[6], (Eigen::MatrixXi(2, 3)<<
                                           1,  4,  0,
-                                          2, 12, 11).finished());
+                                          2, 13, 11).finished());
         ASSERT_EQ(result.Faces.Faces[7], (Eigen::MatrixXi(2, 3)<<
                                           2,  7,  3,
-                                          0, 13,  9).finished());
+                                          0, 12,  9).finished());
         ASSERT_EQ(result.Faces.Faces[8], (Eigen::MatrixXi(2, 4)<<
                                           2, 7, 4, 1,
                                           0, 1, 2, 3).finished());
