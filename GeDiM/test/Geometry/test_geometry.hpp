@@ -456,6 +456,48 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestConvexHullAligned)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check complex convex hull
+      {
+        Eigen::MatrixXd points(3, 4);
+        points.row(0)<< 0.0000000000000000e+00, 3.1798332084839848e-01, -6.4565935079036230e-01, -6.8201667915160147e-01;
+        points.row(1)<< 0.0000000000000000e+00, 3.5504659121373451e-15,  1.9114347052326178e-01,  9.1634431425287495e-15;
+        points.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullAligned";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPoints(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 0, 1, 2, 3 }));
+
+        vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
+                                                                       false);
+        ASSERT_EQ(convexHull,
+                  vector<unsigned int>({ 1, 2, 3 }));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestUnalignedPoints)
   {
     try

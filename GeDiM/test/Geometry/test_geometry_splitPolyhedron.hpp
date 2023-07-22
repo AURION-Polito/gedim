@@ -125,6 +125,7 @@ namespace GedimUnitTesting {
                                        6, 5, 4, 3, 5, 3, 2, 2, 1, 4, 0, 6).finished());
         ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1, -1, -1, 4, 3, 5, 2, 1, 0, 4, 3, 5 }));
         ASSERT_EQ(result.Faces.Faces.size(), 8);
+
         ASSERT_EQ(result.Faces.Faces[0], (Eigen::MatrixXi(2, 3)<<
                                           4, 3, 5,
                                           3, 4, 2).finished());
@@ -132,8 +133,8 @@ namespace GedimUnitTesting {
                                           6, 3, 5,
                                           5, 4, 1).finished());
         ASSERT_EQ(result.Faces.Faces[2], (Eigen::MatrixXi(2, 3)<<
-                                          3, 4, 6,
-                                          3, 0, 5).finished());
+                                          6, 3, 4,
+                                          5, 3, 0).finished());
         ASSERT_EQ(result.Faces.Faces[3], (Eigen::MatrixXi(2, 3)<<
                                           1, 2, 0,
                                           6, 7, 8).finished());
@@ -144,8 +145,8 @@ namespace GedimUnitTesting {
                                           2,  6,  5,  0,
                                           11,  1, 10,  7).finished());
         ASSERT_EQ(result.Faces.Faces[6], (Eigen::MatrixXi(2, 4)<<
-                                          6,  4,  1,  2,
-                                          0,  9,  6, 11).finished());
+                                          2,  6,  4,  1,
+                                          11,  0,  9,  6).finished());
         ASSERT_EQ(result.Faces.Faces[7], (Eigen::MatrixXi(2, 3)<<
                                           4, 6, 5,
                                           0, 1, 2).finished());
@@ -285,8 +286,8 @@ namespace GedimUnitTesting {
                                           5, 3, 0,
                                           5, 4, 1).finished());
         ASSERT_EQ(result.Faces.Faces[2], (Eigen::MatrixXi(2, 3)<<
-                                          3, 4, 5,
-                                          3, 0, 5).finished());
+                                          5, 3, 4,
+                                          5, 3, 0).finished());
         ASSERT_EQ(result.Faces.Faces[3], (Eigen::MatrixXi(2, 3)<<
                                           1, 2, 0,
                                           6, 7, 8).finished());
@@ -297,8 +298,8 @@ namespace GedimUnitTesting {
                                           2, 5, 0,
                                           10, 1, 7).finished());
         ASSERT_EQ(result.Faces.Faces[6], (Eigen::MatrixXi(2, 4)<<
-                                          5,  4,  1,  2,
-                                          0,  9,  6,  10).finished());
+                                          2,  5,  4,  1,
+                                          10,  0,  9,  6).finished());
         ASSERT_EQ(result.Faces.Faces[7], (Eigen::MatrixXi(2, 3)<<
                                           4, 5, 0,
                                           0, 1, 2).finished());
@@ -424,9 +425,9 @@ namespace GedimUnitTesting {
                                              0, 0, 0, 0, 1, 1, 1, 1).finished());
         ASSERT_EQ(result.Vertices.NewVerticesOriginalEdge, std::vector<unsigned int>({ }));
         ASSERT_EQ(result.Edges.Edges, (Eigen::MatrixXi(2, 15)<<
-                                       5, 7, 0, 7, 4, 0, 1, 2, 3, 0, 6, 5, 3, 1, 2,
-                                       7, 0, 5, 4, 5, 4, 2, 3, 0, 1, 7, 6, 7, 5, 6).finished());
-        ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1,-1,-1,7,4,8,1,2,3,0,6,5,11,9,10 }));
+                                       5, 7, 0, 7, 4, 0, 1, 2, 3, 0, 6, 5, 3, 2, 1,
+                                       7, 0, 5, 4, 5, 4, 2, 3, 0, 1, 7, 6, 7, 6, 5).finished());
+        ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1, -1, -1, 7, 4, 8, 1, 2, 3, 0, 6, 5, 11, 10, 9 }));
         ASSERT_EQ(result.Faces.Faces.size(), 10);
         ASSERT_EQ(result.Faces.Faces[0], (Eigen::MatrixXi(2, 3)<<
                                           5, 7, 4,
@@ -444,17 +445,17 @@ namespace GedimUnitTesting {
                                           6 , 7,  5,
                                           10, 0, 11).finished());
         ASSERT_EQ(result.Faces.Faces[5], (Eigen::MatrixXi(2, 3)<<
-                                          7,  0,  3,
-                                          1,  8, 12).finished());
+                                          3,  7,  0,
+                                          12,  1, 8).finished());
         ASSERT_EQ(result.Faces.Faces[6], (Eigen::MatrixXi(2, 4)<<
-                                          6 , 5 , 1 , 2,
-                                          11, 13,  6, 14).finished());
+                                          2 , 6 , 5 , 1,
+                                          13, 11,  14, 6).finished());
         ASSERT_EQ(result.Faces.Faces[7], (Eigen::MatrixXi(2, 3)<<
                                           1,  5,  0,
-                                          13,  2,  9).finished());
+                                          14,  2,  9).finished());
         ASSERT_EQ(result.Faces.Faces[8], (Eigen::MatrixXi(2, 4)<<
                                           2,  6,  7,  3,
-                                          14, 10, 12,  7).finished());
+                                          13, 10, 12,  7).finished());
         ASSERT_EQ(result.Faces.Faces[9], (Eigen::MatrixXi(2, 3)<<
                                           5, 7, 0,
                                           0, 1, 2).finished());
@@ -580,9 +581,12 @@ namespace GedimUnitTesting {
                                              0, 0, 0, 0, 1, 1, 1, 1).finished());
         ASSERT_EQ(result.Vertices.NewVerticesOriginalEdge, std::vector<unsigned int>({ }));
         ASSERT_EQ(result.Edges.Edges, (Eigen::MatrixXi(2, 14)<<
-                                       2, 7, 4, 1, 5, 6, 4, 1, 2, 2, 3, 0, 0, 3,
-                                       7, 4, 1, 2, 6, 7, 5, 5, 6, 3, 0, 1, 4, 7).finished());
-        ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1,7,-1,1,5,6,4,9,10,2,3,0,8,11 }));
+                                       2, 7, 4, 1, 5, 6, 4, 2, 1, 2, 3, 0, 3, 0,
+                                       7, 4, 1, 2, 6, 7, 5, 6, 5, 3, 0, 1, 7, 4).finished());
+        ASSERT_EQ(result.Edges.NewEdgesOriginalEdges, std::vector<int>({ -1, 7, -1, 1, 5, 6, 4, 10, 9, 2, 3, 0, 11, 8 }));
+
+        {using namespace Gedim;
+          cerr<< result.Faces.Faces<< endl;}
         ASSERT_EQ(result.Faces.Faces.size(), 9);
         ASSERT_EQ(result.Faces.Faces[0], (Eigen::MatrixXi(2, 4)<<
                                           5, 6, 7, 4,

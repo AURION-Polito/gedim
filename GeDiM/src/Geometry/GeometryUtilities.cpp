@@ -117,9 +117,19 @@ namespace Gedim
     for (unsigned int p = 0; p < numPoints; p++)
       structPoints[p] = { points.col(p).x(), points.col(p).y(), p };
 
-    pt p0 = *min_element(structPoints.begin(),
-                         structPoints.end(), [](pt a, pt b)
-    { return make_pair(a.y, a.x) < make_pair(b.y, b.x); });
+    pt p0 = { std::numeric_limits<double>::max(),
+              std::numeric_limits<double>::max(),
+              0
+            };
+    for (const auto& p : structPoints)
+    {
+      if (IsValue1DGreater(p0.y, p.y))
+        p0 = p;
+
+      if (IsValue1DZero(abs(p0.y - p.y)) &&
+          IsValue1DGreater(p0.x, p.x))
+        p0 = p;
+    }
 
     sort(structPoints.begin(),
          structPoints.end(),
