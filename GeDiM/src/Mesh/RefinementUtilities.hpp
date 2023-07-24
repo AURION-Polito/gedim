@@ -74,7 +74,8 @@ namespace Gedim
               bool IsIntersectionInside = false;
               bool IsEdgeLengthEnough = false;
               bool IsQualityEnough = false;
-              bool IsAligned = false;
+              bool IsAlignedRespect = false;
+              std::vector<bool> IsNeighAlignedRespect = {};
               bool IsToSplit = false;
               unsigned int Cell2DEdgeIndex = 0;
           };
@@ -220,7 +221,7 @@ namespace Gedim
                                                          const std::vector<unsigned int>& cell1DsAligned,
                                                          const double& cell1DsQualityWeight,
                                                          const double& cell2DArea,
-                                                         const Eigen::VectorXd& cell2DEdgesLength,
+                                                         const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                          const std::vector<bool>& cell2DEdgesDirection,
                                                          IMeshDAO& mesh) const;
 
@@ -241,9 +242,8 @@ namespace Gedim
 
       RefinePolygon_Result::Cell1DToSplit RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
                                                                             const unsigned int& cell2DIndex,
-                                                                            const unsigned int& cell2DNumVertices,
                                                                             const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
-                                                                            const Eigen::VectorXd& cell2DEdgesLength,
+                                                                            const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                             const double& cell1DsQualityWeight,
                                                                             const double& cell1DQuality,
                                                                             const std::vector<unsigned int>& cell1DsAligned,
