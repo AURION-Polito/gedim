@@ -73,7 +73,10 @@ namespace Gedim
           {
               bool IsIntersectionInside = false;
               bool IsEdgeLengthEnough = false;
+              bool IsLocalQualityEnough = false;
               bool IsQualityEnough = false;
+              std::vector<bool> IsNeighQualityEnough = {};
+              bool IsLocalAlignedRespect = false;
               bool IsAlignedRespect = false;
               std::vector<bool> IsNeighAlignedRespect = {};
               bool IsToSplit = false;
@@ -120,7 +123,6 @@ namespace Gedim
 
           struct Cell1D_GeometricData final
           {
-              std::vector<double> Quality = {};
               std::vector<unsigned int> Aligned = {};
           };
 
@@ -217,7 +219,7 @@ namespace Gedim
                                                          const Eigen::MatrixXd& cell2DVertices,
                                                          const Eigen::Vector3d& lineTangent,
                                                          const Eigen::Vector3d& lineOrigin,
-                                                         const std::vector<double>& cell1DsQuality,
+                                                         const std::vector<double>& cell2DsQuality,
                                                          const std::vector<unsigned int>& cell1DsAligned,
                                                          const double& cell1DsQualityWeight,
                                                          const double& cell2DArea,
@@ -245,7 +247,7 @@ namespace Gedim
                                                                             const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
                                                                             const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                             const double& cell1DsQualityWeight,
-                                                                            const double& cell1DQuality,
+                                                                            const std::vector<double>& cell2DsQuality,
                                                                             const std::vector<unsigned int>& cell1DsAligned,
                                                                             const IMeshDAO& mesh) const;
   };
