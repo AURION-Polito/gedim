@@ -726,8 +726,18 @@ namespace Gedim
       result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValue1DGreaterOrEqual(cell1DLength,
                                                                                      2.0 * alignedEdgesLength / double(numAligned + 1));
 
-      if (cell2DNeighIndex == cell2DIndex)
-        result.IsLocalAlignedRespect = result.IsNeighAlignedRespect[c2Dn];
+
+      if (cell2DNeighIndex == cell2DIndex &&
+          !result.IsNeighAlignedRespect[c2Dn])
+        result.IsLocalAlignedRespect = false;
+
+      //      if (cell2DIndex == 6979)
+      //      {
+      //        std::cout<< "cell1DIndex "<< cell1DIndex<< " length "<< cell1DLength<< " aligned "<< aligned<< " ";
+      //        std::cout<< "cell2DNeighIndex "<< cell2DNeighIndex<< " IsNeighAlignedRespect "<< result.IsNeighAlignedRespect[c2Dn]<< " ";
+      //        std::cout<< "IsLocalAlignedRespect "<< result.IsLocalAlignedRespect<< " ";
+      //        std::cout<< " alignedEdgesLength "<< alignedEdgesLength<< " numAligned + 1 "<< (numAligned + 1)<< std::endl;
+      //      }
 
       if (!result.IsNeighAlignedRespect[c2Dn])
         result.IsAlignedRespect = false;
@@ -1021,22 +1031,20 @@ namespace Gedim
     result.Cell1DsToSplit.push_back(createNewVertexOne);
     result.Cell1DsToSplit.push_back(createNewVertexTwo);
 
-    if (!createNewVertexOne.IsToSplit &&
-        createNewVertexOne.IsIntersectionInside &&
-        createNewVertexOne.IsEdgeLengthEnough &&
-        (createNewVertexOne.IsLocalQualityEnough &&
-         createNewVertexOne.IsLocalAlignedRespect) &&
-        (!createNewVertexOne.IsQualityEnough ||
-         !createNewVertexOne.IsAlignedRespect))
-      return result;
-
-    if (!createNewVertexTwo.IsToSplit &&
-        createNewVertexTwo.IsIntersectionInside &&
-        createNewVertexTwo.IsEdgeLengthEnough &&
-        (createNewVertexTwo.IsLocalQualityEnough &&
-         createNewVertexTwo.IsLocalAlignedRespect) &&
-        (!createNewVertexTwo.IsQualityEnough ||
-         !createNewVertexTwo.IsAlignedRespect))
+    if ((!createNewVertexOne.IsToSplit &&
+         createNewVertexOne.IsIntersectionInside &&
+         createNewVertexOne.IsEdgeLengthEnough &&
+         (createNewVertexOne.IsLocalQualityEnough &&
+          createNewVertexOne.IsLocalAlignedRespect) &&
+         (!createNewVertexOne.IsQualityEnough ||
+          !createNewVertexOne.IsAlignedRespect)) &&
+        (!createNewVertexTwo.IsToSplit &&
+         createNewVertexTwo.IsIntersectionInside &&
+         createNewVertexTwo.IsEdgeLengthEnough &&
+         (createNewVertexTwo.IsLocalQualityEnough &&
+          createNewVertexTwo.IsLocalAlignedRespect) &&
+         (!createNewVertexTwo.IsQualityEnough ||
+          !createNewVertexTwo.IsAlignedRespect)))
       return result;
 
     if (!createNewVertexOne.IsToSplit &&
