@@ -815,13 +815,15 @@ namespace GedimUnitTesting
       }
       while (cell2DNeigh < convexCell2DNumber);
 
-      if (tianglesToAgglomerateList.size() < 2)
+      if (tianglesToAgglomerateList.size() < 4)
         continue;
 
       unsigned int sizeToTake = (percentagesToTake[t % 3] * tianglesToAgglomerateList.size() + 1);
-      sizeToTake = (sizeToTake < 2 || sizeToTake > tianglesToAgglomerateList.size()) ?
-                     tianglesToAgglomerateList.size() - 1 :
-                     sizeToTake;
+
+      if (sizeToTake < 3)
+        sizeToTake = 3;
+      else if (sizeToTake >= tianglesToAgglomerateList.size())
+        sizeToTake = tianglesToAgglomerateList.size() - 1;
 
       takenTrianglesToAgglomerate.push_back(std::vector<unsigned int>(sizeToTake));
 
