@@ -43,6 +43,30 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  bool RefinementUtilities::SplitPolygon_CheckIsToSplit(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
+                                                        const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const
+  {
+    if ((cell1DSplitOne.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough ||
+         cell1DSplitOne.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect) &&
+        (cell1DSplitTwo.Type != RefinePolygon_Result::Cell1DToSplit::Types::BothQualityNotEnough &&
+         cell1DSplitTwo.Type != RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalQualityNotEnough &&
+         cell1DSplitTwo.Type != RefinePolygon_Result::Cell1DToSplit::Types::BothAlignedNotRespect &&
+         cell1DSplitTwo.Type != RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalAlignedNotRespect)
+        )
+      return false;
+
+    if ((cell1DSplitTwo.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough ||
+         cell1DSplitTwo.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect) &&
+        (cell1DSplitOne.Type != RefinePolygon_Result::Cell1DToSplit::Types::BothQualityNotEnough &&
+         cell1DSplitOne.Type != RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalQualityNotEnough &&
+         cell1DSplitOne.Type != RefinePolygon_Result::Cell1DToSplit::Types::BothAlignedNotRespect &&
+         cell1DSplitOne.Type != RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalAlignedNotRespect)
+        )
+      return false;
+
+    return true;
+  }
+  // ***************************************************************************
   bool RefinementUtilities::SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
                                                    IMeshDAO& mesh) const
   {
@@ -657,7 +681,10 @@ namespace Gedim
                                    GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
     if (!result.IsIntersectionInside)
+    {
+      result.Type = RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
       return result;
+    }
 
     const double cell1DLength = cell2DsEdgesLength[cell2DIndex][edgeIntersection.Index];
 
@@ -665,7 +692,10 @@ namespace Gedim
     result.IsEdgeLengthEnough = !geometryUtilities.IsValue1DZero(0.5 * cell1DLength);
 
     if (!result.IsEdgeLengthEnough)
+    {
+      result.Type = RefinePolygon_Result::Cell1DToSplit::Types::EdgeLengthNotEnough;
       return result;
+    }
 
     // check if the edge quality is enough
     result.IsLocalQualityEnough = true;
@@ -683,11 +713,26 @@ namespace Gedim
       result.IsNeighQualityEnough[c2Dn] = geometryUtilities.IsValue1DGreaterOrEqual(0.5 * cell1DLength,
                                                                                     cell1DsQualityWeight * cell2DsQuality[cell2DNeighIndex]);
 
-      if (cell2DNeighIndex == cell2DIndex)
-        result.IsLocalQualityEnough = result.IsNeighQualityEnough[c2Dn];
+      if (cell2DNeighIndex == cell2DIndex &&
+          !result.IsNeighQualityEnough[c2Dn])
+      {
+        if (!result.IsQualityEnough)
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::BothQualityNotEnough;
+        else
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalQualityNotEnough;
+
+        result.IsLocalQualityEnough = false;
+      }
 
       if (!result.IsNeighQualityEnough[c2Dn])
+      {
+        if (!result.IsLocalQualityEnough)
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::BothQualityNotEnough;
+        else
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
+
         result.IsQualityEnough = false;
+      }
     }
 
     if (!result.IsQualityEnough)
@@ -729,23 +774,30 @@ namespace Gedim
 
       if (cell2DNeighIndex == cell2DIndex &&
           !result.IsNeighAlignedRespect[c2Dn])
-        result.IsLocalAlignedRespect = false;
+      {
+        if (!result.IsAlignedRespect)
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::BothAlignedNotRespect;
+        else
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::OnlyLocalAlignedNotRespect;
 
-      //      if (cell2DIndex == 6979)
-      //      {
-      //        std::cout<< "cell1DIndex "<< cell1DIndex<< " length "<< cell1DLength<< " aligned "<< aligned<< " ";
-      //        std::cout<< "cell2DNeighIndex "<< cell2DNeighIndex<< " IsNeighAlignedRespect "<< result.IsNeighAlignedRespect[c2Dn]<< " ";
-      //        std::cout<< "IsLocalAlignedRespect "<< result.IsLocalAlignedRespect<< " ";
-      //        std::cout<< " alignedEdgesLength "<< alignedEdgesLength<< " numAligned + 1 "<< (numAligned + 1)<< std::endl;
-      //      }
+        result.IsLocalAlignedRespect = false;
+      }
 
       if (!result.IsNeighAlignedRespect[c2Dn])
+      {
+        if (!result.IsLocalAlignedRespect)
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::BothAlignedNotRespect;
+        else
+          result.Type = RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect;
+
         result.IsAlignedRespect = false;
+      }
     }
 
     if (!result.IsAlignedRespect)
       return result;
 
+    result.Type = RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
     result.IsToSplit = true;
     return result;
   }
@@ -857,6 +909,7 @@ namespace Gedim
     }
 
     result.Cell1DsToSplit.resize(1);
+    result.Cell1DsToSplit[0].Type = RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
     result.Cell1DsToSplit[0].IsIntersectionInside = true;
     result.Cell1DsToSplit[0].IsLocalQualityEnough = true;
     result.Cell1DsToSplit[0].IsQualityEnough = true;
@@ -1031,20 +1084,8 @@ namespace Gedim
     result.Cell1DsToSplit.push_back(createNewVertexOne);
     result.Cell1DsToSplit.push_back(createNewVertexTwo);
 
-    if ((!createNewVertexOne.IsToSplit &&
-         createNewVertexOne.IsIntersectionInside &&
-         createNewVertexOne.IsEdgeLengthEnough &&
-         (createNewVertexOne.IsLocalQualityEnough &&
-          createNewVertexOne.IsLocalAlignedRespect) &&
-         (!createNewVertexOne.IsQualityEnough ||
-          !createNewVertexOne.IsAlignedRespect)) &&
-        (!createNewVertexTwo.IsToSplit &&
-         createNewVertexTwo.IsIntersectionInside &&
-         createNewVertexTwo.IsEdgeLengthEnough &&
-         (createNewVertexTwo.IsLocalQualityEnough &&
-          createNewVertexTwo.IsLocalAlignedRespect) &&
-         (!createNewVertexTwo.IsQualityEnough ||
-          !createNewVertexTwo.IsAlignedRespect)))
+    if (!SplitPolygon_CheckIsToSplit(createNewVertexOne,
+                                     createNewVertexTwo))
       return result;
 
     if (!createNewVertexOne.IsToSplit &&

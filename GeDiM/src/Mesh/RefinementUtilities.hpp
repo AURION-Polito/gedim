@@ -71,6 +71,20 @@ namespace Gedim
 
           struct Cell1DToSplit final
           {
+              enum struct Types
+              {
+                Unknown = -1,
+                NotInside = 0,
+                EdgeLengthNotEnough = 1,
+                OnlyLocalQualityNotEnough = 2,
+                OnlyNeighQualityNotEnough = 3,
+                BothQualityNotEnough = 4,
+                OnlyLocalAlignedNotRespect = 5,
+                OnlyNeighAlignedNotRespect = 6,
+                BothAlignedNotRespect = 7,
+                ToSplit = 8
+              };
+
               bool IsIntersectionInside = false;
               bool IsEdgeLengthEnough = false;
               bool IsLocalQualityEnough = false;
@@ -81,6 +95,7 @@ namespace Gedim
               std::vector<bool> IsNeighAlignedRespect = {};
               bool IsToSplit = false;
               unsigned int Cell2DEdgeIndex = 0;
+              Types Type = Types::Unknown;
           };
 
           std::vector<Cell1DToSplit> Cell1DsToSplit = {};
@@ -141,6 +156,8 @@ namespace Gedim
 
       SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
                                                  IMeshDAO& mesh) const;
+      bool SplitPolygon_CheckIsToSplit(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
+                                       const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
 
       bool SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
                                   IMeshDAO& mesh) const;
