@@ -436,6 +436,12 @@ namespace Gedim
 
       AgglomerateMeshFromTriangularMeshResult AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
                                                                                 IMeshDAO& triangularMesh) const;
+
+      /// \brief Export 2D concave mesh to csv file
+      void ExportConcaveMesh2DToCsv(const IMeshDAO& mesh,
+                                    const std::vector<std::vector<unsigned int>>& convexCell2DsIndex,
+                                    const char& separator,
+                                    const std::string& exportFolderPath) const;
   };
 
 }

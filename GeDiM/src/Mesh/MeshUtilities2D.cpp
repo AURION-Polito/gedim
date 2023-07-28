@@ -1,3 +1,4 @@
+#include "MeshDAOExporterToCsv.hpp"
 #include "MeshUtilities.hpp"
 
 #include "TriangleInterface.hpp"
@@ -1564,6 +1565,46 @@ namespace Gedim
                                                       removedCell1Ds.end());
 
     return result;
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportConcaveMesh2DToCsv(const IMeshDAO& mesh,
+                                               const std::vector<std::vector<unsigned int> >& convexCell2DsIndex,
+                                               const char& separator,
+                                               const std::string& exportFolderPath) const
+  {
+    // export mesh
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+    Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
+    exportConfiguration.Separator = separator;
+    exportConfiguration.Folder = exportFolderPath;
+    Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
+    exporter.Export(exportConfiguration,
+                    mesh);
+
+    // export concave to convex mesh file
+    {
+      ofstream mapFile;
+
+      mapFile.open(exportFolderPath +
+                   "/hierarchy_map.txt");
+      mapFile.precision(16);
+
+      if (mapFile.fail())
+        throw runtime_error("Error on hierarchy_map file");
+
+      mapFile<< mesh.Cell2DTotalNumber()<< endl;
+      mapFile<< "# newCellId, sizeOldCellIdsContainer, oldCellIds"<< endl;
+      for (unsigned int v = 0; v < mesh.Cell2DTotalNumber(); v++)
+      {
+        mapFile<< scientific<< v<< separator;
+        mapFile<< scientific<< convexCell2DsIndex[v].size();
+        for (unsigned int cc = 0; cc < convexCell2DsIndex[v].size(); cc++)
+          mapFile<< scientific<< separator<< convexCell2DsIndex[v][cc];
+        mapFile<< endl;
+      }
+
+      mapFile.close();
+    }
   }
   // ***************************************************************************
   void MeshUtilities::CreateTriangularMesh(const Eigen::MatrixXd& polygonVertices,

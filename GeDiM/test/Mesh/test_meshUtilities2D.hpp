@@ -698,9 +698,15 @@ namespace GedimUnitTesting
     ASSERT_EQ(vector<unsigned int>({ 0, 23, 29, 13, 30 }),
               result.ConcaveCell2Ds[1].ConvexCell2DsIndex);
 
+    Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    extractionData);
+
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ConcaveMesh");
+
+    //meshUtilities.ExportConcaveMesh2DToCsv();
   }
 }
 
