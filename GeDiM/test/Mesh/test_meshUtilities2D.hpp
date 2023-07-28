@@ -685,8 +685,10 @@ namespace GedimUnitTesting
     const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult result = meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
                                                                                                                                  meshDao);
 
-    ASSERT_EQ(vector<unsigned int>({ 13, 56, 0, 50, 36, 35 }),
+    ASSERT_EQ(vector<unsigned int>({ 0, 13, 35, 36, 50, 56 }),
               result.RemovedCell1Ds);
+    ASSERT_EQ(vector<unsigned int>({ 0, 4, 13, 23, 29, 30, 31, 32 }),
+              result.RemovedCell2Ds);
     ASSERT_EQ(2,
               result.ConcaveCell2Ds.size());
     ASSERT_EQ(34,
@@ -706,7 +708,19 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ConcaveMesh");
 
-    //meshUtilities.ExportConcaveMesh2DToCsv();
+//    std::vector<std::vector<unsigned int>> convexCell2DsIndex;
+//    for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
+//    {
+//      const unsigned int
+//    }
+
+//    const string exportMeshFolder = exportFolder + "/Mesh";
+//    Gedim::Output::CreateFolder(exportMeshFolder);
+
+//    meshUtilities.ExportConcaveMesh2DToCsv(meshDao,
+//                                           convexCell2DsIndex,
+//                                           ',',
+//                                           exportMeshFolder);
   }
 }
 

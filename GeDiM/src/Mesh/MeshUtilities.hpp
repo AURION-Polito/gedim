@@ -129,6 +129,7 @@ namespace Gedim
 
           std::vector<ConcaveCell2D> ConcaveCell2Ds;
           std::vector<unsigned int> RemovedCell1Ds;
+          std::vector<unsigned int> RemovedCell2Ds;
       };
 
     public:

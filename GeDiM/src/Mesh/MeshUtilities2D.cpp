@@ -1518,6 +1518,7 @@ namespace Gedim
     AgglomerateMeshFromTriangularMeshResult result;
 
     list<unsigned int> removedCell1Ds;
+    list<unsigned int> removedCell2Ds;
 
     result.ConcaveCell2Ds.resize(trianglesIndicesToAgglomerate.size());
 
@@ -1546,14 +1547,20 @@ namespace Gedim
       // deactivate other cells
       for (const unsigned int cell2DIndex : triangleToAgglomerate)
       {
+        Gedim::Output::Assert(triangularMesh.Cell2DIsActive(cell2DIndex));
+
         triangularMesh.Cell2DSetState(cell2DIndex,
                                       false);
         triangularMesh.Cell2DInsertUpdatedCell2D(cell2DIndex,
                                                  concaveCell2D.Cell2DIndex);
+
+        removedCell2Ds.push_back(cell2DIndex);
       }
 
       for (const unsigned int cell1DIndex : agglomeratedPolygon.RemovedEdges)
       {
+        Gedim::Output::Assert(triangularMesh.Cell1DIsActive(cell1DIndex));
+
         triangularMesh.Cell1DSetState(cell1DIndex,
                                       false);
 
@@ -1561,8 +1568,13 @@ namespace Gedim
       }
     }
 
+    removedCell1Ds.sort();
+    removedCell2Ds.sort();
+
     result.RemovedCell1Ds = std::vector<unsigned int>(removedCell1Ds.begin(),
                                                       removedCell1Ds.end());
+    result.RemovedCell2Ds = std::vector<unsigned int>(removedCell2Ds.begin(),
+                                                      removedCell2Ds.end());
 
     return result;
   }
