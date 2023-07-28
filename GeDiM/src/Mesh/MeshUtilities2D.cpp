@@ -1505,6 +1505,8 @@ namespace Gedim
 
     result.EdgesIndex = std::vector<unsigned int>(agglomeratePolygonEdges.begin(),
                                                   agglomeratePolygonEdges.end());
+    result.RemovedEdges = std::vector<unsigned int>(commonEdges.begin(),
+                                                    commonEdges.end());
 
     return result;
   }
@@ -1514,11 +1516,35 @@ namespace Gedim
   {
     for (unsigned int ac = 0; ac < trianglesIndicesToAgglomerate.size(); ac++)
     {
-      AgglomerateTrianglesResult agglomeratedPolygon = AgglomerateTriangles(trianglesIndicesToAgglomerate[ac],
-                                                                            triangularMesh);
+      const AgglomerateTrianglesResult agglomeratedPolygon = AgglomerateTriangles(trianglesIndicesToAgglomerate[ac],
+                                                                                  triangularMesh);
 
+      // create new cell2D
+      unsigned int agglomeratedCell2D = triangularMesh.Cell2DAppend(1);
 
+      triangularMesh.Cell2DAddVertices(agglomeratedCell2D,
+                                       agglomeratedPolygon.VerticesIndex);
+      triangularMesh.Cell2DAddEdges(agglomeratedCell2D,
+                                    agglomeratedPolygon.EdgesIndex);
+      triangularMesh.Cell2DSetMarker(agglomeratedCell2D,
+                                     0);
+      triangularMesh.Cell2DSetState(agglomeratedCell2D,
+                                    true);
 
+      // deactivate other cells
+      for (const unsigned int cell2DIndex : trianglesIndicesToAgglomerate[ac])
+      {
+        triangularMesh.Cell2DSetState(cell2DIndex,
+                                      false);
+        triangularMesh.Cell2DInsertUpdatedCell2D(cell2DIndex,
+                                                 agglomeratedCell2D);
+      }
+
+      for (const unsigned int cell1DIndex : agglomeratedPolygon.RemovedEdges)
+      {
+        triangularMesh.Cell1DSetState(cell1DIndex,
+                                      false);
+      }
     }
   }
   // ***************************************************************************

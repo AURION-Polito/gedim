@@ -114,6 +114,7 @@ namespace Gedim
 
       struct AgglomerateTrianglesResult final
       {
+          std::vector<unsigned int> RemovedEdges;
           std::vector<unsigned int> VerticesIndex;
           std::vector<unsigned int> EdgesIndex;
       };
@@ -413,6 +414,11 @@ namespace Gedim
       std::vector<unsigned int> FindCell2DsCommonEdges(const std::vector<unsigned int>& cell2DsIndex,
                                                        const IMeshDAO& mesh) const;
 
+      /// \brief Agglomerate Triangles with one vertex in common
+      /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh
+      /// \param triangularMesh the triangular mesh
+      /// \return the agglomearted polygon indices
+      /// \note the triangular index shall be done counterclockwise
       AgglomerateTrianglesResult AgglomerateTriangles(const std::vector<unsigned int>& trianglesIndexToAgglomerate,
                                                       IMeshDAO& triangularMesh) const;
 

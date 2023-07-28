@@ -658,6 +658,8 @@ namespace GedimUnitTesting
               result.VerticesIndex);
     ASSERT_EQ(vector<unsigned int>({ 1, 2, 51, 54, 34, 55, 33 }),
               result.EdgesIndex);
+    ASSERT_EQ(vector<unsigned int>({ 0, 50, 36, 35 }),
+              result.RemovedEdges);
   }
 
   TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
@@ -680,6 +682,10 @@ namespace GedimUnitTesting
 
     meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
                                                     meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConcaveMesh");
   }
 }
 
