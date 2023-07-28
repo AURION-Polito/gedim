@@ -407,7 +407,7 @@ namespace Gedim
       std::vector<unsigned int> FindCell2DsCommonEdges(const std::vector<unsigned int>& cell2DsIndex,
                                                        const IMeshDAO& mesh) const;
 
-      void AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicsToAgglomerate,
+      void AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
                                              IMeshDAO& triangularMesh) const;
   };
 
