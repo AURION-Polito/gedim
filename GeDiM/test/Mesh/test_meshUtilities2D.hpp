@@ -634,6 +634,32 @@ namespace GedimUnitTesting
               std::vector<unsigned int>({ }));
   }
 
+  TEST(TestMeshUtilities, TestAgglomerateTriangles)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateTriangles";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConvexMesh");
+
+
+    const  Gedim::MeshUtilities::AgglomerateTrianglesResult result = meshUtilities.AgglomerateTriangles({0, 23, 29, 13, 30},
+                                                                                                        meshDao);
+
+    ASSERT_EQ(vector<unsigned int>({ 11, 4, 18, 7, 22, 2, 23 }),
+              result.VerticesIndex);
+    ASSERT_EQ(vector<unsigned int>({ 1, 2, 51, 54, 34, 55, 33 }),
+              result.EdgesIndex);
+  }
+
   TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;

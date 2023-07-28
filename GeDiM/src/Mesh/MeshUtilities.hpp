@@ -112,6 +112,12 @@ namespace Gedim
           std::vector<std::vector<unsigned int>> PolyhedronFaces; /// size numFaces x numFaceVertices
       };
 
+      struct AgglomerateTrianglesResult final
+      {
+          std::vector<unsigned int> VerticesIndex;
+          std::vector<unsigned int> EdgesIndex;
+      };
+
     public:
       MeshUtilities() { };
       ~MeshUtilities() { };
@@ -406,6 +412,9 @@ namespace Gedim
       /// \return the Cell1D indices
       std::vector<unsigned int> FindCell2DsCommonEdges(const std::vector<unsigned int>& cell2DsIndex,
                                                        const IMeshDAO& mesh) const;
+
+      AgglomerateTrianglesResult AgglomerateTriangles(const std::vector<unsigned int>& trianglesIndexToAgglomerate,
+                                                      IMeshDAO& triangularMesh) const;
 
       void AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
                                              IMeshDAO& triangularMesh) const;

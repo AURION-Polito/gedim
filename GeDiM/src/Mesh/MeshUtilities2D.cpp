@@ -1434,75 +1434,90 @@ namespace Gedim
     return {};
   }
   // ***************************************************************************
+  MeshUtilities::AgglomerateTrianglesResult MeshUtilities::AgglomerateTriangles(const std::vector<unsigned int>& trianglesIndexToAgglomerate,
+                                                                                IMeshDAO& triangularMesh) const
+  {
+    const unsigned int numTriangles = trianglesIndexToAgglomerate.size();
+
+    const std::vector<unsigned int> commonVertex = FindCell2DsCommonVertices(trianglesIndexToAgglomerate,
+                                                                             triangularMesh);
+
+    Output::Assert(commonVertex.size() == 1);
+
+    std::list<unsigned int> commonEdges;
+    std::list<unsigned int> agglomeratePolygonVertices;
+    std::list<unsigned int> agglomeratePolygonEdges;
+
+    // first triangle
+    {
+      const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(trianglesIndexToAgglomerate.at(0),
+                                                                                  commonVertex[0]);
+      agglomeratePolygonVertices.push_back(commonVertex[0]);
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(trianglesIndexToAgglomerate.at(0),
+                                                                  commonVertexLocalIndex));
+    }
+
+    // middle triangles
+    for (unsigned int t = 0; t < trianglesIndexToAgglomerate.size() - 1; t++)
+    {
+      const std::vector<unsigned int> commonEdge = FindCell2DsCommonEdges({
+                                                                            trianglesIndexToAgglomerate.at(t),
+                                                                            trianglesIndexToAgglomerate.at(t + 1)
+                                                                          },
+                                                                          triangularMesh);
+
+      Output::Assert(commonEdge.size() == 1);
+
+      commonEdges.push_back(commonEdge[0]);
+      const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(trianglesIndexToAgglomerate.at(t),
+                                                                              commonEdge[0]);
+      const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
+
+      agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(trianglesIndexToAgglomerate.at(t),
+                                                                       oppositeCommonEdgeVertexIndex));
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(trianglesIndexToAgglomerate.at(t),
+                                                                  oppositeCommonEdgeVertexIndex));
+    }
+
+    // last triangle
+    {
+      const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                              commonEdges.back());
+      const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
+      const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                                  commonVertex[0]);
+      const unsigned int oppositeCommonVertexVertexIndex = (commonVertexLocalIndex + 1) % 3;
+
+      agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                       oppositeCommonVertexVertexIndex));
+      agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                       oppositeCommonEdgeVertexIndex));
+
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                  oppositeCommonVertexVertexIndex));
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(trianglesIndexToAgglomerate.at(numTriangles - 1),
+                                                                  oppositeCommonEdgeVertexIndex));
+    }
+
+    AgglomerateTrianglesResult result;
+    result.VerticesIndex = std::vector<unsigned int>(agglomeratePolygonVertices.begin(),
+                                                     agglomeratePolygonVertices.end());
+
+    result.EdgesIndex = std::vector<unsigned int>(agglomeratePolygonEdges.begin(),
+                                                  agglomeratePolygonEdges.end());
+
+    return result;
+  }
+  // ***************************************************************************
   void MeshUtilities::AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicesToAgglomerate,
                                                         IMeshDAO& triangularMesh) const
   {
     for (unsigned int ac = 0; ac < trianglesIndicesToAgglomerate.size(); ac++)
     {
-      const std::vector<unsigned int>& triangles = trianglesIndicesToAgglomerate[ac];
-
-      const std::vector<unsigned int> commonVertex = FindCell2DsCommonVertices(triangles,
-                                                                               triangularMesh);
-
-      Output::Assert(commonVertex.size() == 1);
-
-      std::list<unsigned int> commonEdges;
-      std::list<unsigned int> agglomeratePolygonVertices;
-      std::list<unsigned int> agglomeratePolygonEdges;
-
-      // first triangle
-      {
-        const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(triangles.at(0),
-                                                                                    commonVertex[0]);
-        agglomeratePolygonVertices.push_back(commonVertex[0]);
-        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(0),
-                                                                    commonVertexLocalIndex));
-      }
-
-      // middle triangles
-      for (unsigned int t = 0; t < triangles.size() - 1; t++)
-      {
-        const std::vector<unsigned int> commonEdge = FindCell2DsCommonEdges({
-                                                                              triangles.at(t),
-                                                                              triangles.at(t + 1)
-                                                                            },
+      AgglomerateTrianglesResult agglomeratedPolygon = AgglomerateTriangles(trianglesIndicesToAgglomerate[ac],
                                                                             triangularMesh);
 
-        Output::Assert(commonEdge.size() == 1);
 
-        commonEdges.push_back(commonEdge[0]);
-        const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(triangles.at(t),
-                                                                                commonEdge[0]);
-        const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
-
-        agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(t),
-                                                                         oppositeCommonEdgeVertexIndex));
-        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(t),
-                                                                    oppositeCommonEdgeVertexIndex));
-      }
-
-      // last triangle
-      {
-        const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(triangles.at(triangles.size() - 1),
-                                                                                commonEdges.back());
-        const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
-        const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(triangles.at(triangles.size() - 1),
-                                                                                    commonVertex[0]);
-        const unsigned int oppositeCommonVertexVertexIndex = (commonVertexLocalIndex + 1) % 3;
-
-        agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
-                                                                         oppositeCommonVertexVertexIndex));
-        agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
-                                                                         oppositeCommonEdgeVertexIndex));
-
-        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
-                                                                    oppositeCommonVertexVertexIndex));
-        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
-                                                                    oppositeCommonEdgeVertexIndex));
-      }
-
-      std::cout<< agglomeratePolygonEdges<< std::endl;
-      std::cout<< agglomeratePolygonVertices<< std::endl;
 
     }
   }
