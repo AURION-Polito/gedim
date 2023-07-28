@@ -589,6 +589,12 @@ namespace GedimUnitTesting
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateConcaveMeshFromTriangularMesh";
     Gedim::Output::CreateFolder(exportFolder);
 
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConvexMesh");
   }
 }
 

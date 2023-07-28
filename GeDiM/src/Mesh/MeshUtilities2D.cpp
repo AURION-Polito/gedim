@@ -1344,6 +1344,45 @@ namespace Gedim
     return newCell2DsIndex;
   }
   // ***************************************************************************
+  unsigned int MeshUtilities::FindTrianglesCommonVertex(const std::vector<unsigned int>& trianglesIndex,
+                                                        const IMeshDAO& mesh) const
+  {
+    Output::Assert(trianglesIndex.size() > 1);
+
+    std::vector<unsigned int> firstTriangleVertices = mesh.Cell2DVertices(trianglesIndex[0]);
+    Output::Assert(firstTriangleVertices.size() == 3);
+
+    std::vector<unsigned int> secondTriangleVertices = mesh.Cell2DVertices(trianglesIndex[1]);
+    Output::Assert(secondTriangleVertices.size() == 3);
+
+    std::vector<unsigned int> intersection;
+
+    std::sort(firstTriangleVertices.begin(),
+              firstTriangleVertices.end());
+    std::sort(secondTriangleVertices.begin(),
+              secondTriangleVertices.end());
+
+    std::set_intersection(firstTriangleVertices.begin(),
+                          firstTriangleVertices.end(),
+                          secondTriangleVertices.begin(),
+                          secondTriangleVertices.end(),
+                          back_inserter(intersection));
+
+    Output::Assert(intersection.size() == 1);
+
+    // check other triangles
+    for (unsigned int t = 2; t < trianglesIndex.size(); t++)
+    {
+      std::vector<unsigned int> triangleVertices = mesh.Cell2DVertices(trianglesIndex[t]);
+      Output::Assert(triangleVertices.size() == 3);
+      Output::Assert(find(triangleVertices.begin(),
+                          triangleVertices.end(),
+                          intersection[0]) != triangleVertices.end());
+    }
+
+    return intersection[0];
+  }
+  // ***************************************************************************
   void MeshUtilities::CreateConcaveMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicsToAgglomerate,
                                                           IMeshDAO& mesh) const
   {

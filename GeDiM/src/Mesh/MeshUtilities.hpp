@@ -393,6 +393,14 @@ namespace Gedim
                                             const std::vector<Eigen::MatrixXi> subCell2Ds,
                                             IMeshDAO& mesh) const;
 
+      /// \brief Given a set of Cell2D triangles find the common Cell0D vertex
+      /// \param trianglesIndex the cell2Ds index
+      /// \param mesh the mesh
+      /// \return the Cell0D index
+      /// \throw exception if not exists
+      unsigned int FindTrianglesCommonVertex(const std::vector<unsigned int>& trianglesIndex,
+                                             const IMeshDAO& mesh) const;
+
       void CreateConcaveMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicsToAgglomerate,
                                                IMeshDAO& mesh) const;
   };
