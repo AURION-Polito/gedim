@@ -678,10 +678,25 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ConvexMesh");
 
-    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate { {0, 23, 29, 13, 30} };
+    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate { {4, 31, 32},
+                                                                          {0, 23, 29, 13, 30}
+                                                                        };
 
-    meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
-                                                    meshDao);
+    const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult result = meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
+                                                                                                                                 meshDao);
+
+    ASSERT_EQ(vector<unsigned int>({ 13, 56, 0, 50, 36, 35 }),
+              result.RemovedCell1Ds);
+    ASSERT_EQ(2,
+              result.ConcaveCell2Ds.size());
+    ASSERT_EQ(34,
+              result.ConcaveCell2Ds[0].Cell2DIndex);
+    ASSERT_EQ(vector<unsigned int>({ 4, 31, 32 }),
+              result.ConcaveCell2Ds[0].ConvexCell2DsIndex);
+    ASSERT_EQ(35,
+              result.ConcaveCell2Ds[1].Cell2DIndex);
+    ASSERT_EQ(vector<unsigned int>({ 0, 23, 29, 13, 30 }),
+              result.ConcaveCell2Ds[1].ConvexCell2DsIndex);
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,

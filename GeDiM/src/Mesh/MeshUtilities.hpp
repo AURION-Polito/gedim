@@ -119,6 +119,18 @@ namespace Gedim
           std::vector<unsigned int> EdgesIndex;
       };
 
+      struct AgglomerateMeshFromTriangularMeshResult final
+      {
+          struct ConcaveCell2D
+          {
+              unsigned int Cell2DIndex;
+              std::vector<unsigned int> ConvexCell2DsIndex;
+          };
+
+          std::vector<ConcaveCell2D> ConcaveCell2Ds;
+          std::vector<unsigned int> RemovedCell1Ds;
+      };
+
     public:
       MeshUtilities() { };
       ~MeshUtilities() { };
@@ -422,8 +434,8 @@ namespace Gedim
       AgglomerateTrianglesResult AgglomerateTriangles(const std::vector<unsigned int>& trianglesIndexToAgglomerate,
                                                       IMeshDAO& triangularMesh) const;
 
-      void AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
-                                             IMeshDAO& triangularMesh) const;
+      AgglomerateMeshFromTriangularMeshResult AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
+                                                                                IMeshDAO& triangularMesh) const;
   };
 
 }

@@ -1511,41 +1511,59 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void MeshUtilities::AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicesToAgglomerate,
-                                                        IMeshDAO& triangularMesh) const
+  MeshUtilities::AgglomerateMeshFromTriangularMeshResult MeshUtilities::AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicesToAgglomerate,
+                                                                                                          IMeshDAO& triangularMesh) const
   {
+    AgglomerateMeshFromTriangularMeshResult result;
+
+    list<unsigned int> removedCell1Ds;
+
+    result.ConcaveCell2Ds.resize(trianglesIndicesToAgglomerate.size());
+
     for (unsigned int ac = 0; ac < trianglesIndicesToAgglomerate.size(); ac++)
     {
-      const AgglomerateTrianglesResult agglomeratedPolygon = AgglomerateTriangles(trianglesIndicesToAgglomerate[ac],
+      const std::vector<unsigned int>& triangleToAgglomerate = trianglesIndicesToAgglomerate[ac];
+
+      const AgglomerateTrianglesResult agglomeratedPolygon = AgglomerateTriangles(triangleToAgglomerate,
                                                                                   triangularMesh);
 
       // create new cell2D
-      unsigned int agglomeratedCell2D = triangularMesh.Cell2DAppend(1);
+      AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D& concaveCell2D = result.ConcaveCell2Ds[ac];
 
-      triangularMesh.Cell2DAddVertices(agglomeratedCell2D,
+      concaveCell2D.Cell2DIndex = triangularMesh.Cell2DAppend(1);
+      concaveCell2D.ConvexCell2DsIndex = triangleToAgglomerate;
+
+      triangularMesh.Cell2DAddVertices(concaveCell2D.Cell2DIndex,
                                        agglomeratedPolygon.VerticesIndex);
-      triangularMesh.Cell2DAddEdges(agglomeratedCell2D,
+      triangularMesh.Cell2DAddEdges(concaveCell2D.Cell2DIndex,
                                     agglomeratedPolygon.EdgesIndex);
-      triangularMesh.Cell2DSetMarker(agglomeratedCell2D,
+      triangularMesh.Cell2DSetMarker(concaveCell2D.Cell2DIndex,
                                      0);
-      triangularMesh.Cell2DSetState(agglomeratedCell2D,
+      triangularMesh.Cell2DSetState(concaveCell2D.Cell2DIndex,
                                     true);
 
       // deactivate other cells
-      for (const unsigned int cell2DIndex : trianglesIndicesToAgglomerate[ac])
+      for (const unsigned int cell2DIndex : triangleToAgglomerate)
       {
         triangularMesh.Cell2DSetState(cell2DIndex,
                                       false);
         triangularMesh.Cell2DInsertUpdatedCell2D(cell2DIndex,
-                                                 agglomeratedCell2D);
+                                                 concaveCell2D.Cell2DIndex);
       }
 
       for (const unsigned int cell1DIndex : agglomeratedPolygon.RemovedEdges)
       {
         triangularMesh.Cell1DSetState(cell1DIndex,
                                       false);
+
+        removedCell1Ds.push_back(cell1DIndex);
       }
     }
+
+    result.RemovedCell1Ds = std::vector<unsigned int>(removedCell1Ds.begin(),
+                                                      removedCell1Ds.end());
+
+    return result;
   }
   // ***************************************************************************
   void MeshUtilities::CreateTriangularMesh(const Eigen::MatrixXd& polygonVertices,
