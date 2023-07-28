@@ -738,27 +738,35 @@ namespace GedimUnitTesting
                                            exportMeshFolder);
   }
 
-  TEST(TestMeshUtilities, TEMP)
+  TEST(TestMeshUtilities, TestAgglomerateWithRandom)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
-    std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh/Convex";
-
-    std::string exportFolder = "./Export/TestMeshUtilities/TEMP";
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateWithRandom";
     Gedim::Output::CreateFolder(exportFolder);
+
+    bool import = false;
+    std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh/Convex";
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
-    Gedim::MeshFromCsvUtilities importerUtilities;
-    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
-    meshImporterConfiguration.Folder = importFolder;
-    meshImporterConfiguration.Separator = ';';
-    Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
-    importer.Import(meshImporterConfiguration,
-                    meshDao);
+    if (import)
+    {
+      Gedim::MeshFromCsvUtilities importerUtilities;
+      Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+      meshImporterConfiguration.Folder = importFolder;
+      meshImporterConfiguration.Separator = ';';
+      Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+      importer.Import(meshImporterConfiguration,
+                      meshDao);
+    }
+    else
+    {
+      mesh = GedimUnitTesting::MeshMatrices_2D_26Cells_Mock().Mesh;
+    }
 
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
