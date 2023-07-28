@@ -6,6 +6,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
+#include "CommonUtilities.hpp"
 
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -743,7 +744,7 @@ namespace GedimUnitTesting
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
-    std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh";
+    std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh/Convex";
 
     std::string exportFolder = "./Export/TestMeshUtilities/TEMP";
     Gedim::Output::CreateFolder(exportFolder);
@@ -759,11 +760,81 @@ namespace GedimUnitTesting
     importer.Import(meshImporterConfiguration,
                     meshDao);
 
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ConvexMesh");
 
     const unsigned int convexCell2DNumber = meshDao.Cell2DTotalNumber();
+
+    // generate randomly the triangles
+    const std::vector<unsigned int> randomCell2Ds = Gedim::Utilities::RandomArrayNoRepetition((0.25 * convexCell2DNumber + 1),
+                                                                                              convexCell2DNumber);
+
+    const std::vector<double> percentagesToTake = { 0.25, 0.5, 0.75  };
+    std::list<std::vector<unsigned int>> takenTrianglesToAgglomerate;
+    std::vector<bool> used_triangles(convexCell2DNumber, 0);
+    for (unsigned int t = 0; t < randomCell2Ds.size(); t++)
+    {
+      const unsigned int cell2DIndex = randomCell2Ds.at(t);
+      const unsigned int commonCell0DIndex = meshDao.Cell2DVertex(cell2DIndex, 0);
+
+      std::list<unsigned int> tianglesToAgglomerateList;
+      int cell2DNeigh = cell2DIndex;
+      do
+      {
+        if (used_triangles[cell2DNeigh])
+          break;
+
+        tianglesToAgglomerateList.push_back(cell2DNeigh);
+
+        const unsigned int commonCell0DLocalPosition = meshDao.Cell2DFindVertex(cell2DNeigh,
+                                                                                commonCell0DIndex);
+        const unsigned int commonEdgeLocalIndex = (commonCell0DLocalPosition + 2) % 3;
+        const unsigned int commonCell1DIndex = meshDao.Cell2DEdge(cell2DNeigh,
+                                                                  commonEdgeLocalIndex);
+
+        unsigned int cell2DOtherNeigh = convexCell2DNumber;
+        for (unsigned int n = 0; n < meshDao.Cell1DNumberNeighbourCell2D(commonCell1DIndex); n++)
+        {
+          if (!meshDao.Cell1DHasNeighbourCell2D(commonCell1DIndex, n))
+            continue;
+
+          const unsigned int neigh = meshDao.Cell1DNeighbourCell2D(commonCell1DIndex, n);
+          if (neigh == cell2DNeigh || neigh == cell2DIndex)
+            continue;
+
+          cell2DOtherNeigh = neigh;
+        }
+
+        if (cell2DOtherNeigh == convexCell2DNumber)
+          cell2DNeigh = convexCell2DNumber;
+        else
+          cell2DNeigh = cell2DOtherNeigh;
+      }
+      while (cell2DNeigh < convexCell2DNumber);
+
+      if (tianglesToAgglomerateList.size() < 2)
+        continue;
+
+      unsigned int sizeToTake = (percentagesToTake[t % 3] * tianglesToAgglomerateList.size() + 1);
+      sizeToTake = (sizeToTake < 2 || sizeToTake > tianglesToAgglomerateList.size()) ?
+                     tianglesToAgglomerateList.size() - 1 :
+                     sizeToTake;
+
+      takenTrianglesToAgglomerate.push_back(std::vector<unsigned int>(sizeToTake));
+
+      unsigned int iterator = 0;
+      for (const unsigned int triangle : tianglesToAgglomerateList)
+      {
+        if (iterator >= sizeToTake)
+          break;
+
+        used_triangles[triangle] = true;
+        takenTrianglesToAgglomerate.back()[iterator++] = triangle;
+      }
+    }
 
     const std::vector<std::vector<unsigned int>> trianglesToAgglomerate
     {
