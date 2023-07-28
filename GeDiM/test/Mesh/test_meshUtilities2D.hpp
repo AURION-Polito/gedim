@@ -836,28 +836,9 @@ namespace GedimUnitTesting
       }
     }
 
-    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate
-    {
-      { 931,925,1528,917,927 },
-      { 864,906,885,884,861 },
-      { 842,818,857 },
-      { 795,652,700,731 },
-      { 777,772,771,778,708,644 },
-      { 655,1502,680 },
-      { 636,659,627 },
-      { 714,716,747,717,746 },
-      { 582,575,601,583 },
-      { 468,474,502,513 },
-      { 341,349,412,397,359 },
-      { 127,125,123,111 },
-      { 82,79,52,36,68 },
-      { 185,195,196,175 },
-      { 942,944,940 },
-      { 1064,1099,1090,1092,1087 },
-      { 1129,1298,1296 },
-      { 1222,3,1223,1217 },
-      { 1441,1428,1445,1449,1444 }
-    };
+    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate =
+        std::vector<std::vector<unsigned int>>(takenTrianglesToAgglomerate.begin(),
+                                               takenTrianglesToAgglomerate.end());
 
     const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult result = meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
                                                                                                                                  meshDao);
