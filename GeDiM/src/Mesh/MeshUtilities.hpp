@@ -113,8 +113,8 @@ namespace Gedim
       };
 
     public:
-      MeshUtilities();
-      ~MeshUtilities();
+      MeshUtilities() { };
+      ~MeshUtilities() { };
 
       /// \brief Extract Active Cells from mesh
       /// \note the resulting mesh has no inactive elements
