@@ -1448,6 +1448,7 @@ namespace Gedim
 
       std::list<unsigned int> commonEdges;
       std::list<unsigned int> agglomeratePolygonVertices;
+      std::list<unsigned int> agglomeratePolygonEdges;
 
       agglomeratePolygonVertices.push_back(commonVertex[0]);
       for (unsigned int t = 0; t < triangles.size() - 1; t++)
@@ -1467,6 +1468,8 @@ namespace Gedim
 
         agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(t),
                                                                          oppositeCommonEdgeVertexIndex));
+        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(t),
+                                                                    oppositeCommonEdgeVertexIndex));
       }
 
       const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(triangles.at(triangles.size() - 1),
@@ -1481,6 +1484,12 @@ namespace Gedim
       agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
                                                                        oppositeCommonEdgeVertexIndex));
 
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
+                                                                  oppositeCommonVertexVertexIndex));
+      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
+                                                                  oppositeCommonEdgeVertexIndex));
+
+      std::cout<< agglomeratePolygonEdges<< std::endl;
       std::cout<< agglomeratePolygonVertices<< std::endl;
 
     }
