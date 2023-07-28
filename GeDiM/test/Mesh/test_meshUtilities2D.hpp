@@ -580,13 +580,13 @@ namespace GedimUnitTesting
                                          exportFolder + "/hex_parallel_1.ovm");
   }
 
-  TEST(TestMeshUtilities, TestCreateConcaveMeshFromTriangularMesh)
+  TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
-    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateConcaveMeshFromTriangularMesh";
+    std::string exportFolder = "./Export/TestMeshUtilities/TestFindCell2DsCommonVertices";
     Gedim::Output::CreateFolder(exportFolder);
 
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
@@ -595,6 +595,65 @@ namespace GedimUnitTesting
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ConvexMesh");
+
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23, 29, 13, 30},
+                                                      meshDao),
+              std::vector<unsigned int>({ 11 }));
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23},
+                                                      meshDao),
+              std::vector<unsigned int>({ 11, 18 }));
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({ 30, 6 },
+                                                      meshDao),
+              std::vector<unsigned int>({ }));
+  }
+
+  TEST(TestMeshUtilities, TestFindCell2DsCommonEdges)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestFindCell2DsCommonEdges";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConvexMesh");
+
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23, 29, 13, 30},
+                                                   meshDao),
+              std::vector<unsigned int>({  }));
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23},
+                                                   meshDao),
+              std::vector<unsigned int>({ 0 }));
+    ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({ 30, 6 },
+                                                   meshDao),
+              std::vector<unsigned int>({ }));
+  }
+
+  TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateMeshFromTriangularMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConvexMesh");
+
+    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate { {0, 23, 29, 13, 30} };
+
+    meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
+                                                    meshDao);
   }
 }
 

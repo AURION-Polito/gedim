@@ -1344,47 +1344,98 @@ namespace Gedim
     return newCell2DsIndex;
   }
   // ***************************************************************************
-  unsigned int MeshUtilities::FindTrianglesCommonVertex(const std::vector<unsigned int>& trianglesIndex,
-                                                        const IMeshDAO& mesh) const
+  std::vector<unsigned int> MeshUtilities::FindCell2DsCommonVertices(const std::vector<unsigned int>& cell2DsIndex,
+                                                                     const IMeshDAO& mesh) const
   {
-    Output::Assert(trianglesIndex.size() > 1);
+    const unsigned int numPolygons = cell2DsIndex.size();
 
-    std::vector<unsigned int> firstTriangleVertices = mesh.Cell2DVertices(trianglesIndex[0]);
-    Output::Assert(firstTriangleVertices.size() == 3);
+    std::vector<unsigned int> firstPolygonVertices = mesh.Cell2DVertices(cell2DsIndex[0]);
 
-    std::vector<unsigned int> secondTriangleVertices = mesh.Cell2DVertices(trianglesIndex[1]);
-    Output::Assert(secondTriangleVertices.size() == 3);
+    if (numPolygons == 1)
+      return firstPolygonVertices;
 
-    std::vector<unsigned int> intersection;
+    // find intersections with second triangle
+    std::vector<unsigned int> secondPolygonVertices = mesh.Cell2DVertices(cell2DsIndex[1]);
 
-    std::sort(firstTriangleVertices.begin(),
-              firstTriangleVertices.end());
-    std::sort(secondTriangleVertices.begin(),
-              secondTriangleVertices.end());
+    std::vector<unsigned int> intersections;
 
-    std::set_intersection(firstTriangleVertices.begin(),
-                          firstTriangleVertices.end(),
-                          secondTriangleVertices.begin(),
-                          secondTriangleVertices.end(),
-                          back_inserter(intersection));
+    std::sort(firstPolygonVertices.begin(),
+              firstPolygonVertices.end());
+    std::sort(secondPolygonVertices.begin(),
+              secondPolygonVertices.end());
 
-    Output::Assert(intersection.size() == 1);
+    std::set_intersection(firstPolygonVertices.begin(),
+                          firstPolygonVertices.end(),
+                          secondPolygonVertices.begin(),
+                          secondPolygonVertices.end(),
+                          back_inserter(intersections));
+
+    if (numPolygons == 2)
+      return intersections;
+
+    // find intersections with third triangle
+    std::vector<unsigned int> thirdPolygonVertices = mesh.Cell2DVertices(cell2DsIndex[2]);
+
+    std::vector<unsigned int> singleIntersection;
+
+    std::sort(thirdPolygonVertices.begin(),
+              thirdPolygonVertices.end());
+
+    std::set_intersection(intersections.begin(),
+                          intersections.end(),
+                          thirdPolygonVertices.begin(),
+                          thirdPolygonVertices.end(),
+                          back_inserter(singleIntersection));
+
+    if (singleIntersection.size() == 0)
+      return singleIntersection;
 
     // check other triangles
-    for (unsigned int t = 2; t < trianglesIndex.size(); t++)
+    for (unsigned int t = 3; t < cell2DsIndex.size(); t++)
     {
-      std::vector<unsigned int> triangleVertices = mesh.Cell2DVertices(trianglesIndex[t]);
-      Output::Assert(triangleVertices.size() == 3);
-      Output::Assert(find(triangleVertices.begin(),
-                          triangleVertices.end(),
-                          intersection[0]) != triangleVertices.end());
+      std::vector<unsigned int> polygonVertices = mesh.Cell2DVertices(cell2DsIndex[t]);
+      Output::Assert(find(polygonVertices.begin(),
+                          polygonVertices.end(),
+                          singleIntersection[0]) != polygonVertices.end());
     }
 
-    return intersection[0];
+    return singleIntersection;
   }
   // ***************************************************************************
-  void MeshUtilities::CreateConcaveMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicsToAgglomerate,
-                                                          IMeshDAO& mesh) const
+  std::vector<unsigned int> MeshUtilities::FindCell2DsCommonEdges(const std::vector<unsigned int>& cell2DsIndex,
+                                                                  const IMeshDAO& mesh) const
+  {
+    const unsigned int numPolygons = cell2DsIndex.size();
+
+    std::vector<unsigned int> firstPolygonEdges = mesh.Cell2DEdges(cell2DsIndex[0]);
+
+    if (numPolygons == 1)
+      return firstPolygonEdges;
+
+    // find intersections with second polygon
+    std::vector<unsigned int> secondPolygonEdges = mesh.Cell2DEdges(cell2DsIndex[1]);
+
+    std::vector<unsigned int> intersections;
+
+    std::sort(firstPolygonEdges.begin(),
+              firstPolygonEdges.end());
+    std::sort(secondPolygonEdges.begin(),
+              secondPolygonEdges.end());
+
+    std::set_intersection(firstPolygonEdges.begin(),
+                          firstPolygonEdges.end(),
+                          secondPolygonEdges.begin(),
+                          secondPolygonEdges.end(),
+                          back_inserter(intersections));
+
+    if (numPolygons == 2)
+      return intersections;
+
+    return {};
+  }
+  // ***************************************************************************
+  void MeshUtilities::AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicsToAgglomerate,
+                                                        IMeshDAO& triangularMesh) const
   {
 
   }
