@@ -392,6 +392,9 @@ namespace Gedim
       std::vector<unsigned int> SplitCell2D(const unsigned int& cell2DIndex,
                                             const std::vector<Eigen::MatrixXi> subCell2Ds,
                                             IMeshDAO& mesh) const;
+
+      void CreateConcaveMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicsToAgglomerate,
+                                               IMeshDAO& mesh) const;
   };
 
 }

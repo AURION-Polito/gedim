@@ -2459,6 +2459,12 @@ namespace Gedim
     return newCell2DsIndex;
   }
   // ***************************************************************************
+  void MeshUtilities::CreateConcaveMeshFromTriangularMesh(const std::vector<std::vector<unsigned int> >& trianglesIndicsToAgglomerate,
+                                                          IMeshDAO& mesh) const
+  {
+
+  }
+  // ***************************************************************************
   void MeshUtilities::CreateParallelepipedMesh(const Eigen::Vector3d& parallelepipedOrigin,
                                                const Eigen::Vector3d& parallelepipedLengthTangent,
                                                const Eigen::Vector3d& parallelepipedHeightTangent,
