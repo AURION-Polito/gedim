@@ -736,6 +736,97 @@ namespace GedimUnitTesting
                                            ',',
                                            exportMeshFolder);
   }
+
+  TEST(TestMeshUtilities, TEMP)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh";
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TEMP";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshFromCsvUtilities importerUtilities;
+    Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+    meshImporterConfiguration.Folder = importFolder;
+    meshImporterConfiguration.Separator = ';';
+    Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+    importer.Import(meshImporterConfiguration,
+                    meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConvexMesh");
+
+    const unsigned int convexCell2DNumber = meshDao.Cell2DTotalNumber();
+
+    const std::vector<std::vector<unsigned int>> trianglesToAgglomerate
+    {
+      { 931,925,1528,917,927 },
+      { 864,906,885,884,861 },
+      { 842,818,857 },
+      { 795,652,700,731 },
+      { 777,772,771,778,708,644 },
+      { 655,1502,680 },
+      { 636,659,627 },
+      { 714,716,747,717,746 },
+      { 582,575,601,583 },
+      { 468,474,502,513 },
+      { 341,349,412,397,359 },
+      { 127,125,123,111 },
+      { 82,79,52,36,68 },
+      { 185,195,196,175 },
+      { 942,944,940 },
+      { 1064,1099,1090,1092,1087 },
+      { 1129,1298,1296 },
+      { 1222,3,1223,1217 },
+      { 1441,1428,1445,1449,1444 }
+    };
+
+    const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult result = meshUtilities.AgglomerateMeshFromTriangularMesh(trianglesToAgglomerate,
+                                                                                                                                 meshDao);
+
+    std::vector<std::vector<unsigned int>> convexCell2DsIndex(meshDao.Cell2DTotalNumber());
+    for (unsigned int c = 0; c < convexCell2DNumber; c++)
+    {
+      if (meshDao.Cell2DIsActive(c))
+        convexCell2DsIndex[c].resize(1, c);
+    }
+    for (unsigned int cc = 0; cc < result.ConcaveCell2Ds.size(); cc++)
+    {
+      const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D& concaveCell = result.ConcaveCell2Ds[cc];
+      convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
+    }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    extractionData);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConcaveMesh");
+
+    std::vector<std::vector<unsigned int>> extractedConvexCell2DsIndex(meshDao.Cell2DTotalNumber());
+
+    for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
+    {
+      const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
+      extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
+    }
+
+    const string exportMeshFolder = exportFolder + "/Mesh";
+    Gedim::Output::CreateFolder(exportMeshFolder);
+
+    meshUtilities.ExportConcaveMesh2DToCsv(meshDao,
+                                           extractedConvexCell2DsIndex,
+                                           ',',
+                                           exportMeshFolder);
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES2D_H
