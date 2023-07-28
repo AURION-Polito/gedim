@@ -750,7 +750,9 @@ namespace GedimUnitTesting
     bool import = false;
     std::string importFolder = "/home/geoscore/Dropbox/Polito/Articles/VEM_INERTIA/VEM_INERTIA/MESH/TriangularMesh/Convex";
 
+    Gedim::MeshMatrices originalMesh;
     Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO originalMeshDao(originalMesh);
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     if (import)
@@ -761,12 +763,14 @@ namespace GedimUnitTesting
       meshImporterConfiguration.Separator = ';';
       Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
       importer.Import(meshImporterConfiguration,
-                      meshDao);
+                      originalMeshDao);
     }
     else
     {
-      mesh = GedimUnitTesting::MeshMatrices_2D_26Cells_Mock().Mesh;
+      originalMesh = GedimUnitTesting::MeshMatrices_2D_26Cells_Mock().Mesh;
     }
+
+    mesh = originalMesh;
 
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
@@ -881,13 +885,18 @@ namespace GedimUnitTesting
       extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
     }
 
-    const string exportMeshFolder = exportFolder + "/Mesh";
-    Gedim::Output::CreateFolder(exportMeshFolder);
+    const string exportConvexMeshFolder = exportFolder + "/Convex";
+    const string exportConcaveMeshFolder = exportFolder + "/Concave";
+    Gedim::Output::CreateFolder(exportConvexMeshFolder);
+    Gedim::Output::CreateFolder(exportConcaveMeshFolder);
 
+    meshUtilities.ExportMeshToCsv(originalMeshDao,
+                                  ',',
+                                  exportConvexMeshFolder);
     meshUtilities.ExportConcaveMesh2DToCsv(meshDao,
                                            extractedConvexCell2DsIndex,
                                            ',',
-                                           exportMeshFolder);
+                                           exportConcaveMeshFolder);
   }
 }
 

@@ -1,5 +1,6 @@
 #include "MeshUtilities.hpp"
 
+#include "MeshDAOExporterToCsv.hpp"
 #include "VTKUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 
@@ -446,6 +447,20 @@ namespace Gedim
                           "Cell2D_" + to_string(cell2DIndex) +
                           "_Centroid" + ".vtu");
     }
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportMeshToCsv(const IMeshDAO& mesh,
+                                      const char& separator,
+                                      const std::string& exportFolderPath) const
+  {
+    // export mesh
+    Gedim::MeshFromCsvUtilities meshFromCsvUtilities;
+    Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
+    exportConfiguration.Separator = separator;
+    exportConfiguration.Folder = exportFolderPath;
+    Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
+    exporter.Export(exportConfiguration,
+                    mesh);
   }
   // ***************************************************************************
 }
