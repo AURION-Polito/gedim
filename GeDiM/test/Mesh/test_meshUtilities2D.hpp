@@ -700,6 +700,18 @@ namespace GedimUnitTesting
     ASSERT_EQ(vector<unsigned int>({ 0, 23, 29, 13, 30 }),
               result.ConcaveCell2Ds[1].ConvexCell2DsIndex);
 
+    std::vector<std::vector<unsigned int>> convexCell2DsIndex(meshDao.Cell2DTotalNumber());
+    for (unsigned int c = 0; c < mesh.Mesh.NumberCell2D; c++)
+    {
+      if (meshDao.Cell2DIsActive(c))
+        convexCell2DsIndex[c].resize(1, c);
+    }
+    for (unsigned int cc = 0; cc < result.ConcaveCell2Ds.size(); cc++)
+    {
+      const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D& concaveCell = result.ConcaveCell2Ds[cc];
+      convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
+    }
+
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDao,
                                     extractionData);
@@ -708,19 +720,21 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ConcaveMesh");
 
-//    std::vector<std::vector<unsigned int>> convexCell2DsIndex;
-//    for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
-//    {
-//      const unsigned int
-//    }
+    std::vector<std::vector<unsigned int>> extractedConvexCell2DsIndex(meshDao.Cell2DTotalNumber());
 
-//    const string exportMeshFolder = exportFolder + "/Mesh";
-//    Gedim::Output::CreateFolder(exportMeshFolder);
+    for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
+    {
+      const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
+      extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
+    }
 
-//    meshUtilities.ExportConcaveMesh2DToCsv(meshDao,
-//                                           convexCell2DsIndex,
-//                                           ',',
-//                                           exportMeshFolder);
+    const string exportMeshFolder = exportFolder + "/Mesh";
+    Gedim::Output::CreateFolder(exportMeshFolder);
+
+    meshUtilities.ExportConcaveMesh2DToCsv(meshDao,
+                                           extractedConvexCell2DsIndex,
+                                           ',',
+                                           exportMeshFolder);
   }
 }
 
