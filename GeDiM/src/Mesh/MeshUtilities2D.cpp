@@ -1450,7 +1450,16 @@ namespace Gedim
       std::list<unsigned int> agglomeratePolygonVertices;
       std::list<unsigned int> agglomeratePolygonEdges;
 
-      agglomeratePolygonVertices.push_back(commonVertex[0]);
+      // first triangle
+      {
+        const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(triangles.at(0),
+                                                                                    commonVertex[0]);
+        agglomeratePolygonVertices.push_back(commonVertex[0]);
+        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(0),
+                                                                    commonVertexLocalIndex));
+      }
+
+      // middle triangles
       for (unsigned int t = 0; t < triangles.size() - 1; t++)
       {
         const std::vector<unsigned int> commonEdge = FindCell2DsCommonEdges({
@@ -1472,22 +1481,25 @@ namespace Gedim
                                                                     oppositeCommonEdgeVertexIndex));
       }
 
-      const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(triangles.at(triangles.size() - 1),
-                                                                              commonEdges.back());
-      const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
-      const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(triangles.at(triangles.size() - 1),
-                                                                                  commonVertex[0]);
-      const unsigned int oppositeCommonVertexVertexIndex = (commonVertexLocalIndex + 1) % 3;
+      // last triangle
+      {
+        const unsigned int commonEdgeLocalIndex = triangularMesh.Cell2DFindEdge(triangles.at(triangles.size() - 1),
+                                                                                commonEdges.back());
+        const unsigned int oppositeCommonEdgeVertexIndex = (commonEdgeLocalIndex + 2) % 3;
+        const unsigned int commonVertexLocalIndex = triangularMesh.Cell2DFindVertex(triangles.at(triangles.size() - 1),
+                                                                                    commonVertex[0]);
+        const unsigned int oppositeCommonVertexVertexIndex = (commonVertexLocalIndex + 1) % 3;
 
-      agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
-                                                                       oppositeCommonVertexVertexIndex));
-      agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
-                                                                       oppositeCommonEdgeVertexIndex));
+        agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
+                                                                         oppositeCommonVertexVertexIndex));
+        agglomeratePolygonVertices.push_back(triangularMesh.Cell2DVertex(triangles.at(triangles.size() - 1),
+                                                                         oppositeCommonEdgeVertexIndex));
 
-      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
-                                                                  oppositeCommonVertexVertexIndex));
-      agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
-                                                                  oppositeCommonEdgeVertexIndex));
+        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
+                                                                    oppositeCommonVertexVertexIndex));
+        agglomeratePolygonEdges.push_back(triangularMesh.Cell2DEdge(triangles.at(triangles.size() - 1),
+                                                                    oppositeCommonEdgeVertexIndex));
+      }
 
       std::cout<< agglomeratePolygonEdges<< std::endl;
       std::cout<< agglomeratePolygonVertices<< std::endl;
