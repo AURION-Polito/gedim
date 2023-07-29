@@ -1,5 +1,7 @@
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_mesh.hpp)
-list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities1D.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities2D.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities3D.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_intersectorMesh2DSegment.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_unionMeshSegment.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_conformMesh.hpp)
