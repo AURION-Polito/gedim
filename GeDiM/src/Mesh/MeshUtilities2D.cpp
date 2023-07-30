@@ -917,6 +917,15 @@ namespace Gedim
         mapFile<< endl;
       }
 
+      mapFile<< endl;
+      mapFile<< mesh.Cell0DTotalNumber()<< endl;
+      mapFile<< "# newVertId, oldVertId"<< endl;
+      for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+      {
+        mapFile<< scientific<< v<< separator;
+        mapFile<< scientific<< v<< endl;
+      }
+
       mapFile.close();
     }
   }
