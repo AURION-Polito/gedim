@@ -179,6 +179,15 @@ namespace Gedim
       static std::string MemoryFile; ///< File where memory profiling data are stored
 
       static double GetTime(const std::string& nameTime, const bool& localTime = false);
+      /// Get time in ms
+      static double GetTime()
+      {
+#if USE_MPI == 1
+        return MPI::Wtime();
+#elif USE_MPI == 0
+        return clock();
+#endif // USE_MPI
+      }
 
       /// \brief Get Total Physical Memory from file /proc/meminfo (KB)
       /// \param totalMemory will have 3 values: TotMemory, UsedMemory, AvailMemory
@@ -200,7 +209,9 @@ namespace Gedim
       /// Split time with nameTime if exists and return the global time and local time
       static void SplitTime(const std::string& nameTime, double& globalTime, double& localTime);
       /// Stop time with nameTime if exists and print to file the result
-      static void StopTime(const std::string& nameTime, const bool& printTime = true);
+      static double StopTime(const std::string& nameTime, const bool& printTime = true);
+
+      static void WriteTime(const std::string& nameTime, double& globalTime, double& localTime);
   };
 
   /// General print of a vector
