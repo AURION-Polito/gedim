@@ -959,18 +959,8 @@ namespace Gedim
       return;
     }
 
-    double startTime = timeFound->second;
-    double localStartTime = localTimeFound->second;
-#if USE_MPI == 1
-    double timeDifference = endTime - startTime;
-    double localTimeDifference = localEndTime - localStartTime;
-#elif USE_MPI == 0
-    double timeDifference = (endTime - startTime) / (double)CLOCKS_PER_SEC;
-    double localTimeDifference = (localEndTime - localStartTime) / (double)CLOCKS_PER_SEC;
-#endif // USE_MPI
-
-    globalTime = timeDifference;
-    localTime = localTimeDifference;
+    globalTime = ComputeTime(timeFound->second, endTime);
+    localTime = ComputeTime(localTimeFound->second, localEndTime);
   }
   // *************************************************************************
   double Profiler::StopTime(const string& nameTime, const bool& printTime)
@@ -1001,16 +991,8 @@ namespace Gedim
       return 0.0;
     }
 
-    double startTime = timeFound->second;
-    double localStartTime = localTimeFound->second;
-
-#if USE_MPI == 1
-    double timeDifference = endTime - startTime;
-    double localTimeDifference = localEndTime - localStartTime;
-#elif USE_MPI == 0
-    double timeDifference = (endTime - startTime) / (double)CLOCKS_PER_SEC;
-    double localTimeDifference = (localEndTime - localStartTime) / (double)CLOCKS_PER_SEC;
-#endif // USE_MPI
+    const double timeDifference = ComputeTime(timeFound->second, endTime);
+    const double localTimeDifference = ComputeTime(localTimeFound->second, localEndTime);
 
     times[nameTime] = timeDifference;
     localTimes[nameTime] = localTimeDifference;
@@ -1026,8 +1008,8 @@ namespace Gedim
   }
   // *************************************************************************
   void Profiler::WriteTime(const std::string& nameTime,
-                           double& globalTime,
-                           double& localTime)
+                           const double& globalTime,
+                           const double& localTime)
   {
     ostringstream nameFolder;
 
