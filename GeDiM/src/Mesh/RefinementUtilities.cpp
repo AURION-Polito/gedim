@@ -1112,6 +1112,8 @@ namespace Gedim
                                            cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
         return result;
 
+      result.Time = Gedim::Profiler::GetTime();
+
       const SplitPolygon_Result splitResult = SplitPolygon_NoNewVertices(cell2DIndex,
                                                                          cell2DNumVertices,
                                                                          fromVertex,
@@ -1157,6 +1159,8 @@ namespace Gedim
 
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
                                                                         mesh);
+
+      result.Time = Gedim::Profiler::GetTime();
 
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertexFrom(cell2DIndex,
                                                                          cell2DNumVertices,
@@ -1218,6 +1222,8 @@ namespace Gedim
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
 
+      result.Time = Gedim::Profiler::GetTime();
+
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertexTo(cell2DIndex,
                                                                        cell2DNumVertices,
                                                                        fromVertex,
@@ -1265,6 +1271,8 @@ namespace Gedim
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
 
+
+      result.Time = Gedim::Profiler::GetTime();
 
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertices(cell2DIndex,
                                                                        cell2DNumVertices,
