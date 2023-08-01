@@ -308,7 +308,7 @@ namespace Gedim
                                             _mesh.NumberCell0D,
                                             cell0DIndex,
                                             numberNeighbourCell1Ds,
-                                            _mesh.NumberCell1D);
+                                            std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex, const unsigned int& numberNeighbourCell2Ds)
@@ -360,8 +360,6 @@ namespace Gedim
   // ***************************************************************************
   void MeshMatricesDAO::Cell1DsInitialize(const unsigned int& numberCell1Ds)
   {
-    unsigned int oldNumberCell1D = _mesh.NumberCell1D;
-
     _mesh.NumberCell1D = numberCell1Ds;
     _mesh.Cell1DVertices.resize(2 * _mesh.NumberCell1D, 0);
     _mesh.Cell1DMarkers.resize(_mesh.NumberCell1D, 0);
@@ -370,17 +368,24 @@ namespace Gedim
     _mesh.NumberCell1DNeighbourCell2D.resize(_mesh.NumberCell1D + 1, 0);
     for (unsigned int p = 0; p < Cell1DNumberDoubleProperties(); p++)
       _mesh.Cell1DDoublePropertySizes[p].resize(_mesh.NumberCell1D + 1, 0);
-
-    // update neighbours
-    AlignContainerElements(_mesh.Cell0DNeighbourCell1Ds,
-                           oldNumberCell1D,
-                           _mesh.NumberCell1D);
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell1DAppend(const unsigned int& numberCell1Ds)
   {
     unsigned int oldNumberCell1Ds = _mesh.NumberCell1D;
-    Cell1DsInitialize(oldNumberCell1Ds + numberCell1Ds);
+
+    _mesh.NumberCell1D = oldNumberCell1Ds + numberCell1Ds;
+    for (unsigned int nc = 0; nc < numberCell1Ds; nc++)
+    {
+      for (unsigned int v = 0; v < 2; v++)
+        _mesh.Cell1DVertices.push_back(0.0);
+      _mesh.Cell1DMarkers.push_back(0);
+      _mesh.ActiveCell1D.push_back(false);
+      _mesh.Cell1DOriginalCell1Ds.push_back(std::numeric_limits<unsigned int>::max());
+      _mesh.NumberCell1DNeighbourCell2D.push_back(0);
+      for (unsigned int p = 0; p < Cell1DNumberDoubleProperties(); p++)
+        _mesh.Cell1DDoublePropertySizes[p].push_back(0);
+    }
 
     for (unsigned c = 0; c < numberCell1Ds; c++)
       _mesh.NumberCell1DNeighbourCell2D[oldNumberCell1Ds + c + 1] = _mesh.NumberCell1DNeighbourCell2D[oldNumberCell1Ds];
@@ -428,7 +433,7 @@ namespace Gedim
 
     AlignContainerHigherElements(_mesh.Cell0DNeighbourCell1Ds,
                                  cell1DIndex,
-                                 _mesh.NumberCell1D);
+                                 std::numeric_limits<unsigned int>::max());
     AlignContainerHigherElements(_mesh.Cell2DEdges,
                                  cell1DIndex,
                                  _mesh.NumberCell1D);

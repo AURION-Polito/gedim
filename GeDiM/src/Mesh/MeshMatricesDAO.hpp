@@ -185,7 +185,7 @@ namespace Gedim
                                              const unsigned int& neighbourIndex)
       {
         _mesh.Cell0DNeighbourCell1Ds[_mesh.NumberCell0DNeighbourCell1D[cell0DIndex] +
-            neighbourIndex] = _mesh.NumberCell1D;
+            neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
 
       inline void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
