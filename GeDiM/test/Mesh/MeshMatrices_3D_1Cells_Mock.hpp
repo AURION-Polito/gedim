@@ -48,7 +48,7 @@ namespace GedimUnitTesting
         Mesh.Cell2DSubdivision = {};
         Mesh.Cell2DMarkers = { 21,22,23,24,25,26 };
         Mesh.ActiveCell2D = { 1,1,1,1,1,1 };
-        Mesh.Cell2DOriginalCell2Ds = { 6,6,6,6,6,6 };
+        Mesh.Cell2DOriginalCell2Ds.resize(Mesh.NumberCell2D, std::numeric_limits<unsigned int>::max());
         Mesh.UpdatedCell2Ds = {};
         Mesh.Cell2DDoublePropertyIds = {};
         Mesh.Cell2DDoublePropertyIndices = {};
