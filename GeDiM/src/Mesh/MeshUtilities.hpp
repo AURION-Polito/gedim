@@ -132,6 +132,16 @@ namespace Gedim
           std::vector<unsigned int> RemovedCell2Ds;
       };
 
+      struct AgglomerationInformation final
+      {
+          std::vector<unsigned int> OriginalCell0DToAgglomeratedCell0Ds;
+          std::vector<unsigned int> OriginalCell1DToAgglomeratedCell1Ds;
+          std::vector<unsigned int> OriginalCell2DToAgglomeratedCell2Ds;
+          std::vector<unsigned int> AgglomeratedCell0DToOriginalCell0Ds;
+          std::vector<std::vector<unsigned int>> AgglomeratedCell1DToOriginalCell1Ds;
+          std::vector<std::vector<unsigned int>> AgglomeratedCell2DToOriginalCell2Ds;
+      };
+
     public:
       MeshUtilities() { };
       ~MeshUtilities() { };
@@ -454,6 +464,24 @@ namespace Gedim
 
       AgglomerateMeshFromTriangularMeshResult AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>>& trianglesIndicesToAgglomerate,
                                                                                 IMeshDAO& triangularMesh) const;
+
+      /// \brief Import Agglomeration mesh Information From file Csv
+      /// \param geometryUtilities the geometry utilities
+      /// \param originalMesh the original mesh
+      /// \param agglomeratedMesh the agglomerated mesh
+      /// \param fileName the csv file name
+      /// \param separator the csv file separator
+      /// \param originalCell0DToAgglomeratedCell0Ds original Cell0Ds to agglomerated Cell0Ds
+      /// \param originalCell1DToAgglomeratedCell1Ds original Cell1Ds to agglomerated Cell1Ds
+      /// \param originalCell2DToAgglomeratedCell2Ds original Cell2Ds to agglomerated Cell2Ds
+      /// \param agglomeratedCell0DToOriginalCell0Ds agglomerated Cell0Ds to original Cell0Ds
+      /// \param agglomeratedCell1DToOriginalCell1Ds agglomerated Cell1Ds to original Cell1Ds
+      /// \param agglomeratedCell2DToOriginalCell2Ds agglomerated Cell2Ds to original Cell2Ds
+      AgglomerationInformation ImportAgglomerationInformationFromCsv(const Gedim::GeometryUtilities geometryUtilities,
+                                                                     const Gedim::IMeshDAO& originalMesh,
+                                                                     const Gedim::IMeshDAO& agglomeratedMesh,
+                                                                     const std::string& fileName,
+                                                                     const char& separator) const;
 
       /// \brief Export mesh to csv file
       void ExportMeshToCsv(const IMeshDAO& mesh,
