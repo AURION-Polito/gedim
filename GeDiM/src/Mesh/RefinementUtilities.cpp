@@ -630,8 +630,9 @@ namespace Gedim
         const unsigned int end = mesh.Cell2DVertex(cell2DIndex,
                                                    (e + 1) % numCell2DEdges);
 
-        geometricData.Cell2Ds.EdgesDirection[cell2DIndex][e] = mesh.Cell1DExists(origin,
-                                                                                 end);
+        geometricData.Cell2Ds.EdgesDirection[cell2DIndex][e] = (mesh.Cell2DFindEdgeByExtremes(cell2DIndex,
+                                                                                              origin,
+                                                                                              end) == e);
       }
 
       geometricData.Cell2Ds.UnalignedEdgesLength[cell2DIndex] = geometryUtilities.PolygonEdgeLengths(convexCell2DUnalignedVertices);

@@ -25,7 +25,6 @@ namespace Gedim
       std::vector<std::vector<double>> Cell0DDoublePropertyValues = {}; ///< Cell0D double property values
       unsigned int NumberCell1D = 0; ///< number of Cell1D
       std::vector<unsigned int> Cell1DVertices = {}; ///< Cell1D vertices indices, size 2 x NumberCell1D (fromId,toId)
-      Eigen::SparseMatrix<unsigned int> Cell1DAdjacency; ///< Cell1D adjacency, each element is the Cell1D index, size NumberCell0D x NumberCell0D
       std::vector<unsigned int> NumberCell1DNeighbourCell2D = {}; ///< Cell1D neighbour Cell2D indices per cell, size  1 x NumberCell1D + 1
       std::vector<unsigned int> Cell1DNeighbourCell2Ds = {}; ///< Cell1D neighbour Cell2D indices, size 1 x NumberCell1DNeighbourCell2D[NumberCell1D]
       std::vector<unsigned int> Cell1DMarkers = {}; ///< Cell1D propertoes, size 1 x NumberCell1D (marker)

@@ -257,6 +257,13 @@ namespace Gedim
     }
 
     /// <li> Set Cell1Ds
+    struct Edge
+    {
+        unsigned int Cell1DIndex;
+        int Cell0DEnd;
+    };
+
+    std::vector<std::list<Edge>> cell0DsCell1Ds(mesh.Cell0DTotalNumber());
     for(unsigned int e = 0; e < numberOfEgdesMesh; e++)
     {
       mesh.Cell1DInsertExtremes(e,
@@ -264,6 +271,7 @@ namespace Gedim
           tetgenOutput.edgelist[2 * e + 1]);
       mesh.Cell1DSetState(e, true);
       mesh.Cell1DSetMarker(e, tetgenOutput.edgemarkerlist[e]);
+      cell0DsCell1Ds[tetgenOutput.edgelist[2 * e + 0]].push_back({ e, tetgenOutput.edgelist[2 * e + 1] });
     }
 
     /// <li> Set Faces
@@ -282,14 +290,36 @@ namespace Gedim
 
       for (unsigned int v = 0; v < numCell2DVertices; v++)
       {
-        const unsigned int vertexId = tetgenOutput.trifacelist[3 * f + v];
-        const unsigned int nextVertexId = tetgenOutput.trifacelist[3 * f + (v + 1) % 3];
-        const unsigned int edgeId = mesh.Cell1DExists(vertexId,
-                                                      nextVertexId) ?
-                                      mesh.Cell1DByExtremes(vertexId,
-                                                            nextVertexId) :
-                                      mesh.Cell1DByExtremes(nextVertexId,
-                                                            vertexId);
+        const int vertexId = tetgenOutput.trifacelist[3 * f + v];
+        const int nextVertexId = tetgenOutput.trifacelist[3 * f + (v + 1) % 3];
+        unsigned int edgeId = numberOfEgdesMesh;
+
+        if (edgeId == numberOfEgdesMesh)
+        {
+          const std::list<Edge>& originCell1Ds = cell0DsCell1Ds.at(vertexId);
+          std::list<Edge>::const_iterator findOriginEdge = std::find_if(originCell1Ds.begin(),
+                                                                        originCell1Ds.end(),
+                                                                        [&] (const Edge& edge)
+          { return edge.Cell0DEnd == nextVertexId; });
+
+          if (findOriginEdge != originCell1Ds.end())
+            edgeId = findOriginEdge->Cell1DIndex;
+        }
+
+        if (edgeId == numberOfEgdesMesh)
+        {
+          const std::list<Edge>& endCell1Ds = cell0DsCell1Ds.at(nextVertexId);
+          std::list<Edge>::const_iterator findEndEdge = std::find_if(endCell1Ds.begin(),
+                                                                     endCell1Ds.end(),
+                                                                     [&] (const Edge& edge)
+          { return edge.Cell0DEnd == vertexId; });
+
+          if (findEndEdge != endCell1Ds.end())
+            edgeId = findEndEdge->Cell1DIndex;
+        }
+
+        Gedim::Output::Assert(edgeId != numberOfEgdesMesh);
+
         vertices[v] = vertexId;
 
         mesh.Cell2DInsertVertex(f, v, vertexId);

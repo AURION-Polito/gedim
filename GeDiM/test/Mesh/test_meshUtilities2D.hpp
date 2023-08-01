@@ -356,15 +356,15 @@ namespace GedimUnitTesting
     vertices.col(3)<< 1.0, 1.0, 0.0;
     expectedResult.Cell2DsVertices = { vertices };
 
-    EXPECT_EQ(result.Cell2DsAreas, expectedResult.Cell2DsAreas);
-    EXPECT_EQ(result.Cell2DsCentroids, expectedResult.Cell2DsCentroids);
-    EXPECT_EQ(result.Cell2DsDiameters, expectedResult.Cell2DsDiameters);
-    EXPECT_EQ(result.Cell2DsEdgeDirections, expectedResult.Cell2DsEdgeDirections);
-    EXPECT_EQ(result.Cell2DsEdgeLengths, expectedResult.Cell2DsEdgeLengths);
-    EXPECT_EQ(result.Cell2DsEdgeNormals, expectedResult.Cell2DsEdgeNormals);
-    EXPECT_EQ(result.Cell2DsEdgeTangents, expectedResult.Cell2DsEdgeTangents);
-    EXPECT_EQ(result.Cell2DsTriangulations, expectedResult.Cell2DsTriangulations);
-    EXPECT_EQ(result.Cell2DsVertices, expectedResult.Cell2DsVertices);
+    EXPECT_EQ(expectedResult.Cell2DsAreas, result.Cell2DsAreas);
+    EXPECT_EQ(expectedResult.Cell2DsCentroids, result.Cell2DsCentroids);
+    EXPECT_EQ(expectedResult.Cell2DsDiameters, result.Cell2DsDiameters);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeDirections, result.Cell2DsEdgeDirections);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeLengths, result.Cell2DsEdgeLengths);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeNormals, result.Cell2DsEdgeNormals);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, result.Cell2DsEdgeTangents);
+    EXPECT_EQ(expectedResult.Cell2DsTriangulations, result.Cell2DsTriangulations);
+    EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
   }
 
   TEST(TestMeshUtilities, TestRefineMesh2D)

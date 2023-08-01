@@ -33,10 +33,12 @@ namespace Gedim
     {
       for (unsigned int e1 = 0; e1 < convexMesh.Cell1DTotalNumber(); e1++)
       {
-        Output::Assert(convexMesh.Cell1DExists(convexMesh.Cell1DOrigin(e1),
-                                               convexMesh.Cell1DEnd(e1)));
-        Output::Assert(!convexMesh.Cell1DExists(convexMesh.Cell1DEnd(e1),
-                                                convexMesh.Cell1DOrigin(e1)));
+        Output::Assert(convexMesh.Cell1DByExtremes(convexMesh.Cell1DOrigin(e1),
+                                                   convexMesh.Cell1DEnd(e1)) ==
+                       e1);
+        Output::Assert(convexMesh.Cell1DByExtremes(convexMesh.Cell1DEnd(e1),
+                                                   convexMesh.Cell1DOrigin(e1)) ==
+                       convexMesh.Cell1DTotalNumber());
 
         for (unsigned int e2 = e1 + 1; e2 < convexMesh.Cell1DTotalNumber(); e2++)
         {
@@ -62,14 +64,21 @@ namespace Gedim
     {
       for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
       {
-        for (unsigned int v = 0; v < convexMesh.Cell2DNumberVertices(p); v++)
+        const unsigned int cell2DNumEdges = convexMesh.Cell2DNumberEdges(p);
+        for (unsigned int v = 0; v < cell2DNumEdges; v++)
         {
           const unsigned int eO = convexMesh.Cell2DVertex(p, v);
-          const unsigned int eE = convexMesh.Cell2DVertex(p, (v + 1) % convexMesh.Cell2DNumberVertices(p));
-          Output::Assert(convexMesh.Cell1DExists(eO, eE) || convexMesh.Cell1DExists(eE, eO));
-          const unsigned int edgeFromVertices = convexMesh.Cell1DExists(eO, eE) ? convexMesh.Cell1DByExtremes(eO, eE) :
-                                                                                  convexMesh.Cell1DByExtremes(eE, eO);
-          Output::Assert(convexMesh.Cell2DEdge(p, v) == edgeFromVertices);
+          const unsigned int eE = convexMesh.Cell2DVertex(p, (v + 1) % cell2DNumEdges);
+
+          const unsigned int edgeFromVerticesOE = convexMesh.Cell2DFindEdgeByExtremes(p,
+                                                                                      eO,
+                                                                                      eE);
+          const unsigned int edgeFromVerticesEO = convexMesh.Cell2DFindEdgeByExtremes(p,
+                                                                                      eE,
+                                                                                      eO);
+
+          Output::Assert((edgeFromVerticesOE < cell2DNumEdges && edgeFromVerticesOE == v) ||
+                         (edgeFromVerticesEO < cell2DNumEdges && edgeFromVerticesEO == v));
         }
       }
     }
@@ -473,8 +482,9 @@ namespace Gedim
         const unsigned int meshOrigin = convexMesh.Cell3DVertex(c, polyhedron.Edges(0, e));
         const unsigned int meshEnd = convexMesh.Cell3DVertex(c, polyhedron.Edges(1, e));
 
-        result.Cell3DsEdgeDirections[c][e] = convexMesh.Cell1DExists(meshOrigin,
-                                                                     meshEnd);
+        result.Cell3DsEdgeDirections[c][e] = (convexMesh.Cell3DFindEdgeByExtremes(c,
+                                                                                  meshOrigin,
+                                                                                  meshEnd) == e);
       }
 
       result.Cell3DsFaces3DVertices[c] = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
@@ -493,6 +503,8 @@ namespace Gedim
       for (unsigned int f = 0; f < numFaces; f++)
       {
         const unsigned int numFaceEdges = polyhedron.Faces[f].cols();
+        const unsigned int cell2DIndex = convexMesh.Cell3DFace(c, f);
+
         result.Cell3DsFacesEdgeDirections[c][f].resize(numFaceEdges);
         for (unsigned int e = 0; e < numFaceEdges; e++)
         {
@@ -502,8 +514,9 @@ namespace Gedim
           const unsigned int meshOrigin = convexMesh.Cell3DVertex(c, faceEdgeOrigin);
           const unsigned int meshEnd = convexMesh.Cell3DVertex(c, faceEdgeEnd);
 
-          result.Cell3DsFacesEdgeDirections[c][f][e] = convexMesh.Cell1DExists(meshOrigin,
-                                                                               meshEnd);
+          result.Cell3DsFacesEdgeDirections[c][f][e] = (convexMesh.Cell2DFindEdgeByExtremes(cell2DIndex,
+                                                                                            meshOrigin,
+                                                                                            meshEnd) == e);
         }
       }
 
@@ -637,8 +650,9 @@ namespace Gedim
         const unsigned int meshOrigin = mesh.Cell3DVertex(c, polyhedron.Edges(0, e));
         const unsigned int meshEnd = mesh.Cell3DVertex(c, polyhedron.Edges(1, e));
 
-        result.Cell3DsEdgeDirections[c][e] = mesh.Cell1DExists(meshOrigin,
-                                                               meshEnd);
+        result.Cell3DsEdgeDirections[c][e] = (mesh.Cell3DFindEdgeByExtremes(c,
+                                                                            meshOrigin,
+                                                                            meshEnd) == e);
       }
 
       result.Cell3DsFaces3DVertices[c] = geometryUtilities.PolyhedronFaceVertices(result.Cell3DsVertices[c],
@@ -655,6 +669,8 @@ namespace Gedim
       for (unsigned int f = 0; f < numFaces; f++)
       {
         const unsigned int numFaceEdges = polyhedron.Faces[f].cols();
+        const unsigned int cell2DIndex = convexMesh.Cell3DFace(c, f);
+
         result.Cell3DsFacesEdgeDirections[c][f].resize(numFaceEdges);
         for (unsigned int e = 0; e < numFaceEdges; e++)
         {
@@ -664,8 +680,9 @@ namespace Gedim
           const unsigned int meshOrigin = mesh.Cell3DVertex(c, faceEdgeOrigin);
           const unsigned int meshEnd = mesh.Cell3DVertex(c, faceEdgeEnd);
 
-          result.Cell3DsFacesEdgeDirections[c][f][e] = mesh.Cell1DExists(meshOrigin,
-                                                                         meshEnd);
+          result.Cell3DsFacesEdgeDirections[c][f][e] = (mesh.Cell2DFindEdgeByExtremes(cell2DIndex,
+                                                                                      meshOrigin,
+                                                                                      meshEnd) == e);
         }
       }
 

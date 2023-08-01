@@ -38,16 +38,6 @@ namespace GedimUnitTesting
                                 0,1 };
         Mesh.Cell1DMarkers = { 6,0,0,8,0,0,7,5 };
         Mesh.ActiveCell1D = { 1,1,1,1,1,1,1,1 };
-        Mesh.Cell1DAdjacency.resize(5, 5);
-        Mesh.Cell1DAdjacency.reserve(8);
-        Mesh.Cell1DAdjacency.insert(1,2) = 1;
-        Mesh.Cell1DAdjacency.insert(2,4) = 2;
-        Mesh.Cell1DAdjacency.insert(4,1) = 3;
-        Mesh.Cell1DAdjacency.insert(3,0) = 4;
-        Mesh.Cell1DAdjacency.insert(0,4) = 5;
-        Mesh.Cell1DAdjacency.insert(4,3) = 6;
-        Mesh.Cell1DAdjacency.insert(2,3) = 7;
-        Mesh.Cell1DAdjacency.insert(0,1) = 8;
         Mesh.NumberCell1DNeighbourCell2D = { 0,2,4,6,8,10,12,14,16 };
         Mesh.Cell1DNeighbourCell2Ds = { 4,0,2,0,3,0,4,1,3,1,2,1,4,2,4,3 };
         Mesh.NumberCell2D = 4;

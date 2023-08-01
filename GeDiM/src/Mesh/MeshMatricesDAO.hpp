@@ -315,20 +315,8 @@ namespace Gedim
       inline Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const
       { return (Eigen::VectorXi(2)<< Cell1DOrigin(cell1DIndex), Cell1DEnd(cell1DIndex)).finished(); }
 
-      inline bool Cell1DExists(const unsigned int& originCell0DIndex,
-                               const unsigned int& endCell0DIndex) const
-      {
-        Gedim::Output::Assert(originCell0DIndex < Cell0DTotalNumber());
-        Gedim::Output::Assert(endCell0DIndex < Cell0DTotalNumber());
-        return _mesh.Cell1DAdjacency.coeff(originCell0DIndex, endCell0DIndex) > 0;
-      }
-
-      inline unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
-                                           const unsigned int& endCell0DIndex) const
-      {
-        Gedim::Output::Assert(Cell1DExists(originCell0DIndex, endCell0DIndex));
-        return _mesh.Cell1DAdjacency.coeff(originCell0DIndex, endCell0DIndex) - 1;
-      }
+      unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
+                                    const unsigned int& endCell0DIndex) const;
 
       inline void Cell1DSetMarker(const unsigned int& cell1DIndex,
                                   const unsigned int& marker)
@@ -643,6 +631,9 @@ namespace Gedim
       }
       unsigned int Cell2DFindEdge(const unsigned int& cell2DIndex,
                                   const unsigned int& cell1DIndex) const;
+      unsigned int Cell2DFindEdgeByExtremes(const unsigned int& cell2DIndex,
+                                            const unsigned int& originCell0DIndex,
+                                            const unsigned int& endCell0DIndex) const;
       inline unsigned int Cell2DMarker(const unsigned int& cell2DIndex) const
       {
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
@@ -869,6 +860,10 @@ namespace Gedim
                           const std::vector<unsigned int>& edgesCell0DIndices);
       void Cell3DAddFaces(const unsigned int& cell3DIndex,
                           const std::vector<unsigned int>& facesCell0DIndices);
+
+      unsigned int Cell3DFindEdgeByExtremes(const unsigned int& cell3DIndex,
+                                            const unsigned int& originCell0DIndex,
+                                            const unsigned int& endCell0DIndex) const;
 
       inline unsigned int Cell3DTotalNumber() const
       {

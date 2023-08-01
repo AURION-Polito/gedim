@@ -263,18 +263,13 @@ namespace Gedim
       /// \param cell1DExtremes the origin and end indices of all the edges, size 2 x Cell1DTotalNumber()
       virtual void Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes) = 0;
 
-      /// \return true if Cell1D (origin->end) exists, false otherwise
-      /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
-      /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
-      virtual bool Cell1DExists(const unsigned int& originCell0DIndex,
-                                const unsigned int& endCell0DIndex) const = 0;
 
       /// \return the extrems as Eigen MatrixXi of cell1Ds, size 2xCell1DTotalNumber()
       virtual Eigen::MatrixXi Cell1DsExtremes() const = 0;
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       virtual Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const = 0;
-      /// \return the Cell1D Index if Cell1D (origin->end) exists, exception otherwise
+      /// \return the Cell1D Index if Cell1D (origin->end) exists, Cell1DTotalNumber() otherwise
       /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       virtual unsigned int Cell1DByExtremes(const unsigned int& originCell0DIndex,
@@ -581,6 +576,13 @@ namespace Gedim
       virtual unsigned int Cell2DFindEdge(const unsigned int& cell2DIndex,
                                           const unsigned int& cell1DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
+      /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \return the index of the cell1DIndex on the cell2D from 0 to NumberCell2DEdges(cell2DIndex), NumberCell2DEdges(cell2DIndex) otherwise
+      virtual unsigned int Cell2DFindEdgeByExtremes(const unsigned int& cell2DIndex,
+                                                    const unsigned int& originCell0DIndex,
+                                                    const unsigned int& endCell0DIndex) const = 0;
+      /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the cell2D marker
       virtual unsigned int Cell2DMarker(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
@@ -779,6 +781,13 @@ namespace Gedim
       /// \note No itialization is necessary
       virtual void Cell3DAddEdges(const unsigned int& cell3DIndex,
                                   const std::vector<unsigned int>& edgesCell0DIndices) = 0;
+      /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
+      /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
+      /// \return the index of the cell1DIndex on the cell2D from 0 to NumberCell2DEdges(cell3DIndex), NumberCell2DEdges(cell2DIndex) otherwise
+      virtual unsigned int Cell3DFindEdgeByExtremes(const unsigned int& cell3DIndex,
+                                                    const unsigned int& originCell0DIndex,
+                                                    const unsigned int& endCell0DIndex) const = 0;
       /// \brief Insert the Cell3D face
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param faceIndex the number of face of the Cell3D from 0 to Cell3DNumberFaces(cell3DIndex)
