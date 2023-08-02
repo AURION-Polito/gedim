@@ -297,7 +297,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(mesh.Mesh.NumberCell1DNeighbourCell2D,
               vector<unsigned int>({ 0,2,4,6,8 }));
     EXPECT_EQ(mesh.Mesh.Cell1DNeighbourCell2Ds,
-              vector<unsigned int>({ 1,0,1,0,1,0,1,0 }));
+              vector<unsigned int>({ std::numeric_limits<unsigned int>::max(),0,std::numeric_limits<unsigned int>::max(),0,std::numeric_limits<unsigned int>::max(),0,std::numeric_limits<unsigned int>::max(),0 }));
   }
 
   TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
