@@ -227,7 +227,7 @@ namespace Gedim
                                              const unsigned int& neighbourIndex)
       {
         _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
-            neighbourIndex] = _mesh.NumberCell2D;
+            neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
       inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& ,
                                                    const unsigned int& ) { return; }
@@ -412,7 +412,7 @@ namespace Gedim
                                              const unsigned int& neighbourIndex)
       {
         _mesh.Cell1DNeighbourCell2Ds[_mesh.NumberCell1DNeighbourCell2D[cell1DIndex] +
-            neighbourIndex] = _mesh.NumberCell2D;
+            neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
 
       inline unsigned int Cell1DMarker(const unsigned int& cell1DIndex) const

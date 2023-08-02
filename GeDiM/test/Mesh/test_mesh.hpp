@@ -269,12 +269,12 @@ namespace GedimUnitTesting
 
   TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsInitialize)
   {
-    unsigned int numCell0Ds = 1e6;
+    unsigned int numCell1Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
-    meshDao.Cell1DsInitialize(numCell0Ds);
+    meshDao.Cell1DsInitialize(numCell1Ds);
   }
 
   TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsAppend)
@@ -286,6 +286,28 @@ namespace GedimUnitTesting
 
     for (unsigned int c = 0; c < numCell1Ds; c++)
       meshDao.Cell1DAppend(1);
+    meshDao.Compress();
+  }
+
+  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsInitialize)
+  {
+    unsigned int numCell2Ds = 1e6;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    meshDao.Cell2DsInitialize(numCell2Ds);
+  }
+
+  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsAppend)
+  {
+    unsigned int numCell2Ds = 1e6;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    for (unsigned int c = 0; c < numCell2Ds; c++)
+      meshDao.Cell2DAppend(1);
     meshDao.Compress();
   }
 

@@ -37,6 +37,7 @@ namespace GedimUnitTesting
         Mesh.Cell1DOriginalCell1Ds.resize(Mesh.NumberCell1D, std::numeric_limits<unsigned int>::max());
         Mesh.NumberCell1DNeighbourCell2D = { 0,2,4,6,8,10 };
         Mesh.Cell1DNeighbourCell2Ds = { 2,0,2,0,1,0,2,1,2,1 };
+        std::replace(Mesh.Cell1DNeighbourCell2Ds.begin(), Mesh.Cell1DNeighbourCell2Ds.end(), static_cast<unsigned int>(2), std::numeric_limits<unsigned int>::max());
         Mesh.NumberCell2D = 2;
         Mesh.NumberCell2DVertices = { 0, 3, 6 };
         Mesh.NumberCell2DEdges = { 0, 3, 6  };

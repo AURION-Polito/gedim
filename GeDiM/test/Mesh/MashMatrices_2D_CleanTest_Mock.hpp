@@ -35,6 +35,7 @@ namespace GedimUnitTesting
         Mesh.UpdatedCell1Ds = {};
         Mesh.NumberCell1DNeighbourCell2D = {0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118};
         Mesh.Cell1DNeighbourCell2Ds = {7,6,7,0,7,0,0,6,0,6,0,3,0,3,0,2,7,1,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,1,4,1,4,1,4,1,4,7,4,7,5,5,4,5,4,5,4,5,4,5,4,5,4,5,4,5,4,5,4,5,4,6,3,6,3,6,3,6,3,7,2,7,1,1,2,1,2,3,4,3,4,3,4,3,4,3,4,3,4,3,4,3,4,3,4,7,6,7,5,5,6,5,6,5,6,5,6,5,6,5,6,5,6};
+        std::replace(Mesh.Cell1DNeighbourCell2Ds.begin(), Mesh.Cell1DNeighbourCell2Ds.end(), static_cast<unsigned int>(7), std::numeric_limits<unsigned int>::max());
         Mesh.Cell1DDoublePropertyIds = {};
         Mesh.Cell1DDoublePropertyIndices = {};
         Mesh.Cell1DDoublePropertySizes = {};
