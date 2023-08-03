@@ -940,7 +940,19 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell3DAppend(const unsigned int& numberCell3Ds)
   {
     unsigned int oldNumberCell3Ds = _mesh.NumberCell3D;
-    Cell3DsInitialize(oldNumberCell3Ds + numberCell3Ds);
+
+    _mesh.NumberCell3D = oldNumberCell3Ds + numberCell3Ds;
+
+    for (unsigned c = 0; c < numberCell3Ds; c++)
+    {
+      _mesh.NumberCell3DVertices.push_back(0);
+      _mesh.NumberCell3DEdges.push_back(0);
+      _mesh.NumberCell3DFaces.push_back(0);
+      _mesh.Cell3DMarkers.push_back(0);
+      _mesh.ActiveCell3D.push_back(false);
+      for (unsigned int p = 0; p < Cell3DNumberDoubleProperties(); p++)
+        _mesh.Cell3DDoublePropertySizes[p].push_back(0);
+    }
 
     for (unsigned c = 0; c < numberCell3Ds; c++)
     {
