@@ -103,7 +103,6 @@ namespace Gedim
           std::vector<unsigned int> NewCell0DsIndex = {};
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
-          double Time = 0.0;
       };
 
       struct RefinePolygon_UpdateNeighbour_Result final
