@@ -716,7 +716,7 @@ namespace Gedim
                                              const unsigned int& neighbourIndex)
       {
         _mesh.Cell2DNeighbourCell3Ds[_mesh.NumberCell2DNeighbourCell3D[cell2DIndex] +
-            neighbourIndex] = _mesh.NumberCell3D;
+            neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
       void Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell2DAddDoubleProperty(const std::string& propertyId);

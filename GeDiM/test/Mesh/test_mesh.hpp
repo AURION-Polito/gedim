@@ -311,6 +311,28 @@ namespace GedimUnitTesting
     meshDao.Compress();
   }
 
+  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsInitialize)
+  {
+    unsigned int numCell3Ds = 1e6;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    meshDao.Cell3DsInitialize(numCell3Ds);
+  }
+
+  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsAppend)
+  {
+    unsigned int numCell3Ds = 1e6;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    for (unsigned int c = 0; c < numCell3Ds; c++)
+      meshDao.Cell3DAppend(1);
+    meshDao.Compress();
+  }
+
   TEST(TestMesh, TestImportExportMesh2D)
   {
     MeshMatrices_2D_26Cells_Mock mesh;
