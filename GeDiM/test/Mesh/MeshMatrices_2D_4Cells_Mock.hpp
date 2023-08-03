@@ -53,7 +53,9 @@ namespace GedimUnitTesting
                              3,4,5,
                              1,6,5,
                              7,2,4 };
+        Mesh.NumberCell2DSubdivision.resize(Mesh.NumberCell2D + 1, 0);
         Mesh.Cell2DMarkers = { 0,0,0,0 };
+        Mesh.Cell2DOriginalCell2Ds.resize(Mesh.NumberCell2D, std::numeric_limits<unsigned int>::max());
         Mesh.ActiveCell2D = { 1,1,1,1 };
         Mesh.NumberCell2DNeighbourCell3D = { 0,0,0,0,0 };
         Mesh.Cell2DNeighbourCell3Ds = { };

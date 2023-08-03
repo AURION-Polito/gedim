@@ -603,7 +603,20 @@ namespace Gedim
   unsigned int MeshMatricesDAO::Cell2DAppend(const unsigned int& numberCell2Ds)
   {
     unsigned int oldNumberCell2Ds = _mesh.NumberCell2D;
-    Cell2DsInitialize(oldNumberCell2Ds + numberCell2Ds);
+
+    _mesh.NumberCell2D = oldNumberCell2Ds + numberCell2Ds;
+    for (unsigned int c = 0; c < numberCell2Ds; c++)
+    {
+      _mesh.NumberCell2DVertices.push_back(0);
+      _mesh.NumberCell2DEdges.push_back(0);
+      _mesh.NumberCell2DSubdivision.push_back(0);
+      _mesh.Cell2DMarkers.push_back(0);
+      _mesh.ActiveCell2D.push_back(false);
+      _mesh.Cell2DOriginalCell2Ds.push_back(std::numeric_limits<unsigned int>::max());
+      _mesh.NumberCell2DNeighbourCell3D.push_back(0);
+      for (unsigned int p = 0; p < Cell2DNumberDoubleProperties(); p++)
+        _mesh.Cell2DDoublePropertySizes[p].push_back(0);
+    }
 
     for (unsigned c = 0; c < numberCell2Ds; c++)
     {
