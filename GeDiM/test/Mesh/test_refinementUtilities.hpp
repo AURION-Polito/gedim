@@ -13,6 +13,7 @@
 #include "MeshUtilities.hpp"
 #include "RefinementUtilities.hpp"
 #include "CommonUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 using namespace testing;
 using namespace std;
@@ -831,6 +832,51 @@ namespace GedimUnitTesting
                                     exportFolder,
                                     "Mesh_R" +
                                     to_string(r));
+
+      {
+        // Export Cell1Ds
+        if (meshDAO.Cell1DTotalNumber() > 0)
+        {
+          vector<double> id(meshDAO.Cell1DTotalNumber());
+          vector<double> active(meshDAO.Cell1DTotalNumber());
+          vector<double> aligned(meshDAO.Cell1DTotalNumber());
+
+          for (unsigned int g = 0; g < meshDAO.Cell1DTotalNumber(); g++)
+          {
+            id[g] = g;
+            active[g] = meshDAO.Cell1DIsActive(g);
+            aligned[g] = meshGeometricData.Cell1Ds.Aligned[g];
+          }
+
+          Gedim::VTKUtilities vtpUtilities;
+          vtpUtilities.AddSegments(meshDAO.Cell0DsCoordinates(),
+                                   meshDAO.Cell1DsExtremes(),
+                                   {
+                                     {
+                                       "Id",
+                                       Gedim::VTPProperty::Formats::Cells,
+                                       static_cast<unsigned int>(id.size()),
+                                       id.data()
+                                     },
+                                     {
+                                       "Active",
+                                       Gedim::VTPProperty::Formats::Cells,
+                                       static_cast<unsigned int>(active.size()),
+                                       active.data()
+                                     },
+                                     {
+                                       "Aligned",
+                                       Gedim::VTPProperty::Formats::Cells,
+                                       static_cast<unsigned int>(aligned.size()),
+                                       aligned.data()
+                                     }
+                                   });
+          vtpUtilities.Export(exportFolder + "/" +
+                              "Mesh_R" +
+                              to_string(r) +
+                              "_Cell1Ds.vtu");
+        }
+      }
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;

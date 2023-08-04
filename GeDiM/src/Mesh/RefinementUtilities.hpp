@@ -138,6 +138,7 @@ namespace Gedim
 
           struct Cell1D_GeometricData final
           {
+              unsigned int MaxAligned = 0;
               std::vector<unsigned int> Aligned = {};
           };
 

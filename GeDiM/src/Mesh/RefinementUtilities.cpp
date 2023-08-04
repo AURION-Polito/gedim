@@ -548,6 +548,7 @@ namespace Gedim
     std::iota(std::begin(geometricData.Cell1Ds.Aligned),
               std::end(geometricData.Cell1Ds.Aligned),
               1);
+    geometricData.Cell1Ds.MaxAligned = mesh.Cell1DTotalNumber();
 
     RefinePolygonCell_UpdateGeometricData(mesh,
                                           cell2DsIndex,
@@ -576,9 +577,6 @@ namespace Gedim
     geometricData.Cell2Ds.InRadius.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.CentroidEdgesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
-
-    unsigned int maxCell1DAligned = *std::max_element(begin(geometricData.Cell1Ds.Aligned),
-                                                      end(geometricData.Cell1Ds.Aligned)) + 1;
 
     for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
     {
@@ -659,7 +657,7 @@ namespace Gedim
           geometricData.Cell1Ds.Aligned[cell1DIndex] = geometricData.Cell1Ds.Aligned[originalCell1DIndex];
         }
         else if (geometricData.Cell1Ds.Aligned[cell1DIndex] == 0)
-          geometricData.Cell1Ds.Aligned[cell1DIndex] = maxCell1DAligned++;
+          geometricData.Cell1Ds.Aligned[cell1DIndex] = ++(geometricData.Cell1Ds.MaxAligned);
       }
     }
   }
