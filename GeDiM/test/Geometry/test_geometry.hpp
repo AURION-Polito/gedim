@@ -39,6 +39,31 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolarAngle)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-8;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      ASSERT_DOUBLE_EQ(-0.5, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                          Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
+      ASSERT_DOUBLE_EQ(+0.0, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                          Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
+      ASSERT_DOUBLE_EQ(+0.5, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                          Eigen::Vector3d(0.5, -0.5, 0.0),
+                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestCompareValues)
   {
     try

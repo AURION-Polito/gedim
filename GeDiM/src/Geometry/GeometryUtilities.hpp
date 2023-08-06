@@ -832,6 +832,16 @@ namespace Gedim
                                                const double& end,
                                                const bool& insertExtremes) const;
 
+      /// \param v_prev the previous point
+      /// \param v the middle point
+      /// \param v_next the next point
+      /// \return the polar angle between the three points, computed as the cross product (v_next-v) x (v_prev-v)
+      /// \note positive is convex, negative is concave, zero is collinear
+      inline double PolarAngle(const Eigen::Vector3d& v_prev,
+                               const Eigen::Vector3d& v,
+                               const Eigen::Vector3d& v_next) const
+      { return v.x() * (v_next.y() - v_prev.y()) + v_next.x() * (v_prev.y() - v.y()) + v_prev.x() * (v.y() - v_next.y()); }
+
       /// \brief compute the Point distance
       /// \param firstPoint the first point
       /// \param secondPoint the second point
