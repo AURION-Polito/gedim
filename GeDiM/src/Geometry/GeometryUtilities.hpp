@@ -854,6 +854,10 @@ namespace Gedim
       Eigen::MatrixXd PointsDistance(const Eigen::MatrixXd& points) const;
 
       /// \param points the point collection, size 3 x numPoints
+      /// \return the extreme bounding box points (xmin, ymin, zmin) and (xmax, ymax, zmax), size 2 x numPoints
+      Eigen::MatrixXd PointsBoundingBox(const Eigen::MatrixXd& points) const;
+
+      /// \param points the point collection, size 3 x numPoints
       /// \return the maximum distance between the points.
       double PointsMaxDistance(const Eigen::MatrixXd& points) const;
 

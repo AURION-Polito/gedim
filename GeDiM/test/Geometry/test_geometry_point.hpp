@@ -846,6 +846,36 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestPointsBoundingBox)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-08;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      Eigen::MatrixXd points(3, 5);
+      points.col(0)<< 0.50, 0.2, 0.9;
+      points.col(1)<< 0.40, 0.5, 0.3;
+      points.col(2)<< 0.80, 0.7, 0.1;
+      points.col(3)<< 0.45, 0.4, 0.9;
+      points.col(4)<< 0.59, 0.2, 0.3;
+
+      Eigen::MatrixXd expected_result(3, 2);
+      expected_result.col(0)<< 0.40, 0.2, 0.1;
+      expected_result.col(1)<< 0.80, 0.7, 0.9;
+
+      ASSERT_EQ(expected_result,
+                geometryUtilities.PointsBoundingBox(points));
+
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POINT_H

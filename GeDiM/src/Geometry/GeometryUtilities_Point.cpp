@@ -36,6 +36,20 @@ namespace Gedim
     return distances;
   }
   // ***************************************************************************
+  MatrixXd GeometryUtilities::PointsBoundingBox(const Eigen::MatrixXd& points) const
+  {
+    Eigen::MatrixXd boundingBox(3, 2);
+
+    boundingBox(0, 0) = points.row(0).minCoeff();
+    boundingBox(0, 1) = points.row(0).maxCoeff();
+    boundingBox(1, 0) = points.row(1).minCoeff();
+    boundingBox(1, 1) = points.row(1).maxCoeff();
+    boundingBox(2, 0) = points.row(2).minCoeff();
+    boundingBox(2, 1) = points.row(2).maxCoeff();
+
+    return boundingBox;
+  }
+  // ***************************************************************************
   double GeometryUtilities::PointsMaxDistance(const Eigen::MatrixXd& points) const
   {
     Output::Assert(points.rows() == 3);
