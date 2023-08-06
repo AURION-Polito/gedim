@@ -1179,6 +1179,7 @@ namespace GedimUnitTesting
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByInternalPoint(polygonVertices,
                                                                         internalPoint), vector<unsigned int>({ 3, 0, 1, 3, 1, 2, 3, 2, 0 }));
+        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 2 }));
       }
 
       // check square triangulation
@@ -1194,6 +1195,7 @@ namespace GedimUnitTesting
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByInternalPoint(polygonVertices,
                                                                         internalPoint), vector<unsigned int>({ 4, 0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0 }));
+        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
       }
     }
     catch (const exception& exception)

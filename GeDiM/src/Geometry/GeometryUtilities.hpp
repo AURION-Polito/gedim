@@ -1217,10 +1217,19 @@ namespace Gedim
       /// \brief Check if point is inside a polygon
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
-      /// \param result the resulting position
+      /// \return the resulting position
       /// \warning works only in 2D
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \param point the point
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return false if it is outside, true the other cases
+      /// \warning works only in 2D
+      inline bool IsPointInsidePolygon(const Eigen::Vector3d& point,
+                                       const Eigen::MatrixXd& polygonVertices) const
+      { return !(PointPolygonPosition(point,
+                                      polygonVertices).Type == PointPolygonPositionResult::Types::Outside); }
 
       LinePolygonPositionResult LinePolygonPosition(const Eigen::Vector3d& lineTangent,
                                                     const Eigen::Vector3d& lineOrigin,
@@ -1297,6 +1306,11 @@ namespace Gedim
       /// \return the sub-division triangulation, size 1 x 3 * numTriangles
       /// \note works only for convex polygon
       std::vector<unsigned int> PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const;
+
+      /// \brief Concave Polygon Triangulation with ear clipping algorithm
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \return the sub-division triangulation, size 1 x 3 * numTriangles
+      std::vector<unsigned int> PolygonTriangulationByEarClipping(const Eigen::MatrixXd& polygonVertices) const;
 
       /// \brief Convex Polygon simple Triangulation from an internal point
       /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices

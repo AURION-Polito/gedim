@@ -326,6 +326,66 @@ namespace Gedim
     return vector<unsigned int>(triangleList.begin(), triangleList.end());
   }
   // ***************************************************************************
+  std::vector<unsigned int> GeometryUtilities::PolygonTriangulationByEarClipping(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
+    list<unsigned int> triangleList;
+
+    const unsigned int numVertices = polygonVertices.cols();
+
+    if (numVertices == 3)
+      return vector<unsigned int>({ 0, 1, 2 });
+
+    vector<bool> convexVertices(numVertices, false);
+    vector<bool> reflexVertices(numVertices, false);
+    vector<bool> earVertices(numVertices, false);
+
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const unsigned int v_prev = (v == 0) ? numVertices - 1 : v - 1;
+      const unsigned int v_next = (v + 1) % numVertices;
+
+      const double polarAngle = PolarAngle(polygonVertices.col(v_prev),
+                                           polygonVertices.col(v),
+                                           polygonVertices.col(v_next));
+
+      if (IsValue1DNegative(polarAngle))
+      {
+        reflexVertices[v] = true;
+        continue;
+      }
+
+      convexVertices[v] = true;
+
+      // test ear
+      earVertices[v] = true;
+      const Eigen::MatrixXd triangle = ExtractPoints(polygonVertices,
+                                                     { v_prev, v, v_next });
+      const Eigen::MatrixXd boundingBox = PointsBoundingBox(triangle);
+      for (unsigned int ov = 0; ov < numVertices; ov++)
+      {
+        if (ov == v || ov == v_prev || ov == v_next)
+          continue;
+
+        if (!IsPointInBoundingBox(polygonVertices.col(ov),
+                                  boundingBox))
+          continue;
+
+        if (!IsPointInsidePolygon(polygonVertices.col(ov),
+                                  triangle))
+          continue;
+
+        earVertices[v] = false;
+        break;
+      }
+    }
+
+    Output::Assert(triangleList.size() % 3 == 0);
+
+    return vector<unsigned int>(triangleList.begin(), triangleList.end());
+  }
+  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolygonTriangulationByInternalPoint(const Eigen::MatrixXd& polygonVertices,
                                                                               const Eigen::Vector3d& ) const
   {
