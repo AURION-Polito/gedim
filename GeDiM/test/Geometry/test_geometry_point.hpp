@@ -868,7 +868,18 @@ namespace GedimUnitTesting {
 
       ASSERT_EQ(expected_result,
                 geometryUtilities.PointsBoundingBox(points));
-
+      ASSERT_TRUE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(0.40, 0.5, 0.3),
+                                                         expected_result));
+      ASSERT_TRUE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(0.41, 0.45, 0.25),
+                                                         expected_result));
+      ASSERT_FALSE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(1.39, 0.45, 0.25),
+                                                          expected_result));
+      ASSERT_FALSE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(0.39, 1.45, 0.25),
+                                                          expected_result));
+      ASSERT_FALSE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(0.39, 0.45, 1.25),
+                                                          expected_result));
+      ASSERT_FALSE(geometryUtilities.IsPointInBoundingBox(Eigen::Vector3d(1.39, 1.45, 1.25),
+                                                          expected_result));
     }
     catch (const exception& exception)
     {

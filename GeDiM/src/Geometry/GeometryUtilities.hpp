@@ -857,6 +857,15 @@ namespace Gedim
       /// \return the extreme bounding box points (xmin, ymin, zmin) and (xmax, ymax, zmax), size 2 x numPoints
       Eigen::MatrixXd PointsBoundingBox(const Eigen::MatrixXd& points) const;
 
+      /// \param point the point
+      /// \param boudingBox the bounding box points (xmin, ymin, zmin) and (xmax, ymax, zmax), size 2 x numPoints
+      /// \return false if the point is outside the bounding box, true otherwise (border or inside)
+      inline bool IsPointInBoundingBox(const Eigen::Vector3d& point,
+                                       const Eigen::MatrixXd& boudingBox) const
+      { return (IsValue1DGreaterOrEqual(point.x(), boudingBox(0, 0)) && IsValue1DGreaterOrEqual(boudingBox(0, 1), point.x())) &&
+            (IsValue1DGreaterOrEqual(point.y(), boudingBox(1, 0)) && IsValue1DGreaterOrEqual(boudingBox(1, 1), point.y())) &&
+            (IsValue1DGreaterOrEqual(point.z(), boudingBox(2, 0)) && IsValue1DGreaterOrEqual(boudingBox(2, 1), point.z())); }
+
       /// \param points the point collection, size 3 x numPoints
       /// \return the maximum distance between the points.
       double PointsMaxDistance(const Eigen::MatrixXd& points) const;
