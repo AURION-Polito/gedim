@@ -47,6 +47,36 @@ namespace Gedim
     return out;
   }
   // ***************************************************************************
+  void Eigen_Utilities::RemoveRow(Eigen::MatrixXd& matrix,
+                                  const unsigned int& rowToRemove)
+  {
+    const unsigned int numRows = matrix.rows()-1;
+    const unsigned int numCols = matrix.cols();
+
+    if (rowToRemove < numRows )
+      matrix.block(rowToRemove,
+                   0,
+                   numRows - rowToRemove,
+                   numCols) = matrix.bottomRows(numRows - rowToRemove);
+
+    matrix.conservativeResize(numRows, numCols);
+  }
+  // ***************************************************************************
+  void Eigen_Utilities::RemoveColumn(Eigen::MatrixXd& matrix,
+                                     const unsigned int& colToRemove)
+  {
+    const unsigned int numRows = matrix.rows();
+    const unsigned int numCols = matrix.cols()-1;
+
+    if (colToRemove < numCols)
+      matrix.block(0,
+                   colToRemove,
+                   numRows,
+                   numCols - colToRemove) = matrix.rightCols(numCols - colToRemove);
+
+    matrix.conservativeResize(numRows, numCols);
+  }
+  // ***************************************************************************
   void Eigen_Utilities::ReadFromBinaryFile(const string& nameFile,
                                            VectorXd& dataToRead,
                                            const unsigned int& dataSizeToRead,

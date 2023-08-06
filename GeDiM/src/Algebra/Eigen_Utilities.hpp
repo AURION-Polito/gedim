@@ -129,6 +129,11 @@ namespace Gedim
                                     const Eigen::SparseMatrix<double, Eigen::ColMajor>& matrix,
                                     const Eigen::UpLoType& matrixType = (Eigen::UpLoType)0,
                                     const bool& append = false);
+
+      static void RemoveRow(Eigen::MatrixXd& matrix,
+                            const unsigned int& rowToRemove);
+      static void RemoveColumn(Eigen::MatrixXd& matrix,
+                               const unsigned int& colToRemove);
   };
 }
 #endif // __EIGEN_UTILITIES_H

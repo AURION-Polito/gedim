@@ -1195,7 +1195,19 @@ namespace GedimUnitTesting
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByFirstVertex(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByInternalPoint(polygonVertices,
                                                                         internalPoint), vector<unsigned int>({ 4, 0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0 }));
-        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 2, 0, 2, 3 }));
+        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 3, 1, 2, 3 }));
+      }
+
+      // check pentagon triangulation
+      {
+        Eigen::MatrixXd polygonVertices(3, 5);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 1.0, 0.0;
+        polygonVertices.col(3)<< 0.5, 1.5, 0.0;
+        polygonVertices.col(4)<< 0.0, 1.0, 0.0;
+
+        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
       }
     }
     catch (const exception& exception)
