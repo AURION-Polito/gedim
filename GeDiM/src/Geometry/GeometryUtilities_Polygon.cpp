@@ -283,17 +283,19 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
-  GeometryUtilities::PolygonTypes GeometryUtilities::PolygonType(const Eigen::MatrixXd& polygonVertices) const
+  GeometryUtilities::PolygonTypes GeometryUtilities::PolygonType(const unsigned int& numPolygonVertices,
+                                                                 const bool& isPolygonConvex) const
   {
-    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+    Output::Assert(numPolygonVertices > 2);
 
-    const unsigned int& numVertices = polygonVertices.cols();
-    if (numVertices == 3)
+    if (numPolygonVertices == 3)
       return PolygonTypes::Triangle;
-    else if (numVertices == 4)
-      return PolygonTypes::Quadrilateral;
+    else if (numPolygonVertices == 4)
+      return isPolygonConvex ? PolygonTypes::Quadrilateral_Convex :
+                               PolygonTypes::Quadrilateral_Concave;
     else
-      return PolygonTypes::Generic;
+      return isPolygonConvex ? PolygonTypes::Generic_Convex :
+                               PolygonTypes::Generic_Concave;
   }
   // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const

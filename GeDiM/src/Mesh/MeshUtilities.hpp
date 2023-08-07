@@ -253,6 +253,14 @@ namespace Gedim
       MeshGeometricData2D FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
                                                   const IMeshDAO& convexMesh) const;
 
+      /// \brief Fill Mesh2D Geometric Data given a mesh with mesh cells type
+      /// \param mesh the mesh
+      /// \param meshCell2DsPolygonType the cell2D polygon type
+      /// \return the MeshGeometricData computed
+      MeshGeometricData2D FillMesh2DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                  const IMeshDAO& mesh,
+                                                  const std::vector<GeometryUtilities::PolygonTypes>& meshCell2DsPolygonType) const;
+
       /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
       /// \param mesh the mesh
       /// \param convexMesh the convex mesh cells of mesh

@@ -31,8 +31,10 @@ namespace Gedim
       {
         Unknown = 0,
         Triangle = 1,
-        Quadrilateral = 2,
-        Generic = 3
+        Quadrilateral_Convex = 2,
+        Quadrilateral_Concave = 3,
+        Generic_Convex = 4,
+        Generic_Concave = 5
       };
 
       enum struct PointSegmentPositionTypes
@@ -1595,7 +1597,11 @@ namespace Gedim
       bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices,
                            const Eigen::MatrixXd& convexHull) const;
 
-      PolygonTypes PolygonType(const Eigen::MatrixXd& polygonVertices) const;
+      /// \param numPolygonVertices the number of polygon vertices
+      /// \param isPolygonConvex true if the polygon is convex
+      /// \return the polygon type
+      PolygonTypes PolygonType(const unsigned int& numPolygonVertices,
+                               const bool& isPolygonConvex) const;
 
       /// \brief Compute the rotation matrix of a plane from 2D to 3D
       /// \param planeNormal the normalized normal of the plane

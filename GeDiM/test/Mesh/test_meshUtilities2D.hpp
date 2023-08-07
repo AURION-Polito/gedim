@@ -367,6 +367,70 @@ namespace GedimUnitTesting
     EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
   }
 
+  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_CellTypes)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    const vector<Gedim::GeometryUtilities::PolygonTypes> meshCell2DsPolygonType =
+    { Gedim::GeometryUtilities::PolygonTypes::Generic_Concave };
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::MeshUtilities::MeshGeometricData2D result = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                                                   meshDao,
+                                                                                                   meshCell2DsPolygonType);
+
+    Gedim::MeshUtilities::MeshGeometricData2D expectedResult;
+    expectedResult.Cell2DsAreas = { 1.0 };
+    expectedResult.Cell2DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.0) };
+    expectedResult.Cell2DsDiameters = { sqrt(2.0) };
+    expectedResult.Cell2DsEdgeDirections = { { true, true, true, true } };
+    Eigen::VectorXd edgeLengths(4);
+    edgeLengths<< 1.0, 1.0, 1.0, 1.0;
+    expectedResult.Cell2DsEdgeLengths = { edgeLengths };
+    Eigen::MatrixXd edgeNormals(3, 4);
+    edgeNormals.col(0)<< -1.0, 0.0, 0.0;
+    edgeNormals.col(1)<< 0.0, -1.0, 0.0;
+    edgeNormals.col(2)<< 1.0, 0.0, 0.0;
+    edgeNormals.col(3)<< 0.0, 1.0, 0.0;
+    expectedResult.Cell2DsEdgeNormals = { edgeNormals };
+    Eigen::MatrixXd edgeTangents(3, 4);
+    edgeTangents.col(0)<< 0.0, -1.0, 0.0;
+    edgeTangents.col(1)<< 1.0, 0.0, 0.0;
+    edgeTangents.col(2)<< 0.0, 1.0, 0.0;
+    edgeTangents.col(3)<< -1.0, 0.0, 0.0;
+    expectedResult.Cell2DsEdgeTangents = { edgeTangents };
+    Eigen::Matrix3d triangleOne;
+    triangleOne.col(0)<< 0.0, 1.0, 0.0;
+    triangleOne.col(1)<< 0.0, 0.0, 0.0;
+    triangleOne.col(2)<< 1.0, 1.0, 0.0;
+    Eigen::Matrix3d triangleTwo;
+    triangleTwo.col(0)<< 0.0, 0.0, 0.0;
+    triangleTwo.col(1)<< 1.0, 0.0, 0.0;
+    triangleTwo.col(2)<< 1.0, 1.0, 0.0;
+    expectedResult.Cell2DsTriangulations = { { triangleOne, triangleTwo } };
+    Eigen::MatrixXd vertices(3, 4);
+    vertices.col(0)<< 0.0, 1.0, 0.0;
+    vertices.col(1)<< 0.0, 0.0, 0.0;
+    vertices.col(2)<< 1.0, 0.0, 0.0;
+    vertices.col(3)<< 1.0, 1.0, 0.0;
+    expectedResult.Cell2DsVertices = { vertices };
+
+    EXPECT_EQ(expectedResult.Cell2DsAreas, result.Cell2DsAreas);
+    EXPECT_EQ(expectedResult.Cell2DsCentroids, result.Cell2DsCentroids);
+    EXPECT_EQ(expectedResult.Cell2DsDiameters, result.Cell2DsDiameters);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeDirections, result.Cell2DsEdgeDirections);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeLengths, result.Cell2DsEdgeLengths);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeNormals, result.Cell2DsEdgeNormals);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, result.Cell2DsEdgeTangents);
+    EXPECT_EQ(expectedResult.Cell2DsTriangulations, result.Cell2DsTriangulations);
+    EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
+  }
+
   TEST(TestMeshUtilities, TestRefineMesh2D)
   {
     std::string exportFolder = "./Export/TestMeshUtilities/TestRefineMesh2D/";
