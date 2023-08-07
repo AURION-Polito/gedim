@@ -335,20 +335,16 @@ namespace Gedim
 
     std::vector<unsigned int> originalUnalignedVertices = UnalignedPoints(polygonVertices);
 
+    Output::Assert(originalUnalignedVertices.size() > 2);
+
     unsigned int numVertices = originalUnalignedVertices.size();
 
     if (numVertices == 3)
       return vector<unsigned int>({ 0, 1, 2 });
 
-    struct EarVertex
-    {
-        unsigned int LocalIndex;
-        unsigned int GlobalIndex;
-    };
-
     Eigen::MatrixXd vertices = ExtractPoints(polygonVertices,
                                              originalUnalignedVertices);
-    std::list<EarVertex> earVertices;
+    std::list<unsigned int> earVertices;
 
     for (unsigned int v = 0; v < numVertices; v++)
     {
@@ -386,7 +382,7 @@ namespace Gedim
 
       if (isEar)
       {
-        earVertices.push_back({ v, originalUnalignedVertices[v] });
+        earVertices.push_back(v);
         break;
       }
     }
@@ -396,12 +392,12 @@ namespace Gedim
     {
       Output::Assert(earVertices.size() > 0);
 
-      const EarVertex earVertex = earVertices.front();
+      const unsigned int earVertex = earVertices.front();
       earVertices.pop_front();
 
-      const unsigned int v = earVertex.LocalIndex;
-      const unsigned int v_prev = (earVertex.LocalIndex == 0) ? numVertices - 1 : earVertex.LocalIndex - 1;
-      const unsigned int v_next = (earVertex.LocalIndex + 1) % numVertices;
+      const unsigned int v = earVertex;
+      const unsigned int v_prev = (earVertex == 0) ? numVertices - 1 : earVertex - 1;
+      const unsigned int v_next = (earVertex + 1) % numVertices;
 
       triangleList.push_back(unalignedVertices[v]);
       triangleList.push_back(unalignedVertices[v_next]);
@@ -411,10 +407,13 @@ namespace Gedim
       Eigen_Utilities::RemoveColumn(vertices, v);
 
       std::vector<unsigned int> newUnalignedVertices = UnalignedPoints(vertices);
+      Output::Assert(newUnalignedVertices.size() > 2);
+
       numVertices = newUnalignedVertices.size();
 
       for (unsigned int v = 0; v < numVertices; v++)
-        unalignedVertices[v] = unalignedVertices[newUnalignedVertices[v]];
+        newUnalignedVertices[v] = unalignedVertices[newUnalignedVertices[v]];
+      unalignedVertices = newUnalignedVertices;
 
       if (numVertices == 3)
       {
@@ -463,7 +462,7 @@ namespace Gedim
 
         if (isEar)
         {
-          earVertices.push_back({ v, unalignedVertices[v] });
+          earVertices.push_back(v);
           break;
         }
       }

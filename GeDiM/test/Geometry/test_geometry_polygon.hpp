@@ -1212,10 +1212,27 @@ namespace GedimUnitTesting
 
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestConcavePolygonTriangulation)
+  {
+    try
+    {
+      std::string exportFolder = "./Export/TestConcavePolygonTriangulation";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check cocanve triangulation
       {
-        Eigen::MatrixXd polygonVertices(3, 9);
+        Eigen::MatrixXd polygonVertices(3, 10);
         polygonVertices.col(0)<< 1.00, 2.25, 0.0;
         polygonVertices.col(1)<< 2.00, 1.00, 0.0;
         polygonVertices.col(2)<< 3.00, 2.00, 0.0;
@@ -1234,16 +1251,21 @@ namespace GedimUnitTesting
         }
 
         const std::vector<unsigned int> triangles = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
-        const Eigen::MatrixXd trianglePoints = geometryUtilities.ExtractPoints(polygonVertices,
-                                                                               triangles);
 
         {
+          const Eigen::MatrixXd trianglePoints = geometryUtilities.ExtractPoints(polygonVertices,
+                                                                                 triangles);
+
           Gedim::VTKUtilities vtuExporter;
-          vtuExporter.AddPolygon(trianglePoints);
+
+          const unsigned int numTriangles = trianglePoints.size() / 3;
+          for (unsigned int t = 0; t < numTriangles; t++)
+            vtuExporter.AddPolygon(trianglePoints.block(0, 3 * t, 3, 3));
+
           vtuExporter.Export(exportFolder + "/Concave_Triangles.vtu");
         }
 
-        ASSERT_EQ(vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }),
+        ASSERT_EQ(vector<unsigned int>({ 3, 4, 2, 4, 5, 2, 6, 7, 5, 5, 7, 1, 1, 7, 0, 7, 8, 0, 0, 8, 9 }),
                   triangles);
       }
     }
