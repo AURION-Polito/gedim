@@ -295,35 +295,41 @@ namespace GedimUnitTesting
                                                   exportFolder);
         }
 
-        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(concave.Vertices,
-                                                                                              concave.Faces);
-        const vector<Eigen::Vector3d> faceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(faceVertices);
-        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
-        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
-        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
-                                                                                                              faceNormals,
-                                                                                                              faceTranslations);
-        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
-                                                                                                       faceTranslations,
-                                                                                                       faceRotationMatrices);
+        const std::vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(concave.Vertices,
+                                                                                                   concave.Faces);
+        const std::vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const std::vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const std::vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                                   faceNormals,
+                                                                                                                   faceTranslations);
+        const std::vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                            faceTranslations,
+                                                                                                            faceRotationMatrices);
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(concave.Faces,
+                                                                                                                                      face2DVertices);
+        const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
+                                                                                                                                              faceTriangulations);
+        std::vector<Eigen::Vector3d> faceInternalPoints(concave.Faces.size());
+        for (unsigned int f = 0; f < concave.Faces.size(); f++)
+          faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(facesTriangulationPoints[f][0]);
 
         vector<Eigen::Vector3d> expectedFaceNormals(6);
-        expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, -1.0000000000000000e+00;
+        expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
         expectedFaceNormals[1]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
-        expectedFaceNormals[2]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
-        expectedFaceNormals[3]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
-        expectedFaceNormals[4]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
-        expectedFaceNormals[5]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[2]<< -7.0710678118654746e-01, +7.0710678118654746e-01, +0.0000000000000000e+00;
+        expectedFaceNormals[3]<< +4.4721359549995793e-01, -8.9442719099991586e-01, +0.0000000000000000e+00;
+        expectedFaceNormals[4]<< +4.4721359549995793e-01, +8.9442719099991586e-01, +0.0000000000000000e+00;
+        expectedFaceNormals[5]<< -7.0710678118654746e-01, -7.0710678118654746e-01, +0.0000000000000000e+00;
 
         ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
         ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
-                                                                   faceBarycenters,
+                                                                   faceInternalPoints,
                                                                    face2DVertices,
                                                                    faceNormals,
                                                                    faceTranslations,
                                                                    faceRotationMatrices),
-                  vector<bool>({ false, true, false, true, false, true }));
+                  vector<bool>({ false, true, true, true, true, true }));
       }
     }
     catch (const exception& exception)

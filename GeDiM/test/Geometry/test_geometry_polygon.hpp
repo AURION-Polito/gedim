@@ -1160,7 +1160,40 @@ namespace GedimUnitTesting
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      // check cocanve triangulation
+      // check simple cocanve triangulation
+      {
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< -1.0, -1.0, 0.0;
+        polygonVertices.col(2)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(3)<< -1.0, 1.0, 0.0;
+
+        {
+          Gedim::VTKUtilities vtuExporter;
+          vtuExporter.AddPolygon(polygonVertices);
+          vtuExporter.Export(exportFolder + "/Concave_Simple.vtu");
+        }
+
+        const std::vector<unsigned int> triangles = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
+
+        {
+          const Eigen::MatrixXd trianglePoints = geometryUtilities.ExtractPoints(polygonVertices,
+                                                                                 triangles);
+
+          Gedim::VTKUtilities vtuExporter;
+
+          const unsigned int numTriangles = trianglePoints.cols() / 3;
+          for (unsigned int t = 0; t < numTriangles; t++)
+            vtuExporter.AddPolygon(trianglePoints.block(0, 3 * t, 3, 3));
+
+          vtuExporter.Export(exportFolder + "/Concave_Simple_Triangles.vtu");
+        }
+
+        ASSERT_EQ(vector<unsigned int>({ 1, 2, 0, 0, 2, 3 }),
+                  triangles);
+      }
+
+      // check complex cocanve triangulation
       {
         Eigen::MatrixXd polygonVertices(3, 10);
         polygonVertices.col(0)<< 1.00, 2.25, 0.0;
@@ -1177,7 +1210,7 @@ namespace GedimUnitTesting
         {
           Gedim::VTKUtilities vtuExporter;
           vtuExporter.AddPolygon(polygonVertices);
-          vtuExporter.Export(exportFolder + "/Concave.vtu");
+          vtuExporter.Export(exportFolder + "/Concave_Complex.vtu");
         }
 
         const std::vector<unsigned int> triangles = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
@@ -1192,7 +1225,7 @@ namespace GedimUnitTesting
           for (unsigned int t = 0; t < numTriangles; t++)
             vtuExporter.AddPolygon(trianglePoints.block(0, 3 * t, 3, 3));
 
-          vtuExporter.Export(exportFolder + "/Concave_Triangles.vtu");
+          vtuExporter.Export(exportFolder + "/Concave_Complex_Triangles.vtu");
         }
 
         ASSERT_EQ(vector<unsigned int>({ 3, 4, 2, 4, 5, 2, 6, 7, 5, 5, 7, 1, 1, 7, 0, 7, 8, 0, 0, 8, 9 }),
