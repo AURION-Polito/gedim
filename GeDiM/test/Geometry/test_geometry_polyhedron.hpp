@@ -298,13 +298,25 @@ namespace GedimUnitTesting
         const std::vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(concave.Vertices,
                                                                                                    concave.Faces);
         const std::vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+
+        const unsigned int numFaces = concave.Faces.size();
+
         const std::vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+
         const std::vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
                                                                                                                    faceNormals,
                                                                                                                    faceTranslations);
-        const std::vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
-                                                                                                            faceTranslations,
-                                                                                                            faceRotationMatrices);
+        std::vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                      faceTranslations,
+                                                                                                      faceRotationMatrices);
+
+        for (unsigned int f = 0; f < numFaces; f++)
+        {
+          if (geometryUtilities.IsValue1DNegative(faceRotationMatrices[f].determinant()))
+            face2DVertices[f].block(0, 1, 3, face2DVertices[f].cols() - 1).rowwise().reverseInPlace();
+        }
+
+
         const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(concave.Faces,
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
