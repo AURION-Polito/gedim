@@ -2,6 +2,7 @@
 #include "GeometryUtilities.hpp"
 #include "MapTriangle.hpp"
 #include "Eigen_Utilities.hpp"
+#include <numeric>
 
 using namespace std;
 using namespace Eigen;
@@ -333,79 +334,15 @@ namespace Gedim
 
     list<unsigned int> triangleList;
 
-    std::vector<unsigned int> originalUnalignedVertices = UnalignedPoints(polygonVertices);
+    list<unsigned int> earVertices;
+    Eigen::MatrixXd vertices = polygonVertices;
+    unsigned int numVertices = polygonVertices.cols();
+    std::vector<unsigned int> unalignedVertices(numVertices);
+    std::iota(unalignedVertices.begin(),
+              unalignedVertices.end(), 0);
 
-    Output::Assert(originalUnalignedVertices.size() > 2);
-
-    unsigned int numVertices = originalUnalignedVertices.size();
-
-    if (numVertices == 3)
-      return vector<unsigned int>({ 0, 1, 2 });
-
-    Eigen::MatrixXd vertices = ExtractPoints(polygonVertices,
-                                             originalUnalignedVertices);
-    std::list<unsigned int> earVertices;
-
-    for (unsigned int v = 0; v < numVertices; v++)
-    {
-      const unsigned int v_prev = (v == 0) ? numVertices - 1 : v - 1;
-      const unsigned int v_next = (v + 1) % numVertices;
-
-      const double polarAngle = PolarAngle(vertices.col(v_prev),
-                                           vertices.col(v),
-                                           vertices.col(v_next));
-
-      if (IsValue1DNegative(polarAngle))
-        continue;
-
-      // test ear
-      bool isEar = true;
-      const Eigen::MatrixXd triangle = ExtractPoints(vertices,
-                                                     { v_prev, v, v_next });
-      const Eigen::MatrixXd boundingBox = PointsBoundingBox(triangle);
-      for (unsigned int ov = 0; ov < numVertices; ov++)
-      {
-        if (ov == v || ov == v_prev || ov == v_next)
-          continue;
-
-        if (!IsPointInBoundingBox(vertices.col(ov),
-                                  boundingBox))
-          continue;
-
-        if (!IsPointInsidePolygon(vertices.col(ov),
-                                  triangle))
-          continue;
-
-        isEar = false;
-        break;
-      }
-
-      if (isEar)
-      {
-        earVertices.push_back(v);
-        break;
-      }
-    }
-
-    std::vector<unsigned int> unalignedVertices = originalUnalignedVertices;
     do
     {
-      Output::Assert(earVertices.size() > 0);
-
-      const unsigned int earVertex = earVertices.front();
-      earVertices.pop_front();
-
-      const unsigned int v = earVertex;
-      const unsigned int v_prev = (earVertex == 0) ? numVertices - 1 : earVertex - 1;
-      const unsigned int v_next = (earVertex + 1) % numVertices;
-
-      triangleList.push_back(unalignedVertices[v]);
-      triangleList.push_back(unalignedVertices[v_next]);
-      triangleList.push_back(unalignedVertices[v_prev]);
-
-      unalignedVertices.erase(unalignedVertices.begin() + v);
-      Eigen_Utilities::RemoveColumn(vertices, v);
-
       std::vector<unsigned int> newUnalignedVertices = UnalignedPoints(vertices);
       Output::Assert(newUnalignedVertices.size() > 2);
 
@@ -466,8 +403,24 @@ namespace Gedim
           break;
         }
       }
+
+      Output::Assert(earVertices.size() > 0);
+
+      const unsigned int earVertex = earVertices.front();
+      earVertices.pop_front();
+
+      const unsigned int v = earVertex;
+      const unsigned int v_prev = (earVertex == 0) ? numVertices - 1 : earVertex - 1;
+      const unsigned int v_next = (earVertex + 1) % numVertices;
+
+      triangleList.push_back(unalignedVertices[v]);
+      triangleList.push_back(unalignedVertices[v_next]);
+      triangleList.push_back(unalignedVertices[v_prev]);
+
+      unalignedVertices.erase(unalignedVertices.begin() + v);
+      Eigen_Utilities::RemoveColumn(vertices, v);
     }
-    while (numVertices > 3);
+    while (vertices.cols() > 2);
 
     Output::Assert(triangleList.size() % 3 == 0);
 
