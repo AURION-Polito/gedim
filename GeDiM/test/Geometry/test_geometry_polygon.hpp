@@ -1258,7 +1258,7 @@ namespace GedimUnitTesting
 
           Gedim::VTKUtilities vtuExporter;
 
-          const unsigned int numTriangles = trianglePoints.size() / 3;
+          const unsigned int numTriangles = trianglePoints.cols() / 3;
           for (unsigned int t = 0; t < numTriangles; t++)
             vtuExporter.AddPolygon(trianglePoints.block(0, 3 * t, 3, 3));
 
