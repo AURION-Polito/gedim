@@ -309,9 +309,55 @@ namespace GedimUnitTesting
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                               faceTriangulations);
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < facesTriangulationPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            for (unsigned int t = 0; t < facesTriangulationPoints[f].size(); t++)
+            {
+              exporter.AddPolygon(facesTriangulationPoints[f][t],
+                                  {
+                                    {
+                                      "Face",
+                                      Gedim::VTPProperty::Formats::Cells,
+                                      static_cast<unsigned int>(faceIndex.size()),
+                                      faceIndex.data()
+                                    }
+                                  });
+            }
+          }
+
+          exporter.Export(exportFolder + "/FacesTriangulationPoints.vtu");
+        }
+
         std::vector<Eigen::Vector3d> faceInternalPoints(concave.Faces.size());
         for (unsigned int f = 0; f < concave.Faces.size(); f++)
           faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(facesTriangulationPoints[f][0]);
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddPoint(faceInternalPoints[f],
+                              {
+                                {
+                                  "Face",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(faceIndex.size()),
+                                  faceIndex.data()
+                                }
+                              });
+          }
+
+          exporter.Export(exportFolder + "/FacesInternalPoint.vtu");
+        }
+
+
 
         vector<Eigen::Vector3d> expectedFaceNormals(6);
         expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
