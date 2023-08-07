@@ -511,6 +511,75 @@ namespace Gedim
     return faceDirections;
   }
   // ***************************************************************************
+  std::vector<bool> GeometryUtilities::PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                      const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
+                                                                      const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                                      const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                                      const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
+  {
+    vector<bool> faceDirections(polyhedronFaceVertices.size(), true);
+
+    for (unsigned int f1 = 0; f1 < polyhedronFaceVertices.size(); f1++)
+    {
+      const Eigen::Vector3d& normal = polyhedronFaceNormals[f1];
+      const Eigen::Vector3d segmentOrigin = polyhedronFaceVertices[f1].col(0);
+      const Eigen::Vector3d segmentEnd = segmentOrigin + normal;
+
+      unsigned int numAfterFaceIntersections = 0;
+      for (unsigned int f2 = 0; f2 < polyhedronFaceVertices.size(); f2++)
+      {
+        if (f2 == f1)
+          continue;
+
+        const IntersectionSegmentPlaneResult intersections = IntersectionSegmentPlane(segmentOrigin,
+                                                                                      segmentEnd,
+                                                                                      polyhedronFaceNormals[f2],
+                                                                                      polyhedronFaceVertices[f2].col(0));
+
+        switch (intersections.Type)
+        {
+          case IntersectionSegmentPlaneResult::Types::NoIntersection:
+            continue;
+          case IntersectionSegmentPlaneResult::Types::SingleIntersection:
+          {
+            if (intersections.SingleIntersection.Type == PointSegmentPositionTypes::OnSegmentLineBeforeOrigin)
+              continue;
+
+            switch (intersections.SingleIntersection.Type)
+            {
+              case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+              case PointSegmentPositionTypes::OnSegmentOrigin:
+                continue;
+              case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+              case PointSegmentPositionTypes::OnSegmentEnd:
+              case PointSegmentPositionTypes::InsideSegment:
+              {
+                const Eigen::Vector3d pointIntersection = segmentOrigin +
+                                                          intersections.SingleIntersection.CurvilinearCoordinate * normal;
+
+                if (IsPointInsidePolygon(RotatePointsFrom3DTo2D(pointIntersection,
+                                                                polyhedronFaceRotationMatrices[f2].transpose(),
+                                                                polyhedronFaceTranslations[f2]),
+                                         polyhedronFaceRotatedVertices[f2]))
+                  numAfterFaceIntersections++;
+              }
+                break;
+              default:
+                throw runtime_error("intersection.SingleIntersection.Type not expected");
+            }
+          }
+            break;
+          default:
+            throw runtime_error("Intersection not expected");
+        }
+      }
+
+      faceDirections[f1] = (numAfterFaceIntersections % 2 == 0);
+    }
+
+    return faceDirections;
+  }
+  // ***************************************************************************
   vector<vector<unsigned int> > GeometryUtilities::PolyhedronFaceTriangulations(const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                 const vector<vector<unsigned int>>& localFaceTriangulations) const
   {

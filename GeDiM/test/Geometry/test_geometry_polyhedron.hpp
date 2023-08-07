@@ -199,6 +199,15 @@ namespace GedimUnitTesting
         const Eigen::Vector3d barycenter(0.5, 0.5, 0.5);
         const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(cube.Vertices,
                                                                                               cube.Faces);
+        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                              faceNormals,
+                                                                                                              faceTranslations);
+
+        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                       faceTranslations,
+                                                                                                       faceRotationMatrices);
 
         vector<Eigen::Vector3d> expectedFaceNormals(6);
         expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
@@ -208,13 +217,18 @@ namespace GedimUnitTesting
         expectedFaceNormals[4]<< +0.0000000000000000e+00, -1.0000000000000000e+00, +0.0000000000000000e+00;
         expectedFaceNormals[5]<< +0.0000000000000000e+00, -1.0000000000000000e+00, +0.0000000000000000e+00;
 
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormals(faceVertices),
+        ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
         ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
-                                                                   barycenter,
-                                                                   expectedFaceNormals),
+                                                                   face2DVertices,
+                                                                   faceNormals,
+                                                                   faceTranslations,
+                                                                   faceRotationMatrices),
                   vector<bool>({ false, true, false, true, true, false }));
-
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   barycenter,
+                                                                   faceNormals),
+                  vector<bool>({ false, true, false, true, true, false }));
       }
 
       // check tetrahedron face normals
@@ -226,6 +240,15 @@ namespace GedimUnitTesting
         const Eigen::Vector3d barycenter(0.25, 0.25, 0.25);
         const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(tetrahedron.Vertices,
                                                                                               tetrahedron.Faces);
+        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                              faceNormals,
+                                                                                                              faceTranslations);
+
+        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                       faceTranslations,
+                                                                                                       faceRotationMatrices);
 
         vector<Eigen::Vector3d> expectedFaceNormals(4);
         expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, 1.0000000000000000e+00;
@@ -233,11 +256,17 @@ namespace GedimUnitTesting
         expectedFaceNormals[2]<< +1.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
         expectedFaceNormals[3]<< +5.7735026918962584e-01, +5.7735026918962584e-01, +5.7735026918962584e-01;
 
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormals(faceVertices),
+        ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
         ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   face2DVertices,
+                                                                   faceNormals,
+                                                                   faceTranslations,
+                                                                   faceRotationMatrices),
+                  vector<bool>({ false, true, false, true, true, false }));
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
                                                                    barycenter,
-                                                                   expectedFaceNormals),
+                                                                   faceNormals),
                   vector<bool>({ false, true, false, true }));
       }
     }

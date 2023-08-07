@@ -1967,9 +1967,21 @@ namespace Gedim
       /// \param pointInsidePolyhedron a point inside polyhedron
       /// \param polyhedronFaceNormals the normal of each face
       /// \return true if the face has normal outgoing
+      /// \warning works only for convex polyhedrons
       std::vector<bool> PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                        const Eigen::Vector3d& pointInsidePolyhedron,
                                                        const std::vector<Eigen::Vector3d>& polyhedronFaceNormals) const;
+      /// \brief Compute Polyhedron Face Normal Directions for generic polyhedron (slower)
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \param pointInsidePolyhedron a point inside polyhedron
+      /// \param polyhedronFaceNormals the normal of each face
+      /// \return true if the face has normal outgoing
+      std::vector<bool> PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                       const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
+                                                       const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                       const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                       const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const;
+
       /// \brief Polyhedron Face Triangulations of each face
       /// \param polyhedronFaces the polyhedron faces
       /// \param localFaceTriangulations the local faces triangulations indices, size 1xnumFaces x (3xnumTriangles)
