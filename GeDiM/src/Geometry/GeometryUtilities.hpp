@@ -1977,6 +1977,7 @@ namespace Gedim
       /// \param polyhedronFaceNormals the normal of each face
       /// \return true if the face has normal outgoing
       std::vector<bool> PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                       const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                                                        const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
                                                        const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,

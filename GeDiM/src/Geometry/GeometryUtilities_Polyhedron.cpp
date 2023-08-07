@@ -512,6 +512,7 @@ namespace Gedim
   }
   // ***************************************************************************
   std::vector<bool> GeometryUtilities::PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                      const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
                                                                       const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                                                                       const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
                                                                       const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
@@ -522,7 +523,7 @@ namespace Gedim
     for (unsigned int f1 = 0; f1 < polyhedronFaceVertices.size(); f1++)
     {
       const Eigen::Vector3d& normal = polyhedronFaceNormals[f1];
-      const Eigen::Vector3d segmentOrigin = polyhedronFaceVertices[f1].col(0);
+      const Eigen::Vector3d segmentOrigin = polyhedronFaceInternalPoints[f1];
       const Eigen::Vector3d segmentEnd = segmentOrigin + normal;
 
       unsigned int numAfterFaceIntersections = 0;
