@@ -678,8 +678,8 @@ namespace GedimUnitTesting
                                                  vector<unsigned int>({ 0,1,2,0,2,3 }),
                                                  vector<unsigned int>({ 0,1,2,0,2,3 })
                                                }));
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(faceVertices,
-                                                                                   faceTriangulationsByFirstVertex),
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
+                                                                             faceTriangulationsByFirstVertex),
                   vector<vector<Eigen::Matrix3d>>({
                                                     vector<Eigen::Matrix3d>({
                                                       (Eigen::Matrix3d()<< cube.Vertices.col(0), cube.Vertices.col(1), cube.Vertices.col(2)).finished(),
@@ -1058,8 +1058,8 @@ namespace GedimUnitTesting
                                                                                                                polyhedronFaceTranslations,
                                                                                                                polyhedronFaceRotationMatrices);
 
-      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(polyhedronFace2DVertices,
-                                                                                                                                                             polyhedronFaceTriangulations);
+      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
+                                                                                                                                                       polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
@@ -1096,8 +1096,8 @@ namespace GedimUnitTesting
                                                                                                                polyhedronFaceTranslations,
                                                                                                                polyhedronFaceRotationMatrices);
 
-      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(polyhedronFace2DVertices,
-                                                                                                                                                             polyhedronFaceTriangulations);
+      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
+                                                                                                                                                       polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
@@ -1139,8 +1139,8 @@ namespace GedimUnitTesting
                                                                                                                polyhedronFaceTranslations,
                                                                                                                polyhedronFaceRotationMatrices);
 
-      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(polyhedronFace2DVertices,
-                                                                                                                                                             polyhedronFaceTriangulations);
+      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
+                                                                                                                                                       polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
@@ -1186,8 +1186,8 @@ namespace GedimUnitTesting
                                                                                                                polyhedronFaceTranslations,
                                                                                                                polyhedronFaceRotationMatrices);
 
-      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceTriangulationPointsByFirstVertex(polyhedronFace2DVertices,
-                                                                                                                                                             polyhedronFaceTriangulations);
+      const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
+                                                                                                                                                       polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
@@ -1277,6 +1277,65 @@ namespace GedimUnitTesting
       {
         const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                        1.0);
+
+        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
+                                                polyhedron.Edges,
+                                                polyhedron.Faces,
+                                                exportFolder);
+
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                          polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
+
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+        const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronFaceNormals);
+        const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+        const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                        polyhedronFaceNormals,
+                                                                                                                        polyhedronFaceTranslations);
+
+        const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                                 polyhedronFaceTranslations,
+                                                                                                                 polyhedronFaceRotationMatrices);
+
+        ASSERT_TRUE(geometryUtilities.PolyhedronIsConvex(polyhedronFace3DVertices,
+                                                         polyhedronFace2DVertices,
+                                                         polyhedronFaceBarycenters,
+                                                         polyhedronFaceNormals,
+                                                         polyhedronFaceNormalDirections,
+                                                         polyhedronBarycenter));
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Parallellepiped)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      std::string exportFolder = "./Export/TestPolyhedronIsConvex_Parallellepiped";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      // check convex polyhedron
+      {
+        Eigen::MatrixXd polygon(3, 4);
+        polygon.col(0)<< 0.0, 0.0, 0.0;
+        polygon.col(1)<< 1.0, 0.0, 0.0;
+        polygon.col(2)<< 0.75, 1.0, 0.0;
+        polygon.col(3)<< 0.25, 1.0, 0.0;
+
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreatePolyhedronWithExtrusion(polygon,
+                                                                                                                Eigen::Vector3d(0.0, 0.0, 1.0));
 
         geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
                                                 polyhedron.Edges,

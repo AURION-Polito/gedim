@@ -1813,6 +1813,13 @@ namespace Gedim
                                                 const Eigen::Vector3d& heightVector,
                                                 const Eigen::Vector3d& widthVector) const;
 
+      /// \brief Create Polyhedron With Extrusion
+      /// \param polygon the 2D polygon vertices
+      /// \param heightVector  the height vector
+      /// \return the polyhedron created
+      Polyhedron CreatePolyhedronWithExtrusion(const Eigen::MatrixXd& polygonVertices,
+                                               const Eigen::Vector3d& heightVector) const;
+
       /// \brief Create a Cube with origin aligned to axis
       /// \param origin the origin
       /// \param edgeLength the edge length
@@ -1967,8 +1974,15 @@ namespace Gedim
       std::vector<std::vector<unsigned int>> PolyhedronFaceTriangulationsByFirstVertex(const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
-      std::vector<std::vector<Eigen::Matrix3d>> PolyhedronFaceTriangulationPointsByFirstVertex(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
-                                                                                               const std::vector<std::vector<unsigned int>>& polyhedronFaceTriangulations) const;
+      /// \brief Polyhedron Face Triangulations by ear clipping of each face
+      /// \param polyhedronFaces the polyhedron faces
+      /// \param polyhedronFaceVertices the polyhedron faces vertices
+      /// \return for each face the triangulation indices by first vertex, size 1xnumFaces x (3xnumTriangles)
+      std::vector<std::vector<unsigned int>> PolyhedronFaceTriangulationsByEarClipping(const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                                                                       const std::vector<Eigen::MatrixXd>& polyhedronFaces2DVertices) const;
+
+      std::vector<std::vector<Eigen::Matrix3d>> PolyhedronFaceExtractTriangulationPoints(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+                                                                                         const std::vector<std::vector<unsigned int>>& polyhedronFaceTriangulations) const;
 
       std::vector<std::vector<Eigen::Matrix3d>> PolyhedronFaceTriangulationPointsByInternalPoint(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                                                                  const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,

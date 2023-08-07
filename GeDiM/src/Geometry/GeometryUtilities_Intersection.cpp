@@ -726,7 +726,8 @@ namespace Gedim
           if (Are1DValuesEqual(coordCurv[k], max*c))
             intGiaPresente = true;
         }
-        if (flag==true && intGiaPresente==false)
+
+        if (flag && !intGiaPresente)
         {
           result.LineIntersections[numberOfIntersections].CurvilinearCoordinate = max*c;
           coordCurv.push_back(max*c);
