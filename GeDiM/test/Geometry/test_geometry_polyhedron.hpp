@@ -186,6 +186,9 @@ namespace GedimUnitTesting
   {
     try
     {
+      std::string exportFolder = "./Export/TestPolyhedron_TestPolyhedronFaceNormals";
+      Gedim::Output::CreateFolder(exportFolder);
+
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -272,6 +275,55 @@ namespace GedimUnitTesting
                                                                    barycenter,
                                                                    faceNormals),
                   vector<bool>({ false, true, false, true }));
+      }
+
+      // check concave face normals
+      {
+        Eigen::MatrixXd polygon(3, 4);
+        polygon.col(0)<< 0.0, 0.0, 0.0;
+        polygon.col(1)<< -1.0, -1.0, 0.0;
+        polygon.col(2)<< 1.0, 0.0, 0.0;
+        polygon.col(3)<< -1.0, 1.0, 0.0;
+
+        const Gedim::GeometryUtilities::Polyhedron concave = geometryUtilities.CreatePolyhedronWithExtrusion(polygon,
+                                                                                                             Eigen::Vector3d(0.0, 0.0, 1.0));
+
+        {
+          geometryUtilities.ExportPolyhedronToVTU(concave.Vertices,
+                                                  concave.Edges,
+                                                  concave.Faces,
+                                                  exportFolder);
+        }
+
+        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(concave.Vertices,
+                                                                                              concave.Faces);
+        const vector<Eigen::Vector3d> faceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(faceVertices);
+        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                              faceNormals,
+                                                                                                              faceTranslations);
+        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                       faceTranslations,
+                                                                                                       faceRotationMatrices);
+
+        vector<Eigen::Vector3d> expectedFaceNormals(6);
+        expectedFaceNormals[0]<< +0.0000000000000000e+00, +0.0000000000000000e+00, -1.0000000000000000e+00;
+        expectedFaceNormals[1]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +1.0000000000000000e+00;
+        expectedFaceNormals[2]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[3]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[4]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+        expectedFaceNormals[5]<< +0.0000000000000000e+00, +0.0000000000000000e+00, +0.0000000000000000e+00;
+
+        ASSERT_EQ(faceNormals,
+                  expectedFaceNormals);
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   faceBarycenters,
+                                                                   face2DVertices,
+                                                                   faceNormals,
+                                                                   faceTranslations,
+                                                                   faceRotationMatrices),
+                  vector<bool>({ false, true, false, true, false, true }));
       }
     }
     catch (const exception& exception)
