@@ -1164,6 +1164,9 @@ namespace GedimUnitTesting
   {
     try
     {
+      std::string exportFolder = "./Export/TestPolygonTriangulation";
+      Gedim::Output::CreateFolder(exportFolder);
+
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -1208,6 +1211,40 @@ namespace GedimUnitTesting
         polygonVertices.col(4)<< 0.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
+      }
+
+      // check cocanve triangulation
+      {
+        Eigen::MatrixXd polygonVertices(3, 9);
+        polygonVertices.col(0)<< 1.00, 2.25, 0.0;
+        polygonVertices.col(1)<< 2.00, 1.00, 0.0;
+        polygonVertices.col(2)<< 3.00, 2.00, 0.0;
+        polygonVertices.col(3)<< 4.00, 1.25, 0.0;
+        polygonVertices.col(4)<< 5.00, 3.00, 0.0;
+        polygonVertices.col(5)<< 3.75, 2.75, 0.0;
+        polygonVertices.col(6)<< 3.25, 4.00, 0.0;
+        polygonVertices.col(7)<< 2.50, 1.75, 0.0;
+        polygonVertices.col(8)<< 1.25, 2.50, 0.0;
+        polygonVertices.col(9)<< 1.75, 3.50, 0.0;
+
+        {
+          Gedim::VTKUtilities vtuExporter;
+          vtuExporter.AddPolygon(polygonVertices);
+          vtuExporter.Export(exportFolder + "/Concave.vtu");
+        }
+
+        const std::vector<unsigned int> triangles = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
+        const Eigen::MatrixXd trianglePoints = geometryUtilities.ExtractPoints(polygonVertices,
+                                                                               triangles);
+
+        {
+          Gedim::VTKUtilities vtuExporter;
+          vtuExporter.AddPolygon(trianglePoints);
+          vtuExporter.Export(exportFolder + "/Concave_Triangles.vtu");
+        }
+
+        ASSERT_EQ(vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }),
+                  triangles);
       }
     }
     catch (const exception& exception)
