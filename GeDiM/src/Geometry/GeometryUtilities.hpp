@@ -1817,8 +1817,17 @@ namespace Gedim
       /// \param polygon the 2D polygon vertices
       /// \param heightVector  the height vector
       /// \return the polyhedron created
+      inline Polyhedron CreatePolyhedronWithExtrusion(const Eigen::MatrixXd& polygonVertices,
+                                                      const Eigen::Vector3d& heightVector) const
+      { return CreatePolyhedronWithExtrusion(polygonVertices,
+                                             std::vector<Eigen::Vector3d>(polygonVertices.cols(), heightVector)); }
+
+      /// \brief Create Polyhedron With Extrusion
+      /// \param polygon the 2D polygon vertices, size 3 x numPolygonVertices
+      /// \param heightVectors the height vector to be used for each polygon vertex, size numPolygonVertices
+      /// \return the polyhedron created
       Polyhedron CreatePolyhedronWithExtrusion(const Eigen::MatrixXd& polygonVertices,
-                                               const Eigen::Vector3d& heightVector) const;
+                                               const std::vector<Eigen::Vector3d>& heightVectors) const;
 
       /// \brief Create a Cube with origin aligned to axis
       /// \param origin the origin

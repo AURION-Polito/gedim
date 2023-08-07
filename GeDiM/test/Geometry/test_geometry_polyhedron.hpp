@@ -1330,12 +1330,12 @@ namespace GedimUnitTesting
       {
         Eigen::MatrixXd polygon(3, 4);
         polygon.col(0)<< 0.0, 0.0, 0.0;
-        polygon.col(1)<< 1.0, 0.0, 0.0;
-        polygon.col(2)<< 0.75, 1.0, 0.0;
+        polygon.col(1)<< 1.0, 0.25, 0.0;
+        polygon.col(2)<< 0.75, 0.75, 0.0;
         polygon.col(3)<< 0.25, 1.0, 0.0;
 
         const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreatePolyhedronWithExtrusion(polygon,
-                                                                                                                Eigen::Vector3d(0.0, 0.0, 1.0));
+                                                                                                                Eigen::Vector3d(0.5, 0.25, 1.0));
 
         geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices,
                                                 polyhedron.Edges,

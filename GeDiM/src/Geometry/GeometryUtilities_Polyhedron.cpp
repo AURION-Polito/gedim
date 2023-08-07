@@ -142,8 +142,12 @@ namespace Gedim
   }
   // ***************************************************************************
   GeometryUtilities::Polyhedron GeometryUtilities::CreatePolyhedronWithExtrusion(const Eigen::MatrixXd& polygonVertices,
-                                                                                 const Eigen::Vector3d& heightVector) const
+                                                                                 const std::vector<Eigen::Vector3d>& heightVectors) const
   {
+    Output::Assert(static_cast<unsigned int>(polygonVertices.cols()) ==
+                   static_cast<unsigned int>(heightVectors.size()) &&
+                   polygonVertices.rows() == 3);
+
     Gedim::GeometryUtilities::Polyhedron polyhedron;
 
     const unsigned int numPolygonVertices = polygonVertices.cols();
@@ -154,7 +158,7 @@ namespace Gedim
     for (unsigned int v = 0; v < numPolygonVertices; v++)
     {
       polyhedron.Vertices.col(v)<< polygonVertices.col(v);
-      polyhedron.Vertices.col(numPolygonVertices + v)<< polygonVertices.col(v) + heightVector;
+      polyhedron.Vertices.col(numPolygonVertices + v)<< polygonVertices.col(v) + heightVectors[v];
     }
 
     // create edges
