@@ -690,11 +690,30 @@ namespace Gedim
                                                                                          result.Cell3DsFacesTranslations[c],
                                                                                          result.Cell3DsFacesRotationMatrices[c]);
 
+      // fix orientation for concave cells
+      for (unsigned int f = 0; f < numFaces; f++)
+      {
+        if (geometryUtilities.IsValue1DNegative(result.Cell3DsFacesRotationMatrices[c][f].determinant()))
+          result.Cell3DsFaces2DVertices[c][f].block(0, 1, 3, result.Cell3DsFaces2DVertices[c][f].cols() - 1).rowwise().reverseInPlace();
+      }
+
       const vector<vector<unsigned int>> polyhedronFaceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(polyhedron.Faces,
                                                                                                                                     result.Cell3DsFaces2DVertices[c]);
 
       result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces2DVertices[c],
                                                                                                           polyhedronFaceTriangulations);
+
+      std::vector<Eigen::Vector3d> faceInternalPoints(numFaces);
+      for (unsigned int f = 0; f < numFaces; f++)
+        faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces2DTriangulations[c][f][0]);
+
+
+      result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
+                                                                                                faceInternalPoints,
+                                                                                                result.Cell3DsFaces2DVertices[c],
+                                                                                                result.Cell3DsFacesNormals[c],
+                                                                                                result.Cell3DsFacesTranslations[c],
+                                                                                                result.Cell3DsFacesRotationMatrices[c]);
       result.Cell3DsFacesAreas[c].resize(numFaces);
       result.Cell3DsFacesDiameters[c].resize(numFaces);
       result.Cell3DsFaces2DCentroids[c].resize(numFaces);
@@ -751,7 +770,6 @@ namespace Gedim
                                                                                                                          convexCell3DFacesTranslation,
                                                                                                                          convexCell3DFacesRotationMatrices);
 
-
         const std::vector<std::vector<unsigned int>> convexCell3DFacesTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(convexCell3DPolyhedron.Faces,
                                                                                                                                                    convexCell3DFaces3DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> convexCell3DFaces2DTriangulations = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(convexCell3DFaces2DVertices,
@@ -796,27 +814,6 @@ namespace Gedim
           result.Cell3DsTetrahedronPoints[c][tetraCounter++] =
               convexCell3DTetrahedronsPoints[cc][cct];
       }
-
-      result.Cell3DsFacesNormalDirections[c].resize(numFaces, true);
-      throw runtime_error("Not finished!");
-      //      for (unsigned int f = 0; f < numFaces; f++)
-      //      {
-      //        const unsigned int cell2DIndex = mesh.Cell3DFace(c, f);
-
-      //        const unsigned int cell3DNeighIndex = mesh.Cell2DNumberNeighbourCell3D(cell2DIndex) > 0 &&
-      //                                              mesh.Cell2DNeighbourCell3D(cell2DIndex, 0) == c ?
-      //                                                0 : 1;
-
-      //        const unsigned int convexCell3DIndex = meshCell2DToConvexCell3DIndices[cell2DIndex][cell3DNeighIndex];
-      //        const unsigned int convexCellIndex = std::distance(meshCell3DToConvexCell3DIndices[c].begin(),
-      //                                                           std::find(meshCell3DToConvexCell3DIndices[c].begin(),
-      //                                                                     meshCell3DToConvexCell3DIndices[c].end(),
-      //                                                                     convexCell3DIndex));
-
-      //        result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.PolyhedronFaceNormalDirections({ result.Cell3DsFaces3DVertices[c][f] },
-      //                                                                                                     convexCell3DsCentroid.col(convexCellIndex),
-      //                                                                                                     { result.Cell3DsFacesNormals[c][f] }).at(0);
-      //      }
     }
 
     return result;
