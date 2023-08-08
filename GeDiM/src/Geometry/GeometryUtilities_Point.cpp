@@ -260,7 +260,7 @@ namespace Gedim
             }
             case PointSegmentPositionTypes::OnSegmentEnd:
             {
-              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
+              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
               result.BorderIndex = (v + 1) % numVertices;
               return result;
             }
