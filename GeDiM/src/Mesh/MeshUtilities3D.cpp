@@ -620,6 +620,7 @@ namespace Gedim
 
     result.Cell3DsFaces3DVertices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DVertices.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFaces3DTriangulations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DTriangulations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesAreas.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DCentroids.resize(mesh.Cell3DTotalNumber());
@@ -700,12 +701,14 @@ namespace Gedim
       const vector<vector<unsigned int>> polyhedronFaceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(polyhedron.Faces,
                                                                                                                                     result.Cell3DsFaces2DVertices[c]);
 
+      result.Cell3DsFaces3DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces3DVertices[c],
+                                                                                                          polyhedronFaceTriangulations);
       result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces2DVertices[c],
                                                                                                           polyhedronFaceTriangulations);
 
       std::vector<Eigen::Vector3d> faceInternalPoints(numFaces);
       for (unsigned int f = 0; f < numFaces; f++)
-        faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces2DTriangulations[c][f][0]);
+        faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
 
 
       result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],

@@ -14,6 +14,7 @@
 
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
+#include "VTKUtilities.hpp"
 
 using namespace testing;
 using namespace std;
@@ -168,6 +169,9 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave)
   {
+    std::string exportFolder = "./Export/TestFillMesh3DGeometricData_Concave";
+    Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -179,11 +183,92 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConcaveMesh");
 
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao,
                                                                                                    meshDao,
                                                                                                    std::vector<std::vector<unsigned int>> { { 0 } });
+
+    {
+      for (unsigned int c = 0; c < meshDao.Cell3DTotalNumber(); c++)
+      {
+        const unsigned int numFaces = result.Cell3DsFaces[c].size();
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < result.Cell3DsFaces3DTriangulations[c].size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            for (unsigned int t = 0; t < result.Cell3DsFaces3DTriangulations[c][f].size(); t++)
+            {
+              exporter.AddPolygon(result.Cell3DsFaces3DTriangulations[c][f][t],
+                                  {
+                                    {
+                                      "Face",
+                                      Gedim::VTPProperty::Formats::Cells,
+                                      static_cast<unsigned int>(faceIndex.size()),
+                                      faceIndex.data()
+                                    }
+                                  });
+            }
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_Faces2DTriangulations.vtu");
+        }
+
+        std::vector<Eigen::Vector3d> faceInternalPoints(numFaces);
+        for (unsigned int f = 0; f < numFaces; f++)
+          faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddPoint(faceInternalPoints[f],
+                              {
+                                {
+                                  "Face",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(faceIndex.size()),
+                                  faceIndex.data()
+                                }
+                              });
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_FacesInternalPoint.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddSegment(faceInternalPoints[f],
+                                faceInternalPoints[f] + result.Cell3DsFacesNormals[c][f],
+                                {
+                                  {
+                                    "Face",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(faceIndex.size()),
+                                    faceIndex.data()
+                                  }
+                                });
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_FacesNormal.vtu");
+        }
+      }
+    }
 
     Gedim::MeshUtilities::MeshGeometricData3D expectedResult;
     expectedResult.Cell3DsVolumes = { 1.0 };
