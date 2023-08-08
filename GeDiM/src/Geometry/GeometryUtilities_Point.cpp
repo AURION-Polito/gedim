@@ -217,6 +217,127 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition_RayCasting(const Eigen::Vector3d& point, const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.cols() > 2 && PointsAre2D(point));
+
+    GeometryUtilities::PointPolygonPositionResult result;
+
+    const unsigned int numVertices =  polygonVertices.cols();
+    unsigned int numIntersections = 0;
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      const Vector3d& edgeOrigin = polygonVertices.col(v);
+      const Vector3d edgeTangent = SegmentTangent(edgeOrigin,
+                                                  polygonVertices.col((v + 1) % numVertices));
+
+      if (IsValue1DZero(edgeTangent.y()))
+      {
+        if (IsValue1DZero(point.y() - edgeOrigin.y()))
+        {
+          const double intersection_point_curvilinearCoordinate = PointLineCurvilinearCoordinate(point,
+                                                                                                 edgeOrigin,
+                                                                                                 edgeTangent,
+                                                                                                 edgeTangent.squaredNorm());
+          const PointSegmentPositionTypes intersection_point_position = PointSegmentPosition(intersection_point_curvilinearCoordinate);
+
+          switch (intersection_point_position)
+          {
+            case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+              case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+              continue; // intersection not interesting
+            case PointSegmentPositionTypes::OnSegmentOrigin:
+            {
+              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
+              result.BorderIndex = v;
+              return result;
+            }
+            case PointSegmentPositionTypes::InsideSegment:
+            {
+              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
+              result.BorderIndex = v;
+              return result;
+            }
+            case PointSegmentPositionTypes::OnSegmentEnd:
+            {
+              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
+              result.BorderIndex = (v + 1) % numVertices;
+              return result;
+            }
+            default:
+              throw runtime_error("Intersection point not expected");
+          }
+        }
+        else
+          continue;
+      }
+
+      const double intersection_edge_curvilinearCoordinate = (point.y() - edgeOrigin.y()) / edgeTangent.y();
+
+      const PointSegmentPositionTypes intersection_edge_position = PointSegmentPosition(intersection_edge_curvilinearCoordinate);
+
+      switch (intersection_edge_position)
+      {
+        case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+        case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+          continue; // intersection outside the edge
+        case PointSegmentPositionTypes::OnSegmentOrigin:
+        case PointSegmentPositionTypes::InsideSegment:
+        case PointSegmentPositionTypes::OnSegmentEnd:
+        {
+          const double x_intersection = edgeOrigin.x() +
+                                        intersection_edge_curvilinearCoordinate * edgeTangent.x();
+
+          const double intersection_point_curvilinearCoordinate = (x_intersection - point.x());
+          const PointSegmentPositionTypes intersection_point_position = PointSegmentPosition(intersection_point_curvilinearCoordinate);
+
+          switch (intersection_point_position)
+          {
+            case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+              continue; // intersection not interesting
+            case PointSegmentPositionTypes::OnSegmentOrigin:
+            {
+              if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentOrigin)
+              {
+                result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
+                result.BorderIndex = v;
+                return result;
+              }
+
+              if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentEnd)
+              {
+                result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
+                result.BorderIndex = (v + 1) % numVertices;
+                return result;
+              }
+
+              result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge;
+              result.BorderIndex = v;
+              return result;
+            }
+            case PointSegmentPositionTypes::InsideSegment:
+            case PointSegmentPositionTypes::OnSegmentEnd:
+            case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+            {
+              numIntersections++;
+              continue;
+            }
+            default:
+              throw runtime_error("Intersection point not expected");
+          }
+
+          break;
+        }
+        default:
+          throw runtime_error("Intersection edge not expected");
+      }
+    }
+
+    result.Type = (numIntersections % 2) == 1 ? GeometryUtilities::PointPolygonPositionResult::Types::Inside :
+                                                GeometryUtilities::PointPolygonPositionResult::Types::Outside;
+    return result;
+  }
+  // ***************************************************************************
   GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhedronPosition(const Eigen::Vector3d& point,
                                                                                               const vector<Eigen::MatrixXi>& polyhedronFaces,
                                                                                               const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,

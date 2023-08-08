@@ -1220,18 +1220,31 @@ namespace Gedim
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \return the resulting position
-      /// \warning works only in 2D
+      /// \warning works only in 2D with convex polygons
       PointPolygonPositionResult PointPolygonPosition(const Eigen::Vector3d& point,
                                                       const Eigen::MatrixXd& polygonVertices) const;
+
+      PointPolygonPositionResult PointPolygonPosition_RayCasting(const Eigen::Vector3d& point,
+                                                                 const Eigen::MatrixXd& polygonVertices) const;
 
       /// \param point the point
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \return false if it is outside, true the other cases
-      /// \warning works only in 2D
+      /// \warning works only in 2D with convex polygons
       inline bool IsPointInsidePolygon(const Eigen::Vector3d& point,
                                        const Eigen::MatrixXd& polygonVertices) const
       { return !(PointPolygonPosition(point,
                                       polygonVertices).Type == PointPolygonPositionResult::Types::Outside); }
+
+      /// \brief IsPointInsidePolygon using RayCasting algorithm
+      /// (see https://en.wikipedia.org/wiki/Point_in_polygon)
+      /// \param point the point
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return false if it is outside, true the other cases
+      inline bool IsPointInsidePolygon_RayCasting(const Eigen::Vector3d& point,
+                                                  const Eigen::MatrixXd& polygonVertices) const
+      { return !(PointPolygonPosition_RayCasting(point,
+                                                 polygonVertices).Type == PointPolygonPositionResult::Types::Outside); }
 
       LinePolygonPositionResult LinePolygonPosition(const Eigen::Vector3d& lineTangent,
                                                     const Eigen::Vector3d& lineOrigin,

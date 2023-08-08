@@ -553,6 +553,13 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                              polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(point,
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                       polygonVertices));
       }
       
       // check border
@@ -567,12 +574,30 @@ namespace GedimUnitTesting {
                                                                                                                       polygonVertices);
         ASSERT_EQ(resultBorderEdge.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge);
         ASSERT_EQ(resultBorderEdge.BorderIndex, 1);
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderEdge_ray = geometryUtilities.PointPolygonPosition_RayCasting(Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                                                                                                      polygonVertices);
+        ASSERT_EQ(resultBorderEdge_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge);
+        ASSERT_EQ(resultBorderEdge_ray.BorderIndex, 1);
+
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                                       polygonVertices));
         
         // border vertex
         Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex = geometryUtilities.PointPolygonPosition(Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                                                          polygonVertices);
         ASSERT_EQ(resultBorderVertex.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
         ASSERT_EQ(resultBorderVertex.BorderIndex, 1);
+        Gedim::GeometryUtilities::PointPolygonPositionResult resultBorderVertex_ray = geometryUtilities.PointPolygonPosition_RayCasting(Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                                                                        polygonVertices);
+        ASSERT_EQ(resultBorderVertex_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+        ASSERT_EQ(resultBorderVertex_ray.BorderIndex, 1);
+
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                       polygonVertices));
       }
       
       // check inside
@@ -586,6 +611,15 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                              polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside);
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside);
+
+
+        ASSERT_TRUE(geometryUtilities.IsPointInsidePolygon(point,
+                                                           polygonVertices));
+        ASSERT_TRUE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                      polygonVertices));
       }
       
       // check on vertex
@@ -599,6 +633,15 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                              polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+
+
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(point,
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                       polygonVertices));
       }
 
       // check on vertex aligned edge
@@ -612,6 +655,15 @@ namespace GedimUnitTesting {
         Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
                                                                                                              polygonVertices);
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex);
+
+
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(point,
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                       polygonVertices));
       }
     }
     catch (const exception& exception)

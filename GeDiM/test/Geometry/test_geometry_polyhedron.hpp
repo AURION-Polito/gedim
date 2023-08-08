@@ -276,6 +276,24 @@ namespace GedimUnitTesting
                                                                    faceNormals),
                   vector<bool>({ false, true, false, true }));
       }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals_Concave)
+  {
+    try
+    {
+      std::string exportFolder = "./Export/TestPolyhedron_TestPolyhedronFaceNormals_Concave";
+      Gedim::Output::CreateFolder(exportFolder);
+
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
 
       // check concave face normals
       {
@@ -367,6 +385,27 @@ namespace GedimUnitTesting
           }
 
           exporter.Export(exportFolder + "/FacesInternalPoint.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddSegment(faceInternalPoints[f],
+                                faceInternalPoints[f] + faceNormals[f],
+                                {
+                                  {
+                                    "Face",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(faceIndex.size()),
+                                    faceIndex.data()
+                                  }
+                                });
+          }
+
+          exporter.Export(exportFolder + "/FacesNormal.vtu");
         }
 
 
