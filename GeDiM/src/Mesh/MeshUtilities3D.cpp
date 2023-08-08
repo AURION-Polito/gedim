@@ -668,7 +668,7 @@ namespace Gedim
       for (unsigned int f = 0; f < numFaces; f++)
       {
         const unsigned int numFaceEdges = polyhedron.Faces[f].cols();
-        const unsigned int cell2DIndex = convexMesh.Cell3DFace(c, f);
+        const unsigned int cell2DIndex = mesh.Cell3DFace(c, f);
 
         result.Cell3DsFacesEdgeDirections[c][f].resize(numFaceEdges);
         for (unsigned int e = 0; e < numFaceEdges; e++)
