@@ -561,17 +561,9 @@ namespace Gedim
                 const Eigen::Vector3d pointIntersection2D = RotatePointsFrom3DTo2D(pointIntersection,
                                                                                    polyhedronFaceRotationMatrices[f2].transpose(),
                                                                                    polyhedronFaceTranslations[f2]);
-                {
-                  Gedim::VTKUtilities exporter;
 
-                  exporter.AddPoint(pointIntersection2D);
-                  exporter.AddPolygon(polyhedronFaceRotatedVertices[f2]);
-                  exporter.Export("./TEST.vtu");
-                  exit(-1);
-                }
-
-                if (IsPointInsidePolygon(pointIntersection2D,
-                                         polyhedronFaceRotatedVertices[f2]))
+                if (IsPointInsidePolygon_RayCasting(pointIntersection2D,
+                                                    polyhedronFaceRotatedVertices[f2]))
                   numAfterFaceIntersections++;
               }
                 break;
