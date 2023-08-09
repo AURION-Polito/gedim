@@ -929,7 +929,7 @@ namespace Gedim
       vector<double> id(1, index);
       vector<double> volume(1, polyhedronVolume);
 
-      // Export cell3D
+      // Export Polyhedron
       exporter.AddPolyhedron(polyhedronVertices,
                              polyhedronEdges,
                              polyhedronFaces,
@@ -949,13 +949,13 @@ namespace Gedim
                              });
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D.vtu");
+                      "Polyhedron.vtu");
     }
 
     {
       Gedim::VTKUtilities exporter;
 
-      // Export cell3D tetra
+      // Export Polyhedron tetra
       for (unsigned int t = 0; t < polyhedronTetra.size(); t++)
       {
         vector<double> id(1, t);
@@ -979,7 +979,7 @@ namespace Gedim
       }
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_Tetra.vtu");
+                      "Polyhedron_Tetra.vtu");
     }
 
     {
@@ -990,7 +990,7 @@ namespace Gedim
         vector<double> id(1, f);
         vector<double> area(1, polyhedronFacesArea[f]);
 
-        // Export cell2D
+        // Export faces
         exporter.AddPolygon(polyhedronFaces3DVertices[f],
                             {
                               {
@@ -1009,13 +1009,13 @@ namespace Gedim
       }
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_Faces.vtu");
+                      "Polyhedron_Faces.vtu");
     }
 
     {
       Gedim::VTKUtilities exporter;
 
-      // Export cell2D triangles
+      // Export faces triangles
       unsigned int numFaceTriangles = 0;
       for (unsigned int f = 0; f < polyhedronFaces3DTriangles.size(); f++)
       {
@@ -1043,13 +1043,13 @@ namespace Gedim
       }
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_FacesTriangles.vtu");
+                      "Polyhedron_FacesTriangles.vtu");
     }
 
     {
       Gedim::VTKUtilities exporter;
 
-      // Export cell2D normal
+      // Export faces normal
       for (unsigned int f = 0; f < polyhedronFaces3DNormal.size(); f++)
       {
         vector<double> face(1, f);
@@ -1075,23 +1075,23 @@ namespace Gedim
       }
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_FacesNormal.vtu");
+                      "Polyhedron_FacesNormal.vtu");
     }
 
     {
       Gedim::VTKUtilities exporter;
 
-      // Export cell3D centroid
+      // Export Polyhedron centroid
       exporter.AddPoint(polyhedronCentroid);
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_Centroid.vtu");
+                      "Polyhedron_Centroid.vtu");
     }
 
     {
       Gedim::VTKUtilities exporter;
 
-      // Export cell2D centroids
+      // Export faces centroids
       for (unsigned int f = 0; f < polyhedronFaces2DCentroid.size(); f++)
       {
         const Eigen::Vector3d rotatedCentroid = RotatePointsFrom2DTo3D(polyhedronFaces2DCentroid[f],
@@ -1101,7 +1101,7 @@ namespace Gedim
       }
 
       exporter.Export(exportFolder + "/" +
-                      "Cell3D_FacesCentroid.vtu");
+                      "Polyhedron_FacesCentroid.vtu");
     }
   }
   // ***************************************************************************

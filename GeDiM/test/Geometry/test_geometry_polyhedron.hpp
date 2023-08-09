@@ -307,10 +307,14 @@ namespace GedimUnitTesting
         const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
+        const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
         const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetrahedron.Faces,
                                                                                                                                       face2DVertices);
-        const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
-                                                                                                                                              faceTriangulations);
+        const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
+                                                                                                                                                faceTriangulations);
+        std::vector<Eigen::Vector3d> faceInternalPoints(tetrahedron.Faces.size());
+        for (unsigned int f = 0; f < tetrahedron.Faces.size(); f++)
+          faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(faces3DTriangulationPoints[f][0]);
 
 
         const std::vector<bool> face2DNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(tetrahedron.Vertices,
@@ -333,11 +337,11 @@ namespace GedimUnitTesting
                                                 barycenter,
                                                 faceVertices,
                                                 { 0.0, 0.0, 0.0, 0.0},
-                                                faceBarycenters,
+                                                face2DCentroid,
                                                 faceTranslations,
                                                 faceRotationMatrices,
-                                                facesTriangulationPoints,
-                                                faceBarycenters,
+                                                faces3DTriangulationPoints,
+                                                faceInternalPoints,
                                                 faceNormals,
                                                 face2DNormalDirections,
                                                 exportTetraFolder);
