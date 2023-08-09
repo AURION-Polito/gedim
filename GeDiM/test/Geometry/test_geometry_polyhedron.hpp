@@ -276,6 +276,44 @@ namespace GedimUnitTesting
                                                                    faceNormals),
                   vector<bool>({ false, true, false, true }));
       }
+
+      // check other tetrahedron face normals
+      {
+        Eigen::MatrixXd tetraVertices(3, 4);
+        tetraVertices.row(0)<< 4.0386589600299999e-01, 4.4444444444400000e-01, 3.3333333333300003e-01, 4.0386589600299999e-01;
+        tetraVertices.row(1)<< 1.0135526475499999e-01, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
+        tetraVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 1.0135526475499999e-01;
+
+        const Gedim::GeometryUtilities::Polyhedron tetrahedron = geometryUtilities.CreateTetrahedronWithVertices(tetraVertices.col(0),
+                                                                                                                 tetraVertices.col(1),
+                                                                                                                 tetraVertices.col(2),
+                                                                                                                 tetraVertices.col(3));
+        const Eigen::Vector3d barycenter = geometryUtilities.PolyhedronBarycenter(tetrahedron.Vertices);
+        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(tetrahedron.Vertices,
+                                                                                              tetrahedron.Faces);
+        const vector<Eigen::Vector3d> faceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(faceVertices);
+        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                              faceNormals,
+                                                                                                              faceTranslations);
+
+        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                       faceTranslations,
+                                                                                                       faceRotationMatrices);
+
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   faceBarycenters,
+                                                                   face2DVertices,
+                                                                   faceNormals,
+                                                                   faceTranslations,
+                                                                   faceRotationMatrices),
+                  vector<bool>({ true, false, false, true }));
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   barycenter,
+                                                                   faceNormals),
+                  vector<bool>({ true, false, false, true }));
+      }
     }
     catch (const exception& exception)
     {
