@@ -870,8 +870,13 @@ namespace Gedim
           }
         }
 
-        std::cerr<< "concave Cell3D "<< c<< " face "<< f<< " ";
-        std::cerr<< "convex Cell3D "<< convexCellFound<< " face "<< convexFaceFound<< endl;
+        Output::Assert(convexCellFound >= 0 && convexFaceFound >= 0);
+        const Eigen::Vector3d outgoingFaceNormal =
+            convexCell3DsNormalDirections[convexCellFound][convexFaceFound] ?
+              convexCell3DsNormal[convexCellFound][convexFaceFound] :
+              -1.0 * convexCell3DsNormal[convexCellFound][convexFaceFound];
+
+        result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValue1DPositive(faceNormal.dot(outgoingFaceNormal));
       }
     }
 

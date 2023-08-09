@@ -277,6 +277,7 @@ namespace GedimUnitTesting
     expectedResult.Cell3DsVertices = { cube.Vertices };
     expectedResult.Cell3DsEdges = { cube.Edges };
     expectedResult.Cell3DsFaces = { cube.Faces };
+    expectedResult.Cell3DsFacesNormalDirections = { { false, true, false, true, true, false } };
 
     EXPECT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
     EXPECT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
@@ -286,6 +287,8 @@ namespace GedimUnitTesting
     EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
     EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
     EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+    EXPECT_EQ(result.Cell3DsFacesNormalDirections,
+              expectedResult.Cell3DsFacesNormalDirections);
   }
 
   TEST(TestMeshUtilities, TestSetMeshMarkersOnPlane)
