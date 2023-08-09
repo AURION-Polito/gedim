@@ -1989,6 +1989,7 @@ namespace Gedim
       /// \param pointInsidePolyhedron a point inside polyhedron
       /// \param polyhedronFaceNormals the normal of each face
       /// \return true if the face has normal outgoing
+      /// \warning NOT WORKING in all cases
       std::vector<bool> PolyhedronFaceNormalDirections(const Eigen::MatrixXd& polyhedronVertices,
                                                        const Eigen::MatrixXi& polyhedronEdges,
                                                        const std::vector<Eigen::MatrixXi>& polyhedronFaces,
