@@ -441,12 +441,12 @@ namespace GedimUnitTesting
                                                 face2DNormalDirections,
                                                 exportTetraFolder);
 
-        ASSERT_EQ(vector<bool>({ true, false, false, true }),
-                  face2DNormalDirections);
         ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
                                                                    barycenter,
                                                                    faceNormals),
-                  vector<bool>({ true, false, false, true }));
+                  vector<bool>({ true, true, true, false }));
+        ASSERT_EQ(vector<bool>({ true, true, true, false }),
+                  face2DNormalDirections);
       }
     }
     catch (const exception& exception)
