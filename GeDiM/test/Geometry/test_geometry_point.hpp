@@ -681,6 +681,28 @@ namespace GedimUnitTesting {
                                                                       polygonVertices));
       }
 
+      // check outside aligned on edge
+      {
+        Eigen::Vector3d point(-0.5, 0.0, 0.0);
+        Eigen::MatrixXd polygonVertices(3, 3);
+        polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+        Gedim::GeometryUtilities::PointPolygonPositionResult result = geometryUtilities.PointPolygonPosition(point,
+                                                                                                             polygonVertices);
+        ASSERT_EQ(result.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Outside);
+
+
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon(point,
+                                                            polygonVertices));
+        ASSERT_FALSE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                       polygonVertices));
+      }
+
       // check on vertex aligned edge
       {
         Eigen::Vector3d point(7.5000000000000000e-01, 0.0000000000000000e+00, 0.0000000000000000e+00);
