@@ -285,6 +285,10 @@ namespace GedimUnitTesting
 
       // check other tetrahedron face normals
       {
+        Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+        geometryUtilitiesConfig.Tolerance = 1.0e-6;
+        Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
         Eigen::MatrixXd tetraVertices(3, 4);
         tetraVertices.row(0)<< 4.0386589600299999e-01, 4.4444444444400000e-01, 3.3333333333300003e-01, 4.0386589600299999e-01;
         tetraVertices.row(1)<< 1.0135526475499999e-01, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
