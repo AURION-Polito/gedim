@@ -457,6 +457,7 @@ namespace Gedim
 
     result.Cell3DsFaces3DVertices.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DVertices.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFaces3DTriangulations.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DTriangulations.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesAreas.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFaces2DCentroids.resize(convexMesh.Cell3DTotalNumber());
@@ -529,6 +530,8 @@ namespace Gedim
                                                                                          result.Cell3DsFacesTranslations[c],
                                                                                          result.Cell3DsFacesRotationMatrices[c]);
 
+      result.Cell3DsFaces3DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces3DVertices[c],
+                                                                                                          polyhedronFaceTriangulations);
       result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces2DVertices[c],
                                                                                                           polyhedronFaceTriangulations);
 

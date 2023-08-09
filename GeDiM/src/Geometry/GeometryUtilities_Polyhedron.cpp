@@ -541,6 +541,8 @@ namespace Gedim
         {
           case IntersectionSegmentPlaneResult::Types::NoIntersection:
             continue;
+          case IntersectionSegmentPlaneResult::Types::MultipleIntersections:
+            continue;
           case IntersectionSegmentPlaneResult::Types::SingleIntersection:
           {
             if (intersections.SingleIntersection.Type == PointSegmentPositionTypes::OnSegmentLineBeforeOrigin)

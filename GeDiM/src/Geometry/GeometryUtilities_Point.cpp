@@ -244,7 +244,9 @@ namespace Gedim
           switch (intersection_point_position)
           {
             case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
-              case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+              numIntersections++; // intersection parallel on edge
+              continue;
+            case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
               continue; // intersection not interesting
             case PointSegmentPositionTypes::OnSegmentOrigin:
             {
