@@ -1989,7 +1989,10 @@ namespace Gedim
       /// \param pointInsidePolyhedron a point inside polyhedron
       /// \param polyhedronFaceNormals the normal of each face
       /// \return true if the face has normal outgoing
-      std::vector<bool> PolyhedronFaceNormalDirections(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
+      std::vector<bool> PolyhedronFaceNormalDirections(const Eigen::MatrixXd& polyhedronVertices,
+                                                       const Eigen::MatrixXi& polyhedronEdges,
+                                                       const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                                       const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                                        const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaceRotatedVertices,
                                                        const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
@@ -2094,6 +2097,29 @@ namespace Gedim
       void ExportPolyhedronToVTU(const Eigen::MatrixXd& polyhedronVertices,
                                  const Eigen::MatrixXi& polyhedronEdges,
                                  const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                 const std::string& exportFolder) const;
+
+      /// \brief Export Polyhedron To VTU
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronEdges the polyhedron edges
+      /// \param polyhedronFaces the polyhedron faces
+      /// \param exportFolder the folder in which to export
+      void ExportPolyhedronToVTU(const unsigned int& index,
+                                 const Eigen::MatrixXd& polyhedronVertices,
+                                 const Eigen::MatrixXi& polyhedronEdges,
+                                 const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                 const std::vector<Eigen::MatrixXd>& polyhedronTetra,
+                                 const double& polyhedronVolume,
+                                 const Eigen::Vector3d& polyhedronCentroid,
+                                 const std::vector<Eigen::MatrixXd>& polyhedronFaces3DVertices,
+                                 const std::vector<double>& polyhedronFacesArea,
+                                 const std::vector<Eigen::Vector3d>& polyhedronFaces2DCentroid,
+                                 const std::vector<Eigen::Vector3d>& polyhedronFacesTranslation,
+                                 const std::vector<Eigen::Matrix3d>& polyhedronFacesRotationMatrix,
+                                 const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaces3DTriangles,
+                                 const std::vector<Eigen::Vector3d>& polyhedronFaces3DInternalPoint,
+                                 const std::vector<Eigen::Vector3d>& polyhedronFaces3DNormal,
+                                 const std::vector<bool>& polyhedronFaces3DNormalDirection,
                                  const std::string& exportFolder) const;
   };
 }

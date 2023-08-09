@@ -714,7 +714,10 @@ namespace Gedim
         faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
 
 
-      result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
+      result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsVertices[c],
+                                                                                                result.Cell3DsEdges[c],
+                                                                                                result.Cell3DsFaces[c],
+                                                                                                result.Cell3DsFaces3DVertices[c],
                                                                                                 faceInternalPoints,
                                                                                                 result.Cell3DsFaces2DVertices[c],
                                                                                                 result.Cell3DsFacesNormals[c],

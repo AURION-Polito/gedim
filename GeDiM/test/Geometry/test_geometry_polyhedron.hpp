@@ -223,7 +223,10 @@ namespace GedimUnitTesting
 
         ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(cube.Vertices,
+                                                                   cube.Edges,
+                                                                   cube.Faces,
+                                                                   faceVertices,
                                                                    faceBarycenters,
                                                                    face2DVertices,
                                                                    faceNormals,
@@ -264,7 +267,10 @@ namespace GedimUnitTesting
 
         ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(tetrahedron.Vertices,
+                                                                   tetrahedron.Edges,
+                                                                   tetrahedron.Faces,
+                                                                   faceVertices,
                                                                    faceBarycenters,
                                                                    face2DVertices,
                                                                    faceNormals,
@@ -301,14 +307,43 @@ namespace GedimUnitTesting
         const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetrahedron.Faces,
+                                                                                                                                      face2DVertices);
+        const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
+                                                                                                                                              faceTriangulations);
 
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
-                                                                   faceBarycenters,
-                                                                   face2DVertices,
-                                                                   faceNormals,
-                                                                   faceTranslations,
-                                                                   faceRotationMatrices),
-                  vector<bool>({ true, false, false, true }));
+
+        const std::vector<bool> face2DNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(tetrahedron.Vertices,
+                                                                                                          tetrahedron.Edges,
+                                                                                                          tetrahedron.Faces,
+                                                                                                          faceVertices,
+                                                                                                          faceBarycenters,
+                                                                                                          face2DVertices,
+                                                                                                          faceNormals,
+                                                                                                          faceTranslations,
+                                                                                                          faceRotationMatrices);
+        const string exportTetraFolder = exportFolder + "/Tetra";
+        Gedim::Output::CreateFolder(exportTetraFolder);
+        geometryUtilities.ExportPolyhedronToVTU(0,
+                                                tetrahedron.Vertices,
+                                                tetrahedron.Edges,
+                                                tetrahedron.Faces,
+                                                {tetrahedron.Vertices},
+                                                0.0,
+                                                barycenter,
+                                                faceVertices,
+                                                { 0.0, 0.0, 0.0, 0.0},
+                                                faceBarycenters,
+                                                faceTranslations,
+                                                faceRotationMatrices,
+                                                facesTriangulationPoints,
+                                                faceBarycenters,
+                                                faceNormals,
+                                                face2DNormalDirections,
+                                                exportTetraFolder);
+
+        ASSERT_EQ(vector<bool>({ true, false, false, true }),
+                  face2DNormalDirections);
         ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
                                                                    barycenter,
                                                                    faceNormals),
@@ -458,7 +493,10 @@ namespace GedimUnitTesting
 
         ASSERT_EQ(faceNormals,
                   expectedFaceNormals);
-        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(concave.Vertices,
+                                                                   concave.Edges,
+                                                                   concave.Faces,
+                                                                   faceVertices,
                                                                    faceInternalPoints,
                                                                    face2DVertices,
                                                                    faceNormals,

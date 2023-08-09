@@ -217,7 +217,8 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition_RayCasting(const Eigen::Vector3d& point, const Eigen::MatrixXd& polygonVertices) const
+  GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition_RayCasting(const Eigen::Vector3d& point,
+                                                                                                   const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.cols() > 2 && PointsAre2D(point));
 
