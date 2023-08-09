@@ -596,7 +596,6 @@ namespace Gedim
       Gedim::VTKUtilities exporter;
 
       // Export cell2D normal
-      unsigned int numFaceTriangles = 0;
       for (unsigned int f = 0; f < cell3DFaces3DNormal.size(); f++)
       {
         vector<double> face(1, f);
