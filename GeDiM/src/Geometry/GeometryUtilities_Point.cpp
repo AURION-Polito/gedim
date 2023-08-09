@@ -226,14 +226,14 @@ namespace Gedim
 
     const unsigned int numVertices =  polygonVertices.cols();
     unsigned int numIntersections = 0;
-    std::vector<bool> intersection_vertex(numVertices, false);
 
     for (unsigned int v = 0; v < numVertices; v++)
     {
       const unsigned int v_next = (v + 1) % numVertices;
       const Vector3d& edgeOrigin = polygonVertices.col(v);
+      const Vector3d& edgeEnd = polygonVertices.col(v_next);
       const Vector3d edgeTangent = SegmentTangent(edgeOrigin,
-                                                  polygonVertices.col(v_next));
+                                                  edgeEnd);
 
       if (IsValue1DZero(edgeTangent.y()))
       {
@@ -248,8 +248,7 @@ namespace Gedim
           switch (intersection_point_position)
           {
             case PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
-              numIntersections++; // intersection parallel on edge
-              continue;
+              continue; // intersection parallel on edge
             case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
               continue; // intersection not interesting
             case PointSegmentPositionTypes::OnSegmentOrigin:
@@ -327,20 +326,18 @@ namespace Gedim
             {
               if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentOrigin)
               {
-                if (!intersection_vertex[v])
-                {
-                  intersection_vertex[v] = true;
+                // the inserction count only if the other edge vertex is uder the ray
+                if (IsValue1DGreater(point.y(), edgeEnd.y()))
                   numIntersections++;
-                }
+                continue;
               }
 
               if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentEnd)
               {
-                if (!intersection_vertex[v_next])
-                {
-                  intersection_vertex[v_next] = true;
+                // the inserction count only if the other edge vertex is uder the ray
+                if (IsValue1DGreater(point.y(), edgeOrigin.y()))
                   numIntersections++;
-                }
+                continue;
               }
 
               numIntersections++;
