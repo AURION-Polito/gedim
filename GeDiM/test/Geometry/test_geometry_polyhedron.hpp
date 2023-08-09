@@ -283,7 +283,7 @@ namespace GedimUnitTesting
                   vector<bool>({ false, true, false, true }));
       }
 
-      // check other tetrahedron face normals
+      // check tetrahedron 2 face normals
       {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
         geometryUtilitiesConfig.Tolerance = 1.0e-6;
@@ -366,7 +366,7 @@ namespace GedimUnitTesting
                   vector<bool>({ true, false, false, true }));
       }
 
-      // check other tetrahedron face normals
+      // check tetrahedron 3 face normals
       {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
         geometryUtilitiesConfig.Tolerance = 1.0e-6;
@@ -422,6 +422,89 @@ namespace GedimUnitTesting
                                                                                                           faceTranslations,
                                                                                                           faceRotationMatrices);
         const string exportTetraFolder = exportFolder + "/Tetra3";
+        Gedim::Output::CreateFolder(exportTetraFolder);
+        geometryUtilities.ExportPolyhedronToVTU(0,
+                                                tetraVertices,
+                                                tetraEdges,
+                                                tetraFaces,
+                                                { tetraVertices },
+                                                0.0,
+                                                barycenter,
+                                                faceVertices,
+                                                { 0.0, 0.0, 0.0, 0.0},
+                                                face2DCentroid,
+                                                faceTranslations,
+                                                faceRotationMatrices,
+                                                faces3DTriangulationPoints,
+                                                faceInternalPoints,
+                                                faceNormals,
+                                                face2DNormalDirections,
+                                                exportTetraFolder);
+
+        ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices,
+                                                                   barycenter,
+                                                                   faceNormals),
+                  vector<bool>({ true, true, true, false }));
+        ASSERT_EQ(vector<bool>({ true, true, true, false }),
+                  face2DNormalDirections);
+      }
+
+      // check tetrahedron 4 face normals
+      {
+        Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+        geometryUtilitiesConfig.Tolerance = 1.0e-5;
+        Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+        Eigen::MatrixXd tetraVertices(3, 4);
+        tetraVertices.row(0)<< 2.4069810210299999e-01, 2.5752285704000000e-01, 1.0671088379000000e-01, 1.2153801988400000e-01;
+        tetraVertices.row(1)<< 4.8751808986700002e-01, 3.8626821047799997e-01, 3.7923669784300001e-01, 4.3349091758300001e-01;
+        tetraVertices.row(2)<< 4.4591160662099999e-01, 4.2369762890099999e-01, 3.8280917906299999e-01, 4.8221637936799999e-01;
+        Eigen::MatrixXi tetraEdges(2, 6);
+        tetraEdges.row(0)<< 0, 0, 0, 1, 2, 2;
+        tetraEdges.row(1)<< 2, 3, 1, 3, 1, 3;
+        std::vector<Eigen::MatrixXi> tetraFaces(4, Eigen::MatrixXi(2, 3));
+        tetraFaces[0].row(0)<< 3, 2, 1;
+        tetraFaces[0].row(1)<< 5, 4, 3;
+        tetraFaces[1].row(0)<< 3, 1, 0;
+        tetraFaces[1].row(1)<< 3, 2, 1;
+        tetraFaces[2].row(0)<< 3, 0, 2;
+        tetraFaces[2].row(1)<< 1, 0, 5;
+        tetraFaces[3].row(0)<< 0, 2, 1;
+        tetraFaces[3].row(1)<< 0, 4, 2;
+
+        const Eigen::Vector3d barycenter = geometryUtilities.PolyhedronBarycenter(tetraVertices);
+        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(tetraVertices,
+                                                                                              tetraFaces);
+        const vector<Eigen::Vector3d> faceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(faceVertices);
+        const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
+        const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
+        const vector<Eigen::Matrix3d> faceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(faceVertices,
+                                                                                                              faceNormals,
+                                                                                                              faceTranslations);
+
+        const vector<Eigen::MatrixXd> face2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(faceVertices,
+                                                                                                       faceTranslations,
+                                                                                                       faceRotationMatrices);
+        const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces,
+                                                                                                                                      face2DVertices);
+        const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
+                                                                                                                                                faceTriangulations);
+        std::vector<Eigen::Vector3d> faceInternalPoints(tetraFaces.size());
+        for (unsigned int f = 0; f < tetraFaces.size(); f++)
+          faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(faces3DTriangulationPoints[f][0]);
+
+
+        const std::vector<bool> face2DNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(tetraVertices,
+                                                                                                          tetraEdges,
+                                                                                                          tetraFaces,
+                                                                                                          faceVertices,
+                                                                                                          faceBarycenters,
+                                                                                                          face2DVertices,
+                                                                                                          faceNormals,
+                                                                                                          faceTranslations,
+                                                                                                          faceRotationMatrices);
+        const string exportTetraFolder = exportFolder + "/Tetra4";
         Gedim::Output::CreateFolder(exportTetraFolder);
         geometryUtilities.ExportPolyhedronToVTU(0,
                                                 tetraVertices,

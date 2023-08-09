@@ -530,8 +530,8 @@ namespace Gedim
       const Eigen::Vector3d& normal = polyhedronFaceNormals[f1];
       const Eigen::Vector3d segmentOrigin = polyhedronFaceInternalPoints[f1];
       const Eigen::Vector3d segmentEnd = segmentOrigin + normal;
+      list<double> curvilinearCoordinates;
 
-      unsigned int numAfterFaceIntersections = 0;
       for (unsigned int f2 = 0; f2 < polyhedronFaceVertices.size(); f2++)
       {
         if (f2 == f1)
@@ -562,6 +562,20 @@ namespace Gedim
               case PointSegmentPositionTypes::OnSegmentEnd:
               case PointSegmentPositionTypes::InsideSegment:
               {
+                bool intersectionAlreadyConsidered = false;
+                for (const double& curvilinearCoordinate : curvilinearCoordinates)
+                {
+                  if (Are1DValuesEqual(curvilinearCoordinate,
+                                       intersections.SingleIntersection.CurvilinearCoordinate))
+                  {
+                    intersectionAlreadyConsidered = true;
+                    break;
+                  }
+                }
+
+                if (intersectionAlreadyConsidered)
+                  continue;
+
                 const Eigen::Vector3d pointIntersection = segmentOrigin +
                                                           intersections.SingleIntersection.CurvilinearCoordinate * normal;
 
@@ -580,8 +594,8 @@ namespace Gedim
                     const unsigned int faceVertexIndex = polyhedronFaces[f2](0, intersectionPosition.BorderIndex);
                     if (!vertices_intersection[faceVertexIndex])
                     {
+                      curvilinearCoordinates.push_back(intersections.SingleIntersection.CurvilinearCoordinate);
                       vertices_intersection[faceVertexIndex] = true;
-                      numAfterFaceIntersections++;
                     }
                     continue;
                   }
@@ -590,13 +604,13 @@ namespace Gedim
                     const unsigned int faceEdgeIndex = polyhedronFaces[f2](1, intersectionPosition.BorderIndex);
                     if (!edges_intersection[faceEdgeIndex])
                     {
+                      curvilinearCoordinates.push_back(intersections.SingleIntersection.CurvilinearCoordinate);
                       edges_intersection[faceEdgeIndex] = true;
-                      numAfterFaceIntersections++;
                     }
                     continue;
                   }
                   case PointPolygonPositionResult::Types::Inside:
-                    numAfterFaceIntersections++;
+                    curvilinearCoordinates.push_back(intersections.SingleIntersection.CurvilinearCoordinate);
                     continue;
                   default:
                     throw runtime_error("intersectionPosition.Type not expected");
@@ -613,7 +627,7 @@ namespace Gedim
         }
       }
 
-      faceDirections[f1] = (numAfterFaceIntersections % 2 == 0);
+      faceDirections[f1] = (curvilinearCoordinates.size() % 2 == 0);
     }
 
     return faceDirections;
