@@ -402,7 +402,15 @@ namespace Gedim
                              const std::vector<Eigen::MatrixXd>& cell3DTetra,
                              const double& cell3DVolume,
                              const Eigen::Vector3d& cell3DCentroid,
-                             const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaces3DTriangles,
+                             const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
+                             const std::vector<double>& cell3DFacesArea,
+                             const std::vector<Eigen::Vector3d>& cell3DFaces2DCentroid,
+                             const std::vector<Eigen::Vector3d>& cell3DFacesTranslation,
+                             const std::vector<Eigen::Matrix3d>& cell3DFacesRotationMatrix,
+                             const std::vector<std::vector<Eigen::Matrix3d>>& cell3DFaces3DTriangles,
+                             const std::vector<Eigen::Vector3d>& cell3DFaces3DInternalPoint,
+                             const std::vector<Eigen::Vector3d>& cell3DFaces3DNormal,
+                             const std::vector<bool>& cell3DFaces3DNormalDirection,
                              const std::string& exportFolder) const;
 
       /// \brief Convert a mesh cell3D to a geometric polydheron
