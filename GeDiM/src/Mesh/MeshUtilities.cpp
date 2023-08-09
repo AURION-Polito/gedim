@@ -449,6 +449,125 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::ExportCell3DToVTU(const GeometryUtilities& geometryUtilities,
+                                        const IMeshDAO& mesh,
+                                        const unsigned int& cell3DIndex,
+                                        const std::vector<Eigen::MatrixXd>& cell3DTetra,
+                                        const double& cell3DVolume,
+                                        const Eigen::Vector3d& cell3DCentroid,
+                                        const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaces3DTriangles,
+                                        const std::string& exportFolder) const
+  {
+    {
+      Gedim::VTKUtilities exporter;
+
+      vector<double> id(1, cell3DIndex);
+      vector<double> volume(1, cell3DVolume);
+
+      const GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(mesh,
+                                                                              cell3DIndex);
+
+      // Export cell3D
+      exporter.AddPolyhedron(polyhedron.Vertices,
+                             polyhedron.Edges,
+                             polyhedron.Faces,
+                             {
+                               {
+                                 "Id",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(id.size()),
+                                 id.data()
+                               },
+                               {
+                                 "Volume",
+                                 Gedim::VTPProperty::Formats::Cells,
+                                 static_cast<unsigned int>(volume.size()),
+                                 volume.data()
+                               }
+                             });
+
+      exporter.Export(exportFolder + "/" + "Cell3D_" +
+                      to_string(cell3DIndex) + ".vtu");
+    }
+
+    {
+      Gedim::VTKUtilities vtpUtilities;
+
+      // Export cell3D tetra
+      for (unsigned int t = 0; t < cell3DTetra.size(); t++)
+      {
+        vector<double> id(1, t);
+
+        const GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateTetrahedronWithVertices(cell3DTetra[t].col(0),
+                                                                                                         cell3DTetra[t].col(1),
+                                                                                                         cell3DTetra[t].col(2),
+                                                                                                         cell3DTetra[t].col(3));
+
+        vtpUtilities.AddPolyhedron(polyhedron.Vertices,
+                                   polyhedron.Edges,
+                                   polyhedron.Faces,
+                                   {
+                                     {
+                                       "Id",
+                                       Gedim::VTPProperty::Formats::Cells,
+                                       static_cast<unsigned int>(id.size()),
+                                       id.data()
+                                     }
+                                   });
+      }
+
+      vtpUtilities.Export(exportFolder + "/" +
+                          "Cell3D_" + to_string(cell3DIndex) +
+                          "_Tetra" + ".vtu");
+    }
+
+    {
+      Gedim::VTKUtilities vtpUtilities;
+
+      // Export cell2D triangles
+      unsigned int numFaceTriangles = 0;
+      for (unsigned int f = 0; f < cell3DsFaces3DTriangles.size(); f++)
+      {
+        vector<double> face(1, f);
+
+        for (unsigned int t = 0; t < cell3DsFaces3DTriangles[f].size(); t++)
+        {
+          vector<double> id(1, numFaceTriangles++);
+          vtpUtilities.AddPolygon(cell3DsFaces3DTriangles[f][t],
+                                  {
+                                    {
+                                      "Face",
+                                      Gedim::VTPProperty::Formats::Cells,
+                                      static_cast<unsigned int>(face.size()),
+                                      face.data()
+                                    },
+                                    {
+                                      "Id",
+                                      Gedim::VTPProperty::Formats::Cells,
+                                      static_cast<unsigned int>(id.size()),
+                                      id.data()
+                                    }
+                                  });
+        }
+      }
+
+      vtpUtilities.Export(exportFolder + "/" +
+                          "Cell3D_" + to_string(cell3DIndex) +
+                          "_FacesTriangles" + ".vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      // Export cell3D centroid
+      exporter.AddPoint(cell3DCentroid);
+
+      exporter.Export(exportFolder + "/" +
+                      "Cell3D_" + to_string(cell3DIndex) +
+                      "_Centroid" + ".vtu");
+    }
+  }
+  // ***************************************************************************
   void MeshUtilities::ExportMeshToCsv(const IMeshDAO& mesh,
                                       const char& separator,
                                       const std::string& exportFolderPath) const
