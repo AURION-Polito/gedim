@@ -1094,10 +1094,20 @@ namespace Gedim
       // Export faces centroids
       for (unsigned int f = 0; f < polyhedronFaces2DCentroid.size(); f++)
       {
+        vector<double> face(1, f);
+
         const Eigen::Vector3d rotatedCentroid = RotatePointsFrom2DTo3D(polyhedronFaces2DCentroid[f],
                                                                        polyhedronFacesRotationMatrix[f],
                                                                        polyhedronFacesTranslation[f]);
-        exporter.AddPoint(rotatedCentroid);
+        exporter.AddPoint(rotatedCentroid,
+                          {
+                            {
+                              "Face",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(face.size()),
+                              face.data()
+                            }
+                          });
       }
 
       exporter.Export(exportFolder + "/" +
