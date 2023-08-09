@@ -388,30 +388,6 @@ namespace Gedim
                              const double& cell2DArea,
                              const Eigen::Vector3d& cell2DCentroid,
                              const std::string& exportFolder) const;
-      /// \brief Export Cell3D To VTU
-      /// \param mesh the mesh
-      /// \param cell2DIndex the cell2D index
-      /// \param cell2DVertices the cell2D vertices
-      /// \param cell2DTetra the cell2D tetrahedrons
-      /// \param cell3DVolume the cell2D volume
-      /// \param cell2DCentroid the cell2D centroid
-      /// \param exportFolder the folder in which to export
-      void ExportCell3DToVTU(const GeometryUtilities& geometryUtilities,
-                             const IMeshDAO& mesh,
-                             const unsigned int& cell3DIndex,
-                             const std::vector<Eigen::MatrixXd>& cell3DTetra,
-                             const double& cell3DVolume,
-                             const Eigen::Vector3d& cell3DCentroid,
-                             const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
-                             const std::vector<double>& cell3DFacesArea,
-                             const std::vector<Eigen::Vector3d>& cell3DFaces2DCentroid,
-                             const std::vector<Eigen::Vector3d>& cell3DFacesTranslation,
-                             const std::vector<Eigen::Matrix3d>& cell3DFacesRotationMatrix,
-                             const std::vector<std::vector<Eigen::Matrix3d>>& cell3DFaces3DTriangles,
-                             const std::vector<Eigen::Vector3d>& cell3DFaces3DInternalPoint,
-                             const std::vector<Eigen::Vector3d>& cell3DFaces3DNormal,
-                             const std::vector<bool>& cell3DFaces3DNormalDirection,
-                             const std::string& exportFolder) const;
 
       /// \brief Convert a mesh cell3D to a geometric polydheron
       /// \param mesh a mesh

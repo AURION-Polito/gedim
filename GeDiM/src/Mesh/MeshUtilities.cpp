@@ -449,45 +449,6 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void MeshUtilities::ExportCell3DToVTU(const GeometryUtilities& geometryUtilities,
-                                        const IMeshDAO& mesh,
-                                        const unsigned int& cell3DIndex,
-                                        const std::vector<Eigen::MatrixXd>& cell3DTetra,
-                                        const double& cell3DVolume,
-                                        const Eigen::Vector3d& cell3DCentroid,
-                                        const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
-                                        const std::vector<double>& cell3DFacesArea,
-                                        const std::vector<Eigen::Vector3d>& cell3DFaces2DCentroid,
-                                        const std::vector<Eigen::Vector3d>& cell3DFacesTranslation,
-                                        const std::vector<Eigen::Matrix3d>& cell3DFacesRotationMatrix,
-                                        const std::vector<std::vector<Eigen::Matrix3d>>& cell3DFaces3DTriangles,
-                                        const std::vector<Eigen::Vector3d>& cell3DFaces3DInternalPoint,
-                                        const std::vector<Eigen::Vector3d>& cell3DFaces3DNormal,
-                                        const std::vector<bool>& cell3DFaces3DNormalDirection,
-                                        const std::string& exportFolder) const
-  {
-    const GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(mesh,
-                                                                            cell3DIndex);
-    geometryUtilities.ExportPolyhedronToVTU(cell3DIndex,
-                                            polyhedron.Vertices,
-                                            polyhedron.Edges,
-                                            polyhedron.Faces,
-                                            cell3DTetra,
-                                            cell3DVolume,
-                                            cell3DCentroid,
-                                            cell3DFaces3DVertices,
-                                            cell3DFacesArea,
-                                            cell3DFaces2DCentroid,
-                                            cell3DFacesTranslation,
-                                            cell3DFacesRotationMatrix,
-                                            cell3DFaces3DTriangles,
-                                            cell3DFaces3DInternalPoint,
-                                            cell3DFaces3DNormal,
-                                            cell3DFaces3DNormalDirection,
-                                            exportFolder);
-
-  }
-  // ***************************************************************************
   void MeshUtilities::ExportMeshToCsv(const IMeshDAO& mesh,
                                       const char& separator,
                                       const std::string& exportFolderPath) const

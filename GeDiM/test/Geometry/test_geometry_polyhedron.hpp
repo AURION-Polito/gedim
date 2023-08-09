@@ -293,14 +293,22 @@ namespace GedimUnitTesting
         tetraVertices.row(0)<< 4.0386589600299999e-01, 4.4444444444400000e-01, 3.3333333333300003e-01, 4.0386589600299999e-01;
         tetraVertices.row(1)<< 1.0135526475499999e-01, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00;
         tetraVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00, 1.0135526475499999e-01;
+        Eigen::MatrixXi tetraEdges(2, 6);
+        tetraEdges.row(0)<< 0, 0, 3, 1, 2, 3;
+        tetraEdges.row(1)<< 2, 1, 0, 3, 1, 2;
+        std::vector<Eigen::MatrixXi> tetraFaces(4, Eigen::MatrixXi(2, 3));
+        tetraFaces[0].row(0)<< 3, 2, 1;
+        tetraFaces[0].row(1)<< 5, 4, 3;
+        tetraFaces[1].row(0)<< 3, 0, 1;
+        tetraFaces[1].row(1)<< 2, 1, 3;
+        tetraFaces[2].row(0)<< 0, 3, 2;
+        tetraFaces[2].row(1)<< 2, 5, 0;
+        tetraFaces[3].row(0)<< 1, 2, 0;
+        tetraFaces[3].row(1)<< 4, 0, 1;
 
-        const Gedim::GeometryUtilities::Polyhedron tetrahedron = geometryUtilities.CreateTetrahedronWithVertices(tetraVertices.col(0),
-                                                                                                                 tetraVertices.col(1),
-                                                                                                                 tetraVertices.col(2),
-                                                                                                                 tetraVertices.col(3));
-        const Eigen::Vector3d barycenter = geometryUtilities.PolyhedronBarycenter(tetrahedron.Vertices);
-        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(tetrahedron.Vertices,
-                                                                                              tetrahedron.Faces);
+        const Eigen::Vector3d barycenter = geometryUtilities.PolyhedronBarycenter(tetraVertices);
+        const vector<Eigen::MatrixXd> faceVertices = geometryUtilities.PolyhedronFaceVertices(tetraVertices,
+                                                                                              tetraFaces);
         const vector<Eigen::Vector3d> faceBarycenters = geometryUtilities.PolyhedronFaceBarycenter(faceVertices);
         const vector<Eigen::Vector3d> faceNormals = geometryUtilities.PolyhedronFaceNormals(faceVertices);
         const vector<Eigen::Vector3d> faceTranslations = geometryUtilities.PolyhedronFaceTranslations(faceVertices);
@@ -312,18 +320,18 @@ namespace GedimUnitTesting
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
         const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
-        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetrahedron.Faces,
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces,
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                                 faceTriangulations);
-        std::vector<Eigen::Vector3d> faceInternalPoints(tetrahedron.Faces.size());
-        for (unsigned int f = 0; f < tetrahedron.Faces.size(); f++)
+        std::vector<Eigen::Vector3d> faceInternalPoints(tetraFaces.size());
+        for (unsigned int f = 0; f < tetraFaces.size(); f++)
           faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(faces3DTriangulationPoints[f][0]);
 
 
-        const std::vector<bool> face2DNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(tetrahedron.Vertices,
-                                                                                                          tetrahedron.Edges,
-                                                                                                          tetrahedron.Faces,
+        const std::vector<bool> face2DNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(tetraVertices,
+                                                                                                          tetraEdges,
+                                                                                                          tetraFaces,
                                                                                                           faceVertices,
                                                                                                           faceBarycenters,
                                                                                                           face2DVertices,
@@ -333,10 +341,10 @@ namespace GedimUnitTesting
         const string exportTetraFolder = exportFolder + "/Tetra";
         Gedim::Output::CreateFolder(exportTetraFolder);
         geometryUtilities.ExportPolyhedronToVTU(0,
-                                                tetrahedron.Vertices,
-                                                tetrahedron.Edges,
-                                                tetrahedron.Faces,
-                                                {tetrahedron.Vertices},
+                                                tetraVertices,
+                                                tetraEdges,
+                                                tetraFaces,
+                                                { tetraVertices },
                                                 0.0,
                                                 barycenter,
                                                 faceVertices,
