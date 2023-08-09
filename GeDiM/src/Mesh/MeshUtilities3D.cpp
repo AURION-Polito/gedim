@@ -710,8 +710,12 @@ namespace Gedim
                                                                                                           polyhedronFaceTriangulations);
 
       std::vector<Eigen::Vector3d> faces2DInternalPoints(numFaces);
+      std::vector<Eigen::Vector3d> faces3DInternalPoints(numFaces);
       for (unsigned int f = 0; f < numFaces; f++)
+      {
+        faces3DInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
         faces2DInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces2DTriangulations[c][f][0]);
+      }
 
 
       result.Cell3DsFacesAreas[c].resize(numFaces);
@@ -824,6 +828,7 @@ namespace Gedim
         const Eigen::Matrix3d& faceRotationMatrix = result.Cell3DsFacesRotationMatrices[c][f];
         const Eigen::Vector3d& faceTranslation = result.Cell3DsFacesTranslations[c][f];
         const Eigen::Vector3d& faceNormal = result.Cell3DsFacesNormals[c][f];
+        const Eigen::Vector3d& face3DInternalPoint = faces3DInternalPoints[f];
         const Eigen::Vector3d& face2DInternalPoint = faces2DInternalPoints[f];
 
         int convexCellFound = -1, convexFaceFound = -1;
@@ -840,7 +845,7 @@ namespace Gedim
               continue;
 
             // verify if the convex face is in the same plane of the concave face
-            if (!geometryUtilities.IsPointOnPlane(face2DInternalPoint,
+            if (!geometryUtilities.IsPointOnPlane(face3DInternalPoint,
                                                   convexFaceNormal,
                                                   convexFaceVertices3D.col(0)))
               continue;
