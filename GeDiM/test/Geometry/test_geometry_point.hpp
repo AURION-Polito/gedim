@@ -640,6 +640,24 @@ namespace GedimUnitTesting {
         ASSERT_TRUE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
                                                                       polygonVertices));
       }
+
+      // check inside on rombo
+      {
+        Eigen::Vector3d point(-0.5, 0.0, 0.0);
+        Eigen::MatrixXd polygonVertices(3, 4);
+        polygonVertices.col(0)<< 1.0, 0.0, 0.0;
+        polygonVertices.col(1)<< 0.0, 1.0, 0.0;
+        polygonVertices.col(2)<< -1.0, 0.0, 0.0;
+        polygonVertices.col(3)<< 0.0, -1.0, 0.0;
+
+        Gedim::GeometryUtilities::PointPolygonPositionResult result_ray = geometryUtilities.PointPolygonPosition_RayCasting(point,
+                                                                                                                            polygonVertices);
+        ASSERT_EQ(result_ray.Type, Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside);
+
+
+        ASSERT_TRUE(geometryUtilities.IsPointInsidePolygon_RayCasting(point,
+                                                                      polygonVertices));
+      }
       
       // check on vertex
       {

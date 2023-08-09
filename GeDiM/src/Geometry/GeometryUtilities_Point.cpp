@@ -225,11 +225,14 @@ namespace Gedim
 
     const unsigned int numVertices =  polygonVertices.cols();
     unsigned int numIntersections = 0;
+    std::vector<bool> intersection_vertex(numVertices, false);
+
     for (unsigned int v = 0; v < numVertices; v++)
     {
+      const unsigned int v_next = (v + 1) % numVertices;
       const Vector3d& edgeOrigin = polygonVertices.col(v);
       const Vector3d edgeTangent = SegmentTangent(edgeOrigin,
-                                                  polygonVertices.col((v + 1) % numVertices));
+                                                  polygonVertices.col(v_next));
 
       if (IsValue1DZero(edgeTangent.y()))
       {
@@ -263,7 +266,7 @@ namespace Gedim
             case PointSegmentPositionTypes::OnSegmentEnd:
             {
               result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
-              result.BorderIndex = (v + 1) % numVertices;
+              result.BorderIndex = v_next;
               return result;
             }
             default:
@@ -309,7 +312,7 @@ namespace Gedim
               if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentEnd)
               {
                 result.Type = GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex;
-                result.BorderIndex = (v + 1) % numVertices;
+                result.BorderIndex = v_next;
                 return result;
               }
 
@@ -321,6 +324,24 @@ namespace Gedim
             case PointSegmentPositionTypes::OnSegmentEnd:
             case PointSegmentPositionTypes::OnSegmentLineAfterEnd:
             {
+              if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentOrigin)
+              {
+                if (!intersection_vertex[v])
+                {
+                  intersection_vertex[v] = true;
+                  numIntersections++;
+                }
+              }
+
+              if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentEnd)
+              {
+                if (!intersection_vertex[v_next])
+                {
+                  intersection_vertex[v_next] = true;
+                  numIntersections++;
+                }
+              }
+
               numIntersections++;
               continue;
             }
