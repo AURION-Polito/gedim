@@ -498,7 +498,7 @@ namespace Gedim
 
 
 
-      /// TODO: qui secondo me questo non è corretto, occore utilizzare le informazioni della mesh
+
       const unsigned int numFaces = result.Cell3DsFaces[c].size();
       result.Cell3DsFacesEdgeDirections[c].resize(numFaces);
       for (unsigned int f = 0; f < numFaces; f++)
@@ -571,6 +571,7 @@ namespace Gedim
       result.Cell3DsFacesNormalDirections[c] = geometryUtilities.PolyhedronFaceNormalDirections(result.Cell3DsFaces3DVertices[c],
                                                                                                 geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
                                                                                                 result.Cell3DsFacesNormals[c]);
+
 
       result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolume(result.Cell3DsFaces2DTriangulations[c],
                                                                     result.Cell3DsFacesNormals[c],
@@ -841,7 +842,7 @@ namespace Gedim
             const Eigen::Vector3d& convexFaceNormal = convexCell3DsNormal[cc][ccf];
             const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
 
-            if (geometryUtilities.IsValue1DPositive(faceNormal.cross(convexFaceNormal).norm()))
+            if (geometryUtilities.IsValue2DPositive(faceNormal.cross(convexFaceNormal).squaredNorm()))
               continue;
 
             // verify if the convex face is in the same plane of the concave face
@@ -870,7 +871,15 @@ namespace Gedim
           }
         }
 
-        Output::Assert(convexCellFound >= 0 && convexFaceFound >= 0);
+        if (convexCellFound < 0 || convexFaceFound < 0)
+        {
+          std::cout<< "Concave Cell3D "<< c<< " face "<< f<< " Cell2D "<< mesh.Cell3DFace(c, f)<< " ";
+          std::cout<< "convex Cell3D "<< convexCellFound<< " face "<< convexFaceFound<< " ";
+          std::cout<< "convex Cell2D "<< ((convexCellFound >= 0 && convexFaceFound >= 0) ? convexMesh.Cell3DFace(convexCell3DIndices[convexCellFound],
+                                                                                                                 convexCellFound) : 0)<< std::endl;
+          throw runtime_error("Convex Cell 3D face not found");
+        }
+
         const Eigen::Vector3d outgoingFaceNormal =
             convexCell3DsNormalDirections[convexCellFound][convexFaceFound] ?
               convexCell3DsNormal[convexCellFound][convexFaceFound] :
