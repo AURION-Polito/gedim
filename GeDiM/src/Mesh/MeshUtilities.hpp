@@ -135,12 +135,23 @@ namespace Gedim
 
       struct AgglomerationInformation final
       {
-          std::vector<unsigned int> OriginalCell0DToAgglomeratedCell0Ds;
-          std::vector<unsigned int> OriginalCell1DToAgglomeratedCell1Ds;
-          std::vector<unsigned int> OriginalCell2DToAgglomeratedCell2Ds;
-          std::vector<unsigned int> AgglomeratedCell0DToOriginalCell0Ds;
-          std::vector<std::vector<unsigned int>> AgglomeratedCell1DToOriginalCell1Ds;
-          std::vector<std::vector<unsigned int>> AgglomeratedCell2DToOriginalCell2Ds;
+          std::vector<unsigned int> OriginalCell0DToAgglomeratedCell0Ds = {};
+          std::vector<unsigned int> OriginalCell1DToAgglomeratedCell1Ds = {};
+          std::vector<unsigned int> OriginalCell2DToAgglomeratedCell2Ds = {};
+          std::vector<unsigned int> AgglomeratedCell0DToOriginalCell0Ds = {};
+          std::vector<std::vector<unsigned int>> AgglomeratedCell1DToOriginalCell1Ds = {};
+          std::vector<std::vector<unsigned int>> AgglomeratedCell2DToOriginalCell2Ds = {};
+      };
+
+      struct FindConcaveCell3DFacesConvexCell2DResult final
+      {
+          struct ConvexCell2D final
+          {
+              unsigned int ConvexCell3DIndex = 0;
+              unsigned int ConvexCell3DFaceIndex = 0;
+          };
+
+          std::vector<ConvexCell2D> ConcaveCell3DFacesConvexCell2D = {};
       };
 
     public:
@@ -460,6 +471,19 @@ namespace Gedim
       /// \return the Cell1D indices
       std::vector<unsigned int> FindCell2DsCommonEdges(const std::vector<unsigned int>& cell2DsIndex,
                                                        const IMeshDAO& mesh) const;
+
+      FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(const GeometryUtilities& geometryUtilities,
+                                                                                  const unsigned int& concaveCell3DIndex,
+                                                                                  const IMeshDAO& mesh,
+                                                                                  const IMeshDAO& convexMesh,
+                                                                                  const std::vector<unsigned int>& convexCell3DIndices,
+                                                                                  const std::vector<Eigen::MatrixXd>& concaveCell3DFaces3DVertices,
+                                                                                  const std::vector<Eigen::MatrixXd>& concaveCell3DFaces2DVertices,
+                                                                                  const std::vector<Eigen::Vector3d>& concaveCell3DFacesTranslation,
+                                                                                  const std::vector<Eigen::Matrix3d>& concaveCell3DFacesRotationMatrix,
+                                                                                  const std::vector<Eigen::Vector3d>& concaveCell3DFacesNormal,
+                                                                                  const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
+                                                                                  const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
 
       /// \brief Agglomerate Triangles with one vertex in common
       /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh

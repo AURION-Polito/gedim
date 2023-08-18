@@ -710,14 +710,6 @@ namespace Gedim
       result.Cell3DsFaces2DTriangulations[c] = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(result.Cell3DsFaces2DVertices[c],
                                                                                                           polyhedronFaceTriangulations);
 
-      std::vector<Eigen::Vector3d> faces2DInternalPoints(numFaces);
-      std::vector<Eigen::Vector3d> faces3DInternalPoints(numFaces);
-      for (unsigned int f = 0; f < numFaces; f++)
-      {
-        faces3DInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
-        faces2DInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces2DTriangulations[c][f][0]);
-      }
-
 
       result.Cell3DsFacesAreas[c].resize(numFaces);
       result.Cell3DsFacesDiameters[c].resize(numFaces);
@@ -756,6 +748,7 @@ namespace Gedim
       Eigen::VectorXd convexCell3DsVolume(numConvexCell3Ds);
       Eigen::MatrixXd convexCell3DsCentroid(3, numConvexCell3Ds);
       std::vector<std::vector<Eigen::MatrixXd>> convexCell3DsFaces3DVertices(numConvexCell3Ds);
+      std::vector<std::vector<std::vector<unsigned int>>> convexCell3DsFacesUnalignedVertices(numConvexCell3Ds);
       std::vector<std::vector<Eigen::Vector3d>> convexCell3DsNormal(numConvexCell3Ds);
       std::vector<std::vector<bool>> convexCell3DsNormalDirections(numConvexCell3Ds);
 
@@ -777,6 +770,9 @@ namespace Gedim
         const std::vector<Eigen::MatrixXd> convexCell3DFaces2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(convexCell3DsFaces3DVertices[cc],
                                                                                                                          convexCell3DFacesTranslation,
                                                                                                                          convexCell3DFacesRotationMatrices);
+        convexCell3DsFacesUnalignedVertices[cc].resize(convexCell3DFaces2DVertices.size());
+        for (unsigned int ccf = 0; ccf < convexCell3DsFacesUnalignedVertices[cc].size(); ccf++)
+          convexCell3DsFacesUnalignedVertices[cc][ccf] = geometryUtilities.UnalignedPoints(convexCell3DFaces2DVertices[cc]);
 
         const std::vector<std::vector<unsigned int>> convexCell3DFacesTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(convexCell3DPolyhedron.Faces,
                                                                                                                                                    convexCell3DsFaces3DVertices[cc]);
@@ -823,70 +819,142 @@ namespace Gedim
               convexCell3DTetrahedronsPoints[cc][cct];
       }
 
+      const FindConcaveCell3DFacesConvexCell2DResult convexCell2Ds = FindConcaveCell3DFacesConvexCell2D(geometryUtilities,
+                                                                                                        c,
+                                                                                                        mesh,
+                                                                                                        convexMesh,
+                                                                                                        convexCell3DIndices,
+                                                                                                        result.Cell3DsFaces3DVertices[c],
+                                                                                                        result.Cell3DsFaces2DVertices[c],
+                                                                                                        result.Cell3DsFacesTranslations[c],
+                                                                                                        result.Cell3DsFacesRotationMatrices[c],
+                                                                                                        result.Cell3DsFacesNormals[c],
+                                                                                                        convexCell3DsFaces3DVertices,
+                                                                                                        convexCell3DsFacesUnalignedVertices);
+
       result.Cell3DsFacesNormalDirections[c].resize(numFaces);
       for (unsigned int f = 0; f < numFaces; f++)
       {
-        const Eigen::Matrix3d& faceRotationMatrix = result.Cell3DsFacesRotationMatrices[c][f];
-        const Eigen::Vector3d& faceTranslation = result.Cell3DsFacesTranslations[c][f];
         const Eigen::Vector3d& faceNormal = result.Cell3DsFacesNormals[c][f];
-        const Eigen::Vector3d& face3DInternalPoint = faces3DInternalPoints[f];
-        const Eigen::Vector3d& face2DInternalPoint = faces2DInternalPoints[f];
 
-        int convexCellFound = -1, convexFaceFound = -1;
-
-        // find convex cell3D face parallel to concave face normal
-        for (unsigned int cc = 0; cc < numConvexCell3Ds; cc++)
-        {
-          for (unsigned int ccf = 0; ccf < convexCell3DsNormal[cc].size(); ccf++)
-          {
-            const Eigen::Vector3d& convexFaceNormal = convexCell3DsNormal[cc][ccf];
-            const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
-
-            if (geometryUtilities.IsValue2DPositive(faceNormal.cross(convexFaceNormal).squaredNorm()))
-              continue;
-
-            // verify if the convex face is in the same plane of the concave face
-            if (!geometryUtilities.IsPointOnPlane(face3DInternalPoint,
-                                                  convexFaceNormal,
-                                                  convexFaceVertices3D.col(0)))
-              continue;
-
-            // rotate convex face to 2D with concave face matrices
-            const Eigen::MatrixXd convexFace2DVertices = geometryUtilities.RotatePointsFrom3DTo2D(convexFaceVertices3D,
-                                                                                                  faceRotationMatrix.transpose(),
-                                                                                                  faceTranslation);
-            // check if concave face point is inside convex cell
-            if (!geometryUtilities.IsPointInsidePolygon_RayCasting(face2DInternalPoint,
-                                                                   convexFace2DVertices))
-              continue;
-
-            convexFaceFound = ccf;
-            break;
-          }
-
-          if (convexFaceFound >= 0)
-          {
-            convexCellFound = cc;
-            break;
-          }
-        }
-
-        if (convexCellFound < 0 || convexFaceFound < 0)
-        {
-          std::cout<< "Concave Cell3D "<< c<< " face "<< f<< " Cell2D "<< mesh.Cell3DFace(c, f)<< " ";
-          std::cout<< "convex Cell3D "<< convexCellFound<< " face "<< convexFaceFound<< " ";
-          std::cout<< "convex Cell2D "<< ((convexCellFound >= 0 && convexFaceFound >= 0) ? convexMesh.Cell3DFace(convexCell3DIndices[convexCellFound],
-                                                                                                                 convexCellFound) : 0)<< std::endl;
-          throw runtime_error("Convex Cell 3D face not found");
-        }
+        const unsigned int cc = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DIndex;
+        const unsigned int ccf = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DFaceIndex;
 
         const Eigen::Vector3d outgoingFaceNormal =
-            convexCell3DsNormalDirections[convexCellFound][convexFaceFound] ?
-              convexCell3DsNormal[convexCellFound][convexFaceFound] :
-              -1.0 * convexCell3DsNormal[convexCellFound][convexFaceFound];
+            convexCell3DsNormalDirections[cc][ccf] ?
+              convexCell3DsNormal[cc][ccf] : -1.0 * convexCell3DsNormal[cc][ccf];
 
         result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValue1DPositive(faceNormal.dot(outgoingFaceNormal));
       }
+    }
+
+    return result;
+  }
+  // ***************************************************************************
+  MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConcaveCell3DFacesConvexCell2D(const GeometryUtilities& geometryUtilities,
+                                                                                                            const unsigned int& concaveCell3DIndex,
+                                                                                                            const IMeshDAO& mesh,
+                                                                                                            const IMeshDAO& convexMesh,
+                                                                                                            const std::vector<unsigned int>& convexCell3DIndices,
+                                                                                                            const std::vector<Eigen::MatrixXd>& concaveCell3DFaces3DVertices,
+                                                                                                            const std::vector<Eigen::MatrixXd>& concaveCell3DFaces2DVertices,
+                                                                                                            const std::vector<Eigen::Vector3d>& concaveCell3DFacesTranslation,
+                                                                                                            const std::vector<Eigen::Matrix3d>& concaveCell3DFacesRotationMatrix,
+                                                                                                            const std::vector<Eigen::Vector3d>& concaveCell3DFacesNormal,
+                                                                                                            const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
+                                                                                                            const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const
+  {
+    FindConcaveCell3DFacesConvexCell2DResult result;
+
+    const unsigned int& numConvexCell3Ds = convexCell3DIndices.size();
+    const unsigned int numConcaveFaces = mesh.Cell3DNumberFaces(concaveCell3DIndex);
+
+    result.ConcaveCell3DFacesConvexCell2D.resize(numConcaveFaces);
+
+    for (unsigned int f = 0; f < numConcaveFaces; f++)
+    {
+      FindConcaveCell3DFacesConvexCell2DResult::ConvexCell2D& convexCell2D = result.ConcaveCell3DFacesConvexCell2D[f];
+
+      const Eigen::MatrixXd& faceVertices = concaveCell3DFaces3DVertices[f];
+      const Eigen::MatrixXd& face2DVertices = concaveCell3DFaces2DVertices[f];
+      const Eigen::Matrix3d& faceRotationMatrix = concaveCell3DFacesRotationMatrix[f];
+      const Eigen::Vector3d& faceTranslation = concaveCell3DFacesTranslation[f];
+      const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
+
+      int convexCellFound = -1, convexFaceFound = -1;
+
+      // find convex cell3D face parallel to concave face normal
+      for (unsigned int cc = 0; cc < numConvexCell3Ds; cc++)
+      {
+        const unsigned int convexCell3DIndex = convexCell3DIndices[cc];
+
+        const unsigned int numConvexFaces = convexMesh.Cell3DNumberFaces(convexCell3DIndex);
+
+        for (unsigned int ccf = 0; ccf < numConvexFaces; ccf++)
+        {
+          const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
+          const std::vector<unsigned int>& convexFaceUnalignedVertices = convexCell3DsFacesUnalignedVertices[cc][ccf];
+
+          Eigen::Matrix3d convexFaceTriangle;
+          convexFaceTriangle.col(0)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[0]);
+          convexFaceTriangle.col(1)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[1]);
+          convexFaceTriangle.col(2)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[2]);
+
+          // verify if the convex face is in the same plane of the concave face
+          if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(0),
+                                                faceNormal,
+                                                faceVertices.col(0)))
+            continue;
+          if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(1),
+                                                faceNormal,
+                                                faceVertices.col(0)))
+            continue;
+          if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(2),
+                                                faceNormal,
+                                                faceVertices.col(0)))
+            continue;
+
+          // rotate convex face to 2D with concave face matrices
+          Eigen::MatrixXd convexFace2DTriangle = geometryUtilities.RotatePointsFrom3DTo2D(convexFaceTriangle,
+                                                                                          faceRotationMatrix.transpose(),
+                                                                                          faceTranslation);
+
+          if (geometryUtilities.IsValue1DNegative(faceRotationMatrix.determinant()))
+            convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
+
+          // check if concave face point is inside convex cell
+          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(0),
+                                                                 face2DVertices))
+            continue;
+          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(1),
+                                                                 face2DVertices))
+            continue;
+          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(2),
+                                                                 face2DVertices))
+            continue;
+
+          convexFaceFound = ccf;
+          break;
+        }
+
+        if (convexFaceFound >= 0)
+        {
+          convexCellFound = cc;
+          break;
+        }
+      }
+
+      if (convexCellFound < 0 || convexFaceFound < 0)
+      {
+        std::cerr<< "Concave Cell3D "<< concaveCell3DIndex<< " face "<< f<< " Cell2D "<< mesh.Cell3DFace(concaveCell3DIndex, f)<< " ";
+        std::cerr<< "convex Cell3D "<< convexCellFound<< " face "<< convexFaceFound<< " ";
+        std::cerr<< "convex Cell2D "<< ((convexCellFound >= 0 && convexFaceFound >= 0) ? convexMesh.Cell3DFace(convexCell3DIndices[convexCellFound],
+                                                                                                               convexCellFound) : 0)<< std::endl;
+        throw runtime_error("Convex Cell 3D face not found");
+      }
+
+      convexCell2D.ConvexCell3DIndex = convexCellFound;
+      convexCell2D.ConvexCell3DFaceIndex = convexFaceFound;
     }
 
     return result;
