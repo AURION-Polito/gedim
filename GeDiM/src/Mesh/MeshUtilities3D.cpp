@@ -4,6 +4,8 @@
 #include "VTKUtilities.hpp"
 #include "MapTetrahedron.hpp"
 
+//#define DEBUG_MESH3D 1
+
 using namespace std;
 using namespace Eigen;
 
@@ -866,6 +868,13 @@ namespace Gedim
   {
     FindConcaveCell3DFacesConvexCell2DResult result;
 
+#ifdef DEBUG_MESH3D
+    if (concaveCell3DIndex == 1316)
+    {
+      cout<< convexCell3DIndices<< endl;
+    }
+#endif
+
     const unsigned int& numConvexCell3Ds = convexCell3DIndices.size();
     const unsigned int numConcaveFaces = mesh.Cell3DNumberFaces(concaveCell3DIndex);
 
@@ -876,10 +885,24 @@ namespace Gedim
       FindConcaveCell3DFacesConvexCell2DResult::ConvexCell2D& convexCell2D = result.ConcaveCell3DFacesConvexCell2D[f];
 
       const Eigen::MatrixXd& faceVertices = concaveCell3DFaces3DVertices[f];
+      const Eigen::Vector3d& faceOrigin = faceVertices.col(0);
       const Eigen::MatrixXd& face2DVertices = concaveCell3DFaces2DVertices[f];
       const Eigen::Matrix3d& faceRotationMatrix = concaveCell3DFacesRotationMatrix[f];
       const Eigen::Vector3d& faceTranslation = concaveCell3DFacesTranslation[f];
       const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
+
+#ifdef DEBUG_MESH3D
+      if (concaveCell3DIndex == 1316)
+      {
+        cout.precision(16);
+        cout<< "Face "<< mesh.Cell3DFace(concaveCell3DIndex, f)<< endl;
+        cout<< "Origin "<< mesh.Cell2DVertex(mesh.Cell3DFace(concaveCell3DIndex, f), 0)<< endl;
+        cout<< scientific<< "Origin "<< faceOrigin.transpose()<< endl;
+        cout<< scientific<< "End "<< (faceOrigin + faceNormal).transpose()<< endl;
+        cout<< scientific<< "Normal "<< faceNormal.transpose()<< endl;
+        cout<< scientific<< "NormalNorm "<< faceNormal.norm()<< endl;
+      }
+#endif
 
       int convexCellFound = -1, convexFaceFound = -1;
 
@@ -895,6 +918,29 @@ namespace Gedim
           const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
           const std::vector<unsigned int>& convexFaceUnalignedVertices = convexCell3DsFacesUnalignedVertices[cc][ccf];
 
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 1316)
+          {
+            const unsigned int faceIndex = convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                 ccf);
+            cout<< "Test CEll3D "<< convexCell3DIndex<< " face "<< faceIndex<< endl;
+            cout<< "Vertices "<< convexFaceUnalignedVertices<< endl;
+            cout<< "Vertices "<< convexMesh.Cell2DVertices(faceIndex)<< endl;
+
+            if (faceIndex == 920)
+            {
+              for (unsigned int v = 0; v < 3; v++)
+              {
+                const double distancePoint = (convexFaceVertices3D.col(v) - faceOrigin).norm();
+                const double position = faceNormal.dot(convexFaceVertices3D.col(v) - faceOrigin) / distancePoint;
+
+                std::cout<< "Distance "<< distancePoint<< std::endl;
+                std::cout<< "Position "<< position<< std::endl;
+              }
+            }
+          }
+#endif
+
           Eigen::Matrix3d convexFaceTriangle;
           convexFaceTriangle.col(0)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[0]);
           convexFaceTriangle.col(1)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[1]);
@@ -903,16 +949,42 @@ namespace Gedim
           // verify if the convex face is in the same plane of the concave face
           if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(0),
                                                 faceNormal,
-                                                faceVertices.col(0)))
+                                                faceOrigin))
             continue;
+
+          #ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 1316)
+          {
+            cout<< "Here 1 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                                           ccf)<< endl;
+          }
+#endif
+
           if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(1),
                                                 faceNormal,
-                                                faceVertices.col(0)))
+                                                faceOrigin))
             continue;
+
+          #ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 1316)
+          {
+            cout<< "Here 2 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                                           ccf)<< endl;
+          }
+#endif
+
           if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(2),
                                                 faceNormal,
-                                                faceVertices.col(0)))
+                                                faceOrigin))
             continue;
+
+          #ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 1316)
+          {
+            cout<< "Here 3 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                                           ccf)<< endl;
+          }
+#endif
 
           // rotate convex face to 2D with concave face matrices
           Eigen::MatrixXd convexFace2DTriangle = geometryUtilities.RotatePointsFrom3DTo2D(convexFaceTriangle,
