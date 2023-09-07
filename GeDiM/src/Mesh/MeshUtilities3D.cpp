@@ -4,7 +4,7 @@
 #include "VTKUtilities.hpp"
 #include "MapTetrahedron.hpp"
 
-//#define DEBUG_MESH3D 1
+#define DEBUG_MESH3D 1
 
 using namespace std;
 using namespace Eigen;
@@ -869,7 +869,7 @@ namespace Gedim
     FindConcaveCell3DFacesConvexCell2DResult result;
 
 #ifdef DEBUG_MESH3D
-    if (concaveCell3DIndex == 1316)
+    if (concaveCell3DIndex == 2504)
     {
       cout<< convexCell3DIndices<< endl;
     }
@@ -892,15 +892,25 @@ namespace Gedim
       const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
 
 #ifdef DEBUG_MESH3D
-      if (concaveCell3DIndex == 1316)
+      if (concaveCell3DIndex == 2504)
       {
+        const unsigned int concaveCell2DIndex = mesh.Cell3DFace(concaveCell3DIndex, f);
+
         cout.precision(16);
-        cout<< "Face "<< mesh.Cell3DFace(concaveCell3DIndex, f)<< endl;
-        cout<< "Origin "<< mesh.Cell2DVertex(mesh.Cell3DFace(concaveCell3DIndex, f), 0)<< endl;
+        cout<< "Face "<< concaveCell2DIndex<< endl;
+        cout<< "Origin "<< mesh.Cell2DVertex(concaveCell2DIndex, 0)<< endl;
         cout<< scientific<< "Origin "<< faceOrigin.transpose()<< endl;
         cout<< scientific<< "End "<< (faceOrigin + faceNormal).transpose()<< endl;
         cout<< scientific<< "Normal "<< faceNormal.transpose()<< endl;
         cout<< scientific<< "NormalNorm "<< faceNormal.norm()<< endl;
+
+        for (unsigned int p = 0; p < faceVertices.cols(); p++)
+        {
+          std::cout<< "Is vertex "<< mesh.Cell2DVertex(concaveCell2DIndex, p)<< " on plane? ";
+          std::cout<< geometryUtilities.IsPointOnPlane(faceVertices.col(p),
+                                                       faceNormal,
+                                                       faceOrigin)<< std::endl;
+        }
       }
 #endif
 
@@ -919,7 +929,7 @@ namespace Gedim
           const std::vector<unsigned int>& convexFaceUnalignedVertices = convexCell3DsFacesUnalignedVertices[cc][ccf];
 
 #ifdef DEBUG_MESH3D
-          if (concaveCell3DIndex == 1316)
+          if (concaveCell3DIndex == 2504)
           {
             const unsigned int faceIndex = convexMesh.Cell3DFace(convexCell3DIndex,
                                                                  ccf);
@@ -946,14 +956,25 @@ namespace Gedim
           convexFaceTriangle.col(1)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[1]);
           convexFaceTriangle.col(2)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[2]);
 
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 2504)
+          {
+            auto convexFaceNormal = geometryUtilities.PolygonNormal(convexFaceTriangle);
+            cout<< "Here 0 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                                           ccf)<< endl;
+            cout<< scientific<< "ConvexNormal "<< convexFaceNormal.transpose()<< endl;
+            cout<< scientific<< "ConvexNormalNorm "<< convexFaceNormal.norm()<< endl;
+          }
+#endif
+
           // verify if the convex face is in the same plane of the concave face
           if (!geometryUtilities.IsPointOnPlane(convexFaceTriangle.col(0),
                                                 faceNormal,
                                                 faceOrigin))
             continue;
 
-          #ifdef DEBUG_MESH3D
-          if (concaveCell3DIndex == 1316)
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 2504)
           {
             cout<< "Here 1 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
                                                                                            ccf)<< endl;
@@ -965,8 +986,8 @@ namespace Gedim
                                                 faceOrigin))
             continue;
 
-          #ifdef DEBUG_MESH3D
-          if (concaveCell3DIndex == 1316)
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 2504)
           {
             cout<< "Here 2 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
                                                                                            ccf)<< endl;
@@ -978,8 +999,8 @@ namespace Gedim
                                                 faceOrigin))
             continue;
 
-          #ifdef DEBUG_MESH3D
-          if (concaveCell3DIndex == 1316)
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 2504)
           {
             cout<< "Here 3 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
                                                                                            ccf)<< endl;
@@ -1006,6 +1027,15 @@ namespace Gedim
             continue;
 
           convexFaceFound = ccf;
+
+#ifdef DEBUG_MESH3D
+          if (concaveCell3DIndex == 2504)
+          {
+            cout<< "Here 4 CEll3D "<< convexCell3DIndex<< " face "<< convexMesh.Cell3DFace(convexCell3DIndex,
+                                                                                           ccf)<< endl;
+          }
+#endif
+
           break;
         }
 
