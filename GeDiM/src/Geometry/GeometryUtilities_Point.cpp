@@ -159,12 +159,12 @@ namespace Gedim
       return 0.0;
 
     const Eigen::Vector3d pbd = planePoints[1] - point;
-    const double pbdNorm = pad.norm();
+    const double pbdNorm = pbd.norm();
     if (IsValue1DZero(pbdNorm))
       return 0.0;
 
     const Eigen::Vector3d pcd = planePoints[2] - point;
-    const double pcdNorm = pad.norm();
+    const double pcdNorm = pcd.norm();
     if (IsValue1DZero(pcdNorm))
       return 0.0;
 
