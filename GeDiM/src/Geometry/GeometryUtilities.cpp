@@ -63,8 +63,8 @@ namespace Gedim
     const double max_tolerance = std::max(abs(tolerance),
                                           std::numeric_limits<double>::epsilon());
 
-    double relativeValue = (first == 0.0 ||
-                            second == 0.0) ? 1.0 :
+    double relativeValue = (abs(first) <= max_tolerance ||
+                            abs(second) <= max_tolerance) ? 1.0 :
                                              abs(first);
     double difference = second - first;
 

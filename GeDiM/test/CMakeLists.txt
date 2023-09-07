@@ -67,6 +67,11 @@ if(${ENABLE_VTK})
     find_package(VTK CONFIG REQUIRED)
 endif()
 
+## VORO
+if(${ENABLE_VORO})
+  find_package(VORO CONFIG REQUIRED)
+endif()
+
 ## triangle
 find_package(triangle CONFIG REQUIRED)
 

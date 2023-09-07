@@ -1,0 +1,20 @@
+# VORO package
+
+include(ExternalProject)
+
+set(VORO_SOURCE_DIR ${MAIN_SOURCE_DIR}/voro)
+set(VORO_BINARY_DIR ${MAIN_BINARY_DIR}/voro)
+set(VORO_INSTALL_PREFIX ${MAIN_INSTALL_PREFIX}/voro)
+
+message(STATUS "Install VORO last commit on main on 25/8/2023")
+message("Installing voro in ${VORO_INSTALL_PREFIX}")
+
+ExternalProject_Add(VORO
+    GIT_REPOSITORY https://github.com/ltalirz/voro.git
+    GIT_TAG f35fff4cbc09d00c2e28cfb948a686f7789ab16e # pull request of 3/11/2022
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    SOURCE_DIR ${VORO_SOURCE_DIR}
+    BINARY_DIR ${VORO_BINARY_DIR}
+    CMAKE_ARGS -DVORO_BUILD_CMD_LINE=OFF -DVORO_BUILD_EXAMPLES=OFF -DVORO_ENABLE_DOXYGEN=OFF -DCMAKE_INSTALL_PREFIX=${VORO_INSTALL_PREFIX}
+)
