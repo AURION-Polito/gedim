@@ -708,9 +708,10 @@ namespace Gedim
         // controllo se l'intersezione è interna alla faccia
         flag = false; //se è interna diventa true
 
-        PointPlanePositionTypes type = PointPlanePosition(inters,
-                                                          planeNormal,
-                                                          planeOrigin);
+        PointPlanePositionTypes type = PointPlanePosition(
+                                         PointPlaneDistance(inters,
+                                                            planeNormal,
+                                                            planeOrigin));
         if (type == PointPlanePositionTypes::OnPlane)
         {
           if ((Compare1DValues(inters(0),polyhedronVertices(0,0)) == CompareTypes::SecondBeforeFirst || Compare1DValues(inters(0),polyhedronVertices(0,0)) == CompareTypes::Coincident) && (Compare1DValues(inters(0),polyhedronVertices(0,1)) == CompareTypes::FirstBeforeSecond || Compare1DValues(inters(0),polyhedronVertices(0,1)) == CompareTypes::Coincident) &&

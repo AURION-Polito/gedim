@@ -55,22 +55,6 @@ namespace GedimUnitTesting {
         const Eigen::MatrixXd planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
         const Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
 
-        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
-                                                                                                                           polyhedron.Edges,
-                                                                                                                           polyhedron.Faces,
-                                                                                                                           polyhedronFaceVertices,
-                                                                                                                           polyhedronFaceEdgesTangents,
-                                                                                                                           polyhedronFaceTranslations,
-                                                                                                                           polyhedronFaceRotationMatrices,
-                                                                                                                           planeNormal,
-                                                                                                                           planeOrigin,
-                                                                                                                           planeRotationMatrix,
-                                                                                                                           planeTranslation);
-
-        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
-
-        ASSERT_EQ(splitPolyhedra.size(), 2);
-
         // Export to VTK
         std::string exportFolder = "./Export/TestSplitPolyhedronWithPlane/TetraOne";
         Gedim::Output::CreateFolder(exportFolder);
@@ -87,6 +71,22 @@ namespace GedimUnitTesting {
           vtpUtilities.Export(exportFolder + "/Original.vtu",
                               Gedim::VTKUtilities::Ascii);
         }
+
+        const Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result = geometryUtilities.SplitPolyhedronWithPlane(polyhedron.Vertices,
+                                                                                                                           polyhedron.Edges,
+                                                                                                                           polyhedron.Faces,
+                                                                                                                           polyhedronFaceVertices,
+                                                                                                                           polyhedronFaceEdgesTangents,
+                                                                                                                           polyhedronFaceTranslations,
+                                                                                                                           polyhedronFaceRotationMatrices,
+                                                                                                                           planeNormal,
+                                                                                                                           planeOrigin,
+                                                                                                                           planeRotationMatrix,
+                                                                                                                           planeTranslation);
+
+        const vector<Gedim::GeometryUtilities::Polyhedron> splitPolyhedra = geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
+
+        ASSERT_EQ(splitPolyhedra.size(), 2);
 
         {
           Gedim::VTKUtilities vtpUtilities;

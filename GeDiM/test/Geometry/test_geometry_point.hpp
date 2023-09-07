@@ -745,27 +745,30 @@ namespace GedimUnitTesting {
       // check point on plane
       {
         const Eigen::Vector3d point = Eigen::Vector3d(5.0, -5.0, 1.0);
-        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
-                                                       planeNormal,
-                                                       planeOrigin),
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(
+                    geometryUtilities.PointPlaneDistance(point,
+                                                         planeNormal,
+                                                         planeOrigin)),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::OnPlane);
       }
 
       // check curvilinear coordinate coincident
       {
         const Eigen::Vector3d point = Eigen::Vector3d(-1.0, -1.0, -2.0);
-        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
-                                                       planeNormal,
-                                                       planeOrigin),
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(
+                    geometryUtilities.PointPlaneDistance(point,
+                                                         planeNormal,
+                                                         planeOrigin)),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::Negative);
       }
 
       // check curvilinear coordinate before
       {
         const Eigen::Vector3d point = Eigen::Vector3d(0.0, 1.0, 2.0);
-        ASSERT_EQ(geometryUtilities.PointPlanePosition(point,
-                                                       planeNormal,
-                                                       planeOrigin),
+        ASSERT_EQ(geometryUtilities.PointPlanePosition(
+                    geometryUtilities.PointPlaneDistance(point,
+                                                         planeNormal,
+                                                         planeOrigin)),
                   Gedim::GeometryUtilities::PointPlanePositionTypes::Positive);
       }
     }

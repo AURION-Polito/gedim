@@ -911,6 +911,24 @@ namespace Gedim
                                                        faceNormal,
                                                        faceOrigin)<< std::endl;
         }
+
+        Eigen::Matrix3d concaveFaceTriangle;
+        concaveFaceTriangle.col(0)<< faceVertices.col(0);
+        concaveFaceTriangle.col(1)<< faceVertices.col(1);
+        concaveFaceTriangle.col(2)<< faceVertices.col(3);
+
+        std::cout<< "Convex Points "<< scientific<< concaveFaceTriangle<< std::endl;
+        std::cout<< "Last Points "<< scientific<< faceVertices.col(2)<< std::endl;
+
+        const Eigen::Vector3d alternativeNormal = geometryUtilities.PolygonNormal(concaveFaceTriangle);
+        std::cout<< "Is vertex "<< mesh.Cell2DVertex(concaveCell2DIndex, 2)<< " on alternative plane? ";
+        std::cout<< geometryUtilities.IsPointOnPlane(faceVertices.col(0),
+                                                     alternativeNormal,
+                                                     faceVertices.col(2))<< std::endl;
+        std::cout<< "Distance computed "<< scientific<< geometryUtilities.PointPlaneDistance(faceVertices.col(2),
+                                                                                             { faceVertices.col(0),
+                                                                                               faceVertices.col(1),
+                                                                                               faceVertices.col(3) }) << std::endl;
       }
 #endif
 

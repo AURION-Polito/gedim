@@ -150,19 +150,47 @@ namespace Gedim
     throw runtime_error("PointSegmentPosition failed");
   }
   // ***************************************************************************
-  GeometryUtilities::PointPlanePositionTypes GeometryUtilities::PointPlanePosition(const Eigen::Vector3d& point,
-                                                                                   const Eigen::Vector3d& planeNormal,
-                                                                                   const Eigen::Vector3d& planeOrigin) const
+  double GeometryUtilities::PointPlaneDistance(const Eigen::Vector3d& point,
+                                               const std::array<Eigen::Vector3d, 3>& planePoints) const
   {
-    const double distancePoint = (point - planeOrigin).norm();
-    if (IsValue1DZero(distancePoint))
-      return PointPlanePositionTypes::OnPlane;
+    const Eigen::Vector3d pad = planePoints[0] - point;
+    const double padNorm = pad.norm();
+    if (IsValue1DZero(padNorm))
+      return 0.0;
 
-    const double position = planeNormal.dot(point - planeOrigin) / distancePoint;
+    const Eigen::Vector3d pbd = planePoints[1] - point;
+    const double pbdNorm = pad.norm();
+    if (IsValue1DZero(pbdNorm))
+      return 0.0;
 
-    if (IsValue1DZero(position))
+    const Eigen::Vector3d pcd = planePoints[2] - point;
+    const double pcdNorm = pad.norm();
+    if (IsValue1DZero(pcdNorm))
+      return 0.0;
+
+    return (pad[0] * (pbd[1] * pcd[2] - pbd[2] * pcd[1])
+        + pbd[0] * (pcd[1] * pad[2] - pcd[2] * pad[1])
+        + pcd[0] * (pad[1] * pbd[2] - pad[2] * pbd[1])) /
+        (padNorm * pbdNorm * pcdNorm);
+  }
+  // ***************************************************************************
+  double GeometryUtilities::PointPlaneDistance(const Eigen::Vector3d& point,
+                                               const Eigen::Vector3d& planeNormal,
+                                               const Eigen::Vector3d& planeOrigin) const
+  {
+    const Eigen::Vector3d pod = point - planeOrigin;
+    const double podNorm = pod.norm();
+    if (IsValue1DZero(podNorm))
+      return 0.0;
+
+    return planeNormal.dot(pod) / podNorm;
+  }
+  // ***************************************************************************
+  GeometryUtilities::PointPlanePositionTypes GeometryUtilities::PointPlanePosition(const double& pointPlaneDistance) const
+  {
+    if (IsValue1DZero(pointPlaneDistance))
       return PointPlanePositionTypes::OnPlane;
-    else if (IsValue1DNegative(position))
+    else if (IsValue1DNegative(pointPlaneDistance))
       return PointPlanePositionTypes::Negative;
     else
       return PointPlanePositionTypes::Positive;
@@ -377,9 +405,10 @@ namespace Gedim
       const Eigen::MatrixXd& faceVertices2D = polyhedronFaceRotatedVertices[f];
       const double faceOutgoingNormal = polyhedronFaceNormalDirections[f] ? 1.0 : -1.0;
 
-      const PointPlanePositionTypes pointFacePlanePosition = PointPlanePosition(point,
-                                                                                faceOutgoingNormal * polyhedronFaceNormals[f],
-                                                                                faceVertices3D.col(0));
+      const PointPlanePositionTypes pointFacePlanePosition = PointPlanePosition(
+                                                               PointPlaneDistance(point,
+                                                                                  faceOutgoingNormal * polyhedronFaceNormals[f],
+                                                                                  faceVertices3D.col(0)));
 
       switch (pointFacePlanePosition)
       {

@@ -27,7 +27,7 @@ namespace Gedim
         SetUInt = 8,
         UInt = 9,
         VectorUInt = 10,
-        Matrix = 11,
+        Matrix = 11
       };
 
       /// Get Supported Type from the type

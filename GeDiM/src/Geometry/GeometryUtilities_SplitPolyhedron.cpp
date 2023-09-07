@@ -1,5 +1,5 @@
-#include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include <string>
 
 using namespace std;
 using namespace Eigen;
@@ -30,9 +30,9 @@ namespace Gedim
     {
       // Place the vertex in the front or back polygon (or both)
       const unsigned int& vertexIndex = i;
-      PointPlanePositionTypes vertexPlanePosition = PointPlanePosition(polygonVertices.col(vertexIndex),
-                                                                       planeNormal,
-                                                                       planeOrigin);
+      PointPlanePositionTypes vertexPlanePosition = PointPlanePosition(PointPlaneDistance(polygonVertices.col(vertexIndex),
+                                                                                          planeNormal,
+                                                                                          planeOrigin));
       switch (vertexPlanePosition)
       {
         case PointPlanePositionTypes::Positive:
@@ -50,6 +50,7 @@ namespace Gedim
           negativeVerticesIndex.push_back(vertexIndex);
           negativeUsed = true;
           break;
+
         default:
           throw runtime_error("Unsupported plane position");
       }
@@ -57,9 +58,9 @@ namespace Gedim
       // Add a vertex to both polygons where edges intersect the plane
       unsigned int nextVertexIndex = (i + 1) % polygonVertices.cols();
       
-      PointPlanePositionTypes nextVertexPlanePosition = PointPlanePosition(polygonVertices.col(nextVertexIndex),
-                                                                           planeNormal,
-                                                                           planeOrigin);
+      PointPlanePositionTypes nextVertexPlanePosition = PointPlanePosition(PointPlaneDistance(polygonVertices.col(nextVertexIndex),
+                                                                                              planeNormal,
+                                                                                              planeOrigin));
       if ((vertexPlanePosition == PointPlanePositionTypes::Positive &&
            nextVertexPlanePosition == PointPlanePositionTypes::Negative) ||
           (vertexPlanePosition == PointPlanePositionTypes::Negative &&
@@ -359,9 +360,12 @@ namespace Gedim
     // Craete new edges
     unordered_map<string, unsigned int> originalEdges;
     for (unsigned int e = 0; e < polyhedronEdges.cols(); e++)
-      originalEdges.insert(make_pair(to_string(polyhedronEdges(0, e)) + "-" +
-                                     to_string(polyhedronEdges(1, e)),
-                                     e));
+    {
+      const string key = to_string(polyhedronEdges(0, e)) + "-" +
+                         to_string(polyhedronEdges(1, e));
+
+      originalEdges.insert(make_pair(key, e));
+    }
 
     unordered_map<string, unsigned int> newEdges;
     unordered_map<string, vector<unsigned int>> newEdgesOriginEnd;
@@ -484,12 +488,10 @@ namespace Gedim
     result.Edges.NewEdgesOriginalEdges.resize(newEdges.size(), -1);
 
     {
-      for (unordered_map<string, unsigned int>::const_iterator it = newEdges.begin();
-           it != newEdges.end();
-           it++)
+      for (const auto& it : newEdges)
       {
-        const string& newEdgeKey = it->first;
-        const unsigned int& newEdgeIndex = it->second;
+        const string& newEdgeKey = it.first;
+        const unsigned int& newEdgeIndex = it.second;
         const vector<unsigned int>& newEdgeOriginEnd = newEdgesOriginEnd.at(newEdgeKey);
         const int& originalEdge = newEdgesOriginalEdges.at(newEdgeIndex);
 

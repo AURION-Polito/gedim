@@ -499,9 +499,10 @@ namespace Gedim
     for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
     {
       const Eigen::Vector3d& normal = polyhedronFaceNormals[f];
-      const PointPlanePositionTypes pointFacePosition = PointPlanePosition(pointInsidePolyhedron,
-                                                                           normal,
-                                                                           polyhedronFaceVertices[f].col(0));
+      const PointPlanePositionTypes pointFacePosition = PointPlanePosition(
+                                                          PointPlaneDistance(pointInsidePolyhedron,
+                                                                             normal,
+                                                                             polyhedronFaceVertices[f].col(0)));
       Output::Assert(pointFacePosition == PointPlanePositionTypes::Negative ||
                      pointFacePosition == PointPlanePositionTypes::Positive);
 

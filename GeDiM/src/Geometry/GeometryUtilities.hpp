@@ -666,9 +666,12 @@ namespace Gedim
       /// \param second the second value
       /// \return the relative difference between the two values according the first
       inline double RelativeDifference(const double& first,
-                                       const double& second) const
+                                       const double& second,
+                                       const double& tolerance = std::numeric_limits<double>::epsilon()) const
       {
-        return abs(second - first) / ((first == 0.0) ? 1.0 : abs(first));
+        const double max_tolerance = std::max(abs(tolerance),
+                                              std::numeric_limits<double>::epsilon());
+        return abs(second - first) / ((abs(first) <= max_tolerance) ? 1.0 : abs(first));
       }
 
       /// \brief Compare two 1D values according to tolerance
@@ -994,14 +997,30 @@ namespace Gedim
         return PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd);
       }
 
-      /// \brief Compute point position respect to a plane
+      /// \brief Compute point position respect to a plane formed by 3 points
+      /// \param planePoints the 3 plane points
       /// \param point the point
+      /// \return the signed point distance, 0.0 on plane, positive above, negative bottom
+      double PointPlaneDistance(const Eigen::Vector3d& point,
+                                const std::array<Eigen::Vector3d, 3>& planePoints) const;
+      /// \brief Compute point position respect to a plane normal
       /// \param planeNormal the plane normal
       /// \param planeOrigin the plane origin
+      /// \param point the point
+      /// \return the signed point distance, 0.0 on plane, positive above, negative bottom
+      double PointPlaneDistance(const Eigen::Vector3d& point,
+                                const Eigen::Vector3d& planeNormal,
+                                const Eigen::Vector3d& planeOrigin) const;
+
+      /// \brief Compute point position respect to a plane
+      /// \param pointPlaneDistance the point plane distance
       /// \return result the point position
-      PointPlanePositionTypes PointPlanePosition(const Eigen::Vector3d& point,
-                                                 const Eigen::Vector3d& planeNormal,
-                                                 const Eigen::Vector3d& planeOrigin) const;
+      PointPlanePositionTypes PointPlanePosition(const double& pointPlaneDistance) const;
+
+      /// \param pointPlaneDistance the point plane distance
+      /// \return true if point is on the plane
+      inline bool IsPointOnPlane(const double& pointPlaneDistance) const
+      { return PointPlanePosition(pointPlaneDistance) == PointPlanePositionTypes::OnPlane; }
 
       /// \param point the point
       /// \param planeNormal the plane normal
@@ -1010,9 +1029,9 @@ namespace Gedim
       inline bool IsPointOnPlane(const Eigen::Vector3d& point,
                                  const Eigen::Vector3d& planeNormal,
                                  const Eigen::Vector3d& planeOrigin) const
-      { return PointPlanePosition(point,
-                                  planeNormal,
-                                  planeOrigin) == PointPlanePositionTypes::OnPlane; }
+      { return PointPlanePosition(PointPlaneDistance(point,
+                                                     planeNormal,
+                                                     planeOrigin)) == PointPlanePositionTypes::OnPlane; }
 
       /// \param segmentOrigin the segment origin
       /// \param segmentEnd the segment end
