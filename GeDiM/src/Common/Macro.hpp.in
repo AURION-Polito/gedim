@@ -16,6 +16,11 @@
 /// - 1 true
 #cmakedefine01 ENABLE_METIS
 
+/// Enable VORO++
+/// - 0 false
+/// - 1 true
+#cmakedefine01 ENABLE_VORO
+
 /// Use MPI
 /// - 0 false
 /// - 1 true
