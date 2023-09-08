@@ -986,11 +986,17 @@ namespace Gedim
     RefinePolygon_Result result;
 
     if (mesh.Cell2DHasUpdatedCell2Ds(cell2DIndex))
+    {
+      result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DAlreadySplitted;
       return result;
+    }
 
     // Check if the cell refinement creates null cell2Ds
     if (geometryUtilities.IsValue2DZero(0.5 * cell2DArea))
+    {
+      result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
       return result;
+    }
 
     const unsigned int cell2DNumVertices = cell2DVertices.cols();
 
@@ -1000,7 +1006,10 @@ namespace Gedim
     Output::Assert(linePolygonPosition.Type != GeometryUtilities::LinePolygonPositionResult::Types::Unknown);
 
     if (linePolygonPosition.Type != GeometryUtilities::LinePolygonPositionResult::Types::Intersecting)
+    {
+      result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
       return result;
+    }
 
     if (linePolygonPosition.EdgeIntersections.size() < 2)
       throw std::runtime_error("Not enough intersections found");
@@ -1008,7 +1017,10 @@ namespace Gedim
     const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionOne = linePolygonPosition.EdgeIntersections[0];
     Output::Assert(edgeIntersectionOne.Type != GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Unknown);
     if (edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel)
+    {
+      result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
       return result;
+    }
 
     const unsigned int cell1DIndexOne = mesh.Cell2DEdge(cell2DIndex,
                                                         edgeIntersectionOne.Index);
@@ -1022,7 +1034,10 @@ namespace Gedim
       switch (edgeIntersectionTwo.Type)
       {
         case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel:
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
           return result;
+        }
         case GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge:
           findEdgeIntersectionTwo = &linePolygonPosition.EdgeIntersections[i];
           break;
@@ -1085,7 +1100,10 @@ namespace Gedim
 
     if (!SplitPolygon_CheckIsToSplit(createNewVertexOne,
                                      createNewVertexTwo))
+    {
+      result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
       return result;
+    }
 
     if (!createNewVertexOne.IsToSplit &&
         !createNewVertexTwo.IsToSplit)
@@ -1100,7 +1118,10 @@ namespace Gedim
 
       if ((fromVertex + 1) % cell2DNumVertices == toVertex ||
           (toVertex + 1) % cell2DNumVertices == fromVertex)
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
+      }
 
       if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
                                            cell2DVertices.col(toVertex),
@@ -1108,7 +1129,10 @@ namespace Gedim
           geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
                                            cell2DVertices.col(toVertex),
                                            cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
+      }
 
       const SplitPolygon_Result splitResult = SplitPolygon_NoNewVertices(cell2DIndex,
                                                                          cell2DNumVertices,
@@ -1121,7 +1145,10 @@ namespace Gedim
         case SplitPolygon_Result::Types::Unknown:
           throw std::runtime_error("Unknown SplitPolygon_Result Type");
         case SplitPolygon_Result::Types::NoSplit:
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
           return result;
+        }
         default:
           break;
       }
@@ -1151,7 +1178,10 @@ namespace Gedim
           geometryUtilities.PointIsAligned(cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices),
                                            cell2DVertices.col(toVertex),
                                            middleCoordinate))
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
+      }
 
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
                                                                         mesh);
@@ -1170,11 +1200,14 @@ namespace Gedim
         case SplitPolygon_Result::Types::Unknown:
           throw std::runtime_error("Unknown SplitPolygon_Result Type");
         case SplitPolygon_Result::Types::NoSplit:
+        {
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
           mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
           mesh.Cell1DSetState(cell1DIndexOne, true);
+          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
           return result;
+        }
         default:
           break;
       }
@@ -1211,7 +1244,10 @@ namespace Gedim
           geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
                                            cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
                                            middleCoordinate))
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
+      }
 
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
@@ -1230,11 +1266,14 @@ namespace Gedim
         case SplitPolygon_Result::Types::Unknown:
           throw std::runtime_error("Unknown SplitPolygon_Result Type");
         case SplitPolygon_Result::Types::NoSplit:
+        {
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
           mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
           mesh.Cell1DSetState(cell1DIndexTwo, true);
+          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
           return result;
+        }
         default:
           break;
       }
@@ -1281,6 +1320,7 @@ namespace Gedim
         case SplitPolygon_Result::Types::Unknown:
           throw std::runtime_error("Unknown SplitPolygon_Result Type");
         case SplitPolygon_Result::Types::NoSplit:
+        {
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
           mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
           mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
@@ -1289,7 +1329,9 @@ namespace Gedim
           mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
           mesh.Cell1DSetState(cell1DIndexTwo, true);
           mesh.Cell1DSetState(cell1DIndexOne, true);
+          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
           return result;
+        }
         default:
           break;
       }
@@ -1314,6 +1356,7 @@ namespace Gedim
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
 
+    result.ResultType = RefinePolygon_Result::ResultTypes::Successfull;
     return result;
   }
   // ***************************************************************************

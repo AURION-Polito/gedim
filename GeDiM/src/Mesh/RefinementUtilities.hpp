@@ -53,6 +53,16 @@ namespace Gedim
 
       struct RefinePolygon_Result final
       {
+          enum struct ResultTypes
+          {
+            Unknown = 0,
+            Successfull = 1,
+            Cell2DAlreadySplitted = 2,
+            Cell2DSplitUnderTolerance = 3,
+            SplitDirectionNotInsideCell2D = 4,
+            SplitQualityCheckCell2DFailed = 5
+          };
+
           struct RefinedCell1D final
           {
               enum struct Types
@@ -103,6 +113,8 @@ namespace Gedim
           std::vector<unsigned int> NewCell0DsIndex = {};
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
+
+          ResultTypes ResultType = ResultTypes::Unknown;
       };
 
       struct RefinePolygon_UpdateNeighbour_Result final
