@@ -7,6 +7,21 @@ namespace Gedim
 {
   // ***************************************************************************
   template<typename T>
+  void MeshMatricesDAO::InitializeNuberVectorWithConstantElements(std::vector<unsigned int>& numberElementVector,
+                                                                  std::vector<T>& elementVector,
+                                                                  const unsigned int numberElementSize,
+                                                                  const unsigned int numberElements,
+                                                                  const T& elementInitialization)
+  {
+    numberElementVector.resize(numberElementSize + 1, 0);
+    for (unsigned int e = 0; e < numberElementSize; e++)
+      numberElementVector[e + 1] = numberElementVector[e] + numberElements;
+
+    elementVector.resize(numberElementSize * numberElements,
+                         elementInitialization);
+  }
+  // ***************************************************************************
+  template<typename T>
   void MeshMatricesDAO::ResizeNumberVectorWithNewNumberElements(vector<unsigned int>& numberElementVector,
                                                                 vector<T>& elementVector,
                                                                 const unsigned int& numberElements,
@@ -505,6 +520,15 @@ namespace Gedim
     return Cell1DTotalNumber();
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds)
+  {
+    InitializeNuberVectorWithConstantElements(_mesh.NumberCell1DNeighbourCell2D,
+                                              _mesh.Cell1DNeighbourCell2Ds,
+                                              _mesh.NumberCell1D,
+                                              numberNeighbourCell2Ds,
+                                              std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                                          const unsigned int& numberNeighbourCell2Ds)
   {
@@ -709,6 +733,15 @@ namespace Gedim
                                  std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeVertices(const unsigned int& numberCell2DVertices)
+  {
+    InitializeNuberVectorWithConstantElements(_mesh.NumberCell2DVertices,
+                                              _mesh.Cell2DVertices,
+                                              _mesh.NumberCell2D,
+                                              numberCell2DVertices,
+                                              std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeVertices(const unsigned int& cell2DIndex,
                                                  const unsigned int& numberCell2DVertices)
   {
@@ -718,6 +751,15 @@ namespace Gedim
                                             _mesh.NumberCell2D,
                                             cell2DIndex,
                                             numberCell2DVertices);
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeEdges(const unsigned int& numberCell2DEdges)
+  {
+    InitializeNuberVectorWithConstantElements(_mesh.NumberCell2DEdges,
+                                              _mesh.Cell2DEdges,
+                                              _mesh.NumberCell2D,
+                                              numberCell2DEdges,
+                                              std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeEdges(const unsigned int& cell2DIndex,

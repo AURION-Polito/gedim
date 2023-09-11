@@ -109,6 +109,8 @@ namespace Gedim
 
     // create cell2Ds
     unsigned int cell2DIndex = 0;
+    mesh.Cell2DsInitializeVertices(4);
+    mesh.Cell2DsInitializeEdges(4);
     for (unsigned int h = 0; h < numHeightPoints - 1; h++)
     {
       for (unsigned int b = 0; b < numBasePoints - 1; b++)
@@ -127,8 +129,8 @@ namespace Gedim
                                              cell1DVerticalIndex
                                            };
 
-        mesh.Cell2DAddVertices(cell2DIndex, cell2DVertices);
-        mesh.Cell2DAddEdges(cell2DIndex, cell2DEdges);
+        mesh.Cell2DInsertVertices(cell2DIndex, cell2DVertices);
+        mesh.Cell2DInsertEdges(cell2DIndex, cell2DEdges);
 
         mesh.Cell2DSetState(cell2DIndex, true);
 
@@ -725,11 +727,11 @@ namespace Gedim
 
 
     vector<double> baseMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numQuadrilateralsBaseTangent + 1,
-                                                                                               0.0, 1.0, 1);
+                                                                                           0.0, 1.0, 1);
 
 
     vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numQuadrilateralsHeightTangent + 1,
-                                                                                                 0.0, 1.0, 1);
+                                                                                             0.0, 1.0, 1);
 
     const unsigned int& numBasePoints = baseMeshCurvilinearCoordinates.size();
     const unsigned int& numHeightPoints = heightMeshCurvilinearCoordinates.size();
@@ -867,11 +869,11 @@ namespace Gedim
 
 
     vector<double> baseMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numQuadrilateralsBaseTangent + 1,
-                                                                                               0.0, 1.0, 1);
+                                                                                           0.0, 1.0, 1);
 
 
     vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numQuadrilateralsHeightTangent + 1,
-                                                                                                 0.0, 1.0, 1);
+                                                                                             0.0, 1.0, 1);
 
     const unsigned int& numBasePoints = baseMeshCurvilinearCoordinates.size();
     const unsigned int& numHeightPoints = heightMeshCurvilinearCoordinates.size();

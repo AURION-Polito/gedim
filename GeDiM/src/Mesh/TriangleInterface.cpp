@@ -98,9 +98,9 @@ namespace Gedim
                                                const string& triangleOptions) const
   {
     ostringstream options;
-    options.precision(16);
+    options.precision(std::numeric_limits<double>::digits10);
     options<< triangleOptions;
-    options<< scientific<< maxTriangleArea;
+    options<< maxTriangleArea;
 
     size_t sizeOptions = options.str().size();
     char* optionPointer = new char[sizeOptions + 1];
@@ -185,7 +185,8 @@ namespace Gedim
     };
 
     std::vector<std::list<Edge>> cell0DsCell1Ds(mesh.Cell0DTotalNumber());
-    for(unsigned int ed = 0; ed < numberOfCell1Ds; ed++)
+
+    for (unsigned int ed = 0; ed < numberOfCell1Ds; ed++)
     {
       mesh.Cell1DInsertExtremes(ed,
                                 triangleOutput->edgelist[2 * ed],
@@ -193,11 +194,13 @@ namespace Gedim
       mesh.Cell1DSetState(ed, true);
       mesh.Cell1DSetMarker(ed,
                            triangleOutput->edgemarkerlist[ed]);
-      mesh.Cell1DInitializeNeighbourCell2Ds(ed, 2);
+
       cell0DsCell1Ds[triangleOutput->edgelist[2 * ed]].push_back({ ed, triangleOutput->edgelist[2 * ed + 1] });
     }
 
     /// <li> Set Cell2Ds
+    mesh.Cell2DsInitializeVertices(3);
+    mesh.Cell2DsInitializeEdges(3);
     for (unsigned int c = 0; c < numberOfCell2Ds; c++)
     {
       vector<unsigned int> cell2DVertices(3);
@@ -241,10 +244,10 @@ namespace Gedim
         cell2DEdges[e] = edgeId;
       }
 
-      mesh.Cell2DAddVertices(c,
-                             cell2DVertices);
-      mesh.Cell2DAddEdges(c,
-                          cell2DEdges);
+      mesh.Cell2DInsertVertices(c,
+                                cell2DVertices);
+      mesh.Cell2DInsertEdges(c,
+                             cell2DEdges);
       mesh.Cell2DSetState(c, true);
       mesh.Cell2DSetMarker(c,
                            0);
