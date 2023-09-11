@@ -348,6 +348,10 @@ namespace Gedim
       virtual bool Cell1DUpdatedCell1Ds(const unsigned int& cell1DIndex,
                                         std::list<unsigned int>& updatedCell1DIds) const = 0;
 
+      /// \brief Initialize the Cell1Ds Cell2D neighbours number
+      /// \param numberNeighbourCell2Ds the number of Cell2D neighbours of the Cell1D
+      virtual void Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds) = 0;
+
       /// \brief Initialize the Cell1D Cell2D neighbours number
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param numberNeighbourCell2Ds the number of Cell2D neighbours of the Cell1D
@@ -473,16 +477,28 @@ namespace Gedim
       /// \param cell2DIndex the index of Cell0D from 0 to Cell2DTotalNumber()
       /// \note the cell2D is removed and no integrity check in the mesh are performed
       virtual void Cell2DRemove(const unsigned int& cell2DIndex) = 0;
+      /// \brief Initialize the Cell2Ds vertices number
+      /// \param numberCell2DVertices the number of vertices of all Cell2Ds
+      virtual void Cell2DsInitializeVertices(const unsigned int& numberCell2DVertices) = 0;
       /// \brief Initialize the Cell2D vertices  number
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param numberCell2DVertices the number of vertices of Cell2D
       virtual void Cell2DInitializeVertices(const unsigned int& cell2DIndex,
                                             const unsigned int& numberCell2DVertices) = 0;
+      /// \brief Initialize the Cell2Ds edges number
+      /// \param numberCell2DEdges the number of edges of all Cell2Ds
+      virtual void Cell2DsInitializeEdges(const unsigned int& numberCell2DEdges) = 0;
       /// \brief Initialize the Cell2D edges number
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param numberCell2DEdges the number of edges of Cell2D
       virtual void Cell2DInitializeEdges(const unsigned int& cell2DIndex,
                                          const unsigned int& numberCell2DEdges) = 0;
+      /// \brief Insert the Cell2D vertex
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param verticesCell0DIndices the Cell0D vertices index from 0 to Cell0DTotalNumber()
+      /// \note Cell2DInitializeVertices() should be called before using this method
+      virtual void Cell2DInsertVertices(const unsigned int& cell2DIndex,
+                                        const std::vector<unsigned int>& verticesCell0DIndices) = 0;
       /// \brief Insert the Cell2D vertex
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param vertexIndex the number of vertex of the Cell2D from 0 to Cell2DNumberVertices(cell2DIndex)
@@ -497,6 +513,12 @@ namespace Gedim
       /// \note No itialization is necessary
       virtual void Cell2DAddVertices(const unsigned int& cell2DIndex,
                                      const std::vector<unsigned int>& verticesCell0DIndices) = 0;
+      /// \brief Insert the Cell2D edge
+      /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
+      /// \param edgesCell1DIndices the Cell1D edges indices from 0 to Cell1DTotalNumber()
+      /// \note Cell2DInitializeEdges() should be called before using this method
+      virtual void Cell2DInsertEdges(const unsigned int& cell2DIndex,
+                                    const std::vector<unsigned int>& edgesCell1DIndices) = 0;
       /// \brief Insert the Cell2D edge
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param edgeIndex the number of edge of the Cell2D from 0 to Cell2DNumberEdges(cell2DIndex)

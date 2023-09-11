@@ -7,6 +7,7 @@
 
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "CommonUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -187,6 +188,79 @@ namespace GedimUnitTesting
                 meshDao.Cell2DEdges(c));
     }
 
+  }
+
+  TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMeshComplex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Eigen::MatrixXd vertices3D(3, 17);
+    vertices3D.col(0)<< 9.1063719200000003e+02, 7.7833189100000004e+02, 1.7582560899999999e+02;
+    vertices3D.col(1)<< 8.5555104200000005e+02, 8.0332537000000002e+02, 1.8229437300000001e+02;
+    vertices3D.col(2)<< 7.9795447200000001e+02, 8.0966405199999997e+02, 2.0082702300000000e+02;
+    vertices3D.col(3)<< 7.4562621899999999e+02, 7.9649186499999996e+02, 2.2892062100000001e+02;
+    vertices3D.col(4)<< 7.0563350300000002e+02, 7.6558778500000005e+02, 2.6278097100000002e+02;
+    vertices3D.col(5)<< 6.8337756200000001e+02, 7.2112558000000001e+02, 2.9783504599999998e+02;
+    vertices3D.col(6)<< 6.8186418500000002e+02, 6.6911011499999995e+02, 3.2934859799999998e+02;
+    vertices3D.col(7)<< 7.0129776000000004e+02, 6.1656636900000001e+02, 3.5306554799999998e+02;
+    vertices3D.col(8)<< 7.3905367600000000e+02, 5.7059066499999994e+02, 3.6578278999999998e+02;
+    vertices3D.col(9)<< 7.9003278799999998e+02, 5.3739227700000004e+02, 3.6578278999999998e+02;
+    vertices3D.col(10)<< 8.4735008400000004e+02, 5.2145483100000001e+02, 3.5306554799999998e+02;
+    vertices3D.col(11)<< 9.0326454500000000e+02, 5.2493076699999995e+02, 3.2934859799999998e+02;
+    vertices3D.col(12)<< 9.5022461399999997e+02, 5.4735064199999999e+02, 2.9783504599999998e+02;
+    vertices3D.col(13)<< 9.8188807299999996e+02, 5.8568652599999996e+02, 2.6278097100000002e+02;
+    vertices3D.col(14)<< 9.9397859700000004e+02, 6.3476094599999999e+02, 2.2892062100000001e+02;
+    vertices3D.col(15)<< 9.8486329300000000e+02, 6.8794613100000004e+02, 2.0082702300000000e+02;
+    vertices3D.col(16)<< 9.5577323300000000e+02, 7.3805912499999999e+02, 1.8229437300000001e+02;
+
+    const Eigen::Vector3d normal = geometryUtilities.PolygonNormal(vertices3D);
+    const Eigen::Vector3d translation = geometryUtilities.PolygonTranslation(vertices3D);
+    const Eigen::Matrix3d rotation = geometryUtilities.PolygonRotationMatrix(vertices3D,
+                                                                             normal,
+                                                                             translation);
+    const Eigen::MatrixXd vertices2D = geometryUtilities.RotatePointsFrom3DTo2D(vertices3D,
+                                                                                rotation.transpose(),
+                                                                                translation);
+    const double polygonArea = geometryUtilities.PolygonArea(vertices2D);
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      exporter.AddPolygon(vertices2D,
+                          {
+                            {
+                              "Area",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(1.0),
+                              &polygonArea
+                            }
+                          });
+      exporter.Export(exportFolder + "/Domain.vtu");
+    }
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.CreateTriangularMesh(vertices2D,
+                                       0.01 * polygonArea,
+                                       meshDao,
+                                       "-QDzpqnea");
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "mesh");
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+    ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config,
+                                              geometryUtilities,
+                                              meshDao));
   }
 
   TEST(TestMeshUtilities, TestCreateTriangleMesh)

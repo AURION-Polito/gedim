@@ -52,6 +52,13 @@ namespace Gedim
                                   const T& newElementInitialization);
 
       template<typename T>
+      void InitializeNuberVectorWithConstantElements(std::vector<unsigned int>& numberElementVector,
+                                                     std::vector<T>& elementVector,
+                                                     const unsigned int numberElementSize,
+                                                     const unsigned int numberElements,
+                                                     const T& elementInitialization = T());
+
+      template<typename T>
       void ResizeNumberVectorWithNewNumberElements(std::vector<unsigned int>& numberElementVector,
                                                    std::vector<T>& elementVector,
                                                    const unsigned int& numberElements,
@@ -330,6 +337,7 @@ namespace Gedim
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         _mesh.ActiveCell1D[cell1DIndex] = state;
       }
+      void Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds);
       void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                             const unsigned int& numberNeighbourCell2Ds);
       inline void Cell1DInsertNeighbourCell2D(const unsigned int& cell1DIndex,
@@ -546,10 +554,18 @@ namespace Gedim
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
         _mesh.ActiveCell2D[cell2DIndex] = state;
       }
+      inline void Cell2DsInitializeVertices(const unsigned int& numberCell2DVertices);
       void Cell2DInitializeVertices(const unsigned int& cell2DIndex,
                                     const unsigned int& numberCell2DVertices);
+      inline void Cell2DsInitializeEdges(const unsigned int& numberCell2DEdges);
       void Cell2DInitializeEdges(const unsigned int& cell2DIndex,
                                  const unsigned int& numberCell2DEdges);
+      inline void Cell2DInsertVertices(const unsigned int& cell2DIndex,
+                                       const std::vector<unsigned int>& verticesCell0DIndices)
+      {
+        for (unsigned int v = 0; v < verticesCell0DIndices.size(); v++)
+          Cell2DInsertVertex(cell2DIndex, v, verticesCell0DIndices[v]);
+      }
       inline void Cell2DInsertVertex(const unsigned int& cell2DIndex,
                                      const unsigned int& vertexIndex,
                                      const unsigned int& vertexCell0DIndex)
@@ -559,6 +575,12 @@ namespace Gedim
         Gedim::Output::Assert(vertexCell0DIndex < Cell0DTotalNumber());
         _mesh.Cell2DVertices[_mesh.NumberCell2DVertices[cell2DIndex] +
             vertexIndex] = vertexCell0DIndex;
+      }
+      inline void Cell2DInsertEdges(const unsigned int& cell2DIndex,
+                                    const std::vector<unsigned int>& edgesCell1DIndices)
+      {
+        for (unsigned int e = 0; e < edgesCell1DIndices.size(); e++)
+          Cell2DInsertEdge(cell2DIndex, e, edgesCell1DIndices[e]);
       }
       inline void Cell2DInsertEdge(const unsigned int& cell2DIndex,
                                    const unsigned int& edgeIndex,

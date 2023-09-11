@@ -354,11 +354,9 @@ namespace Gedim
     mesh.Cell2DSetMarker(0, 0);
 
     // Create Cell1D neighbours
+    mesh.Cell1DsInitializeNeighbourCell2Ds(2);
     for (unsigned int e = 0; e < numPolygonVertices; e++)
-    {
-      mesh.Cell1DInitializeNeighbourCell2Ds(e, 2);
       mesh.Cell1DInsertNeighbourCell2D(e, 1, 0);
-    }
   }
   // ***************************************************************************
   vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO& mesh) const
@@ -692,8 +690,7 @@ namespace Gedim
   void MeshUtilities::ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const
   {
     // Initialize cell1D neighbours
-    for (unsigned int c1D = 0; c1D < mesh.Cell1DTotalNumber(); c1D++)
-      mesh.Cell1DInitializeNeighbourCell2Ds(c1D, 2);
+    mesh.Cell1DsInitializeNeighbourCell2Ds(2);
 
     // Compute Cell1D neighbours starting from cell2Ds
     for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
