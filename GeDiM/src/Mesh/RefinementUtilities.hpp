@@ -171,6 +171,8 @@ namespace Gedim
                                                  IMeshDAO& mesh) const;
       bool SplitPolygon_CheckIsToSplit(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
                                        const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
+      bool SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
+                                               const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
 
       bool SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
                                   IMeshDAO& mesh) const;

@@ -67,6 +67,19 @@ namespace Gedim
     return true;
   }
   // ***************************************************************************
+  bool RefinementUtilities::SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne, const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const
+  {
+    if ((cell1DSplitOne.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough ||
+         cell1DSplitOne.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect))
+      return false;
+
+    if ((cell1DSplitTwo.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough ||
+         cell1DSplitTwo.Type == RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect))
+      return false;
+
+    return true;
+  }
+  // ***************************************************************************
   bool RefinementUtilities::SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
                                                    IMeshDAO& mesh) const
   {
@@ -1119,6 +1132,13 @@ namespace Gedim
       if ((fromVertex + 1) % cell2DNumVertices == toVertex ||
           (toVertex + 1) % cell2DNumVertices == fromVertex)
       {
+        if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
+                                                 createNewVertexTwo))
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+          return result;
+        }
+
         result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
       }
@@ -1130,6 +1150,13 @@ namespace Gedim
                                            cell2DVertices.col(toVertex),
                                            cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
       {
+        if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
+                                                 createNewVertexTwo))
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+          return result;
+        }
+
         result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
       }
