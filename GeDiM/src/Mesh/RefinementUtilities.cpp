@@ -1189,6 +1189,12 @@ namespace Gedim
     else if (createNewVertexOne.IsToSplit &&
              !createNewVertexTwo.IsToSplit)
     {
+      if (cell2DIndex == 252486)
+      {
+        using namespace Gedim;
+        std::cout<< "HERE 1"<< std::endl;
+      }
+
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1212,6 +1218,20 @@ namespace Gedim
 
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
                                                                         mesh);
+
+      if (cell2DIndex == 252486)
+      {
+        using namespace Gedim;
+        std::cout.precision(16);
+
+        std::cout<< std::scientific<< "Middle "<< mesh.Cell0DCoordinates(splitCell1DOne.NewCell0DIndex)<< std::endl;
+        std::cout<< std::scientific<< "cell2DNumVertices "<< cell2DNumVertices<< std::endl;
+        std::cout<< std::scientific<< "edgeIntersectionOne.Index "<< edgeIntersectionOne.Index<< std::endl;
+        std::cout<< std::scientific<< "toVertex "<< toVertex<< std::endl;
+        std::cout<< std::scientific<< "splitCell1DOne.NewCell0DIndex "<< splitCell1DOne.NewCell0DIndex<< std::endl;
+        std::cout<< std::scientific<< "splitCell1DOne.NewCell1DsIndex "<< splitCell1DOne.NewCell1DsIndex<< std::endl;
+        std::cout<< std::scientific<< "cell2DEdgesDirection.at(edgeIntersectionOne.Index) "<< cell2DEdgesDirection.at(edgeIntersectionOne.Index)<< std::endl;
+      }
 
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertexFrom(cell2DIndex,
                                                                          cell2DNumVertices,
@@ -1255,6 +1275,12 @@ namespace Gedim
     else if (!createNewVertexOne.IsToSplit &&
              createNewVertexTwo.IsToSplit)
     {
+      if (cell2DIndex == 252486)
+      {
+        using namespace Gedim;
+        std::cout<< "HERE 2"<< std::endl;
+      }
+
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 

@@ -34,6 +34,7 @@ namespace Gedim
     Gedim::FileReader csvCell2DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell2DUpdatedCellsName + "." + configuration.FileExtension);
     Gedim::FileReader csvCell3DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell3DUpdatedCellsName + "." + configuration.FileExtension);
 
+    Gedim::Profiler::StartTime("ReadFiles");
     vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile,
                                                                            configuration.Separator);
     vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile,
@@ -42,16 +43,26 @@ namespace Gedim
                                                                            configuration.Separator);
     vector<MeshFromCsvUtilities::Cell3D> cell3Ds = utilities.ImportCell3Ds(csvCell3DsFile,
                                                                            configuration.Separator);
+    Gedim::Profiler::StopTime("ReadFiles");
 
-
+    Gedim::Profiler::StartTime("ConvertFiles");
+    Gedim::Profiler::StartTime("Cell0Ds");
     utilities.ConvertCell0Ds(cell0Ds,
                              mesh);
+    Gedim::Profiler::StopTime("Cell0Ds");
+    Gedim::Profiler::StartTime("Cell1Ds");
     utilities.ConvertCell1Ds(cell1Ds,
                              mesh);
+    Gedim::Profiler::StopTime("Cell1Ds");
+    Gedim::Profiler::StartTime("Cell2Ds");
     utilities.ConvertCell2Ds(cell2Ds,
                              mesh);
+    Gedim::Profiler::StopTime("Cell2Ds");
+    Gedim::Profiler::StartTime("Cell3Ds");
     utilities.ConvertCell3Ds(cell3Ds,
                              mesh);
+    Gedim::Profiler::StopTime("Cell3Ds");
+    Gedim::Profiler::StopTime("ConvertFiles");
 
     unsigned int meshDimension = 0;
     if (mesh.Cell0DTotalNumber() > 0 &&
@@ -74,6 +85,7 @@ namespace Gedim
 
     mesh.InitializeDimension(meshDimension);
 
+    Gedim::Profiler::StartTime("ReadProperties");
     vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell0DPropertiesFile,
                                                                                                                    configuration.Separator);
 
@@ -85,7 +97,9 @@ namespace Gedim
 
     vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties = utilities.ImportCellDoubleProperties(csvCell3DPropertiesFile,
                                                                                                                    configuration.Separator);
+    Gedim::Profiler::StopTime("ReadProperties");
 
+    Gedim::Profiler::StartTime("ConvertProperties");
     utilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties,
                                             mesh);
     utilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties,
@@ -94,7 +108,9 @@ namespace Gedim
                                             mesh);
     utilities.ConvertCell3DDoubleProperties(cell3DDoubleProperties,
                                             mesh);
+    Gedim::Profiler::StopTime("ConvertProperties");
 
+    Gedim::Profiler::StartTime("ReadNeighbours");
     vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours = utilities.ImportCell0DNeighbours(csvCell0DNeighboursFile,
                                                                                                        configuration.Separator);
     vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours = utilities.ImportCell1DNeighbours(csvCell1DNeighboursFile,
@@ -102,18 +118,26 @@ namespace Gedim
     vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours = utilities.ImportCell2DNeighbours(csvCell2DNeighboursFile,
                                                                                                        configuration.Separator);
 
+    Gedim::Profiler::StopTime("ReadNeighbours");
+    Gedim::Profiler::StartTime("ConvertNeighbours");
     utilities.ConvertCell0DNeighbours(cell0DNeighbours,
                                       mesh);
     utilities.ConvertCell1DNeighbours(cell1DNeighbours,
                                       mesh);
     utilities.ConvertCell2DNeighbours(cell2DNeighbours,
                                       mesh);
+    Gedim::Profiler::StopTime("ConvertNeighbours");
 
+    Gedim::Profiler::StartTime("ReadSubdivision");
     vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions = utilities.ImportCell2DSubDivision(csvCell2DSubDivisionsFile,
                                                                                                            configuration.Separator);
+    Gedim::Profiler::StopTime("ReadSubdivision");
+    Gedim::Profiler::StartTime("ConvertSubdivision");
     utilities.ConvertCell2DSubDivisions(cell2DSubDivisions,
                                         mesh);
+    Gedim::Profiler::StopTime("ConvertSubdivision");
 
+    Gedim::Profiler::StartTime("ReadUpdated");
     vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell0DUpdatedCellsFile,
                                                                                                          configuration.Separator);
 
@@ -125,7 +149,9 @@ namespace Gedim
 
     vector<MeshFromCsvUtilities::CellUpdatedCells> cell3DUpdatedCells = utilities.ImportCellUpdatedCells(csvCell3DUpdatedCellsFile,
                                                                                                          configuration.Separator);
+    Gedim::Profiler::StopTime("ReadUpdated");
 
+    Gedim::Profiler::StartTime("ConvertUpdated");
     utilities.ConvertCell0DUpdatedCells(cell0DUpdatedCells,
                                         mesh);
     utilities.ConvertCell1DUpdatedCells(cell1DUpdatedCells,
@@ -134,6 +160,7 @@ namespace Gedim
                                         mesh);
     utilities.ConvertCell3DUpdatedCells(cell3DUpdatedCells,
                                         mesh);
+    Gedim::Profiler::StopTime("ConvertUpdated");
 
     mesh.Compress();
   }

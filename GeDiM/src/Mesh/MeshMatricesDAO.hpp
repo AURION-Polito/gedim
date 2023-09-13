@@ -57,6 +57,11 @@ namespace Gedim
                                                      const unsigned int numberElementSize,
                                                      const unsigned int numberElements,
                                                      const T& elementInitialization = T());
+      template<typename T>
+      void InitializeNumberVector(std::vector<unsigned int>& numberElementVector,
+                                  std::vector<T>& elementVector,
+                                  const std::vector<unsigned int>& numberElements,
+                                  const T& elementInitialization = T());
 
       template<typename T>
       void ResizeNumberVectorWithNewNumberElements(std::vector<unsigned int>& numberElementVector,
@@ -153,6 +158,7 @@ namespace Gedim
       bool Cell0DUpdatedCell0Ds(const unsigned int& cell0DIndex,
                                 std::list<unsigned int>& updatedCell0DIds) const;
 
+      inline void Cell0DsInitializeNeighbourCell1Ds(const std::vector<unsigned int>& numberNeighbourCell1Ds);
       inline void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell1Ds);
       inline void Cell0DInsertNeighbourCell1D(const unsigned int& cell0DIndex,
@@ -195,6 +201,7 @@ namespace Gedim
             neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
 
+      inline void Cell0DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds);
       inline void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell2Ds);
       inline void Cell0DInsertNeighbourCell2D(const unsigned int& cell0DIndex,
@@ -236,6 +243,8 @@ namespace Gedim
         _mesh.Cell0DNeighbourCell2Ds[_mesh.NumberCell0DNeighbourCell2D[cell0DIndex] +
             neighbourIndex] = std::numeric_limits<unsigned int>::max();
       }
+      inline void Cell0DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>&)
+      { return; }
       inline void Cell0DInitializeNeighbourCell3Ds(const unsigned int& ,
                                                    const unsigned int& ) { return; }
       inline void Cell0DInsertNeighbourCell3D(const unsigned int& ,
@@ -254,9 +263,11 @@ namespace Gedim
 
       void Cell0DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell0DAddDoubleProperty(const std::string& propertyId);
+      inline void Cell0DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                        const std::vector<unsigned int>& propertySizes);
       void Cell0DInitializeDoublePropertyValues(const unsigned int& cell0DIndex,
                                                 const unsigned int& propertyIndex,
-                                                const unsigned int& porpertySize);
+                                                const unsigned int& propertySize);
       inline void Cell0DInsertDoublePropertyValue(const unsigned int& cell0DIndex,
                                                   const unsigned int& propertyIndex,
                                                   const unsigned int& propertyValueIndex,
@@ -337,7 +348,8 @@ namespace Gedim
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         _mesh.ActiveCell1D[cell1DIndex] = state;
       }
-      void Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds);
+      inline void Cell1DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds);
+      inline void Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds);
       void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                             const unsigned int& numberNeighbourCell2Ds);
       inline void Cell1DInsertNeighbourCell2D(const unsigned int& cell1DIndex,
@@ -466,8 +478,10 @@ namespace Gedim
                                 std::list<unsigned int>& updatedCell1DIds) const;
       void Cell1DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
 
+      inline void Cell1DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>&)
+      { return; }
       inline void Cell1DInitializeNeighbourCell3Ds(const unsigned int& ,
-                                                   const unsigned int& ) { }
+                                                   const unsigned int& ) { return; }
       inline void Cell1DInsertNeighbourCell3D(const unsigned int& ,
                                               const unsigned int& ,
                                               const unsigned int& )
@@ -485,9 +499,11 @@ namespace Gedim
       }
 
       unsigned int Cell1DAddDoubleProperty(const std::string& propertyId);
+      inline void Cell1DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                        const std::vector<unsigned int>& propertySizes);
       void Cell1DInitializeDoublePropertyValues(const unsigned int& cell1DIndex,
                                                 const unsigned int& propertyIndex,
-                                                const unsigned int& porpertySize);
+                                                const unsigned int& propertySize);
       inline void Cell1DInsertDoublePropertyValue(const unsigned int& cell1DIndex,
                                                   const unsigned int& propertyIndex,
                                                   const unsigned int& propertyValueIndex,
@@ -555,9 +571,11 @@ namespace Gedim
         _mesh.ActiveCell2D[cell2DIndex] = state;
       }
       inline void Cell2DsInitializeVertices(const unsigned int& numberCell2DVertices);
+      inline void Cell2DsInitializeVertices(const std::vector<unsigned int>& numberCell2DsVertices);
       void Cell2DInitializeVertices(const unsigned int& cell2DIndex,
                                     const unsigned int& numberCell2DVertices);
       inline void Cell2DsInitializeEdges(const unsigned int& numberCell2DEdges);
+      inline void Cell2DsInitializeEdges(const std::vector<unsigned int>& numberCell2DsEdges);
       void Cell2DInitializeEdges(const unsigned int& cell2DIndex,
                                  const unsigned int& numberCell2DEdges);
       inline void Cell2DInsertVertices(const unsigned int& cell2DIndex,
@@ -699,6 +717,7 @@ namespace Gedim
       bool Cell2DUpdatedCell2Ds(const unsigned int& cell2DIndex,
                                 std::list<unsigned int>& updatedCell2DIds) const;
 
+      inline void Cell2DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds);
       void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
                                             const unsigned int& numberNeighbourCell3Ds);
       inline void Cell2DInsertNeighbourCell3D(const unsigned int& cell2DIndex,
@@ -742,9 +761,11 @@ namespace Gedim
       }
       void Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell2DAddDoubleProperty(const std::string& propertyId);
+      inline void Cell2DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                        const std::vector<unsigned int>& propertySizes);
       void Cell2DInitializeDoublePropertyValues(const unsigned int& cell2DIndex,
                                                 const unsigned int& propertyIndex,
-                                                const unsigned int& porpertySize);
+                                                const unsigned int& propertySize);
       inline void Cell2DInsertDoublePropertyValue(const unsigned int& cell2DIndex,
                                                   const unsigned int& propertyIndex,
                                                   const unsigned int& propertyValueIndex,
@@ -980,9 +1001,11 @@ namespace Gedim
 
       void Cell3DInitializeDoubleProperties(const unsigned int& numberDoubleProperties);
       unsigned int Cell3DAddDoubleProperty(const std::string& propertyId);
+      inline void Cell3DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                        const std::vector<unsigned int>& propertySizes);
       void Cell3DInitializeDoublePropertyValues(const unsigned int& cell3DIndex,
                                                 const unsigned int& propertyIndex,
-                                                const unsigned int& porpertySize);
+                                                const unsigned int& propertySize);
       inline void Cell3DInsertDoublePropertyValue(const unsigned int& cell3DIndex,
                                                   const unsigned int& propertyIndex,
                                                   const unsigned int& propertyValueIndex,

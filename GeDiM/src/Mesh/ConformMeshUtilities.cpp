@@ -171,21 +171,22 @@ namespace Gedim
     conformedMesh.Cell1DAddDoubleProperty("marked");
     conformedMesh.Cell1DAddDoubleProperty("segment");
 
+    for (unsigned int p = 0; p < conformedMesh.Cell0DNumberDoubleProperties(); p++)
+      conformedMesh.Cell0DsInitializeDoublePropertyValues(p, std::vector<unsigned int>(conformedMesh.Cell0DTotalNumber(), 1));
+
     for (unsigned int c = 0; c < conformedMesh.Cell0DTotalNumber(); c++)
     {
       for (unsigned int p = 0; p < conformedMesh.Cell0DNumberDoubleProperties(); p++)
-      {
-        conformedMesh.Cell0DInitializeDoublePropertyValues(c, p, 1);
         conformedMesh.Cell0DInsertDoublePropertyValue(c, p, 0, 0.0);
-      }
     }
+
+    for (unsigned int p = 0; p < conformedMesh.Cell1DNumberDoubleProperties(); p++)
+      conformedMesh.Cell1DsInitializeDoublePropertyValues(p, std::vector<unsigned int>(conformedMesh.Cell1DTotalNumber(), 1));
+
     for (unsigned int e = 0; e < conformedMesh.Cell1DTotalNumber(); e++)
     {
       for (unsigned int p = 0; p < conformedMesh.Cell1DNumberDoubleProperties(); p++)
-      {
-        conformedMesh.Cell1DInitializeDoublePropertyValues(e, p, 1);
         conformedMesh.Cell1DInsertDoublePropertyValue(e, p, 0, 0.0);
-      }
     }
 
     for (unsigned int s = 0; s < segmentsConformMesh.size(); s++)

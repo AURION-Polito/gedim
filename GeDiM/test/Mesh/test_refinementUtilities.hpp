@@ -1253,6 +1253,104 @@ namespace GedimUnitTesting
     }
   }
 
+  TEST(TestRefinementUtilities, TestSplitCell1D)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance = 1.0e-6;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::RefinementUtilities refinementUtilities(geometryUtilities,
+                                                   meshUtilities);
+
+    Eigen::Matrix3d triangle3D;
+    triangle3D.row(0)<< 5.6613367583541731e+02, 5.6613363197072454e+02, 5.6613369569476731e+02;
+    triangle3D.row(1)<< 1.8946020258114748e+02, 1.8946008596008372e+02, 1.8946011343827706e+02;
+    triangle3D.row(2)<< 2.4715150696171321e+02, 2.4715156990258430e+02, 2.4715155370888877e+02;
+
+    Eigen::Matrix3d Q;
+    Q.row(0)<< -9.8964533885268602e-01,  1.4175019673791203e-01, 2.2560696175343498e-02;
+    Q.row(1)<< -1.1481367466553302e-01, -8.7610936339133005e-01, 4.6824160802713377e-01;
+    Q.row(2)<<  8.6138977222567956e-02,  4.6080284841003560e-01, 8.8331240877746520e-01;
+
+    Eigen::Vector3d t(9.4907725500000004e+02, 4.0053029600000002e+02, 1.2548303199999999e+02);
+
+    const Eigen::Matrix3d triangle2D = geometryUtilities.RotatePointsFrom3DTo2D(triangle3D,
+                                                                                Q.transpose(),
+                                                                                t);
+
+    const unsigned int originIndex = 0;
+    const unsigned int endIndex = 1;
+
+    const Eigen::Vector3d middlePoint3D = 0.5 * (triangle3D.col(originIndex) + triangle3D.col(endIndex));
+    const Eigen::Vector3d middlePoint2D = 0.5 * (triangle2D.col(originIndex) + triangle2D.col(endIndex));
+    const Eigen::Vector3d middlePoint3D2D = geometryUtilities.RotatePointsFrom3DTo2D(middlePoint3D,
+                                                                                     Q.transpose(),
+                                                                                     t);
+    const Eigen::Vector3d middlePoint2D3D = geometryUtilities.RotatePointsFrom2DTo3D(middlePoint3D2D,
+                                                                                     Q,
+                                                                                     t);
+
+
+    Eigen::Matrix3d newPolygon1_2D, newPolygon2_2D;
+    newPolygon1_2D.col(0)<< triangle2D.col(0);
+    newPolygon1_2D.col(1)<< middlePoint2D;
+    newPolygon1_2D.col(2)<< triangle2D.col(2);
+    newPolygon2_2D.col(0)<< middlePoint2D;
+    newPolygon2_2D.col(1)<< triangle2D.col(1);
+    newPolygon2_2D.col(2)<< triangle2D.col(2);
+
+    Eigen::Matrix3d newPolygon1_3D, newPolygon2_3D;
+    newPolygon1_3D.col(0)<< triangle3D.col(0);
+    newPolygon1_3D.col(1)<< middlePoint3D;
+    newPolygon1_3D.col(2)<< triangle3D.col(2);
+    newPolygon2_3D.col(0)<< middlePoint3D;
+    newPolygon2_3D.col(1)<< triangle3D.col(1);
+    newPolygon2_3D.col(2)<< triangle3D.col(2);
+
+    std::cout.precision(16);
+    std::cout<< scientific<< "middlePoint3D "<< middlePoint3D.transpose()<< std::endl;
+    std::cout<< scientific<< "middlePoint2D3D "<< middlePoint2D3D.transpose()<< std::endl;
+    std::cout<< scientific<< "Sub area1_2D "<< geometryUtilities.PolygonArea(newPolygon1_2D)<< " ";
+    std::cout<< scientific<< "Sub area2_2D "<< geometryUtilities.PolygonArea(newPolygon1_2D)<< std::endl;
+    std::cout<< scientific<< "Sub area1_3D "<< geometryUtilities.PolygonArea3D(newPolygon1_3D)<< " ";
+    std::cout<< scientific<< "Sub area2_3D "<< geometryUtilities.PolygonArea3D(newPolygon1_3D)<< std::endl;
+    std::cout<< scientific<< "Distance2D "<< geometryUtilities.PointDistances(triangle2D,
+                                                                              middlePoint2D).transpose()<< std::endl;
+    std::cout<< scientific<< "Distance3D2D "<< geometryUtilities.PointDistances(triangle2D,
+                                                                                middlePoint3D2D).transpose()<< std::endl;
+    std::cout<< scientific<< "Distance3D "<< geometryUtilities.PointDistances(triangle3D,
+                                                                              middlePoint3D).transpose()<< std::endl;
+
+
+    const string exportFolder = "./Export/TestRefinementUtilities/TestSplitCell1D";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolygon(triangle3D);
+      exporter.Export(exportFolder + "/triangle3D.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolygon(triangle2D);
+      exporter.Export(exportFolder + "/triangle2D.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoint(middlePoint2D);
+      exporter.Export(exportFolder + "/middlePoint2D.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoint(middlePoint3D);
+      exporter.Export(exportFolder + "/middlePoint3D.vtu");
+    }
+  }
+
   TEST(TestRefinementUtilities, TestCheckSplit)
   {
     string exportFolder = "./Export";

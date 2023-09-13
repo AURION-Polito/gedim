@@ -978,10 +978,13 @@ namespace Gedim
       }
     }
 
+    std::vector<unsigned int> cell2DsNumNeighbours3D(mesh.Cell2DTotalNumber());
+    for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
+      cell2DsNumNeighbours3D[c2D] = cell2DsNeighbours[c2D].size();
+
+    mesh.Cell2DsInitializeNeighbourCell3Ds(cell2DsNumNeighbours3D);
     for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
     {
-      mesh.Cell2DInitializeNeighbourCell3Ds(c2D, cell2DsNeighbours[c2D].size());
-
       unsigned int n = 0;
       for (const auto& cell3DIndex : cell2DsNeighbours[c2D])
         mesh.Cell2DInsertNeighbourCell3D(c2D,

@@ -22,6 +22,25 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename T>
+  void MeshMatricesDAO::InitializeNumberVector(std::vector<unsigned int>& numberElementVector,
+                                               std::vector<T>& elementVector,
+                                               const std::vector<unsigned int>& numberElements,
+                                               const T& elementInitialization)
+  {
+    const unsigned int numberElementSize = numberElements.size();
+    unsigned int totalSize = 0;
+    numberElementVector.resize(numberElementSize + 1, 0);
+    for (unsigned int e = 0; e < numberElementSize; e++)
+    {
+      totalSize += numberElements[e];
+      numberElementVector[e + 1] = numberElementVector[e] + numberElements[e];
+    }
+
+    elementVector.resize(totalSize,
+                         elementInitialization);
+  }
+  // ***************************************************************************
+  template<typename T>
   void MeshMatricesDAO::ResizeNumberVectorWithNewNumberElements(vector<unsigned int>& numberElementVector,
                                                                 vector<T>& elementVector,
                                                                 const unsigned int& numberElements,
@@ -313,6 +332,15 @@ namespace Gedim
     return false;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell0DsInitializeNeighbourCell1Ds(const std::vector<unsigned int>& numberNeighbourCell1Ds)
+  {
+    Output::Assert(numberNeighbourCell1Ds.size() == Cell0DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell0DNeighbourCell1D,
+                           _mesh.Cell0DNeighbourCell1Ds,
+                           numberNeighbourCell1Ds,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                          const unsigned int& numberNeighbourCell1Ds)
   {
@@ -324,6 +352,15 @@ namespace Gedim
                                             cell0DIndex,
                                             numberNeighbourCell1Ds,
                                             std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell0DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds)
+  {
+    Output::Assert(numberNeighbourCell2Ds.size() == Cell0DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell0DNeighbourCell2D,
+                           _mesh.Cell0DNeighbourCell2Ds,
+                           numberNeighbourCell2Ds,
+                           std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex, const unsigned int& numberNeighbourCell2Ds)
@@ -358,9 +395,21 @@ namespace Gedim
     return propertyIndex;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell0DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                              const std::vector<unsigned int>& propertySizes)
+  {
+    Output::Assert(propertyIndex < Cell0DNumberDoubleProperties());
+    Output::Assert(propertySizes.size() == Cell0DTotalNumber());
+
+    InitializeNumberVector(_mesh.Cell0DDoublePropertySizes[propertyIndex],
+                           _mesh.Cell0DDoublePropertyValues[propertyIndex],
+                           propertySizes,
+                           0.0);
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell0DInitializeDoublePropertyValues(const unsigned int& cell0DIndex,
                                                              const unsigned int& propertyIndex,
-                                                             const unsigned int& porpertySize)
+                                                             const unsigned int& propertySize)
   {
     Output::Assert(cell0DIndex < Cell0DTotalNumber());
     Output::Assert(propertyIndex < Cell0DNumberDoubleProperties());
@@ -369,7 +418,7 @@ namespace Gedim
                                             _mesh.Cell0DDoublePropertyValues[propertyIndex],
                                             _mesh.NumberCell0D,
                                             cell0DIndex,
-                                            porpertySize,
+                                            propertySize,
                                             0.0);
   }
   // ***************************************************************************
@@ -529,6 +578,15 @@ namespace Gedim
                                               std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds)
+  {
+    Output::Assert(numberNeighbourCell2Ds.size() == Cell1DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell1DNeighbourCell2D,
+                           _mesh.Cell1DNeighbourCell2Ds,
+                           numberNeighbourCell2Ds,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                                          const unsigned int& numberNeighbourCell2Ds)
   {
@@ -595,9 +653,21 @@ namespace Gedim
     return propertyIndex;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                              const std::vector<unsigned int>& propertySizes)
+  {
+    Output::Assert(propertyIndex < Cell1DNumberDoubleProperties());
+    Output::Assert(propertySizes.size() == Cell1DTotalNumber());
+
+    InitializeNumberVector(_mesh.Cell1DDoublePropertySizes[propertyIndex],
+                           _mesh.Cell1DDoublePropertyValues[propertyIndex],
+                           propertySizes,
+                           0.0);
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInitializeDoublePropertyValues(const unsigned int& cell1DIndex,
                                                              const unsigned int& propertyIndex,
-                                                             const unsigned int& porpertySize)
+                                                             const unsigned int& propertySize)
   {
     Output::Assert(cell1DIndex < Cell1DTotalNumber());
     Output::Assert(propertyIndex < Cell1DNumberDoubleProperties());
@@ -606,7 +676,7 @@ namespace Gedim
                                             _mesh.Cell1DDoublePropertyValues[propertyIndex],
                                             _mesh.NumberCell1D,
                                             cell1DIndex,
-                                            porpertySize,
+                                            propertySize,
                                             0.0);
   }
   // ***************************************************************************
@@ -742,6 +812,16 @@ namespace Gedim
                                               std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeVertices(const std::vector<unsigned int>& numberCell2DsVertices)
+  {
+    Gedim::Output::Assert(numberCell2DsVertices.size() ==
+                          _mesh.NumberCell2D);
+    InitializeNumberVector(_mesh.NumberCell2DVertices,
+                           _mesh.Cell2DVertices,
+                           numberCell2DsVertices,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeVertices(const unsigned int& cell2DIndex,
                                                  const unsigned int& numberCell2DVertices)
   {
@@ -760,6 +840,16 @@ namespace Gedim
                                               _mesh.NumberCell2D,
                                               numberCell2DEdges,
                                               std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeEdges(const std::vector<unsigned int>& numberCell2DsEdges)
+  {
+    Output::Assert(numberCell2DsEdges.size() ==
+                   Cell2DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell2DEdges,
+                           _mesh.Cell2DEdges,
+                           numberCell2DsEdges,
+                           std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeEdges(const unsigned int& cell2DIndex,
@@ -907,6 +997,15 @@ namespace Gedim
     return false;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds)
+  {
+    Output::Assert(numberNeighbourCell3Ds.size() == Cell2DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell2DNeighbourCell3D,
+                           _mesh.Cell2DNeighbourCell3Ds,
+                           numberNeighbourCell3Ds,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
                                                          const unsigned int& numberNeighbourCell3Ds)
   {
@@ -940,9 +1039,21 @@ namespace Gedim
     return propertyIndex;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                              const std::vector<unsigned int>& propertySizes)
+  {
+    Output::Assert(propertyIndex < Cell2DNumberDoubleProperties());
+    Output::Assert(propertySizes.size() == Cell2DTotalNumber());
+
+    InitializeNumberVector(_mesh.Cell2DDoublePropertySizes[propertyIndex],
+                           _mesh.Cell2DDoublePropertyValues[propertyIndex],
+                           propertySizes,
+                           0.0);
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeDoublePropertyValues(const unsigned int& cell2DIndex,
                                                              const unsigned int& propertyIndex,
-                                                             const unsigned int& porpertySize)
+                                                             const unsigned int& propertySize)
   {
     Output::Assert(cell2DIndex < Cell2DTotalNumber());
     Output::Assert(propertyIndex < Cell2DNumberDoubleProperties());
@@ -951,7 +1062,7 @@ namespace Gedim
                                             _mesh.Cell2DDoublePropertyValues[propertyIndex],
                                             _mesh.NumberCell2D,
                                             cell2DIndex,
-                                            porpertySize,
+                                            propertySize,
                                             0.0);
   }
   // ***************************************************************************
@@ -1219,9 +1330,21 @@ namespace Gedim
     return propertyIndex;
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell3DsInitializeDoublePropertyValues(const unsigned int& propertyIndex,
+                                                              const std::vector<unsigned int>& propertySizes)
+  {
+    Output::Assert(propertyIndex < Cell3DNumberDoubleProperties());
+    Output::Assert(propertySizes.size() == Cell3DTotalNumber());
+
+    InitializeNumberVector(_mesh.Cell3DDoublePropertySizes[propertyIndex],
+                           _mesh.Cell3DDoublePropertyValues[propertyIndex],
+                           propertySizes,
+                           0.0);
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell3DInitializeDoublePropertyValues(const unsigned int& cell3DIndex,
                                                              const unsigned int& propertyIndex,
-                                                             const unsigned int& porpertySize)
+                                                             const unsigned int& propertySize)
   {
     Output::Assert(cell3DIndex < Cell3DTotalNumber());
     Output::Assert(propertyIndex < Cell3DNumberDoubleProperties());
@@ -1230,7 +1353,7 @@ namespace Gedim
                                             _mesh.Cell3DDoublePropertyValues[propertyIndex],
                                             _mesh.NumberCell3D,
                                             cell3DIndex,
-                                            porpertySize,
+                                            propertySize,
                                             0.0);
   }
   // ***************************************************************************
