@@ -816,6 +816,8 @@ namespace Gedim
             propertyValueIndex];
       }
 
+      inline void Cell2DsInitializeSubDivision(const std::vector<unsigned int>& numberSubDivisions);
+
       void Cell2DInitializeSubDivision(const unsigned int& cell2DIndex,
                                        const unsigned int& numberSubDivision);
       inline void Cell2DInsertSubDivision(const unsigned int& cell2DIndex,

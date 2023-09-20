@@ -1066,6 +1066,16 @@ namespace Gedim
                                             0.0);
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell2DsInitializeSubDivision(const std::vector<unsigned int>& numberSubDivisions)
+  {
+    Output::Assert(numberSubDivisions.size() == Cell2DTotalNumber());
+
+    InitializeNumberVector(_mesh.NumberCell2DSubdivision,
+                           _mesh.Cell2DSubdivision,
+                           numberSubDivisions,
+                           static_cast<unsigned int>(0));
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeSubDivision(const unsigned int& cell2DIndex,
                                                     const unsigned int& numberSubDivision)
   {

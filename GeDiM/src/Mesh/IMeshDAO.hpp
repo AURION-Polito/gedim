@@ -760,6 +760,10 @@ namespace Gedim
                                                const unsigned int& propertyIndex,
                                                const unsigned int& propertyValueIndex) const = 0;
 
+      /// \brief Initialize the Cell2D subdivision number for each Cell2D
+      /// \param numberSubDivisions the number of sub-polygons for each Cell2D, size 1 x Cell2DTotalNumber()
+      /// \note each subdivision is a triangle, thus numberSubDivision shall be a multiple of 3
+      virtual void Cell2DsInitializeSubDivision(const std::vector<unsigned int>& numberSubDivisions) = 0;
       /// \brief Initialize the Cell2D subdivision number
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param numberSubDivision the number of sub-polygons of the Cell2D

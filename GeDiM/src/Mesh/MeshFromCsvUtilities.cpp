@@ -343,13 +343,17 @@ namespace Gedim
     if (numCell2Ds == 0)
       return;
 
+    std::vector<unsigned int> numCell2DSubdivisions(numCell2Ds);
+    for (unsigned int v = 0; v < numCell2Ds; v++)
+      numCell2DSubdivisions[v] = cell2DSubDivisions[v].SubDivision.size();
+
+    mesh.Cell2DsInitializeSubDivision(numCell2DSubdivisions);
     for (unsigned int v = 0; v < numCell2Ds; v++)
     {
       const MeshFromCsvUtilities::Cell2DSubDivision& cell2D = cell2DSubDivisions[v];
 
       const unsigned int numCell2DSubDivision = cell2D.SubDivision.size();
 
-      mesh.Cell2DInitializeSubDivision(v, numCell2DSubDivision);
       for (unsigned int n = 0; n < numCell2DSubDivision; n++)
         mesh.Cell2DInsertSubDivision(v, n, cell2D.SubDivision[n]);
     }
