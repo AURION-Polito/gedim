@@ -1092,11 +1092,11 @@ namespace GedimUnitTesting
 
   TEST(TestGeometryUtilities, TestPolygonTriangulation)
   {
+    std::string exportFolder = "./Export/TestPolygonTriangulation";
+    Gedim::Output::CreateFolder(exportFolder);
+
     try
     {
-      std::string exportFolder = "./Export/TestPolygonTriangulation";
-      Gedim::Output::CreateFolder(exportFolder);
-
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -1141,6 +1141,23 @@ namespace GedimUnitTesting
         polygonVertices.col(4)<< 0.0, 1.0, 0.0;
 
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices), vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
+      }
+
+      // check lshape triangulation
+      {
+        Eigen::MatrixXd polygonVertices(3, 8);
+        polygonVertices.row(0)<< 0.0000000000000000e+00, -1.5550727099400418e-18, -7.5281251671799322e-18, 8.5741657103499923e-03,  8.5741657103499975e-03,  5.0167546397709983e-02,  5.0167546397709983e-02,  8.5741657103499992e-03;
+        polygonVertices.row(1)<< 0.0000000000000000e+00,  7.0034248770199977e-03,  3.3903661697709989e-02, 3.3903661697709989e-02,  7.0034248770199994e-03,  7.0034248770200090e-03,  1.1139433019937694e-17,  1.9038472377164164e-18;
+        polygonVertices.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(polygonVertices);
+            exporter.Export(exportFolder + "/LShape.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices),
+                  vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
       }
     }
     catch (const exception& exception)
