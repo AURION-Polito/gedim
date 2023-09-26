@@ -1187,6 +1187,36 @@ namespace Gedim
                                     _mesh.NumberCell3D);
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell3DsInitializeVertices(const std::vector<unsigned int>& numberCell3DsVertices)
+  {
+    Gedim::Output::Assert(numberCell3DsVertices.size() ==
+                          _mesh.NumberCell3D);
+    InitializeNumberVector(_mesh.NumberCell3DVertices,
+                           _mesh.Cell3DVertices,
+                           numberCell3DsVertices,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell3DsInitializeEdges(const std::vector<unsigned int>& numberCell3DsEdges)
+  {
+    Gedim::Output::Assert(numberCell3DsEdges.size() ==
+                          _mesh.NumberCell3D);
+    InitializeNumberVector(_mesh.NumberCell3DEdges,
+                           _mesh.Cell3DEdges,
+                           numberCell3DsEdges,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell3DsInitializeFaces(const std::vector<unsigned int>& numberCell3DsFaces)
+  {
+    Gedim::Output::Assert(numberCell3DsFaces.size() ==
+                          _mesh.NumberCell3D);
+    InitializeNumberVector(_mesh.NumberCell3DFaces,
+                           _mesh.Cell3DFaces,
+                           numberCell3DsFaces,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell3DInitializeVertices(const unsigned int& cell3DIndex,
                                                  const unsigned int& numberCell3DVertices)
   {

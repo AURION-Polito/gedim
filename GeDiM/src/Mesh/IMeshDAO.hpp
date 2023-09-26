@@ -803,16 +803,25 @@ namespace Gedim
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \note the cell3D is removed and no integrity check in the mesh are performed
       virtual void Cell3DRemove(const unsigned int& cell3DIndex) = 0;
+      /// \brief Initialize the Cell3Ds vertices number
+      /// \param numberCell3DsVertices the number of vertices of each Cell3D
+      virtual void Cell3DsInitializeVertices(const std::vector<unsigned int>& numberCell3DsVertices) = 0;
       /// \brief Initialize the Cell3D vertices  number
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param numberCell3DVertices the number of vertices of Cell3D
       virtual void Cell3DInitializeVertices(const unsigned int& cell3DIndex,
                                             const unsigned int& numberCell3DVertices) = 0;
+      /// \brief Initialize the Cell3Ds edges number
+      /// \param numberCell3DsEdges the number of edges of each Cell3D
+      virtual void Cell3DsInitializeEdges(const std::vector<unsigned int>& numberCell3DsEdges) = 0;
       /// \brief Initialize the Cell3D edges number
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param numberCell3DEdges the number of edges of Cell3D
       virtual void Cell3DInitializeEdges(const unsigned int& cell3DIndex,
                                          const unsigned int& numberCell3DEdges) = 0;
+      /// \brief Initialize the Cell3Ds faces number
+      /// \param numberCell3DsFaces the number of faces of each Cell3D
+      virtual void Cell3DsInitializeFaces(const std::vector<unsigned int>& numberCell3DsFaces) = 0;
       /// \brief Initialize the Cell3D faces number
       /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
       /// \param numberCell3DFaces the number of faces of Cell3D

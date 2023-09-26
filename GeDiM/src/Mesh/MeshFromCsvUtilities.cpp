@@ -175,7 +175,23 @@ namespace Gedim
     if (numCell3Ds == 0)
       return;
 
+    std::vector<unsigned int> numberVertices(numCell3Ds);
+    std::vector<unsigned int> numberEdges(numCell3Ds);
+    std::vector<unsigned int> numberFaces(numCell3Ds);
+    for (unsigned int c = 0; c < numCell3Ds; c++)
+    {
+      const Cell3D& cell3D = cell3Ds[c];
+
+      numberVertices[c] = cell3D.Vertices.size();
+      numberEdges[c] = cell3D.Edges.size();
+      numberFaces[c] = cell3D.Faces.size();
+    }
+
     mesh.Cell3DsInitialize(numCell3Ds);
+    mesh.Cell3DsInitializeVertices(numberVertices);
+    mesh.Cell3DsInitializeEdges(numberEdges);
+    mesh.Cell3DsInitializeFaces(numberFaces);
+
     for (unsigned int c = 0; c < numCell3Ds; c++)
     {
       const Cell3D& cell3D = cell3Ds[c];
@@ -187,15 +203,12 @@ namespace Gedim
       const unsigned int numCellEdges = cell3D.Edges.size();
       const unsigned int numCellFaces = cell3D.Faces.size();
 
-      mesh.Cell3DInitializeVertices(c, numCellVertices);
       for (unsigned int v = 0; v < numCellVertices; v++)
         mesh.Cell3DInsertVertex(c, v, cell3D.Vertices[v]);
 
-      mesh.Cell3DInitializeEdges(c, numCellEdges);
       for (unsigned int e = 0; e < numCellEdges; e++)
         mesh.Cell3DInsertEdge(c, e, cell3D.Edges[e]);
 
-      mesh.Cell3DInitializeFaces(c, numCellFaces);
       for (unsigned int f = 0; f < numCellFaces; f++)
         mesh.Cell3DInsertFace(c, f, cell3D.Faces[f]);
     }

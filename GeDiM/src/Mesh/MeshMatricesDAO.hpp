@@ -860,6 +860,9 @@ namespace Gedim
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
         _mesh.ActiveCell3D[cell3DIndex] = state;
       }
+      inline void Cell3DsInitializeVertices(const std::vector<unsigned int>& numberCell3DsVertices);
+      inline void Cell3DsInitializeEdges(const std::vector<unsigned int>& numberCell3DsEdges);
+      inline void Cell3DsInitializeFaces(const std::vector<unsigned int>& numberCell3DsFaces);
       void Cell3DInitializeVertices(const unsigned int& cell3DIndex,
                                     const unsigned int& numberCell3DVertices);
       void Cell3DInitializeEdges(const unsigned int& cell3DIndex,

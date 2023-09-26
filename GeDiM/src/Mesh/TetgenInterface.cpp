@@ -278,15 +278,16 @@ namespace Gedim
     vector<unsigned int> vertices(3);
     vector<unsigned int> edgeEndPoints(2);
 
-    unsigned long estimatedValue = 2* numberOfPointsMesh * numberOfPointsMesh + 2*numberOfPointsMesh + 1;
+    mesh.Cell2DsInitializeVertices(3);
+    mesh.Cell2DsInitializeEdges(3);
+
+    unsigned long estimatedValue = 2 * numberOfPointsMesh * numberOfPointsMesh + 2*numberOfPointsMesh + 1;
     SparseMatrix<int> connectivityPointsFaces(numberOfPointsMesh,estimatedValue);
     vector< Triplet<int, unsigned long> > tripletsFaces;
     tripletsFaces.reserve(numberOfFacesMesh);
     for(unsigned int f = 0; f < numberOfFacesMesh; f++)
     {
       const unsigned int numCell2DVertices = 3;
-      mesh.Cell2DInitializeVertices(f, numCell2DVertices);
-      mesh.Cell2DInitializeEdges(f, numCell2DVertices);
 
       for (unsigned int v = 0; v < numCell2DVertices; v++)
       {
@@ -345,16 +346,14 @@ namespace Gedim
     connectivityPointsFaces.makeCompressed();
 
     /// <li> Set Cells
+    mesh.Cell3DsInitializeVertices(std::vector<unsigned int>(numberOfCellsMesh, 4));
+    mesh.Cell3DsInitializeEdges(std::vector<unsigned int>(numberOfCellsMesh, 6));
+    mesh.Cell3DsInitializeFaces(std::vector<unsigned int>(numberOfCellsMesh, 4));
     vector<unsigned int> faceVertices(3);
     for (unsigned int c = 0; c < numberOfCellsMesh; c++)
     {
       const unsigned int numVertices = 4;
-      const unsigned int numEdges = 6;
       const unsigned int numFaces = 4;
-
-      mesh.Cell3DInitializeVertices(c, numVertices);
-      mesh.Cell3DInitializeEdges(c, numEdges);
-      mesh.Cell3DInitializeFaces(c, numFaces);
 
       for (unsigned int v = 0; v < numVertices; v++)
         mesh.Cell3DInsertVertex(c, v, tetgenOutput.tetrahedronlist[tetgenOutput.numberofcorners * c + v]);
