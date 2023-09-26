@@ -91,10 +91,11 @@ namespace Gedim
     return !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea3D(polygon_vertices));
   }
   // ***************************************************************************
-  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int& cell2DIndex,
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
                                                                                            const unsigned int cell2DNumVertices,
-                                                                                           const unsigned int& fromVertex,
-                                                                                           const unsigned int& toVertex,
+                                                                                           const unsigned int fromVertex,
+                                                                                           const unsigned int toVertex,
+                                                                                           const Eigen::MatrixXd& cell2DVertices,
                                                                                            IMeshDAO& mesh) const
   {
     SplitPolygon_Result result;
@@ -191,11 +192,12 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexFrom(const unsigned int& cell2DIndex,
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexFrom(const unsigned int cell2DIndex,
                                                                                            const unsigned int cell2DNumVertices,
-                                                                                           const unsigned int& fromEdge,
-                                                                                           const unsigned int& toVertex,
-                                                                                           const unsigned int& fromNewCell0DIndex,
+                                                                                           const unsigned int fromEdge,
+                                                                                           const unsigned int toVertex,
+                                                                                           const Eigen::MatrixXd& cell2DVertices,
+                                                                                           const unsigned int fromNewCell0DIndex,
                                                                                            const std::vector<unsigned int>& fromSplitCell1DsIndex,
                                                                                            const bool& fromEdgeDirection,
                                                                                            IMeshDAO& mesh) const
@@ -304,11 +306,12 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexTo(const unsigned int& cell2DIndex,
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertexTo(const unsigned int cell2DIndex,
                                                                                          const unsigned int cell2DNumVertices,
-                                                                                         const unsigned int& fromVertex,
-                                                                                         const unsigned int& toEdge,
-                                                                                         const unsigned int& toNewCell0DIndex,
+                                                                                         const unsigned int fromVertex,
+                                                                                         const unsigned int toEdge,
+                                                                                         const Eigen::MatrixXd& cell2DVertices,
+                                                                                         const unsigned int toNewCell0DIndex,
                                                                                          const std::vector<unsigned int>& toSplitCell1DsIndex,
                                                                                          const bool& toEdgeDirection,
                                                                                          IMeshDAO& mesh) const
@@ -415,12 +418,13 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertices(const unsigned int& cell2DIndex,
+  RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVertices(const unsigned int cell2DIndex,
                                                                                          const unsigned int cell2DNumVertices,
-                                                                                         const unsigned int& fromEdge,
-                                                                                         const unsigned int& toEdge,
-                                                                                         const unsigned int& fromNewCell0DIndex,
-                                                                                         const unsigned int& toNewCell0DIndex,
+                                                                                         const unsigned int fromEdge,
+                                                                                         const unsigned int toEdge,
+                                                                                         const Eigen::MatrixXd& cell2DVertices,
+                                                                                         const unsigned int fromNewCell0DIndex,
+                                                                                         const unsigned int toNewCell0DIndex,
                                                                                          const std::vector<unsigned int>& fromSplitCell1DsIndex,
                                                                                          const std::vector<unsigned int>& toSplitCell1DsIndex,
                                                                                          const bool& fromEdgeDirection,
@@ -874,6 +878,7 @@ namespace Gedim
   }
   // ***************************************************************************
   RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCell_ByEdge(const unsigned int& cell2DIndex,
+                                                                                           const Eigen::MatrixXd& cell2DVertices,
                                                                                            const unsigned int& edgeIndex,
                                                                                            const unsigned int& oppositeVertexIndex,
                                                                                            const std::vector<bool>& cell2DEdgesDirection,
@@ -902,6 +907,7 @@ namespace Gedim
                                                                      3,
                                                                      oppositeVertexIndex,
                                                                      edgeIndex,
+                                                                     cell2DVertices,
                                                                      splitCell1D.NewCell0DIndex,
                                                                      splitCell1D.NewCell1DsIndex,
                                                                      cell1DDirection,
@@ -954,6 +960,7 @@ namespace Gedim
                                                                 const unsigned int& newCell0DIndex,
                                                                 const std::vector<unsigned int>& splitCell1DsIndex,
                                                                 const bool& cell2DEdgeDirection,
+                                                                const std::vector<Eigen::MatrixXd>& cell2DsVertices,
                                                                 IMeshDAO& mesh) const
   {
     // update neighbour cells
@@ -977,6 +984,7 @@ namespace Gedim
                                3,
                                neighOppositeVertexIndex,
                                neighEdgeIndex,
+                               cell2DsVertices.at(neighCell2DIndex),
                                newCell0DIndex,
                                splitCell1DsIndex,
                                !cell2DEdgeDirection,
@@ -1165,6 +1173,7 @@ namespace Gedim
                                                                          cell2DNumVertices,
                                                                          fromVertex,
                                                                          toVertex,
+                                                                         cell2DVertices,
                                                                          mesh);
 
       switch (splitResult.Type)
@@ -1237,6 +1246,7 @@ namespace Gedim
                                                                          cell2DNumVertices,
                                                                          edgeIntersectionOne.Index,
                                                                          toVertex,
+                                                                         cell2DVertices,
                                                                          splitCell1DOne.NewCell0DIndex,
                                                                          splitCell1DOne.NewCell1DsIndex,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
@@ -1309,6 +1319,7 @@ namespace Gedim
                                                                        cell2DNumVertices,
                                                                        fromVertex,
                                                                        edgeIntersectionTwo.Index,
+                                                                       cell2DVertices,
                                                                        splitCell1DTwo.NewCell0DIndex,
                                                                        splitCell1DTwo.NewCell1DsIndex,
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
@@ -1360,6 +1371,7 @@ namespace Gedim
                                                                        cell2DNumVertices,
                                                                        edgeIntersectionOne.Index,
                                                                        edgeIntersectionTwo.Index,
+                                                                       cell2DVertices,
                                                                        splitCell1DOne.NewCell0DIndex,
                                                                        splitCell1DTwo.NewCell0DIndex,
                                                                        splitCell1DOne.NewCell1DsIndex,

@@ -49,6 +49,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(1, direction.OppositeVertexIndex);
 
     const Gedim::RefinementUtilities::RefinePolygon_Result result = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+                                                                                                                  meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
                                                                                                                   direction.MaxEdgeIndex,
                                                                                                                   direction.OppositeVertexIndex,
                                                                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
@@ -84,6 +85,7 @@ namespace GedimUnitTesting
                                                               result.NewCell1DsIndex[e].NewCell0DIndex,
                                                               result.NewCell1DsIndex[e].NewCell1DsIndex,
                                                               meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(result.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                              meshGeometricData.Cell2DsVertices,
                                                               meshDAO);
     }
 
@@ -144,11 +146,24 @@ namespace GedimUnitTesting
 
       for (unsigned int c = 0; c < cell2DsToRefineIndex.size(); c++)
       {
-        const unsigned int cell2DToRefineIndex = cell2DsToRefineIndex[c];
+        meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                  meshDAO);
+
+        std::list<unsigned int> updatedCell2Ds;
+        meshDAO.Cell2DUpdatedCell2Ds(cell2DsToRefineIndex[c],
+                                     updatedCell2Ds);
+
+        if (updatedCell2Ds.size() > 1)
+          continue;
+
+        const unsigned int cell2DToRefineIndex = updatedCell2Ds.size() == 0 ?
+                                                   cell2DsToRefineIndex[c] :
+                                                   updatedCell2Ds.front();
 
         const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+                                                                                                                            meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
                                                                                                                             direction.MaxEdgeIndex,
                                                                                                                             direction.OppositeVertexIndex,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
@@ -166,6 +181,7 @@ namespace GedimUnitTesting
                                                                   refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                                   refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                  meshGeometricData.Cell2DsVertices,
                                                                   meshDAO);
         }
       }
