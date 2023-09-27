@@ -702,6 +702,25 @@ namespace Gedim
           result.Cell3DsFaces2DVertices[c][f].block(0, 1, 3, result.Cell3DsFaces2DVertices[c][f].cols() - 1).rowwise().reverseInPlace();
       }
 
+      if (c == 3374)
+      {
+        std::cout.precision(16);
+        std::cout<< "Cell "<< c<< std::endl;
+        std::cout<< scientific<< result.Cell3DsFaces2DVertices[c][2]<< std::endl;
+
+        {
+          Gedim::VTKUtilities exporter;
+          exporter.AddPolygon(result.Cell3DsFaces3DVertices[c][2]);
+          exporter.Export("./Test3D.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+          exporter.AddPolygon(result.Cell3DsFaces2DVertices[c][2]);
+          exporter.Export("./Test2D.vtu");
+        }
+      }
+
       const vector<vector<unsigned int>> polyhedronFaceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(polyhedron.Faces,
                                                                                                                                     result.Cell3DsFaces2DVertices[c]);
 

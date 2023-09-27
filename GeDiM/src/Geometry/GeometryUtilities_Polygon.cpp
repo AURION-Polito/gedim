@@ -298,6 +298,28 @@ namespace Gedim
                                PolygonTypes::Generic_Concave;
   }
   // ***************************************************************************
+  GeometryUtilities::PolygonOrientations GeometryUtilities::PolygonOrientation(const Eigen::MatrixXd& polygonVertices)
+  {
+    const std::vector<unsigned int> unalignedPoints = UnalignedPoints(polygonVertices,
+                                                                3);
+    if (unalignedPoints.size() < 3)
+      throw runtime_error("Unknown polygon with few vertices");
+
+    const Eigen::Vector3d a = polygonVertices.col(unalignedPoints[0]);
+    const Eigen::Vector3d b = polygonVertices.col(unalignedPoints[1]);
+    const Eigen::Vector3d c = polygonVertices.col(unalignedPoints[2]);
+
+    const double orientation = (b.x() * c.y() + a.x() * b.y() + a.y() * c.x()) -
+                               (b.x() * a.y() + c.x() * b.y() + c.y() * a.x());
+
+    if (IsValue1DPositive(orientation))
+      return PolygonOrientations::CounterClockwise;
+    else if (IsValue1DNegative(orientation))
+      return PolygonOrientations::Clockwise;
+
+    throw runtime_error("Polygon orientation not detected");
+  }
+  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::PolygonTriangulationByFirstVertex(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);

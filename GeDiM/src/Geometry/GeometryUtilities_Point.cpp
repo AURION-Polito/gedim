@@ -512,7 +512,8 @@ namespace Gedim
     return aligned;
   }
   // ***************************************************************************
-  vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd& points) const
+  vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd& points,
+                                                          const unsigned int numDesiredUnalignedPoints) const
   {
     Output::Assert(points.rows() == 3 && points.cols() > 1);
     const unsigned int& numPoints = points.cols();
@@ -532,6 +533,10 @@ namespace Gedim
                           segmentEnd,
                           nextPoint))
         unalignedPoints.push_back(p);
+
+      if (numDesiredUnalignedPoints > 0 &&
+          unalignedPoints.size() == numDesiredUnalignedPoints)
+        break;
     }
 
     return std::vector<unsigned int>(unalignedPoints.begin(), unalignedPoints.end());
