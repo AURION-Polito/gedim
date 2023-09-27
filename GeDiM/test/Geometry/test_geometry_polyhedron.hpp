@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
+#include <numeric>
 
 #include "GeometryUtilities.hpp"
 #include "VTKUtilities.hpp"
@@ -320,7 +321,7 @@ namespace GedimUnitTesting
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
         const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
-        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces,
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces.size(),
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                                 faceTriangulations);
@@ -403,7 +404,7 @@ namespace GedimUnitTesting
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
         const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
-        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces,
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces.size(),
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                                 faceTriangulations);
@@ -486,7 +487,7 @@ namespace GedimUnitTesting
                                                                                                        faceTranslations,
                                                                                                        faceRotationMatrices);
         const vector<Eigen::Vector3d> face2DCentroid = geometryUtilities.PolyhedronFaceBarycenter(face2DVertices);
-        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces,
+        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(tetraFaces.size(),
                                                                                                                                       face2DVertices);
         const std::vector<std::vector<Eigen::Matrix3d>> faces3DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                                 faceTriangulations);
@@ -583,15 +584,35 @@ namespace GedimUnitTesting
                                                                                                       faceTranslations,
                                                                                                       faceRotationMatrices);
 
+        std::vector<Eigen::MatrixXd> face2DVerticesCCW(numFaces);
+        std::vector<std::vector<unsigned int>> face2DsCCW(numFaces);
+
         for (unsigned int f = 0; f < numFaces; f++)
         {
-          if (geometryUtilities.IsValue1DNegative(faceRotationMatrices[f].determinant()))
-            face2DVertices[f].block(0, 1, 3, face2DVertices[f].cols() - 1).rowwise().reverseInPlace();
+          if (geometryUtilities.PolygonOrientation(face2DVertices[f]) ==
+              Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
+          {
+            face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(face2DVertices[f].cols());
+            face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(face2DVertices[f],
+                                                                   face2DsCCW[f]);
+          }
+          else
+          {
+            face2DVerticesCCW[f] = face2DVertices[f];
+
+            face2DsCCW[f].resize(face2DVertices[f].cols());
+            std::iota(face2DsCCW[f].begin(), face2DsCCW[f].end(), 0);
+          }
         }
 
 
-        const std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(concave.Faces,
-                                                                                                                                      face2DVertices);
+        std::vector<std::vector<unsigned int>> faceTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(numFaces,
+                                                                                                                                face2DVerticesCCW);
+        for (unsigned int f = 0; f < numFaces; f++)
+        {
+          for (unsigned int nt = 0; nt < faceTriangulations[f].size(); nt++)
+            faceTriangulations[f][nt] = face2DsCCW[f][faceTriangulations[f][nt]];
+        }
         const std::vector<std::vector<Eigen::Matrix3d>> facesTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(faceVertices,
                                                                                                                                               faceTriangulations);
 

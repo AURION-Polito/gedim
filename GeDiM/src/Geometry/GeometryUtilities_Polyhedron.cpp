@@ -663,11 +663,11 @@ namespace Gedim
     return polyhedronFacesTriangulations;
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int> > GeometryUtilities::PolyhedronFaceTriangulationsByEarClipping(const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+  std::vector<std::vector<unsigned int> > GeometryUtilities::PolyhedronFaceTriangulationsByEarClipping(const unsigned int numPolyhedronFaces,
                                                                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaces2DVertices) const
   {
-    vector<vector<unsigned int>> polyhedronFacesTriangulations(polyhedronFaces.size());
-    for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
+    vector<vector<unsigned int>> polyhedronFacesTriangulations(numPolyhedronFaces);
+    for (unsigned int f = 0; f < numPolyhedronFaces; f++)
       polyhedronFacesTriangulations[f] = PolygonTriangulationByEarClipping(polyhedronFaces2DVertices[f]);
 
     return polyhedronFacesTriangulations;

@@ -947,9 +947,9 @@ namespace GedimUnitTesting
     }
   }
 
-  TEST(TestGeometryUtilities, TestPolygonType)
+  TEST(TestGeometryUtilities, TestPolygonOrientation)
   {
-    std::string exportFolder = "./Export/TestPolygonType";
+    std::string exportFolder = "./Export/TestPolygonOrientation";
     Gedim::Output::CreateFolder(exportFolder);
 
     // check lshape triangulation
@@ -957,6 +957,18 @@ namespace GedimUnitTesting
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
       geometryUtilitiesConfig.Tolerance = 1.0e-6;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      Eigen::MatrixXd polygonVertices3D(3, 8);
+      polygonVertices3D.row(0)<< -1.0000000000000000e-14, -1.0000000000000000e-14, -1.0000000000000000e-14,  7.0034248770099996e-03,  7.0034248770099996e-03,  3.3903661697699997e-02,  3.3903661697699997e-02,  7.0034248770099996e-03;
+      polygonVertices3D.row(1)<<  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01,  5.3286608315399997e-01;
+      polygonVertices3D.row(2)<< -1.0000000000000000e-14,  8.5741657103400003e-03,  5.0167546397699998e-02,  5.0167546397699998e-02,  8.5741657103400003e-03,  8.5741657103400003e-03, -1.0000000000000000e-14, -1.0000000000000000e-14;
+
+      Eigen::Matrix3d Q;
+      Q.row(0)<< -2.2204460492503131e-16,  9.9999999999999978e-01,  2.8081963307813881e-20;
+      Q.row(1)<< -9.7346332126342270e-20,  2.8081963307152385e-20, -1.0000000000000000e+00;
+      Q.row(2)<<  9.9999999999999978e-01,  2.2204460492503131e-16, -9.7346332126381186e-20;
+
+      const Eigen::Vector3d t(-1.0000000000000000e-14, 5.3286608315399997e-01, -1.0000000000000000e-14);
 
       Eigen::MatrixXd polygonVertices(3, 8);
       polygonVertices.row(0)<< 0.0000000000000000e+00, -1.5550727099400418e-18, -7.5281251671799322e-18, 8.5741657103499923e-03,  8.5741657103499975e-03,  5.0167546397709983e-02,  5.0167546397709983e-02,  8.5741657103499992e-03;
@@ -972,8 +984,10 @@ namespace GedimUnitTesting
       ASSERT_EQ(Gedim::GeometryUtilities::PolygonOrientations::Clockwise,
                 geometryUtilities.PolygonOrientation(polygonVertices));
 
-      const Eigen::MatrixXd newPolygonVertices = geometryUtilities.ChangePolygonOrientation(polygonVertices);
+      const std::vector<unsigned int> newOrientation = geometryUtilities.ChangePolygonOrientation(polygonVertices.cols());
 
+      const Eigen::MatrixXd newPolygonVertices = geometryUtilities.ExtractPoints(polygonVertices,
+                                                                                 newOrientation);
       {
         Gedim::VTKUtilities exporter;
         exporter.AddPolygon(newPolygonVertices);
@@ -982,6 +996,63 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise,
                 geometryUtilities.PolygonOrientation(newPolygonVertices));
+
+      const Eigen::MatrixXd clock_3DVertices = geometryUtilities.RotatePointsFrom2DTo3D(polygonVertices,
+                                                                                        Q,
+                                                                                        t);
+      const Eigen::MatrixXd counter_3DVertices = geometryUtilities.RotatePointsFrom2DTo3D(newPolygonVertices,
+                                                                                          Q,
+                                                                                          t);
+
+      Eigen::MatrixXd points(3, 2);
+      points.col(0)<< polygonVertices3D.col(4) + 0.25 * (polygonVertices3D.col(5) - polygonVertices3D.col(4));
+      points.col(1)<< polygonVertices3D.col(4) + 0.75 * (polygonVertices3D.col(5) - polygonVertices3D.col(4));
+      Eigen::MatrixXd points2D_clock(3, 2);
+      points2D_clock.col(0)<< polygonVertices.col(4) + 0.25 * (polygonVertices.col(3) - polygonVertices.col(4));
+      points2D_clock.col(1)<< polygonVertices.col(4) + 0.75 * (polygonVertices.col(3) - polygonVertices.col(4));
+      Eigen::MatrixXd points2D_counter(3, 2);
+      points2D_counter.col(0)<< newPolygonVertices.col(4) + 0.25 * (newPolygonVertices.col(5) - newPolygonVertices.col(4));
+      points2D_counter.col(1)<< newPolygonVertices.col(4) + 0.75 * (newPolygonVertices.col(5) - newPolygonVertices.col(4));
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPolygon(polygonVertices3D);
+        exporter.Export(exportFolder + "/LShape3D.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPolygon(counter_3DVertices);
+        exporter.Export(exportFolder + "/LShape3D_counterclockwise.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoints(points);
+        exporter.Export(exportFolder + "/barycenter3D.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoints(geometryUtilities.RotatePointsFrom2DTo3D(points2D_clock,
+                                                                    Q,
+                                                                    t));
+        exporter.Export(exportFolder + "/barycenter3D_clockwise.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoints(geometryUtilities.RotatePointsFrom2DTo3D(points2D_counter,
+                                                                    Q,
+                                                                    t));
+        exporter.Export(exportFolder + "/barycenter3D_counterclockwise.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPolygon(clock_3DVertices);
+        exporter.Export(exportFolder + "/LShape3D_clockwise.vtu");
+      }
     }
   }
 
@@ -1187,10 +1258,15 @@ namespace GedimUnitTesting
         geometryUtilitiesConfig.Tolerance = 1.0e-6;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-        Eigen::MatrixXd polygonVertices(3, 8);
-        polygonVertices.row(0)<< 0.0000000000000000e+00, -1.5550727099400418e-18, -7.5281251671799322e-18, 8.5741657103499923e-03,  8.5741657103499975e-03,  5.0167546397709983e-02,  5.0167546397709983e-02,  8.5741657103499992e-03;
-        polygonVertices.row(1)<< 0.0000000000000000e+00,  7.0034248770199977e-03,  3.3903661697709989e-02, 3.3903661697709989e-02,  7.0034248770199994e-03,  7.0034248770200090e-03,  1.1139433019937694e-17,  1.9038472377164164e-18;
-        polygonVertices.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+        Eigen::MatrixXd polygonVertices_clock(3, 8);
+        polygonVertices_clock.row(0)<< 0.0000000000000000e+00, -1.5550727099400418e-18, -7.5281251671799322e-18, 8.5741657103499923e-03,  8.5741657103499975e-03,  5.0167546397709983e-02,  5.0167546397709983e-02,  8.5741657103499992e-03;
+        polygonVertices_clock.row(1)<< 0.0000000000000000e+00,  7.0034248770199977e-03,  3.3903661697709989e-02, 3.3903661697709989e-02,  7.0034248770199994e-03,  7.0034248770200090e-03,  1.1139433019937694e-17,  1.9038472377164164e-18;
+        polygonVertices_clock.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        const std::vector<unsigned int> newOrientation = geometryUtilities.ChangePolygonOrientation(polygonVertices_clock.cols());
+
+        const Eigen::MatrixXd polygonVertices = geometryUtilities.ExtractPoints(polygonVertices_clock,
+                                                                                newOrientation);
 
         {
           Gedim::VTKUtilities exporter;
@@ -1198,9 +1274,8 @@ namespace GedimUnitTesting
           exporter.Export(exportFolder + "/LShape.vtu");
         }
 
-        throw runtime_error("Vertices clock-wise");
         ASSERT_EQ(geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices),
-                  vector<unsigned int>({ 0, 1, 4, 1, 2, 4, 2, 3, 4 }));
+                  vector<unsigned int>({ 2, 3, 0, 3, 4, 0, 0, 4, 6, 4, 5, 6 }));
       }
     }
     catch (const exception& exception)

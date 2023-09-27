@@ -1642,15 +1642,21 @@ namespace Gedim
       PolygonTypes PolygonType(const unsigned int& numPolygonVertices,
                                const bool& isPolygonConvex) const;
 
-      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
       /// \return the polygon 2D orientation
       /// \note works only in 2D-plane
       PolygonOrientations PolygonOrientation(const Eigen::MatrixXd& polygonVertices) const;
 
-      /// \param polygonVertices the polygon vertices, size 3 x numVertices
-      /// \return the new polygon vertices oriented in the opposite direction
-      inline Eigen::MatrixXd ChangePolygonOrientation(const Eigen::MatrixXd& polygonVertices) const
-      { return polygonVertices.block(0, 1, 3, polygonVertices.cols() - 1).rowwise().reverse(); }
+      /// \param numPolygonVertices the number of polygon vertices
+      /// \return the new polygon vertices indices oriented in the opposite direction
+      inline std::vector<unsigned int> ChangePolygonOrientation(const unsigned int numPolygonVertices) const
+      {
+        std::vector<unsigned int> newVertices(numPolygonVertices);
+        newVertices[0] = 0;
+        for (unsigned int i = 1; i < numPolygonVertices; i++)
+          newVertices[i] = numPolygonVertices - i;
+        return newVertices;
+      }
 
       /// \brief Compute the rotation matrix of a plane from 2D to 3D
       /// \param planeNormal the normalized normal of the plane
@@ -2052,10 +2058,10 @@ namespace Gedim
                                                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
       /// \brief Polyhedron Face Triangulations by ear clipping of each face
-      /// \param polyhedronFaces the polyhedron faces
+      /// \param numPolyhedronFaces the number of polyhedron faces
       /// \param polyhedronFaceVertices the polyhedron faces vertices
       /// \return for each face the triangulation indices by first vertex, size 1xnumFaces x (3xnumTriangles)
-      std::vector<std::vector<unsigned int>> PolyhedronFaceTriangulationsByEarClipping(const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+      std::vector<std::vector<unsigned int>> PolyhedronFaceTriangulationsByEarClipping(const unsigned int numPolyhedronFaces,
                                                                                        const std::vector<Eigen::MatrixXd>& polyhedronFaces2DVertices) const;
 
       std::vector<std::vector<Eigen::Matrix3d>> PolyhedronFaceExtractTriangulationPoints(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,

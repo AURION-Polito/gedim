@@ -298,7 +298,7 @@ namespace Gedim
                                PolygonTypes::Generic_Concave;
   }
   // ***************************************************************************
-  GeometryUtilities::PolygonOrientations GeometryUtilities::PolygonOrientation(const Eigen::MatrixXd& polygonVertices)
+  GeometryUtilities::PolygonOrientations GeometryUtilities::PolygonOrientation(const Eigen::MatrixXd& polygonVertices) const
   {
     const std::vector<unsigned int> unalignedPoints = UnalignedPoints(polygonVertices,
                                                                 3);
