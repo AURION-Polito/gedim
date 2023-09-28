@@ -589,7 +589,10 @@ namespace GedimUnitTesting
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-          if (geometryUtilities.PolygonOrientation(face2DVertices[f]) ==
+          const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVertices[f],
+                                                                                   false);
+
+          if (geometryUtilities.PolygonOrientation(faceConvexHull) ==
               Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
           {
             face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(face2DVertices[f].cols());

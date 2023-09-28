@@ -1428,13 +1428,13 @@ namespace Gedim
       Eigen::Matrix3d PolygonInertia(const Eigen::Vector3d& polygonCentroid,
                                      const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints) const;
 
-      /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a segment contained inside
+      /// \brief Split a polygon with n vertices numbered from 0 to n counterclockwise given a segment contained inside
       /// \param input the input data
       /// \param result the resulting split
       /// \note only indices are threated in this function, no space points
       SplitPolygonWithSegmentResult SplitPolygonWithSegment(const SplitPolygonInput& input) const;
 
-      /// \brief Split a polygon with n vertices numbered from 0 to n unclockwise given a cirle
+      /// \brief Split a polygon with n vertices numbered from 0 to n counterclockwise given a cirle
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param circleCenter the circle center
       /// \param circleRadius the circle radius
@@ -1608,7 +1608,7 @@ namespace Gedim
       }
 
       /// \brief Compute the translation vector of a tridimensional Polygon
-      /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
+      /// \param polygonVertices the vertices of the polygon counterclockwise (size 3 x numVertices)
       /// \return the resulting translation vector t which corresponds to the first vertex of the polygon
       /// \note to rotate some point P from 2D to 3D use Q * P + t
       /// \note to rotate some point P from 3D to 2D use Q^T * (P - t)
@@ -1618,7 +1618,7 @@ namespace Gedim
       }
 
       /// \brief Compute the rotation matrix and translation vector of a tridimensional Polygon
-      /// \param polygonVertices the vertices of the polygon unclockwise (size 3 x numVertices)
+      /// \param polygonVertices the vertices of the polygon counterclockwise (size 3 x numVertices)
       /// \param polygonNormal the normalized normal of the plane which contains the polygon
       /// \param polygonTranslation the translation vector t
       /// \return the resulting rotation matrix Q which rotates 2D points to 3D points
@@ -1630,7 +1630,7 @@ namespace Gedim
 
       /// \brief Check if Polygon is Convex
       /// \param polygonVertices the polygon vertices, size 3 x numVertices
-      /// \param convexHull the convex hull vertices unclockwise
+      /// \param convexHull the convex hull vertices counterclockwise
       /// \return true if polygon is convex, false otherwise
       /// \note works only in 2D-plane
       bool PolygonIsConvex(const Eigen::MatrixXd& polygonVertices,
@@ -1642,10 +1642,10 @@ namespace Gedim
       PolygonTypes PolygonType(const unsigned int& numPolygonVertices,
                                const bool& isPolygonConvex) const;
 
-      /// \param polygonVertices the polygon vertices, size 3 x numPolygonVertices
+      /// \param convexHull the polygon convex hull vertices indices counterclockwise
       /// \return the polygon 2D orientation
       /// \note works only in 2D-plane
-      PolygonOrientations PolygonOrientation(const Eigen::MatrixXd& polygonVertices) const;
+      PolygonOrientations PolygonOrientation(const std::vector<unsigned int>& convexHull) const;
 
       /// \param numPolygonVertices the number of polygon vertices
       /// \return the new polygon vertices indices oriented in the opposite direction
@@ -1717,7 +1717,7 @@ namespace Gedim
       /// \brief Compute the Convex Hull of 2D points
       /// \param points the points, size 3 x numPoints
       /// \param includeCollinear include the collinear points, default true
-      /// \return the convex hull indices unclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
+      /// \return the convex hull indices counterclockwise, size numConvexHullPoints, numConvexHullPoints <= numPoints
       /// \note works in 2D, use the Graham_scan algorithm https://en.wikipedia.org/wiki/Graham_scan
       std::vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points,
                                            const bool& includeCollinear = true) const;
@@ -1768,12 +1768,12 @@ namespace Gedim
       /// \brief Extract the circumscribed unaligned points (minimum 2) in a set of points
       /// \param points the points, size 3 x numPoints
       /// \param numDesiredUnalignedPoints the number of desired unaligned points, if 0 all the points are computed
-      /// \return the unaligned points indices unclockwise, size numUnalignedPoints, 2 <= numUnalignedPoints <= numPoints
+      /// \return the unaligned points indices counterclockwise, size numUnalignedPoints, 2 <= numUnalignedPoints <= numPoints
       std::vector<unsigned int> UnalignedPoints(const Eigen::MatrixXd& points,
                                                 const unsigned int numDesiredUnalignedPoints = 0) const;
 
       /// \param points the points, size 3 x numPoints
-      /// \param filter indices unclockwise, size numFilterPoints, numFilterPoints <= numPoints
+      /// \param filter indices counterclockwise, size numFilterPoints, numFilterPoints <= numPoints
       /// \return the points coordinates filtered, size 3 x numFilterPoints
       Eigen::MatrixXd ExtractPoints(const Eigen::MatrixXd& points,
                                     const std::vector<unsigned int>& filter) const;

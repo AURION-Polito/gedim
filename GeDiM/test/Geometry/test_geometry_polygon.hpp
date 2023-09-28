@@ -981,8 +981,11 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/LShape_clockwise.vtu");
       }
 
+      const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(polygonVertices,
+                                                                           false);
+
       ASSERT_EQ(Gedim::GeometryUtilities::PolygonOrientations::Clockwise,
-                geometryUtilities.PolygonOrientation(polygonVertices));
+                geometryUtilities.PolygonOrientation(convexHull));
 
       const std::vector<unsigned int> newOrientation = geometryUtilities.ChangePolygonOrientation(polygonVertices.cols());
 
@@ -994,8 +997,11 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/LShape_counterclockwise.vtu");
       }
 
+      const vector<unsigned int> newConvexHull = geometryUtilities.ConvexHull(newPolygonVertices,
+                                                                              false);
+
       ASSERT_EQ(Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise,
-                geometryUtilities.PolygonOrientation(newPolygonVertices));
+                geometryUtilities.PolygonOrientation(newConvexHull));
 
       const Eigen::MatrixXd clock_3DVertices = geometryUtilities.RotatePointsFrom2DTo3D(polygonVertices,
                                                                                         Q,

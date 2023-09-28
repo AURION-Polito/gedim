@@ -298,23 +298,19 @@ namespace Gedim
                                PolygonTypes::Generic_Concave;
   }
   // ***************************************************************************
-  GeometryUtilities::PolygonOrientations GeometryUtilities::PolygonOrientation(const Eigen::MatrixXd& polygonVertices) const
+  GeometryUtilities::PolygonOrientations GeometryUtilities::PolygonOrientation(const std::vector<unsigned int>& convexHull) const
   {
-    const std::vector<unsigned int> unalignedPoints = UnalignedPoints(polygonVertices,
-                                                                3);
-    if (unalignedPoints.size() < 3)
-      throw runtime_error("Unknown polygon with few vertices");
+    Gedim::Output::Assert(convexHull.size() > 2);
 
-    const Eigen::Vector3d a = polygonVertices.col(unalignedPoints[0]);
-    const Eigen::Vector3d b = polygonVertices.col(unalignedPoints[1]);
-    const Eigen::Vector3d c = polygonVertices.col(unalignedPoints[2]);
+    const unsigned int minIndex = std::distance(std::begin(convexHull),
+                                                std::min_element(std::begin(convexHull),
+                                                                 std::end(convexHull)));
+    const unsigned int minIndex_next = (minIndex + 1) % convexHull.size();
+    const unsigned int minIndex_next_next = (minIndex_next + 1) % convexHull.size();
 
-    const double orientation = (b.x() * c.y() + a.x() * b.y() + a.y() * c.x()) -
-                               (b.x() * a.y() + c.x() * b.y() + c.y() * a.x());
-
-    if (IsValue1DPositive(orientation))
+    if (convexHull[minIndex_next] < convexHull[minIndex_next_next])
       return PolygonOrientations::CounterClockwise;
-    else if (IsValue1DNegative(orientation))
+    else
       return PolygonOrientations::Clockwise;
 
     throw runtime_error("Polygon orientation not detected");
