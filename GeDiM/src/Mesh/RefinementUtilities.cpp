@@ -956,15 +956,17 @@ namespace Gedim
     const SplitCell1D_Result splitCell1D = SplitCell1D_MiddlePoint(cell1DIndex,
                                                                    mesh);
 
-    const Eigen::Vector3d newCell2DVertex = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndex)) +
-                                                   cell2DVertices.col(mesh.Cell1DEnd(cell1DIndex)));
+    const unsigned int cell2DNumVertices = cell2DVertices.cols();
+    const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIndex) +
+                                                    cell2DVertices.col((edgeIndex + 1) % cell2DNumVertices));
+
 
     const SplitPolygon_Result splitResult = SplitPolygon_NewVertexTo(cell2DIndex,
                                                                      3,
                                                                      oppositeVertexIndex,
                                                                      edgeIndex,
                                                                      cell2DVertices,
-                                                                     newCell2DVertex,
+                                                                     middleCoordinate,
                                                                      splitCell1D.NewCell0DIndex,
                                                                      splitCell1D.NewCell1DsIndex,
                                                                      cell1DDirection,
@@ -1038,17 +1040,17 @@ namespace Gedim
       const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
       const Eigen::MatrixXd cell2DVertices = cell2DsVertices.at(neighCell2DIndex);
+      const unsigned int cell2DNumVertices = cell2DVertices.cols();
 
-      const Eigen::Vector3d newCell2DVertex = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndex)) +
-                                                     cell2DVertices.col(mesh.Cell1DEnd(cell1DIndex)));
-
+      const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(neighEdgeIndex) +
+                                                      cell2DVertices.col((neighEdgeIndex + 1) % cell2DNumVertices));
 
       SplitPolygon_NewVertexTo(neighCell2DIndex,
                                3,
                                neighOppositeVertexIndex,
                                neighEdgeIndex,
                                cell2DVertices,
-                               newCell2DVertex,
+                               middleCoordinate,
                                newCell0DIndex,
                                splitCell1DsIndex,
                                !cell2DEdgeDirection,
@@ -1292,9 +1294,6 @@ namespace Gedim
       const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
                                                                         mesh);
 
-      const Eigen::Vector3d newCell2DVertex = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndexOne)) +
-                                                     cell2DVertices.col(mesh.Cell1DEnd(cell1DIndexOne)));
-
       if (cell2DIndex == 252486)
       {
         using namespace Gedim;
@@ -1314,7 +1313,7 @@ namespace Gedim
                                                                          edgeIntersectionOne.Index,
                                                                          toVertex,
                                                                          cell2DVertices,
-                                                                         newCell2DVertex,
+                                                                         middleCoordinate,
                                                                          splitCell1DOne.NewCell0DIndex,
                                                                          splitCell1DOne.NewCell1DsIndex,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
@@ -1383,15 +1382,12 @@ namespace Gedim
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
 
-      const Eigen::Vector3d newCell2DVertex = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndexTwo)) +
-                                                     cell2DVertices.col(mesh.Cell1DEnd(cell1DIndexTwo)));
-
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertexTo(cell2DIndex,
                                                                        cell2DNumVertices,
                                                                        fromVertex,
                                                                        edgeIntersectionTwo.Index,
                                                                        cell2DVertices,
-                                                                       newCell2DVertex,
+                                                                       middleCoordinate,
                                                                        splitCell1DTwo.NewCell0DIndex,
                                                                        splitCell1DTwo.NewCell1DsIndex,
                                                                        cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
@@ -1438,18 +1434,17 @@ namespace Gedim
       const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
                                                                         mesh);
 
-      const Eigen::Vector3d newCell2DVertexOne = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndexOne)) +
-                                                        cell2DVertices.col(mesh.Cell1DEnd(cell1DIndexOne)));
-      const Eigen::Vector3d newCell2DVertexTwo = 0.5 * (cell2DVertices.col(mesh.Cell1DOrigin(cell1DIndexTwo)) +
-                                                        cell2DVertices.col(mesh.Cell1DEnd(cell1DIndexTwo)));
-
+      const Eigen::Vector3d middleCoordinateOne = 0.5 * (cell2DVertices.col(edgeIntersectionOne.Index) +
+                                                         cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices));
+      const Eigen::Vector3d middleCoordinateTwo = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
+                                                         cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
 
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertices(cell2DIndex,
                                                                        cell2DNumVertices,
                                                                        edgeIntersectionOne.Index,
                                                                        edgeIntersectionTwo.Index,
                                                                        cell2DVertices,
-                                                                       { newCell2DVertexOne, newCell2DVertexTwo },
+                                                                       { middleCoordinateOne, middleCoordinateTwo },
                                                                        splitCell1DOne.NewCell0DIndex,
                                                                        splitCell1DTwo.NewCell0DIndex,
                                                                        splitCell1DOne.NewCell1DsIndex,
