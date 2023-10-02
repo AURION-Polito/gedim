@@ -174,8 +174,9 @@ namespace Gedim
       bool SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
                                                const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
 
-      bool SplitPolygon_CheckArea(const Eigen::VectorXi& newCell2DVertices,
-                                  IMeshDAO& mesh) const;
+      bool SplitPolygon_IsAreaPositive(const Eigen::VectorXi& newCell2D_Indices,
+                                       const Eigen::MatrixXd& newCell2D_Vertices,
+                                       IMeshDAO& mesh) const;
 
       SplitPolygon_Result SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
@@ -188,6 +189,7 @@ namespace Gedim
                                                      const unsigned int fromEdge,
                                                      const unsigned int toVertex,
                                                      const Eigen::MatrixXd& cell2DVertices,
+                                                     const Eigen::Vector3d& newCell2DVertex,
                                                      const unsigned int fromNewCell0DIndex,
                                                      const std::vector<unsigned int>& fromSplitCell1DsIndex,
                                                      const bool& fromEdgeDirection,
@@ -197,6 +199,7 @@ namespace Gedim
                                                    const unsigned int fromVertex,
                                                    const unsigned int toEdge,
                                                    const Eigen::MatrixXd& cell2DVertices,
+                                                   const Eigen::Vector3d& newCell2DVertex,
                                                    const unsigned int toNewCell0DIndex,
                                                    const std::vector<unsigned int>& toSplitCell1DsIndex,
                                                    const bool& toEdgeDirection,
@@ -206,6 +209,7 @@ namespace Gedim
                                                    const unsigned int fromEdge,
                                                    const unsigned int toEdge,
                                                    const Eigen::MatrixXd& cell2DVertices,
+                                                   const std::array<Eigen::Vector3d, 2>& newCell2DVertices,
                                                    const unsigned int fromNewCell0DIndex,
                                                    const unsigned int toNewCell0DIndex,
                                                    const std::vector<unsigned int>& fromSplitCell1DsIndex,
