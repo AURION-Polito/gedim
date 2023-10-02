@@ -734,37 +734,37 @@ namespace Gedim
         const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f],
                                                                                  false);
 
-        if (geometryUtilities.PolygonOrientation(faceConvexHull) !=
-            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise)
-        {
-          std::cout.precision(16);
-          std::cout<< "Cell "<< c<< " ";
-          std::cout<< "Face "<< f<< " ";
-          std::cout<< "index "<< mesh.Cell3DFace(c, f)<< std::endl;
-          std::cout<< scientific<< "3DVertices:\n"<< result.Cell3DsFaces3DVertices[c][f]<< std::endl;
-          std::cout<< scientific<< "2DVertices:\n"<< result.Cell3DsFaces2DVertices[c][f]<< std::endl;
-          std::cout<< scientific<< "2DVertices_CCW:\n"<< face2DVerticesCCW[f]<< std::endl;
-          std::cout<< scientific<< "Rotation:\n"<< result.Cell3DsFacesRotationMatrices[c][f]<< std::endl;
-          std::cout<< scientific<< "Translation:\n "<< result.Cell3DsFacesTranslations[c][f]<< std::endl;
+//        if (geometryUtilities.PolygonOrientation(faceConvexHull) !=
+//            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise)
+//        {
+//          std::cout.precision(16);
+//          std::cout<< "Cell "<< c<< " ";
+//          std::cout<< "Face "<< f<< " ";
+//          std::cout<< "index "<< mesh.Cell3DFace(c, f)<< std::endl;
+//          std::cout<< scientific<< "3DVertices:\n"<< result.Cell3DsFaces3DVertices[c][f]<< std::endl;
+//          std::cout<< scientific<< "2DVertices:\n"<< result.Cell3DsFaces2DVertices[c][f]<< std::endl;
+//          std::cout<< scientific<< "2DVertices_CCW:\n"<< face2DVerticesCCW[f]<< std::endl;
+//          std::cout<< scientific<< "Rotation:\n"<< result.Cell3DsFacesRotationMatrices[c][f]<< std::endl;
+//          std::cout<< scientific<< "Translation:\n "<< result.Cell3DsFacesTranslations[c][f]<< std::endl;
 
-          {
-            Gedim::VTKUtilities exporter;
-            exporter.AddPolygon(result.Cell3DsFaces3DVertices[c][f]);
-            exporter.Export("./Cell3DFace3D.vtu");
-          }
+//          {
+//            Gedim::VTKUtilities exporter;
+//            exporter.AddPolygon(result.Cell3DsFaces3DVertices[c][f]);
+//            exporter.Export("./Cell3DFace3D.vtu");
+//          }
 
-          {
-            Gedim::VTKUtilities exporter;
-            exporter.AddPolygon(result.Cell3DsFaces2DVertices[c][f]);
-            exporter.Export("./Cell3DFace2D.vtu");
-          }
+//          {
+//            Gedim::VTKUtilities exporter;
+//            exporter.AddPolygon(result.Cell3DsFaces2DVertices[c][f]);
+//            exporter.Export("./Cell3DFace2D.vtu");
+//          }
 
-          {
-            Gedim::VTKUtilities exporter;
-            exporter.AddPolygon(face2DVerticesCCW[f]);
-            exporter.Export("./Cell3DFace2DCCW.vtu");
-          }
-        }
+//          {
+//            Gedim::VTKUtilities exporter;
+//            exporter.AddPolygon(face2DVerticesCCW[f]);
+//            exporter.Export("./Cell3DFace2DCCW.vtu");
+//          }
+//        }
 
         Output::Assert(geometryUtilities.PolygonOrientation(faceConvexHull) ==
                        Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
