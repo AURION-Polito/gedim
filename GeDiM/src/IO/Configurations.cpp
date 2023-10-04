@@ -291,25 +291,21 @@ namespace Gedim
     if(!inFile.is_open())
       throw runtime_error("Cannot open file '" + inputFile + "'");
 
-    int numberLines = 0;
+    int num_line = 0;
     while (!inFile.eof())
     {
       string line;
       getline(inFile, line);
+      num_line++;
 
-      // Skip Comment Line
-      if(line[0] == '#')
+      // Skip header
+      if (num_line == 1 &&
+          hasHeader)
         continue;
-
-      if (numberLines == 0 && hasHeader)
-      {
-        numberLines++;
-        continue;
-      }
 
       vector<string> columns = StringsUtilities::Split(line, separator);
 
-      if (columns.size() < 2)
+      if (columns.size() == 0)
         continue;
 
       switch (columns.size())
@@ -343,7 +339,11 @@ namespace Gedim
           break;
         }
         default:
+        {
+          Gedim::Output::PrintWarningMessage("Skip property at line " +
+                                             to_string(num_line), true);
           break;
+        }
       }
     }
 
@@ -362,11 +362,13 @@ namespace Gedim
       throw runtime_error("Cannot open file '" + inputFile + "'");
 
     // Find Property in File
+    unsigned int num_line = 0;
     while (!inFile.eof())
     {
       string line;
 
       getline(inFile, line);
+      num_line++;
 
       // Skip Comment Line
       if(line[0] == '#')
@@ -374,7 +376,7 @@ namespace Gedim
 
       vector<string> columns = StringsUtilities::Split(line, ' ');
 
-      if (columns.size() < 2)
+      if (columns.size() == 0)
         continue;
 
       switch (columns.size())
@@ -398,6 +400,8 @@ namespace Gedim
           break;
         }
         default:
+          Gedim::Output::PrintWarningMessage("Skip property at line " +
+                                             to_string(num_line), true);
           break;
       }
     }

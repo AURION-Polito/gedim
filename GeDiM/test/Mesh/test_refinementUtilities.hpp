@@ -44,6 +44,9 @@ namespace GedimUnitTesting
 
     const unsigned int cell2DToRefineIndex = 0;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
     EXPECT_EQ(2, direction.MaxEdgeIndex);
     EXPECT_EQ(1, direction.OppositeVertexIndex);
@@ -54,6 +57,8 @@ namespace GedimUnitTesting
                                                                                                                   direction.OppositeVertexIndex,
                                                                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                   meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                  cell2DRotation,
+                                                                                                                  cell2DTranslation,
                                                                                                                   meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                   meshDAO);
     EXPECT_EQ(std::vector<unsigned int>({ 4 }),
@@ -80,11 +85,18 @@ namespace GedimUnitTesting
       if (result.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
         continue;
 
+      const unsigned int cell1DIndex = result.NewCell1DsIndex[e].OriginalCell1DIndex;
+      unsigned int numNeighs = meshDAO.Cell1DNumberNeighbourCell2D(cell1DIndex);
+      std::vector<Eigen::Matrix3d> cell2DsRotation(numNeighs, Eigen::Matrix3d::Identity());
+      std::vector<Eigen::Vector3d> cell2DsTranslation(numNeighs, Eigen::Vector3d::Zero());
+
       refinementUtilities.RefineTriangleCell_UpdateNeighbours(cell2DToRefineIndex,
                                                               result.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                               result.NewCell1DsIndex[e].NewCell0DIndex,
                                                               result.NewCell1DsIndex[e].NewCell1DsIndex,
                                                               meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(result.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                              cell2DsRotation,
+                                                              cell2DsTranslation,
                                                               meshGeometricData.Cell2DsVertices,
                                                               meshDAO);
     }
@@ -160,6 +172,9 @@ namespace GedimUnitTesting
                                                    cell2DsToRefineIndex[c] :
                                                    updatedCell2Ds.front();
 
+        const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+        const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
         const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
@@ -168,6 +183,8 @@ namespace GedimUnitTesting
                                                                                                                             direction.OppositeVertexIndex,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
 
@@ -176,11 +193,18 @@ namespace GedimUnitTesting
           if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
             continue;
 
+          const unsigned int cell1DIndex = refineResult.NewCell1DsIndex[e].OriginalCell1DIndex;
+          unsigned int numNeighs = meshDAO.Cell1DNumberNeighbourCell2D(cell1DIndex);
+          std::vector<Eigen::Matrix3d> cell2DsRotation(numNeighs, Eigen::Matrix3d::Identity());
+          std::vector<Eigen::Vector3d> cell2DsTranslation(numNeighs, Eigen::Vector3d::Zero());
+
           refinementUtilities.RefineTriangleCell_UpdateNeighbours(cell2DToRefineIndex,
                                                                   refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                                   refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                                   refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+                                                                  cell2DsRotation,
+                                                                  cell2DsTranslation,
                                                                   meshGeometricData.Cell2DsVertices,
                                                                   meshDAO);
         }
@@ -243,6 +267,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
     const unsigned int cell2DToRefineIndex = 0;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -251,6 +278,8 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -315,6 +344,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -323,6 +355,8 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -387,6 +421,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.25, 0.25, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -395,6 +432,8 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -459,6 +498,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -467,6 +509,8 @@ namespace GedimUnitTesting
                                                                                                                             cell1DsAligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2DsAreas.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2DsEdgeLengths,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -538,6 +582,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.5, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -546,6 +593,8 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -617,6 +666,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(0.5, 0.55, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -625,6 +677,8 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -696,6 +750,9 @@ namespace GedimUnitTesting
     const Eigen::Vector3d lineOrigin = Eigen::Vector3d(1.0, 0.51, 0.0);
     const unsigned int cell2DToRefineIndex = 1;
 
+    const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+    const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
@@ -704,6 +761,8 @@ namespace GedimUnitTesting
                                                                                                                             meshGeometricData.Cell1Ds.Aligned,
                                                                                                                             cell1DsQualityWeight,
                                                                                                                             meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                            cell2DRotation,
+                                                                                                                            cell2DTranslation,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                             meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                             meshDAO);
@@ -803,6 +862,9 @@ namespace GedimUnitTesting
           direction.LineTangent = Eigen::Vector3d(1.0, 0.5, 0.0);
         }
 
+        const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+        const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                                  meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                                  direction.LineTangent,
@@ -811,6 +873,8 @@ namespace GedimUnitTesting
                                                                                                                                  meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                  cell1DsQualityWeight,
                                                                                                                                  meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                                 cell2DRotation,
+                                                                                                                                 cell2DTranslation,
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                  meshDAO);
@@ -984,6 +1048,9 @@ namespace GedimUnitTesting
           direction.LineTangent = Eigen::Vector3d(1.0, 0.5, 0.0);
         }
 
+        const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+        const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
                                                                                                                                  meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                                  direction.LineTangent,
@@ -992,6 +1059,8 @@ namespace GedimUnitTesting
                                                                                                                                  meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                  cell1DsQualityWeight,
                                                                                                                                  meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                                 cell2DRotation,
+                                                                                                                                 cell2DTranslation,
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                                  meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                  meshDAO);
@@ -1194,6 +1263,9 @@ namespace GedimUnitTesting
                                                      cell2DsToRefineIndex[c] :
                                                      updatedCell2Ds.front();
 
+          const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+          const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
           Gedim::RefinementUtilities::PolygonDirection direction = refinementUtilities.ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
                                                                                                                          meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
                                                                                                                          meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
@@ -1207,6 +1279,8 @@ namespace GedimUnitTesting
                                                                                                                                   meshGeometricData.Cell1Ds.Aligned,
                                                                                                                                   cell1DsQualityWeight,
                                                                                                                                   meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                                                                                                                  cell2DRotation,
+                                                                                                                                  cell2DTranslation,
                                                                                                                                   meshGeometricData.Cell2Ds.EdgesLength,
                                                                                                                                   meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                                                                                                   meshDAO);

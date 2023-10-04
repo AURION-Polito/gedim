@@ -160,9 +160,9 @@ namespace GedimUnitTesting
       (char*)"TestChar:char=b",
       (char*)"TestDouble:double=202.79",
       (char*)"TestBool:bool=true",
-      (char*)"TestVectorInt:vector<int>=[1,2,3]",
-      (char*)"TestVectorUInt:vector<uint>=[7,4,5]",
-      (char*)"TestVectorDouble:vector<double>=[1.5,1.6]",
+      (char*)"TestVectorInt:vector_int=[1,2,3]",
+      (char*)"TestVectorUInt:vector_uint=[7,4,5]",
+      (char*)"TestVectorDouble:vector_double=[1.5,1.6]",
     };
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());

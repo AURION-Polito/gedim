@@ -175,19 +175,24 @@ namespace Gedim
                                                const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
 
       bool SplitPolygon_IsAreaPositive(const Eigen::VectorXi& newCell2D_Indices,
-                                       const Eigen::MatrixXd& newCell2D_Vertices,
+                                       const Eigen::Matrix3d& cell2DRotation,
+                                       const Eigen::Vector3d& cell2DTranslation,
                                        IMeshDAO& mesh) const;
 
       SplitPolygon_Result SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
                                                      const unsigned int fromVertex,
                                                      const unsigned int toVertex,
+                                                     const Eigen::Matrix3d& cell2DRotation,
+                                                     const Eigen::Vector3d& cell2DTranslation,
                                                      const Eigen::MatrixXd& cell2DVertices,
                                                      IMeshDAO& mesh) const;
       SplitPolygon_Result SplitPolygon_NewVertexFrom(const unsigned int cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
                                                      const unsigned int fromEdge,
                                                      const unsigned int toVertex,
+                                                     const Eigen::Matrix3d& cell2DRotation,
+                                                     const Eigen::Vector3d& cell2DTranslation,
                                                      const Eigen::MatrixXd& cell2DVertices,
                                                      const Eigen::Vector3d& newCell2DVertex,
                                                      const unsigned int fromNewCell0DIndex,
@@ -198,6 +203,8 @@ namespace Gedim
                                                    const unsigned int cell2DNumVertices,
                                                    const unsigned int fromVertex,
                                                    const unsigned int toEdge,
+                                                   const Eigen::Matrix3d& cell2DRotation,
+                                                   const Eigen::Vector3d& cell2DTranslation,
                                                    const Eigen::MatrixXd& cell2DVertices,
                                                    const Eigen::Vector3d& newCell2DVertex,
                                                    const unsigned int toNewCell0DIndex,
@@ -208,6 +215,8 @@ namespace Gedim
                                                    const unsigned int cell2DNumVertices,
                                                    const unsigned int fromEdge,
                                                    const unsigned int toEdge,
+                                                   const Eigen::Matrix3d& cell2DRotation,
+                                                   const Eigen::Vector3d& cell2DTranslation,
                                                    const Eigen::MatrixXd& cell2DVertices,
                                                    const std::array<Eigen::Vector3d, 2>& newCell2DVertices,
                                                    const unsigned int fromNewCell0DIndex,
@@ -239,6 +248,8 @@ namespace Gedim
                                                      const unsigned int& oppositeVertexIndex,
                                                      const std::vector<bool>& cell2DEdgesDirection,
                                                      const double& cell2DArea,
+                                                     const Eigen::Matrix3d& cell2DRotation,
+                                                     const Eigen::Vector3d& cell2DTranslation,
                                                      const Eigen::VectorXd& cell2DEdgesLength,
                                                      IMeshDAO& mesh) const;
 
@@ -254,6 +265,8 @@ namespace Gedim
                                                const unsigned int& newCell0DIndex,
                                                const std::vector<unsigned int>& splitCell1DsIndex,
                                                const bool& cell2DEdgeDirection,
+                                               const std::vector<Eigen::Matrix3d>& cell2DsRotation,
+                                               const std::vector<Eigen::Vector3d>& cell2DsTranslation,
                                                const std::vector<Eigen::MatrixXd>& cell2DsVertices,
                                                IMeshDAO& mesh) const;
 
@@ -266,6 +279,8 @@ namespace Gedim
                                                          const std::vector<unsigned int>& cell1DsAligned,
                                                          const double& cell1DsQualityWeight,
                                                          const double& cell2DArea,
+                                                         const Eigen::Matrix3d& cell2DRotation,
+                                                         const Eigen::Vector3d& cell2DTranslation,
                                                          const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                          const std::vector<bool>& cell2DEdgesDirection,
                                                          IMeshDAO& mesh) const;

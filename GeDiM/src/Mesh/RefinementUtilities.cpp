@@ -1,4 +1,5 @@
 #include "RefinementUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 
 namespace Gedim
@@ -81,22 +82,41 @@ namespace Gedim
   }
   // ***************************************************************************
   bool RefinementUtilities::SplitPolygon_IsAreaPositive(const Eigen::VectorXi& newCell2D_Indices,
-                                                        const Eigen::MatrixXd& newCell2D_Vertices,
+                                                        const Eigen::Matrix3d& cell2DRotation,
+                                                        const Eigen::Vector3d& cell2DTranslation,
                                                         IMeshDAO& mesh) const
   {
-    Eigen::MatrixXd polygon_3D_vertices(3, newCell2D_Indices.size());
+    double area_2D = 0.0;
 
-    for (unsigned int v = 0; v < newCell2D_Indices.size(); v++)
-      polygon_3D_vertices.col(v)<< mesh.Cell0DCoordinates(newCell2D_Indices[v]);
+    {
+      Eigen::MatrixXd polygon_3D_vertices(3, newCell2D_Indices.size());
+      for (unsigned int v = 0; v < newCell2D_Indices.size(); v++)
+        polygon_3D_vertices.col(v)<< mesh.Cell0DCoordinates(newCell2D_Indices[v]);
 
-    return !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea3D(polygon_3D_vertices)) &&
-        !geometryUtilities.IsValue2DZero(geometryUtilities.PolygonArea(newCell2D_Vertices));
+      const Eigen::MatrixXd newCell2D_Vertices = geometryUtilities.RotatePointsFrom3DTo2D(polygon_3D_vertices,
+                                                                                          cell2DRotation.transpose(),
+                                                                                          cell2DTranslation);
+      const std::vector<unsigned int> unaligned = geometryUtilities.UnalignedPoints(newCell2D_Vertices);
+      const Eigen::MatrixXd unalignedVertices = geometryUtilities.ExtractPoints(newCell2D_Vertices,
+                                                                                unaligned);
+      const std::vector<unsigned int> triangles = geometryUtilities.PolygonTriangulationByFirstVertex(unalignedVertices);
+
+      const std::vector<Eigen::Matrix3d> trianglesVertices = geometryUtilities.ExtractTriangulationPoints(unalignedVertices,
+                                                                                                          triangles);
+
+      for (unsigned int cct = 0; cct < trianglesVertices.size(); cct++)
+        area_2D += geometryUtilities.PolygonArea(trianglesVertices[cct]);
+    }
+
+    return !geometryUtilities.IsValue2DZero(area_2D);
   }
   // ***************************************************************************
   RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
                                                                                            const unsigned int cell2DNumVertices,
                                                                                            const unsigned int fromVertex,
                                                                                            const unsigned int toVertex,
+                                                                                           const Eigen::Matrix3d& cell2DRotation,
+                                                                                           const Eigen::Vector3d& cell2DTranslation,
                                                                                            const Eigen::MatrixXd& cell2DVertices,
                                                                                            IMeshDAO& mesh) const
   {
@@ -131,6 +151,16 @@ namespace Gedim
       subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toVertex);
       subCells_2Dvertices[0].col(v) = cell2DVertices.col(toVertex);
 
+      // Check split areas
+      if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
+                                       cell2DRotation,
+                                       cell2DTranslation,
+                                       mesh))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+
       v = 0;
       for (const unsigned int& index : secondPolygonIndices)
       {
@@ -140,23 +170,16 @@ namespace Gedim
       }
       subCells[1](0, v) = mesh.Cell2DVertex(cell2DIndex, fromVertex);
       subCells_2Dvertices[1].col(v) = cell2DVertices.col(fromVertex);
-    }
 
-    // Check split areas
-    if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
-                                     subCells_2Dvertices[0],
-                                     mesh))
-    {
-      result.Type = SplitPolygon_Result::Types::NoSplit;
-      return result;
-    }
 
-    if (!SplitPolygon_IsAreaPositive(subCells[1].row(0).transpose(),
-                                     subCells_2Dvertices[1],
-                                     mesh))
-    {
-      result.Type = SplitPolygon_Result::Types::NoSplit;
-      return result;
+      if (!SplitPolygon_IsAreaPositive(subCells[1].row(0).transpose(),
+                                       cell2DRotation,
+                                       cell2DTranslation,
+                                       mesh))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
     }
 
     // Create new cell1D from vertex to vertex
@@ -192,6 +215,92 @@ namespace Gedim
                                                        subCells,
                                                        mesh);
 
+    if (cell2DIndex == 321797)
+    {
+      using namespace Gedim;
+
+      std::cout.precision(16);
+      std::cout<< "SplitPolygon_NoNewVertices"<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< cell2DIndex<< " vertices\n"<< cell2DVertices<< std::endl;
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " Area2D_0 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[0])<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " Area2D_1 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[1])<< std::endl;
+
+      const auto unaligned_0 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[0]);
+      const auto unaligned_1 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[1]);
+
+
+      const auto unaligned_vert_0 = geometryUtilities.ExtractPoints(subCells_2Dvertices[0],
+          unaligned_0);
+      const auto unaligned_vert_1 = geometryUtilities.ExtractPoints(subCells_2Dvertices[1],
+          unaligned_1);
+
+      const std::vector<unsigned int> triang_0 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_0);
+      const std::vector<unsigned int> triang_1 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_1);
+
+      const auto triang_vert_0 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_0,
+                                                                              triang_0);
+      const auto triang_vert_1 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_1,
+                                                                              triang_1);
+
+      double tri_area_0 = 0.0, tri_area_1 = 0.0;
+      for (unsigned int cct = 0; cct < triang_vert_0.size(); cct++)
+        tri_area_0 += geometryUtilities.PolygonArea(triang_vert_0[cct]);
+      for (unsigned int cct = 0; cct < triang_vert_1.size(); cct++)
+        tri_area_1 += geometryUtilities.PolygonArea(triang_vert_1[cct]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vert_unlg_0 "<< unaligned_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vert_unlg_1 "<< unaligned_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " tri_0 "<< triang_vert_0.size()<< ": "<< triang_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " tri_1 "<< triang_vert_1.size()<< ": "<< triang_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " area_0 "<< tri_area_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " area_1 "<< tri_area_1<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(cell2DVertices);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_0(3, subCells[0].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[0].row(0).transpose().size(); v++)
+        polygon_3D_vertices_0.col(v)<< mesh.Cell0DCoordinates(subCells[0].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vertices\n"<< subCells_2Dvertices[0]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[0]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_0);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_1(3, subCells[1].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[1].row(0).transpose().size(); v++)
+        polygon_3D_vertices_1.col(v)<< mesh.Cell0DCoordinates(subCells[1].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vertices\n"<< subCells_2Dvertices[1]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[1]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_1);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+    }
+
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
                                      result.NewCell2DsIndex[1]); // right
@@ -208,6 +317,8 @@ namespace Gedim
                                                                                            const unsigned int cell2DNumVertices,
                                                                                            const unsigned int fromEdge,
                                                                                            const unsigned int toVertex,
+                                                                                           const Eigen::Matrix3d& cell2DRotation,
+                                                                                           const Eigen::Vector3d& cell2DTranslation,
                                                                                            const Eigen::MatrixXd& cell2DVertices,
                                                                                            const Eigen::Vector3d& newCell2DVertex,
                                                                                            const unsigned int fromNewCell0DIndex,
@@ -249,6 +360,16 @@ namespace Gedim
       subCells[0](0, v) = mesh.Cell2DVertex(cell2DIndex, toVertex);
       subCells_2Dvertices[0].col(v) = cell2DVertices.col(toVertex);
 
+      // Check split areas
+      if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
+                                       cell2DRotation,
+                                       cell2DTranslation,
+                                       mesh))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+
       v = 0;
       for (const unsigned int& index : secondPolygonIndices)
       {
@@ -264,17 +385,9 @@ namespace Gedim
       subCells_2Dvertices[1].col(v) = newCell2DVertex;
     }
 
-    // Check split areas
-    if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
-                                     subCells_2Dvertices[0],
-                                     mesh))
-    {
-      result.Type = SplitPolygon_Result::Types::NoSplit;
-      return result;
-    }
-
     if (!SplitPolygon_IsAreaPositive(subCells[1].row(0).transpose(),
-                                     subCells_2Dvertices[1],
+                                     cell2DRotation,
+                                     cell2DTranslation,
                                      mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
@@ -319,6 +432,92 @@ namespace Gedim
                                                        subCells,
                                                        mesh);
 
+    if (cell2DIndex == 321797)
+    {
+      using namespace Gedim;
+
+      std::cout.precision(16);
+      std::cout<< "SplitPolygon_NewVertexFrom"<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< cell2DIndex<< " vertices\n"<< cell2DVertices<< std::endl;
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " Area2D_0 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[0])<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " Area2D_1 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[1])<< std::endl;
+
+      const auto unaligned_0 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[0]);
+      const auto unaligned_1 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[1]);
+
+
+      const auto unaligned_vert_0 = geometryUtilities.ExtractPoints(subCells_2Dvertices[0],
+          unaligned_0);
+      const auto unaligned_vert_1 = geometryUtilities.ExtractPoints(subCells_2Dvertices[1],
+          unaligned_1);
+
+      const std::vector<unsigned int> triang_0 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_0);
+      const std::vector<unsigned int> triang_1 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_1);
+
+      const auto triang_vert_0 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_0,
+                                                                              triang_0);
+      const auto triang_vert_1 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_1,
+                                                                              triang_1);
+
+      double tri_area_0 = 0.0, tri_area_1 = 0.0;
+      for (unsigned int cct = 0; cct < triang_vert_0.size(); cct++)
+        tri_area_0 += geometryUtilities.PolygonArea(triang_vert_0[cct]);
+      for (unsigned int cct = 0; cct < triang_vert_1.size(); cct++)
+        tri_area_1 += geometryUtilities.PolygonArea(triang_vert_1[cct]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vert_unlg_0 "<< unaligned_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vert_unlg_1 "<< unaligned_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " tri_0 "<< triang_vert_0.size()<< ": "<< triang_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " tri_1 "<< triang_vert_1.size()<< ": "<< triang_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " area_0 "<< tri_area_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " area_1 "<< tri_area_1<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(cell2DVertices);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_0(3, subCells[0].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[0].row(0).transpose().size(); v++)
+        polygon_3D_vertices_0.col(v)<< mesh.Cell0DCoordinates(subCells[0].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vertices\n"<< subCells_2Dvertices[0]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[0]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_0);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_1(3, subCells[1].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[1].row(0).transpose().size(); v++)
+        polygon_3D_vertices_1.col(v)<< mesh.Cell0DCoordinates(subCells[1].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vertices\n"<< subCells_2Dvertices[1]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[1]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_1);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+    }
+
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
                                      result.NewCell2DsIndex[1]); // right
@@ -335,6 +534,8 @@ namespace Gedim
                                                                                          const unsigned int cell2DNumVertices,
                                                                                          const unsigned int fromVertex,
                                                                                          const unsigned int toEdge,
+                                                                                         const Eigen::Matrix3d& cell2DRotation,
+                                                                                         const Eigen::Vector3d& cell2DTranslation,
                                                                                          const Eigen::MatrixXd& cell2DVertices,
                                                                                          const Eigen::Vector3d& newCell2DVertex,
                                                                                          const unsigned int toNewCell0DIndex,
@@ -376,6 +577,15 @@ namespace Gedim
       subCells[0](0, v) = toNewCell0DIndex;
       subCells_2Dvertices[0].col(v) = newCell2DVertex;
 
+      if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
+                                       cell2DRotation,
+                                       cell2DTranslation,
+                                       mesh))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+
       v = 0;
       subCells[1](0, v) = toNewCell0DIndex;
       subCells_2Dvertices[1].col(v) = newCell2DVertex;
@@ -390,17 +600,9 @@ namespace Gedim
       subCells_2Dvertices[1].col(v) = cell2DVertices.col(fromVertex);
     }
 
-    // Check split areas
-    if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
-                                     subCells_2Dvertices[0],
-                                     mesh))
-    {
-      result.Type = SplitPolygon_Result::Types::NoSplit;
-      return result;
-    }
-
     if (!SplitPolygon_IsAreaPositive(subCells[1].row(0).transpose(),
-                                     subCells_2Dvertices[1],
+                                     cell2DRotation,
+                                     cell2DTranslation,
                                      mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
@@ -444,6 +646,92 @@ namespace Gedim
                                                        subCells,
                                                        mesh);
 
+    if (cell2DIndex == 321797)
+    {
+      using namespace Gedim;
+
+      std::cout.precision(16);
+      std::cout<< "SplitPolygon_NewVertexTo"<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< cell2DIndex<< " vertices\n"<< cell2DVertices<< std::endl;
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " Area2D_0 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[0])<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " Area2D_1 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[1])<< std::endl;
+
+      const auto unaligned_0 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[0]);
+      const auto unaligned_1 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[1]);
+
+
+      const auto unaligned_vert_0 = geometryUtilities.ExtractPoints(subCells_2Dvertices[0],
+          unaligned_0);
+      const auto unaligned_vert_1 = geometryUtilities.ExtractPoints(subCells_2Dvertices[1],
+          unaligned_1);
+
+      const std::vector<unsigned int> triang_0 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_0);
+      const std::vector<unsigned int> triang_1 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_1);
+
+      const auto triang_vert_0 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_0,
+                                                                              triang_0);
+      const auto triang_vert_1 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_1,
+                                                                              triang_1);
+
+      double tri_area_0 = 0.0, tri_area_1 = 0.0;
+      for (unsigned int cct = 0; cct < triang_vert_0.size(); cct++)
+        tri_area_0 += geometryUtilities.PolygonArea(triang_vert_0[cct]);
+      for (unsigned int cct = 0; cct < triang_vert_1.size(); cct++)
+        tri_area_1 += geometryUtilities.PolygonArea(triang_vert_1[cct]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vert_unlg_0 "<< unaligned_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vert_unlg_1 "<< unaligned_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " tri_0 "<< triang_vert_0.size()<< ": "<< triang_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " tri_1 "<< triang_vert_1.size()<< ": "<< triang_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " area_0 "<< tri_area_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " area_1 "<< tri_area_1<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(cell2DVertices);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_0(3, subCells[0].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[0].row(0).transpose().size(); v++)
+        polygon_3D_vertices_0.col(v)<< mesh.Cell0DCoordinates(subCells[0].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vertices\n"<< subCells_2Dvertices[0]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[0]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_0);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_1(3, subCells[1].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[1].row(0).transpose().size(); v++)
+        polygon_3D_vertices_1.col(v)<< mesh.Cell0DCoordinates(subCells[1].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vertices\n"<< subCells_2Dvertices[1]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[1]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_1);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+    }
+
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
                                      result.NewCell2DsIndex[1]); // right
@@ -460,6 +748,8 @@ namespace Gedim
                                                                                          const unsigned int cell2DNumVertices,
                                                                                          const unsigned int fromEdge,
                                                                                          const unsigned int toEdge,
+                                                                                         const Eigen::Matrix3d& cell2DRotation,
+                                                                                         const Eigen::Vector3d& cell2DTranslation,
                                                                                          const Eigen::MatrixXd& cell2DVertices,
                                                                                          const std::array<Eigen::Vector3d, 2>& newCell2DVertices,
                                                                                          const unsigned int fromNewCell0DIndex,
@@ -507,6 +797,16 @@ namespace Gedim
       subCells[0](0, v) = toNewCell0DIndex;
       subCells_2Dvertices[0].col(v) = newCell2DVertices[1];
 
+      // Check split areas
+      if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
+                                       cell2DRotation,
+                                       cell2DTranslation,
+                                       mesh))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+
       v = 0;
       subCells[1](0, v) = toNewCell0DIndex;
       subCells_2Dvertices[1].col(v) = newCell2DVertices[1];
@@ -524,17 +824,9 @@ namespace Gedim
       subCells_2Dvertices[1].col(v) = newCell2DVertices[0];
     }
 
-    // Check split areas
-    if (!SplitPolygon_IsAreaPositive(subCells[0].row(0).transpose(),
-                                     subCells_2Dvertices[0],
-                                     mesh))
-    {
-      result.Type = SplitPolygon_Result::Types::NoSplit;
-      return result;
-    }
-
     if (!SplitPolygon_IsAreaPositive(subCells[1].row(0).transpose(),
-                                     subCells_2Dvertices[1],
+                                     cell2DRotation,
+                                     cell2DTranslation,
                                      mesh))
     {
       result.Type = SplitPolygon_Result::Types::NoSplit;
@@ -581,6 +873,92 @@ namespace Gedim
     result.NewCell2DsIndex = meshUtilities.SplitCell2D(cell2DIndex,
                                                        subCells,
                                                        mesh);
+
+    if (cell2DIndex == 321797)
+    {
+      using namespace Gedim;
+
+      std::cout.precision(16);
+      std::cout<< "SplitPolygon_NewVertices"<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< cell2DIndex<< " vertices\n"<< cell2DVertices<< std::endl;
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " Area2D_0 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[0])<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " Area2D_1 "<< geometryUtilities.PolygonArea(subCells_2Dvertices[1])<< std::endl;
+
+      const auto unaligned_0 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[0]);
+      const auto unaligned_1 = geometryUtilities.UnalignedPoints(subCells_2Dvertices[1]);
+
+
+      const auto unaligned_vert_0 = geometryUtilities.ExtractPoints(subCells_2Dvertices[0],
+          unaligned_0);
+      const auto unaligned_vert_1 = geometryUtilities.ExtractPoints(subCells_2Dvertices[1],
+          unaligned_1);
+
+      const std::vector<unsigned int> triang_0 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_0);
+      const std::vector<unsigned int> triang_1 = geometryUtilities.PolygonTriangulationByFirstVertex(unaligned_vert_1);
+
+      const auto triang_vert_0 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_0,
+                                                                              triang_0);
+      const auto triang_vert_1 = geometryUtilities.ExtractTriangulationPoints(unaligned_vert_1,
+                                                                              triang_1);
+
+      double tri_area_0 = 0.0, tri_area_1 = 0.0;
+      for (unsigned int cct = 0; cct < triang_vert_0.size(); cct++)
+        tri_area_0 += geometryUtilities.PolygonArea(triang_vert_0[cct]);
+      for (unsigned int cct = 0; cct < triang_vert_1.size(); cct++)
+        tri_area_1 += geometryUtilities.PolygonArea(triang_vert_1[cct]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vert_unlg_0 "<< unaligned_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vert_unlg_1 "<< unaligned_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " tri_0 "<< triang_vert_0.size()<< ": "<< triang_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " tri_1 "<< triang_vert_1.size()<< ": "<< triang_1<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " area_0 "<< tri_area_0<< std::endl;
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " area_1 "<< tri_area_1<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(cell2DVertices);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_0(3, subCells[0].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[0].row(0).transpose().size(); v++)
+        polygon_3D_vertices_0.col(v)<< mesh.Cell0DCoordinates(subCells[0].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[0]<< " vertices\n"<< subCells_2Dvertices[0]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[0]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_0);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD0_" + std::to_string(result.NewCell2DsIndex[0]) + ".vtu");
+      }
+
+      Eigen::MatrixXd polygon_3D_vertices_1(3, subCells[1].row(0).transpose().size());
+
+      for (unsigned int v = 0; v < subCells[1].row(0).transpose().size(); v++)
+        polygon_3D_vertices_1.col(v)<< mesh.Cell0DCoordinates(subCells[1].row(0).transpose()[v]);
+
+      std::cout<< std::scientific<< "Cell "<< result.NewCell2DsIndex[1]<< " vertices\n"<< subCells_2Dvertices[1]<< std::endl;
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(subCells_2Dvertices[1]);
+        exporter.Export("./TEST/TEST2D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolygon(polygon_3D_vertices_1);
+        exporter.Export("./TEST/TEST3D_" + std::to_string(cell2DIndex) + "_CHILD1_" + std::to_string(result.NewCell2DsIndex[1]) + ".vtu");
+      }
+    }
 
     mesh.Cell1DInsertNeighbourCell2D(newCell1DIndex,
                                      0,
@@ -936,6 +1314,8 @@ namespace Gedim
                                                                                            const unsigned int& oppositeVertexIndex,
                                                                                            const std::vector<bool>& cell2DEdgesDirection,
                                                                                            const double& cell2DArea,
+                                                                                           const Eigen::Matrix3d& cell2DRotation,
+                                                                                           const Eigen::Vector3d& cell2DTranslation,
                                                                                            const Eigen::VectorXd& cell2DEdgesLength,
                                                                                            IMeshDAO& mesh) const
   {
@@ -965,6 +1345,8 @@ namespace Gedim
                                                                      3,
                                                                      oppositeVertexIndex,
                                                                      edgeIndex,
+                                                                     cell2DRotation,
+                                                                     cell2DTranslation,
                                                                      cell2DVertices,
                                                                      middleCoordinate,
                                                                      splitCell1D.NewCell0DIndex,
@@ -1019,6 +1401,8 @@ namespace Gedim
                                                                 const unsigned int& newCell0DIndex,
                                                                 const std::vector<unsigned int>& splitCell1DsIndex,
                                                                 const bool& cell2DEdgeDirection,
+                                                                const std::vector<Eigen::Matrix3d>& cell2DsRotation,
+                                                                const std::vector<Eigen::Vector3d>& cell2DsTranslation,
                                                                 const std::vector<Eigen::MatrixXd>& cell2DsVertices,
                                                                 IMeshDAO& mesh) const
   {
@@ -1039,7 +1423,9 @@ namespace Gedim
                                                               cell1DIndex);
       const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
-      const Eigen::MatrixXd cell2DVertices = cell2DsVertices.at(neighCell2DIndex);
+      const Eigen::MatrixXd& cell2DVertices = cell2DsVertices.at(neighCell2DIndex);
+      const Eigen::Matrix3d& cell2DRotation = cell2DsRotation.at(n);
+      const Eigen::Vector3d& cell2DTranslation = cell2DsTranslation.at(n);
       const unsigned int cell2DNumVertices = cell2DVertices.cols();
 
       const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(neighEdgeIndex) +
@@ -1049,6 +1435,8 @@ namespace Gedim
                                3,
                                neighOppositeVertexIndex,
                                neighEdgeIndex,
+                               cell2DRotation,
+                               cell2DTranslation,
                                cell2DVertices,
                                middleCoordinate,
                                newCell0DIndex,
@@ -1066,6 +1454,8 @@ namespace Gedim
                                                                                                const std::vector<unsigned int>& cell1DsAligned,
                                                                                                const double& cell1DsQualityWeight,
                                                                                                const double& cell2DArea,
+                                                                                               const Eigen::Matrix3d& cell2DRotation,
+                                                                                               const Eigen::Vector3d& cell2DTranslation,
                                                                                                const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                                                const std::vector<bool>& cell2DEdgesDirection,
                                                                                                IMeshDAO& mesh) const
@@ -1195,6 +1585,14 @@ namespace Gedim
     if (!createNewVertexOne.IsToSplit &&
         !createNewVertexTwo.IsToSplit)
     {
+      if (cell2DIndex == 321797)
+      {
+        using namespace Gedim;
+
+        std::cout.precision(16);
+        std::cout<< "HERE 1"<< std::endl;
+      }
+
       // no new vertices
       const unsigned int fromVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate) ?
                                         edgeIntersectionOne.Index :
@@ -1239,6 +1637,8 @@ namespace Gedim
                                                                          cell2DNumVertices,
                                                                          fromVertex,
                                                                          toVertex,
+                                                                         cell2DRotation,
+                                                                         cell2DTranslation,
                                                                          cell2DVertices,
                                                                          mesh);
 
@@ -1264,6 +1664,14 @@ namespace Gedim
     else if (createNewVertexOne.IsToSplit &&
              !createNewVertexTwo.IsToSplit)
     {
+      if (cell2DIndex == 321797)
+      {
+        using namespace Gedim;
+
+        std::cout.precision(16);
+        std::cout<< "HERE 2"<< std::endl;
+      }
+
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1292,6 +1700,8 @@ namespace Gedim
                                                                          cell2DNumVertices,
                                                                          edgeIntersectionOne.Index,
                                                                          toVertex,
+                                                                         cell2DRotation,
+                                                                         cell2DTranslation,
                                                                          cell2DVertices,
                                                                          middleCoordinate,
                                                                          splitCell1DOne.NewCell0DIndex,
@@ -1332,6 +1742,14 @@ namespace Gedim
     else if (!createNewVertexOne.IsToSplit &&
              createNewVertexTwo.IsToSplit)
     {
+      if (cell2DIndex == 321797)
+      {
+        using namespace Gedim;
+
+        std::cout.precision(16);
+        std::cout<< "HERE 3"<< std::endl;
+      }
+
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1360,6 +1778,8 @@ namespace Gedim
                                                                        cell2DNumVertices,
                                                                        fromVertex,
                                                                        edgeIntersectionTwo.Index,
+                                                                       cell2DRotation,
+                                                                       cell2DTranslation,
                                                                        cell2DVertices,
                                                                        middleCoordinate,
                                                                        splitCell1DTwo.NewCell0DIndex,
@@ -1413,10 +1833,28 @@ namespace Gedim
       const Eigen::Vector3d middleCoordinateTwo = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
                                                          cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
 
+      if (cell2DIndex == 321797)
+      {
+        using namespace Gedim;
+
+        std::cout.precision(16);
+        std::cout<< "HERE 4"<< std::endl;
+        std::cout<< std::scientific<< "Distance One 1 "<< geometryUtilities.SegmentLength(cell2DVertices.col(edgeIntersectionOne.Index),
+                                                                                          middleCoordinateOne)<< std::endl;
+        std::cout<< std::scientific<< "Distance One 2 "<< geometryUtilities.SegmentLength(cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices),
+                                                                                          middleCoordinateOne)<< std::endl;
+        std::cout<< std::scientific<< "Distance Two 1 "<< geometryUtilities.SegmentLength(cell2DVertices.col(edgeIntersectionTwo.Index),
+                                                                                          middleCoordinateTwo)<< std::endl;
+        std::cout<< std::scientific<< "Distance Two 2 "<< geometryUtilities.SegmentLength(cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
+                                                                                          middleCoordinateTwo)<< std::endl;
+      }
+
       const SplitPolygon_Result splitResult = SplitPolygon_NewVertices(cell2DIndex,
                                                                        cell2DNumVertices,
                                                                        edgeIntersectionOne.Index,
                                                                        edgeIntersectionTwo.Index,
+                                                                       cell2DRotation,
+                                                                       cell2DTranslation,
                                                                        cell2DVertices,
                                                                        { middleCoordinateOne, middleCoordinateTwo },
                                                                        splitCell1DOne.NewCell0DIndex,

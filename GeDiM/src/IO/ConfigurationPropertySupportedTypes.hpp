@@ -89,17 +89,17 @@ namespace Gedim
           case Double:
             return "double";
           case VectorInt:
-            return "vector<int>";
+            return "vector_int";
           case VectorDouble:
-            return "vector<double>";
+            return "vector_double";
           case Bool:
             return "bool";
           case UInt:
             return "uint";
           case SetUInt:
-            return "set<uint>";
+            return "set_uint";
           case VectorUInt:
-            return "vector<uint>";
+            return "vector_uint";
           case Matrix:
             return "Matrix";
           default:
@@ -120,17 +120,17 @@ namespace Gedim
           return String;
         if (stringTypeToLow == "double")
           return Double;
-        if (stringTypeToLow == "vector<int>")
+        if (stringTypeToLow == "vector_int")
           return VectorInt;
-        if (stringTypeToLow == "vector<double>")
+        if (stringTypeToLow == "vector_double")
           return VectorDouble;
         if (stringTypeToLow == "bool")
           return Bool;
-        if (stringTypeToLow == "set<uint>")
+        if (stringTypeToLow == "set_uint")
           return SetUInt;
         if (stringTypeToLow == "uint")
           return UInt;
-        if (stringTypeToLow == "vector<uint>")
+        if (stringTypeToLow == "vector_uint")
           return VectorUInt;
         if (stringTypeToLow == "Matrix")
           return Matrix;
