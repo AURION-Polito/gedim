@@ -52,7 +52,6 @@ namespace GedimUnitTesting
     EXPECT_EQ(1, direction.OppositeVertexIndex);
 
     const Gedim::RefinementUtilities::RefinePolygon_Result result = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
-                                                                                                                  meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
                                                                                                                   direction.MaxEdgeIndex,
                                                                                                                   direction.OppositeVertexIndex,
                                                                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
@@ -97,7 +96,6 @@ namespace GedimUnitTesting
                                                               meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(result.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
                                                               cell2DsRotation,
                                                               cell2DsTranslation,
-                                                              meshGeometricData.Cell2DsVertices,
                                                               meshDAO);
     }
 
@@ -178,7 +176,6 @@ namespace GedimUnitTesting
         const Gedim::RefinementUtilities::MaxEdgeDirection direction = refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2DsEdgeLengths.at(cell2DToRefineIndex));
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
-                                                                                                                            meshGeometricData.Cell2DsVertices.at(cell2DToRefineIndex),
                                                                                                                             direction.MaxEdgeIndex,
                                                                                                                             direction.OppositeVertexIndex,
                                                                                                                             meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex),
@@ -205,7 +202,6 @@ namespace GedimUnitTesting
                                                                   meshGeometricData.Cell2DsEdgeDirections.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
                                                                   cell2DsRotation,
                                                                   cell2DsTranslation,
-                                                                  meshGeometricData.Cell2DsVertices,
                                                                   meshDAO);
         }
       }

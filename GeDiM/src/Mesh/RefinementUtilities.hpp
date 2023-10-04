@@ -185,7 +185,6 @@ namespace Gedim
                                                      const unsigned int toVertex,
                                                      const Eigen::Matrix3d& cell2DRotation,
                                                      const Eigen::Vector3d& cell2DTranslation,
-                                                     const Eigen::MatrixXd& cell2DVertices,
                                                      IMeshDAO& mesh) const;
       SplitPolygon_Result SplitPolygon_NewVertexFrom(const unsigned int cell2DIndex,
                                                      const unsigned int cell2DNumVertices,
@@ -193,8 +192,6 @@ namespace Gedim
                                                      const unsigned int toVertex,
                                                      const Eigen::Matrix3d& cell2DRotation,
                                                      const Eigen::Vector3d& cell2DTranslation,
-                                                     const Eigen::MatrixXd& cell2DVertices,
-                                                     const Eigen::Vector3d& newCell2DVertex,
                                                      const unsigned int fromNewCell0DIndex,
                                                      const std::vector<unsigned int>& fromSplitCell1DsIndex,
                                                      const bool& fromEdgeDirection,
@@ -205,8 +202,6 @@ namespace Gedim
                                                    const unsigned int toEdge,
                                                    const Eigen::Matrix3d& cell2DRotation,
                                                    const Eigen::Vector3d& cell2DTranslation,
-                                                   const Eigen::MatrixXd& cell2DVertices,
-                                                   const Eigen::Vector3d& newCell2DVertex,
                                                    const unsigned int toNewCell0DIndex,
                                                    const std::vector<unsigned int>& toSplitCell1DsIndex,
                                                    const bool& toEdgeDirection,
@@ -217,8 +212,6 @@ namespace Gedim
                                                    const unsigned int toEdge,
                                                    const Eigen::Matrix3d& cell2DRotation,
                                                    const Eigen::Vector3d& cell2DTranslation,
-                                                   const Eigen::MatrixXd& cell2DVertices,
-                                                   const std::array<Eigen::Vector3d, 2>& newCell2DVertices,
                                                    const unsigned int fromNewCell0DIndex,
                                                    const unsigned int toNewCell0DIndex,
                                                    const std::vector<unsigned int>& fromSplitCell1DsIndex,
@@ -243,7 +236,6 @@ namespace Gedim
       /// \param oppositeVertexIndex the vertex opposite to edge local index
       /// \param mesh the mesh to be updated
       RefinePolygon_Result RefineTriangleCell_ByEdge(const unsigned int& cell2DIndex,
-                                                     const Eigen::MatrixXd& cell2DVertices,
                                                      const unsigned int& edgeIndex,
                                                      const unsigned int& oppositeVertexIndex,
                                                      const std::vector<bool>& cell2DEdgesDirection,
@@ -267,7 +259,6 @@ namespace Gedim
                                                const bool& cell2DEdgeDirection,
                                                const std::vector<Eigen::Matrix3d>& cell2DsRotation,
                                                const std::vector<Eigen::Vector3d>& cell2DsTranslation,
-                                               const std::vector<Eigen::MatrixXd>& cell2DsVertices,
                                                IMeshDAO& mesh) const;
 
       /// \brief Refine Polygon Cell2D By Direction
