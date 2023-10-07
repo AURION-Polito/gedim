@@ -870,7 +870,7 @@ namespace Gedim
 
         convexCell3DsFacesUnalignedVertices[cc].resize(convexCell3DFaces2DVertices.size());
         for (unsigned int ccf = 0; ccf < convexCell3DsFacesUnalignedVertices[cc].size(); ccf++)
-          convexCell3DsFacesUnalignedVertices[cc][ccf] = geometryUtilities.UnalignedPoints(convexCell3DFaces2DVertices[cc]);
+          convexCell3DsFacesUnalignedVertices[cc][ccf] = geometryUtilities.UnalignedPoints(convexCell3DFaces2DVertices[ccf]);
 
         const std::vector<std::vector<unsigned int>> convexCell3DFacesTriangulations = geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(convexCell3DPolyhedron.Faces,
                                                                                                                                                    convexCell3DsFaces3DVertices[cc]);
