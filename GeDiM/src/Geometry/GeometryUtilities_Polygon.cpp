@@ -388,9 +388,15 @@ namespace Gedim
         const unsigned int v_prev = (v == 0) ? numVertices - 1 : v - 1;
         const unsigned int v_next = (v + 1) % numVertices;
 
+        const double norm_v_prev_v = (vertices.col(v_prev) -
+                                      vertices.col(v)).norm();
+        const double norm_v_next_v = (vertices.col(v_next) -
+                                      vertices.col(v)).norm();
         const double polarAngle = PolarAngle(vertices.col(v_prev),
                                              vertices.col(v),
-                                             vertices.col(v_next));
+                                             vertices.col(v_next),
+                                             norm_v_prev_v,
+                                             norm_v_next_v);
 
         if (IsValue1DNegative(polarAngle))
           continue;

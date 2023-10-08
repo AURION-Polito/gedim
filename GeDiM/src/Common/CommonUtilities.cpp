@@ -34,26 +34,15 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void Utilities::Shuffle(std::vector<unsigned int>& array,
-                          const unsigned int& seed)
-  {
-    srand(seed);
-    const unsigned int n = array.size();
-
-    for (unsigned int i = 0; i < n - 1; i++)
-    {
-      const unsigned int j = (i + rand() / (RAND_MAX / (n - i) + 1));
-      const unsigned int temp = array[j];
-      array[j] = array[i];
-      array[i] = temp;
-    }
-  }
-  // ***************************************************************************
   std::vector<unsigned int> Utilities::RandomArrayNoRepetition(const unsigned int& n,
                                                                const unsigned int& maxNumber,
                                                                const unsigned int& seed)
   {
-    Output::Assert(n > 0);
+    if (n == 0)
+      return { };
+
+    Gedim::Output::Assert(n <= maxNumber);
+
     vector<unsigned int> randomNumbers(maxNumber);
     std::iota(begin(randomNumbers), end(randomNumbers), 0);
     Shuffle(randomNumbers, seed);

@@ -4,6 +4,7 @@
 #include "IOUtilities.hpp"
 #include <algorithm>
 #include <numeric>
+#include <random>
 
 namespace Gedim
 {
@@ -24,8 +25,14 @@ namespace Gedim
 
 
       /// \brief Shuffle an array
-      static void Shuffle(std::vector<unsigned int>& array,
-                          const unsigned int& seed = time(nullptr));
+      template<class container>
+      static void Shuffle(container& array,
+                          const unsigned int& seed = time(nullptr))
+      {
+        std::shuffle(array.begin(),
+                     array.end(),
+                     std::default_random_engine(seed));
+      }
 
       /// \param n size of elements
       /// \param seed the side
@@ -44,7 +51,9 @@ namespace Gedim
         std::vector<unsigned int> indices(array.size());
         std::iota(begin(indices), end(indices), 0);
 
-        std::sort(indices.begin(), indices.end(), [&array](int a, int b) { return (array.at(a) < array.at(b)); });
+        std::sort(indices.begin(),
+                  indices.end(),
+                  [&array](int a, int b) { return (array.at(a) < array.at(b)); });
 
         return indices;
       }

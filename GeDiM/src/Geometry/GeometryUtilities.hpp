@@ -843,6 +843,15 @@ namespace Gedim
                                                const double& origin,
                                                const double& end,
                                                const bool& insertExtremes) const;
+      /// \param size the number of resulting coordinates
+      /// \param origin the starting curvilinear coordinate
+      /// \param end the ending curvilinear coordinate
+      /// \param insertExtremes if true keeps the extremes
+      /// \return random curvilinear coordinates in the interval [0.0, 1.0], size 1 x numCoordinates
+      /// \note if size < 2 then size will be considered as 2
+      std::vector<double> RandomCoordinates(const unsigned int size,
+                                            const bool insertExtremes,
+                                            const unsigned int seed = time(nullptr)) const;
 
       /// \param v_prev the previous point
       /// \param v the middle point
@@ -851,8 +860,22 @@ namespace Gedim
       /// \note positive is convex, negative is concave, zero is collinear
       inline double PolarAngle(const Eigen::Vector3d& v_prev,
                                const Eigen::Vector3d& v,
-                               const Eigen::Vector3d& v_next) const
-      { return v.x() * (v_next.y() - v_prev.y()) + v_next.x() * (v_prev.y() - v.y()) + v_prev.x() * (v.y() - v_next.y()); }
+                               const Eigen::Vector3d& v_next,
+                               const double& norm_v_prev_v,
+                               const double& norm_v_next_v) const
+      { return IsValue1DZero(norm_v_prev_v) ||
+            IsValue1DZero(norm_v_next_v) ? 0.0 :
+                                           1.0 / norm_v_prev_v *
+                                           1.0 / norm_v_next_v *
+                                           ((v.x() - v_prev.x()) *
+                                            (v_next.y() - v_prev.y()) -
+                                            (v_next.x() - v_prev.x()) *
+                                            (v.y() - v_prev.y()));
+
+        // v.x() * (v_next.y() - v_prev.y()) +
+        //     v_next.x() * (v_prev.y() - v.y()) +
+        //     v_prev.x() * (v.y() - v_next.y());
+      }
 
       /// \brief compute the Point distance
       /// \param firstPoint the first point

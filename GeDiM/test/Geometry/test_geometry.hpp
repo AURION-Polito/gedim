@@ -39,6 +39,52 @@ namespace GedimUnitTesting {
     }
   }
 
+  TEST(TestGeometryUtilities, TestRandomCoordinates)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-6;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      const unsigned int seed = 10;
+
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(0, true), vector<double>({ }));
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(2, true), vector<double>({ 0.0, 1.0 }));
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, true, seed),
+                vector<double>({
+                                 0.0000000000000000e+00,
+                                 1.9572019572019574e-02,
+                                 6.8943068943068939e-02,
+                                 8.1099081099081094e-02,
+                                 1.8478218478218478e-01,
+                                 3.3922533922533921e-01,
+                                 3.6754236754236752e-01,
+                                 5.7031257031257032e-01,
+                                 9.3629493629493632e-01,
+                                 1.0000000000000000e+00
+                               }));
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, false, seed),
+                vector<double>({
+                                 1.9572019572019574e-02,
+                                 6.8943068943068939e-02,
+                                 8.1099081099081094e-02,
+                                 1.8478218478218478e-01,
+                                 3.3922533922533921e-01,
+                                 3.6754236754236752e-01,
+                                 3.7036237036237035e-01,
+                                 5.7031257031257032e-01,
+                                 7.4340974340974342e-01,
+                                 9.3629493629493632e-01
+                               }));
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolarAngle)
   {
     try
@@ -47,15 +93,24 @@ namespace GedimUnitTesting {
       geometryUtilitiesConfig.Tolerance = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      ASSERT_DOUBLE_EQ(-0.5, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                          Eigen::Vector3d(0.5, 0.5, 0.0),
-                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
-      ASSERT_DOUBLE_EQ(+0.0, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                          Eigen::Vector3d(0.5, 0.0, 0.0),
-                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
-      ASSERT_DOUBLE_EQ(+0.5, geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                          Eigen::Vector3d(0.5, -0.5, 0.0),
-                                                          Eigen::Vector3d(1.0, 0.0, 0.0)));
+      ASSERT_DOUBLE_EQ(-0.5,
+                       geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                    Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                    Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                    (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm(),
+                                                    (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm()));
+      ASSERT_DOUBLE_EQ(+0.0,
+                       geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                    Eigen::Vector3d(0.5, 0.0, 0.0),
+                                                    Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                    (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.0, 0.0)).norm(),
+                                                    (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.0, 0.0)).norm()));
+      ASSERT_DOUBLE_EQ(+0.5,
+                       geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                    Eigen::Vector3d(0.5, -0.5, 0.0),
+                                                    Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                    (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, -0.5, 0.0)).norm(),
+                                                    (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, -0.5, 0.0)).norm()));
     }
     catch (const exception& exception)
     {
@@ -251,6 +306,57 @@ namespace GedimUnitTesting {
         result.col(1)<< 1.0, 1.0, 0.0;
         result.col(2)<< 0.0, 1.0, 0.0;
         result.col(3)<< 0.0, 0.0, 0.0;
+
+        ASSERT_EQ(geometryUtilities.ExtractPoints(points,
+                                                  convexHull),
+                  result);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestConvexHullSmall)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance = 1.0e-6;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check small convex hull
+      {
+        Eigen::MatrixXd points(3, 4);
+        points.row(0)<< 0.0000000000000000e+00,  6.9000069000124689e-05,  6.9000069000124689e-05, -5.7818391272698275e-21;
+        points.row(1)<< 0.0000000000000000e+00,  2.9924009884633952e-23,  1.3332013332013341e-02,  1.3332013332013341e-02;
+        points.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        {
+          const string exportFolder = "./Export/TestGeometryUtilities/TestConvexHullSmall";
+          Gedim::Output::CreateFolder(exportFolder);
+
+          Gedim::VTKUtilities exporter;
+          exporter.AddPolygon(points);
+          exporter.Export(exportFolder +
+                          "/Points.vtu");
+        }
+
+        ASSERT_EQ(geometryUtilities.ConvexHull(points,
+                                               true),
+                  vector<unsigned int>({ 0, 1, 3, 2 }));
+
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
+                                                                             false);
+        ASSERT_EQ(convexHull,
+                  vector<unsigned int>({ 0, 1, 3, 2 }));
+
+        Eigen::MatrixXd result(3, 4);
+        result.row(0)<< 0.0000000000000000e+00,  6.9000069000124689e-05,  6.9000069000124689e-05, -5.7818391272698275e-21;
+        result.row(1)<< 0.0000000000000000e+00,  2.9924009884633952e-23,  1.3332013332013341e-02,  1.3332013332013341e-02;
+        result.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                   convexHull),
