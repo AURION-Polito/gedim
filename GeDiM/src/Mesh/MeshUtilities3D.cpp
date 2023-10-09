@@ -536,14 +536,6 @@ namespace Gedim
         const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f],
                                                                                  false);
 
-        if (faceConvexHull.size() == 2)
-        {
-          using namespace Gedim;
-          std::cout.precision(16);
-          std::cout<< std::scientific<< "Vertices 3D\n"<< result.Cell3DsFaces3DVertices[c][f]<< std::endl;
-          std::cout<< std::scientific<< "Vertices 2D\n"<< result.Cell3DsFaces2DVertices[c][f]<< std::endl;
-        }
-
         Output::Assert(geometryUtilities.PolygonOrientation(faceConvexHull) ==
                        Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
       }
