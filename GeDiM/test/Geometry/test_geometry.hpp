@@ -93,7 +93,7 @@ namespace GedimUnitTesting {
       geometryUtilitiesConfig.Tolerance = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      ASSERT_DOUBLE_EQ(-0.5,
+      ASSERT_DOUBLE_EQ(-1.0,
                        geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                     Eigen::Vector3d(0.5, 0.5, 0.0),
                                                     Eigen::Vector3d(1.0, 0.0, 0.0),
@@ -105,7 +105,7 @@ namespace GedimUnitTesting {
                                                     Eigen::Vector3d(1.0, 0.0, 0.0),
                                                     (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.0, 0.0)).norm(),
                                                     (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.0, 0.0)).norm()));
-      ASSERT_DOUBLE_EQ(+0.5,
+      ASSERT_DOUBLE_EQ(+1.0,
                        geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                     Eigen::Vector3d(0.5, -0.5, 0.0),
                                                     Eigen::Vector3d(1.0, 0.0, 0.0),
@@ -294,6 +294,8 @@ namespace GedimUnitTesting {
                           "/Points.vtu");
         }
 
+        ASSERT_EQ(geometryUtilities.OLD_ConvexHull(points,
+                                                   true), vector<unsigned int>({ 3, 0, 2, 1 }));
         ASSERT_EQ(geometryUtilities.ConvexHull(points,
                                                true), vector<unsigned int>({ 3, 0, 2, 1 }));
 

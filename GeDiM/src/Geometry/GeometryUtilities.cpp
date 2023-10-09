@@ -157,6 +157,119 @@ namespace Gedim
     return Q;
   }
   // ***************************************************************************
+  vector<unsigned int> GeometryUtilities::OLD_ConvexHull(const Eigen::MatrixXd& points,
+                                                         const bool& includeCollinear) const
+  {
+    Output::Assert(points.rows() == 3 && PointsAre2D(points));
+
+    list<unsigned int> convexHull;
+    const unsigned int numPoints = points.cols();
+
+    if (numPoints == 1)
+      return vector<unsigned int> { 0 };
+
+    struct pt
+    {
+        double x;
+        double y;
+        unsigned int id;
+    };
+
+    vector<pt> structPoints(numPoints);
+    for (unsigned int p = 0; p < numPoints; p++)
+      structPoints[p] = { points.col(p).x(), points.col(p).y(), p };
+
+    pt p0 = { std::numeric_limits<double>::max(),
+              std::numeric_limits<double>::max(),
+              0
+            };
+    for (const auto& p : structPoints)
+    {
+      if (IsValue1DGreater(p0.y, p.y))
+        p0 = p;
+
+      if (IsValue1DZero(abs(p0.y - p.y)) &&
+          IsValue1DGreater(p0.x, p.x))
+        p0 = p;
+    }
+
+    std::cout<< "OLD P0 "<< p0.id<< std::endl;
+
+    sort(structPoints.begin(),
+         structPoints.end(),
+         [&p0, this](const pt& a, const pt& b)
+    {
+      const double orientation = p0.x * (a.y - b.y) +
+                                 a.x * (b.y - p0.y) +
+                                 b.x * (p0.y - a.y); // < 0 clockwise, > 0 counter-clockwise
+
+      if (IsValue1DZero(orientation))
+        return IsValue1DGreater((p0.x-b.x) * (p0.x-b.x) +
+                                (p0.y-b.y) * (p0.y-b.y),
+                                (p0.x-a.x) * (p0.x-a.x) +
+                                (p0.y-a.y) * (p0.y-a.y));
+      return IsValue1DNegative(orientation);
+    });
+
+    std::cout<< "OLD B P: ";
+    for (auto p : structPoints)
+      std::cout<< " "<< p.id;
+    std::cout<< std::endl;
+
+    if (includeCollinear)
+    {
+      int i = (int)structPoints.size() - 1;
+
+      while (i >= 0 &&
+             IsValue1DZero(p0.x * (structPoints[i].y - structPoints.back().y) +
+                           structPoints[i].x * (structPoints.back().y - p0.y) +
+                           structPoints.back().x * (p0.y - structPoints[i].y)))
+        i--;
+      reverse(structPoints.begin() + i + 1,
+              structPoints.end());
+    }
+
+    std::cout<< "OLD P: ";
+    for (auto p : structPoints)
+      std::cout<< " "<< p.id;
+    std::cout<< std::endl;
+
+    vector<pt> st;
+    for (int i = 0; i < (int)structPoints.size(); i++)
+    {
+      std::cout<< "OLD Point "<< structPoints[i].id<< " - ";
+      std::cout<< "st: ";
+      for (unsigned int k = 0; k < st.size(); k++)
+        std::cout<< " "<< st[k].id;
+      std::cout<< std::endl;
+
+      while (st.size() > 1)
+      {
+        double orientation = st[st.size()-2].x * (st.back().y - structPoints[i].y) +
+                             st.back().x * (structPoints[i].y - st[st.size()-2].y) +
+            structPoints[i].x*(st[st.size()-2].y - st.back().y); // < 0 clockwise, > 0 counter-clockwise
+
+        if (IsValue1DNegative(orientation) || (includeCollinear && IsValue1DZero(orientation)))
+          break;
+
+        std::cout.precision(4);
+        std::cout<< std::scientific<< "\t OLD rm: "<< st[st.size() - 1].id<< " value "<< orientation<< std::endl;
+
+        st.pop_back();
+      }
+
+      st.push_back(structPoints[i]);
+    }
+
+    structPoints = st;
+
+    vector<unsigned int> result(structPoints.size());
+    for (unsigned int p = 0; p < structPoints.size(); p++)
+      result[result.size() - 1 - p] = structPoints[p].id;
+
+    return result;
+  }
+  // ***************************************************************************
   vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd& points,
                                                      const bool& includeCollinear) const
   {
@@ -205,10 +318,9 @@ namespace Gedim
       const double norm_b_p0 = (p0.x - b.x) * (p0.x - b.x) +
                                (p0.y - b.y) * (p0.y - b.y);
 
-      const double orientation = (b.x - a.x) *
-                                 (p0.y - a.y) -
-                                 (p0.x - a.x) *
-                                 (b.y - a.y); // < 0 clockwise, > 0 counter-clockwise
+      const double orientation = p0.x * (a.y - b.y) +
+                                 a.x * (b.y - p0.y) +
+                                 b.x * (p0.y - a.y); // < 0 clockwise, > 0 counter-clockwise
 
       const double orientation_polar = PolarAngle(a.Point(),
                                                   b.Point(),
@@ -217,27 +329,30 @@ namespace Gedim
                                                   norm_b_p0);
 
       if(Compare1DValues(0.0,
-                                            orientation) !=
-                            Compare1DValues(0.0,
-                                            orientation_polar))
+                         orientation) !=
+         Compare1DValues(0.0,
+                         orientation_polar))
       {
-        std::cout<< "HERE "<< std::endl;
+        std::cout<< "HERE 1 "<< std::endl;
         std::cout.precision(16);
         std::cout<< std::scientific<< "\t 0"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
         std::cout<< std::scientific<< "\t 0"<< " norm_b_a "<< norm_b_a<< " norm_b_p0 "<< norm_b_p0<< std::endl;
         std::cout<< scientific<< a.Point().transpose()<< "\n"<< b.Point().transpose()<< "\n"<< p0.Point().transpose()<< std::endl;
-        exit(-1);
       }
 
-      std::cout.precision(4);
-      std::cout<< std::scientific<< "\t 0"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
-
+      const double norm_a_p0 = (p0.x - a.x) * (p0.x - a.x) +
+                               (p0.y - a.y) * (p0.y - a.y);
 
       if (IsValue1DZero(orientation))
-        return IsValue1DGreater(norm_b_a,
-                                norm_b_p0);
+        return IsValue1DGreater(norm_b_p0,
+                                norm_a_p0);
       return IsValue1DNegative(orientation);
     });
+
+    std::cout<< "B P: ";
+    for (auto p : structPoints)
+      std::cout<< " "<< p.id;
+    std::cout<< std::endl;
 
     if (includeCollinear)
     {
@@ -256,11 +371,21 @@ namespace Gedim
                                             norm_b_a,
                                             norm_b_p0);
 
-      std::cout.precision(4);
-      std::cout<< std::scientific<< "\t 1"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
+      if(Compare1DValues(0.0,
+                         orientation) !=
+         Compare1DValues(0.0,
+                         orientation_polar))
+      {
+        std::cout<< "HERE 2 "<< std::endl;
+        std::cout.precision(16);
+        std::cout<< std::scientific<< "\t 0"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
+        std::cout<< std::scientific<< "\t 0"<< " norm_b_a "<< norm_b_a<< " norm_b_p0 "<< norm_b_p0<< std::endl;
+      }
 
       while (i >= 0 &&
-             IsValue1DZero(orientation))
+             IsValue1DZero(p0.x * (structPoints[i].y - structPoints.back().y) +
+                           structPoints[i].x * (structPoints.back().y - p0.y) +
+                           structPoints.back().x * (p0.y - structPoints[i].y)))
       {
         i--;
 
@@ -277,8 +402,16 @@ namespace Gedim
                                        norm_b_a,
                                        norm_b_p0);
 
-        std::cout.precision(4);
-        std::cout<< std::scientific<< "\t 2"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
+        if(Compare1DValues(0.0,
+                           orientation) !=
+           Compare1DValues(0.0,
+                           orientation_polar))
+        {
+          std::cout<< "HERE 3 "<< std::endl;
+          std::cout.precision(16);
+          std::cout<< std::scientific<< "\t 0"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
+          std::cout<< std::scientific<< "\t 0"<< " norm_b_a "<< norm_b_a<< " norm_b_p0 "<< norm_b_p0<< std::endl;
+        }
       }
 
       reverse(structPoints.begin() + i + 1,
@@ -305,18 +438,34 @@ namespace Gedim
                                 (st.back().y - structPoints[i].y) * (st.back().y - structPoints[i].y);
         const double norm_b_c = (st[st.size() - 2].x - structPoints[i].x) * (st[st.size() - 2].x - structPoints[i].x) +
             (st[st.size() - 2].y - structPoints[i].y) * (st[st.size() - 2].y - structPoints[i].y);
-        const double orientation = PolarAngle(st.back().Point(),
-                                              structPoints[i].Point(),
-                                              st[st.size() - 2].Point(),
+        double orientation = st[st.size()-2].x * (st.back().y - structPoints[i].y) +
+                             st.back().x * (structPoints[i].y - st[st.size()-2].y) +
+            structPoints[i].x*(st[st.size()-2].y - st.back().y); // < 0 clockwise, > 0 counter-clockwise
+
+
+        const double orientation_polar = PolarAngle(st.back().Point(),
+                                                    structPoints[i].Point(),
+                                                    st[st.size() - 2].Point(),
             norm_b_a,
             norm_b_c);
+
+        if(Compare1DValues(0.0,
+                           orientation) !=
+           Compare1DValues(0.0,
+                           orientation_polar))
+        {
+          std::cout<< "HERE 4 "<< std::endl;
+          std::cout.precision(16);
+          std::cout<< std::scientific<< "\t 0"<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
+          std::cout<< std::scientific<< "\t 0"<< " norm_b_a "<< norm_b_a<< " norm_b_p0 "<< norm_b_c<< std::endl;
+        }
 
         if (IsValue1DNegative(orientation) ||
             (includeCollinear && IsValue1DZero(orientation)))
           break;
 
         std::cout.precision(4);
-        std::cout<< std::scientific<< "\t rm: "<< st[st.size() - 1].id<< " value "<< orientation<< std::endl;
+        std::cout<< std::scientific<< "\t rm: "<< st[st.size() - 1].id<< " value "<< orientation<< " polar "<< orientation_polar<< std::endl;
 
         st.pop_back();
       }

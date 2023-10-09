@@ -1745,6 +1745,9 @@ namespace Gedim
       std::vector<unsigned int> ConvexHull(const Eigen::MatrixXd& points,
                                            const bool& includeCollinear = true) const;
 
+      std::vector<unsigned int> OLD_ConvexHull(const Eigen::MatrixXd& points,
+                                               const bool& includeCollinear = true) const;
+
       /// \brief Check if a set of points are aligned to a line identified by a segment
       /// \param segmentOrigin segment origin of the line
       /// \param segmentEnd segment end of the line
