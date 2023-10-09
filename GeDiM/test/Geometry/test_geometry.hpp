@@ -294,8 +294,6 @@ namespace GedimUnitTesting {
                           "/Points.vtu");
         }
 
-        ASSERT_EQ(geometryUtilities.OLD_ConvexHull(points,
-                                                   true), vector<unsigned int>({ 3, 0, 2, 1 }));
         ASSERT_EQ(geometryUtilities.ConvexHull(points,
                                                true), vector<unsigned int>({ 3, 0, 2, 1 }));
 
