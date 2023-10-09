@@ -348,17 +348,17 @@ namespace GedimUnitTesting {
 
         ASSERT_EQ(geometryUtilities.ConvexHull(points,
                                                true),
-                  vector<unsigned int>({ 0, 1, 3, 2 }));
+                  vector<unsigned int>({ 1, 2, 3, 0 }));
 
         const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(points,
                                                                              false);
         ASSERT_EQ(convexHull,
-                  vector<unsigned int>({ 0, 1, 3, 2 }));
+                  vector<unsigned int>({ 1, 2, 3, 0 }));
 
         Eigen::MatrixXd result(3, 4);
-        result.row(0)<< 0.0000000000000000e+00,  6.9000069000124689e-05,  6.9000069000124689e-05, -5.7818391272698275e-21;
-        result.row(1)<< 0.0000000000000000e+00,  2.9924009884633952e-23,  1.3332013332013341e-02,  1.3332013332013341e-02;
-        result.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+        result.row(0)<< 6.9000069000124689e-05,  6.9000069000124689e-05, -5.7818391272698275e-21, 0.0000000000000000e+00;
+        result.row(1)<< 2.9924009884633952e-23,  1.3332013332013341e-02,  1.3332013332013341e-02, 0.0000000000000000e+00;
+        result.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, 0.0000000000000000e+00;
 
         ASSERT_EQ(geometryUtilities.ExtractPoints(points,
                                                   convexHull),
