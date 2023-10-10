@@ -154,11 +154,11 @@ namespace Gedim
   }
   // ***************************************************************************
   double GeometryUtilities::PolygonAreaByInternalIntegral(const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints,
-                                                          const Eigen::VectorXd& referenceTriangleWeights) const
+                                                          const Eigen::VectorXd& referenceQuadratureWeights) const
   {
     const unsigned int numPolygonTriangles = polygonTriangulationPoints.size();
 
-    const unsigned int numTriangleQuadraturePoints = referenceTriangleWeights.size();
+    const unsigned int numTriangleQuadraturePoints = referenceQuadratureWeights.size();
     const unsigned int numQuadraturePoints = numPolygonTriangles *
                                              numTriangleQuadraturePoints;
 
@@ -172,9 +172,9 @@ namespace Gedim
 
       Gedim::MapTriangle::MapTriangleData mapData = mapTriangle.Compute(triangleVertices);
       quadratureWeights.segment(numTriangleQuadraturePoints * t,
-                                numTriangleQuadraturePoints) = referenceTriangleWeights.array() *
+                                numTriangleQuadraturePoints) = referenceQuadratureWeights.array() *
                                                                mapTriangle.DetJ(mapData,
-                                                                                referenceTriangleWeights).array().abs();
+                                                                                referenceQuadratureWeights).array().abs();
 
     }
 

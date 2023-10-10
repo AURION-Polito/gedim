@@ -1592,10 +1592,11 @@ namespace Gedim
 
       /// \brief Polygon Area By Internal Integral
       /// \param polygonTriangulationPoints the internal polygon sub-triangulation
-      /// \param referenceTriangleWeights the triangle reference quadrature weights
+      /// \param referenceTriangleWeights the reference triangle quadrature weights [0,1]x[0,1]
       /// \return the area computed as integral on sub-triangles
       double PolygonAreaByInternalIntegral(const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints,
-                                           const Eigen::VectorXd& referenceTriangleWeights) const;
+                                           const Eigen::VectorXd& referenceQuadratureWeights =
+          Eigen::VectorXd::Constant(1, 0.5)) const;
 
       /// \brief Polygon Area By Integral on edges
       /// \param polygonVertices the polygon vertices, size 3 x numVertices

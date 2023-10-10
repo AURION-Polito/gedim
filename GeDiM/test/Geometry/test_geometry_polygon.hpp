@@ -124,13 +124,7 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
 
-        Eigen::MatrixXd referenceTriangleQuadraturePoints;
-        Eigen::VectorXd referenceTriangleQuadratureWeights;
-        Gedim::Quadrature_Gauss2D_Triangle::FillPointsAndWeights(0,
-                                                                 referenceTriangleQuadraturePoints,
-                                                                 referenceTriangleQuadratureWeights);
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints,
-                                                                                              referenceTriangleQuadratureWeights);
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
@@ -211,13 +205,7 @@ namespace GedimUnitTesting
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
-        Eigen::MatrixXd referenceTriangleQuadraturePoints;
-        Eigen::VectorXd referenceTriangleQuadratureWeights;
-        Gedim::Quadrature_Gauss2D_Triangle::FillPointsAndWeights(0,
-                                                                 referenceTriangleQuadraturePoints,
-                                                                 referenceTriangleQuadratureWeights);
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints,
-                                                                                              referenceTriangleQuadratureWeights);
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
@@ -298,13 +286,7 @@ namespace GedimUnitTesting
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
-        Eigen::MatrixXd referenceTriangleQuadraturePoints;
-        Eigen::VectorXd referenceTriangleQuadratureWeights;
-        Gedim::Quadrature_Gauss2D_Triangle::FillPointsAndWeights(0,
-                                                                 referenceTriangleQuadraturePoints,
-                                                                 referenceTriangleQuadratureWeights);
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints,
-                                                                                              referenceTriangleQuadratureWeights);
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
@@ -384,15 +366,9 @@ namespace GedimUnitTesting
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
-        Eigen::MatrixXd referenceTriangleQuadraturePoints;
-        Eigen::VectorXd referenceTriangleQuadratureWeights;
-        Gedim::Quadrature_Gauss2D_Triangle::FillPointsAndWeights(0,
-                                                                 referenceTriangleQuadraturePoints,
-                                                                 referenceTriangleQuadratureWeights);
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints,
-                                                                                              referenceTriangleQuadratureWeights);
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints;
 
-        ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
+                                              ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
         const Eigen::Vector3d centroidByIntegral = geometryUtilities.PolygonCentroidByIntegral(polygonVertices,
                                                                                                edgeLengths,
@@ -470,13 +446,7 @@ namespace GedimUnitTesting
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
-        Eigen::MatrixXd referenceTriangleQuadraturePoints;
-        Eigen::VectorXd referenceTriangleQuadratureWeights;
-        Gedim::Quadrature_Gauss2D_Triangle::FillPointsAndWeights(0,
-                                                                 referenceTriangleQuadraturePoints,
-                                                                 referenceTriangleQuadratureWeights);
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints,
-                                                                                              referenceTriangleQuadratureWeights);
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
