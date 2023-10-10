@@ -1576,12 +1576,26 @@ namespace Gedim
       /// \param edgeLengths the edge lengths, size numEdges
       /// \param edgeTangents the edge tangents, size 3 x numEdges
       /// \param edgeNormals the edge outgoint normals, size 3 x numEdges
+      /// \param referenceQuadraturePoints quadrature points on reference segment [0,1]
+      /// \param referenceQuadratureWeights quadrature weights on reference segment [0,1]
       /// \return the polygon area
       /// \note the area is computed as integral_edges x dot n_x with gauss formula on edges of order 1
-      double PolygonAreaByIntegral(const Eigen::MatrixXd& polygonVertices,
-                                   const Eigen::VectorXd& edgeLengths,
-                                   const Eigen::MatrixXd& edgeTangents,
-                                   const Eigen::MatrixXd& edgeNormals) const;
+      double PolygonAreaByBoundaryIntegral(const Eigen::MatrixXd& polygonVertices,
+                                           const Eigen::VectorXd& edgeLengths,
+                                           const Eigen::MatrixXd& edgeTangents,
+                                           const Eigen::MatrixXd& edgeNormals,
+                                           const std::vector<bool>& edgeDirections,
+                                           const Eigen::MatrixXd& referenceQuadraturePoints =
+          (Eigen::MatrixXd(3, 1) << 0.5, 0.0, 0.0).finished(),
+                                           const Eigen::VectorXd& referenceQuadratureWeights =
+          Eigen::VectorXd::Ones(1)) const;
+
+      /// \brief Polygon Area By Internal Integral
+      /// \param polygonTriangulationPoints the internal polygon sub-triangulation
+      /// \param referenceTriangleWeights the triangle reference quadrature weights
+      /// \return the area computed as integral on sub-triangles
+      double PolygonAreaByInternalIntegral(const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints,
+                                           const Eigen::VectorXd& referenceTriangleWeights) const;
 
       /// \brief Polygon Area By Integral on edges
       /// \param polygonVertices the polygon vertices, size 3 x numVertices

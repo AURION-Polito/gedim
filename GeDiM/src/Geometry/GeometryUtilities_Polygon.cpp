@@ -103,23 +103,24 @@ namespace Gedim
     return centroid;
   }
   // ***************************************************************************
-  double GeometryUtilities::PolygonAreaByIntegral(const Eigen::MatrixXd& polygonVertices,
-                                                  const Eigen::VectorXd& edgeLengths,
-                                                  const Eigen::MatrixXd& edgeTangents,
-                                                  const Eigen::MatrixXd& edgeNormals) const
+  double GeometryUtilities::PolygonAreaByBoundaryIntegral(const Eigen::MatrixXd& polygonVertices,
+                                                          const Eigen::VectorXd& edgeLengths,
+                                                          const Eigen::MatrixXd& edgeTangents,
+                                                          const Eigen::MatrixXd& edgeNormals,
+                                                          const std::vector<bool>& edgeDirections,
+                                                          const Eigen::MatrixXd& referenceQuadraturePoints,
+                                                          const Eigen::VectorXd& referenceQuadratureWeights) const
   {
-    Gedim::Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
-    Gedim::Output::Assert(edgeLengths.size() == polygonVertices.cols());
-    Output::Assert(edgeTangents.rows() == 3 && edgeTangents.cols() == polygonVertices.cols());
-    Output::Assert(edgeNormals.rows() == 3 && edgeNormals.cols() == polygonVertices.cols());
-
-
-    // quadrature on reference segment [0,1] of order 1
-    const double referenceSegmentPoints = 5.0000000000000000e-01;
-    const double referenceSegmentWeights = 1.0000000000000000e+00;
-    const unsigned int numReferenceQuadraturePoints = 1;
-
     const unsigned int numEdges = polygonVertices.cols();
+
+    Gedim::Output::Assert(polygonVertices.rows() == 3 && numEdges > 2);
+    Gedim::Output::Assert(edgeLengths.size() == numEdges);
+    Gedim::Output::Assert(edgeDirections.size() == numEdges);
+    Output::Assert(edgeTangents.rows() == 3 && edgeTangents.cols() == numEdges);
+    Output::Assert(edgeNormals.rows() == 3 && edgeNormals.cols() == numEdges);
+    Output::Assert(referenceQuadraturePoints.cols() == referenceQuadratureWeights.size());
+
+    const unsigned int numReferenceQuadraturePoints = referenceQuadraturePoints.cols();
     const unsigned int numQuadraturePoints = numEdges *
                                              numReferenceQuadraturePoints;
 
@@ -128,15 +129,18 @@ namespace Gedim
 
     for (unsigned int e = 0; e < numEdges; e++)
     {
+      const double direction = edgeDirections[e] ? 1.0 : -1.0;
+
       const MatrixXd edgeWeightsTimesNormal = std::abs(edgeLengths[e]) *
-                                              referenceSegmentWeights *
+                                              referenceQuadratureWeights *
                                               edgeNormals.col(e).transpose();
 
       for (unsigned int q = 0; q < numReferenceQuadraturePoints; q++)
       {
         quadraturePoints.col(e * numReferenceQuadraturePoints +
                              q) = polygonVertices.col(e) +
-                                  referenceSegmentPoints *
+                                  direction *
+                                  referenceQuadraturePoints(0, q) *
                                   edgeTangents.col(e);
       }
 
@@ -147,6 +151,34 @@ namespace Gedim
     }
 
     return quadraturePoints.row(0).dot(quadratureWeightsTimesNormal.row(0));
+  }
+  // ***************************************************************************
+  double GeometryUtilities::PolygonAreaByInternalIntegral(const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints,
+                                                          const Eigen::VectorXd& referenceTriangleWeights) const
+  {
+    const unsigned int numPolygonTriangles = polygonTriangulationPoints.size();
+
+    const unsigned int numTriangleQuadraturePoints = referenceTriangleWeights.size();
+    const unsigned int numQuadraturePoints = numPolygonTriangles *
+                                             numTriangleQuadraturePoints;
+
+    Eigen::VectorXd quadratureWeights = Eigen::VectorXd::Zero(numQuadraturePoints);
+
+    Gedim::MapTriangle mapTriangle;
+
+    for (unsigned int t = 0; t < numPolygonTriangles; t++)
+    {
+      const Eigen::Matrix3d& triangleVertices = polygonTriangulationPoints[t];
+
+      Gedim::MapTriangle::MapTriangleData mapData = mapTriangle.Compute(triangleVertices);
+      quadratureWeights.segment(numTriangleQuadraturePoints * t,
+                                numTriangleQuadraturePoints) = referenceTriangleWeights.array() *
+                                                               mapTriangle.DetJ(mapData,
+                                                                                referenceTriangleWeights).array().abs();
+
+    }
+
+    return quadratureWeights.sum();
   }
   // ***************************************************************************
   Vector3d GeometryUtilities::PolygonCentroidByIntegral(const Eigen::MatrixXd& polygonVertices,
