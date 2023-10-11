@@ -340,10 +340,9 @@ namespace Gedim
           {
             std::cout.precision(16);
             std::cout<< "Cell1D_CheckNormals"<< std::endl;
-            std::cout<< scientific<< area<< "\n"<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
-            std::cout<< scientific<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
-            std::cout<< scientific<< GeometryUtilitiesConfig::MinTolerance() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
-            std::cout<< scientific<< GeometryUtilitiesConfig::MinTolerance() << "\n"<< std::numeric_limits<double>::epsilon()<< std::endl;
+            std::cout<< scientific<< "Areas: "<< area<< "\n"<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
+            std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
+            std::cout<< scientific<< "Tolerance: "<< GeometryUtilitiesConfig::MinTolerance() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
           }
 
           Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
@@ -376,6 +375,17 @@ namespace Gedim
         for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
         {
           const double area = geometryUtilities.PolygonAreaByInternalIntegral(geometricData.Cell3DsFaces2DTriangulations[cell3DIndex][f]);
+
+          if (!geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
+                                                  area))
+          {
+            std::cout.precision(16);
+            std::cout<< "Cell2D_CheckTriangles"<< std::endl;
+            std::cout<< scientific<< "Tolerance: "<< area<< "\n"<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
+            std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
+            std::cout<< scientific<< "Areas: "<< GeometryUtilitiesConfig::MinTolerance() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
+          }
+
           Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
                                                             area));
         }
@@ -396,6 +406,17 @@ namespace Gedim
                                                                               geometricData.Cell3DsFacesEdge2DTangents[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdgeDirections[cell3DIndex][f]);
+
+          if (!geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
+                                                  area))
+          {
+            std::cout.precision(16);
+            std::cout<< "Cell2D_CheckNormals"<< std::endl;
+            std::cout<< scientific<< "Tolerance: "<< area<< "\n"<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
+            std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
+            std::cout<< scientific<< "Areas: "<< GeometryUtilitiesConfig::MinTolerance() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
+          }
+
           Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
                                                             area));
         }
@@ -406,6 +427,17 @@ namespace Gedim
                                                                                    geometricData.Cell3DsFacesNormalDirections[cell3DIndex],
                                                                                    geometricData.Cell3DsFacesTranslations[cell3DIndex],
                                                                                    geometricData.Cell3DsFacesRotationMatrices[cell3DIndex]);
+
+        if (!geometryUtilities.Are3DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
+                                                volume))
+        {
+          std::cout.precision(16);
+          std::cout<< "Cell2D_CheckNormals"<< std::endl;
+          std::cout<< scientific<< "Tolerance: "<< volume<< "\n"<< geometricData.Cell3DsVolumes[cell3DIndex]<< std::endl;
+          std::cout<< scientific<< "Difference: "<< (volume - geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
+          std::cout<< scientific<< "Areas: "<< GeometryUtilitiesConfig::MinTolerance() * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
+        }
+
         Output::Assert(geometryUtilities.Are3DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
                                                           volume));
       }
@@ -436,9 +468,9 @@ namespace Gedim
         {
           std::cout.precision(16);
           std::cout<< "Cell3D_CheckTetrahedra"<< std::endl;
-          std::cout<< scientific<< volume<< "\n"<< geometricData.Cell3DsVolumes[cell3DIndex]<< std::endl;
-          std::cout<< scientific<< (volume - geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
-          std::cout<< scientific<< GeometryUtilitiesConfig::MinTolerance() * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
+          std::cout<< scientific<< "Tolerance: "<< volume<< "\n"<< geometricData.Cell3DsVolumes[cell3DIndex]<< std::endl;
+          std::cout<< scientific<< "Difference: "<< (volume - geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
+          std::cout<< scientific<< "Areas: "<< GeometryUtilitiesConfig::MinTolerance() * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
         }
 
         Output::Assert(geometryUtilities.Are3DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
