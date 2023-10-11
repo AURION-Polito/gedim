@@ -700,9 +700,8 @@ namespace Gedim
       inline bool Are1DValuesEqual(const double& first,
                                    const double& second) const
       {
-        return CompareValues(first,
-                             second,
-                             _configuration.Tolerance) == CompareTypes::Coincident;
+        return Compare1DValues(first,
+                               second) == CompareTypes::Coincident;
       }
 
       /// \param first the first value
@@ -789,6 +788,17 @@ namespace Gedim
                                value) == CompareTypes::Coincident;
       }
 
+      /// \brief Check if two 2D values are equal according to tolerance
+      /// \param first the first value
+      /// \param second the second value
+      /// \return the result
+      inline bool Are2DValuesEqual(const double& first,
+                                   const double& second) const
+      {
+        return Compare2DValues(first,
+                               second) == CompareTypes::Coincident;
+      }
+
       /// \brief Compare two 3D values according to cube tolerance
       /// \param first the first value
       /// \param second the second value
@@ -825,6 +835,17 @@ namespace Gedim
       {
         return Compare3DValues(0.0,
                                value) == CompareTypes::Coincident;
+      }
+
+      /// \brief Check if two 3D values are equal according to tolerance
+      /// \param first the first value
+      /// \param second the second value
+      /// \return the result
+      inline bool Are3DValuesEqual(const double& first,
+                                   const double& second) const
+      {
+        return Compare3DValues(first,
+                               second) == CompareTypes::Coincident;
       }
 
       /// \param step the distance between each coordinate

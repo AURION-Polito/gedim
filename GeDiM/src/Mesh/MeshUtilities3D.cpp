@@ -334,6 +334,42 @@ namespace Gedim
       }
     }
 
+    if (configuration.Cell2D_CheckTriangles)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
+        {
+          const double area = geometryUtilities.PolygonAreaByInternalIntegral(geometricData.Cell3DsFaces2DTriangulations[cell3DIndex][f]);
+          Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
+                                                            area));
+        }
+      }
+    }
+
+    if (configuration.Cell2D_CheckNormals)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
+        {
+          const double area = geometryUtilities.PolygonAreaByBoundaryIntegral(geometricData.Cell3DsFaces2DVertices[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdgeLengths[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdge2DTangents[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdgeDirections[cell3DIndex][f]);
+          Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
+                                                            area));
+        }
+      }
+    }
+
     if (configuration.Cell3D_CheckMeasure)
     {
       for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)

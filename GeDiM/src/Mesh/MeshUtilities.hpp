@@ -42,7 +42,10 @@ namespace Gedim
       {
           bool Cell1D_CheckMeasure = true;
           bool Cell2D_CheckMeasure = true;
+          bool Cell2D_CheckTriangles = true;
+          bool Cell2D_CheckNormals = true;
           bool Cell3D_CheckMeasure = true;
+          bool Cell3D_CheckTetrahedra = true;
       };
 
       struct ExtractActiveMeshData final
