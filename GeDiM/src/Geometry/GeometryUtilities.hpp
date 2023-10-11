@@ -1949,9 +1949,9 @@ namespace Gedim
                                                 const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
                                                 const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices,
                                                 const Eigen::MatrixXd& referenceQuadraturePoints =
-               (Eigen::MatrixXd(3, 1) << 1.0 / 3.0, 1.0 / 3.0, 0.0).finished(),
+          (Eigen::MatrixXd(3, 1) << 1.0 / 3.0, 1.0 / 3.0, 0.0).finished(),
                                                 const Eigen::VectorXd& referenceQuadratureWeights =
-               Eigen::VectorXd::Constant(1, 0.5)) const;
+          Eigen::VectorXd::Constant(1, 0.5)) const;
 
       /// \brief Polyhedron Volume By Internal Integral
       /// \param polyhedronTetrahedronVertices the internal polyhedron sub-tetrahedra
@@ -1959,7 +1959,7 @@ namespace Gedim
       /// \return the area computed as integral on sub-tetrahedra
       double PolyhedronVolumeByInternalIntegral(const std::vector<Eigen::MatrixXd>& polyhedronTetrahedronVertices,
                                                 const Eigen::VectorXd& referenceQuadratureWeights =
-               Eigen::VectorXd::Constant(1, 1.0 / 6.0));
+          Eigen::VectorXd::Constant(1, 1.0 / 6.0));
 
       /// \brief Compute the Polyhedron centroid
       /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace

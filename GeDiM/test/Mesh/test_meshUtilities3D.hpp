@@ -157,14 +157,20 @@ namespace GedimUnitTesting
     expectedResult.Cell3DsEdges = { cube.Edges };
     expectedResult.Cell3DsFaces = { cube.Faces };
 
-    EXPECT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
-    EXPECT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
-    EXPECT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
-    EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+    ASSERT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
+    ASSERT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
+    ASSERT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
+    ASSERT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration checkMeshGeometricDataConfig;
+    ASSERT_NO_THROW(meshUtilities.CheckMeshGeometricData3D(checkMeshGeometricDataConfig,
+                                                           geometryUtilities,
+                                                           meshDao,
+                                                           result));
   }
 
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave)
@@ -279,16 +285,22 @@ namespace GedimUnitTesting
     expectedResult.Cell3DsFaces = { cube.Faces };
     expectedResult.Cell3DsFacesNormalDirections = { { false, true, false, true, true, false } };
 
-    EXPECT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
-    EXPECT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
-    EXPECT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
-    EXPECT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
-    EXPECT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
-    EXPECT_EQ(result.Cell3DsFacesNormalDirections,
+    ASSERT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
+    ASSERT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
+    ASSERT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
+    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
+    ASSERT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+    ASSERT_EQ(result.Cell3DsFacesNormalDirections,
               expectedResult.Cell3DsFacesNormalDirections);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration checkMeshGeometricDataConfig;
+    ASSERT_NO_THROW(meshUtilities.CheckMeshGeometricData3D(checkMeshGeometricDataConfig,
+                                                           geometryUtilities,
+                                                           meshDao,
+                                                           result));
   }
 
   TEST(TestMeshUtilities, TestSetMeshMarkersOnPlane)

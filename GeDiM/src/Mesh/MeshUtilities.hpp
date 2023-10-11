@@ -38,6 +38,13 @@ namespace Gedim
           bool Cell3D_CheckMeasure = true;
       };
 
+      struct CheckMeshGeometricData3DConfiguration final
+      {
+          bool Cell1D_CheckMeasure = true;
+          bool Cell2D_CheckMeasure = true;
+          bool Cell3D_CheckMeasure = true;
+      };
+
       struct ExtractActiveMeshData final
       {
           std::unordered_map<unsigned int, unsigned int> OldCell0DToNewCell0D; ///< each pair is {old Cell0D index, new Cell0D index}
@@ -203,6 +210,15 @@ namespace Gedim
       void CheckMesh3D(const CheckMesh3DConfiguration& configuration,
                        const GeometryUtilities& geometryUtilities,
                        const IMeshDAO& convexMesh) const;
+
+      /// \brief Check MeshGeometricData3D correctness
+      /// \param geometryUtilities the geometry utilities
+      /// \param mesh the 3D mesh
+      /// \param geometricData the mesh geometric data
+      void CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfiguration& configuration,
+                                    const GeometryUtilities& geometryUtilities,
+                                    const IMeshDAO& mesh,
+                                    const MeshGeometricData3D& geometricData) const;
 
       /// \brief Create a Mesh 1D with a segment
       /// \param segmentVertices the segment coordinates, size 3x2

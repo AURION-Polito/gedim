@@ -291,10 +291,57 @@ namespace Gedim
 
         Output::Assert(geometryUtilities.IsValue3DPositive(
                          geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
-                                                            polyhedronFaceNormals,
-                                                            polyhedronFaceNormalDirections,
-                                                            polyhedronFaceTranslations,
-                                                            polyhedronFaceRotationMatrices)));
+                                                                              polyhedronFaceNormals,
+                                                                              polyhedronFaceNormalDirections,
+                                                                              polyhedronFaceTranslations,
+                                                                              polyhedronFaceRotationMatrices)));
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfiguration& configuration,
+                                               const GeometryUtilities& geometryUtilities,
+                                               const IMeshDAO& mesh,
+                                               const MeshGeometricData3D& geometricData) const
+  {
+    if (configuration.Cell1D_CheckMeasure)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
+        {
+          const unsigned int cell2DIndex = mesh.Cell3DFace(cell3DIndex, f);
+          for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
+            Output::Assert(geometryUtilities.IsValue1DPositive(geometricData.Cell3DsFacesEdgeLengths[cell3DIndex][f][e]));
+        }
+      }
+    }
+
+    if (configuration.Cell2D_CheckMeasure)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
+        {
+          Output::Assert(geometryUtilities.IsValue2DPositive(geometricData.Cell3DsFacesAreas[cell3DIndex][f]));
+        }
+      }
+    }
+
+    if (configuration.Cell3D_CheckMeasure)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        Output::Assert(geometryUtilities.IsValue3DPositive(geometricData.Cell3DsVolumes[cell3DIndex]));
       }
     }
   }
@@ -584,10 +631,10 @@ namespace Gedim
 
 
       result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(result.Cell3DsFaces2DTriangulations[c],
-                                                                    result.Cell3DsFacesNormals[c],
-                                                                    result.Cell3DsFacesNormalDirections[c],
-                                                                    result.Cell3DsFacesTranslations[c],
-                                                                    result.Cell3DsFacesRotationMatrices[c]);
+                                                                                      result.Cell3DsFacesNormals[c],
+                                                                                      result.Cell3DsFacesNormalDirections[c],
+                                                                                      result.Cell3DsFacesTranslations[c],
+                                                                                      result.Cell3DsFacesRotationMatrices[c]);
 
       result.Cell3DsCentroids[c] = geometryUtilities.PolyhedronCentroid(result.Cell3DsFaces2DTriangulations[c],
                                                                         result.Cell3DsFacesNormals[c],
@@ -734,37 +781,37 @@ namespace Gedim
         const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f],
                                                                                  false);
 
-//        if (geometryUtilities.PolygonOrientation(faceConvexHull) !=
-//            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise)
-//        {
-//          std::cout.precision(16);
-//          std::cout<< "Cell "<< c<< " ";
-//          std::cout<< "Face "<< f<< " ";
-//          std::cout<< "index "<< mesh.Cell3DFace(c, f)<< std::endl;
-//          std::cout<< scientific<< "3DVertices:\n"<< result.Cell3DsFaces3DVertices[c][f]<< std::endl;
-//          std::cout<< scientific<< "2DVertices:\n"<< result.Cell3DsFaces2DVertices[c][f]<< std::endl;
-//          std::cout<< scientific<< "2DVertices_CCW:\n"<< face2DVerticesCCW[f]<< std::endl;
-//          std::cout<< scientific<< "Rotation:\n"<< result.Cell3DsFacesRotationMatrices[c][f]<< std::endl;
-//          std::cout<< scientific<< "Translation:\n "<< result.Cell3DsFacesTranslations[c][f]<< std::endl;
+        //        if (geometryUtilities.PolygonOrientation(faceConvexHull) !=
+        //            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise)
+        //        {
+        //          std::cout.precision(16);
+        //          std::cout<< "Cell "<< c<< " ";
+        //          std::cout<< "Face "<< f<< " ";
+        //          std::cout<< "index "<< mesh.Cell3DFace(c, f)<< std::endl;
+        //          std::cout<< scientific<< "3DVertices:\n"<< result.Cell3DsFaces3DVertices[c][f]<< std::endl;
+        //          std::cout<< scientific<< "2DVertices:\n"<< result.Cell3DsFaces2DVertices[c][f]<< std::endl;
+        //          std::cout<< scientific<< "2DVertices_CCW:\n"<< face2DVerticesCCW[f]<< std::endl;
+        //          std::cout<< scientific<< "Rotation:\n"<< result.Cell3DsFacesRotationMatrices[c][f]<< std::endl;
+        //          std::cout<< scientific<< "Translation:\n "<< result.Cell3DsFacesTranslations[c][f]<< std::endl;
 
-//          {
-//            Gedim::VTKUtilities exporter;
-//            exporter.AddPolygon(result.Cell3DsFaces3DVertices[c][f]);
-//            exporter.Export("./Cell3DFace3D.vtu");
-//          }
+        //          {
+        //            Gedim::VTKUtilities exporter;
+        //            exporter.AddPolygon(result.Cell3DsFaces3DVertices[c][f]);
+        //            exporter.Export("./Cell3DFace3D.vtu");
+        //          }
 
-//          {
-//            Gedim::VTKUtilities exporter;
-//            exporter.AddPolygon(result.Cell3DsFaces2DVertices[c][f]);
-//            exporter.Export("./Cell3DFace2D.vtu");
-//          }
+        //          {
+        //            Gedim::VTKUtilities exporter;
+        //            exporter.AddPolygon(result.Cell3DsFaces2DVertices[c][f]);
+        //            exporter.Export("./Cell3DFace2D.vtu");
+        //          }
 
-//          {
-//            Gedim::VTKUtilities exporter;
-//            exporter.AddPolygon(face2DVerticesCCW[f]);
-//            exporter.Export("./Cell3DFace2DCCW.vtu");
-//          }
-//        }
+        //          {
+        //            Gedim::VTKUtilities exporter;
+        //            exporter.AddPolygon(face2DVerticesCCW[f]);
+        //            exporter.Export("./Cell3DFace2DCCW.vtu");
+        //          }
+        //        }
 
         Output::Assert(geometryUtilities.PolygonOrientation(faceConvexHull) ==
                        Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
@@ -882,10 +929,10 @@ namespace Gedim
                                                                                              convexCell3DsNormal[cc]);
 
         convexCell3DsVolume[cc] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(convexCell3DFaces2DTriangulations,
-                                                                     convexCell3DsNormal[cc],
-                                                                     convexCell3DsNormalDirections[cc],
-                                                                     convexCell3DFacesTranslation,
-                                                                     convexCell3DFacesRotationMatrices);
+                                                                                       convexCell3DsNormal[cc],
+                                                                                       convexCell3DsNormalDirections[cc],
+                                                                                       convexCell3DFacesTranslation,
+                                                                                       convexCell3DFacesRotationMatrices);
 
         convexCell3DsCentroid.col(cc) = geometryUtilities.PolyhedronCentroid(convexCell3DFaces2DTriangulations,
                                                                              convexCell3DsNormal[cc],
