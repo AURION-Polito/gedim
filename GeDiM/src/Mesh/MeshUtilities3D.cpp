@@ -290,7 +290,7 @@ namespace Gedim
                                                                                                                                                          polyhedronFaceTriangulations);
 
         Output::Assert(geometryUtilities.IsValue3DPositive(
-                         geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
+                         geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
                                                             polyhedronFaceNormals,
                                                             polyhedronFaceNormalDirections,
                                                             polyhedronFaceTranslations,
@@ -583,7 +583,7 @@ namespace Gedim
                                                                                                 result.Cell3DsFacesNormals[c]);
 
 
-      result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolume(result.Cell3DsFaces2DTriangulations[c],
+      result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(result.Cell3DsFaces2DTriangulations[c],
                                                                     result.Cell3DsFacesNormals[c],
                                                                     result.Cell3DsFacesNormalDirections[c],
                                                                     result.Cell3DsFacesTranslations[c],
@@ -881,7 +881,7 @@ namespace Gedim
                                                                                              geometryUtilities.PolyhedronBarycenter(convexCell3DPolyhedron.Vertices),
                                                                                              convexCell3DsNormal[cc]);
 
-        convexCell3DsVolume[cc] = geometryUtilities.PolyhedronVolume(convexCell3DFaces2DTriangulations,
+        convexCell3DsVolume[cc] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(convexCell3DFaces2DTriangulations,
                                                                      convexCell3DsNormal[cc],
                                                                      convexCell3DsNormalDirections[cc],
                                                                      convexCell3DFacesTranslation,

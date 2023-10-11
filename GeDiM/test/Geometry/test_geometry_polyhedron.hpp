@@ -1531,7 +1531,7 @@ namespace GedimUnitTesting
       const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
                                                                                                                                                        polyhedronFaceTriangulations);
 
-      const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
+      const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
                                                                          polyhedronFaceNormalDirections,
                                                                          polyhedronFaceTranslations,
@@ -1569,7 +1569,7 @@ namespace GedimUnitTesting
       const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
                                                                                                                                                        polyhedronFaceTriangulations);
 
-      const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
+      const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
                                                                          polyhedronFaceNormalDirections,
                                                                          polyhedronFaceTranslations,
@@ -1612,7 +1612,7 @@ namespace GedimUnitTesting
       const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
                                                                                                                                                        polyhedronFaceTriangulations);
 
-      const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
+      const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
                                                                          polyhedronFaceNormalDirections,
                                                                          polyhedronFaceTranslations,
@@ -1659,7 +1659,7 @@ namespace GedimUnitTesting
       const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints = geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedronFace2DVertices,
                                                                                                                                                        polyhedronFaceTriangulations);
 
-      const double polyhedronVolume = geometryUtilities.PolyhedronVolume(polyhedronFace2DTriangulationPoints,
+      const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
                                                                          polyhedronFaceNormals,
                                                                          polyhedronFaceNormalDirections,
                                                                          polyhedronFaceTranslations,

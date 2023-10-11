@@ -1941,11 +1941,15 @@ namespace Gedim
       /// \param polyhedronFaceRotationMatrices polyhedron face rotation matrix from 2D to 3D
       /// \return the polyhedron volume
       /// \note use the divergence theorem, with F = 1/3 (x, y, z), see https://en.wikipedia.org/wiki/Divergence_theorem
-      double PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
-                              const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
-                              const std::vector<bool>& polyhedronFaceNormalDirections,
-                              const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
-                              const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const;
+      double PolyhedronVolumeByBoundaryIntegral(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
+                                                const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                const std::vector<bool>& polyhedronFaceNormalDirections,
+                                                const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices,
+                                                const Eigen::MatrixXd& referenceQuadraturePoints =
+               (Eigen::MatrixXd(3, 1) << 1.0 / 3.0, 1.0 / 3.0, 0.0).finished(),
+                                                const Eigen::VectorXd& referenceQuadratureWeights =
+               Eigen::VectorXd::Constant(1, 0.5)) const;
 
       /// \brief Compute the Polyhedron centroid
       /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace

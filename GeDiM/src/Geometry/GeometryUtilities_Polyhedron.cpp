@@ -193,19 +193,22 @@ namespace Gedim
 
   }
   // ***************************************************************************
-  double GeometryUtilities::PolyhedronVolume(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceRotatedTriangulationPoints,
-                                             const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
-                                             const std::vector<bool>& polyhedronFaceNormalDirections,
-                                             const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
-                                             const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const
+  double GeometryUtilities::PolyhedronVolumeByBoundaryIntegral(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceRotatedTriangulationPoints,
+                                                               const std::vector<Eigen::Vector3d>& polyhedronFaceNormals,
+                                                               const std::vector<bool>& polyhedronFaceNormalDirections,
+                                                               const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
+                                                               const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices,
+                                                               const MatrixXd& referenceQuadraturePoints,
+                                                               const VectorXd& referenceQuadratureWeights) const
   {
     double volume = 0.0;
     const unsigned int numFaces = polyhedronFaceRotatedTriangulationPoints.size();
-    const Eigen::Vector3d quadraturePoint(1.0 / 3.0, 1.0 / 3.0, 0.0);
 
+    const Gedim::MapTriangle mapTriangle;
     for (unsigned int f = 0; f < numFaces; f++)
     {
       const unsigned int numFaceTriangles = polyhedronFaceRotatedTriangulationPoints[f].size();
+
       const Eigen::Matrix3d& faceRotationMatrix = polyhedronFaceRotationMatrices[f];
       const Eigen::Vector3d& faceTranslation = polyhedronFaceTranslations[f];
       const Eigen::Vector3d& faceNormal = polyhedronFaceNormalDirections[f] ? polyhedronFaceNormals[f] :
@@ -215,16 +218,24 @@ namespace Gedim
       {
         const Eigen::Matrix3d& face2DTriangle = polyhedronFaceRotatedTriangulationPoints[f][t];
 
-        Gedim::MapTriangle mapping;
-        const Gedim::MapTriangle::MapTriangleData mapData = mapping.Compute(face2DTriangle);
+        const Gedim::MapTriangle::MapTriangleData mapData = mapTriangle.Compute(face2DTriangle);
 
-        volume += mapData.B.determinant() * (faceRotationMatrix * mapData.B * quadraturePoint +
-                                             faceRotationMatrix * mapData.b +
-                                             faceTranslation).transpose() * faceNormal;
+        const MatrixXd faceWeightsTimesNormal = (mapTriangle.DetJ(mapData,
+                                                                  referenceQuadratureWeights).array().abs() *
+                                                 referenceQuadratureWeights.array()).matrix() *
+                                                faceNormal.transpose();
+        const Eigen::MatrixXd faceQuadraturePoints =
+            faceRotationMatrix * mapData.B * referenceQuadraturePoints +
+            faceRotationMatrix * mapData.b +
+            faceTranslation;
+
+        volume += 1.0 / 3.0 * (faceQuadraturePoints.row(0) * faceWeightsTimesNormal.col(0) +
+                               faceQuadraturePoints.row(1) * faceWeightsTimesNormal.col(1) +
+                               faceQuadraturePoints.row(2) * faceWeightsTimesNormal.col(2)).sum();
       }
     }
 
-    return 1.0 / 6.0 * volume;
+    return volume;
   }
   // ***************************************************************************
   Eigen::Vector3d GeometryUtilities::PolyhedronCentroid(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceRotatedTriangulationPoints,

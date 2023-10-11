@@ -366,7 +366,7 @@ namespace GedimUnitTesting
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
-        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints;
+        const double areaByInternalIntegral = geometryUtilities.PolygonAreaByInternalIntegral(polygonTriangulationPoints);
 
                                               ASSERT_DOUBLE_EQ(polygonArea, areaByInternalIntegral);
 
