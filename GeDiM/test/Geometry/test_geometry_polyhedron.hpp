@@ -1532,12 +1532,22 @@ namespace GedimUnitTesting
                                                                                                                                                        polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
-                                                                         polyhedronFaceNormals,
-                                                                         polyhedronFaceNormalDirections,
-                                                                         polyhedronFaceTranslations,
-                                                                         polyhedronFaceRotationMatrices);
-
+                                                                                           polyhedronFaceNormals,
+                                                                                           polyhedronFaceNormalDirections,
+                                                                                           polyhedronFaceTranslations,
+                                                                                           polyhedronFaceRotationMatrices);
       ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, polyhedronVolume));
+
+      const vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(polyhedron.Vertices,
+                                                                                                                       polyhedron.Faces,
+                                                                                                                       polyhedronFaceTriangulations,
+                                                                                                                       polyhedronBarycenter);
+      const vector<Eigen::MatrixXd> polyhedronTetrahedronPoints = geometryUtilities.ExtractTetrahedronPoints(polyhedron.Vertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronTetrahedrons);
+      const double polyhedronVolumeByInternal = geometryUtilities.PolyhedronVolumeByInternalIntegral(polyhedronTetrahedronPoints);
+
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, polyhedronVolumeByInternal));
     }
 
     // check tetrahedron volume
@@ -1570,12 +1580,23 @@ namespace GedimUnitTesting
                                                                                                                                                        polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
-                                                                         polyhedronFaceNormals,
-                                                                         polyhedronFaceNormalDirections,
-                                                                         polyhedronFaceTranslations,
-                                                                         polyhedronFaceRotationMatrices);
+                                                                                           polyhedronFaceNormals,
+                                                                                           polyhedronFaceNormalDirections,
+                                                                                           polyhedronFaceTranslations,
+                                                                                           polyhedronFaceRotationMatrices);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0/6.0, polyhedronVolume));
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0 / 6.0, polyhedronVolume));
+
+      const vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(polyhedron.Vertices,
+                                                                                                                       polyhedron.Faces,
+                                                                                                                       polyhedronFaceTriangulations,
+                                                                                                                       polyhedronBarycenter);
+      const vector<Eigen::MatrixXd> polyhedronTetrahedronPoints = geometryUtilities.ExtractTetrahedronPoints(polyhedron.Vertices,
+                                                                                                             polyhedronBarycenter,
+                                                                                                             polyhedronTetrahedrons);
+      const double polyhedronVolumeByInternal = geometryUtilities.PolyhedronVolumeByInternalIntegral(polyhedronTetrahedronPoints);
+
+      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0 / 6.0, polyhedronVolumeByInternal));
     }
   }
 
@@ -1613,10 +1634,10 @@ namespace GedimUnitTesting
                                                                                                                                                        polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
-                                                                         polyhedronFaceNormals,
-                                                                         polyhedronFaceNormalDirections,
-                                                                         polyhedronFaceTranslations,
-                                                                         polyhedronFaceRotationMatrices);
+                                                                                           polyhedronFaceNormals,
+                                                                                           polyhedronFaceNormalDirections,
+                                                                                           polyhedronFaceTranslations,
+                                                                                           polyhedronFaceRotationMatrices);
 
       const Eigen::Vector3d polyhedronCentroid = geometryUtilities.PolyhedronCentroid(polyhedronFace2DTriangulationPoints,
                                                                                       polyhedronFaceNormals,
@@ -1660,10 +1681,10 @@ namespace GedimUnitTesting
                                                                                                                                                        polyhedronFaceTriangulations);
 
       const double polyhedronVolume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(polyhedronFace2DTriangulationPoints,
-                                                                         polyhedronFaceNormals,
-                                                                         polyhedronFaceNormalDirections,
-                                                                         polyhedronFaceTranslations,
-                                                                         polyhedronFaceRotationMatrices);
+                                                                                           polyhedronFaceNormals,
+                                                                                           polyhedronFaceNormalDirections,
+                                                                                           polyhedronFaceTranslations,
+                                                                                           polyhedronFaceRotationMatrices);
 
       const Eigen::Vector3d polyhedronCentroid = geometryUtilities.PolyhedronCentroid(polyhedronFace2DTriangulationPoints,
                                                                                       polyhedronFaceNormals,

@@ -1,5 +1,6 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include "MapTetrahedron.hpp"
 #include "MapTriangle.hpp"
 #include "VTKUtilities.hpp"
 
@@ -236,6 +237,34 @@ namespace Gedim
     }
 
     return volume;
+  }
+  // ***************************************************************************
+  double GeometryUtilities::PolyhedronVolumeByInternalIntegral(const std::vector<Eigen::MatrixXd>& polyhedronTetrahedronVertices,
+                                                               const Eigen::VectorXd& referenceQuadratureWeights)
+  {
+    const unsigned int numPolyhedronTetra = polyhedronTetrahedronVertices.size();
+
+    const unsigned int numReferenceQuadraturePoints = referenceQuadratureWeights.size();
+    const unsigned int numQuadraturePoints = numPolyhedronTetra *
+                                             numReferenceQuadraturePoints;
+
+    Eigen::VectorXd quadratureWeights = Eigen::VectorXd::Zero(numQuadraturePoints);
+
+    const Gedim::MapTetrahedron mapTetra(*this);
+
+    for (unsigned int t = 0; t < numPolyhedronTetra; t++)
+    {
+      const Eigen::Matrix3d& tetraVertices = polyhedronTetrahedronVertices[t];
+
+      const Gedim::MapTetrahedron::MapTetrahedronData mapData = mapTetra.Compute(tetraVertices);
+      quadratureWeights.segment(numReferenceQuadraturePoints * t,
+                                numReferenceQuadraturePoints) = referenceQuadratureWeights.array() *
+                                                                mapTetra.DetJ(mapData,
+                                                                              referenceQuadratureWeights).array().abs();
+
+    }
+
+    return quadratureWeights.sum();
   }
   // ***************************************************************************
   Eigen::Vector3d GeometryUtilities::PolyhedronCentroid(const std::vector<std::vector<Eigen::Matrix3d> >& polyhedronFaceRotatedTriangulationPoints,

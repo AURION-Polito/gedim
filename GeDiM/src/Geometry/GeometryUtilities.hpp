@@ -1592,7 +1592,7 @@ namespace Gedim
 
       /// \brief Polygon Area By Internal Integral
       /// \param polygonTriangulationPoints the internal polygon sub-triangulation
-      /// \param referenceTriangleWeights the reference triangle quadrature weights [0,1]x[0,1]
+      /// \param referenceQuadratureWeights the reference triangle quadrature weights [0,1]x[0,1]
       /// \return the area computed as integral on sub-triangles
       double PolygonAreaByInternalIntegral(const std::vector<Eigen::Matrix3d>& polygonTriangulationPoints,
                                            const Eigen::VectorXd& referenceQuadratureWeights =
@@ -1939,6 +1939,8 @@ namespace Gedim
       /// \param polyhedronFaceNormalDirections polyhedron face normal directions, size numPolyhedronFaces
       /// \param polyhedronFaceTranslations polyhedron face translation vector from 2D to 3D
       /// \param polyhedronFaceRotationMatrices polyhedron face rotation matrix from 2D to 3D
+      /// \param referenceQuadraturePoints the reference tetrahedron quadrature points [0,1]x[0,1]x[0,1]
+      /// \param referenceQuadratureWeights the reference tetrahedron quadrature weights [0,1]x[0,1]x[0,1]
       /// \return the polyhedron volume
       /// \note use the divergence theorem, with F = 1/3 (x, y, z), see https://en.wikipedia.org/wiki/Divergence_theorem
       double PolyhedronVolumeByBoundaryIntegral(const std::vector<std::vector<Eigen::Matrix3d>>& polyhedronFaceRotatedTriangulationPoints,
@@ -1950,6 +1952,14 @@ namespace Gedim
                (Eigen::MatrixXd(3, 1) << 1.0 / 3.0, 1.0 / 3.0, 0.0).finished(),
                                                 const Eigen::VectorXd& referenceQuadratureWeights =
                Eigen::VectorXd::Constant(1, 0.5)) const;
+
+      /// \brief Polyhedron Volume By Internal Integral
+      /// \param polyhedronTetrahedronVertices the internal polyhedron sub-tetrahedra
+      /// \param referenceQuadratureWeights the reference tetrahedron quadrature weights [0,1]x[0,1]x[0,1]
+      /// \return the area computed as integral on sub-tetrahedra
+      double PolyhedronVolumeByInternalIntegral(const std::vector<Eigen::MatrixXd>& polyhedronTetrahedronVertices,
+                                                const Eigen::VectorXd& referenceQuadratureWeights =
+               Eigen::VectorXd::Constant(1, 1.0 / 6.0));
 
       /// \brief Compute the Polyhedron centroid
       /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace

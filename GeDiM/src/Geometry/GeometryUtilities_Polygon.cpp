@@ -158,9 +158,9 @@ namespace Gedim
   {
     const unsigned int numPolygonTriangles = polygonTriangulationPoints.size();
 
-    const unsigned int numTriangleQuadraturePoints = referenceQuadratureWeights.size();
+    const unsigned int numReferenceQuadraturePoints = referenceQuadratureWeights.size();
     const unsigned int numQuadraturePoints = numPolygonTriangles *
-                                             numTriangleQuadraturePoints;
+                                             numReferenceQuadraturePoints;
 
     Eigen::VectorXd quadratureWeights = Eigen::VectorXd::Zero(numQuadraturePoints);
 
@@ -171,10 +171,10 @@ namespace Gedim
       const Eigen::Matrix3d& triangleVertices = polygonTriangulationPoints[t];
 
       Gedim::MapTriangle::MapTriangleData mapData = mapTriangle.Compute(triangleVertices);
-      quadratureWeights.segment(numTriangleQuadraturePoints * t,
-                                numTriangleQuadraturePoints) = referenceQuadratureWeights.array() *
-                                                               mapTriangle.DetJ(mapData,
-                                                                                referenceQuadratureWeights).array().abs();
+      quadratureWeights.segment(numReferenceQuadraturePoints * t,
+                                numReferenceQuadraturePoints) = referenceQuadratureWeights.array() *
+                                                                mapTriangle.DetJ(mapData,
+                                                                                 referenceQuadratureWeights).array().abs();
 
     }
 
