@@ -41,11 +41,15 @@ namespace Gedim
       struct CheckMeshGeometricData3DConfiguration final
       {
           bool Cell1D_CheckMeasure = true;
+          bool Cell1D_CheckNormals = true;
           bool Cell2D_CheckMeasure = true;
           bool Cell2D_CheckTriangles = true;
           bool Cell2D_CheckNormals = true;
           bool Cell3D_CheckMeasure = true;
           bool Cell3D_CheckTetrahedra = true;
+          unsigned int Cell1D_QuadratureOrder = 0;
+          unsigned int Cell2D_QuadratureOrder = 0;
+          unsigned int Cell3D_QuadratureOrder = 0;
       };
 
       struct ExtractActiveMeshData final

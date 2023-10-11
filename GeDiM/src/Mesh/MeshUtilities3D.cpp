@@ -320,6 +320,27 @@ namespace Gedim
       }
     }
 
+    if (configuration.Cell1D_CheckNormals)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(cell3DIndex); f++)
+        {
+          const double area = geometryUtilities.PolygonAreaByBoundaryIntegral(geometricData.Cell3DsFaces2DVertices[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdgeLengths[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdge2DTangents[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f],
+                                                                              geometricData.Cell3DsFacesEdgeDirections[cell3DIndex][f]);
+
+          Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
+                                                            area));
+        }
+      }
+    }
+
     if (configuration.Cell2D_CheckMeasure)
     {
       for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
@@ -367,6 +388,15 @@ namespace Gedim
           Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
                                                             area));
         }
+
+
+        const double volume = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(geometricData.Cell3DsFaces2DTriangulations[cell3DIndex],
+                                                                                   geometricData.Cell3DsFacesNormals[cell3DIndex],
+                                                                                   geometricData.Cell3DsFacesNormalDirections[cell3DIndex],
+                                                                                   geometricData.Cell3DsFacesTranslations[cell3DIndex],
+                                                                                   geometricData.Cell3DsFacesRotationMatrices[cell3DIndex]);
+        Output::Assert(geometryUtilities.Are3DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
+                                                          volume));
       }
     }
 
@@ -388,9 +418,9 @@ namespace Gedim
         if (!mesh.Cell3DIsActive(cell3DIndex))
           continue;
 
-        const double area = geometryUtilities.PolyhedronVolumeByInternalIntegral(geometricData.Cell3DsTetrahedronPoints[cell3DIndex]);
+        const double volume = geometryUtilities.PolyhedronVolumeByInternalIntegral(geometricData.Cell3DsTetrahedronPoints[cell3DIndex]);
         Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
-                                                          area));
+                                                          volume));
       }
     }
   }
