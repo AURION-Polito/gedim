@@ -254,7 +254,7 @@ namespace Gedim
 
     for (unsigned int t = 0; t < numPolyhedronTetra; t++)
     {
-      const Eigen::Matrix3d& tetraVertices = polyhedronTetrahedronVertices[t];
+      const Eigen::MatrixXd& tetraVertices = polyhedronTetrahedronVertices[t];
 
       const Gedim::MapTetrahedron::MapTetrahedronData mapData = mapTetra.Compute(tetraVertices);
       quadratureWeights.segment(numReferenceQuadraturePoints * t,
