@@ -9,7 +9,9 @@ namespace Gedim
 {
   struct GeometryUtilitiesConfig final
   {
-      double Tolerance = std::numeric_limits<double>::epsilon();
+      static constexpr double MinTolerance = 2.0 * std::numeric_limits<double>::epsilon();
+
+      double Tolerance = GeometryUtilitiesConfig::MinTolerance;
   };
 
   /// \brief The GeometryUtilities class intersects 3D segments
@@ -674,10 +676,10 @@ namespace Gedim
       /// \return the relative difference between the two values according the first
       inline double RelativeDifference(const double& first,
                                        const double& second,
-                                       const double& tolerance = std::numeric_limits<double>::epsilon()) const
+                                       const double& tolerance = GeometryUtilitiesConfig::MinTolerance) const
       {
         const double max_tolerance = std::max(abs(tolerance),
-                                              std::numeric_limits<double>::epsilon());
+                                              GeometryUtilitiesConfig::MinTolerance);
         return abs(second - first) / ((abs(first) <= max_tolerance) ? 1.0 : abs(first));
       }
 
@@ -760,6 +762,7 @@ namespace Gedim
       {
         return CompareValues(first,
                              second,
+                             0.25 * std::sqrt(3.0) *
                              _configuration.Tolerance *
                              _configuration.Tolerance);
       }
@@ -808,6 +811,7 @@ namespace Gedim
       {
         return CompareValues(first,
                              second,
+                             1.0 / (6.0 * sqrt(2.0)) *
                              _configuration.Tolerance *
                              _configuration.Tolerance *
                              _configuration.Tolerance);

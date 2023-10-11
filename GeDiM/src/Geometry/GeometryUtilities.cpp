@@ -123,12 +123,11 @@ namespace Gedim
                                                                    const double& tolerance) const
   {
     const double max_tolerance = std::max(abs(tolerance),
-                                          std::numeric_limits<double>::epsilon());
-
-    double relativeValue = (abs(first) <= max_tolerance ||
-                            abs(second) <= max_tolerance) ? 1.0 :
-                                                            abs(first);
-    double difference = second - first;
+                                          GeometryUtilitiesConfig::MinTolerance);
+    const double relativeValue = (abs(first) <= max_tolerance ||
+                                  abs(second) <= max_tolerance) ? 1.0 :
+                                                                  abs(first);
+    const double difference = second - first;
 
     if (abs(difference) <= max_tolerance * relativeValue)
       return CompareTypes::Coincident;
