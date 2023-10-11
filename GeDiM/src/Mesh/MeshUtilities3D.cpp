@@ -380,6 +380,19 @@ namespace Gedim
         Output::Assert(geometryUtilities.IsValue3DPositive(geometricData.Cell3DsVolumes[cell3DIndex]));
       }
     }
+
+    if (configuration.Cell3D_CheckTetrahedra)
+    {
+      for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+      {
+        if (!mesh.Cell3DIsActive(cell3DIndex))
+          continue;
+
+        const double area = geometryUtilities.PolyhedronVolumeByInternalIntegral(geometricData.Cell3DsTetrahedronPoints[cell3DIndex]);
+        Output::Assert(geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsVolumes[cell3DIndex],
+                                                          area));
+      }
+    }
   }
   // ***************************************************************************
   void MeshUtilities::Mesh3DFromPolyhedron(const Eigen::MatrixXd& polyhedronVertices,

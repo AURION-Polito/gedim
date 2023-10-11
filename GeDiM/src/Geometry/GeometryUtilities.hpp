@@ -1980,7 +1980,7 @@ namespace Gedim
       /// \return the area computed as integral on sub-tetrahedra
       double PolyhedronVolumeByInternalIntegral(const std::vector<Eigen::MatrixXd>& polyhedronTetrahedronVertices,
                                                 const Eigen::VectorXd& referenceQuadratureWeights =
-          Eigen::VectorXd::Constant(1, 1.0 / 6.0));
+          Eigen::VectorXd::Constant(1, 1.0 / 6.0)) const;
 
       /// \brief Compute the Polyhedron centroid
       /// \param polyhedronRotatedFaceTriangulationPoints polyhedron face triangulation points 2D, size numPolyhedronFaces x numTrianglesPerFace

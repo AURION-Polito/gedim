@@ -240,7 +240,7 @@ namespace Gedim
   }
   // ***************************************************************************
   double GeometryUtilities::PolyhedronVolumeByInternalIntegral(const std::vector<Eigen::MatrixXd>& polyhedronTetrahedronVertices,
-                                                               const Eigen::VectorXd& referenceQuadratureWeights)
+                                                               const Eigen::VectorXd& referenceQuadratureWeights) const
   {
     const unsigned int numPolyhedronTetra = polyhedronTetrahedronVertices.size();
 
