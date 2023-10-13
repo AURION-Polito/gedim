@@ -123,7 +123,7 @@ namespace Gedim
                                                                    const double& tolerance) const
   {
     const double max_tolerance = std::max(abs(tolerance),
-                                          GeometryUtilitiesConfig::MinTolerance());
+                                          _configuration.MinTolerance);
     const double relativeValue = (abs(first) <= max_tolerance ||
                                   abs(second) <= max_tolerance) ? 1.0 :
                                                                   abs(first);
