@@ -1613,7 +1613,6 @@ namespace Gedim
                                            const Eigen::VectorXd& edgeLengths,
                                            const Eigen::MatrixXd& edgeTangents,
                                            const Eigen::MatrixXd& edgeNormals,
-                                           const std::vector<bool>& edgeDirections,
                                            const Eigen::MatrixXd& referenceQuadraturePoints =
           (Eigen::MatrixXd(3, 1) << 0.5, 0.0, 0.0).finished(),
                                            const Eigen::VectorXd& referenceQuadratureWeights =

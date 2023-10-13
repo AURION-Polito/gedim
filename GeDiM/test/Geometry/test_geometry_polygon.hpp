@@ -118,8 +118,7 @@ namespace GedimUnitTesting
         const double areaByIntegral = geometryUtilities.PolygonAreaByBoundaryIntegral(polygonVertices,
                                                                                       edgeLengths,
                                                                                       edgeTangents,
-                                                                                      edgeNormals,
-                                                                                      edgeDirections);
+                                                                                      edgeNormals);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
@@ -200,8 +199,7 @@ namespace GedimUnitTesting
         const double areaByIntegral = geometryUtilities.PolygonAreaByBoundaryIntegral(polygonVertices,
                                                                                       edgeLengths,
                                                                                       edgeTangents,
-                                                                                      edgeNormals,
-                                                                                      edgeDirections);
+                                                                                      edgeNormals);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
@@ -281,8 +279,7 @@ namespace GedimUnitTesting
         const double areaByIntegral = geometryUtilities.PolygonAreaByBoundaryIntegral(polygonVertices,
                                                                                       edgeLengths,
                                                                                       edgeTangents,
-                                                                                      edgeNormals,
-                                                                                      edgeDirections);
+                                                                                      edgeNormals);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
@@ -361,8 +358,7 @@ namespace GedimUnitTesting
         const double areaByIntegral = geometryUtilities.PolygonAreaByBoundaryIntegral(polygonVertices,
                                                                                       edgeLengths,
                                                                                       edgeTangents,
-                                                                                      edgeNormals,
-                                                                                      edgeDirections);
+                                                                                      edgeNormals);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 
@@ -441,8 +437,7 @@ namespace GedimUnitTesting
         const double areaByIntegral = geometryUtilities.PolygonAreaByBoundaryIntegral(polygonVertices,
                                                                                       edgeLengths,
                                                                                       edgeTangents,
-                                                                                      edgeNormals,
-                                                                                      edgeDirections);
+                                                                                      edgeNormals);
 
         ASSERT_DOUBLE_EQ(polygonArea, areaByIntegral);
 

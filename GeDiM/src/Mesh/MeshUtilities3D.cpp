@@ -332,8 +332,7 @@ namespace Gedim
           const double area = geometryUtilities.PolygonAreaByBoundaryIntegral(geometricData.Cell3DsFaces2DVertices[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdgeLengths[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdge2DTangents[cell3DIndex][f],
-                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f],
-                                                                              geometricData.Cell3DsFacesEdgeDirections[cell3DIndex][f]);
+                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f]);
 
           if (!geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
                                                   area))
@@ -404,8 +403,7 @@ namespace Gedim
           const double area = geometryUtilities.PolygonAreaByBoundaryIntegral(geometricData.Cell3DsFaces2DVertices[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdgeLengths[cell3DIndex][f],
                                                                               geometricData.Cell3DsFacesEdge2DTangents[cell3DIndex][f],
-                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f],
-                                                                              geometricData.Cell3DsFacesEdgeDirections[cell3DIndex][f]);
+                                                                              geometricData.Cell3DsFacesEdge2DNormals[cell3DIndex][f]);
 
           if (!geometryUtilities.Are2DValuesEqual(geometricData.Cell3DsFacesAreas[cell3DIndex][f],
                                                   area))

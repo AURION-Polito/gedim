@@ -107,7 +107,6 @@ namespace Gedim
                                                           const Eigen::VectorXd& edgeLengths,
                                                           const Eigen::MatrixXd& edgeTangents,
                                                           const Eigen::MatrixXd& edgeNormals,
-                                                          const std::vector<bool>& edgeDirections,
                                                           const Eigen::MatrixXd& referenceQuadraturePoints,
                                                           const Eigen::VectorXd& referenceQuadratureWeights) const
   {
@@ -115,7 +114,6 @@ namespace Gedim
 
     Gedim::Output::Assert(polygonVertices.rows() == 3 && numEdges > 2);
     Gedim::Output::Assert(edgeLengths.size() == numEdges);
-    Gedim::Output::Assert(edgeDirections.size() == numEdges);
     Output::Assert(edgeTangents.rows() == 3 && edgeTangents.cols() == numEdges);
     Output::Assert(edgeNormals.rows() == 3 && edgeNormals.cols() == numEdges);
     Output::Assert(referenceQuadraturePoints.cols() == referenceQuadratureWeights.size());
@@ -129,8 +127,6 @@ namespace Gedim
 
     for (unsigned int e = 0; e < numEdges; e++)
     {
-      const double direction = edgeDirections[e] ? 1.0 : -1.0;
-
       const MatrixXd edgeWeightsTimesNormal = std::abs(edgeLengths[e]) *
                                               referenceQuadratureWeights *
                                               edgeNormals.col(e).transpose();
@@ -139,7 +135,6 @@ namespace Gedim
       {
         quadraturePoints.col(e * numReferenceQuadraturePoints +
                              q) = polygonVertices.col(e) +
-                                  direction *
                                   referenceQuadraturePoints(0, q) *
                                   edgeTangents.col(e);
       }
