@@ -157,7 +157,7 @@ namespace GedimUnitTesting
   TEST(TestQuadratureMap, TestMapTetrahedron)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     Eigen::MatrixXd vertices;
@@ -209,15 +209,15 @@ namespace GedimUnitTesting
     Eigen::VectorXd expectedWeights(4);
     expectedWeights<< 7.7000000000000000e+01, 7.7000000000000000e+01, 7.7000000000000000e+01, 7.7000000000000000e+01;
 
-    ASSERT_TRUE(geometryUtilities.IsValue1DZero((expectedWeights - mappedWeights).norm()));
-    ASSERT_TRUE(geometryUtilities.IsValue1DZero(abs((mappedWeights).sum() - 308.0)));
-    ASSERT_TRUE(geometryUtilities.IsValue1DZero(1.0/6.0 * abs(mapping.DetJ(mapData)) - 308.0));
+    ASSERT_TRUE(geometryUtilities.IsValueZero((expectedWeights - mappedWeights).norm(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.IsValueZero(abs((mappedWeights).sum() - 308.0), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.IsValueZero(1.0/6.0 * abs(mapping.DetJ(mapData)) - 308.0, geometryUtilities.Tolerance1D()));
   }
 
   TEST(TestQuadratureMap, TestMapHexahedron)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     Eigen::MatrixXd vertices;
@@ -292,8 +292,8 @@ namespace GedimUnitTesting
     Eigen::VectorXd expectedWeights(8);
     expectedWeights<< 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02, 1.8000000000000000e+02;
 
-    ASSERT_TRUE(geometryUtilities.IsValue1DZero((expectedWeights - mappedWeights).norm()));
-    ASSERT_TRUE(geometryUtilities.IsValue1DZero(abs((mappedWeights).sum() - 1440.0)));
+    ASSERT_TRUE(geometryUtilities.IsValueZero((expectedWeights - mappedWeights).norm(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.IsValueZero(abs((mappedWeights).sum() - 1440.0), geometryUtilities.Tolerance1D()));
   }
 }
 

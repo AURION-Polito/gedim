@@ -18,7 +18,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split tetrahedron with plane
@@ -173,7 +173,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split tetrahedron with plane
@@ -326,7 +326,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split cube with plane
@@ -482,7 +482,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // split cube with plane

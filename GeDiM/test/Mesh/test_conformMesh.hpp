@@ -487,7 +487,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -646,7 +646,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // conform of simple 5 points mesh
@@ -811,7 +811,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -985,7 +985,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -1132,7 +1132,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -1279,7 +1279,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
       Gedim::MeshUtilities meshUtilities;
 
@@ -1426,7 +1426,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // conform of simple 2 points mesh only on edges

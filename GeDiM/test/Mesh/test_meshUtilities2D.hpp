@@ -511,7 +511,7 @@ namespace GedimUnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     GedimUnitTesting::MeshMatrices_2D_1Cells_Mock mesh;

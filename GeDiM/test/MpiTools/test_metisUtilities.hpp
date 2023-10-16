@@ -251,7 +251,7 @@ namespace UnitTesting
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh2D_DualGraph)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -381,7 +381,7 @@ namespace UnitTesting
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh2D_DualGraph_Constraints)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -575,7 +575,7 @@ namespace UnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -683,7 +683,7 @@ namespace UnitTesting
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -732,7 +732,7 @@ namespace UnitTesting
   TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_Constraints)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -801,7 +801,7 @@ namespace UnitTesting
     GTEST_SKIP();
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
@@ -913,7 +913,7 @@ namespace UnitTesting
     GTEST_SKIP();
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 

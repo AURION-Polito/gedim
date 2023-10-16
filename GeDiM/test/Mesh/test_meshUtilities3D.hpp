@@ -99,7 +99,7 @@ namespace GedimUnitTesting
   TEST(TestMeshUtilities, TestCheckMesh3D)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1e-12;
+    geometryUtilitiesConfig.Tolerance1D = 1e-12;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
@@ -135,7 +135,7 @@ namespace GedimUnitTesting
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
@@ -160,10 +160,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
     ASSERT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
     ASSERT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0], geometryUtilities.Tolerance3D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x(), geometryUtilities.Tolerance1D()));
     ASSERT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
 
     Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration checkMeshGeometricDataConfig;
@@ -179,7 +179,7 @@ namespace GedimUnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
@@ -288,10 +288,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
     ASSERT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
     ASSERT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0]));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z()));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y()));
-    ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0], geometryUtilities.Tolerance3D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x(), geometryUtilities.Tolerance1D()));
     ASSERT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
     ASSERT_EQ(result.Cell3DsFacesNormalDirections,
               expectedResult.Cell3DsFacesNormalDirections);
@@ -309,7 +309,7 @@ namespace GedimUnitTesting
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;

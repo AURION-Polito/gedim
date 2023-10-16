@@ -47,7 +47,8 @@ namespace Gedim
          UnionMesh::UnionMeshPoint>::const_iterator it = result.Points.begin();
          it != result.Points.end(); it++)
     {
-      if (!_geometryUtilities.IsValue1DPositive(abs(it->first - curvilinearCoordinate)))
+      if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate),
+                                              _geometryUtilities.Tolerance1D()))
       {
         foundCoordinate = it->first;
         break;

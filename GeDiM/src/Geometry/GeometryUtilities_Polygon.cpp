@@ -257,7 +257,7 @@ namespace Gedim
                                                     const Eigen::Vector3d& polygonNormal,
                                                     const Eigen::Vector3d& polygonTranslation) const
   {
-    Output::Assert(Compare1DValues(polygonNormal.norm(), 1.0) == CompareTypes::Coincident);
+    Output::Assert(CompareValues(polygonNormal.norm(), 1.0, Tolerance1D()) == CompareTypes::Coincident);
 
     const unsigned int& numVertices = polygonVertices.cols();
     MatrixXd Z, W;
@@ -276,11 +276,11 @@ namespace Gedim
       const double normVectorI = VimV0.norm();
       const double cosTheta = VimV0.dot(V1mV0) / (normVectorOne * normVectorI);
 
-      if (Compare1DValues(cosTheta, 1.0) == CompareTypes::Coincident)
+      if (CompareValues(cosTheta, 1.0, Tolerance1D()) == CompareTypes::Coincident)
         W.col(i - 1)<< normVectorI, 0.0, 0.0;
-      else if (Compare1DValues(cosTheta, -1.0) == CompareTypes::Coincident)
+      else if (CompareValues(cosTheta, -1.0, Tolerance1D()) == CompareTypes::Coincident)
         W.col(i - 1)<< -normVectorI, 0.0, 0.0;
-      else if (Compare1DValues(cosTheta, 0.0) == CompareTypes::Coincident)
+      else if (CompareValues(cosTheta, 0.0, Tolerance1D()) == CompareTypes::Coincident)
         W.col(i - 1)<< 0.0, normVectorI, 0.0;
       else
         W.col(i - 1) << normVectorI * cosTheta, normVectorI * sqrt(1.0 - cosTheta*cosTheta), 0;
@@ -425,7 +425,7 @@ namespace Gedim
                                              norm_v_prev_v,
                                              norm_v_next_v);
 
-        if (IsValue1DNegative(polarAngle))
+        if (IsValueNegative(polarAngle, Tolerance1D()))
           continue;
 
         // test ear
@@ -986,7 +986,7 @@ namespace Gedim
         break;
       }
 
-      Output::Assert(IsValue1DPositive(intersectionCoordinate));
+      Output::Assert(IsValuePositive(intersectionCoordinate, Tolerance1D()));
 
       const Eigen::Vector3d intersectionPoint = edgeEnd + intersectionCoordinate * endEdgeCenterTangent;
       newVerticesIndicesPerEdge[edgeNumber] = newCoordinates.size();
@@ -1231,7 +1231,7 @@ namespace Gedim
         break;
       }
 
-      Output::Assert(IsValue1DNegative(intersectionCoordinate));
+      Output::Assert(IsValueNegative(intersectionCoordinate, Tolerance1D()));
 
       // create new coordinate
       const Eigen::Vector3d intersectionPoint = edgeEnd + intersectionCoordinate * endEdgeCenterTangent;

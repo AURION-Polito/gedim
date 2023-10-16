@@ -27,13 +27,13 @@ namespace GedimUnitTesting {
         const double expectedSlope = 1.0;
         const double expectedIntercept = 0.0;
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
-                                                                                  segmentEnd),
-                                                     expectedSlope));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
+                                                                                    segmentEnd),
+                                                     expectedSlope, geometryUtilities.Tolerance1D()));
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
-                                                                                      segmentEnd),
-                                                     expectedIntercept));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
+                                                                                        segmentEnd),
+                                                     expectedIntercept, geometryUtilities.Tolerance1D()));
       }
 
       // check line passing in the origin negative
@@ -44,13 +44,13 @@ namespace GedimUnitTesting {
         const double expectedSlope = -1.0;
         const double expectedIntercept = 0.0;
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
-                                                                                  segmentEnd),
-                                                     expectedSlope));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
+                                                                                    segmentEnd),
+                                                     expectedSlope, geometryUtilities.Tolerance1D()));
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
-                                                                                      segmentEnd),
-                                                     expectedIntercept));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
+                                                                                        segmentEnd),
+                                                     expectedIntercept, geometryUtilities.Tolerance1D()));
       }
 
       // check line not passing in the origin positive
@@ -61,13 +61,13 @@ namespace GedimUnitTesting {
         const double expectedSlope = 1.0;
         const double expectedIntercept = 1.0;
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
-                                                                                  segmentEnd),
-                                                     expectedSlope));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
+                                                                                    segmentEnd),
+                                                     expectedSlope, geometryUtilities.Tolerance1D()));
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
-                                                                                      segmentEnd),
-                                                     expectedIntercept));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
+                                                                                        segmentEnd),
+                                                     expectedIntercept, geometryUtilities.Tolerance1D()));
       }
 
       // check line not passing in the origin negtive
@@ -78,13 +78,13 @@ namespace GedimUnitTesting {
         const double expectedSlope = -1.0;
         const double expectedIntercept = -1.0;
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
-                                                                                  segmentEnd),
-                                                     expectedSlope));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentSlope(segmentOrigin,
+                                                                                    segmentEnd),
+                                                     expectedSlope, geometryUtilities.Tolerance1D()));
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
-                                                                                      segmentEnd),
-                                                     expectedIntercept));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.SegmentIntercept(segmentOrigin,
+                                                                                        segmentEnd),
+                                                     expectedIntercept, geometryUtilities.Tolerance1D()));
       }
     }
     catch (const exception& exception)

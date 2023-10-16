@@ -44,14 +44,14 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-6;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       const unsigned int seed = 10;
 
-      ASSERT_EQ(geometryUtilities.RandomCoordinates(0, true), vector<double>({ }));
-      ASSERT_EQ(geometryUtilities.RandomCoordinates(2, true), vector<double>({ 0.0, 1.0 }));
-      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, true, seed),
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(0, true, 3.0 * geometryUtilitiesConfig.Tolerance1D), vector<double>({ }));
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(2, true, 3.0 * geometryUtilitiesConfig.Tolerance1D), vector<double>({ 0.0, 1.0 }));
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, true, 3.0 * geometryUtilitiesConfig.Tolerance1D, seed),
                 vector<double>({
                                  0.0000000000000000e+00,
                                  1.9572019572019574e-02,
@@ -64,7 +64,7 @@ namespace GedimUnitTesting {
                                  9.3629493629493632e-01,
                                  1.0000000000000000e+00
                                }));
-      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, false, seed),
+      ASSERT_EQ(geometryUtilities.RandomCoordinates(10, false, 3.0 * geometryUtilitiesConfig.Tolerance1D, seed),
                 vector<double>({
                                  1.9572019572019574e-02,
                                  6.8943068943068939e-02,
@@ -90,7 +90,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-8;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       ASSERT_DOUBLE_EQ(-1.0,
@@ -128,56 +128,56 @@ namespace GedimUnitTesting {
 
       // check Compare1DValues
       {
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, -7.6547685574189633e-17), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(-7.6547685574189633e-17, 0.0), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, -7.6547685574189633e-17, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(-7.6547685574189633e-17, 0.0, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, 1.0, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(1.0, -1.0, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare2DValues
       {
-        ASSERT_EQ(geometryUtilities.Compare2DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtilities.Compare2DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare2DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, 1.0, geometryUtilities.Tolerance2D()), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance2D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(1.0, -1.0, geometryUtilities.Tolerance2D()), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check Compare3DValues
       {
-        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, 1.0), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
-        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare3DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.0, geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance), Gedim::GeometryUtilities::CompareTypes::Coincident);
-        ASSERT_EQ(geometryUtilities.Compare3DValues(1.0, -1.0), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, 1.0, geometryUtilities.Tolerance3D()), Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance3D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance3D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(0.0, geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance1D()), Gedim::GeometryUtilities::CompareTypes::Coincident);
+        ASSERT_EQ(geometryUtilities.CompareValues(1.0, -1.0, geometryUtilities.Tolerance3D()), Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
 
       // check IsLengthPositive
       {
-        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(0.0));
-        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue1DPositive(-1.0));
-        ASSERT_TRUE(geometryUtilities.IsValue1DPositive(2 * geometryUtilitiesConfig.Tolerance));
-        ASSERT_TRUE(geometryUtilities.IsValue1DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(0.0, geometryUtilities.Tolerance1D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance1D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(-1.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.IsValuePositive(2 * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.IsValuePositive(10.0, geometryUtilities.Tolerance1D()));
       }
 
       // check IsAreaPositive
       {
-        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(0.0));
-        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue2DPositive(-1.0));
-        ASSERT_TRUE(geometryUtilities.IsValue2DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(0.0, geometryUtilities.Tolerance2D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance2D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance2D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(-1.0, geometryUtilities.Tolerance2D()));
+        ASSERT_TRUE(geometryUtilities.IsValuePositive(10.0, geometryUtilities.Tolerance2D()));
       }
 
-      // check IsLengthPositive
+      // check IsVolumePositive
       {
-        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(0.0));
-        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance * geometryUtilitiesConfig.Tolerance));
-        ASSERT_FALSE(geometryUtilities.IsValue3DPositive(-1.0));
-        ASSERT_TRUE(geometryUtilities.IsValue3DPositive(10.0));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(0.0, geometryUtilities.Tolerance3D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance3D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance3D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D * geometryUtilitiesConfig.Tolerance1D, geometryUtilities.Tolerance3D()));
+        ASSERT_FALSE(geometryUtilities.IsValuePositive(-1.0, geometryUtilities.Tolerance3D()));
+        ASSERT_TRUE(geometryUtilities.IsValuePositive(10.0, geometryUtilities.Tolerance3D()));
       }
     }
     catch (const exception& exception)
@@ -324,7 +324,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-6;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check small convex hull
@@ -416,7 +416,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-8;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check convex hull with aligned points
@@ -497,7 +497,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check convex hull with aligned points
@@ -592,7 +592,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check complex convex hull

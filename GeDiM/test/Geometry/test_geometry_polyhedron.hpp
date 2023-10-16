@@ -287,7 +287,7 @@ namespace GedimUnitTesting
       // check tetrahedron 2 face normals
       {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-        geometryUtilitiesConfig.Tolerance = 1.0e-6;
+        geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
         Eigen::MatrixXd tetraVertices(3, 4);
@@ -370,7 +370,7 @@ namespace GedimUnitTesting
       // check tetrahedron 3 face normals
       {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-        geometryUtilitiesConfig.Tolerance = 1.0e-6;
+        geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
         Eigen::MatrixXd tetraVertices(3, 4);
@@ -453,7 +453,7 @@ namespace GedimUnitTesting
       // check tetrahedron 4 face normals
       {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-        geometryUtilitiesConfig.Tolerance = 1.0e-5;
+        geometryUtilitiesConfig.Tolerance1D = 1.0e-5;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
         Eigen::MatrixXd tetraVertices(3, 4);
@@ -1501,7 +1501,7 @@ namespace GedimUnitTesting
   TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronVolume)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-15;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-15;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     // check cube volume
@@ -1536,7 +1536,7 @@ namespace GedimUnitTesting
                                                                                            polyhedronFaceNormalDirections,
                                                                                            polyhedronFaceTranslations,
                                                                                            polyhedronFaceRotationMatrices);
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, polyhedronVolume));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, polyhedronVolume, geometryUtilities.Tolerance3D()));
 
       const vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(polyhedron.Vertices,
                                                                                                                        polyhedron.Faces,
@@ -1547,7 +1547,7 @@ namespace GedimUnitTesting
                                                                                                              polyhedronTetrahedrons);
       const double polyhedronVolumeByInternal = geometryUtilities.PolyhedronVolumeByInternalIntegral(polyhedronTetrahedronPoints);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, polyhedronVolumeByInternal));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, polyhedronVolumeByInternal, geometryUtilities.Tolerance3D()));
     }
 
     // check tetrahedron volume
@@ -1585,7 +1585,7 @@ namespace GedimUnitTesting
                                                                                            polyhedronFaceTranslations,
                                                                                            polyhedronFaceRotationMatrices);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0 / 6.0, polyhedronVolume));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0 / 6.0, polyhedronVolume, geometryUtilities.Tolerance3D()));
 
       const vector<unsigned int> polyhedronTetrahedrons = geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(polyhedron.Vertices,
                                                                                                                        polyhedron.Faces,
@@ -1596,14 +1596,14 @@ namespace GedimUnitTesting
                                                                                                              polyhedronTetrahedrons);
       const double polyhedronVolumeByInternal = geometryUtilities.PolyhedronVolumeByInternalIntegral(polyhedronTetrahedronPoints);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0 / 6.0, polyhedronVolumeByInternal));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0 / 6.0, polyhedronVolumeByInternal, geometryUtilities.Tolerance3D()));
     }
   }
 
   TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronCentroid)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    geometryUtilitiesConfig.Tolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     // check cube centroid
@@ -1646,9 +1646,9 @@ namespace GedimUnitTesting
                                                                                       polyhedronFaceRotationMatrices,
                                                                                       polyhedronVolume);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.x(), 0.5));
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.y(), 0.5));
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.z(), 0.5));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.x(), 0.5, geometryUtilities.Tolerance1D()));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.y(), 0.5, geometryUtilities.Tolerance1D()));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.z(), 0.5, geometryUtilities.Tolerance1D()));
     }
 
     // check tetrahedron volume
@@ -1693,9 +1693,9 @@ namespace GedimUnitTesting
                                                                                       polyhedronFaceRotationMatrices,
                                                                                       polyhedronVolume);
 
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.x(), 1.0 / 4.0));
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.y(), 1.0 / 4.0));
-      ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(polyhedronCentroid.z(), 1.0 / 4.0));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.x(), 1.0 / 4.0, geometryUtilities.Tolerance1D()));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.y(), 1.0 / 4.0, geometryUtilities.Tolerance1D()));
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronCentroid.z(), 1.0 / 4.0, geometryUtilities.Tolerance1D()));
     }
   }
 

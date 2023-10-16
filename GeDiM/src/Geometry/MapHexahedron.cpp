@@ -21,9 +21,10 @@ namespace Gedim
         vertices.col(coordinateSystem[fourthVertexIndex]));
     result.b = b(vertices.col(coordinateSystem[0]));
 
-    return (geometryUtilities.IsValue1DZero((vertices -
+    return (geometryUtilities.IsValueZero((vertices -
                                            F(result,
-                                             referencePoints)).norm()));
+                                             referencePoints)).norm(),
+                                          geometryUtilities.Tolerance1D()));
   }
   // ***************************************************************************
   MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd& vertices,

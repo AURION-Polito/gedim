@@ -20,9 +20,10 @@ namespace Gedim
                  vertices.col(fourthVertexIndex));
     result.b = b(vertices.col(0));
 
-    return (geometryUtilities.IsValue1DZero((vertices -
+    return (geometryUtilities.IsValueZero((vertices -
                                            F(result,
-                                             referencePoints)).norm()));
+                                             referencePoints)).norm(),
+                                          geometryUtilities.Tolerance1D()));
   }
   // ***************************************************************************
   MapTetrahedron::MapTetrahedronData MapTetrahedron::Compute(const Eigen::MatrixXd& vertices) const

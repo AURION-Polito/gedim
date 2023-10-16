@@ -51,7 +51,8 @@ namespace Gedim
          IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint>::const_iterator it = result.Points.begin();
          it != result.Points.end(); it++)
     {
-      if (!_geometryUtilities.IsValue1DPositive(abs(it->first - curvilinearCoordinate)))
+      if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate),
+                                              _geometryUtilities.Tolerance1D()))
       {
         foundCoordinate = it->first;
         break;
@@ -559,8 +560,10 @@ namespace Gedim
           intersectionPoint.Vertex2DIds == intersectionPointNext.Vertex2DIds)
       {
         const double avgCoordinate = (curvilinearCoordinatePoint + curvilinearCoordinatePointNext) / 2.0;
-        Output::Assert(!_geometryUtilities.IsValue1DPositive(abs(curvilinearCoordinatePoint - avgCoordinate)));
-        Output::Assert(!_geometryUtilities.IsValue1DPositive(abs(curvilinearCoordinatePointNext - avgCoordinate)));
+        Output::Assert(!_geometryUtilities.IsValuePositive(abs(curvilinearCoordinatePoint - avgCoordinate),
+                                                           _geometryUtilities.Tolerance1D()));
+        Output::Assert(!_geometryUtilities.IsValuePositive(abs(curvilinearCoordinatePointNext - avgCoordinate),
+                                                           _geometryUtilities.Tolerance1D()));
 
         IntersectionMesh::IntersectionMeshPoint avgPoint;
         avgPoint.Vertex2DIds = intersectionPoint.Vertex2DIds;

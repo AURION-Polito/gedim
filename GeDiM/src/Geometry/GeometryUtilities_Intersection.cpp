@@ -22,11 +22,11 @@ namespace Gedim
     coplanarMatrix.col(2)<< (secondLineOrigin + secondLineTangent - firstLineOrigin).normalized();
 
     // Check non-coplanarity of segments: (x3-x1) != 0 && (x4-x1) != 0 && (x3-x2) != 0 && (x4-x2) != 0 && nDotRhs != 0
-    if (IsValue2DPositive((secondLineOrigin - firstLineOrigin).squaredNorm()) &&
-        IsValue2DPositive((secondLineOrigin + secondLineTangent - firstLineOrigin).squaredNorm()) &&
-        IsValue2DPositive((secondLineOrigin - firstLineOrigin - firstLineTangent).squaredNorm()) &&
-        IsValue2DPositive((secondLineOrigin + secondLineTangent - firstLineOrigin - firstLineTangent).squaredNorm()) &&
-        IsValue1DPositive(abs(coplanarMatrix.determinant())))
+    if (IsValuePositive((secondLineOrigin - firstLineOrigin).squaredNorm(), Tolerance1DSquared()) &&
+        IsValuePositive((secondLineOrigin + secondLineTangent - firstLineOrigin).squaredNorm(), Tolerance1DSquared()) &&
+        IsValuePositive((secondLineOrigin - firstLineOrigin - firstLineTangent).squaredNorm(), Tolerance1DSquared()) &&
+        IsValuePositive((secondLineOrigin + secondLineTangent - firstLineOrigin - firstLineTangent).squaredNorm(), Tolerance1DSquared()) &&
+        IsValuePositive(abs(coplanarMatrix.determinant()), Tolerance1D()))
     {
       // segments are not on the same plane
       return false;
@@ -50,8 +50,8 @@ namespace Gedim
     const Vector3d t2 = secondSegmentEnd - secondSegmentOrigin;
 
     // check if t1 and t2 are not zero
-    Gedim::Output::Assert(IsValue2DPositive(t1.squaredNorm()));
-    Gedim::Output::Assert(IsValue2DPositive(t2.squaredNorm()));
+    Gedim::Output::Assert(IsValuePositive(t1.squaredNorm(), Tolerance1DSquared()));
+    Gedim::Output::Assert(IsValuePositive(t2.squaredNorm(), Tolerance1DSquared()));
 
     // Check non-coplanarity of segments: (x3-x1) != 0 && (x4-x1) != 0 && (x3-x2) != 0 && (x4-x2) != 0 && nDotRhs != 0
     if (!AreLineCoplanar(firstSegmentOrigin,
@@ -82,8 +82,8 @@ namespace Gedim
     // segments are not parallel if squared norm of cross product ||t1 x t2||^2 / (||t1||^2 * ||t2||^2) = 1.0 - (t1.dot(t2) / (||t1|| * ||t2||))^2 > 0
     // which means to check 1.0 - (t1.dot(t2) / (||t1|| * ||t2||))^2 > tol^2 => (1.0 - t1.dot(t2) / (||t1|| * ||t2||)) * (1.0 + t1.dot(t2) / (||t1|| * ||t2||)) > tol^2
     // NB: check on abs(t1.dot(t2) / (||t1|| * ||t2||)) != 1.0 is done to avoid numerical loss of significance
-    if (IsValue1DPositive(abs(abs(tangentsDot) - 1.0)) &&
-        IsValue2DPositive((1.0 - tangentsDot) * (1.0 + tangentsDot)))
+    if (IsValuePositive(abs(abs(tangentsDot) - 1.0), Tolerance1DSquared()) &&
+        IsValuePositive((1.0 - tangentsDot) * (1.0 + tangentsDot), Tolerance1DSquared() * Tolerance1DSquared()))
     {
       // no parallel segments
       result.IntersectionLinesType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::CoPlanarIntersecting;
@@ -143,7 +143,7 @@ namespace Gedim
         double distance = (centroid2 - centroid1).norm();
 
         // Check distance of spheres to exclude intersections
-        if (IsValue1DPositive((distance - (r1 + r2))))
+        if (IsValuePositive((distance - (r1 + r2)), Tolerance1D()))
         {
           result.IntersectionSegmentsType = GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::NoIntersection;
           return result;
@@ -218,7 +218,7 @@ namespace Gedim
         Vector3d firstPoint = firstSegmentOrigin + result.FirstSegmentIntersections[0].CurvilinearCoordinate * t1;
         if (PointDistance(firstPoint,
                           secondSegmentOrigin + result.SecondSegmentIntersections[0].CurvilinearCoordinate * t2) >
-            _configuration.Tolerance * firstPoint.norm())
+            _configuration.Tolerance1D * firstPoint.norm())
         {
           result.SecondIntersectionRelation[0] = 1;
           result.SecondIntersectionRelation[1] = 0;
@@ -285,15 +285,16 @@ namespace Gedim
     const Vector3d t = SegmentTangent(segmentOrigin, segmentEnd);
 
     // check if t is not zero and plane normal is normalized
-    Gedim::Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
-    Gedim::Output::Assert(IsValue2DPositive(t.squaredNorm()));
+    Gedim::Output::Assert(CompareValues(planeNormal.norm(), 1.0, Tolerance1D()) == CompareTypes::Coincident);
+    Gedim::Output::Assert(IsValuePositive(t.squaredNorm(), Tolerance1DSquared()));
 
     // check if the plane normal n is perpendicular to segment tangent t
-    if (IsValue1DZero(planeNormal.dot(t.normalized())))
+    if (IsValueZero(planeNormal.dot(t.normalized()), Tolerance1DSquared()))
     {
       // compare if n * segmentOrigin = n * planeOrigin
-      if (Compare1DValues(planeNormal.dot(segmentOrigin),
-                          planeNormal.dot(planeOrigin)) == GeometryUtilities::CompareTypes::Coincident)
+      if (CompareValues(planeNormal.dot(segmentOrigin),
+                        planeNormal.dot(planeOrigin),
+                        Tolerance1DSquared()) == GeometryUtilities::CompareTypes::Coincident)
       {
         // multiple intersection, the segment is coplanar to plane
         result.Type = GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections;
@@ -331,7 +332,7 @@ namespace Gedim
     GeometryUtilities::IntersectionPolyhedronPlaneResult result;
 
     // check if plane normal is normalized
-    Gedim::Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
+    Gedim::Output::Assert(CompareValues(planeNormal.norm(), 1.0, Tolerance1D()) == CompareTypes::Coincident);
 
     unsigned int numberOfIntersections = 0;
     const unsigned int numPolyhedronVertices = polyhedronVertices.cols();
@@ -656,7 +657,7 @@ namespace Gedim
         bool intGiaPresente = false;
         for (unsigned int k=0; k<coordCurv.size(); k++)
         {
-          if (Are1DValuesEqual(coordCurv[k], max*c))
+          if (AreValuesEqual(coordCurv[k], max * c, Tolerance1D()))
             intGiaPresente = true;
         }
 
@@ -714,9 +715,18 @@ namespace Gedim
                                                             planeOrigin));
         if (type == PointPlanePositionTypes::OnPlane)
         {
-          if ((Compare1DValues(inters(0),polyhedronVertices(0,0)) == CompareTypes::SecondBeforeFirst || Compare1DValues(inters(0),polyhedronVertices(0,0)) == CompareTypes::Coincident) && (Compare1DValues(inters(0),polyhedronVertices(0,1)) == CompareTypes::FirstBeforeSecond || Compare1DValues(inters(0),polyhedronVertices(0,1)) == CompareTypes::Coincident) &&
-              (Compare1DValues(inters(1),polyhedronVertices(1,0)) == CompareTypes::SecondBeforeFirst || Compare1DValues(inters(1),polyhedronVertices(1,0)) == CompareTypes::Coincident) && (Compare1DValues(inters(1),polyhedronVertices(1,3)) == CompareTypes::FirstBeforeSecond || Compare1DValues(inters(1),polyhedronVertices(1,3)) == CompareTypes::Coincident) &&
-              (Compare1DValues(inters(2),polyhedronVertices(2,0)) == CompareTypes::SecondBeforeFirst || Compare1DValues(inters(2),polyhedronVertices(2,0)) == CompareTypes::Coincident) && (Compare1DValues(inters(2),polyhedronVertices(2,4)) == CompareTypes::FirstBeforeSecond || Compare1DValues(inters(2),polyhedronVertices(2,4)) == CompareTypes::Coincident))
+          if ((CompareValues(inters(0),polyhedronVertices(0,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst ||
+               CompareValues(inters(0),polyhedronVertices(0,0), Tolerance1D()) == CompareTypes::Coincident) &&
+              (CompareValues(inters(0),polyhedronVertices(0,1), Tolerance1D()) == CompareTypes::FirstBeforeSecond ||
+               CompareValues(inters(0),polyhedronVertices(0,1), Tolerance1D()) == CompareTypes::Coincident) &&
+              (CompareValues(inters(1),polyhedronVertices(1,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst ||
+               CompareValues(inters(1),polyhedronVertices(1,0), Tolerance1D()) == CompareTypes::Coincident) &&
+              (CompareValues(inters(1),polyhedronVertices(1,3), Tolerance1D()) == CompareTypes::FirstBeforeSecond ||
+               CompareValues(inters(1),polyhedronVertices(1,3), Tolerance1D()) == CompareTypes::Coincident) &&
+              (CompareValues(inters(2),polyhedronVertices(2,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst ||
+               CompareValues(inters(2),polyhedronVertices(2,0), Tolerance1D()) == CompareTypes::Coincident) &&
+              (CompareValues(inters(2),polyhedronVertices(2,4), Tolerance1D()) == CompareTypes::FirstBeforeSecond ||
+               CompareValues(inters(2),polyhedronVertices(2,4), Tolerance1D()) == CompareTypes::Coincident))
 
             flag = true;
         }
@@ -724,7 +734,7 @@ namespace Gedim
         bool intGiaPresente = false;
         for (unsigned int k=0; k<coordCurv.size(); k++)
         {
-          if (Are1DValuesEqual(coordCurv[k], max*c))
+          if (AreValuesEqual(coordCurv[k], max*c, Tolerance1D()))
             intGiaPresente = true;
         }
 
@@ -778,8 +788,10 @@ namespace Gedim
 
     for (int i=0; i<numIntersLine; i++)
     {
-      if( (Compare1DValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 1) == CompareTypes::FirstBeforeSecond || Compare1DValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 1) == CompareTypes::Coincident)
-          && (Compare1DValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 0) == CompareTypes::SecondBeforeFirst || Compare1DValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 0) == CompareTypes::Coincident))
+      if( (CompareValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 1, Tolerance1D()) == CompareTypes::FirstBeforeSecond ||
+           CompareValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 1, Tolerance1D()) == CompareTypes::Coincident)
+          && (CompareValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 0, Tolerance1D()) == CompareTypes::SecondBeforeFirst ||
+              CompareValues(polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate, 0, Tolerance1D()) == CompareTypes::Coincident))
       {
         result.LineIntersections[numIntersSegm].CurvilinearCoordinate = polyhedronLineIntersections.LineIntersections[i].CurvilinearCoordinate;
         result.LineIntersections[numIntersSegm].PolyhedronType = polyhedronLineIntersections.LineIntersections[i].PolyhedronType;
@@ -809,18 +821,24 @@ namespace Gedim
     // controllo se ho dimenticato qualche intersezione sui vertici
     if (numIntersLine > numIntersSegm)
     {
-      if ( (Compare1DValues(segmentOrigin(0),polyhedronVertices(0,1)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentOrigin(0),polyhedronVertices(0,0)) == CompareTypes::SecondBeforeFirst) &&
-           (Compare1DValues(segmentOrigin(1),polyhedronVertices(1,3)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentOrigin(1),polyhedronVertices(1,0)) == CompareTypes::SecondBeforeFirst) &&
-           (Compare1DValues(segmentOrigin(2),polyhedronVertices(2,4)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentOrigin(2),polyhedronVertices(2,0)) == CompareTypes::SecondBeforeFirst))
+      if ( (CompareValues(segmentOrigin(0),polyhedronVertices(0,1), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentOrigin(0),polyhedronVertices(0,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst) &&
+           (CompareValues(segmentOrigin(1),polyhedronVertices(1,3), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentOrigin(1),polyhedronVertices(1,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst) &&
+           (CompareValues(segmentOrigin(2),polyhedronVertices(2,4), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentOrigin(2),polyhedronVertices(2,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst))
       {
         result.LineIntersections[numIntersSegm].CurvilinearCoordinate = 0.0;
         result.LineIntersections[numIntersSegm].PolyhedronType = IntersectionPolyhedronLineResult::LineIntersection::Types::Inside;
         result.LineIntersections[numIntersSegm].PolyhedronIndex = 0;
         numIntersSegm++;
       }
-      if ( (Compare1DValues(segmentEnd(0),polyhedronVertices(0,1)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentEnd(0),polyhedronVertices(0,0)) == CompareTypes::SecondBeforeFirst) &&
-           (Compare1DValues(segmentEnd(1),polyhedronVertices(1,3)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentEnd(1),polyhedronVertices(1,0)) == CompareTypes::SecondBeforeFirst) &&
-           (Compare1DValues(segmentEnd(2),polyhedronVertices(2,4)) == CompareTypes::FirstBeforeSecond) && (Compare1DValues(segmentEnd(2),polyhedronVertices(2,0)) == CompareTypes::SecondBeforeFirst))
+      if ( (CompareValues(segmentEnd(0),polyhedronVertices(0,1), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentEnd(0),polyhedronVertices(0,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst) &&
+           (CompareValues(segmentEnd(1),polyhedronVertices(1,3), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentEnd(1),polyhedronVertices(1,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst) &&
+           (CompareValues(segmentEnd(2),polyhedronVertices(2,4), Tolerance1D()) == CompareTypes::FirstBeforeSecond) &&
+           (CompareValues(segmentEnd(2),polyhedronVertices(2,0), Tolerance1D()) == CompareTypes::SecondBeforeFirst))
       {
         result.LineIntersections[numIntersSegm].CurvilinearCoordinate = 1.0;
         result.LineIntersections[numIntersSegm].PolyhedronType = IntersectionPolyhedronLineResult::LineIntersection::Types::Inside;
@@ -900,7 +918,9 @@ namespace Gedim
 
           for (int k=0; k<inters; k++)
           {
-            if (Compare1DValues(coordCurv[j],rs.LineIntersections[k].CurvilinearCoordinate) == CompareTypes::Coincident)
+            if (CompareValues(coordCurv[j],
+                              rs.LineIntersections[k].CurvilinearCoordinate,
+                              Tolerance1D()) == CompareTypes::Coincident)
             {
               flag[k] = true;
               cells[j].push_back(i);
@@ -911,7 +931,8 @@ namespace Gedim
         {
           if (flag[k] == false)
           {
-            if (Compare1DValues(rs.LineIntersections[k].CurvilinearCoordinate,1) == CompareTypes::Coincident)
+            if (CompareValues(rs.LineIntersections[k].CurvilinearCoordinate,
+                              1.0, Tolerance1D()) == CompareTypes::Coincident)
               coordCurv.push_back(1.0);
             else
               coordCurv.push_back(rs.LineIntersections[k].CurvilinearCoordinate);
@@ -970,15 +991,15 @@ namespace Gedim
     double b = 2.0 * f.dot(d) ;
     double c = f.dot(f) - circleRadius*circleRadius;
 
-    Output::Assert(IsValue2DPositive(a));
+    Output::Assert(IsValuePositive(a, Tolerance1DSquared()));
 
     double discriminant = b * b - 4.0 * a * c;
-    if (IsValue2DNegative(discriminant))
+    if (IsValueNegative(discriminant, Tolerance1DSquared() * Tolerance1DSquared()))
     {
       // no intersection found
       result.Type = GeometryUtilities::IntersectionSegmentCircleResult::Types::NoIntersection;
     }
-    else if (IsValue2DZero(discriminant))
+    else if (IsValueZero(discriminant, Tolerance1DSquared() * Tolerance1DSquared()))
     {
       // one intersection found
       double intersection = -b / (2.0 * a);

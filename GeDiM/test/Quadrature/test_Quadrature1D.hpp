@@ -16,7 +16,7 @@ namespace UnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       unsigned int minOrder = 0;
@@ -34,7 +34,7 @@ namespace UnitTesting
                                                                points,
                                                                weights);
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, weights.sum()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, weights.sum(), geometryUtilities.Tolerance1D()));
 
         for(unsigned int ord = 0; ord <= orderMax[numOrd]; ord++)
         {
@@ -42,7 +42,7 @@ namespace UnitTesting
           Eigen::VectorXd pointsXPow = (pointsX.array()).pow(ord);
           double result = pointsXPow.dot(weights);
           double expectedResult = 1.0 / (ord + 1.0);
-          ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(expectedResult, result));
+          ASSERT_TRUE(geometryUtilities.AreValuesEqual(expectedResult, result, geometryUtilities.Tolerance1D()));
         }
       }
     }
@@ -58,7 +58,7 @@ namespace UnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-14;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       unsigned int minOrder = 0;
@@ -76,7 +76,7 @@ namespace UnitTesting
                                                         points,
                                                         weights);
 
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(1.0, weights.sum()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, weights.sum(), geometryUtilities.Tolerance1D()));
 
         for(unsigned int ord = 0; ord <= orderMax[numOrd]; ord++)
         {
@@ -85,7 +85,7 @@ namespace UnitTesting
           double result = pointsXPow.dot(weights);
           double expectedResult = 1.0 / (ord + 1.0);
 
-          ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(expectedResult, result));
+          ASSERT_TRUE(geometryUtilities.AreValuesEqual(expectedResult, result, geometryUtilities.Tolerance1D()));
         }
       }
     }

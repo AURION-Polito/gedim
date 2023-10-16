@@ -65,7 +65,7 @@ namespace Gedim
       {
         const Eigen::Vector3d& vertexTwo = points.col(w);
         double distance = PointDistance(vertexOne, vertexTwo);
-        if (Compare1DValues(maxDistance, distance) == CompareTypes::FirstBeforeSecond)
+        if (CompareValues(maxDistance, distance, Tolerance1D()) == CompareTypes::FirstBeforeSecond)
           maxDistance = distance;
       }
     }
@@ -81,7 +81,7 @@ namespace Gedim
     list<unsigned int> indices;
     for (unsigned int p = 0; p < pointDistances.size(); p++)
     {
-      if (IsValue1DZero(pointDistances[p]))
+      if (IsValueZero(pointDistances[p], Tolerance1D()))
         indices.push_back(p);
     }
 
@@ -95,8 +95,8 @@ namespace Gedim
   {
     const Eigen::Vector3d pointDirection = (point - lineOrigin);
 
-    if (IsValue2DZero(pointDirection.squaredNorm()) ||
-        IsValue2DZero(pointDirection.cross(lineTangent).squaredNorm() / lineTangentSquaredLength))
+    if (IsValueZero(pointDirection.squaredNorm(), Tolerance1DSquared()) ||
+        IsValueZero(pointDirection.cross(lineTangent).squaredNorm() / lineTangentSquaredLength, Tolerance1DSquared()))
       return true;
 
     return false;
@@ -111,19 +111,20 @@ namespace Gedim
     double pointDirectionSquaredNorm = (point - segmentOrigin).squaredNorm();
 
     // check if point is on line
-    if (IsValue2DZero(pointDirectionSquaredNorm) ||
-        IsValue2DZero(pointDirection.cross(segmentTangent).squaredNorm()))
+    if (IsValueZero(pointDirectionSquaredNorm, Tolerance1DSquared()) ||
+        IsValueZero(pointDirection.cross(segmentTangent).squaredNorm(), Tolerance1DSquared()))
     {
       // compute curvilinear coordinate of point (segment is between 0.0 and 1.0)
       return PointSegmentPosition(PointCurvilinearCoordinate(point, segmentOrigin, segmentEnd));
     }
 
     // check point position out of line, supported only in 2D plane
-    Output::Assert(IsValue1DZero(segmentTangent.z()) && IsValue1DZero(pointDirection.z()));
+    Output::Assert(IsValueZero(segmentTangent.z(), Tolerance1D()) &&
+                   IsValueZero(pointDirection.z(), Tolerance1D()));
     // rotate the 2D tangent by 90 degrees
     Vector3d normalTangent(segmentTangent.y(), -segmentTangent.x(), 0.0);
 
-    if (IsValue1DPositive(pointDirection.dot(normalTangent)))
+    if (IsValuePositive(pointDirection.dot(normalTangent), Tolerance1DSquared()))
       return PointSegmentPositionTypes::RightTheSegment;
     else
       return PointSegmentPositionTypes::LeftTheSegment;
@@ -131,20 +132,20 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosition(const double& curvilinearCoordinate) const
   {
-    if (IsValue1DZero(curvilinearCoordinate))
+    if (IsValueZero(curvilinearCoordinate, Tolerance1D()))
       return PointSegmentPositionTypes::OnSegmentOrigin;
 
-    if (Compare1DValues(1.0, curvilinearCoordinate) == CompareTypes::Coincident)
+    if (CompareValues(1.0, curvilinearCoordinate, Tolerance1D()) == CompareTypes::Coincident)
       return PointSegmentPositionTypes::OnSegmentEnd;
 
-    if (IsValue1DPositive(curvilinearCoordinate) &&
-        Compare1DValues(1.0, curvilinearCoordinate) == CompareTypes::SecondBeforeFirst)
+    if (IsValuePositive(curvilinearCoordinate, Tolerance1D()) &&
+        CompareValues(1.0, curvilinearCoordinate, Tolerance1D()) == CompareTypes::SecondBeforeFirst)
       return PointSegmentPositionTypes::InsideSegment;
 
-    if (IsValue1DNegative(curvilinearCoordinate))
+    if (IsValueNegative(curvilinearCoordinate, Tolerance1D()))
       return PointSegmentPositionTypes::OnSegmentLineBeforeOrigin;
 
-    if (Compare1DValues(1.0, curvilinearCoordinate) == CompareTypes::FirstBeforeSecond)
+    if (CompareValues(1.0, curvilinearCoordinate, Tolerance1D()) == CompareTypes::FirstBeforeSecond)
       return PointSegmentPositionTypes::OnSegmentLineAfterEnd;
 
     throw runtime_error("PointSegmentPosition failed");
@@ -155,17 +156,17 @@ namespace Gedim
   {
     const Eigen::Vector3d pad = planePoints[0] - point;
     const double padNorm = pad.norm();
-    if (IsValue1DZero(padNorm))
+    if (IsValueZero(padNorm, Tolerance1D()))
       return 0.0;
 
     const Eigen::Vector3d pbd = planePoints[1] - point;
     const double pbdNorm = pbd.norm();
-    if (IsValue1DZero(pbdNorm))
+    if (IsValueZero(pbdNorm, Tolerance1D()))
       return 0.0;
 
     const Eigen::Vector3d pcd = planePoints[2] - point;
     const double pcdNorm = pcd.norm();
-    if (IsValue1DZero(pcdNorm))
+    if (IsValueZero(pcdNorm, Tolerance1D()))
       return 0.0;
 
     return (pad[0] * (pbd[1] * pcd[2] - pbd[2] * pcd[1])
@@ -180,7 +181,7 @@ namespace Gedim
   {
     const Eigen::Vector3d pod = point - planeOrigin;
     const double podNorm = pod.norm();
-    if (IsValue1DZero(podNorm))
+    if (IsValueZero(podNorm, Tolerance1D()))
       return 0.0;
 
     return planeNormal.dot(pod) / podNorm;
@@ -188,9 +189,9 @@ namespace Gedim
   // ***************************************************************************
   GeometryUtilities::PointPlanePositionTypes GeometryUtilities::PointPlanePosition(const double& pointPlaneDistance) const
   {
-    if (IsValue1DZero(pointPlaneDistance))
+    if (IsValueZero(pointPlaneDistance, Tolerance1D()))
       return PointPlanePositionTypes::OnPlane;
-    else if (IsValue1DNegative(pointPlaneDistance))
+    else if (IsValueNegative(pointPlaneDistance, Tolerance1D()))
       return PointPlanePositionTypes::Negative;
     else
       return PointPlanePositionTypes::Positive;
@@ -263,9 +264,9 @@ namespace Gedim
       const Vector3d edgeTangent = SegmentTangent(edgeOrigin,
                                                   edgeEnd);
 
-      if (IsValue1DZero(edgeTangent.y()))
+      if (IsValueZero(edgeTangent.y(), Tolerance1D()))
       {
-        if (IsValue1DZero(point.y() - edgeOrigin.y()))
+        if (IsValueZero(point.y() - edgeOrigin.y(), Tolerance1D()))
         {
           const double intersection_point_curvilinearCoordinate = PointLineCurvilinearCoordinate(point,
                                                                                                  edgeOrigin,
@@ -355,7 +356,7 @@ namespace Gedim
               if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentOrigin)
               {
                 // the inserction count only if the other edge vertex is uder the ray
-                if (IsValue1DGreater(point.y(), edgeEnd.y()))
+                if (IsValueGreater(point.y(), edgeEnd.y(), Tolerance1D()))
                   numIntersections++;
                 continue;
               }
@@ -363,7 +364,7 @@ namespace Gedim
               if (intersection_edge_position == PointSegmentPositionTypes::OnSegmentEnd)
               {
                 // the inserction count only if the other edge vertex is uder the ray
-                if (IsValue1DGreater(point.y(), edgeOrigin.y()))
+                if (IsValueGreater(point.y(), edgeOrigin.y(), Tolerance1D()))
                   numIntersections++;
                 continue;
               }
@@ -468,7 +469,9 @@ namespace Gedim
                                                                                       const Eigen::Vector3d& circleCenter,
                                                                                       const double& circleRadius) const
   {
-    CompareTypes comparison = Compare1DValues(circleRadius, PointDistance(circleCenter, point));
+    CompareTypes comparison = CompareValues(circleRadius,
+                                            PointDistance(circleCenter, point),
+                                            Tolerance1D());
     if (comparison == CompareTypes::FirstBeforeSecond)
       return PointCirclePositionResult::Outside;
     else if (comparison == CompareTypes::Coincident)
@@ -507,7 +510,7 @@ namespace Gedim
     for (unsigned int p = 0; p < numPoints; p++)
     {
       const Eigen::Vector3d s = (points.col(p) - lineOrigin).normalized();
-      aligned[p] = IsValue1DZero(t.cross(s).norm());
+      aligned[p] = IsValueZero(t.cross(s).norm(), Tolerance1D());
     }
     return aligned;
   }

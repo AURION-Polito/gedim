@@ -108,7 +108,7 @@ namespace Gedim
         area_2D += geometryUtilities.PolygonArea(trianglesVertices[cct]);
     }
 
-    return !geometryUtilities.IsValue2DZero(area_2D);
+    return !geometryUtilities.IsValueZero(area_2D, geometryUtilities.Tolerance2D());
   }
   // ***************************************************************************
   RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
@@ -745,7 +745,8 @@ namespace Gedim
     const double cell1DLength = cell2DsEdgesLength[cell2DIndex][edgeIntersection.Index];
 
     // check if the edge length is enough
-    result.IsEdgeLengthEnough = !geometryUtilities.IsValue1DZero(0.5 * cell1DLength);
+    result.IsEdgeLengthEnough = !geometryUtilities.IsValueZero(0.5 * cell1DLength,
+                                                               geometryUtilities.Tolerance1D());
 
     if (!result.IsEdgeLengthEnough)
     {
@@ -766,8 +767,9 @@ namespace Gedim
 
       const unsigned int cell2DNeighIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, c2Dn);
 
-      result.IsNeighQualityEnough[c2Dn] = geometryUtilities.IsValue1DGreaterOrEqual(0.5 * cell1DLength,
-                                                                                    cell1DsQualityWeight * cell2DsQuality[cell2DNeighIndex]);
+      result.IsNeighQualityEnough[c2Dn] = geometryUtilities.IsValueGreaterOrEqual(0.5 * cell1DLength,
+                                                                                  cell1DsQualityWeight * cell2DsQuality[cell2DNeighIndex],
+                                                                                  geometryUtilities.Tolerance1D());
 
       if (cell2DNeighIndex == cell2DIndex &&
           !result.IsNeighQualityEnough[c2Dn])
@@ -824,8 +826,9 @@ namespace Gedim
 
       // check if the length of the aligned splited edge (|l|) is higher than the mean length (|L|) after the cut
       // |l| / 2 > |L| / (N_aligned + 1)
-      result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValue1DGreaterOrEqual(cell1DLength,
-                                                                                     2.0 * alignedEdgesLength / double(numAligned + 1));
+      result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValueGreaterOrEqual(cell1DLength,
+                                                                                   2.0 * alignedEdgesLength / double(numAligned + 1),
+                                                                                   geometryUtilities.Tolerance1D());
 
 
       if (cell2DNeighIndex == cell2DIndex &&
@@ -933,8 +936,10 @@ namespace Gedim
       return result;
 
     // Check if the cell refinement creates null cell2Ds or cell1Ds
-    if (geometryUtilities.IsValue2DZero(0.5 * cell2DArea) ||
-        geometryUtilities.IsValue1DZero(0.5 * cell2DEdgesLength[edgeIndex]))
+    if (geometryUtilities.IsValueZero(0.5 * cell2DArea,
+                                      geometryUtilities.Tolerance2D()) ||
+        geometryUtilities.IsValueZero(0.5 * cell2DEdgesLength[edgeIndex],
+                                      geometryUtilities.Tolerance1D()))
       return result;
 
     // Add new mesh vertex, middle point of edge
@@ -1062,7 +1067,8 @@ namespace Gedim
     }
 
     // Check if the cell refinement creates null cell2Ds
-    if (geometryUtilities.IsValue2DZero(0.5 * cell2DArea))
+    if (geometryUtilities.IsValueZero(0.5 * cell2DArea,
+                                      geometryUtilities.Tolerance2D()))
     {
       result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
       return result;
@@ -1187,10 +1193,12 @@ namespace Gedim
       }
 
       // no new vertices
-      const unsigned int fromVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate) ?
+      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                              geometryUtilities.Tolerance1D()) ?
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
-      const unsigned int toVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate) ?
+      const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
+                                                                            geometryUtilities.Tolerance1D()) ?
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
@@ -1267,7 +1275,8 @@ namespace Gedim
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-      const unsigned int toVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate) ?
+      const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
+                                                                            geometryUtilities.Tolerance1D()) ?
                                       edgeIntersectionTwo.Index :
                                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
@@ -1343,7 +1352,8 @@ namespace Gedim
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-      const unsigned int fromVertex = geometryUtilities.IsValue1DGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate) ?
+      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                              geometryUtilities.Tolerance1D()) ?
                                         edgeIntersectionOne.Index :
                                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
 

@@ -20,8 +20,8 @@ namespace Gedim
   vector<double> GeometryUtilities::EquispaceCoordinates(const double& step,
                                                          const bool& insertExtremes) const
   {
-    Output::Assert(IsValue1DPositive(step) &&
-                   Compare1DValues(step, 1.0) != CompareTypes::SecondBeforeFirst);
+    Output::Assert(IsValuePositive(step, Tolerance1D()) &&
+                   CompareValues(step, 1.0, Tolerance1D()) != CompareTypes::SecondBeforeFirst);
 
     return insertExtremes ?
           EquispaceCoordinates(static_cast<unsigned int>(1.0 / step + 0.5) + 1, 0.0, 1.0, true) :
@@ -59,6 +59,7 @@ namespace Gedim
   // ***************************************************************************
   std::vector<double> GeometryUtilities::RandomCoordinates(const unsigned int size,
                                                            const bool insertExtremes,
+                                                           const double& minDistance,
                                                            const unsigned int seed) const
   {
     if (size == 0)
@@ -66,7 +67,9 @@ namespace Gedim
     else if (size == 1 && insertExtremes)
       throw invalid_argument("size is not valid with false insertExtremes");
 
-    const unsigned int max_value = 1.0 / (3.0 * _configuration.Tolerance);
+    Gedim::Output::Assert(IsValuePositive(minDistance, Tolerance1D()));
+
+    const unsigned int max_value = 1.0 / minDistance;
 
     Gedim::Output::Assert(size <= max_value);
 
@@ -142,11 +145,11 @@ namespace Gedim
     Matrix3d Q;
     Q.setIdentity();
 
-    Output::Assert(Compare1DValues(planeNormal.norm(), 1.0) == CompareTypes::Coincident);
+    Output::Assert(CompareValues(planeNormal.norm(), 1.0, Tolerance1D()) == CompareTypes::Coincident);
 
     // if planeNormal is already oriented as z-axis the return the identity
     const double n_xy = sqrt(planeNormal.x() * planeNormal.x() + planeNormal.y() * planeNormal.y());
-    if (IsValue1DZero(n_xy))
+    if (IsValueZero(n_xy, Tolerance1D()))
       return Q;
 
     Q.col(0)<< -planeNormal.y() / n_xy, planeNormal.x() / n_xy, 0.0;
@@ -183,11 +186,11 @@ namespace Gedim
             };
     for (const auto& p : structPoints)
     {
-      if (IsValue1DGreater(p0.Point.y(), p.Point.y()))
+      if (IsValueGreater(p0.Point.y(), p.Point.y(), Tolerance1D()))
         p0 = p;
 
-      if (Are1DValuesEqual(p0.Point.y(), p.Point.y()) &&
-          IsValue1DGreater(p0.Point.x(), p.Point.x()))
+      if (AreValuesEqual(p0.Point.y(), p.Point.y(), Tolerance1D()) &&
+          IsValueGreater(p0.Point.x(), p.Point.x(), Tolerance1D()))
         p0 = p;
     }
 
@@ -204,14 +207,15 @@ namespace Gedim
                                                   norm_b_a,
                                                   sqrt(squared_norm_b_p0));
 
-      if (IsValue1DZero(orientation_polar))
+      if (IsValueZero(orientation_polar, Tolerance1D()))
       {
         const double squared_norm_a_p0 = (p0.Point - a.Point).squaredNorm();
-        return IsValue1DGreater(squared_norm_b_p0,
-                                squared_norm_a_p0);
+        return IsValueGreater(squared_norm_b_p0,
+                              squared_norm_a_p0,
+                              Tolerance1DSquared());
       }
 
-      return IsValue1DNegative(orientation_polar);
+      return IsValueNegative(orientation_polar, Tolerance1D());
     });
 
     if (includeCollinear)
@@ -227,7 +231,7 @@ namespace Gedim
                                             norm_b_p0);
 
       while (i >= 0 &&
-             IsValue1DZero(orientation_polar))
+             IsValueZero(orientation_polar, Tolerance1D()))
       {
         i--;
 
@@ -256,8 +260,8 @@ namespace Gedim
                                                     st.at(st.size() - 2).Point,
                                                     norm_b_a,
                                                     norm_b_c);
-        if (IsValue1DNegative(orientation_polar) ||
-            (includeCollinear && IsValue1DZero(orientation_polar)))
+        if (IsValueNegative(orientation_polar, Tolerance1D()) ||
+            (includeCollinear && IsValueZero(orientation_polar, Tolerance1D())))
           break;
 
         st.pop_back();

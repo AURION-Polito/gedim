@@ -110,19 +110,19 @@ namespace GedimUnitTesting {
       
       // check curvilinear coordinate before
       {
-        ASSERT_EQ(geometryUtilities.Compare1DValues(-0.5, 1.5),
+        ASSERT_EQ(geometryUtilities.CompareValues(-0.5, 1.5, geometryUtilities.Tolerance1D()),
                   Gedim::GeometryUtilities::CompareTypes::FirstBeforeSecond);
       }
       
       // check curvilinear coordinate coincident
       {
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.5, 0.5 + geometryUtilitiesConfig.Tolerance / 2.0),
+        ASSERT_EQ(geometryUtilities.CompareValues(0.5, 0.5 + geometryUtilitiesConfig.Tolerance1D / 2.0, geometryUtilities.Tolerance1D()),
                   Gedim::GeometryUtilities::CompareTypes::Coincident);
       }
       
       // check curvilinear coordinate before
       {
-        ASSERT_EQ(geometryUtilities.Compare1DValues(0.5, -1.5),
+        ASSERT_EQ(geometryUtilities.CompareValues(0.5, -1.5, geometryUtilities.Tolerance1D()),
                   Gedim::GeometryUtilities::CompareTypes::SecondBeforeFirst);
       }
     }
@@ -148,7 +148,7 @@ namespace GedimUnitTesting {
         
         ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                      segmentOrigin,
-                                                                     segmentEnd) - 0.0) < geometryUtilitiesConfig.Tolerance);
+                                                                     segmentEnd) - 0.0) < geometryUtilitiesConfig.Tolerance1D);
       }
       
       // check curvilinear coordinate end
@@ -159,7 +159,7 @@ namespace GedimUnitTesting {
         
         ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                      segmentOrigin,
-                                                                     segmentEnd) - 1.0) < geometryUtilitiesConfig.Tolerance);
+                                                                     segmentEnd) - 1.0) < geometryUtilitiesConfig.Tolerance1D);
       }
       
       // check curvilinear coordinate inside
@@ -170,7 +170,7 @@ namespace GedimUnitTesting {
         
         ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                      segmentOrigin,
-                                                                     segmentEnd) - 0.5) < geometryUtilitiesConfig.Tolerance);
+                                                                     segmentEnd) - 0.5) < geometryUtilitiesConfig.Tolerance1D);
       }
       
       // check curvilinear coordinate before origin
@@ -181,7 +181,7 @@ namespace GedimUnitTesting {
         
         ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                      segmentOrigin,
-                                                                     segmentEnd) - -0.5) < geometryUtilitiesConfig.Tolerance);
+                                                                     segmentEnd) - -0.5) < geometryUtilitiesConfig.Tolerance1D);
       }
       
       // check curvilinear coordinate after end
@@ -192,7 +192,7 @@ namespace GedimUnitTesting {
         
         ASSERT_TRUE(abs(geometryUtilities.PointCurvilinearCoordinate(point,
                                                                      segmentOrigin,
-                                                                     segmentEnd) - 1.5) < geometryUtilitiesConfig.Tolerance);
+                                                                     segmentEnd) - 1.5) < geometryUtilitiesConfig.Tolerance1D);
       }
     }
     catch (const exception& exception)
@@ -391,11 +391,11 @@ namespace GedimUnitTesting {
                                                     lineOrigin,
                                                     lineTangent,
                                                     lineTangentSquaredLength));
-        ASSERT_TRUE(geometryUtilities.Are1DValuesEqual(geometryUtilities.PointLineCurvilinearCoordinate(point,
-                                                                                                        lineOrigin,
-                                                                                                        lineTangent,
-                                                                                                        lineTangentSquaredLength),
-                                                       0.5));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(geometryUtilities.PointLineCurvilinearCoordinate(point,
+                                                                                                      lineOrigin,
+                                                                                                      lineTangent,
+                                                                                                      lineTangentSquaredLength),
+                                                     0.5, geometryUtilities.Tolerance1D()));
       }
     }
     catch (const exception& exception)
@@ -984,7 +984,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-08;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-08;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       Eigen::MatrixXd points(3, 5);

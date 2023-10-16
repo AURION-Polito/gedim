@@ -231,9 +231,10 @@ namespace Gedim
     {
       for (unsigned int e = 0; e < convexMesh.Cell1DTotalNumber(); e++)
       {
-        Output::Assert(geometryUtilities.IsValue1DPositive(
+        Output::Assert(geometryUtilities.IsValuePositive(
                          geometryUtilities.SegmentLength(convexMesh.Cell1DOriginCoordinates(e),
-                                                         convexMesh.Cell1DEndCoordinates(e))));
+                                                         convexMesh.Cell1DEndCoordinates(e)),
+                         geometryUtilities.Tolerance1D()));
       }
     }
 
@@ -307,8 +308,9 @@ namespace Gedim
     {
       for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
       {
-        Output::Assert(geometryUtilities.IsValue2DPositive(
-                         geometryUtilities.PolygonArea(convexMesh.Cell2DVerticesCoordinates(p))));
+        Output::Assert(geometryUtilities.IsValuePositive(
+                         geometryUtilities.PolygonArea(convexMesh.Cell2DVerticesCoordinates(p)),
+                         geometryUtilities.Tolerance2D()));
       }
     }
   }

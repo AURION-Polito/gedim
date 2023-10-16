@@ -23,7 +23,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1e-15;
+      geometryUtilitiesConfig.Tolerance1D = 1e-15;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // segment inside mesh2D
@@ -203,7 +203,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance = 1.0e-08;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-08;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // segment inside single cell

@@ -606,8 +606,9 @@ namespace Gedim
                 bool intersectionAlreadyConsidered = false;
                 for (const double& curvilinearCoordinate : curvilinearCoordinates)
                 {
-                  if (Are1DValuesEqual(curvilinearCoordinate,
-                                       intersections.SingleIntersection.CurvilinearCoordinate))
+                  if (AreValuesEqual(curvilinearCoordinate,
+                                     intersections.SingleIntersection.CurvilinearCoordinate,
+                                     Tolerance1D()))
                   {
                     intersectionAlreadyConsidered = true;
                     break;

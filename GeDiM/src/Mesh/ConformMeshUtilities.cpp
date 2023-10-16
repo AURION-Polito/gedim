@@ -60,7 +60,8 @@ namespace Gedim
                                                                 segmentsCurvilinearCoordinatesMesh[i]);
 
       for (const Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshSegment& segment : segmentsIntersectionMesh[i].Segments)
-        Gedim::Output::Assert(geometryUtilities.IsValue1DPositive(abs(segment.Points[1] - segment.Points[0])));
+        Gedim::Output::Assert(geometryUtilities.IsValuePositive(abs(segment.Points[1] - segment.Points[0]),
+            geometryUtilities.Tolerance1D()));
 
       if (options.PrintStatus)
       {
@@ -101,7 +102,8 @@ namespace Gedim
                                              segmentsConformMesh[i]);
 
       for (const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment& segment : segmentsConformMesh[i].Segments)
-        Gedim::Output::Assert(geometryUtilities.IsValue1DPositive(abs(segment.Points[1] - segment.Points[0])));
+        Gedim::Output::Assert(geometryUtilities.IsValuePositive(abs(segment.Points[1] - segment.Points[0]),
+            geometryUtilities.Tolerance1D()));
 
       // Conform mesh 2D
       Gedim::ConformerMeshPolygon::ConformerMeshPolygonConfiguration conformMeshDomainConfiguration;
