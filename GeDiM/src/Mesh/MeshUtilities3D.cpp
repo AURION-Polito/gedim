@@ -338,7 +338,7 @@ namespace Gedim
                                                   area))
           {
             std::cout.precision(16);
-            std::cout<< "Cell1D_CheckNormals"<< std::endl;
+            std::cout<< "Cell1D_CheckNormals cell3DIndex "<< cell3DIndex<< " cell2DIndex "<< mesh.Cell3DFace(cell3DIndex, f)<< std::endl;
             std::cout<< scientific<< "Areas: "<< area<< " "<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
             std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
             std::cout<< scientific<< "Tolerance: "<< geometryUtilities.Configuration().MinTolerance * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
@@ -379,7 +379,7 @@ namespace Gedim
                                                   area))
           {
             std::cout.precision(16);
-            std::cout<< "Cell2D_CheckTriangles"<< std::endl;
+            std::cout<< "Cell2D_CheckTriangles cell3DIndex "<< cell3DIndex<< " cell2DIndex "<< mesh.Cell3DFace(cell3DIndex, f)<< std::endl;
             std::cout<< scientific<< "Areas: "<< area<< " "<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
             std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
             std::cout<< scientific<< "Tolerance: "<< geometryUtilities.Configuration().MinTolerance * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
@@ -409,7 +409,7 @@ namespace Gedim
                                                   area))
           {
             std::cout.precision(16);
-            std::cout<< "Cell2D_CheckNormals"<< std::endl;
+            std::cout<< "Cell2D_CheckNormals cell3DIndex "<< cell3DIndex<< " cell2DIndex "<< mesh.Cell3DFace(cell3DIndex, f)<< std::endl;
             std::cout<< scientific<< "Areas: "<< area<< " "<< geometricData.Cell3DsFacesAreas[cell3DIndex][f]<< std::endl;
             std::cout<< scientific<< "Difference: "<< (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
             std::cout<< scientific<< "Tolerance: "<< geometryUtilities.Configuration().MinTolerance * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])<< std::endl;
@@ -430,7 +430,7 @@ namespace Gedim
                                                 volume))
         {
           std::cout.precision(16);
-          std::cout<< "Cell2D_CheckNormals"<< std::endl;
+          std::cout<< "Cell2D_CheckNormals cell3DIndex "<< cell3DIndex<< std::endl;
           std::cout<< scientific<< "Volumes: "<< volume<< " "<< geometricData.Cell3DsVolumes[cell3DIndex]<< std::endl;
           std::cout<< scientific<< "Difference: "<< (volume - geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
           std::cout<< scientific<< "Tolerance: "<< geometryUtilities.Configuration().MinTolerance * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
@@ -465,7 +465,7 @@ namespace Gedim
                                                 volume))
         {
           std::cout.precision(16);
-          std::cout<< "Cell3D_CheckTetrahedra"<< std::endl;
+          std::cout<< "Cell3D_CheckTetrahedra cell3DIndex "<< cell3DIndex<< std::endl;
           std::cout<< scientific<< "Volume: "<< volume<< " "<< geometricData.Cell3DsVolumes[cell3DIndex]<< std::endl;
           std::cout<< scientific<< "Difference: "<< (volume - geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
           std::cout<< scientific<< "Tolerance: "<< geometryUtilities.Configuration().MinTolerance * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])<< std::endl;
