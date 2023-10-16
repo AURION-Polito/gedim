@@ -213,10 +213,10 @@ namespace Gedim
 
       /// \brief Check Mesh3D correctness
       /// \param geometryUtilities the geometry utilities
-      /// \param convexMesh a convex 3D mesh
+      /// \param mesh a 3D mesh
       void CheckMesh3D(const CheckMesh3DConfiguration& configuration,
                        const GeometryUtilities& geometryUtilities,
-                       const IMeshDAO& convexMesh) const;
+                       const IMeshDAO& mesh) const;
 
       /// \brief Check MeshGeometricData3D correctness
       /// \param geometryUtilities the geometry utilities
