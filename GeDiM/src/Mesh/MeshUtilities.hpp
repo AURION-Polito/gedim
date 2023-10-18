@@ -423,6 +423,27 @@ namespace Gedim
                              const Eigen::Vector3d& cell2DCentroid,
                              const std::string& exportFolder) const;
 
+      /// \brief Export Cell2D To VTU
+      /// \param mesh the mesh
+      /// \param cell3DIndex the cell3D index
+      /// \param cell2DVertices the cell2D vertices
+      /// \param cell2DTriangulations the cell2D triangulation
+      /// \param cell2DArea the cell2D area
+      /// \param cell2DCentroid the cell2D centroid
+      /// \param exportFolder the folder in which to export
+      void ExportCell3DToVTU(const GeometryUtilities& geometryUtilities,
+                             const IMeshDAO& mesh,
+                             const unsigned int& cell3DIndex,
+                             const Eigen::MatrixXd& cell3DVertices,
+                             const std::vector<Eigen::MatrixXd>& cell3DTetrahedrons,
+                             const std::vector<std::vector<Eigen::Matrix3d>>& cell3DFaces3DTriangulations,
+                             const double& cell3DVolume,
+                             const Eigen::Vector3d& cell3DCentroid,
+                             const std::vector<Eigen::Vector3d>& cell3DFacesNormals,
+                             const std::vector<bool>& cell3DFacesNormalDirections,
+                             const std::vector<Eigen::Vector3d>& cell3DFaces3DCentroids,
+                             const std::string& exportFolder) const;
+
       /// \brief Convert a mesh cell3D to a geometric polydheron
       /// \param mesh a mesh
       /// \param cell3DIndex the cell3D index
