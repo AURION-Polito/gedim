@@ -459,6 +459,7 @@ namespace Gedim
                                         const Eigen::Vector3d& cell3DCentroid,
                                         const std::vector<Eigen::Vector3d>& cell3DFacesTranslation,
                                         const std::vector<Eigen::Matrix3d>& cell3DFacesRotationMatrix,
+                                        const std::vector<double>& cell3DFacesArea,
                                         const std::vector<Eigen::MatrixXd>& cell3DFaces2DVertices,
                                         const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
                                         const std::vector<Eigen::VectorXd>& cell3DFacesEdgeLengths,
@@ -623,6 +624,17 @@ namespace Gedim
         const Eigen::Matrix3d& faceRotation = cell3DFacesRotationMatrix[f];
         const Eigen::Vector3d& faceTranslation = cell3DFacesTranslation[f];
         const Eigen::MatrixXd& faceEdgesNormal = cell3DFacesEdges2DNormal[f];
+        const Eigen::MatrixXd& faceEdgesTangent = cell3DFacesEdges2DTangent[f];
+
+        {
+          Gedim::VTKUtilities vtpUtilities;
+          vtpUtilities.AddPoints(face3DVertices);
+          vtpUtilities.Export(exportFolder + "/" +
+                              "Cell3D_" + to_string(cell3DIndex) +
+                              "_Face_" + to_string(f) +
+                              "_Vertices" + ".vtu");
+        }
+
 
         {
           Gedim::VTKUtilities vtpUtilities;
@@ -674,34 +686,63 @@ namespace Gedim
         }
 
         {
-          Gedim::VTKUtilities vtpUtilities;
+          Gedim::VTKUtilities vtpUtilitiesNormal, vtpUtilitiesTangent;
           for (unsigned int e = 0; e < faceEdgeDirections.size(); e++)
           {
             // Export cell2D centroids
-            const vector<double> edge_length(1, faceEdgeLengths[e]);
             const vector<double> edge_direction(1, faceEdgeDirections[e] ? 1.0 : -1.0);
             const vector<double> face_local_id(1, f);
             const vector<double> face_global_id(1, mesh.Cell3DFace(cell3DIndex, f));
+
+            const double sizeNormal = std::max(std::max(std::sqrt(cell3DFacesArea[f]),
+                                                        std::cbrt(cell3DVolume)),
+                                               faceEdgeLengths[e]);
 
             const Eigen::Vector3d edgeO2D = face2DVertices.col(e);
             const Eigen::Vector3d edgeE2D = face2DVertices.col((e + 1) % faceEdgeDirections.size());
 
             const Eigen::Vector3d edgeNormal2DO = 0.5 * (edgeO2D + edgeE2D);
-            const Eigen::Vector3d edgeNormal2DE = edgeNormal2DO + faceEdgesNormal.col(e);
+            const Eigen::Vector3d edgeNormal2DE = edgeNormal2DO + sizeNormal * faceEdgesNormal.col(e);
+
+            const Eigen::Vector3d edgeTangent2DO = edgeO2D;
+            const Eigen::Vector3d edgeTangent2DE = edgeO2D + faceEdgesTangent.col(e);
+
             const Eigen::Vector3d edgeNormal3DO = geometryUtilities.RotatePointsFrom2DTo3D(edgeNormal2DO,
                                                                                            faceRotation,
                                                                                            faceTranslation);
             const Eigen::Vector3d edgeNormal3DE = geometryUtilities.RotatePointsFrom2DTo3D(edgeNormal2DE,
                                                                                            faceRotation,
                                                                                            faceTranslation);
-            vtpUtilities.AddSegment(edgeNormal3DO,
-                                    edgeNormal3DE);
+
+            const Eigen::Vector3d edgeTangent3DO = geometryUtilities.RotatePointsFrom2DTo3D(edgeTangent2DO,
+                                                                                            faceRotation,
+                                                                                            faceTranslation);
+            const Eigen::Vector3d edgeTangent3DE = geometryUtilities.RotatePointsFrom2DTo3D(edgeTangent2DE,
+                                                                                            faceRotation,
+                                                                                            faceTranslation);
+
+            vtpUtilitiesNormal.AddSegment(edgeTangent3DO,
+                                          edgeTangent3DE,
+                                          {
+                                            {
+                                              "edge_direction",
+                                              Gedim::VTPProperty::Formats::Cells,
+                                              static_cast<unsigned int>(edge_direction.size()),
+                                              edge_direction.data()
+                                            }
+                                          });
+            vtpUtilitiesTangent.AddSegment(edgeNormal3DO,
+                                           edgeNormal3DE);
           }
 
-          vtpUtilities.Export(exportFolder + "/" +
-                              "Cell3D_" + to_string(cell3DIndex) +
-                              "_Face_" + to_string(f) +
-                              "_EdgeNormals" + ".vtu");
+          vtpUtilitiesNormal.Export(exportFolder + "/" +
+                                    "Cell3D_" + to_string(cell3DIndex) +
+                                    "_Face_" + to_string(f) +
+                                    "_EdgeTangents" + ".vtu");
+          vtpUtilitiesTangent.Export(exportFolder + "/" +
+                                     "Cell3D_" + to_string(cell3DIndex) +
+                                     "_Face_" + to_string(f) +
+                                     "_EdgeNormals" + ".vtu");
         }
       }
     }
@@ -748,6 +789,8 @@ namespace Gedim
         const Eigen::Vector3d& faceCentroid = geometryUtilities.RotatePointsFrom2DTo3D(cell3DFaces2DCentroids[f],
                                                                                        cell3DFacesRotationMatrix[f],
                                                                                        cell3DFacesTranslation[f]);
+        const double sizeNormal = std::max(std::sqrt(cell3DFacesArea[f]),
+                                           std::cbrt(cell3DVolume));
         const Eigen::Vector3d& faceNormal = cell3DFacesNormals[f];
         const double faceDirection = cell3DFacesNormalDirections[f] ? 1.0 : -1.0;
 
@@ -755,7 +798,7 @@ namespace Gedim
         const vector<double> face_local_id(1, f);
         const vector<double> face_global_id(1, mesh.Cell3DFace(cell3DIndex, f));
         vtpUtilities.AddSegment(faceCentroid,
-                                faceCentroid + faceDirection * faceNormal,
+                                faceCentroid + faceDirection * sizeNormal * faceNormal,
                                 {
                                   {
                                     "face_global_id",

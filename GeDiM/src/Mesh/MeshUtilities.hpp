@@ -433,6 +433,7 @@ namespace Gedim
                              const Eigen::Vector3d& cell3DCentroid,
                              const std::vector<Eigen::Vector3d>& cell3DFacesTranslation,
                              const std::vector<Eigen::Matrix3d>& cell3DFacesRotationMatrix,
+                             const std::vector<double>& cell3DFacesArea,
                              const std::vector<Eigen::MatrixXd>& cell3DFaces2DVertices,
                              const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
                              const std::vector<Eigen::VectorXd>& cell3DFacesEdgeLengths,

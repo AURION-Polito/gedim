@@ -1226,6 +1226,12 @@ namespace Gedim
         const unsigned int cc = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DIndex;
         const unsigned int ccf = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DFaceIndex;
 
+        if (c == 1863 &&
+            f == 4)
+        {
+          std::cout<< "CC "<< convexCell3DIndices[cc]<< " ccf "<< ccf<< std::endl;
+        }
+
         const Eigen::Vector3d outgoingFaceNormal =
             convexCell3DsNormalDirections[cc][ccf] ?
               convexCell3DsNormal[cc][ccf] : -1.0 * convexCell3DsNormal[cc][ccf];
@@ -1313,7 +1319,7 @@ namespace Gedim
                                                 geometryUtilities.Tolerance1D()))
             convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
 
-          // check if concave face point is inside convex cell
+          // check if convex face point is inside concave cell
           if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(0),
                                                                  face2DVertices))
             continue;
@@ -1321,6 +1327,11 @@ namespace Gedim
                                                                  face2DVertices))
             continue;
           if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(2),
+                                                                 face2DVertices))
+            continue;
+
+          // check if convex cell centroid is inside concave cell
+          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(geometryUtilities.PolygonBarycenter(convexFace2DTriangle),
                                                                  face2DVertices))
             continue;
 
