@@ -12,59 +12,69 @@ using namespace std;
 
 namespace Gedim
 {
-  class VoroInterface final
-  {
-    public:
-      struct Cell0D
-      {
-          const double x;
-          const double y;
-          const double z;
+class VoroInterface final
+{
+public:
+    struct Cell0D
+    {
+        const double x;
+        const double y;
+        const double z;
 
-          unsigned int id;
-          unsigned int marker;
+        unsigned int id;
+        unsigned int marker;
 
-          Cell0D(const double x,
-                 const double y,
-                 const double z): x(x), y(y), z(z) {};
-      };
+        Cell0D(const double x,
+               const double y,
+               const double z): x(x), y(y), z(z) {};
+    };
 
-      struct Cell2D
-      {
-          unsigned int id;
-          int marker;
-          vector<unsigned int> vertices;
-          vector<unsigned int> edges;
-      };
+    struct Cell2D
+    {
+        unsigned int id;
+        int marker;
+        vector<unsigned int> vertices;
+        vector<unsigned int> edges;
+    };
 
-    private:
+private:
 
-      const Gedim::GeometryUtilities& geometryUtilities;
+    const Gedim::GeometryUtilities& geometryUtilities;
 
-    public:
-      VoroInterface(const Gedim::GeometryUtilities& geometryUtilities);
+public:
+    VoroInterface(const Gedim::GeometryUtilities& geometryUtilities);
 
-      void GenerateVoronoiTassellations(const Eigen::MatrixXd& polyhedronVertices,
+    void GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhedronVertices,
                                         const Eigen::MatrixXi& polyhedronEdges,
                                         const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                         const unsigned int &numPoints,
+                                        const unsigned int& numIterations,
                                         Gedim::IMeshDAO& mesh);
 
-    private:
+    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
+                                        const unsigned int& numPoints,
+                                        const unsigned int& numIterations,
+                                        Gedim::IMeshDAO& mesh);
+
+private:
 
 #if ENABLE_VORO == 1
-      bool InsertNewPoints(Cell0D& cell0D, list<Cell0D>& cell0Ds);
-      inline double rnd() {return double(rand())/RAND_MAX;}
+    bool InsertNewPoints(Cell0D& cell0D, list<Cell0D>& cell0Ds);
+    inline double rnd() {return double(rand())/RAND_MAX;}
 
-      void GenerateRandomPoints(const Eigen::MatrixXd &polyhedronVertices,
-                                const unsigned int &numPoints,
-                                voro::container &con);
+    void GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
+                              const unsigned int& numPoints,
+                              voro::container& con);
 
-      void GenerateCartesianPoints(const Eigen::MatrixXd &polyhedronVertices,
+    void GenerateCartesianPoints3D(const Eigen::MatrixXd &polyhedronVertices,
                                    const unsigned int &numPoints,
                                    voro::container &con);
+
+    void GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
+                              const unsigned int& numPoints,
+                              Eigen::MatrixXd& VoronoiPoints);
 #endif
-  };
+};
 
 }
 
