@@ -1226,12 +1226,6 @@ namespace Gedim
         const unsigned int cc = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DIndex;
         const unsigned int ccf = convexCell2Ds.ConcaveCell3DFacesConvexCell2D[f].ConvexCell3DFaceIndex;
 
-        if (c == 1863 &&
-            f == 4)
-        {
-          std::cout<< "CC "<< convexCell3DIndices[cc]<< " ccf "<< ccf<< std::endl;
-        }
-
         const Eigen::Vector3d outgoingFaceNormal =
             convexCell3DsNormalDirections[cc][ccf] ?
               convexCell3DsNormal[cc][ccf] : -1.0 * convexCell3DsNormal[cc][ccf];
