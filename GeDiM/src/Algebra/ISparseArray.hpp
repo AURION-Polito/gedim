@@ -67,6 +67,8 @@ namespace Gedim
 
       /// \return the condition number of the sparse array in norm 2
       virtual double Cond() const = 0;
+      /// \return the number of non-zeros element
+      virtual unsigned int NonZeros() const = 0;
 
       virtual ISparseArray& operator+=(const ISparseArray& A) = 0;
       virtual ISparseArray& operator-=(const ISparseArray& A) = 0;

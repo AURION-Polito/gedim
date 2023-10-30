@@ -97,6 +97,9 @@ namespace Gedim
 
       inline double Cond() const
       { return LAPACK_utilities::cond(LAPACK_utilities::svd(Eigen::MatrixXd(_matrix))); }
+
+      inline unsigned int NonZeros() const
+      { return _matrix.nonZeros(); }
   };
 }
 
