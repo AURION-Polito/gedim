@@ -31,17 +31,50 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SumMultiplication(const ISparseArray& A, const IArray& w)
+  void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SumMultiplication(const ISparseArray& A,
+                                                                              const IArray& w)
   {
-    _vector += (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_SparseArrayType>&>(A) *
-               Cast(w);
+    const Eigen_SparseArrayType& M = (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_SparseArrayType>&>(A);
+
+    switch (A.Type())
+    {
+      case ISparseArray::SparseArrayTypes::Symmetric:
+        _vector += (Eigen::SparseMatrix<double>(M)).selfadjointView<Lower>() *
+                   Cast(w);
+        break;
+      case ISparseArray::SparseArrayTypes::None:
+      case ISparseArray::SparseArrayTypes::Diagonal:
+      case ISparseArray::SparseArrayTypes::Lower:
+      case ISparseArray::SparseArrayTypes::Upper:
+        _vector += M * Cast(w);
+        break;
+      default:
+        throw std::runtime_error("Matrix type not managed");
+    }
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SubtractionMultiplication(const ISparseArray& A, const IArray& w)
+  void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SubtractionMultiplication(const ISparseArray& A,
+                                                                                      const IArray& w)
   {
-    _vector -= (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_SparseArrayType>&>(A) *
-               Cast(w);
+
+    const Eigen_SparseArrayType& M = (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_SparseArrayType>&>(A);
+
+    switch (A.Type())
+    {
+      case ISparseArray::SparseArrayTypes::Symmetric:
+        _vector -= (Eigen::SparseMatrix<double>(M)).selfadjointView<Lower>() *
+                   Cast(w);
+        break;
+      case ISparseArray::SparseArrayTypes::None:
+      case ISparseArray::SparseArrayTypes::Diagonal:
+      case ISparseArray::SparseArrayTypes::Lower:
+      case ISparseArray::SparseArrayTypes::Upper:
+        _vector -= M * Cast(w);
+        break;
+      default:
+        throw std::runtime_error("Matrix type not managed");
+    }
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>

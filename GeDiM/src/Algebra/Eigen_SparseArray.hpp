@@ -4,6 +4,7 @@
 #include "ISparseArray.hpp"
 #include "Eigen/Eigen"
 #include "LAPACK_utilities.hpp"
+#include "IOUtilities.hpp"
 
 namespace Gedim
 {
@@ -64,11 +65,13 @@ namespace Gedim
 
       inline ISparseArray& operator+=(const ISparseArray& A)
       {
+        Gedim::Output::Assert(A.Type() == Type());
         _matrix += Cast(A);
         return *this;
       }
       inline ISparseArray& operator-=(const ISparseArray& A)
       {
+        Gedim::Output::Assert(A.Type() == Type());
         _matrix -= Cast(A);
         return *this;
       }
