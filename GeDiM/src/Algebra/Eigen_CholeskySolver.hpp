@@ -8,11 +8,12 @@ namespace Gedim
 {
   /// \brief Eigen Cholesky Linear solver
   template<typename Eigen_ArrayType = Eigen::VectorXd,
-           typename Eigen_SparseArrayType = Eigen::SparseMatrix<double>>
+           typename Eigen_SparseArrayType = Eigen::SparseMatrix<double>,
+           typename Eigen_SolverType = Eigen::SimplicialLDLT<Eigen_SparseArrayType, Eigen::Lower, Eigen::AMDOrdering<int>>>
   class Eigen_CholeskySolver final : public ILinearSolver
   {
     private:
-      Eigen::SimplicialLDLT<Eigen_SparseArrayType, Eigen::Lower> linearSolver; ///< The solver
+      Eigen_SolverType linearSolver; ///< The solver
       const IArray* _rightHandSide; ///< The rightHandSide of the linear syste
       IArray* _solution; ///< The solution of the linear syste
 

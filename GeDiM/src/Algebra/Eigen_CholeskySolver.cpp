@@ -9,25 +9,43 @@ using namespace std;
 namespace Gedim
 {
   // ***************************************************************************
-  template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>>;
+  template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::SimplicialLLT<SparseMatrix<double>, Eigen::Lower, Eigen::NaturalOrdering<int>>>;
+  template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::SimplicialLDLT<SparseMatrix<double>, Eigen::Lower, Eigen::NaturalOrdering<int>>>;
+  template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::SimplicialLLT<SparseMatrix<double>, Eigen::Lower, Eigen::AMDOrdering<int>>>;
+  template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::SimplicialLDLT<SparseMatrix<double>, Eigen::Lower, Eigen::AMDOrdering<int>>>;
   // ***************************************************************************
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Eigen_CholeskySolver()
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::Eigen_CholeskySolver()
   {
     _rightHandSide = nullptr;
     _solution = nullptr;
   }
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::~Eigen_CholeskySolver()
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::~Eigen_CholeskySolver()
   {
     _rightHandSide = nullptr;
     _solution = nullptr;
   }
   // ***************************************************************************
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray& matrix,
-                                                                                const IArray& rightHandSide,
-                                                                                IArray& solution)
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  void Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::Initialize(const ISparseArray& matrix,
+                                const IArray& rightHandSide,
+                                IArray& solution)
   {
     _rightHandSide = &rightHandSide;
     _solution = &solution;
@@ -35,8 +53,13 @@ namespace Gedim
     Initialize(matrix);
   }
   // ***************************************************************************
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve() const
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  void Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::Solve() const
   {
     if (_rightHandSide == nullptr ||
         _solution == nullptr)
@@ -46,8 +69,13 @@ namespace Gedim
           *_solution);
   }
   // ***************************************************************************
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray& matrix)
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  void Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::Initialize(const ISparseArray& matrix)
   {
     const SparseMatrix<double>& _matrix = static_cast<const Eigen_SparseArray<SparseMatrix<double>>&>(matrix);
 
@@ -64,9 +92,14 @@ namespace Gedim
       throw runtime_error("Cholesky Factorization computation failed");
   }
   // ***************************************************************************
-  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve(const IArray& rightHandSide,
-                                                                           IArray& solution) const
+  template<typename Eigen_ArrayType,
+           typename Eigen_SparseArrayType,
+           typename Eigen_SolverType>
+  void Eigen_CholeskySolver<
+  Eigen_ArrayType,
+  Eigen_SparseArrayType,
+  Eigen_SolverType>::Solve(const IArray& rightHandSide,
+                           IArray& solution) const
   {
     const VectorXd& _rightHandSide = static_cast<const Eigen_Array<VectorXd>&>(rightHandSide);
     VectorXd& _solution = static_cast<Eigen_Array<VectorXd>&>(solution);
