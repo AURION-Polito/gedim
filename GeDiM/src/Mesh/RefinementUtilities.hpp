@@ -51,6 +51,52 @@ namespace Gedim
           std::vector<unsigned int> NewCell2DsIndex = {};
       };
 
+      struct RefinePolygon_CheckResult final
+      {
+          enum struct ResultTypes
+          {
+            Unknown = 0,
+            Cell2DToBeSplitted = 1,
+            Cell2DAlreadySplitted = 2,
+            Cell2DSplitUnderTolerance = 3,
+            SplitDirectionNotInsideCell2D = 4
+          };
+
+          struct Cell1DToSplit final
+          {
+              enum struct Types
+              {
+                Unknown = 0,
+                NotInside = 1,
+                EdgeLengthNotEnough = 2,
+                OnlyLocalQualityNotEnough = 3,
+                OnlyNeighQualityNotEnough = 4,
+                BothQualityNotEnough = 5,
+                OnlyLocalAlignedNotRespect = 6,
+                OnlyNeighAlignedNotRespect = 7,
+                BothAlignedNotRespect = 8,
+                ToSplit = 9
+              };
+
+              bool IsIntersectionInside = false;
+              bool IsEdgeLengthEnough = false;
+              bool IsLocalQualityEnough = false;
+              bool IsQualityEnough = false;
+              std::vector<bool> IsNeighQualityEnough = {};
+              bool IsLocalAlignedRespect = false;
+              bool IsAlignedRespect = false;
+              std::vector<bool> IsNeighAlignedRespect = {};
+              bool IsToSplit = false;
+              unsigned int Cell2DEdgeIndex = 0;
+              Types Type = Types::Unknown;
+          };
+
+          std::vector<unsigned int> Cell1DsIndex = {};
+          std::vector<GeometryUtilities::LinePolygonPositionResult::EdgeIntersection> Cell1DsIntersection = {};
+          std::vector<Cell1DToSplit> Cell1DsToSplit = {};
+          ResultTypes ResultType = ResultTypes::Unknown;
+      };
+
       struct RefinePolygon_Result final
       {
           enum struct ResultTypes
@@ -78,37 +124,6 @@ namespace Gedim
               unsigned int NewCell0DIndex = 0;
               unsigned int OriginalCell2DEdgeIndex = 0;
           };
-
-          struct Cell1DToSplit final
-          {
-              enum struct Types
-              {
-                Unknown = -1,
-                NotInside = 0,
-                EdgeLengthNotEnough = 1,
-                OnlyLocalQualityNotEnough = 2,
-                OnlyNeighQualityNotEnough = 3,
-                BothQualityNotEnough = 4,
-                OnlyLocalAlignedNotRespect = 5,
-                OnlyNeighAlignedNotRespect = 6,
-                BothAlignedNotRespect = 7,
-                ToSplit = 8
-              };
-
-              bool IsIntersectionInside = false;
-              bool IsEdgeLengthEnough = false;
-              bool IsLocalQualityEnough = false;
-              bool IsQualityEnough = false;
-              std::vector<bool> IsNeighQualityEnough = {};
-              bool IsLocalAlignedRespect = false;
-              bool IsAlignedRespect = false;
-              std::vector<bool> IsNeighAlignedRespect = {};
-              bool IsToSplit = false;
-              unsigned int Cell2DEdgeIndex = 0;
-              Types Type = Types::Unknown;
-          };
-
-          std::vector<Cell1DToSplit> Cell1DsToSplit = {};
 
           std::vector<unsigned int> NewCell0DsIndex = {};
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
@@ -169,10 +184,10 @@ namespace Gedim
 
       SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
                                                  IMeshDAO& mesh) const;
-      bool SplitPolygon_CheckIsToSplit(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
-                                       const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
-      bool SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_Result::Cell1DToSplit& cell1DSplitOne,
-                                               const RefinePolygon_Result::Cell1DToSplit& cell1DSplitTwo) const;
+      bool SplitPolygon_CheckIsToSplit(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
+                                       const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
+      bool SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
+                                               const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
 
       bool SplitPolygon_IsAreaPositive(const Eigen::VectorXi& newCell2D_Indices,
                                        const Eigen::Matrix3d& cell2DRotation,
@@ -262,18 +277,25 @@ namespace Gedim
                                                IMeshDAO& mesh) const;
 
       /// \brief Refine Polygon Cell2D By Direction
+      RefinePolygon_CheckResult RefinePolygonCell_CheckRefinement(const unsigned int& cell2DIndex,
+                                                                  const Eigen::MatrixXd& cell2DVertices,
+                                                                  const Eigen::Vector3d& lineTangent,
+                                                                  const Eigen::Vector3d& lineOrigin,
+                                                                  const std::vector<double>& cell2DsQuality,
+                                                                  const std::vector<unsigned int>& cell1DsAligned,
+                                                                  const double& cell1DsQualityWeight,
+                                                                  const double& cell2DArea,
+                                                                  const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
+                                                                  const std::vector<bool>& cell2DEdgesDirection,
+                                                                  IMeshDAO& mesh) const;
+
+      /// \brief Refine Polygon Cell2D By Direction
       RefinePolygon_Result RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
                                                          const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
                                                          const Eigen::MatrixXd& cell2DVertices,
-                                                         const Eigen::Vector3d& lineTangent,
-                                                         const Eigen::Vector3d& lineOrigin,
-                                                         const std::vector<double>& cell2DsQuality,
-                                                         const std::vector<unsigned int>& cell1DsAligned,
-                                                         const double& cell1DsQualityWeight,
-                                                         const double& cell2DArea,
+                                                         const RefinePolygon_CheckResult& cell2DCheckToRefine,
                                                          const Eigen::Matrix3d& cell2DRotation,
                                                          const Eigen::Vector3d& cell2DTranslation,
-                                                         const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                          const std::vector<bool>& cell2DEdgesDirection,
                                                          IMeshDAO& mesh) const;
 
@@ -292,14 +314,14 @@ namespace Gedim
                                                  const std::vector<unsigned int>& cell2DsIndex,
                                                  Cell2Ds_GeometricData& geometricData) const;
 
-      RefinePolygon_Result::Cell1DToSplit RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
-                                                                            const unsigned int& cell2DIndex,
-                                                                            const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
-                                                                            const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
-                                                                            const double& cell1DsQualityWeight,
-                                                                            const std::vector<double>& cell2DsQuality,
-                                                                            const std::vector<unsigned int>& cell1DsAligned,
-                                                                            const IMeshDAO& mesh) const;
+      RefinePolygon_CheckResult::Cell1DToSplit RefinePolygonCell_IsCell1DToSplit(const unsigned int& cell1DIndex,
+                                                                                 const unsigned int& cell2DIndex,
+                                                                                 const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
+                                                                                 const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
+                                                                                 const double& cell1DsQualityWeight,
+                                                                                 const std::vector<double>& cell2DsQuality,
+                                                                                 const std::vector<unsigned int>& cell1DsAligned,
+                                                                                 const IMeshDAO& mesh) const;
   };
 
 }
