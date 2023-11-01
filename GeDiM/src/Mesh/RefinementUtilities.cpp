@@ -1045,6 +1045,7 @@ namespace Gedim
   }
   // ***************************************************************************
   RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
+                                                                                               const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
                                                                                                const Eigen::MatrixXd& cell2DVertices,
                                                                                                const Eigen::Vector3d& lineTangent,
                                                                                                const Eigen::Vector3d& lineOrigin,
@@ -1075,6 +1076,7 @@ namespace Gedim
     }
 
     const unsigned int cell2DNumVertices = cell2DVertices.cols();
+    const bool isTriangle = (cell2DPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
 
     GeometryUtilities::LinePolygonPositionResult linePolygonPosition = geometryUtilities.LinePolygonPosition(lineTangent,
                                                                                                              lineOrigin,
@@ -1174,24 +1176,18 @@ namespace Gedim
     result.Cell1DsToSplit.push_back(createNewVertexOne);
     result.Cell1DsToSplit.push_back(createNewVertexTwo);
 
-    if (!SplitPolygon_CheckIsToSplit(createNewVertexOne,
+    if (!isTriangle &&
+        !SplitPolygon_CheckIsToSplit(createNewVertexOne,
                                      createNewVertexTwo))
     {
       result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
       return result;
     }
 
-    if (!createNewVertexOne.IsToSplit &&
+    if (!isTriangle &&
+        !createNewVertexOne.IsToSplit &&
         !createNewVertexTwo.IsToSplit)
     {
-      if (cell2DIndex == 321797)
-      {
-        using namespace Gedim;
-
-        std::cout.precision(16);
-        std::cout<< "HERE 1"<< std::endl;
-      }
-
       // no new vertices
       const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
                                                                               geometryUtilities.Tolerance1D()) ?
@@ -1261,17 +1257,13 @@ namespace Gedim
 
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
-    else if (createNewVertexOne.IsToSplit &&
-             !createNewVertexTwo.IsToSplit)
+    else if ((isTriangle &&
+              createNewVertexTwo.Type ==
+              RefinePolygon_Result::Cell1DToSplit::Types::NotInside
+              ) ||
+             (createNewVertexOne.IsToSplit &&
+              !createNewVertexTwo.IsToSplit))
     {
-      if (cell2DIndex == 321797)
-      {
-        using namespace Gedim;
-
-        std::cout.precision(16);
-        std::cout<< "HERE 2"<< std::endl;
-      }
-
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1338,17 +1330,13 @@ namespace Gedim
 
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
-    else if (!createNewVertexOne.IsToSplit &&
-             createNewVertexTwo.IsToSplit)
+    else if ((isTriangle &&
+              createNewVertexOne.Type ==
+              RefinePolygon_Result::Cell1DToSplit::Types::NotInside
+              ) ||
+             (!createNewVertexOne.IsToSplit &&
+              createNewVertexTwo.IsToSplit))
     {
-      if (cell2DIndex == 321797)
-      {
-        using namespace Gedim;
-
-        std::cout.precision(16);
-        std::cout<< "HERE 3"<< std::endl;
-      }
-
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1415,7 +1403,7 @@ namespace Gedim
 
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
-    else
+    else if (!isTriangle)
     {
       // two new vertices
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
@@ -1480,6 +1468,8 @@ namespace Gedim
 
       result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
     }
+    else
+     throw std::runtime_error("Split type not managed case!");
 
     result.ResultType = RefinePolygon_Result::ResultTypes::Successfull;
     return result;

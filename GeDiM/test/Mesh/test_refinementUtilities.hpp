@@ -267,6 +267,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -344,6 +345,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -421,6 +423,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -498,6 +501,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2DsVertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -582,6 +586,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -666,6 +671,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -750,6 +756,7 @@ namespace GedimUnitTesting
     const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
     const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                            Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                             meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                             lineTangent,
                                                                                                                             lineOrigin,
@@ -862,6 +869,7 @@ namespace GedimUnitTesting
         const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                 Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                                  meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                                  direction.LineTangent,
                                                                                                                                  direction.LineOrigin,
@@ -1048,6 +1056,7 @@ namespace GedimUnitTesting
         const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult  = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                 Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                                  meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
                                                                                                                                  direction.LineTangent,
                                                                                                                                  direction.LineOrigin,
@@ -1268,6 +1277,7 @@ namespace GedimUnitTesting
                                                                                                                          meshGeometricData.Cell2Ds.Inertia.at(cell2DToRefineIndex));
 
           const Gedim::RefinementUtilities::RefinePolygon_Result refineResult = refinementUtilities.RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                                                                                                                  Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
                                                                                                                                   meshGeometricData.Cell2Ds.Vertices.at(cell2DToRefineIndex),
                                                                                                                                   direction.LineTangent,
                                                                                                                                   direction.LineOrigin,

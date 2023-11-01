@@ -263,6 +263,7 @@ namespace Gedim
 
       /// \brief Refine Polygon Cell2D By Direction
       RefinePolygon_Result RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
+                                                         const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
                                                          const Eigen::MatrixXd& cell2DVertices,
                                                          const Eigen::Vector3d& lineTangent,
                                                          const Eigen::Vector3d& lineOrigin,
