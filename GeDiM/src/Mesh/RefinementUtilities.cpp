@@ -1211,17 +1211,21 @@ namespace Gedim
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexOne = cell2DCheckToRefine.Cell1DsToSplit[0];
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexTwo = cell2DCheckToRefine.Cell1DsToSplit[1];
 
-    if (!isTriangle &&
-        !SplitPolygon_CheckIsToSplit(createNewVertexOne,
+    if (!SplitPolygon_CheckIsToSplit(createNewVertexOne,
                                      createNewVertexTwo))
     {
       result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
       return result;
     }
 
-    if (!isTriangle &&
-        !createNewVertexOne.IsToSplit &&
-        !createNewVertexTwo.IsToSplit)
+    if ((isTriangle &&
+         createNewVertexOne.Type ==
+         RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+         createNewVertexTwo.Type ==
+         RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside) ||
+        (!isTriangle &&
+         !createNewVertexOne.IsToSplit &&
+         !createNewVertexTwo.IsToSplit))
     {
       // no new vertices
       const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
