@@ -1303,6 +1303,14 @@ namespace Gedim
              (createNewVertexOne.IsToSplit &&
               !createNewVertexTwo.IsToSplit))
     {
+      // check if edge can be splitted
+      if (createNewVertexOne.Type ==
+          RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+        return result;
+      }
+
       // new vertex one
       Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
@@ -1376,6 +1384,14 @@ namespace Gedim
              (!createNewVertexOne.IsToSplit &&
               createNewVertexTwo.IsToSplit))
     {
+      // check if edge can be divided
+      if (createNewVertexTwo.Type ==
+          RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
+      {
+        result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+        return result;
+      }
+
       // new vertex two
       Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
