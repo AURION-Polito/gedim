@@ -16,32 +16,32 @@ VoroInterface::VoroInterface(const Gedim::GeometryUtilities& geometryUtilities):
 }
 // ************************************************************************* //
 #if ENABLE_VORO == 0
-void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
-                                                   const unsigned int& numPoints,
-                                                   const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
-{
-    Gedim::Utilities::Unused(polygonVertices);
-    Gedim::Utilities::Unused(numPoints);
-    Gedim::Utilities::Unused(numIterations);
-    Gedim::Utilities::Unused(mesh);
-    throw runtime_error("Not active module VORO");
-}
-// ************************************************************************* //
 void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhedronVertices,
-                                                   const Eigen::MatrixXi& polyhedronEdges,
-                                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                                                   const unsigned int &numPoints,
-                                                   const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
+                                    const Eigen::MatrixXi& polyhedronEdges,
+                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                    const unsigned int &numPoints,
+                                    const unsigned int& numIterations,
+                                    Gedim::IMeshDAO& mesh)
 {
-    Gedim::Utilities::Unused(polyhedronVertices);
-    Gedim::Utilities::Unused(polyhedronEdges);
-    Gedim::Utilities::Unused(polyhedronFaces);
-    Gedim::Utilities::Unused(numPoints);
-    Gedim::Utilities::Unused(numIterations);
-    Gedim::Utilities::Unused(mesh);
-    throw runtime_error("Not active module VORO");
+  Gedim::Utilities::Unused(polyhedronVertices);
+  Gedim::Utilities::Unused(polyhedronEdges);
+  Gedim::Utilities::Unused(polyhedronFaces);
+  Gedim::Utilities::Unused(numPoints);
+  Gedim::Utilities::Unused(numIterations);
+  Gedim::Utilities::Unused(mesh);
+  throw runtime_error("Not active module VORO");
+}
+
+void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
+                                    const unsigned int& numPoints,
+                                    const unsigned int& numIterations,
+                                    Gedim::IMeshDAO& mesh)
+{
+  Gedim::Utilities::Unused(polygonVertices);
+  Gedim::Utilities::Unused(numPoints);
+  Gedim::Utilities::Unused(numIterations);
+  Gedim::Utilities::Unused(mesh);
+  throw runtime_error("Not active module VORO");
 }
 #else
 // ************************************************************************* //
