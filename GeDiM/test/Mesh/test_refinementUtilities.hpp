@@ -1393,7 +1393,7 @@ namespace GedimUnitTesting
       cell1DSplitTwo.IsToSplit = false;
       cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
 
-      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
                                                                   cell1DSplitTwo));
     }
 
@@ -1424,9 +1424,9 @@ namespace GedimUnitTesting
       cell1DSplitTwo.IsToSplit = true;
       cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
 
-      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
                                                                   cell1DSplitTwo));
-      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
                                                                   cell1DSplitOne));
     }
 

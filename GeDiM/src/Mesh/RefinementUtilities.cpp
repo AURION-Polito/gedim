@@ -44,8 +44,117 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  bool RefinementUtilities::SplitPolygon_CheckIsToSplit(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
-                                                        const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const
+  RefinementUtilities::RefinePolygon_Result::SplitTypes RefinementUtilities::SplitPolygon_CheckSplitType(const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
+                                                                                                         const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
+                                                                                                         const Eigen::MatrixXd& cell2DVertices,
+                                                                                                         const RefinePolygon_CheckResult& cell2DCheckToRefine) const
+  {
+    const bool isTriangle = (cell2DPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
+    const bool isUnalignedTriangle = (cell2DUnalignedPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
+
+    const unsigned int cell2DNumVertices = cell2DVertices.cols();
+    Gedim::Output::Assert(cell2DCheckToRefine.Cell1DsIndex.size() == 2);
+
+    Gedim::Output::Assert(cell2DCheckToRefine.Cell1DsIntersection.size() == 2);
+    const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionOne = cell2DCheckToRefine.Cell1DsIntersection[0];
+    const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersectionTwo = cell2DCheckToRefine.Cell1DsIntersection[1];
+
+    Gedim::Output::Assert(cell2DCheckToRefine.Cell1DsToSplit.size() == 2);
+    const RefinePolygon_CheckResult::Cell1DToSplit& cell1DToSplitOne = cell2DCheckToRefine.Cell1DsToSplit[0];
+    const RefinePolygon_CheckResult::Cell1DToSplit& cell1DToSplitTwo = cell2DCheckToRefine.Cell1DsToSplit[1];
+
+    if (isTriangle &&
+        cell1DToSplitTwo.Type ==
+        RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside
+        )
+      return RefinePolygon_Result::SplitTypes::NewVertexFrom;
+
+    if (isTriangle &&
+        cell1DToSplitOne.Type ==
+        RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+      return RefinePolygon_Result::SplitTypes::NewVertexTo;
+
+    if (!isTriangle &&
+        !cell1DToSplitOne.IsToSplit &&
+        !cell1DToSplitTwo.IsToSplit)
+    {
+      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                              geometryUtilities.Tolerance1D()) ?
+                                        edgeIntersectionOne.Index :
+                                        (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+      const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
+                                                                            geometryUtilities.Tolerance1D()) ?
+                                      edgeIntersectionTwo.Index :
+                                      (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
+
+      // check contigous vertices
+      if ((fromVertex + 1) % cell2DNumVertices == toVertex ||
+          (toVertex + 1) % cell2DNumVertices == fromVertex)
+      {
+        if (isUnalignedTriangle)
+        {
+          if (cell1DToSplitOne.Type !=
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+              cell1DToSplitTwo.Type ==
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+            return RefinePolygon_Result::SplitTypes::NewVertexFrom;
+
+          if (cell1DToSplitOne.Type ==
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+              cell1DToSplitTwo.Type !=
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+            return RefinePolygon_Result::SplitTypes::NewVertexTo;
+
+          return RefinePolygon_Result::SplitTypes::Unknown;
+        }
+      }
+
+      // check aligned vertices
+      if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                           cell2DVertices.col(toVertex),
+                                           cell2DVertices.col((fromVertex + 1) % cell2DNumVertices)) ||
+          geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                           cell2DVertices.col(toVertex),
+                                           cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
+      {
+        if (isUnalignedTriangle)
+        {
+          if (cell1DToSplitOne.Type !=
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+              cell1DToSplitTwo.Type ==
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+            return RefinePolygon_Result::SplitTypes::NewVertexFrom;
+
+          if (cell1DToSplitOne.Type ==
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+              cell1DToSplitTwo.Type !=
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+            return RefinePolygon_Result::SplitTypes::NewVertexTo;
+
+          return RefinePolygon_Result::SplitTypes::Unknown;
+        }
+      }
+
+      return RefinePolygon_Result::SplitTypes::NoNewVertices;
+    }
+
+    if (cell1DToSplitOne.IsToSplit &&
+        !cell1DToSplitTwo.IsToSplit)
+      return RefinePolygon_Result::SplitTypes::NewVertexFrom;
+
+    if (!cell1DToSplitOne.IsToSplit &&
+        cell1DToSplitTwo.IsToSplit)
+      return RefinePolygon_Result::SplitTypes::NewVertexTo;
+
+    if (!isTriangle)
+      return RefinePolygon_Result::SplitTypes::NewVertices;
+
+    // not managed case
+    return RefinePolygon_Result::SplitTypes::Unknown;
+  }
+  // ***************************************************************************
+  bool RefinementUtilities::SplitPolygon_CheckIsNotToExtend(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
+                                                            const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const
   {
     if ((cell1DSplitOne.Type == RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighQualityNotEnough ||
          cell1DSplitOne.Type == RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect) &&
@@ -825,7 +934,7 @@ namespace Gedim
         }
       }
 
-      // check if the length of the aligned splited edge (|l|) is higher than the mean length (|L|) after the cut
+      // check if the length of the aligned splitted edge (|l|) is higher than the mean length (|L|) after the cut
       // |l| / 2 > |L| / (N_aligned + 1)
       result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValueGreaterOrEqual(cell1DLength,
                                                                                    2.0 * alignedEdgesLength / double(numAligned + 1),
@@ -1164,6 +1273,7 @@ namespace Gedim
   // ***************************************************************************
   RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
                                                                                                const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
+                                                                                               const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
                                                                                                const Eigen::MatrixXd& cell2DVertices,
                                                                                                const RefinePolygon_CheckResult& cell2DCheckToRefine,
                                                                                                const Eigen::Matrix3d& cell2DRotation,
@@ -1177,16 +1287,19 @@ namespace Gedim
     {
       case RefinePolygon_CheckResult::ResultTypes::Cell2DAlreadySplitted:
       {
+        result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
         result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DAlreadySplitted;
         return result;
       }
       case RefinePolygon_CheckResult::ResultTypes::Cell2DSplitUnderTolerance:
       {
+        result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
         result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
         return result;
       }
       case RefinePolygon_CheckResult::ResultTypes::SplitDirectionNotInsideCell2D:
       {
+        result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
         result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
         return result;
       }
@@ -1197,8 +1310,6 @@ namespace Gedim
     }
 
     const unsigned int cell2DNumVertices = cell2DVertices.cols();
-    const bool isTriangle = (cell2DPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
-
     Gedim::Output::Assert(cell2DCheckToRefine.Cell1DsIndex.size() == 2);
     const unsigned int cell1DIndexOne = cell2DCheckToRefine.Cell1DsIndex[0];
     const unsigned int cell1DIndexTwo = cell2DCheckToRefine.Cell1DsIndex[1];
@@ -1211,320 +1322,336 @@ namespace Gedim
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexOne = cell2DCheckToRefine.Cell1DsToSplit[0];
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexTwo = cell2DCheckToRefine.Cell1DsToSplit[1];
 
-    if (!SplitPolygon_CheckIsToSplit(createNewVertexOne,
-                                     createNewVertexTwo))
+    if (!SplitPolygon_CheckIsNotToExtend(createNewVertexOne,
+                                         createNewVertexTwo))
     {
       result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+      result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
       return result;
     }
 
-    if ((isTriangle &&
-         createNewVertexOne.Type ==
-         RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
-         createNewVertexTwo.Type ==
-         RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside) ||
-        (!isTriangle &&
-         !createNewVertexOne.IsToSplit &&
-         !createNewVertexTwo.IsToSplit))
+    const RefinePolygon_Result::SplitTypes splitType = SplitPolygon_CheckSplitType(cell2DPolygonType,
+                                                                                   cell2DUnalignedPolygonType,
+                                                                                   cell2DVertices,
+                                                                                   cell2DCheckToRefine);
+
+    switch (splitType)
     {
-      // no new vertices
-      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+      case RefinePolygon_Result::SplitTypes::NoNewVertices:
+      {
+        // no new vertices
+        const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                                geometryUtilities.Tolerance1D()) ?
+                                          edgeIntersectionOne.Index :
+                                          (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+        const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
                                                                               geometryUtilities.Tolerance1D()) ?
-                                        edgeIntersectionOne.Index :
-                                        (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
-      const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
-                                                                            geometryUtilities.Tolerance1D()) ?
-                                      edgeIntersectionTwo.Index :
-                                      (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
+                                        edgeIntersectionTwo.Index :
+                                        (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
 
-      if ((fromVertex + 1) % cell2DNumVertices == toVertex ||
-          (toVertex + 1) % cell2DNumVertices == fromVertex)
-      {
-        if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
-                                                 createNewVertexTwo))
+        if ((fromVertex + 1) % cell2DNumVertices == toVertex ||
+            (toVertex + 1) % cell2DNumVertices == fromVertex)
         {
-          result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+          if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
+                                                   createNewVertexTwo))
+          {
+            result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+          throw std::runtime_error("Case to managed");
           return result;
         }
 
-        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
-        return result;
-      }
-
-      if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
-                                           cell2DVertices.col(toVertex),
-                                           cell2DVertices.col((fromVertex + 1) % cell2DNumVertices)) ||
-          geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
-                                           cell2DVertices.col(toVertex),
-                                           cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
-      {
-        if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
-                                                 createNewVertexTwo))
+        if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                             cell2DVertices.col(toVertex),
+                                             cell2DVertices.col((fromVertex + 1) % cell2DNumVertices)) ||
+            geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                             cell2DVertices.col(toVertex),
+                                             cell2DVertices.col((toVertex + 1) % cell2DNumVertices)))
         {
-          result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+          if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
+                                                   createNewVertexTwo))
+          {
+            result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+          throw std::runtime_error("Case to managed");
           return result;
         }
 
-        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
-        return result;
+        const SplitPolygon_Result splitResult = SplitPolygon_NoNewVertices(cell2DIndex,
+                                                                           cell2DNumVertices,
+                                                                           fromVertex,
+                                                                           toVertex,
+                                                                           cell2DRotation,
+                                                                           cell2DTranslation,
+                                                                           mesh);
+
+        switch (splitResult.Type)
+        {
+          case SplitPolygon_Result::Types::Unknown:
+            throw std::runtime_error("Unknown SplitPolygon_Result Type");
+          case SplitPolygon_Result::Types::NoSplit:
+          {
+            result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+          default:
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoNewVertices;
+            break;
+        }
+
+        result.NewCell1DsIndex.resize(1);
+        result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+        result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
+        result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
       }
-
-      const SplitPolygon_Result splitResult = SplitPolygon_NoNewVertices(cell2DIndex,
-                                                                         cell2DNumVertices,
-                                                                         fromVertex,
-                                                                         toVertex,
-                                                                         cell2DRotation,
-                                                                         cell2DTranslation,
-                                                                         mesh);
-
-      switch (splitResult.Type)
+        break;
+      case RefinePolygon_Result::SplitTypes::NewVertexFrom:
       {
-        case SplitPolygon_Result::Types::Unknown:
-          throw std::runtime_error("Unknown SplitPolygon_Result Type");
-        case SplitPolygon_Result::Types::NoSplit:
+        // check if edge can be splitted
+        if (createNewVertexOne.Type ==
+            RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
         {
           result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
           return result;
         }
-        default:
-          break;
+
+        // new vertex one
+        Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
+
+        const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
+                                                                              geometryUtilities.Tolerance1D()) ?
+                                        edgeIntersectionTwo.Index :
+                                        (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
+
+        const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionOne.Index) +
+                                                        cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices));
+
+        if (geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
+                                             cell2DVertices.col(toVertex),
+                                             middleCoordinate) ||
+            geometryUtilities.PointIsAligned(cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices),
+                                             cell2DVertices.col(toVertex),
+                                             middleCoordinate))
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+          throw std::runtime_error("Case to managed");
+          return result;
+        }
+
+        const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
+                                                                          mesh);
+
+        const SplitPolygon_Result splitResult = SplitPolygon_NewVertexFrom(cell2DIndex,
+                                                                           cell2DNumVertices,
+                                                                           edgeIntersectionOne.Index,
+                                                                           toVertex,
+                                                                           cell2DRotation,
+                                                                           cell2DTranslation,
+                                                                           splitCell1DOne.NewCell0DIndex,
+                                                                           splitCell1DOne.NewCell1DsIndex,
+                                                                           cell2DEdgesDirection.at(edgeIntersectionOne.Index),
+                                                                           mesh);
+
+        switch (splitResult.Type)
+        {
+          case SplitPolygon_Result::Types::Unknown:
+            throw std::runtime_error("Unknown SplitPolygon_Result Type");
+          case SplitPolygon_Result::Types::NoSplit:
+          {
+            mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
+            mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
+            mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+            mesh.Cell1DSetState(cell1DIndexOne, true);
+            result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+          default:
+            result.SplitType = RefinePolygon_Result::SplitTypes::NewVertexFrom;
+            break;
+        }
+
+        result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex };
+
+        result.NewCell1DsIndex.resize(2);
+        result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+        result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DOne.NewCell1DsIndex;
+        result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
+        result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionOne.Index;
+        result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DOne.NewCell0DIndex;
+        result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+        result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
+        result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
       }
-
-      result.NewCell1DsIndex.resize(1);
-      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
-      result.NewCell1DsIndex[0].NewCell1DsIndex = { splitResult.NewCell1DIndex };
-
-      result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
-    }
-    else if ((isTriangle &&
-              createNewVertexTwo.Type ==
-              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside
-              ) ||
-             (createNewVertexOne.IsToSplit &&
-              !createNewVertexTwo.IsToSplit))
-    {
-      // check if edge can be splitted
-      if (createNewVertexOne.Type ==
-          RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
+        break;
+      case RefinePolygon_Result::SplitTypes::NewVertexTo:
       {
-        result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
-        return result;
+        // check if edge can be divided
+        if (createNewVertexTwo.Type ==
+            RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+          return result;
+        }
+
+        // new vertex two
+        Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
+
+        const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                                geometryUtilities.Tolerance1D()) ?
+                                          edgeIntersectionOne.Index :
+                                          (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+
+        const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
+                                                        cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
+
+        if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                             cell2DVertices.col(edgeIntersectionTwo.Index),
+                                             middleCoordinate) ||
+            geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                             cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
+                                             middleCoordinate))
+        {
+          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
+          result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+          throw std::runtime_error("Case to managed");
+          return result;
+        }
+
+        const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
+                                                                          mesh);
+
+        const SplitPolygon_Result splitResult = SplitPolygon_NewVertexTo(cell2DIndex,
+                                                                         cell2DNumVertices,
+                                                                         fromVertex,
+                                                                         edgeIntersectionTwo.Index,
+                                                                         cell2DRotation,
+                                                                         cell2DTranslation,
+                                                                         splitCell1DTwo.NewCell0DIndex,
+                                                                         splitCell1DTwo.NewCell1DsIndex,
+                                                                         cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
+                                                                         mesh);
+
+        switch (splitResult.Type)
+        {
+          case SplitPolygon_Result::Types::Unknown:
+            throw std::runtime_error("Unknown SplitPolygon_Result Type");
+          case SplitPolygon_Result::Types::NoSplit:
+          {
+            mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
+            mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
+            mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
+            mesh.Cell1DSetState(cell1DIndexTwo, true);
+            result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+          default:
+            result.SplitType = RefinePolygon_Result::SplitTypes::NewVertexTo;
+            break;
+        }
+
+        result.NewCell0DsIndex = { splitCell1DTwo.NewCell0DIndex };
+
+        result.NewCell1DsIndex.resize(2);
+        result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+        result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DTwo.NewCell1DsIndex;
+        result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexTwo;
+        result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionTwo.Index;
+        result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DTwo.NewCell0DIndex;
+        result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+        result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
+        result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
       }
-
-      // new vertex one
-      Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
-
-      const unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
-                                                                            geometryUtilities.Tolerance1D()) ?
-                                      edgeIntersectionTwo.Index :
-                                      (edgeIntersectionTwo.Index + 1) % cell2DNumVertices;
-
-      const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionOne.Index) +
-                                                      cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices));
-
-      if (geometryUtilities.PointIsAligned(cell2DVertices.col(edgeIntersectionOne.Index),
-                                           cell2DVertices.col(toVertex),
-                                           middleCoordinate) ||
-          geometryUtilities.PointIsAligned(cell2DVertices.col((edgeIntersectionOne.Index + 1) % cell2DNumVertices),
-                                           cell2DVertices.col(toVertex),
-                                           middleCoordinate))
+        break;
+      case RefinePolygon_Result::SplitTypes::NewVertices:
       {
-        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
-        return result;
-      }
+        // two new vertices
+        Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
+        Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-      const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
-                                                                        mesh);
+        const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
+                                                                          mesh);
+        const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
+                                                                          mesh);
 
-      const SplitPolygon_Result splitResult = SplitPolygon_NewVertexFrom(cell2DIndex,
+        const SplitPolygon_Result splitResult = SplitPolygon_NewVertices(cell2DIndex,
                                                                          cell2DNumVertices,
                                                                          edgeIntersectionOne.Index,
-                                                                         toVertex,
+                                                                         edgeIntersectionTwo.Index,
                                                                          cell2DRotation,
                                                                          cell2DTranslation,
                                                                          splitCell1DOne.NewCell0DIndex,
+                                                                         splitCell1DTwo.NewCell0DIndex,
                                                                          splitCell1DOne.NewCell1DsIndex,
+                                                                         splitCell1DTwo.NewCell1DsIndex,
                                                                          cell2DEdgesDirection.at(edgeIntersectionOne.Index),
+                                                                         cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
                                                                          mesh);
 
-      switch (splitResult.Type)
-      {
-        case SplitPolygon_Result::Types::Unknown:
-          throw std::runtime_error("Unknown SplitPolygon_Result Type");
-        case SplitPolygon_Result::Types::NoSplit:
+        switch (splitResult.Type)
         {
-          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
-          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
-          mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
-          mesh.Cell1DSetState(cell1DIndexOne, true);
-          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
-          return result;
+          case SplitPolygon_Result::Types::Unknown:
+            throw std::runtime_error("Unknown SplitPolygon_Result Type");
+          case SplitPolygon_Result::Types::NoSplit:
+          {
+            mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
+            mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
+            mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
+            mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
+            mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
+            mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
+            mesh.Cell1DSetState(cell1DIndexTwo, true);
+            mesh.Cell1DSetState(cell1DIndexOne, true);
+            result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
+            result.SplitType = RefinePolygon_Result::SplitTypes::NoSplit;
+            return result;
+          }
+          default:
+            result.SplitType = RefinePolygon_Result::SplitTypes::NewVertices;
+            break;
         }
-        default:
-          break;
+
+        result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex,
+                                   splitCell1DTwo.NewCell0DIndex };
+
+        result.NewCell1DsIndex.resize(3);
+        result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+        result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DOne.NewCell1DsIndex;
+        result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
+        result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionOne.Index;
+        result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DOne.NewCell0DIndex;
+        result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
+        result.NewCell1DsIndex[1].NewCell1DsIndex = splitCell1DTwo.NewCell1DsIndex;
+        result.NewCell1DsIndex[1].OriginalCell1DIndex = cell1DIndexTwo;
+        result.NewCell1DsIndex[1].OriginalCell2DEdgeIndex = edgeIntersectionTwo.Index;
+        result.NewCell1DsIndex[1].NewCell0DIndex = splitCell1DTwo.NewCell0DIndex;
+        result.NewCell1DsIndex[2].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
+        result.NewCell1DsIndex[2].NewCell1DsIndex = { splitResult.NewCell1DIndex };
+
+        result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
       }
-
-      result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex };
-
-      result.NewCell1DsIndex.resize(2);
-      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
-      result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DOne.NewCell1DsIndex;
-      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
-      result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionOne.Index;
-      result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DOne.NewCell0DIndex;
-      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
-      result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
-
-      result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
+        break;
+      default:
+        throw std::runtime_error("Split type not managed case!");
     }
-    else if ((isTriangle &&
-              createNewVertexOne.Type ==
-              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside
-              ) ||
-             (!createNewVertexOne.IsToSplit &&
-              createNewVertexTwo.IsToSplit))
-    {
-      // check if edge can be divided
-      if (createNewVertexTwo.Type ==
-          RefinePolygon_CheckResult::Cell1DToSplit::Types::EdgeLengthNotEnough)
-      {
-        result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
-        return result;
-      }
-
-      // new vertex two
-      Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
-
-      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
-                                                                              geometryUtilities.Tolerance1D()) ?
-                                        edgeIntersectionOne.Index :
-                                        (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
-
-      const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
-                                                      cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
-
-      if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
-                                           cell2DVertices.col(edgeIntersectionTwo.Index),
-                                           middleCoordinate) ||
-          geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
-                                           cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
-                                           middleCoordinate))
-      {
-        result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
-        return result;
-      }
-
-      const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
-                                                                        mesh);
-
-      const SplitPolygon_Result splitResult = SplitPolygon_NewVertexTo(cell2DIndex,
-                                                                       cell2DNumVertices,
-                                                                       fromVertex,
-                                                                       edgeIntersectionTwo.Index,
-                                                                       cell2DRotation,
-                                                                       cell2DTranslation,
-                                                                       splitCell1DTwo.NewCell0DIndex,
-                                                                       splitCell1DTwo.NewCell1DsIndex,
-                                                                       cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
-                                                                       mesh);
-
-      switch (splitResult.Type)
-      {
-        case SplitPolygon_Result::Types::Unknown:
-          throw std::runtime_error("Unknown SplitPolygon_Result Type");
-        case SplitPolygon_Result::Types::NoSplit:
-        {
-          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
-          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
-          mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
-          mesh.Cell1DSetState(cell1DIndexTwo, true);
-          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
-          return result;
-        }
-        default:
-          break;
-      }
-
-      result.NewCell0DsIndex = { splitCell1DTwo.NewCell0DIndex };
-
-      result.NewCell1DsIndex.resize(2);
-      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
-      result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DTwo.NewCell1DsIndex;
-      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexTwo;
-      result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionTwo.Index;
-      result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DTwo.NewCell0DIndex;
-      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
-      result.NewCell1DsIndex[1].NewCell1DsIndex = { splitResult.NewCell1DIndex };
-
-      result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
-    }
-    else if (!isTriangle)
-    {
-      // two new vertices
-      Gedim::Output::Assert(edgeIntersectionOne.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
-      Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
-
-      const SplitCell1D_Result splitCell1DOne = SplitCell1D_MiddlePoint(cell1DIndexOne,
-                                                                        mesh);
-      const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
-                                                                        mesh);
-
-      const SplitPolygon_Result splitResult = SplitPolygon_NewVertices(cell2DIndex,
-                                                                       cell2DNumVertices,
-                                                                       edgeIntersectionOne.Index,
-                                                                       edgeIntersectionTwo.Index,
-                                                                       cell2DRotation,
-                                                                       cell2DTranslation,
-                                                                       splitCell1DOne.NewCell0DIndex,
-                                                                       splitCell1DTwo.NewCell0DIndex,
-                                                                       splitCell1DOne.NewCell1DsIndex,
-                                                                       splitCell1DTwo.NewCell1DsIndex,
-                                                                       cell2DEdgesDirection.at(edgeIntersectionOne.Index),
-                                                                       cell2DEdgesDirection.at(edgeIntersectionTwo.Index),
-                                                                       mesh);
-
-      switch (splitResult.Type)
-      {
-        case SplitPolygon_Result::Types::Unknown:
-          throw std::runtime_error("Unknown SplitPolygon_Result Type");
-        case SplitPolygon_Result::Types::NoSplit:
-        {
-          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[1]);
-          mesh.Cell1DRemove(splitCell1DTwo.NewCell1DsIndex[0]);
-          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[1]);
-          mesh.Cell1DRemove(splitCell1DOne.NewCell1DsIndex[0]);
-          mesh.Cell0DRemove(splitCell1DTwo.NewCell0DIndex);
-          mesh.Cell0DRemove(splitCell1DOne.NewCell0DIndex);
-          mesh.Cell1DSetState(cell1DIndexTwo, true);
-          mesh.Cell1DSetState(cell1DIndexOne, true);
-          result.ResultType = RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance;
-          return result;
-        }
-        default:
-          break;
-      }
-
-      result.NewCell0DsIndex = { splitCell1DOne.NewCell0DIndex,
-                                 splitCell1DTwo.NewCell0DIndex };
-
-      result.NewCell1DsIndex.resize(3);
-      result.NewCell1DsIndex[0].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
-      result.NewCell1DsIndex[0].NewCell1DsIndex = splitCell1DOne.NewCell1DsIndex;
-      result.NewCell1DsIndex[0].OriginalCell1DIndex = cell1DIndexOne;
-      result.NewCell1DsIndex[0].OriginalCell2DEdgeIndex = edgeIntersectionOne.Index;
-      result.NewCell1DsIndex[0].NewCell0DIndex = splitCell1DOne.NewCell0DIndex;
-      result.NewCell1DsIndex[1].Type = RefinePolygon_Result::RefinedCell1D::Types::Updated;
-      result.NewCell1DsIndex[1].NewCell1DsIndex = splitCell1DTwo.NewCell1DsIndex;
-      result.NewCell1DsIndex[1].OriginalCell1DIndex = cell1DIndexTwo;
-      result.NewCell1DsIndex[1].OriginalCell2DEdgeIndex = edgeIntersectionTwo.Index;
-      result.NewCell1DsIndex[1].NewCell0DIndex = splitCell1DTwo.NewCell0DIndex;
-      result.NewCell1DsIndex[2].Type = RefinePolygon_Result::RefinedCell1D::Types::New;
-      result.NewCell1DsIndex[2].NewCell1DsIndex = { splitResult.NewCell1DIndex };
-
-      result.NewCell2DsIndex = splitResult.NewCell2DsIndex;
-    }
-    else
-      throw std::runtime_error("Split type not managed case!");
 
     result.ResultType = RefinePolygon_Result::ResultTypes::Successfull;
     return result;

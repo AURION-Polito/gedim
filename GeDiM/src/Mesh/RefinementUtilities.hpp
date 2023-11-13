@@ -99,6 +99,16 @@ namespace Gedim
 
       struct RefinePolygon_Result final
       {
+          enum struct SplitTypes
+          {
+            Unknown = 0,
+            NoSplit = 1,
+            NoNewVertices = 2,
+            NewVertexFrom = 3,
+            NewVertexTo = 4,
+            NewVertices = 5
+          };
+
           enum struct ResultTypes
           {
             Unknown = 0,
@@ -129,6 +139,7 @@ namespace Gedim
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
 
+          SplitTypes SplitType = SplitTypes::Unknown;
           ResultTypes ResultType = ResultTypes::Unknown;
       };
 
@@ -184,8 +195,15 @@ namespace Gedim
 
       SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
                                                  IMeshDAO& mesh) const;
-      bool SplitPolygon_CheckIsToSplit(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
-                                       const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
+
+
+      RefinePolygon_Result::SplitTypes SplitPolygon_CheckSplitType(const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
+                                                                   const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
+                                                                   const Eigen::MatrixXd& cell2DVertices,
+                                                                   const RefinePolygon_CheckResult& cell2DCheckToRefine) const;
+
+      bool SplitPolygon_CheckIsNotToExtend(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
+                                           const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
       bool SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
                                                const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
 
@@ -292,6 +310,7 @@ namespace Gedim
       /// \brief Refine Polygon Cell2D By Direction
       RefinePolygon_Result RefinePolygonCell_ByDirection(const unsigned int& cell2DIndex,
                                                          const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
+                                                         const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
                                                          const Eigen::MatrixXd& cell2DVertices,
                                                          const RefinePolygon_CheckResult& cell2DCheckToRefine,
                                                          const Eigen::Matrix3d& cell2DRotation,
