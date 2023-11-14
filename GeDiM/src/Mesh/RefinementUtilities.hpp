@@ -97,7 +97,7 @@ namespace Gedim
           ResultTypes ResultType = ResultTypes::Unknown;
       };
 
-      struct RefinePolygon_Result final
+      struct CheckSplitType_Result final
       {
           enum struct SplitTypes
           {
@@ -109,6 +109,12 @@ namespace Gedim
             NewVertices = 5
           };
 
+          std::array<unsigned int, 2> NoNewVerticesIndex = {}; ///< valid only for NoNewVertices type
+          SplitTypes Type = SplitTypes::Unknown;
+      };
+
+      struct RefinePolygon_Result final
+      {
           enum struct ResultTypes
           {
             Unknown = 0,
@@ -139,7 +145,7 @@ namespace Gedim
           std::vector<RefinedCell1D> NewCell1DsIndex = {};
           std::vector<unsigned int> NewCell2DsIndex = {};
 
-          SplitTypes SplitType = SplitTypes::Unknown;
+          CheckSplitType_Result::SplitTypes SplitType = CheckSplitType_Result::SplitTypes::Unknown;
           ResultTypes ResultType = ResultTypes::Unknown;
       };
 
@@ -196,11 +202,14 @@ namespace Gedim
       SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int& cell1DIndex,
                                                  IMeshDAO& mesh) const;
 
+      bool AreVerticesAligned(const Eigen::MatrixXd& cell2DVertices,
+                              const unsigned int fromVertex,
+                              const unsigned int toVertex) const;
 
-      RefinePolygon_Result::SplitTypes SplitPolygon_CheckSplitType(const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
-                                                                   const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
-                                                                   const Eigen::MatrixXd& cell2DVertices,
-                                                                   const RefinePolygon_CheckResult& cell2DCheckToRefine) const;
+      CheckSplitType_Result SplitPolygon_CheckSplitType(const Gedim::GeometryUtilities::PolygonTypes& cell2DPolygonType,
+                                                        const Gedim::GeometryUtilities::PolygonTypes& cell2DUnalignedPolygonType,
+                                                        const Eigen::MatrixXd& cell2DVertices,
+                                                        const RefinePolygon_CheckResult& cell2DCheckToRefine) const;
 
       bool SplitPolygon_CheckIsNotToExtend(const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitOne,
                                            const RefinePolygon_CheckResult::Cell1DToSplit& cell1DSplitTwo) const;
