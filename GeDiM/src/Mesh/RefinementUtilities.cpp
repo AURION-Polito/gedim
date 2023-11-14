@@ -345,6 +345,17 @@ namespace Gedim
     }
 
     // Create new cell1D from vertex to vertex
+    {
+      // check new edge length
+      if (geometryUtilities.IsValueZero(geometryUtilities.SegmentLength(mesh.Cell2DVertexCoordinates(cell2DIndex, toVertex),
+                                                                        mesh.Cell2DVertexCoordinates(cell2DIndex, fromVertex)),
+                                        geometryUtilities.Tolerance1D()))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+    }
+
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
@@ -459,6 +470,17 @@ namespace Gedim
     }
 
     // Create new cell1D from new vertex to vertex
+    {
+      // check new edge length
+      if (geometryUtilities.IsValueZero(geometryUtilities.SegmentLength(mesh.Cell2DVertexCoordinates(cell2DIndex, toVertex),
+                                                                        mesh.Cell0DCoordinates(fromNewCell0DIndex)),
+                                        geometryUtilities.Tolerance1D()))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+    }
+
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
@@ -576,6 +598,17 @@ namespace Gedim
     }
 
     // Create new cell1D from vertex to new vertex
+    {
+      // check new edge length
+      if (geometryUtilities.IsValueZero(geometryUtilities.SegmentLength(mesh.Cell0DCoordinates(toNewCell0DIndex),
+                                                                        mesh.Cell2DVertexCoordinates(cell2DIndex, fromVertex)),
+                                        geometryUtilities.Tolerance1D()))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+    }
+
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
@@ -700,6 +733,17 @@ namespace Gedim
     }
 
     // Create new cell1D from new vertex to new vertex
+    {
+      // check new edge length
+      if (geometryUtilities.IsValueZero(geometryUtilities.SegmentLength(mesh.Cell0DCoordinates(toNewCell0DIndex),
+                                                                        mesh.Cell0DCoordinates(fromNewCell0DIndex)),
+                                        geometryUtilities.Tolerance1D()))
+      {
+        result.Type = SplitPolygon_Result::Types::NoSplit;
+        return result;
+      }
+    }
+
     result.NewCell1DIndex = mesh.Cell1DAppend(1);
     const unsigned int& newCell1DIndex = result.NewCell1DIndex;
     mesh.Cell1DInsertExtremes(newCell1DIndex,
