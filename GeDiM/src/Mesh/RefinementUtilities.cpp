@@ -113,10 +113,10 @@ namespace Gedim
         !cell1DToSplitOne.IsToSplit &&
         !cell1DToSplitTwo.IsToSplit)
     {
-      const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
-                                                                              geometryUtilities.Tolerance1D()) ?
-                                        edgeIntersectionOne.Index :
-                                        (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+      unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                        geometryUtilities.Tolerance1D()) ?
+                                  edgeIntersectionOne.Index :
+                                  (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
       unsigned int toVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionTwo.CurvilinearCoordinate,
                                                                       geometryUtilities.Tolerance1D()) ?
                                 edgeIntersectionTwo.Index :
@@ -125,10 +125,38 @@ namespace Gedim
       // check aligned vertices
       if (AreVerticesAligned(cell2DVertices, fromVertex, toVertex))
       {
-        // try to flip toVertex
-        toVertex = (toVertex == edgeIntersectionTwo.Index) ?
-                     (edgeIntersectionTwo.Index + 1) % cell2DNumVertices :
-                     edgeIntersectionTwo.Index;
+        // try to flip vertices
+        if (cell1DToSplitOne.Type !=
+            RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+            cell1DToSplitTwo.Type !=
+            RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+        {
+          // no fixed vertices, flip toVertex
+          toVertex = (toVertex == edgeIntersectionTwo.Index) ?
+                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices :
+                       edgeIntersectionTwo.Index;
+        }
+        else if (cell1DToSplitOne.Type ==
+                 RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+                 cell1DToSplitTwo.Type !=
+                 RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+        {
+          // fromVertex is fixed
+          toVertex = (toVertex == edgeIntersectionTwo.Index) ?
+                       (edgeIntersectionTwo.Index + 1) % cell2DNumVertices :
+                       edgeIntersectionTwo.Index;
+        }
+        else if (cell1DToSplitOne.Type !=
+                 RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside &&
+                 cell1DToSplitTwo.Type ==
+                 RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+        {
+          // toVertex is fixed
+          fromVertex = (fromVertex == edgeIntersectionOne.Index) ?
+                         (edgeIntersectionOne.Index + 1) % cell2DNumVertices :
+                         edgeIntersectionOne.Index;
+        }
+
 
         if (AreVerticesAligned(cell2DVertices, fromVertex, toVertex))
         {
@@ -1355,7 +1383,8 @@ namespace Gedim
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexOne = cell2DCheckToRefine.Cell1DsToSplit[0];
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexTwo = cell2DCheckToRefine.Cell1DsToSplit[1];
 
-    if (!SplitPolygon_CheckIsNotToExtend(createNewVertexOne,
+    if (cell2DUnalignedPolygonType != Gedim::GeometryUtilities::PolygonTypes::Triangle &&
+        !SplitPolygon_CheckIsNotToExtend(createNewVertexOne,
                                          createNewVertexTwo))
     {
       result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;
