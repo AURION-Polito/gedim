@@ -906,7 +906,8 @@ namespace UnitTesting
       for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
       {
         index[e] = e;
-        constrained[e] = cell1DsConstrained[e] ? 1.0 : 0.0;
+        constrained[e] = cell1DsConstrained.size() > 0 &&
+                         cell1DsConstrained[e] ? 1.0 : 0.0;
       }
 
       for (unsigned int e = 0; e < meshToNetwork.Network.EdgesWeight.size(); e++)
