@@ -18,6 +18,7 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshMatrices_3D_3
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_conformMeshUtilities.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_refinementUtilities.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OVM_Mesh_Mock.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OFF_Mesh_Mock.hpp)
 
 list(APPEND gedim_test_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 

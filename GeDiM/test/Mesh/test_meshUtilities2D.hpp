@@ -15,8 +15,8 @@
 #include "MeshUtilities.hpp"
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
-#include "OVM_Mesh_Mock.hpp"
-#include "OpenVolumeMeshInterface.hpp"
+#include "OFF_Mesh_Mock.hpp"
+#include "ObjectFileFormatInterface.hpp"
 
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
@@ -657,66 +657,62 @@ namespace GedimUnitTesting
 
   }
 
-  TEST(TestMeshUtilities, TestImportOVMMesh)
+  TEST(TestMeshUtilities, TestImportOFFMesh)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
 
-    std::vector<std::vector<bool>> meshCell3DsFacesOrientation;
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
-    Gedim::OpenVolumeMeshInterface ovmInterface;
+    Gedim::ObjectFileFormatInterface offInterface;
 
-    const std::vector<string> lines = OVM_Mesh_Mock::FileLines();
-    const Gedim::OpenVolumeMeshInterface::OVMMesh ovm_mesh = ovmInterface.StringsToOVMMesh(lines);
-    ovmInterface.OVMMeshToMeshDAO(ovm_mesh,
-                                  meshDao,
-                                  meshCell3DsFacesOrientation);
+    const std::vector<string> lines = OFF_Mesh_Mock::FileLines();
+    const Gedim::ObjectFileFormatInterface::OFFMesh off_mesh = offInterface.StringsToOFFMesh(lines);
+    offInterface.OFFMeshToMeshDAO(off_mesh,
+                                  meshUtilities,
+                                  meshDao);
 
-    std::string exportFolder = "./Export/TestMeshUtilities/TestImportOVMMesh";
+    Gedim::MeshUtilities::CheckMesh2DConfiguration checkMeshConfig;
+    checkMeshConfig.Cell1D_CheckNeighbours = false;
+    checkMeshConfig.Cell2D_CheckConvexity = false;
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestImportOFFMesh";
     Gedim::Output::CreateFolder(exportFolder);
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
-                                  "ImportedOVMMesh");
+                                  "ImportedOFFMesh");
 
-    ASSERT_EQ(3,
+    ASSERT_NO_THROW(meshUtilities.CheckMesh2D(checkMeshConfig,
+                                              geometryUtilities,
+                                              meshDao));
+    ASSERT_EQ(2,
               meshDao.Dimension());
-    ASSERT_EQ(64,
+    ASSERT_EQ(100,
               meshDao.Cell0DTotalNumber());
-    ASSERT_EQ(144,
+    ASSERT_EQ(261,
               meshDao.Cell1DTotalNumber());
-    ASSERT_EQ(108,
+    ASSERT_EQ(162,
               meshDao.Cell2DTotalNumber());
-    ASSERT_EQ(27,
-              meshDao.Cell3DTotalNumber());
 
-    const Gedim::OpenVolumeMeshInterface::OVMMesh reconverted_ovm_mesh = ovmInterface.MeshDAOToOVMMesh(meshDao,
-                                                                                                       meshCell3DsFacesOrientation);
+    const Gedim::ObjectFileFormatInterface::OFFMesh reconverted_off_mesh = offInterface.MeshDAOToOFFMesh(meshDao);
 
-    ASSERT_EQ(ovm_mesh.NumCell0Ds, reconverted_ovm_mesh.NumCell0Ds);
-    ASSERT_EQ(ovm_mesh.NumCell1Ds, reconverted_ovm_mesh.NumCell1Ds);
-    ASSERT_EQ(ovm_mesh.NumCell2Ds, reconverted_ovm_mesh.NumCell2Ds);
-    ASSERT_EQ(ovm_mesh.NumCell3Ds, reconverted_ovm_mesh.NumCell3Ds);
-    ASSERT_EQ(ovm_mesh.Cell0Ds, reconverted_ovm_mesh.Cell0Ds);
-    ASSERT_EQ(ovm_mesh.Cell1Ds, reconverted_ovm_mesh.Cell1Ds);
-    ASSERT_EQ(ovm_mesh.Cell2Ds, reconverted_ovm_mesh.Cell2Ds);
-    for (unsigned int p = 0; p < ovm_mesh.NumCell3Ds; p++)
-    {
-      ASSERT_EQ(ovm_mesh.Cell3Ds[p].FacesIndex, reconverted_ovm_mesh.Cell3Ds[p].FacesIndex);
-      ASSERT_EQ(ovm_mesh.Cell3Ds[p].FacesOrientation, reconverted_ovm_mesh.Cell3Ds[p].FacesOrientation);
-    }
+    ASSERT_EQ(off_mesh.NumCell0Ds, reconverted_off_mesh.NumCell0Ds);
+    ASSERT_EQ(off_mesh.NumCell1Ds, reconverted_off_mesh.NumCell1Ds);
+    ASSERT_EQ(off_mesh.NumCell2Ds, reconverted_off_mesh.NumCell2Ds);
+    ASSERT_EQ(off_mesh.Cell0Ds, reconverted_off_mesh.Cell0Ds);
+    ASSERT_EQ(off_mesh.Cell2Ds, reconverted_off_mesh.Cell2Ds);
 
-    const std::vector<std::string> reconverted_lines = ovmInterface.OVMMeshToStrings(reconverted_ovm_mesh);
+    const std::vector<std::string> reconverted_lines = offInterface.OFFMeshToStrings(reconverted_off_mesh);
 
     ASSERT_EQ(lines.size(), reconverted_lines.size());
     for (unsigned int l = 0; l < lines.size(); l++)
       ASSERT_EQ(lines[l], reconverted_lines[l]);
 
-    meshUtilities.ExportMeshToOpenVolume(meshDao,
-                                         meshCell3DsFacesOrientation,
-                                         exportFolder + "/hex_parallel_1.ovm");
+
+    meshUtilities.ExportMeshToObjectFileFormat(meshDao,
+                                               exportFolder + "/mesh.off");
   }
 
   TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
