@@ -68,7 +68,8 @@ namespace Gedim
           unsigned int NumberOfParts = 0;
           unsigned int NumberRefinementIterations = 10;
           bool ContigousPartitions = true;
-          bool CompressGraph = false;
+          bool CompressGraph = true;
+          unsigned int RandomSeed = -1;
           unsigned int MasterWeight = 100; ///< 0 de-activated; 100 activated totally
       };
 

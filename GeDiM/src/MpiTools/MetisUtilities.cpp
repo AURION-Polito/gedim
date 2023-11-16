@@ -369,6 +369,7 @@ namespace Gedim
     metisOptions[METIS_OPTION_NITER] = options.NumberRefinementIterations;
 
     metisOptions[METIS_OPTION_COMPRESS] = options.CompressGraph ? 1 : 0;
+    metisOptions[METIS_OPTION_SEED] = options.RandomSeed;
 
     switch (metisDivisionType)
     {

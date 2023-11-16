@@ -824,7 +824,7 @@ namespace UnitTesting
     std::vector<unsigned int> partitions, fix_constraints_partitions, fix_connectedComponents_partitions;
 
     //std::vector<double> toTests = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.5  };
-    std::vector<double> toTests = { 0.125 };
+    std::vector<double> toTests = { 0.5 };
     for (double p : toTests)
     {
 
@@ -833,12 +833,13 @@ namespace UnitTesting
       partitionOptions.MasterWeight = 100;
       partitionOptions.NumberOfParts = p * meshDAO.Cell2DTotalNumber();
       partitionOptions.ContigousPartitions = true;
-      partitionOptions.CompressGraph = false;
+      partitionOptions.CompressGraph = true;
       partitionOptions.DebugLevel = Gedim::MetisUtilities::NetworkPartitionOptions::DebugLevels::METIS_DBG_INFO;
       partitionOptions.CoarseningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::CoarseningSchemes::Default;
       partitionOptions.RefinementSchema = Gedim::MetisUtilities::NetworkPartitionOptions::RefinementSchemes::Default;
       partitionOptions.NumberRefinementIterations = 100;
       partitionOptions.InitialPartitioningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::InitialPartitioningSchemes::Default;
+      partitionOptions.RandomSeed = -1;
 
       partitions = metisUtilities.NetworkPartition(partitionOptions,
                                                    meshToNetwork.Network);
