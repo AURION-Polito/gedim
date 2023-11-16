@@ -3,6 +3,7 @@
 #include "MeshDAOExporterToCsv.hpp"
 #include "VTKUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
+#include "ObjectFileFormatInterface.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -134,6 +135,23 @@ namespace Gedim
     openVolumeMeshInterface.ExportMeshToFile(mesh,
                                              meshCell3DsFacesOrientation,
                                              ovmFilePath);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ImportObjectFileFormat(const std::string& offFilePath,
+                                             IMeshDAO& mesh) const
+  {
+    ObjectFileFormatInterface objectFileFormatInterface;
+    objectFileFormatInterface.ImportMeshFromFile(offFilePath,
+                                                 *this,
+                                                 mesh);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportMeshToObjectFileFormat(const IMeshDAO& mesh,
+                                                   const std::string& offFilePath) const
+  {
+    ObjectFileFormatInterface objectFileFormatInterface;
+    objectFileFormatInterface.ExportMeshToFile(mesh,
+                                               offFilePath);
   }
   // ***************************************************************************
   void MeshUtilities::ExportMeshToVTU(const IMeshDAO& mesh,
