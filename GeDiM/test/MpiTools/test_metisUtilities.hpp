@@ -823,8 +823,8 @@ namespace UnitTesting
 
     std::vector<unsigned int> partitions, fix_constraints_partitions, fix_connectedComponents_partitions;
 
-    //std::vector<double> toTests = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.5  };
-    std::vector<double> toTests = { 0.125 };
+    std::vector<double> toTests = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.5  };
+    //std::vector<double> toTests = { 0.125 };
     for (double p : toTests)
     {
 
@@ -835,7 +835,7 @@ namespace UnitTesting
       partitionOptions.ContigousPartitions = true;
       partitionOptions.CompressGraph = true;
       partitionOptions.MinimizeConnectivity = true;
-      partitionOptions.DebugLevel = Gedim::MetisUtilities::NetworkPartitionOptions::DebugLevels::METIS_DBG_INFO;
+      partitionOptions.DebugLevel = Gedim::MetisUtilities::NetworkPartitionOptions::DebugLevels::None;
       partitionOptions.CoarseningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::CoarseningSchemes::Default;
       partitionOptions.RefinementSchema = Gedim::MetisUtilities::NetworkPartitionOptions::RefinementSchemes::Default;
       partitionOptions.NumberRefinementIterations = 100;
