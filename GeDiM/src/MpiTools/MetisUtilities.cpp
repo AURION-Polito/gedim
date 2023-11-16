@@ -368,6 +368,8 @@ namespace Gedim
                                           static_cast<mdbglvl_et>(options.DebugLevel);
     metisOptions[METIS_OPTION_NITER] = options.NumberRefinementIterations;
 
+    metisOptions[METIS_OPTION_COMPRESS] = options.CompressGraph ? 1 : 0;
+
     switch (metisDivisionType)
     {
       case NetworkPartitionOptions::PartitionTypes::CutBalancing:

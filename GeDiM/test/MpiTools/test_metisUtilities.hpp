@@ -720,11 +720,13 @@ namespace UnitTesting
       cell1DsConstrained[5] = true;
     }
 
-    Eigen::SparseMatrix<unsigned int> cell1DsWeight(meshDAO.Cell2DTotalNumber(),
-                                                    meshDAO.Cell2DTotalNumber());
+    Eigen::SparseMatrix<unsigned int> cell1DsWeight;
 
     if (false)
     {
+      cell1DsWeight.resize(meshDAO.Cell2DTotalNumber(),
+                           meshDAO.Cell2DTotalNumber());
+
       constexpr double toCutEdgeJHorizWeigth = 1.0;
       constexpr double toCutEdgeVertWeigth = 5330.0;
       constexpr double toMantainEdgeWeigth = 26244.0;
@@ -785,8 +787,11 @@ namespace UnitTesting
       cell1DsWeight.setFromTriplets(triplets.begin(), triplets.end());
       cell1DsWeight.makeCompressed();
     }
-    else
+    else if (false)
     {
+      cell1DsWeight.resize(meshDAO.Cell2DTotalNumber(),
+                           meshDAO.Cell2DTotalNumber());
+
       list<Eigen::Triplet<unsigned int>> triplets;
 
       Gedim::FileReader fileReader("/home/geoscore/Downloads/weights.txt");
@@ -827,7 +832,8 @@ namespace UnitTesting
       partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
       partitionOptions.MasterWeight = 100;
       partitionOptions.NumberOfParts = p * meshDAO.Cell2DTotalNumber();
-      partitionOptions.ContigousPartitions = false;
+      partitionOptions.ContigousPartitions = true;
+      partitionOptions.CompressGraph = false;
       partitionOptions.DebugLevel = Gedim::MetisUtilities::NetworkPartitionOptions::DebugLevels::METIS_DBG_INFO;
       partitionOptions.CoarseningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::CoarseningSchemes::Default;
       partitionOptions.RefinementSchema = Gedim::MetisUtilities::NetworkPartitionOptions::RefinementSchemes::Default;
