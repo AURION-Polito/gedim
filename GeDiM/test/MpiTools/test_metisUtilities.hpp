@@ -712,15 +712,22 @@ namespace UnitTesting
                                                                                                           meshDAO);
 
     std::vector<bool> cell1DsConstrained = {};
-    // std::vector<bool> cell1DsConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(),
-    //                   false);
-    // cell1DsConstrained[2] = true;
-    // cell1DsConstrained[5] = true;
+    if (false)
+    {
+      std::vector<bool> cell1DsConstrained = std::vector<bool>(meshDAO.Cell1DTotalNumber(),
+                                                               false);
+      cell1DsConstrained[2] = true;
+      cell1DsConstrained[5] = true;
+    }
 
     Eigen::SparseMatrix<unsigned int> cell1DsWeight(meshDAO.Cell2DTotalNumber(),
                                                     meshDAO.Cell2DTotalNumber());
 
+    if (false)
     {
+      constexpr double toCutEdgeJHorizWeigth = 1.0;
+      constexpr double toCutEdgeVertWeigth = 5330.0;
+      constexpr double toMantainEdgeWeigth = 26244.0;
       list<Eigen::Triplet<unsigned int>> triplets;
 
       for (unsigned int e = 0; e < meshDAO.Cell1DTotalNumber(); e++)
@@ -732,21 +739,33 @@ namespace UnitTesting
 
         if (geometryUtilities.AreValuesEqual(meshDAO.Cell1DOriginCoordinates(e).x(),
                                              meshDAO.Cell1DEndCoordinates(e).x(),
-                                             geometryUtilities.Tolerance1D()) ||
-            geometryUtilities.AreValuesEqual(meshDAO.Cell1DOriginCoordinates(e).y(),
-                                             meshDAO.Cell1DEndCoordinates(e).y(),
                                              geometryUtilities.Tolerance1D()))
         {
           triplets.push_back(Eigen::Triplet<unsigned int>(meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         0),
                                                           meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         1),
-                                                          std::round(1.0)));
+                                                          std::round(toCutEdgeVertWeigth)));
           triplets.push_back(Eigen::Triplet<unsigned int>(meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         1),
                                                           meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         0),
-                                                          std::round(1.0)));
+                                                          std::round(toCutEdgeVertWeigth)));
+        }
+        else if (geometryUtilities.AreValuesEqual(meshDAO.Cell1DOriginCoordinates(e).y(),
+                                                  meshDAO.Cell1DEndCoordinates(e).y(),
+                                                  geometryUtilities.Tolerance1D()))
+        {
+          triplets.push_back(Eigen::Triplet<unsigned int>(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                        0),
+                                                          meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                        1),
+                                                          std::round(toCutEdgeJHorizWeigth)));
+          triplets.push_back(Eigen::Triplet<unsigned int>(meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                        1),
+                                                          meshDAO.Cell1DNeighbourCell2D(e,
+                                                                                        0),
+                                                          std::round(toCutEdgeJHorizWeigth)));
         }
         else
         {
@@ -754,13 +773,39 @@ namespace UnitTesting
                                                                                         0),
                                                           meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         1),
-                                                          std::round(100.0)));
+                                                          std::round(toMantainEdgeWeigth)));
           triplets.push_back(Eigen::Triplet<unsigned int>(meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         1),
                                                           meshDAO.Cell1DNeighbourCell2D(e,
                                                                                         0),
-                                                          std::round(100.0)));
+                                                          std::round(toMantainEdgeWeigth)));
         }
+      }
+
+      cell1DsWeight.setFromTriplets(triplets.begin(), triplets.end());
+      cell1DsWeight.makeCompressed();
+    }
+    else
+    {
+      list<Eigen::Triplet<unsigned int>> triplets;
+
+      Gedim::FileReader fileReader("/home/geoscore/Downloads/weights.txt");
+      fileReader.Open();
+
+      std::vector<string> lines;
+      fileReader.GetAllLines(lines);
+      fileReader.Close();
+
+      for (unsigned int l = 0; l < lines.size(); l++)
+      {
+        istringstream converter(lines[l]);
+
+        unsigned int i, j, weight;
+        converter >> i>> j>> weight;
+
+        triplets.push_back(Eigen::Triplet<unsigned int>(i,
+                                                        j,
+                                                        weight));
       }
 
       cell1DsWeight.setFromTriplets(triplets.begin(), triplets.end());
@@ -771,19 +816,45 @@ namespace UnitTesting
                                                                                                 cell1DsConstrained,
                                                                                                 cell1DsWeight);
 
-    Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
-    partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
-    partitionOptions.MasterWeight = 100;
-    partitionOptions.NumberOfParts = 2;
+    std::vector<unsigned int> partitions, fix_constraints_partitions, fix_connectedComponents_partitions;
 
-    const std::vector<unsigned int> partitions = metisUtilities.NetworkPartition(partitionOptions,
-                                                                                 meshToNetwork.Network);
+    //std::vector<double> toTests = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.5  };
+    std::vector<double> toTests = { 0.125 };
+    for (double p : toTests)
+    {
 
-    const std::vector<unsigned int> fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
-                                                                                                          partitions);
+      Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+      partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+      partitionOptions.MasterWeight = 100;
+      partitionOptions.NumberOfParts = p * meshDAO.Cell2DTotalNumber();
+      partitionOptions.ContigousPartitions = false;
+      partitionOptions.DebugLevel = Gedim::MetisUtilities::NetworkPartitionOptions::DebugLevels::METIS_DBG_INFO;
+      partitionOptions.CoarseningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::CoarseningSchemes::Default;
+      partitionOptions.RefinementSchema = Gedim::MetisUtilities::NetworkPartitionOptions::RefinementSchemes::Default;
+      partitionOptions.NumberRefinementIterations = 100;
+      partitionOptions.InitialPartitioningSchema = Gedim::MetisUtilities::NetworkPartitionOptions::InitialPartitioningSchemes::Default;
 
-    const std::vector<unsigned int> fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
-                                                                                                                          fix_constraints_partitions);
+      partitions = metisUtilities.NetworkPartition(partitionOptions,
+                                                   meshToNetwork.Network);
+
+      fix_constraints_partitions = metisUtilities.PartitionCheckConstraints(meshToNetwork.Network,
+                                                                            partitions);
+
+      fix_connectedComponents_partitions = metisUtilities.PartitionCheckConnectedComponents(meshToNetwork.Network,
+                                                                                            fix_constraints_partitions);
+
+      {
+        using namespace Gedim;
+
+        std::cout<< "Perc "<< p<< " ";
+        std::cout<< "partition: "<< *std::max_element(partitions.begin(),
+                                                      partitions.end()) + 1<< " / "<< partitionOptions.NumberOfParts<< " ";
+        std::cout<< "fix_const: "<< *std::max_element(fix_constraints_partitions.begin(),
+                                                      fix_constraints_partitions.end())  + 1<< " / "<< partitionOptions.NumberOfParts<< " ";
+        std::cout<< "fix_conne: "<< *std::max_element(fix_connectedComponents_partitions.begin(),
+                                                      fix_connectedComponents_partitions.end())  + 1<< " / "<< partitionOptions.NumberOfParts<< std::endl;
+      }
+    }
 
     for (unsigned int e = 0; e < cell1DsConstrained.size(); e++)
     {

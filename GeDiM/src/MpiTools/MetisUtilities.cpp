@@ -348,6 +348,26 @@ namespace Gedim
 
     METIS_SetDefaultOptions(metisOptions);
 
+    metisOptions[METIS_OPTION_CTYPE] = options.CoarseningSchema ==
+                                       NetworkPartitionOptions::CoarseningSchemes::Default ?
+                                         -1 :
+                                         static_cast<mctype_et>(options.CoarseningSchema);
+    metisOptions[METIS_OPTION_IPTYPE] = options.InitialPartitioningSchema ==
+                                        NetworkPartitionOptions::InitialPartitioningSchemes::Default ?
+                                          -1 :
+                                          static_cast<miptype_et>(options.InitialPartitioningSchema);
+    metisOptions[METIS_OPTION_RTYPE] = options.RefinementSchema ==
+                                       NetworkPartitionOptions::RefinementSchemes::Default ?
+                                         -1 :
+                                         static_cast<mrtype_et>(options.RefinementSchema);
+
+    metisOptions[METIS_OPTION_CONTIG] = options.ContigousPartitions ? 1 : 0;
+    metisOptions[METIS_OPTION_DBGLVL] = options.DebugLevel ==
+                                        NetworkPartitionOptions::DebugLevels::None ?
+                                          -1 :
+                                          static_cast<mdbglvl_et>(options.DebugLevel);
+    metisOptions[METIS_OPTION_NITER] = options.NumberRefinementIterations;
+
     switch (metisDivisionType)
     {
       case NetworkPartitionOptions::PartitionTypes::CutBalancing:
@@ -413,6 +433,31 @@ namespace Gedim
       for (unsigned int p = 1; p < numberParts; p++)
         tpwgts[p] = 1.0 / (numberParts - 1.0) * (1.0 - tpwgts[0]);
     }
+
+    // print
+    std::cout<< "METIS_OPTION_PTYPE : "<< metisOptions[METIS_OPTION_PTYPE]<< std::endl;
+    std::cout<< "METIS_OPTION_OBJTYPE : "<< metisOptions[METIS_OPTION_OBJTYPE]<< std::endl;
+    std::cout<< "METIS_OPTION_CTYPE : "<< metisOptions[METIS_OPTION_CTYPE]<< std::endl;
+    std::cout<< "METIS_OPTION_IPTYPE : "<< metisOptions[METIS_OPTION_IPTYPE]<< std::endl;
+    std::cout<< "METIS_OPTION_RTYPE : "<< metisOptions[METIS_OPTION_RTYPE]<< std::endl;
+    std::cout<< "METIS_OPTION_DBGLVL : "<< metisOptions[METIS_OPTION_DBGLVL]<< std::endl;
+    std::cout<< "METIS_OPTION_NIPARTS : "<< metisOptions[METIS_OPTION_NIPARTS]<< std::endl;
+    std::cout<< "METIS_OPTION_NITER : "<< metisOptions[METIS_OPTION_NITER]<< std::endl;
+    std::cout<< "METIS_OPTION_NCUTS : "<< metisOptions[METIS_OPTION_NCUTS]<< std::endl;
+    std::cout<< "METIS_OPTION_SEED : "<< metisOptions[METIS_OPTION_SEED]<< std::endl;
+    std::cout<< "METIS_OPTION_ONDISK : "<< metisOptions[METIS_OPTION_ONDISK]<< std::endl;
+    std::cout<< "METIS_OPTION_MINCONN : "<< metisOptions[METIS_OPTION_MINCONN]<< std::endl;
+    std::cout<< "METIS_OPTION_CONTIG : "<< metisOptions[METIS_OPTION_CONTIG]<< std::endl;
+    std::cout<< "METIS_OPTION_COMPRESS : "<< metisOptions[METIS_OPTION_COMPRESS]<< std::endl;
+    std::cout<< "METIS_OPTION_CCORDER : "<< metisOptions[METIS_OPTION_CCORDER]<< std::endl;
+    std::cout<< "METIS_OPTION_PFACTOR : "<< metisOptions[METIS_OPTION_PFACTOR]<< std::endl;
+    std::cout<< "METIS_OPTION_NSEPS : "<< metisOptions[METIS_OPTION_NSEPS]<< std::endl;
+    std::cout<< "METIS_OPTION_UFACTOR : "<< metisOptions[METIS_OPTION_UFACTOR]<< std::endl;
+    std::cout<< "METIS_OPTION_NUMBERING : "<< metisOptions[METIS_OPTION_NUMBERING]<< std::endl;
+    std::cout<< "METIS_OPTION_DROPEDGES : "<< metisOptions[METIS_OPTION_DROPEDGES]<< std::endl;
+    std::cout<< "METIS_OPTION_NO2HOP : "<< metisOptions[METIS_OPTION_NO2HOP]<< std::endl;
+    std::cout<< "METIS_OPTION_TWOHOP : "<< metisOptions[METIS_OPTION_TWOHOP]<< std::endl;
+    std::cout<< "METIS_OPTION_FAST : "<< metisOptions[METIS_OPTION_FAST]<< std::endl;
 
     /// <li> Partiton
     metisResult = (rstatus_et)METIS_PartGraphKway(&nElements,
