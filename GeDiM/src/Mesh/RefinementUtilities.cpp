@@ -1384,6 +1384,7 @@ namespace Gedim
                                                                                                const Eigen::Matrix3d& cell2DRotation,
                                                                                                const Eigen::Vector3d& cell2DTranslation,
                                                                                                const std::vector<bool>& cell2DEdgesDirection,
+                                                                                               const bool& extendToNeighbours,
                                                                                                IMeshDAO& mesh) const
   {
     RefinePolygon_Result result;
@@ -1427,7 +1428,8 @@ namespace Gedim
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexOne = cell2DCheckToRefine.Cell1DsToSplit[0];
     const RefinePolygon_CheckResult::Cell1DToSplit& createNewVertexTwo = cell2DCheckToRefine.Cell1DsToSplit[1];
 
-    if (cell2DUnalignedPolygonType != Gedim::GeometryUtilities::PolygonTypes::Triangle &&
+    if (extendToNeighbours &&
+        cell2DUnalignedPolygonType != Gedim::GeometryUtilities::PolygonTypes::Triangle &&
         !SplitPolygon_CheckIsNotToExtend(createNewVertexOne,
                                          createNewVertexTwo))
     {
@@ -1451,7 +1453,8 @@ namespace Gedim
 
         if (AreVerticesAligned(cell2DVertices, fromVertex, toVertex))
         {
-          if (!SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
+          if (extendToNeighbours &&
+              !SplitPolygon_CheckIsToSplit_Relaxed(createNewVertexOne,
                                                    createNewVertexTwo))
           {
             result.ResultType = RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed;

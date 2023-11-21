@@ -325,6 +325,7 @@ namespace Gedim
                                                          const Eigen::Matrix3d& cell2DRotation,
                                                          const Eigen::Vector3d& cell2DTranslation,
                                                          const std::vector<bool>& cell2DEdgesDirection,
+                                                         const bool& extendToNeighbours,
                                                          IMeshDAO& mesh) const;
 
       RefinePolygon_UpdateNeighbour_Result RefinePolygonCell_UpdateNeighbours(const unsigned int& cell2DIndex,
