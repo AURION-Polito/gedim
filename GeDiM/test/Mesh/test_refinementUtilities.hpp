@@ -1517,282 +1517,282 @@ namespace GedimUnitTesting
     }
   }
 
-  //  TEST(TestRefinementUtilities, TestCheckSplit)
-  //  {
-  //    string exportFolder = "./Export";
-  //    Gedim::Output::CreateFolder(exportFolder);
-  //    exportFolder = "./Export/TestRefinementUtilities/TestCheckSplit";
-  //    Gedim::Output::CreateFolder(exportFolder);
+  TEST(TestRefinementUtilities, TestCheckSplit)
+  {
+    string exportFolder = "./Export";
+    Gedim::Output::CreateFolder(exportFolder);
+    exportFolder = "./Export/TestRefinementUtilities/TestCheckSplit";
+    Gedim::Output::CreateFolder(exportFolder);
 
-  //    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-  //    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
-  //    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
-  //    Gedim::MeshUtilities meshUtilities;
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
 
-  //    Gedim::ConformMeshUtilities conformMeshUtilities(geometryUtilities,
-  //                                                     meshUtilities);
-  //    Gedim::RefinementUtilities refinementUtilities(geometryUtilities,
-  //                                                   meshUtilities);
+    Gedim::ConformMeshUtilities conformMeshUtilities(geometryUtilities,
+                                                     meshUtilities);
+    Gedim::RefinementUtilities refinementUtilities(geometryUtilities,
+                                                   meshUtilities);
 
-  //    {
-  //      // both not inside
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // both not inside
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = false;
-  //      cell1DSplitOne.IsEdgeLengthEnough = false;
-  //      cell1DSplitOne.IsLocalQualityEnough = false;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = {};
-  //      cell1DSplitOne.IsLocalAlignedRespect = false;
-  //      cell1DSplitOne.IsAlignedRespect = false;
-  //      cell1DSplitOne.IsNeighAlignedRespect = {};
-  //      cell1DSplitOne.IsToSplit = false;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
+      cell1DSplitOne.IsIntersectionInside = false;
+      cell1DSplitOne.IsEdgeLengthEnough = false;
+      cell1DSplitOne.IsLocalQualityEnough = false;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = {};
+      cell1DSplitOne.IsLocalAlignedRespect = false;
+      cell1DSplitOne.IsAlignedRespect = false;
+      cell1DSplitOne.IsNeighAlignedRespect = {};
+      cell1DSplitOne.IsToSplit = false;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside;
 
-  //      cell1DSplitTwo.IsIntersectionInside = false;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = false;
-  //      cell1DSplitTwo.IsLocalQualityEnough = false;
-  //      cell1DSplitTwo.IsQualityEnough = false;
-  //      cell1DSplitTwo.IsNeighQualityEnough = {};
-  //      cell1DSplitTwo.IsLocalAlignedRespect = false;
-  //      cell1DSplitTwo.IsAlignedRespect = false;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = {};
-  //      cell1DSplitTwo.IsToSplit = false;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
+      cell1DSplitTwo.IsIntersectionInside = false;
+      cell1DSplitTwo.IsEdgeLengthEnough = false;
+      cell1DSplitTwo.IsLocalQualityEnough = false;
+      cell1DSplitTwo.IsQualityEnough = false;
+      cell1DSplitTwo.IsNeighQualityEnough = {};
+      cell1DSplitTwo.IsLocalAlignedRespect = false;
+      cell1DSplitTwo.IsAlignedRespect = false;
+      cell1DSplitTwo.IsNeighAlignedRespect = {};
+      cell1DSplitTwo.IsToSplit = false;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside;
 
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
-  //                                                                  cell1DSplitTwo));
-  //    }
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                      cell1DSplitTwo));
+    }
 
-  //    {
-  //      // one not inside and the other inside
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // one not inside and the other inside
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = false;
-  //      cell1DSplitOne.IsEdgeLengthEnough = false;
-  //      cell1DSplitOne.IsLocalQualityEnough = false;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = {};
-  //      cell1DSplitOne.IsLocalAlignedRespect = false;
-  //      cell1DSplitOne.IsAlignedRespect = false;
-  //      cell1DSplitOne.IsNeighAlignedRespect = {};
-  //      cell1DSplitOne.IsToSplit = false;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
+      cell1DSplitOne.IsIntersectionInside = false;
+      cell1DSplitOne.IsEdgeLengthEnough = false;
+      cell1DSplitOne.IsLocalQualityEnough = false;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = {};
+      cell1DSplitOne.IsLocalAlignedRespect = false;
+      cell1DSplitOne.IsAlignedRespect = false;
+      cell1DSplitOne.IsNeighAlignedRespect = {};
+      cell1DSplitOne.IsToSplit = false;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = true;
-  //      cell1DSplitTwo.IsAlignedRespect = true;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = true;
+      cell1DSplitTwo.IsAlignedRespect = true;
+      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::ToSplit;
 
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
-  //                                                                  cell1DSplitTwo));
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
-  //                                                                  cell1DSplitOne));
-  //    }
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                      cell1DSplitTwo));
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                      cell1DSplitOne));
+    }
 
-  //    {
-  //      // both inside
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // both inside
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = true;
-  //      cell1DSplitOne.IsQualityEnough = true;
-  //      cell1DSplitOne.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = true;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = true;
+      cell1DSplitOne.IsQualityEnough = true;
+      cell1DSplitOne.IsNeighQualityEnough = { true, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = true;
+      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::ToSplit;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = true;
-  //      cell1DSplitTwo.IsAlignedRespect = true;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = true;
+      cell1DSplitTwo.IsAlignedRespect = true;
+      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::ToSplit;
 
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                  cell1DSplitTwo));
-  //    }
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                      cell1DSplitTwo));
+    }
 
-  //    {
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = false;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = { false, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = true;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::BothQualityNotEnough;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = false;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = { false, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = true;
+      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::BothQualityNotEnough;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = true;
-  //      cell1DSplitTwo.IsAlignedRespect = true;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::ToSplit;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = true;
+      cell1DSplitTwo.IsAlignedRespect = true;
+      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::ToSplit;
 
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                  cell1DSplitTwo));
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
-  //                                                                  cell1DSplitOne));
-  //    }
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                      cell1DSplitTwo));
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                      cell1DSplitOne));
+    }
 
-  //    {
-  //      // one not neigh quality
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // one not neigh quality
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = true;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = { false, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = true;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = true;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = { false, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = true;
+      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = true;
-  //      cell1DSplitTwo.IsAlignedRespect = true;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = true;
+      cell1DSplitTwo.IsAlignedRespect = true;
+      cell1DSplitTwo.IsNeighAlignedRespect = { true, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
 
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                   cell1DSplitTwo));
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
-  //                                                                   cell1DSplitOne));
-  //    }
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                       cell1DSplitTwo));
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                       cell1DSplitOne));
+    }
 
-  //    {
-  //      // both not neigh quality
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // both not neigh quality
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = true;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = { false, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = true;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = true;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = { false, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = true;
+      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = true;
-  //      cell1DSplitTwo.IsAlignedRespect = false;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { false, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = true;
+      cell1DSplitTwo.IsAlignedRespect = false;
+      cell1DSplitTwo.IsNeighAlignedRespect = { false, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect;
 
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                   cell1DSplitTwo));
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
-  //                                                                   cell1DSplitOne));
-  //    }
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                       cell1DSplitTwo));
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                       cell1DSplitOne));
+    }
 
-  //    {
-  //      // one not neigh quality and the other not local quality
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // one not neigh quality and the other not local quality
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = true;
-  //      cell1DSplitOne.IsQualityEnough = false;
-  //      cell1DSplitOne.IsNeighQualityEnough = { false, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = true;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = true;
+      cell1DSplitOne.IsQualityEnough = false;
+      cell1DSplitOne.IsNeighQualityEnough = { false, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = true;
+      cell1DSplitOne.IsNeighAlignedRespect = { true, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighQualityNotEnough;
 
-  //      cell1DSplitTwo.IsIntersectionInside = true;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = true;
-  //      cell1DSplitTwo.IsLocalQualityEnough = true;
-  //      cell1DSplitTwo.IsQualityEnough = true;
-  //      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = false;
-  //      cell1DSplitTwo.IsAlignedRespect = false;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { false, true };
-  //      cell1DSplitTwo.IsToSplit = true;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::BothAlignedNotRespect;
+      cell1DSplitTwo.IsIntersectionInside = true;
+      cell1DSplitTwo.IsEdgeLengthEnough = true;
+      cell1DSplitTwo.IsLocalQualityEnough = true;
+      cell1DSplitTwo.IsQualityEnough = true;
+      cell1DSplitTwo.IsNeighQualityEnough = { true, true };
+      cell1DSplitTwo.IsLocalAlignedRespect = false;
+      cell1DSplitTwo.IsAlignedRespect = false;
+      cell1DSplitTwo.IsNeighAlignedRespect = { false, true };
+      cell1DSplitTwo.IsToSplit = true;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::BothAlignedNotRespect;
 
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                  cell1DSplitTwo));
-  //      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
-  //                                                                  cell1DSplitOne));
-  //    }
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                      cell1DSplitTwo));
+      ASSERT_TRUE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                      cell1DSplitOne));
+    }
 
-  //    {
-  //      // one not neigh quality and the other not inside
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitOne;
-  //      Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit cell1DSplitTwo;
+    {
+      // one not neigh quality and the other not inside
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitOne;
+      Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit cell1DSplitTwo;
 
-  //      cell1DSplitOne.IsIntersectionInside = true;
-  //      cell1DSplitOne.IsEdgeLengthEnough = true;
-  //      cell1DSplitOne.IsLocalQualityEnough = true;
-  //      cell1DSplitOne.IsQualityEnough = true;
-  //      cell1DSplitOne.IsNeighQualityEnough = { true, true };
-  //      cell1DSplitOne.IsLocalAlignedRespect = true;
-  //      cell1DSplitOne.IsAlignedRespect = false;
-  //      cell1DSplitOne.IsNeighAlignedRespect = { false, true };
-  //      cell1DSplitOne.IsToSplit = true;
-  //      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect;
+      cell1DSplitOne.IsIntersectionInside = true;
+      cell1DSplitOne.IsEdgeLengthEnough = true;
+      cell1DSplitOne.IsLocalQualityEnough = true;
+      cell1DSplitOne.IsQualityEnough = true;
+      cell1DSplitOne.IsNeighQualityEnough = { true, true };
+      cell1DSplitOne.IsLocalAlignedRespect = true;
+      cell1DSplitOne.IsAlignedRespect = false;
+      cell1DSplitOne.IsNeighAlignedRespect = { false, true };
+      cell1DSplitOne.IsToSplit = true;
+      cell1DSplitOne.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::OnlyNeighAlignedNotRespect;
 
-  //      cell1DSplitTwo.IsIntersectionInside = false;
-  //      cell1DSplitTwo.IsEdgeLengthEnough = false;
-  //      cell1DSplitTwo.IsLocalQualityEnough = false;
-  //      cell1DSplitTwo.IsQualityEnough = false;
-  //      cell1DSplitTwo.IsNeighQualityEnough = {  };
-  //      cell1DSplitTwo.IsLocalAlignedRespect = false;
-  //      cell1DSplitTwo.IsAlignedRespect = false;
-  //      cell1DSplitTwo.IsNeighAlignedRespect = { };
-  //      cell1DSplitTwo.IsToSplit = false;
-  //      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_Result::Cell1DToSplit::Types::NotInside;
+      cell1DSplitTwo.IsIntersectionInside = false;
+      cell1DSplitTwo.IsEdgeLengthEnough = false;
+      cell1DSplitTwo.IsLocalQualityEnough = false;
+      cell1DSplitTwo.IsQualityEnough = false;
+      cell1DSplitTwo.IsNeighQualityEnough = {  };
+      cell1DSplitTwo.IsLocalAlignedRespect = false;
+      cell1DSplitTwo.IsAlignedRespect = false;
+      cell1DSplitTwo.IsNeighAlignedRespect = { };
+      cell1DSplitTwo.IsToSplit = false;
+      cell1DSplitTwo.Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside;
 
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitOne,
-  //                                                                   cell1DSplitTwo));
-  //      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsToSplit(cell1DSplitTwo,
-  //                                                                   cell1DSplitOne));
-  //    }
-  //  }
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitOne,
+                                                                       cell1DSplitTwo));
+      ASSERT_FALSE(refinementUtilities.SplitPolygon_CheckIsNotToExtend(cell1DSplitTwo,
+                                                                       cell1DSplitOne));
+    }
+  }
 }
 
 #endif // __TEST_REFINEMENT_UTILITIES_H
