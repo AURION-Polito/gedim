@@ -1612,10 +1612,10 @@ namespace Gedim
         // new vertex two
         Gedim::Output::Assert(edgeIntersectionTwo.Type == GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge);
 
-        const unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
-                                                                                geometryUtilities.Tolerance1D()) ?
-                                          edgeIntersectionOne.Index :
-                                          (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
+        unsigned int fromVertex = geometryUtilities.IsValueGreaterOrEqual(0.5, edgeIntersectionOne.CurvilinearCoordinate,
+                                                                          geometryUtilities.Tolerance1D()) ?
+                                    edgeIntersectionOne.Index :
+                                    (edgeIntersectionOne.Index + 1) % cell2DNumVertices;
 
         const Eigen::Vector3d middleCoordinate = 0.5 * (cell2DVertices.col(edgeIntersectionTwo.Index) +
                                                         cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices));
@@ -1627,10 +1627,28 @@ namespace Gedim
                                              cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
                                              middleCoordinate))
         {
-          result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
-          result.SplitType = CheckSplitType_Result::SplitTypes::NoSplit;
-          throw std::runtime_error("Case to manage");
-          return result;
+          // try to flip vertices
+          if (createNewVertexOne.Type !=
+              RefinePolygon_CheckResult::Cell1DToSplit::Types::NotInside)
+          {
+            // no fixed vertices, flip toVertex
+            fromVertex = (fromVertex == edgeIntersectionOne.Index) ?
+                           (edgeIntersectionOne.Index + 1) % cell2DNumVertices :
+                           edgeIntersectionOne.Index;
+          }
+
+          if (geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                               cell2DVertices.col(edgeIntersectionTwo.Index),
+                                               middleCoordinate) ||
+              geometryUtilities.PointIsAligned(cell2DVertices.col(fromVertex),
+                                               cell2DVertices.col((edgeIntersectionTwo.Index + 1) % cell2DNumVertices),
+                                               middleCoordinate))
+          {
+            result.ResultType = RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D;
+            result.SplitType = CheckSplitType_Result::SplitTypes::NoSplit;
+            throw std::runtime_error("Case to manage");
+            return result;
+          }
         }
 
         const SplitCell1D_Result splitCell1DTwo = SplitCell1D_MiddlePoint(cell1DIndexTwo,
