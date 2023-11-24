@@ -370,6 +370,43 @@ namespace Gedim
       mesh.Cell1DInsertNeighbourCell2D(e, 1, 0);
   }
   // ***************************************************************************
+  void MeshUtilities::SetMeshMarkersOnLine(const GeometryUtilities& geometryUtilities,
+                                           const Eigen::Vector3d& lineOrigin,
+                                           const Eigen::Vector3d& lineTangent,
+                                           const double& lineTangentSquaredLength,
+                                           const unsigned int& marker,
+                                           IMeshDAO& mesh) const
+  {
+    // set cell0Ds markers
+    std::vector<bool> vertices_on_plane(mesh.Cell0DTotalNumber(),
+                                        false);
+    for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+    {
+      if (geometryUtilities.IsPointOnLine(mesh.Cell0DCoordinates(v),
+                                          lineOrigin,
+                                          lineTangent,
+                                          lineTangentSquaredLength))
+      {
+        vertices_on_plane[v] = true;
+        mesh.Cell0DSetMarker(v,
+                             marker);
+      }
+    }
+
+    // set cell1Ds markers
+    for (unsigned int s = 0; s < mesh.Cell1DTotalNumber(); s++)
+    {
+      const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
+
+      if (vertices_on_plane[extremes[0]] &&
+          vertices_on_plane[extremes[1]])
+      {
+        mesh.Cell1DSetMarker(s,
+                             marker);
+      }
+    }
+  }
+  // ***************************************************************************
   vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO& mesh) const
   {
     vector<unsigned int> rootCell2Ds(mesh.Cell2DTotalNumber());
@@ -1084,6 +1121,232 @@ namespace Gedim
     unsigned int numAgglomeratedCell0Ds;
     converterCell0Ds>> numAgglomeratedCell0Ds;
     Gedim::Output::Assert(numAgglomeratedCell0Ds == agglomeratedMesh.Cell0DTotalNumber());
+
+    lineCounter++; // ingnore header
+    for (unsigned int ac = 0; ac < numAgglomeratedCell0Ds; ac++)
+    {
+      char temp;
+      istringstream converterAgglomeratedCell(lines[lineCounter++]);
+      unsigned int agglomeratedCell0D, originalCell0D;
+      converterAgglomeratedCell >>agglomeratedCell0D;
+      if (separator != ' ')
+        converterAgglomeratedCell >> temp;
+      converterAgglomeratedCell >>originalCell0D;
+      if (separator != ' ')
+        converterAgglomeratedCell >> temp;
+
+      Gedim::Output::Assert(agglomeratedCell0D < agglomeratedMesh.Cell0DTotalNumber());
+
+      if (originalCell0D < originalMesh.Cell0DTotalNumber())
+        result.OriginalCell0DToAgglomeratedCell0Ds[originalCell0D] = agglomeratedCell0D;
+
+      result.AgglomeratedCell0DToOriginalCell0Ds[agglomeratedCell0D] = originalCell0D;
+    }
+
+    // create cell0D-cell1D relation
+    struct Edge
+    {
+        unsigned int Cell1DIndex;
+        unsigned int Cell0DEnd;
+    };
+    std::vector<std::list<Edge>> cell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
+    vector<list<unsigned int>> originalCell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
+
+    for (unsigned int c1D = 0; c1D < originalMesh.Cell1DTotalNumber(); c1D++)
+    {
+      const unsigned int originalCell1DOrigin = originalMesh.Cell1DOrigin(c1D);
+      const unsigned int originalCell1DEnd = originalMesh.Cell1DEnd(c1D);
+
+      originalCell0DsCell1Ds[originalCell1DOrigin].push_back(c1D);
+      originalCell0DsCell1Ds[originalCell1DEnd].push_back(c1D);
+      cell0DsCell1Ds[originalMesh.Cell1DOrigin(c1D)].push_back({c1D, originalMesh.Cell1DEnd(c1D)});
+    }
+
+    // compute agglomerate cell1D and original cell1D relation
+    for (unsigned int ac1D = 0; ac1D < agglomeratedMesh.Cell1DTotalNumber(); ac1D++)
+    {
+      const unsigned int cell1DAgglomeratedOrigin = agglomeratedMesh.Cell1DOrigin(ac1D);
+      const unsigned int cell1DAgglomeratedEnd = agglomeratedMesh.Cell1DEnd(ac1D);
+
+      const unsigned int cell1DOriginalOrigin = result.AgglomeratedCell0DToOriginalCell0Ds[cell1DAgglomeratedOrigin];
+      const unsigned int cell1DOriginalEnd = result.AgglomeratedCell0DToOriginalCell0Ds[cell1DAgglomeratedEnd];
+
+      if (cell1DOriginalOrigin >=  originalMesh.Cell0DTotalNumber() ||
+          cell1DOriginalEnd >= originalMesh.Cell0DTotalNumber())
+        continue;
+
+      const std::list<Edge>& originCell1Ds = cell0DsCell1Ds.at(cell1DOriginalOrigin);
+      std::list<Edge>::const_iterator findOriginEdge = std::find_if(originCell1Ds.begin(),
+                                                                    originCell1Ds.end(),
+                                                                    [&] (const Edge& edge)
+      { return edge.Cell0DEnd == cell1DOriginalEnd; });
+
+      const std::list<Edge>& endCell1Ds = cell0DsCell1Ds.at(cell1DOriginalEnd);
+      std::list<Edge>::const_iterator findEndEdge = std::find_if(endCell1Ds.begin(),
+                                                                 endCell1Ds.end(),
+                                                                 [&] (const Edge& edge)
+      { return edge.Cell0DEnd == cell1DOriginalOrigin; });
+
+      if (findOriginEdge != originCell1Ds.end())
+      {
+        const unsigned int originalCell1D = findOriginEdge->Cell1DIndex;
+        result.OriginalCell1DToAgglomeratedCell1Ds[originalCell1D] = ac1D;
+        result.AgglomeratedCell1DToOriginalCell1Ds[ac1D].resize(1, originalCell1D);
+      }
+      else if (findEndEdge != endCell1Ds.end())
+      {
+        const unsigned int originalCell1D = findEndEdge->Cell1DIndex;
+        result.OriginalCell1DToAgglomeratedCell1Ds[originalCell1D] = ac1D;
+        result.AgglomeratedCell1DToOriginalCell1Ds[ac1D].resize(1, originalCell1D);
+      }
+      else
+      {
+        // search original cell1Ds aligned and inside the agglomerated cell1D
+        const Eigen::Vector3d& endCoordinates = originalMesh.Cell0DCoordinates(cell1DOriginalEnd);
+
+        list<unsigned int> originalCell1Ds;
+        queue<unsigned int> origins;
+        origins.push(cell1DOriginalOrigin);
+
+        while (!origins.empty())
+        {
+          const unsigned int cell0D = origins.front();
+          origins.pop();
+
+          if (originalCell0DsCell1Ds[cell0D].size() == 0)
+            continue;
+
+          const Vector3d cell0DCoordinates = originalMesh.Cell0DCoordinates(cell0D);
+          const list<unsigned int>& cell1Ds = originalCell0DsCell1Ds[cell0D];
+
+          unsigned int cell1DAligned = originalMesh.Cell1DTotalNumber();
+          for (unsigned int cell1D : cell1Ds)
+          {
+            if (result.OriginalCell1DToAgglomeratedCell1Ds[cell1D] !=
+                originalMesh.Cell1DTotalNumber())
+              continue;
+
+            const unsigned int cell1DOtherCell0DIndex = (originalMesh.Cell1DOrigin(cell1D) == cell0D) ?
+                                                          originalMesh.Cell1DEnd(cell1D) :
+                                                          originalMesh.Cell1DOrigin(cell1D);
+
+            if (cell1DOtherCell0DIndex == cell1DOriginalEnd)
+            {
+              cell1DAligned = cell1D;
+              break;
+            }
+
+            const Vector3d cell1DOtherCell0DCoordinates = originalMesh.Cell0DCoordinates(cell1DOtherCell0DIndex);
+
+            if (!geometryUtilities.PointIsAligned(cell0DCoordinates,
+                                                  endCoordinates,
+                                                  cell1DOtherCell0DCoordinates))
+              continue;
+
+            if (geometryUtilities.PointSegmentPosition(cell1DOtherCell0DCoordinates,
+                                                       cell0DCoordinates,
+                                                       endCoordinates) !=
+                Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment)
+              continue;
+
+            cell1DAligned = cell1D;
+            if (cell1DOtherCell0DIndex != cell1DOriginalEnd)
+              origins.push(cell1DOtherCell0DIndex);
+
+            break;
+          }
+
+          Gedim::Output::Assert(cell1DAligned != originalMesh.Cell1DTotalNumber());
+
+          result.OriginalCell1DToAgglomeratedCell1Ds[cell1DAligned] = ac1D;
+          originalCell1Ds.push_back(cell1DAligned);
+        }
+
+        result.AgglomeratedCell1DToOriginalCell1Ds[ac1D] = vector<unsigned int>(originalCell1Ds.begin(),
+                                                                                originalCell1Ds.end());
+      }
+    }
+
+    return result;
+  }
+  // ***************************************************************************
+  MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInformationFromOFF(const GeometryUtilities geometryUtilities,
+                                                                                               const IMeshDAO& originalMesh,
+                                                                                               const IMeshDAO& agglomeratedMesh,
+                                                                                               const std::string& fileName,
+                                                                                               const char& separator) const
+  {
+    AgglomerationInformation result;
+
+    // initialize
+    result.OriginalCell0DToAgglomeratedCell0Ds.resize(originalMesh.Cell0DTotalNumber(),
+                                                      originalMesh.Cell0DTotalNumber());
+    result.OriginalCell1DToAgglomeratedCell1Ds.resize(originalMesh.Cell1DTotalNumber(),
+                                                      originalMesh.Cell1DTotalNumber());
+    result.OriginalCell2DToAgglomeratedCell2Ds.resize(originalMesh.Cell2DTotalNumber(),
+                                                      originalMesh.Cell2DTotalNumber());
+    result.AgglomeratedCell0DToOriginalCell0Ds.resize(agglomeratedMesh.Cell0DTotalNumber(),
+                                                      agglomeratedMesh.Cell0DTotalNumber());
+    result.AgglomeratedCell1DToOriginalCell1Ds.resize(agglomeratedMesh.Cell1DTotalNumber());
+    result.AgglomeratedCell2DToOriginalCell2Ds.resize(agglomeratedMesh.Cell2DTotalNumber());
+
+    // read agglomeration information file
+    Gedim::FileReader file(fileName);
+    vector<string> lines;
+    file.Open();
+    file.GetAllLines(lines);
+    file.Close();
+
+    Gedim::Output::Assert(lines.size() > 1);
+
+    unsigned int lineCounter = 0;
+
+    // read cell3D agglomeration
+    istringstream converterCell2Ds(lines[lineCounter++]);
+    string labelCell2Ds;
+    unsigned int numAgglomeratedCell2Ds;
+    converterCell2Ds>> labelCell2Ds>> numAgglomeratedCell2Ds;
+    Gedim::Output::Assert(numAgglomeratedCell2Ds <= agglomeratedMesh.Cell2DTotalNumber());
+
+    lineCounter++; // ingnore header
+    for (unsigned int ac = 0; ac < numAgglomeratedCell2Ds; ac++)
+    {
+      char temp;
+      istringstream converterAgglomeratedCell(lines[lineCounter++]);
+      unsigned int agglomeratedCell2D, numOriginalCell2Ds;
+      converterAgglomeratedCell >>agglomeratedCell2D;
+      if (separator != ' ')
+        converterAgglomeratedCell >> temp;
+      converterAgglomeratedCell >>numOriginalCell2Ds;
+      if (separator != ' ')
+        converterAgglomeratedCell >> temp;
+
+      Gedim::Output::Assert(agglomeratedCell2D < agglomeratedMesh.Cell2DTotalNumber() &&
+                            numOriginalCell2Ds > 0);
+
+      result.AgglomeratedCell2DToOriginalCell2Ds[agglomeratedCell2D].resize(numOriginalCell2Ds);
+      for (unsigned int oc = 0; oc < numOriginalCell2Ds; oc++)
+      {
+        unsigned int originalCell2D;
+        converterAgglomeratedCell >>originalCell2D;
+        if (separator != ' ')
+          converterAgglomeratedCell >> temp;
+
+        Gedim::Output::Assert(originalCell2D < originalMesh.Cell2DTotalNumber());
+
+        result.AgglomeratedCell2DToOriginalCell2Ds[agglomeratedCell2D][oc] = originalCell2D;
+        result.OriginalCell2DToAgglomeratedCell2Ds[originalCell2D] = agglomeratedCell2D;
+      }
+    }
+
+    lineCounter++; // ingnore empty line
+
+    // read cell0D agglomeration
+    istringstream converterCell0Ds(lines[lineCounter++]);
+    string labelCell0Ds;
+    unsigned int numAgglomeratedCell0Ds;
+    converterCell0Ds>> labelCell0Ds>> numAgglomeratedCell0Ds;
+    Gedim::Output::Assert(numAgglomeratedCell0Ds <= agglomeratedMesh.Cell0DTotalNumber());
 
     lineCounter++; // ingnore header
     for (unsigned int ac = 0; ac < numAgglomeratedCell0Ds; ac++)

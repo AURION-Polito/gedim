@@ -244,6 +244,20 @@ namespace Gedim
                              const std::vector<unsigned int> edgeMarkers,
                              IMeshDAO& mesh) const;
 
+      /// \brief Set the marker on all the mesh 2D elements laying on the line
+      /// \param geometryUtilities the geometry utilities
+      /// \param lineTangent the line tangent
+      /// \param lineOrigin the line origin
+      /// \param lineTangentSquaredLength the line tangent squared length
+      /// \param marker the marker
+      /// \param mesh the mesh
+      void SetMeshMarkersOnLine(const GeometryUtilities& geometryUtilities,
+                                const Eigen::Vector3d& lineOrigin,
+                                const Eigen::Vector3d& lineTangent,
+                                const double& lineTangentSquaredLength,
+                                const unsigned int& marker,
+                                IMeshDAO& mesh) const;
+
       /// \brief Create a Mesh 3D with a polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
@@ -259,7 +273,7 @@ namespace Gedim
                                 const std::vector<unsigned int> faceMarkers,
                                 IMeshDAO& mesh) const;
 
-      /// \brief Set the marker on all the mesh 3D elements lyin on the plane
+      /// \brief Set the marker on all the mesh 3D elements laying on the plane
       /// \param geometryUtilities the geometry utilities
       /// \param planeNormal the plane normal
       /// \param planeOrigin the plane origin
@@ -567,6 +581,26 @@ namespace Gedim
                                                                      const Gedim::IMeshDAO& agglomeratedMesh,
                                                                      const std::string& fileName,
                                                                      const char& separator) const;
+
+
+      /// \brief Import Agglomeration mesh Information From file OFF
+      /// \param geometryUtilities the geometry utilities
+      /// \param originalMesh the original mesh
+      /// \param agglomeratedMesh the agglomerated mesh
+      /// \param fileName the csv file name
+      /// \param separator the csv file separator
+      /// \param originalCell0DToAgglomeratedCell0Ds original Cell0Ds to agglomerated Cell0Ds
+      /// \param originalCell1DToAgglomeratedCell1Ds original Cell1Ds to agglomerated Cell1Ds
+      /// \param originalCell2DToAgglomeratedCell2Ds original Cell2Ds to agglomerated Cell2Ds
+      /// \param agglomeratedCell0DToOriginalCell0Ds agglomerated Cell0Ds to original Cell0Ds
+      /// \param agglomeratedCell1DToOriginalCell1Ds agglomerated Cell1Ds to original Cell1Ds
+      /// \param agglomeratedCell2DToOriginalCell2Ds agglomerated Cell2Ds to original Cell2Ds
+      AgglomerationInformation ImportAgglomerationInformationFromOFF(const Gedim::GeometryUtilities geometryUtilities,
+                                                                     const Gedim::IMeshDAO& originalMesh,
+                                                                     const Gedim::IMeshDAO& agglomeratedMesh,
+                                                                     const std::string& fileName,
+                                                                     const char& separator) const;
+
 
       /// \brief Export mesh to csv file
       void ExportMeshToCsv(const IMeshDAO& mesh,
