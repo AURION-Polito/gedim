@@ -1280,13 +1280,13 @@ namespace Gedim
 
     // initialize
     result.OriginalCell0DToAgglomeratedCell0Ds.resize(originalMesh.Cell0DTotalNumber(),
-                                                      originalMesh.Cell0DTotalNumber());
-    result.OriginalCell1DToAgglomeratedCell1Ds.resize(originalMesh.Cell1DTotalNumber(),
-                                                      originalMesh.Cell1DTotalNumber());
-    result.OriginalCell2DToAgglomeratedCell2Ds.resize(originalMesh.Cell2DTotalNumber(),
-                                                      originalMesh.Cell2DTotalNumber());
-    result.AgglomeratedCell0DToOriginalCell0Ds.resize(agglomeratedMesh.Cell0DTotalNumber(),
                                                       agglomeratedMesh.Cell0DTotalNumber());
+    result.OriginalCell1DToAgglomeratedCell1Ds.resize(originalMesh.Cell1DTotalNumber(),
+                                                      agglomeratedMesh.Cell1DTotalNumber());
+    result.OriginalCell2DToAgglomeratedCell2Ds.resize(originalMesh.Cell2DTotalNumber(),
+                                                      agglomeratedMesh.Cell2DTotalNumber());
+    result.AgglomeratedCell0DToOriginalCell0Ds.resize(agglomeratedMesh.Cell0DTotalNumber(),
+                                                      originalMesh.Cell0DTotalNumber());
     result.AgglomeratedCell1DToOriginalCell1Ds.resize(agglomeratedMesh.Cell1DTotalNumber());
     result.AgglomeratedCell2DToOriginalCell2Ds.resize(agglomeratedMesh.Cell2DTotalNumber());
 
@@ -1301,7 +1301,7 @@ namespace Gedim
 
     unsigned int lineCounter = 0;
 
-    // read cell3D agglomeration
+    // read cell2D agglomeration
     istringstream converterCell2Ds(lines[lineCounter++]);
     string labelCell2Ds;
     unsigned int numAgglomeratedCell2Ds;
@@ -1339,6 +1339,16 @@ namespace Gedim
       }
     }
 
+    // check read cell2D information
+    for (unsigned int c = 0; c < originalMesh.Cell2DTotalNumber(); c++)
+    {
+      Gedim::Output::Assert(result.OriginalCell2DToAgglomeratedCell2Ds[c] <
+                            agglomeratedMesh.Cell2DTotalNumber());
+    }
+    for (unsigned int c = 0; c < agglomeratedMesh.Cell2DTotalNumber(); c++)
+      Gedim::Output::Assert(result.AgglomeratedCell2DToOriginalCell2Ds[c].size() > 0);
+
+
     lineCounter++; // ingnore empty line
 
     // read cell0D agglomeration
@@ -1367,6 +1377,13 @@ namespace Gedim
         result.OriginalCell0DToAgglomeratedCell0Ds[originalCell0D] = agglomeratedCell0D;
 
       result.AgglomeratedCell0DToOriginalCell0Ds[agglomeratedCell0D] = originalCell0D;
+    }
+
+    // check read cell0D information
+    for (unsigned int c = 0; c < agglomeratedMesh.Cell2DTotalNumber(); c++)
+    {
+      Gedim::Output::Assert(result.AgglomeratedCell0DToOriginalCell0Ds[c] <
+                            originalMesh.Cell0DTotalNumber());
     }
 
     // create cell0D-cell1D relation
