@@ -1393,7 +1393,7 @@ namespace Gedim
         unsigned int Cell0DEnd;
     };
     std::vector<std::list<Edge>> cell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
-    vector<list<unsigned int>> originalCell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
+    std::vector<std::list<unsigned int>> originalCell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
 
     for (unsigned int c1D = 0; c1D < originalMesh.Cell1DTotalNumber(); c1D++)
     {
@@ -1402,7 +1402,17 @@ namespace Gedim
 
       originalCell0DsCell1Ds[originalCell1DOrigin].push_back(c1D);
       originalCell0DsCell1Ds[originalCell1DEnd].push_back(c1D);
-      cell0DsCell1Ds[originalMesh.Cell1DOrigin(c1D)].push_back({c1D, originalMesh.Cell1DEnd(c1D)});
+      cell0DsCell1Ds[originalCell1DOrigin].push_back({ c1D, originalCell1DEnd });
+    }
+
+    for (unsigned int c = 0; c < originalMesh.Cell0DTotalNumber(); c++)
+    {
+      Gedim::Output::Assert(originalCell0DsCell1Ds[c].size() > 0);
+
+      for (const auto edge : cell0DsCell1Ds[c])
+      {
+        std::cout<< "From "<< c<< " To "<< edge.Cell0DEnd<< " edge "<< edge.Cell1DIndex<< std::endl;
+      }
     }
 
     // compute agglomerate cell1D and original cell1D relation
@@ -1466,7 +1476,7 @@ namespace Gedim
           for (unsigned int cell1D : cell1Ds)
           {
             if (result.OriginalCell1DToAgglomeratedCell1Ds[cell1D] !=
-                originalMesh.Cell1DTotalNumber())
+                agglomeratedMesh.Cell1DTotalNumber())
               continue;
 
             const unsigned int cell1DOtherCell0DIndex = (originalMesh.Cell1DOrigin(cell1D) == cell0D) ?
