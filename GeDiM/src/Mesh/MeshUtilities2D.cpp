@@ -1406,14 +1406,7 @@ namespace Gedim
     }
 
     for (unsigned int c = 0; c < originalMesh.Cell0DTotalNumber(); c++)
-    {
       Gedim::Output::Assert(originalCell0DsCell1Ds[c].size() > 0);
-
-      for (const auto edge : cell0DsCell1Ds[c])
-      {
-        std::cout<< "From "<< c<< " To "<< edge.Cell0DEnd<< " edge "<< edge.Cell1DIndex<< std::endl;
-      }
-    }
 
     // compute agglomerate cell1D and original cell1D relation
     for (unsigned int ac1D = 0; ac1D < agglomeratedMesh.Cell1DTotalNumber(); ac1D++)
