@@ -244,6 +244,7 @@ namespace Gedim
               std::vector<Eigen::MatrixXd> UnalignedVertices = {};
               std::vector<Eigen::VectorXd> UnalignedEdgesLength = {};
               std::vector<Eigen::VectorXd> CentroidEdgesDistance = {};
+              std::vector<Eigen::VectorXd> CentroidVerticesDistance = {};
               std::vector<double> InRadius = {};
               std::vector<double> Quality = {};
           };

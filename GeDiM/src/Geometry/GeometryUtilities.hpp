@@ -1589,6 +1589,13 @@ namespace Gedim
                                                    const Eigen::Vector3d& polygonCentroid,
                                                    const Eigen::MatrixXd& polygonEdgeNormals) const;
 
+
+      /// \param polygonVertices the polygon vertices, size 3 x numVertices
+      /// \param polygonCentroid the polygon centroid
+      /// \return the distance between the centroid and all the polygon vertices, size 1 x numEdges
+      Eigen::VectorXd PolygonCentroidVerticesDistance(const Eigen::MatrixXd& polygonVertices,
+                                                      const Eigen::Vector3d& polygonCentroid) const;
+
       /// \param polygonCentroidEdgesDistance the polygon centroid edges distance, size 1 x numEdges
       /// \return the polygon in radius, as the minimum distance between the polygon centroid and the edges
       inline double PolygonInRadius(const Eigen::VectorXd& polygonCentroidEdgesDistance) const

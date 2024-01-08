@@ -782,6 +782,7 @@ namespace Gedim
     geometricData.Cell2Ds.UnalignedEdgesLength.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.InRadius.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.CentroidEdgesDistance.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.CentroidVerticesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
 
     for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
@@ -846,6 +847,8 @@ namespace Gedim
       geometricData.Cell2Ds.CentroidEdgesDistance[cell2DIndex] = geometryUtilities.PolygonCentroidEdgesDistance(convexCell2DVertices,
                                                                                                                 convexCell2DCentroid,
                                                                                                                 geometricData.Cell2Ds.EdgesNormal[cell2DIndex]);
+      geometricData.Cell2Ds.CentroidVerticesDistance[cell2DIndex] = geometryUtilities.PolygonCentroidVerticesDistance(convexCell2DVertices,
+                                                                                                                      convexCell2DCentroid);
       geometricData.Cell2Ds.InRadius[cell2DIndex] = geometryUtilities.PolygonInRadius(geometricData.Cell2Ds.CentroidEdgesDistance[cell2DIndex]);
       geometricData.Cell2Ds.Inertia[cell2DIndex] = geometryUtilities.PolygonInertia(convexCell2DCentroid,
                                                                                     convexCell2DTriangulationPoints);
