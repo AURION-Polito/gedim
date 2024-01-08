@@ -873,6 +873,7 @@ namespace Gedim
                                                                                                                        const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
                                                                                                                        const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                                                                        const double& cell1DsQualityWeight,
+                                                                                                                       const double& cell1DsAlignedWeight,
                                                                                                                        const std::vector<double>& cell2DsQuality,
                                                                                                                        const std::vector<unsigned int>& cell1DsAligned,
                                                                                                                        const IMeshDAO& mesh) const
@@ -974,9 +975,9 @@ namespace Gedim
       }
 
       // check if the length of the aligned splitted edge (|l|) is higher than the mean length (|L|) after the cut
-      // |l| / 2 > |L| / (N_aligned + 1)
-      result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValueGreaterOrEqual(cell1DLength,
-                                                                                   2.0 * alignedEdgesLength / double(numAligned + 1),
+      // |l| / 2 > c_alg * |L| / (N_aligned + 1)
+      result.IsNeighAlignedRespect[c2Dn] = geometryUtilities.IsValueGreaterOrEqual(0.5 * cell1DLength,
+                                                                                   cell1DsAlignedWeight * alignedEdgesLength / double(numAligned + 1),
                                                                                    geometryUtilities.Tolerance1D());
 
 
@@ -1193,6 +1194,7 @@ namespace Gedim
                                                                                                         const std::vector<double>& cell2DsQuality,
                                                                                                         const std::vector<unsigned int>& cell1DsAligned,
                                                                                                         const double& cell1DsQualityWeight,
+                                                                                                        const double& cell1DsAlignedWeight,
                                                                                                         const double& cell2DArea,
                                                                                                         const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                                                         const std::vector<bool>& cell2DEdgesDirection,
@@ -1296,6 +1298,7 @@ namespace Gedim
                                                                                                           edgeIntersectionOne,
                                                                                                           cell2DsEdgesLength,
                                                                                                           cell1DsQualityWeight,
+                                                                                                          cell1DsAlignedWeight,
                                                                                                           cell2DsQuality,
                                                                                                           cell1DsAligned,
                                                                                                           mesh);
@@ -1304,6 +1307,7 @@ namespace Gedim
                                                                                                           edgeIntersectionTwo,
                                                                                                           cell2DsEdgesLength,
                                                                                                           cell1DsQualityWeight,
+                                                                                                          cell1DsAlignedWeight,
                                                                                                           cell2DsQuality,
                                                                                                           cell1DsAligned,
                                                                                                           mesh);

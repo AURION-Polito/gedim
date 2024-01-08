@@ -437,6 +437,7 @@ namespace Gedim
                                                                   const std::vector<double>& cell2DsQuality,
                                                                   const std::vector<unsigned int>& cell1DsAligned,
                                                                   const double& cell1DsQualityWeight,
+                                                                  const double& cell1DsAlignedWeight,
                                                                   const double& cell2DArea,
                                                                   const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                   const std::vector<bool>& cell2DEdgesDirection,
@@ -474,6 +475,7 @@ namespace Gedim
                                                                                  const GeometryUtilities::LinePolygonPositionResult::EdgeIntersection& edgeIntersection,
                                                                                  const std::vector<Eigen::VectorXd>& cell2DsEdgesLength,
                                                                                  const double& cell1DsQualityWeight,
+                                                                                 const double& cell1DsAlignedWeight,
                                                                                  const std::vector<double>& cell2DsQuality,
                                                                                  const std::vector<unsigned int>& cell1DsAligned,
                                                                                  const IMeshDAO& mesh) const;
