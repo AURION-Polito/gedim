@@ -673,7 +673,7 @@ namespace GedimUnitTesting
                      4,7,5,
                      7,16,8).finished();
 
-    const vector<Gedim::MeshUtilities::FillMesh3DPolyhedron> polyhedrons =
+    const vector<Gedim::MeshUtilities::Mesh3DPolyhedron> polyhedrons =
     {
       {
         { 0,1,2,8 },
@@ -684,6 +684,16 @@ namespace GedimUnitTesting
         { 0,2,3,4,5,6 },
         { 0,3,14,4,9,10,5,6,8,12 },
         { 1,2,9,10,11,13 }
+      },
+      {
+        { 0,1,4,5,7 },
+        { 1,4,15,9,16,17,7,8 },
+        { 0,5,9,16,18 }
+      },
+      {
+        { 4,5,6,7 },
+        { 6,7,8,12,13,16 },
+        { 10,12,14,18 }
       }
     };
 

@@ -190,7 +190,7 @@ namespace Gedim
           std::vector<ConvexCell2D> ConcaveCell3DFacesConvexCell2D = {};
       };
 
-      struct FillMesh3DPolyhedron final
+      struct Mesh3DPolyhedron final
       {
           std::vector<unsigned int> VerticesIndex;
           std::vector<unsigned int> EdgesIndex;
@@ -248,7 +248,7 @@ namespace Gedim
       void FillMesh3D(const Eigen::MatrixXd& cell0Ds,
                       const Eigen::MatrixXi& cell1Ds,
                       const std::vector<Eigen::MatrixXi>& cell2Ds,
-                      const std::vector<FillMesh3DPolyhedron>& cell3Ds,
+                      const std::vector<Mesh3DPolyhedron>& cell3Ds,
                       IMeshDAO& mesh) const;
 
       /// \brief Compute edges in a Mesh 2D with vertices and polygons

@@ -14,15 +14,10 @@ namespace Gedim
   void MeshUtilities::FillMesh3D(const Eigen::MatrixXd& cell0Ds,
                                  const Eigen::MatrixXi& cell1Ds,
                                  const std::vector<Eigen::MatrixXi>& cell2Ds,
-                                 const std::vector<FillMesh3DPolyhedron>& cell3Ds,
+                                 const std::vector<Mesh3DPolyhedron>& cell3Ds,
                                  IMeshDAO& mesh) const
   {
     mesh.InitializeDimension(3);
-
-    const unsigned int numVertices = cell0Ds.cols();
-    const unsigned int numEdges = cell1Ds.cols();
-    const unsigned int numFaces = cell2Ds.size();
-    const unsigned int numCells = cell3Ds.size();
 
     // Create Cell0Ds
     {
@@ -96,7 +91,7 @@ namespace Gedim
 
       for (unsigned int c = 0; c < numCell3Ds; c++)
       {
-        const FillMesh3DPolyhedron& polyhedron = cell3Ds[c];
+        const Mesh3DPolyhedron& polyhedron = cell3Ds[c];
 
         for (unsigned int v = 0; v < polyhedron.VerticesIndex.size(); v++)
           mesh.Cell3DInsertVertex(c, v, polyhedron.VerticesIndex.at(v));
