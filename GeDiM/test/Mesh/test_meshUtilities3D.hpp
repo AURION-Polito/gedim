@@ -613,7 +613,7 @@ namespace GedimUnitTesting
                                    0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6, 3, 4, 5, 7, 0, 1, 2,
                                    3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7, 4, 1, 7, 1, 8, 8, 8).finished();
 
-    vector<Eigen::MatrixXi> triangles(18);
+    vector<Eigen::MatrixXi> triangles(19);
     triangles[0] = (Eigen::MatrixXi(2, 3)<<
                     0,1,4,
                     1,15,4).finished();
@@ -669,14 +669,22 @@ namespace GedimUnitTesting
     triangles[17] = (Eigen::MatrixXi(2, 4)<<
                      4,1,2,6,
                      15,2,5,6).finished();
+    triangles[18] = (Eigen::MatrixXi(2, 3)<<
+                     4,7,5,
+                     7,16,8).finished();
 
-    vector<Gedim::MeshUtilities::FillMesh3DPolyhedron> polyhedrons(1);
-
-    polyhedrons[0] =
+    const vector<Gedim::MeshUtilities::FillMesh3DPolyhedron> polyhedrons =
     {
-      { 0,1,2,8 },
-      { 18,19,20,1,2,9,10,11,16,17 },
-      { 5,6,7,3,4,8 }
+      {
+        { 0,1,2,8 },
+        { 18,19,20,1,2,9,10,11,16,17 },
+        { 5,6,7,3,4,8 }
+      },
+      {
+        { 0,2,3,4,5,6 },
+        { 0,3,14,4,9,10,5,6,8,12 },
+        { 1,2,9,10,11,13 }
+      }
     };
 
     meshUtilities.FillMesh3D(vertices,
