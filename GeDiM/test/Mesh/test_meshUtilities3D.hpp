@@ -600,18 +600,18 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities meshUtilities;
 
-    Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 8)<<
-                                0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0).finished();
+    Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 9)<<
+                                0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0).finished();
     vertices.col(4)<< 0.5 * (vertices.col(1) + vertices.col(3));
     vertices.col(5)<< 0.5 * (vertices.col(0) + vertices.col(2));
     vertices.col(6)<< 0.5 * (vertices.col(4) + vertices.col(2));
     vertices.col(7)<< 0.5 * (vertices.col(5) + vertices.col(1));
 
-    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 14)<<
-                                   0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6,
-                                   3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7).finished();
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 21)<<
+                                   0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6, 3, 4, 5, 7, 0, 1, 2,
+                                   3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7, 4, 1, 7, 1, 8, 8, 8).finished();
 
     vector<Eigen::MatrixXi> triangles(4, Eigen::MatrixXi(2, 3));
     triangles[0] = (Eigen::MatrixXi(2, 3)<<
