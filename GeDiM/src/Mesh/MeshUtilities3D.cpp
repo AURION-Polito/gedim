@@ -14,7 +14,7 @@ namespace Gedim
   void MeshUtilities::FillMesh3D(const Eigen::MatrixXd& cell0Ds,
                                  const Eigen::MatrixXi& cell1Ds,
                                  const std::vector<Eigen::MatrixXi>& cell2Ds,
-                                 const std::vector<Gedim::GeometryUtilities::Polyhedron>& cell3Ds,
+                                 const std::vector<FillMesh3DPolyhedron>& cell3Ds,
                                  IMeshDAO& mesh) const
   {
     mesh.InitializeDimension(3);
@@ -25,48 +25,88 @@ namespace Gedim
     const unsigned int numCells = cell3Ds.size();
 
     // Create Cell0Ds
-    Output::Assert(cell0Ds.rows() == 3);
-    const unsigned int numCell0Ds = cell0Ds.cols();
-    mesh.Cell0DsInitialize(numCell0Ds);
-    mesh.Cell0DsInsertCoordinates(cell0Ds);
-    for (unsigned int v = 0; v < numCell0Ds; v++)
-      mesh.Cell0DSetState(v, true);
-
-    // Create Cell1Ds
-    Output::Assert(cell1Ds.rows() == 2);
-    unsigned int numCell1Ds = cell1Ds.cols();
-    mesh.Cell1DsInitialize(numCell1Ds);
-    mesh.Cell1DsInsertExtremes(cell1Ds);
-    for (int e = 0; e < cell1Ds.cols(); e++)
-      mesh.Cell1DSetState(e, true);
-
-    // Create Cell2Ds
-    const unsigned int& numCell2Ds = cell2Ds.size();
-    mesh.Cell2DsInitialize(numCell2Ds);
-    std::vector<unsigned int> cell2DsNumVertices(numCell2Ds), cell2DsNumEdges(numCell2Ds);
-
-    for (unsigned int f = 0; f < numCell2Ds; f++)
     {
-      const unsigned int numVertices = cell2Ds[f].cols();
-      cell2DsNumVertices[f] = numVertices;
-      cell2DsNumEdges[f] = numVertices;
+      Output::Assert(cell0Ds.rows() == 3);
+      const unsigned int numCell0Ds = cell0Ds.cols();
+      mesh.Cell0DsInitialize(numCell0Ds);
+      mesh.Cell0DsInsertCoordinates(cell0Ds);
+      for (unsigned int v = 0; v < numCell0Ds; v++)
+        mesh.Cell0DSetState(v, true);
     }
 
-    mesh.Cell2DsInitializeVertices(cell2DsNumVertices);
-    mesh.Cell2DsInitializeEdges(cell2DsNumEdges);
-
-    for (unsigned int f = 0; f < numCell2Ds; f++)
+    // Create Cell1Ds
     {
-      const MatrixXi& polygon = cell2Ds[f];
-      Output::Assert(polygon.rows() == 2);
-      const unsigned int& numVertices = polygon.cols();
+      Output::Assert(cell1Ds.rows() == 2);
+      unsigned int numCell1Ds = cell1Ds.cols();
+      mesh.Cell1DsInitialize(numCell1Ds);
+      mesh.Cell1DsInsertExtremes(cell1Ds);
+      for (int e = 0; e < cell1Ds.cols(); e++)
+        mesh.Cell1DSetState(e, true);
+    }
 
-      for (unsigned int v = 0; v < numVertices; v++)
-        mesh.Cell2DInsertVertex(f, v, polygon(0, v));
-      for (unsigned int e = 0; e < numVertices; e++)
-        mesh.Cell2DInsertEdge(f, e, polygon(1, e));
+    // Create Cell2Ds
+    {
+      const unsigned int& numCell2Ds = cell2Ds.size();
+      mesh.Cell2DsInitialize(numCell2Ds);
+      std::vector<unsigned int> cell2DsNumVertices(numCell2Ds), cell2DsNumEdges(numCell2Ds);
 
-      mesh.Cell2DSetState(f, true);
+      for (unsigned int f = 0; f < numCell2Ds; f++)
+      {
+        const unsigned int numVertices = cell2Ds[f].cols();
+        cell2DsNumVertices[f] = numVertices;
+        cell2DsNumEdges[f] = numVertices;
+      }
+
+      mesh.Cell2DsInitializeVertices(cell2DsNumVertices);
+      mesh.Cell2DsInitializeEdges(cell2DsNumEdges);
+
+      for (unsigned int f = 0; f < numCell2Ds; f++)
+      {
+        const MatrixXi& polygon = cell2Ds[f];
+        Output::Assert(polygon.rows() == 2);
+        const unsigned int& numVertices = polygon.cols();
+
+        for (unsigned int v = 0; v < numVertices; v++)
+          mesh.Cell2DInsertVertex(f, v, polygon(0, v));
+        for (unsigned int e = 0; e < numVertices; e++)
+          mesh.Cell2DInsertEdge(f, e, polygon(1, e));
+
+        mesh.Cell2DSetState(f, true);
+      }
+    }
+
+    // Create Cell3Ds
+    {
+      const unsigned int& numCell3Ds = cell3Ds.size();
+      mesh.Cell3DsInitialize(numCell3Ds);
+      std::vector<unsigned int> cell3DsNumVertices(numCell3Ds);
+      std::vector<unsigned int> cell3DsNumEdges(numCell3Ds);
+      std::vector<unsigned int> cell3DsNumFaces(numCell3Ds);
+
+      for (unsigned int c = 0; c < numCell3Ds; c++)
+      {
+        cell3DsNumVertices[c] = cell3Ds[c].VerticesIndex.size();
+        cell3DsNumEdges[c] = cell3Ds[c].EdgesIndex.size();
+        cell3DsNumFaces[c] = cell3Ds[c].FacesIndex.size();
+      }
+
+      mesh.Cell3DsInitializeVertices(cell3DsNumVertices);
+      mesh.Cell3DsInitializeEdges(cell3DsNumEdges);
+      mesh.Cell3DsInitializeFaces(cell3DsNumFaces);
+
+      for (unsigned int c = 0; c < numCell3Ds; c++)
+      {
+        const FillMesh3DPolyhedron& polyhedron = cell3Ds[c];
+
+        for (unsigned int v = 0; v < polyhedron.VerticesIndex.size(); v++)
+          mesh.Cell3DInsertVertex(c, v, polyhedron.VerticesIndex.at(v));
+        for (unsigned int e = 0; e < polyhedron.EdgesIndex.size(); e++)
+          mesh.Cell3DInsertEdge(c, e, polyhedron.EdgesIndex.at(e));
+        for (unsigned int f = 0; f < polyhedron.FacesIndex.size(); f++)
+          mesh.Cell3DInsertFace(c, f, polyhedron.FacesIndex.at(f));
+
+        mesh.Cell3DSetState(c, true);
+      }
     }
   }
   // ***************************************************************************
