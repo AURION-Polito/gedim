@@ -613,19 +613,62 @@ namespace GedimUnitTesting
                                    0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6, 3, 4, 5, 7, 0, 1, 2,
                                    3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7, 4, 1, 7, 1, 8, 8, 8).finished();
 
-    vector<Eigen::MatrixXi> triangles(4, Eigen::MatrixXi(2, 3));
+    vector<Eigen::MatrixXi> triangles(18);
     triangles[0] = (Eigen::MatrixXi(2, 3)<<
-                    1,2,4,
-                    0,1,2).finished();
-    triangles[1] = (Eigen::MatrixXi(2, 3)<<
-                    3,0,4,
-                    3,4,5).finished();
-    triangles[2] = (Eigen::MatrixXi(2, 3)<<
-                    4,2,3,
-                    1,6,5).finished();
-    triangles[3] = (Eigen::MatrixXi(2, 3)<<
                     0,1,4,
-                    7,2,4).finished();
+                    1,15,4).finished();
+    triangles[1] = (Eigen::MatrixXi(2, 3)<<
+                    0,4,3,
+                    4,14,0).finished();
+    triangles[2] = (Eigen::MatrixXi(2, 4)<<
+                    0,5,2,3,
+                    9,10,3,0).finished();
+    triangles[3] = (Eigen::MatrixXi(2, 3)<<
+                    0,8,1,
+                    18,19,1).finished();
+    triangles[4] = (Eigen::MatrixXi(2, 4)<<
+                    0,8,2,5,
+                    18,20,10,9).finished();
+    triangles[5] = (Eigen::MatrixXi(2, 4)<<
+                    0,1,7,5,
+                    1,17,16,9).finished();
+    triangles[6] = (Eigen::MatrixXi(2, 3)<<
+                    7,1,2,
+                    17,2,11).finished();
+    triangles[7] = (Eigen::MatrixXi(2, 3)<<
+                    5,7,2,
+                    16,11,10).finished();
+    triangles[8] = (Eigen::MatrixXi(2, 3)<<
+                    2,1,8,
+                    2,19,20).finished();
+    triangles[9] = (Eigen::MatrixXi(2, 3)<<
+                    0,4,5,
+                    4,8,9).finished();
+    triangles[10] = (Eigen::MatrixXi(2, 3)<<
+                     5,4,6,
+                     8,6,12).finished();
+    triangles[11] = (Eigen::MatrixXi(2, 3)<<
+                     5,6,2,
+                     12,5,10).finished();
+    triangles[12] = (Eigen::MatrixXi(2, 3)<<
+                     6,7,5,
+                     13,16,12).finished();
+    triangles[13] = (Eigen::MatrixXi(2, 4)<<
+                     3,4,6,2,
+                     14,6,5,3).finished();
+    triangles[14] = (Eigen::MatrixXi(2, 3)<<
+                     4,7,6,
+                     7,13,6).finished();
+    triangles[15] = (Eigen::MatrixXi(2, 3)<<
+                     6,7,2,
+                     13,11,5).finished();
+
+    triangles[16] = (Eigen::MatrixXi(2, 3)<<
+                     4,1,7,
+                     15,17,7).finished();
+    triangles[17] = (Eigen::MatrixXi(2, 4)<<
+                     4,1,2,6,
+                     15,2,5,6).finished();
 
     vector<Gedim::GeometryUtilities::Polyhedron> polyhedrons;
 

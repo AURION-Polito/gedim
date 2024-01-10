@@ -39,6 +39,35 @@ namespace Gedim
     mesh.Cell1DsInsertExtremes(cell1Ds);
     for (int e = 0; e < cell1Ds.cols(); e++)
       mesh.Cell1DSetState(e, true);
+
+    // Create Cell2Ds
+    const unsigned int& numCell2Ds = cell2Ds.size();
+    mesh.Cell2DsInitialize(numCell2Ds);
+    std::vector<unsigned int> cell2DsNumVertices(numCell2Ds), cell2DsNumEdges(numCell2Ds);
+
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const unsigned int numVertices = cell2Ds[f].cols();
+      cell2DsNumVertices[f] = numVertices;
+      cell2DsNumEdges[f] = numVertices;
+    }
+
+    mesh.Cell2DsInitializeVertices(cell2DsNumVertices);
+    mesh.Cell2DsInitializeEdges(cell2DsNumEdges);
+
+    for (unsigned int f = 0; f < numCell2Ds; f++)
+    {
+      const MatrixXi& polygon = cell2Ds[f];
+      Output::Assert(polygon.rows() == 2);
+      const unsigned int& numVertices = polygon.cols();
+
+      for (unsigned int v = 0; v < numVertices; v++)
+        mesh.Cell2DInsertVertex(f, v, polygon(0, v));
+      for (unsigned int e = 0; e < numVertices; e++)
+        mesh.Cell2DInsertEdge(f, e, polygon(1, e));
+
+      mesh.Cell2DSetState(f, true);
+    }
   }
   // ***************************************************************************
   void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration& configuration,
