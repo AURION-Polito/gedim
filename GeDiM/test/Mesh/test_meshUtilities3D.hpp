@@ -721,6 +721,10 @@ namespace GedimUnitTesting
               meshDao.Cell0DsCoordinates());
     ASSERT_EQ(edges,
               meshDao.Cell1DsExtremes());
+    Gedim::MeshUtilities::CheckMesh3DConfiguration checkConfig;
+    meshUtilities.CheckMesh3D(checkConfig,
+                              geometryUtilities,
+                              meshDao);
   }
 }
 
