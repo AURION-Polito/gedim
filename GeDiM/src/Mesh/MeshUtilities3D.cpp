@@ -11,6 +11,36 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
+  void MeshUtilities::FillMesh3D(const Eigen::MatrixXd& cell0Ds,
+                                 const Eigen::MatrixXi& cell1Ds,
+                                 const std::vector<Eigen::MatrixXi>& cell2Ds,
+                                 const std::vector<Gedim::GeometryUtilities::Polyhedron>& cell3Ds,
+                                 IMeshDAO& mesh) const
+  {
+    mesh.InitializeDimension(3);
+
+    const unsigned int numVertices = cell0Ds.cols();
+    const unsigned int numEdges = cell1Ds.cols();
+    const unsigned int numFaces = cell2Ds.size();
+    const unsigned int numCells = cell3Ds.size();
+
+    // Create Cell0Ds
+    Output::Assert(cell0Ds.rows() == 3);
+    const unsigned int numCell0Ds = cell0Ds.cols();
+    mesh.Cell0DsInitialize(numCell0Ds);
+    mesh.Cell0DsInsertCoordinates(cell0Ds);
+    for (unsigned int v = 0; v < numCell0Ds; v++)
+      mesh.Cell0DSetState(v, true);
+
+    // Create Cell1Ds
+    Output::Assert(cell1Ds.rows() == 2);
+    unsigned int numCell1Ds = cell1Ds.cols();
+    mesh.Cell1DsInitialize(numCell1Ds);
+    mesh.Cell1DsInsertExtremes(cell1Ds);
+    for (int e = 0; e < cell1Ds.cols(); e++)
+      mesh.Cell1DSetState(e, true);
+  }
+  // ***************************************************************************
   void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration& configuration,
                                   const GeometryUtilities& geometryUtilities,
                                   const IMeshDAO& mesh) const

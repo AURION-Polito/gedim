@@ -238,6 +238,12 @@ namespace Gedim
                       const std::vector<Eigen::MatrixXi>& cell2Ds,
                       IMeshDAO& mesh) const;
 
+      void FillMesh3D(const Eigen::MatrixXd& cell0Ds,
+                      const Eigen::MatrixXi& cell1Ds,
+                      const std::vector<Eigen::MatrixXi>& cell2Ds,
+                      const std::vector<Gedim::GeometryUtilities::Polyhedron>& cell3Ds,
+                      IMeshDAO& mesh) const;
+
       /// \brief Compute edges in a Mesh 2D with vertices and polygons
       /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
       /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()xCell2DNumberVertices()

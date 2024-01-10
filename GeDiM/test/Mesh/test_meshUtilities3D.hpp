@@ -586,6 +586,64 @@ namespace GedimUnitTesting
                                   "Mesh_Final");
 
   }
+
+  TEST(TestMeshUtilities, TestFillMesh3D)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh3D";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 8)<<
+                                0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0).finished();
+    vertices.col(4)<< 0.5 * (vertices.col(1) + vertices.col(3));
+    vertices.col(5)<< 0.5 * (vertices.col(0) + vertices.col(2));
+    vertices.col(6)<< 0.5 * (vertices.col(4) + vertices.col(2));
+    vertices.col(7)<< 0.5 * (vertices.col(5) + vertices.col(1));
+
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 14)<<
+                                   0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6,
+                                   3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7).finished();
+
+    vector<Eigen::MatrixXi> triangles(4, Eigen::MatrixXi(2, 3));
+    triangles[0] = (Eigen::MatrixXi(2, 3)<<
+                    1,2,4,
+                    0,1,2).finished();
+    triangles[1] = (Eigen::MatrixXi(2, 3)<<
+                    3,0,4,
+                    3,4,5).finished();
+    triangles[2] = (Eigen::MatrixXi(2, 3)<<
+                    4,2,3,
+                    1,6,5).finished();
+    triangles[3] = (Eigen::MatrixXi(2, 3)<<
+                    0,1,4,
+                    7,2,4).finished();
+
+    vector<Gedim::GeometryUtilities::Polyhedron> polyhedrons;
+
+    meshUtilities.FillMesh3D(vertices,
+                             edges,
+                             triangles,
+                             polyhedrons,
+                             meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    ASSERT_EQ(vertices,
+              meshDao.Cell0DsCoordinates());
+    ASSERT_EQ(edges,
+              meshDao.Cell1DsExtremes());
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H
