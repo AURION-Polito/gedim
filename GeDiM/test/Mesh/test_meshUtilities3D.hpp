@@ -676,7 +676,7 @@ namespace GedimUnitTesting
     const vector<Gedim::MeshUtilities::Mesh3DPolyhedron> polyhedrons =
     {
       {
-        { 0,1,2,8 },
+        { 0,1,2,5,7,8 },
         { 18,19,20,1,2,9,10,11,16,17 },
         { 5,6,7,3,4,8 }
       },
