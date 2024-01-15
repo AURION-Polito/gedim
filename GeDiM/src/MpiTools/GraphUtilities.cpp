@@ -25,6 +25,14 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  std::vector<unsigned int> GraphUtilities::BreadthFirstSearch(const unsigned int& vertex,
+                                                               const std::vector<std::vector<unsigned int>>& graphAdjacency) const
+  {
+    std::vector<unsigned int> visitedVertices;
+
+    return visitedVertices;
+  }
+  // ***************************************************************************
   std::vector<std::vector<unsigned int>> GraphUtilities::ComputeAdjacencyTranspose(const std::vector<std::vector<unsigned int> >& graphAdjacency) const
   {
     const unsigned int& graphNumVertices = graphAdjacency.size();

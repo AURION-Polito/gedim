@@ -50,6 +50,10 @@ namespace Gedim
                             std::vector<bool>& visited,
                             std::list<unsigned int>& visitedVertices) const;
 
+      /// A function to BFS starting from v
+      std::vector<unsigned int> BreadthFirstSearch(const unsigned int& vertex,
+                                                   const std::vector<std::vector<unsigned int>>& graphAdjacency) const;
+
       /// \return the reverse (or transpose) of a graph
       std::vector<std::vector<unsigned int>> ComputeAdjacencyTranspose(const std::vector<std::vector<unsigned int>>& graphAdjacency) const;
   };
