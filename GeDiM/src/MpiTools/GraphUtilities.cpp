@@ -28,7 +28,30 @@ namespace Gedim
   std::vector<unsigned int> GraphUtilities::BreadthFirstSearch(const unsigned int& vertex,
                                                                const std::vector<std::vector<unsigned int>>& graphAdjacency) const
   {
+    unsigned int visitedVertex = vertex;
+    unsigned int numVertexVisited = 0;
     std::vector<unsigned int> visitedVertices;
+    std::vector<bool> markedVertices;
+    std::list <unsigned int> queue;
+
+    markedVertices.resize(graphAdjacency.size(),false);
+
+    markedVertices[visitedVertex] = true;
+    queue.push_back(visitedVertex);
+
+    while(!queue.empty()){
+      visitedVertex = queue.front();
+      numVertexVisited++;
+      visitedVertices.resize(numVertexVisited);
+      visitedVertices[numVertexVisited-1] = visitedVertex;
+      queue.pop_front();
+      for (auto adjacent : graphAdjacency[visitedVertex]) {
+        if (!markedVertices[adjacent]) {
+            markedVertices[adjacent] = true;
+            queue.push_back(adjacent);
+        }
+      }
+    }
 
     return visitedVertices;
   }

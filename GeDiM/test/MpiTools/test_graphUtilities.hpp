@@ -105,23 +105,23 @@ namespace UnitTesting
 
     // Create a graph given in the above diagram
     const unsigned int graph_numVertices = 5;
-    const unsigned int graph_numEdges = 5;
+    const unsigned int graph_numEdges = 7;
     Eigen::MatrixXi graph_connectivity_expected(2, graph_numEdges);
 
-    graph_connectivity_expected.col(0)<< 0, 2;
-    graph_connectivity_expected.col(1)<< 0, 3;
-    graph_connectivity_expected.col(2)<< 1, 0;
-    graph_connectivity_expected.col(3)<< 2, 1;
-    graph_connectivity_expected.col(4)<< 3, 4;
+    graph_connectivity_expected.col(0)<< 0, 1;
+    graph_connectivity_expected.col(1)<< 0, 2;
+    graph_connectivity_expected.col(2)<< 2, 1;
+    graph_connectivity_expected.col(3)<< 1, 3;
+    graph_connectivity_expected.col(4)<< 2, 4;
+    graph_connectivity_expected.col(5)<< 3, 4;
+    graph_connectivity_expected.col(6)<< 4, 0;
 
     const std::vector<std::vector<unsigned int>> graph_adjacency = graphUtilities.GraphConnectivityToGraphAdjacency(graph_numVertices,
                                                                                                                     graph_connectivity_expected);
-
-
     const std::vector<unsigned int> visitedVertices = graphUtilities.BreadthFirstSearch(2,
                                                                                         graph_adjacency);
 
-    ASSERT_EQ(std::vector<unsigned int>({ 1, 2, 3 }),
+    ASSERT_EQ(std::vector<unsigned int>({ 2, 1, 4, 3, 0 }),
               visitedVertices);
   }
   // ***************************************************************************
