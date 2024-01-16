@@ -7,6 +7,7 @@
 #include <numeric>
 
 #include "GeometryUtilities.hpp"
+#include "GraphUtilities.hpp"
 #include "VTKUtilities.hpp"
 
 using namespace testing;
@@ -2150,6 +2151,7 @@ namespace GedimUnitTesting
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::GraphUtilities graphUtilities;
 
     std::string exportFolder = "./Export/TestAlignedPolyhedronEdges";
     Gedim::Output::CreateFolder(exportFolder);
@@ -2217,9 +2219,12 @@ namespace GedimUnitTesting
                                               polyhedron.Edges,
                                               polyhedron.Faces,
                                               exportFolder);
+      const std::vector<std::vector<unsigned int>> edgesAdjacency = graphUtilities.GraphConnectivityToGraphAdjacency(polyhedron.Vertices.cols(),
+                                                                                                                     polyhedron.Edges);
 
       const std::vector<std::vector<unsigned int>> alignedEdges = geometryUtilities.AlignedPolyhedronEdges(polyhedron.Vertices,
-                                                                                                           polyhedron.Edges);
+                                                                                                           polyhedron.Edges,
+                                                                                                           edgesAdjacency);
 
       ASSERT_EQ(7,
                 alignedEdges.size());

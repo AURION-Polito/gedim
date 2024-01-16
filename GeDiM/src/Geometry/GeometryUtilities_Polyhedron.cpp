@@ -1273,9 +1273,11 @@ namespace Gedim
   }
   // ***************************************************************************
   std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
-                                                                                   const Eigen::MatrixXi& polyhedronEdges) const
+                                                                                   const Eigen::MatrixXi& polyhedronEdges,
+                                                                                   const std::vector<std::vector<unsigned int>>& edgesAdjacency) const
   {
-
+    std::vector<std::vector<unsigned int>> result;
+    return result;
   }
   // ***************************************************************************
 }
