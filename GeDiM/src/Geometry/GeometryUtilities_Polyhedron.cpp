@@ -1272,7 +1272,8 @@ namespace Gedim
                                      unalignedVertices.end());
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges() const
+  std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                   const Eigen::MatrixXi& polyhedronEdges) const
   {
 
   }
