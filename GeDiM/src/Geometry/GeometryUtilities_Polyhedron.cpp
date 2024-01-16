@@ -1252,7 +1252,7 @@ namespace Gedim
           if (unalignedVertices.find(polyhedronVertex) ==
               unalignedVertices.end())
             unalignedVertices.insert(polyhedronVertex);
-         }
+        }
       }
       else
       {
@@ -1270,6 +1270,11 @@ namespace Gedim
 
     return std::vector<unsigned int>(unalignedVertices.begin(),
                                      unalignedVertices.end());
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges() const
+  {
+
   }
   // ***************************************************************************
 }

@@ -1792,6 +1792,8 @@ namespace Gedim
                                                           const std::vector<std::vector<unsigned int>>& polyhedronUnaligedFaces,
                                                           const std::vector<std::vector<unsigned int>>& polyhedronFacesUnalignedVertices) const;
 
+      std::vector<std::vector<unsigned int>> AlignedPolyhedronEdges() const;
+
 
       /// \param points the points, size 3 x numPoints
       /// \param filter indices counterclockwise, size numFilterPoints, numFilterPoints <= numPoints

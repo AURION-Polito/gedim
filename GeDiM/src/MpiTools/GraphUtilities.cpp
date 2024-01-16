@@ -1,4 +1,5 @@
 #include "GraphUtilities.hpp"
+#include <queue>
 
 namespace Gedim
 {
@@ -30,30 +31,32 @@ namespace Gedim
   {
     unsigned int visitedVertex = vertex;
     unsigned int numVertexVisited = 0;
-    std::vector<unsigned int> visitedVertices;
-    std::vector<bool> markedVertices;
-    std::list <unsigned int> queue;
-
-    markedVertices.resize(graphAdjacency.size(),false);
+    std::list<unsigned int> visitedVertices;
+    std::vector<bool> markedVertices(graphAdjacency.size(), false);
+    std::queue<unsigned int> queue;
 
     markedVertices[visitedVertex] = true;
-    queue.push_back(visitedVertex);
+    queue.push(visitedVertex);
 
-    while(!queue.empty()){
+    while (!queue.empty())
+    {
       visitedVertex = queue.front();
       numVertexVisited++;
-      visitedVertices.resize(numVertexVisited);
-      visitedVertices[numVertexVisited-1] = visitedVertex;
-      queue.pop_front();
-      for (auto adjacent : graphAdjacency[visitedVertex]) {
-        if (!markedVertices[adjacent]) {
-            markedVertices[adjacent] = true;
-            queue.push_back(adjacent);
+      visitedVertices.push_back(visitedVertex);
+      queue.pop();
+
+      for (const unsigned int adjacent : graphAdjacency[visitedVertex])
+      {
+        if (!markedVertices[adjacent])
+        {
+          markedVertices[adjacent] = true;
+          queue.push(adjacent);
         }
       }
     }
 
-    return visitedVertices;
+    return std::vector<unsigned int>(visitedVertices.begin(),
+                                     visitedVertices.end());
   }
   // ***************************************************************************
   std::vector<std::vector<unsigned int>> GraphUtilities::ComputeAdjacencyTranspose(const std::vector<std::vector<unsigned int> >& graphAdjacency) const
