@@ -2219,6 +2219,10 @@ namespace GedimUnitTesting
                                               polyhedron.Edges,
                                               polyhedron.Faces,
                                               exportFolder);
+
+      const Eigen::MatrixXd edgesTangent = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
+                                                                                    polyhedron.Edges);
+
       const Gedim::GraphUtilities::GraphAdjacencyData edgesAdjacency =
           graphUtilities.GraphConnectivityToGraphAdjacency(polyhedron.Vertices.cols(),
                                                            polyhedron.Edges,
@@ -2227,7 +2231,8 @@ namespace GedimUnitTesting
       const std::vector<std::vector<unsigned int>> alignedEdges = geometryUtilities.AlignedPolyhedronEdges(polyhedron.Vertices,
                                                                                                            polyhedron.Edges,
                                                                                                            edgesAdjacency.GraphAdjacencyVertices,
-                                                                                                           edgesAdjacency.GraphAdjacencyEdges);
+                                                                                                           edgesAdjacency.GraphAdjacencyEdges,
+                                                                                                           edgesTangent);
 
       ASSERT_EQ(7,
                 alignedEdges.size());

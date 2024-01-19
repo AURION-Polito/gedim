@@ -1276,7 +1276,8 @@ namespace Gedim
   std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
                                                                                    const Eigen::MatrixXi& polyhedronEdges,
                                                                                    const std::vector<std::vector<unsigned int>>& verticesAdjacency,
-                                                                                   const std::vector<std::vector<unsigned int>>& edgesAdjacency) const
+                                                                                   const std::vector<std::vector<unsigned int>>& edgesAdjacency,
+                                                                                   const Eigen::MatrixXd& polyhedronEdgeTangents) const
   {
     std::vector<std::vector<unsigned int>> result;
 
@@ -1285,7 +1286,15 @@ namespace Gedim
     for (unsigned int v = 0; v < verticesAdjacency.size(); v++)
       markedSubEdges[v].resize(verticesAdjacency[v].size(), false);
 
-    std::list<std::list<unsigned int>> alignedEdges;
+    struct AlignedEdge
+    {
+        std::unordered_set<unsigned int> Vertices;
+        std::list<unsigned int> OriginalEdges;
+        Eigen::Vector3d LineOrigin;
+        Eigen::Vector3d LineTangent;
+    };
+
+    std::list<AlignedEdge> alignedEdges;
 
     std::queue<unsigned int> queue;
 
@@ -1301,7 +1310,6 @@ namespace Gedim
       if (markedVertices[visitedVertex])
         continue;
 
-      std::cout<< "Visit vertex "<< visitedVertex<< std::endl;
       markedVertices[visitedVertex] = true;
 
       for (unsigned int av = 0; av < verticesAdjacency[visitedVertex].size(); av++)
@@ -1309,14 +1317,68 @@ namespace Gedim
         if (markedSubEdges[visitedVertex][av])
           continue;
 
+        const unsigned int adjacentVertex = verticesAdjacency[visitedVertex][av];
+        const unsigned int adjacentEdge = edgesAdjacency[visitedVertex][av];
+        const unsigned int visitedVertexAdjacentIndex = distance(verticesAdjacency[adjacentVertex].begin(),
+                                                                 find(verticesAdjacency[adjacentVertex].begin(),
+                                                                      verticesAdjacency[adjacentVertex].end(),
+                                                                      visitedVertex));
+
         markedSubEdges[visitedVertex][av] = true;
-        markedSubEdges[av][visitedVertex] = true;
+        markedSubEdges[adjacentVertex][visitedVertexAdjacentIndex] = true;
 
-        const unsigned int adjacent = verticesAdjacency[visitedVertex][av];
-        std::cout<< "Visit edge "<< visitedVertex<< "-"<< adjacent<< std::endl;
+        queue.push(adjacentVertex);
 
-        queue.push(adjacent);
+        AlignedEdge* alignedEdgeFound = nullptr;
+
+        Eigen::MatrixXd edgeCoordinates(3, 2);
+        edgeCoordinates.col(0)<< polyhedronVertices.col(visitedVertex);
+        edgeCoordinates.col(1)<< polyhedronVertices.col(adjacentVertex);
+        for (AlignedEdge& alignedEdge : alignedEdges)
+        {
+          const std::vector<bool> pointsAreOnLine = PointsAreOnLine(edgeCoordinates,
+                                                                    alignedEdge.LineOrigin,
+                                                                    alignedEdge.LineTangent);
+
+          if (!pointsAreOnLine[0] ||
+              !pointsAreOnLine[1])
+            continue;
+
+          alignedEdgeFound = &alignedEdge;
+          break;
+        }
+
+        if (alignedEdgeFound == nullptr)
+        {
+          alignedEdges.push_back(AlignedEdge());
+
+          AlignedEdge& alignedEdge = alignedEdges.back();
+          alignedEdge.LineOrigin = polyhedronVertices.col(visitedVertex);
+          alignedEdge.LineTangent = polyhedronEdgeTangents.col(adjacentEdge);
+          alignedEdge.Vertices.insert(visitedVertex);
+          alignedEdge.Vertices.insert(adjacentVertex);
+          alignedEdge.OriginalEdges.push_back(adjacentEdge);
+        }
+        else
+        {
+          AlignedEdge& alignedEdge = *alignedEdgeFound;
+          if (alignedEdge.Vertices.find(visitedVertex) ==
+              alignedEdge.Vertices.end())
+            alignedEdge.Vertices.insert(visitedVertex);
+
+          if (alignedEdge.Vertices.find(adjacentVertex) ==
+              alignedEdge.Vertices.end())
+            alignedEdge.Vertices.insert(adjacentVertex);
+
+          alignedEdge.OriginalEdges.push_back(adjacentEdge);
+        }
       }
+    }
+
+    for (const AlignedEdge& alignedEdge : alignedEdges)
+    {
+      std::cout<< "Vertices: "<< alignedEdge.Vertices<< std::endl;
+      std::cout<< "OriginalEdges: "<< alignedEdge.OriginalEdges<< std::endl;
     }
 
     return result;
