@@ -30,7 +30,6 @@ namespace Gedim
                                                                const std::vector<std::vector<unsigned int>>& graphAdjacency) const
   {
     unsigned int visitedVertex = vertex;
-    unsigned int numVertexVisited = 0;
     std::list<unsigned int> visitedVertices;
     std::vector<bool> markedVertices(graphAdjacency.size(), false);
     std::queue<unsigned int> queue;
@@ -41,7 +40,6 @@ namespace Gedim
     while (!queue.empty())
     {
       visitedVertex = queue.front();
-      numVertexVisited++;
       visitedVertices.push_back(visitedVertex);
       queue.pop();
 

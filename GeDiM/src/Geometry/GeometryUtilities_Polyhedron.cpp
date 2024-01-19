@@ -3,6 +3,7 @@
 #include "MapTetrahedron.hpp"
 #include "MapTriangle.hpp"
 #include "VTKUtilities.hpp"
+#include <queue>
 
 using namespace std;
 using namespace Eigen;
@@ -1277,6 +1278,33 @@ namespace Gedim
                                                                                    const std::vector<std::vector<unsigned int>>& edgesAdjacency) const
   {
     std::vector<std::vector<unsigned int>> result;
+    std::vector<bool> markedVertices(polyhedronVertices.cols(), false);
+    std::vector<bool> markedSubEdges(polyhedronEdges.cols(), false);
+    std::queue<unsigned int> queue;
+
+    unsigned int visitedVertex = 0;
+    unsigned int visitedSubEdge;
+    markedVertices[visitedVertex] = true;
+    queue.push(visitedVertex);
+
+    while (!queue.empty())
+    {
+      visitedVertex = queue.front();
+     // visitedVertices.push_back(visitedVertex);
+      queue.pop();
+
+      for (const unsigned int adjacent : edgesAdjacency[visitedVertex])
+      {
+        if (!markedSubEdges[polyhedronEdges(1,adjacent)] ||!markedSubEdges[polyhedronEdges(0,adjacent)] )
+        {
+          markedVertices[adjacent] = true;
+          markedSubEdges[polyhedronEdges(1,adjacent)]=true;
+          markedSubEdges[polyhedronEdges(0,adjacent)]=true;
+          queue.push(adjacent);
+        }
+      }
+    }
+
     return result;
   }
   // ***************************************************************************
