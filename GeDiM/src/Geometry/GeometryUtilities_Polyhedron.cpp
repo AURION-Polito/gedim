@@ -4,6 +4,7 @@
 #include "MapTriangle.hpp"
 #include "VTKUtilities.hpp"
 #include <queue>
+#include "CommonUtilities.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -1288,7 +1289,7 @@ namespace Gedim
 
     struct AlignedEdge
     {
-        std::unordered_set<unsigned int> Vertices;
+        std::list<unsigned int> Vertices;
         std::list<unsigned int> OriginalEdges;
         Eigen::Vector3d LineOrigin;
         Eigen::Vector3d LineTangent;
@@ -1355,20 +1356,24 @@ namespace Gedim
           AlignedEdge& alignedEdge = alignedEdges.back();
           alignedEdge.LineOrigin = polyhedronVertices.col(visitedVertex);
           alignedEdge.LineTangent = polyhedronEdgeTangents.col(adjacentEdge);
-          alignedEdge.Vertices.insert(visitedVertex);
-          alignedEdge.Vertices.insert(adjacentVertex);
+          alignedEdge.Vertices.push_back(visitedVertex);
+          alignedEdge.Vertices.push_back(adjacentVertex);
           alignedEdge.OriginalEdges.push_back(adjacentEdge);
         }
         else
         {
           AlignedEdge& alignedEdge = *alignedEdgeFound;
-          if (alignedEdge.Vertices.find(visitedVertex) ==
+          if (find(alignedEdge.Vertices.begin(),
+                   alignedEdge.Vertices.end(),
+                   visitedVertex) ==
               alignedEdge.Vertices.end())
-            alignedEdge.Vertices.insert(visitedVertex);
+            alignedEdge.Vertices.push_back(visitedVertex);
 
-          if (alignedEdge.Vertices.find(adjacentVertex) ==
+          if (find(alignedEdge.Vertices.begin(),
+                   alignedEdge.Vertices.end(),
+                   adjacentVertex) ==
               alignedEdge.Vertices.end())
-            alignedEdge.Vertices.insert(adjacentVertex);
+            alignedEdge.Vertices.push_back(adjacentVertex);
 
           alignedEdge.OriginalEdges.push_back(adjacentEdge);
         }
@@ -1377,7 +1382,20 @@ namespace Gedim
 
     for (const AlignedEdge& alignedEdge : alignedEdges)
     {
+      std::vector<unsigned int> alignedVertices(alignedEdge.Vertices.begin(),
+                                                alignedEdge.Vertices.end());
+      std::vector<double> curvilinearCoordinates(alignedEdge.Vertices.size());
+
+      for (unsigned int v = 0; v < alignedVertices.size(); v++)
+        curvilinearCoordinates[v] = PointLineCurvilinearCoordinate(polyhedronVertices.col(alignedVertices.at(v)),
+                                                                   alignedEdge.LineOrigin,
+                                                                   alignedEdge.LineTangent,
+                                                                   alignedEdge.LineTangent.squaredNorm());
+
+      const std::vector<unsigned int> orderedVerticesIndex = Gedim::Utilities::SortArrayIndices(curvilinearCoordinates);
+
       std::cout<< "Vertices: "<< alignedEdge.Vertices<< std::endl;
+      std::cout<< "Order: "<< orderedVerticesIndex<< std::endl;
       std::cout<< "OriginalEdges: "<< alignedEdge.OriginalEdges<< std::endl;
     }
 
