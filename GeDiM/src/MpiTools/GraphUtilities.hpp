@@ -12,6 +12,13 @@ namespace Gedim
 {
   class GraphUtilities final
   {
+    public:
+      struct GraphAdjacencyData final
+      {
+          std::vector<std::vector<unsigned int>> GraphAdjacencyVertices;
+          std::vector<std::vector<unsigned int>> GraphAdjacencyEdges;
+      };
+
     private:
 
       /// Fills Stack with vertices (in increasing order of finishing
@@ -32,8 +39,9 @@ namespace Gedim
       std::vector<std::vector<unsigned int>> ExtractSubGraph(const std::vector<std::vector<unsigned int>>& graphAdjacency,
                                                              const std::unordered_map<unsigned int, unsigned int>& subGraphFilter) const;
 
-      std::vector<std::vector<unsigned int>> GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
-                                                                               const Eigen::MatrixXi& graphConnectivity) const;
+      GraphAdjacencyData GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
+                                                           const Eigen::MatrixXi& graphConnectivity,
+                                                           const bool& directEdges = true) const;
 
       Eigen::MatrixXi GraphAdjacencyToGraphConnectivity(const unsigned int& graphNumEdges,
                                                         const std::vector<std::vector<unsigned int>>& graphAdjacency) const;

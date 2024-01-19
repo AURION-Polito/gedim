@@ -131,25 +131,61 @@ namespace Gedim
     return subGraph_Adjacency;
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GraphUtilities::GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
-                                                                                           const Eigen::MatrixXi& graphConnectivity) const
+  GraphUtilities::GraphAdjacencyData GraphUtilities::GraphConnectivityToGraphAdjacency(const unsigned int& graphNumVertices,
+                                                                                       const Eigen::MatrixXi& graphConnectivity,
+                                                                                       const bool& directEdges) const
   {
-    std::vector<std::vector<unsigned int>> adjacency(graphNumVertices);
+    struct AdjacencyData
+    {
+        unsigned int VertexIndex;
+        unsigned int EdgeIndex;
+    };
 
-    std::vector<std::list<unsigned int>> adj(graphNumVertices);
+    std::vector<std::list<AdjacencyData>> adj(graphNumVertices);
     for (unsigned int e = 0; e < graphConnectivity.cols(); e++)
-      adj[graphConnectivity(0, e)].push_back(graphConnectivity(1, e));
+    {
+      adj[graphConnectivity(0, e)].push_back(
+            {
+              static_cast<unsigned int>(graphConnectivity(1, e)),
+              e
+            });
+
+      if (!directEdges)
+      {
+        adj[graphConnectivity(1, e)].push_back(
+              {
+                static_cast<unsigned int>(graphConnectivity(0, e)),
+                e
+              });
+      }
+    }
+
+    GraphAdjacencyData result;
+    result.GraphAdjacencyVertices.resize(graphNumVertices);
+    result.GraphAdjacencyEdges.resize(graphNumVertices);
 
     for (unsigned int v = 0; v < graphNumVertices; v++)
-      adjacency[v] = std::vector<unsigned int>(adj[v].begin(),
-                                               adj[v].end());
+    {
+      result.GraphAdjacencyVertices[v].reserve(adj[v].size());
+      result.GraphAdjacencyEdges[v].reserve(adj[v].size());
 
-    return adjacency;
+      for (const AdjacencyData& ad_data : adj[v])
+      {
+        result.GraphAdjacencyVertices[v].push_back(ad_data.VertexIndex);
+        result.GraphAdjacencyEdges[v].push_back(ad_data.EdgeIndex);
+      }
+
+      result.GraphAdjacencyVertices[v].shrink_to_fit();
+      result.GraphAdjacencyEdges[v].shrink_to_fit();
+    }
+
+    return result;
   }
   // ***************************************************************************
   Eigen::MatrixXi GraphUtilities::GraphAdjacencyToGraphConnectivity(const unsigned int& graphNumEdges,
                                                                     const std::vector<std::vector<unsigned int>>& graphAdjacency) const
   {
+
     Eigen::MatrixXi graphConnectivity(2, graphNumEdges);
 
     unsigned int e = 0;

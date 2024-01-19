@@ -2219,12 +2219,15 @@ namespace GedimUnitTesting
                                               polyhedron.Edges,
                                               polyhedron.Faces,
                                               exportFolder);
-      const std::vector<std::vector<unsigned int>> edgesAdjacency = graphUtilities.GraphConnectivityToGraphAdjacency(polyhedron.Vertices.cols(),
-                                                                                                                     polyhedron.Edges);
+      const Gedim::GraphUtilities::GraphAdjacencyData edgesAdjacency =
+          graphUtilities.GraphConnectivityToGraphAdjacency(polyhedron.Vertices.cols(),
+                                                           polyhedron.Edges,
+                                                           false);
 
       const std::vector<std::vector<unsigned int>> alignedEdges = geometryUtilities.AlignedPolyhedronEdges(polyhedron.Vertices,
                                                                                                            polyhedron.Edges,
-                                                                                                           edgesAdjacency);
+                                                                                                           edgesAdjacency.GraphAdjacencyVertices,
+                                                                                                           edgesAdjacency.GraphAdjacencyEdges);
 
       ASSERT_EQ(7,
                 alignedEdges.size());

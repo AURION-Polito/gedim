@@ -1275,33 +1275,47 @@ namespace Gedim
   // ***************************************************************************
   std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
                                                                                    const Eigen::MatrixXi& polyhedronEdges,
+                                                                                   const std::vector<std::vector<unsigned int>>& verticesAdjacency,
                                                                                    const std::vector<std::vector<unsigned int>>& edgesAdjacency) const
   {
     std::vector<std::vector<unsigned int>> result;
+
     std::vector<bool> markedVertices(polyhedronVertices.cols(), false);
-    std::vector<bool> markedSubEdges(polyhedronEdges.cols(), false);
+    std::vector<std::vector<bool>> markedSubEdges(verticesAdjacency.size());
+    for (unsigned int v = 0; v < verticesAdjacency.size(); v++)
+      markedSubEdges[v].resize(verticesAdjacency[v].size(), false);
+
+    std::list<std::list<unsigned int>> alignedEdges;
+
     std::queue<unsigned int> queue;
 
     unsigned int visitedVertex = 0;
-    unsigned int visitedSubEdge;
-    markedVertices[visitedVertex] = true;
+
     queue.push(visitedVertex);
 
     while (!queue.empty())
     {
       visitedVertex = queue.front();
-     // visitedVertices.push_back(visitedVertex);
       queue.pop();
 
-      for (const unsigned int adjacent : edgesAdjacency[visitedVertex])
+      if (markedVertices[visitedVertex])
+        continue;
+
+      std::cout<< "Visit vertex "<< visitedVertex<< std::endl;
+      markedVertices[visitedVertex] = true;
+
+      for (unsigned int av = 0; av < verticesAdjacency[visitedVertex].size(); av++)
       {
-        if (!markedSubEdges[polyhedronEdges(1,adjacent)] ||!markedSubEdges[polyhedronEdges(0,adjacent)] )
-        {
-          markedVertices[adjacent] = true;
-          markedSubEdges[polyhedronEdges(1,adjacent)]=true;
-          markedSubEdges[polyhedronEdges(0,adjacent)]=true;
-          queue.push(adjacent);
-        }
+        if (markedSubEdges[visitedVertex][av])
+          continue;
+
+        markedSubEdges[visitedVertex][av] = true;
+        markedSubEdges[av][visitedVertex] = true;
+
+        const unsigned int adjacent = verticesAdjacency[visitedVertex][av];
+        std::cout<< "Visit edge "<< visitedVertex<< "-"<< adjacent<< std::endl;
+
+        queue.push(adjacent);
       }
     }
 

@@ -1794,6 +1794,7 @@ namespace Gedim
 
       std::vector<std::vector<unsigned int>> AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
                                                                     const Eigen::MatrixXi& polyhedronEdges,
+                                                                    const std::vector<std::vector<unsigned int>>& verticesAdjacency,
                                                                     const std::vector<std::vector<unsigned int>>& edgesAdjacency) const;
 
 
