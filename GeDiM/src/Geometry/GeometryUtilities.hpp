@@ -1802,7 +1802,8 @@ namespace Gedim
                                                           const std::vector<std::vector<unsigned int>>& verticesAdjacency,
                                                           const std::vector<std::vector<unsigned int>>& edgesAdjacency,
                                                           const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyVerticesMap,
-                                                          const Eigen::MatrixXd& polyhedronEdgeTangents) const;
+                                                          const Eigen::MatrixXd& polyhedronEdgeTangents,
+                                                          const Eigen::VectorXd& polyhedronEdgeSquaredLenghts) const;
 
 
       /// \param points the points, size 3 x numPoints

@@ -1278,7 +1278,8 @@ namespace Gedim
                                                                                             const std::vector<std::vector<unsigned int>>& verticesAdjacency,
                                                                                             const std::vector<std::vector<unsigned int>>& edgesAdjacency,
                                                                                             const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyVerticesMap,
-                                                                                            const Eigen::MatrixXd& polyhedronEdgeTangents) const
+                                                                                            const Eigen::MatrixXd& polyhedronEdgeTangents,
+                                                                                            const Eigen::VectorXd& polyhedronEdgeSquaredLenghts) const
   {
     std::vector<bool> markedVertices(polyhedronVertices.cols(), false);
     std::vector<std::vector<bool>> markedSubEdges(verticesAdjacency.size());
@@ -1290,6 +1291,7 @@ namespace Gedim
         std::list<unsigned int> Vertices;
         Eigen::Vector3d LineOrigin;
         Eigen::Vector3d LineTangent;
+        double LineTangentSquaredLength;
     };
 
     std::list<AlignedEdge> alignedEdges;
@@ -1350,6 +1352,7 @@ namespace Gedim
           AlignedEdge& alignedEdge = alignedEdges.back();
           alignedEdge.LineOrigin = polyhedronVertices.col(visitedVertex);
           alignedEdge.LineTangent = polyhedronEdgeTangents.col(adjacentEdge);
+          alignedEdge.LineTangentSquaredLength = polyhedronEdgeSquaredLenghts[adjacentEdge];
           alignedEdge.Vertices.push_back(visitedVertex);
           alignedEdge.Vertices.push_back(adjacentVertex);
         }
@@ -1387,7 +1390,7 @@ namespace Gedim
         curvilinearCoordinates[v] = PointLineCurvilinearCoordinate(polyhedronVertices.col(alignedVertices.at(v)),
                                                                    alignedEdge.LineOrigin,
                                                                    alignedEdge.LineTangent,
-                                                                   alignedEdge.LineTangent.squaredNorm());
+                                                                   alignedEdge.LineTangentSquaredLength);
 
       const std::vector<unsigned int> orderedVerticesIndex = Gedim::Utilities::SortArrayIndices(curvilinearCoordinates);
 
