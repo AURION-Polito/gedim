@@ -1802,7 +1802,6 @@ namespace Gedim
                                                           const std::vector<std::vector<unsigned int>>& verticesAdjacency,
                                                           const std::vector<std::vector<unsigned int>>& edgesAdjacency,
                                                           const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyVerticesMap,
-                                                          const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyEdgesMap,
                                                           const Eigen::MatrixXd& polyhedronEdgeTangents) const;
 
 

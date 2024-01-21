@@ -2232,7 +2232,6 @@ namespace GedimUnitTesting
                                                                                                                            edgesAdjacency.GraphAdjacencyVertices,
                                                                                                                            edgesAdjacency.GraphAdjacencyEdges,
                                                                                                                            edgesAdjacency.GraphAdjacencyVerticesMap,
-                                                                                                                           edgesAdjacency.GraphAdjacencyEdgesMap,
                                                                                                                            edgesTangent);
 
       ASSERT_EQ(7,
