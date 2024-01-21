@@ -162,7 +162,9 @@ namespace Gedim
 
     GraphAdjacencyData result;
     result.GraphAdjacencyVertices.resize(graphNumVertices);
+    result.GraphAdjacencyVerticesMap.resize(graphNumVertices);
     result.GraphAdjacencyEdges.resize(graphNumVertices);
+    result.GraphAdjacencyEdgesMap.resize(graphNumVertices);
 
     for (unsigned int v = 0; v < graphNumVertices; v++)
     {
@@ -171,7 +173,14 @@ namespace Gedim
 
       for (const AdjacencyData& ad_data : adj[v])
       {
+        result.GraphAdjacencyVerticesMap[v].insert(
+              std::make_pair(ad_data.VertexIndex,
+                             result.GraphAdjacencyVertices[v].size()));
         result.GraphAdjacencyVertices[v].push_back(ad_data.VertexIndex);
+
+        result.GraphAdjacencyEdgesMap[v].insert(
+              std::make_pair(ad_data.EdgeIndex,
+                             result.GraphAdjacencyEdges[v].size()));
         result.GraphAdjacencyEdges[v].push_back(ad_data.EdgeIndex);
       }
 

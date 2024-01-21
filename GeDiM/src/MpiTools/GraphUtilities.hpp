@@ -16,7 +16,9 @@ namespace Gedim
       struct GraphAdjacencyData final
       {
           std::vector<std::vector<unsigned int>> GraphAdjacencyVertices;
+          std::vector<std::unordered_map<unsigned int, unsigned int>> GraphAdjacencyVerticesMap;
           std::vector<std::vector<unsigned int>> GraphAdjacencyEdges;
+          std::vector<std::unordered_map<unsigned int, unsigned int>> GraphAdjacencyEdgesMap;
       };
 
     private:

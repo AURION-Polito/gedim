@@ -2228,18 +2228,46 @@ namespace GedimUnitTesting
                                                            polyhedron.Edges,
                                                            false);
 
-      const std::vector<std::vector<unsigned int>> alignedEdges = geometryUtilities.AlignedPolyhedronEdges(polyhedron.Vertices,
-                                                                                                           polyhedron.Edges,
-                                                                                                           edgesAdjacency.GraphAdjacencyVertices,
-                                                                                                           edgesAdjacency.GraphAdjacencyEdges,
-                                                                                                           edgesTangent);
+      const Gedim::GeometryUtilities::AlignedPolyhedronEdgesResult alignedEdges = geometryUtilities.AlignedPolyhedronEdges(polyhedron.Vertices,
+                                                                                                                           edgesAdjacency.GraphAdjacencyVertices,
+                                                                                                                           edgesAdjacency.GraphAdjacencyEdges,
+                                                                                                                           edgesAdjacency.GraphAdjacencyVerticesMap,
+                                                                                                                           edgesAdjacency.GraphAdjacencyEdgesMap,
+                                                                                                                           edgesTangent);
 
       ASSERT_EQ(7,
-                alignedEdges.size());
-      ASSERT_EQ(std::vector<unsigned int>({0, 2, 5, 9}),
-                alignedEdges[0]);
-      ASSERT_EQ(std::vector<unsigned int>({0, 2, 5, 9}),
-                alignedEdges[1]);
+                alignedEdges.AlignedEdgesVertices.size());
+      ASSERT_EQ(7,
+                alignedEdges.AlignedEdgesEdges.size());
+      ASSERT_EQ(std::vector<unsigned int>({0,1,2}),
+                alignedEdges.AlignedEdgesVertices[0]);
+      ASSERT_EQ(std::vector<unsigned int>({0,1}),
+                alignedEdges.AlignedEdgesEdges[0]);
+      ASSERT_EQ(std::vector<unsigned int>({5,6,0}),
+                alignedEdges.AlignedEdgesVertices[1]);
+      ASSERT_EQ(std::vector<unsigned int>({5,6}),
+                alignedEdges.AlignedEdgesEdges[1]);
+      ASSERT_EQ(std::vector<unsigned int>({0,7,9}),
+                alignedEdges.AlignedEdgesVertices[2]);
+      ASSERT_EQ(std::vector<unsigned int>({7,8}),
+                alignedEdges.AlignedEdgesEdges[2]);
+      ASSERT_EQ(std::vector<unsigned int>({7,10}),
+                alignedEdges.AlignedEdgesVertices[3]);
+      ASSERT_EQ(std::vector<unsigned int>({13}),
+                alignedEdges.AlignedEdgesEdges[3]);
+      ASSERT_EQ(std::vector<unsigned int>({2,3,4,5}),
+                alignedEdges.AlignedEdgesVertices[4]);
+      ASSERT_EQ(std::vector<unsigned int>({2,3,4}),
+                alignedEdges.AlignedEdgesEdges[4]);
+      ASSERT_EQ(std::vector<unsigned int>({2,8,9}),
+                alignedEdges.AlignedEdgesVertices[5]);
+      ASSERT_EQ(std::vector<unsigned int>({10,9}),
+                alignedEdges.AlignedEdgesEdges[5]);
+      ASSERT_EQ(std::vector<unsigned int>({5,10,9}),
+                alignedEdges.AlignedEdgesVertices[6]);
+      ASSERT_EQ(std::vector<unsigned int>({11,12}),
+                alignedEdges.AlignedEdgesEdges[6]);
+
     }
   }
 

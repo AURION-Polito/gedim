@@ -665,6 +665,12 @@ namespace Gedim
           Types Type = Types::Unknown; /// type of split
       };
 
+      struct AlignedPolyhedronEdgesResult
+      {
+          std::vector<std::vector<unsigned int>> AlignedEdgesVertices;
+          std::vector<std::vector<unsigned int>> AlignedEdgesEdges;
+      };
+
     public:
       GeometryUtilities(const GeometryUtilitiesConfig& configuration);
       ~GeometryUtilities();
@@ -1792,11 +1798,12 @@ namespace Gedim
                                                           const std::vector<std::vector<unsigned int>>& polyhedronUnaligedFaces,
                                                           const std::vector<std::vector<unsigned int>>& polyhedronFacesUnalignedVertices) const;
 
-      std::vector<std::vector<unsigned int>> AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
-                                                                    const Eigen::MatrixXi& polyhedronEdges,
-                                                                    const std::vector<std::vector<unsigned int>>& verticesAdjacency,
-                                                                    const std::vector<std::vector<unsigned int>>& edgesAdjacency,
-                                                                    const Eigen::MatrixXd& polyhedronEdgeTangents) const;
+      AlignedPolyhedronEdgesResult AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
+                                                          const std::vector<std::vector<unsigned int>>& verticesAdjacency,
+                                                          const std::vector<std::vector<unsigned int>>& edgesAdjacency,
+                                                          const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyVerticesMap,
+                                                          const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyEdgesMap,
+                                                          const Eigen::MatrixXd& polyhedronEdgeTangents) const;
 
 
       /// \param points the points, size 3 x numPoints

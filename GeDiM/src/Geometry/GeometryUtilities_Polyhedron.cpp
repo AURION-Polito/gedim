@@ -1274,14 +1274,13 @@ namespace Gedim
                                      unalignedVertices.end());
   }
   // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
-                                                                                   const Eigen::MatrixXi& polyhedronEdges,
-                                                                                   const std::vector<std::vector<unsigned int>>& verticesAdjacency,
-                                                                                   const std::vector<std::vector<unsigned int>>& edgesAdjacency,
-                                                                                   const Eigen::MatrixXd& polyhedronEdgeTangents) const
+  GeometryUtilities::AlignedPolyhedronEdgesResult GeometryUtilities::AlignedPolyhedronEdges(const Eigen::MatrixXd& polyhedronVertices,
+                                                                                            const std::vector<std::vector<unsigned int>>& verticesAdjacency,
+                                                                                            const std::vector<std::vector<unsigned int>>& edgesAdjacency,
+                                                                                            const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyVerticesMap,
+                                                                                            const std::vector<std::unordered_map<unsigned int, unsigned int>>& adjacencyEdgesMap,
+                                                                                            const Eigen::MatrixXd& polyhedronEdgeTangents) const
   {
-    std::vector<std::vector<unsigned int>> result;
-
     std::vector<bool> markedVertices(polyhedronVertices.cols(), false);
     std::vector<std::vector<bool>> markedSubEdges(verticesAdjacency.size());
     for (unsigned int v = 0; v < verticesAdjacency.size(); v++)
@@ -1290,7 +1289,6 @@ namespace Gedim
     struct AlignedEdge
     {
         std::list<unsigned int> Vertices;
-        std::list<unsigned int> OriginalEdges;
         Eigen::Vector3d LineOrigin;
         Eigen::Vector3d LineTangent;
     };
@@ -1320,10 +1318,7 @@ namespace Gedim
 
         const unsigned int adjacentVertex = verticesAdjacency[visitedVertex][av];
         const unsigned int adjacentEdge = edgesAdjacency[visitedVertex][av];
-        const unsigned int visitedVertexAdjacentIndex = distance(verticesAdjacency[adjacentVertex].begin(),
-                                                                 find(verticesAdjacency[adjacentVertex].begin(),
-                                                                      verticesAdjacency[adjacentVertex].end(),
-                                                                      visitedVertex));
+        const unsigned int visitedVertexAdjacentIndex = adjacencyVerticesMap[adjacentVertex].find(visitedVertex)->second;
 
         markedSubEdges[visitedVertex][av] = true;
         markedSubEdges[adjacentVertex][visitedVertexAdjacentIndex] = true;
@@ -1358,7 +1353,6 @@ namespace Gedim
           alignedEdge.LineTangent = polyhedronEdgeTangents.col(adjacentEdge);
           alignedEdge.Vertices.push_back(visitedVertex);
           alignedEdge.Vertices.push_back(adjacentVertex);
-          alignedEdge.OriginalEdges.push_back(adjacentEdge);
         }
         else
         {
@@ -1374,12 +1368,16 @@ namespace Gedim
                    adjacentVertex) ==
               alignedEdge.Vertices.end())
             alignedEdge.Vertices.push_back(adjacentVertex);
-
-          alignedEdge.OriginalEdges.push_back(adjacentEdge);
         }
       }
     }
 
+    GeometryUtilities::AlignedPolyhedronEdgesResult result;
+
+    result.AlignedEdgesVertices.resize(alignedEdges.size());
+    result.AlignedEdgesEdges.resize(alignedEdges.size());
+
+    unsigned int alignedEdgeIndex = 0;
     for (const AlignedEdge& alignedEdge : alignedEdges)
     {
       std::vector<unsigned int> alignedVertices(alignedEdge.Vertices.begin(),
@@ -1394,9 +1392,24 @@ namespace Gedim
 
       const std::vector<unsigned int> orderedVerticesIndex = Gedim::Utilities::SortArrayIndices(curvilinearCoordinates);
 
-      std::cout<< "Vertices: "<< alignedEdge.Vertices<< std::endl;
-      std::cout<< "Order: "<< orderedVerticesIndex<< std::endl;
-      std::cout<< "OriginalEdges: "<< alignedEdge.OriginalEdges<< std::endl;
+      result.AlignedEdgesVertices[alignedEdgeIndex].resize(alignedVertices.size());
+      result.AlignedEdgesEdges[alignedEdgeIndex].resize(alignedVertices.size() - 1);
+
+      for (unsigned int ov = 0; ov < orderedVerticesIndex.size() - 1; ov++)
+      {
+        result.AlignedEdgesVertices[alignedEdgeIndex][ov] = orderedVerticesIndex.at(ov);
+
+        const unsigned int edgeOrigin = alignedVertices.at(orderedVerticesIndex.at(ov));
+        const unsigned int edgeEnd = alignedVertices.at(orderedVerticesIndex.at(ov + 1));
+
+        const unsigned int edgePosition = adjacencyVerticesMap[edgeOrigin].find(edgeEnd)->second;
+        const unsigned int edgeIndex = edgesAdjacency[edgeOrigin][edgePosition];
+        result.AlignedEdgesEdges[alignedEdgeIndex][ov] = edgeIndex;
+      }
+      result.AlignedEdgesVertices[alignedEdgeIndex][orderedVerticesIndex.size() - 1] = orderedVerticesIndex.at(orderedVerticesIndex.size() - 1);
+
+
+      alignedEdgeIndex++;
     }
 
     return result;
