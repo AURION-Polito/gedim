@@ -1397,7 +1397,7 @@ namespace Gedim
 
       for (unsigned int ov = 0; ov < orderedVerticesIndex.size() - 1; ov++)
       {
-        result.AlignedEdgesVertices[alignedEdgeIndex][ov] = orderedVerticesIndex.at(ov);
+        result.AlignedEdgesVertices[alignedEdgeIndex][ov] = alignedVertices.at(orderedVerticesIndex.at(ov));
 
         const unsigned int edgeOrigin = alignedVertices.at(orderedVerticesIndex.at(ov));
         const unsigned int edgeEnd = alignedVertices.at(orderedVerticesIndex.at(ov + 1));
@@ -1406,7 +1406,7 @@ namespace Gedim
         const unsigned int edgeIndex = edgesAdjacency[edgeOrigin][edgePosition];
         result.AlignedEdgesEdges[alignedEdgeIndex][ov] = edgeIndex;
       }
-      result.AlignedEdgesVertices[alignedEdgeIndex][orderedVerticesIndex.size() - 1] = orderedVerticesIndex.at(orderedVerticesIndex.size() - 1);
+      result.AlignedEdgesVertices[alignedEdgeIndex][orderedVerticesIndex.size() - 1] = alignedVertices.at(orderedVerticesIndex.at(orderedVerticesIndex.size() - 1));
 
 
       alignedEdgeIndex++;
