@@ -1466,6 +1466,9 @@ namespace Gedim
     std::vector<std::list<unsigned int>> cell1DsNeighbours(mesh.Cell1DTotalNumber());
     for (unsigned int c3D = 0; c3D < mesh.Cell3DTotalNumber(); c3D++)
     {
+      if (!mesh.Cell3DIsActive(c3D))
+        continue;
+
       const unsigned int numCell3DEdges = mesh.Cell3DNumberEdges(c3D);
       for (unsigned int e = 0; e < numCell3DEdges; e++)
       {
@@ -1495,6 +1498,9 @@ namespace Gedim
     std::vector<std::list<unsigned int>> cell2DsNeighbours(mesh.Cell2DTotalNumber());
     for (unsigned int c3D = 0; c3D < mesh.Cell3DTotalNumber(); c3D++)
     {
+      if (!mesh.Cell3DIsActive(c3D))
+        continue;
+
       const unsigned int numCell3DFaces = mesh.Cell3DNumberFaces(c3D);
       for (unsigned int f = 0; f < numCell3DFaces; f++)
       {

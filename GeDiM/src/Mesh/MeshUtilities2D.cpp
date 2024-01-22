@@ -868,6 +868,9 @@ namespace Gedim
     // Compute Cell1D neighbours starting from cell2Ds
     for (unsigned int c2D = 0; c2D < mesh.Cell2DTotalNumber(); c2D++)
     {
+      if (!mesh.Cell2DIsActive(c2D))
+        continue;
+
       const unsigned int numCell2DEdges = mesh.Cell2DNumberEdges(c2D);
       for (unsigned int e = 0; e < numCell2DEdges; e++)
       {
