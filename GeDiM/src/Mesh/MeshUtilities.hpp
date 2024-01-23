@@ -284,7 +284,8 @@ namespace Gedim
       /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size Cell2DTotalNumber()xCell2DNumberVertices()
       /// \return the Cell1Ds data
       ComputeMesh3DAlignedCell1DsResult ComputeMesh3DAlignedCell1Ds(const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesVertices,
-                                                                    const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesEdges) const;
+                                                                    const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesEdges,
+                                                                    const IMeshDAO& mesh) const;
 
 
       /// \brief Check MeshGeometricData3D correctness

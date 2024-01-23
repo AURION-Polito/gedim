@@ -898,7 +898,18 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities::ComputeMesh3DAlignedCell1DsResult result =
         meshUtilities.ComputeMesh3DAlignedCell1Ds(cell3DsAlignedEdgesVertices,
-                                                  cell3DsAlignedEdgesEdges);
+                                                  cell3DsAlignedEdgesEdges,
+                                                  mesh);
+
+    ASSERT_EQ(
+          std::vector<std::vector<unsigned int>>({{0,8}, {0,1}, {0,5,2}, {1,8}, {2,8}, {1,2}, {1,7,5}, {2,7}, {0,3}, {0,4}, {2,3}, {3,4}, {2,6,4}, {4,5}, {5,6}, {0,5}, {1,4}, {4,7}, {4,6}, {6,7}, {5,7}, {2,6}, {2,5}, {1,7}}),
+          result.AlignedCell1DsCell0Ds);
+    ASSERT_EQ(
+          std::vector<std::vector<unsigned int>>({{18}, {1}, {9,10}, {19}, {20}, {2}, {17,16}, {11}, {0}, {4}, {3}, {14}, {5,6}, {8}, {12}, {9}, {15}, {7}, {6}, {13}, {16}, {5}, {10}, {17}}),
+          result.AlignedCell1DsCell1Ds);
+    ASSERT_EQ(
+          std::vector<std::vector<unsigned int>>({{0,1,2,3,4,5,6,7}, {8,9,2,10,11,12,13,14}, {1,9,15,16,6,17,13}, {18,17,13,14,19,20}, {21,22,7,14,19,20}, {5,16,23,12,7,17,19}}),
+          result.Cell3DsAlignedCell1DsIndex);
 
   }
 }

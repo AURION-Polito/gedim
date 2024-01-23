@@ -527,9 +527,98 @@ namespace Gedim
   }
   // ***************************************************************************
   MeshUtilities::ComputeMesh3DAlignedCell1DsResult MeshUtilities::ComputeMesh3DAlignedCell1Ds(const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesVertices,
-                                                                                              const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesEdges) const
+                                                                                              const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesEdges,
+                                                                                              const IMeshDAO& mesh) const
   {
     ComputeMesh3DAlignedCell1DsResult result;
+
+    struct AlignedCell1D final
+    {
+        unsigned int Index;
+        std::vector<unsigned int> Cell0Ds;
+        std::vector<unsigned int> Cell1Ds;
+    };
+
+    unsigned int alignedCell1DIndex = 0;
+    std::vector<std::unordered_map<unsigned int, AlignedCell1D>> alignedCell1DsByOrigin(mesh.Cell0DTotalNumber());
+    result.Cell3DsAlignedCell1DsIndex.resize(mesh.Cell3DTotalNumber());
+
+    for (unsigned int cell3DIndex = 0; cell3DIndex < mesh.Cell3DTotalNumber(); cell3DIndex++)
+    {
+      if (!mesh.Cell3DIsActive(cell3DIndex))
+        continue;
+
+      const std::vector<std::vector<unsigned int>>& cell3DAlignedEdgesVertices = cell3DsAlignedEdgesVertices.at(cell3DIndex);
+      const std::vector<std::vector<unsigned int>>& cell3DAlignedEdgesEdges = cell3DsAlignedEdgesEdges.at(cell3DIndex);
+      result.Cell3DsAlignedCell1DsIndex[cell3DIndex].resize(cell3DAlignedEdgesVertices.size());
+
+      for (unsigned int ae = 0; ae < cell3DAlignedEdgesVertices.size(); ae++)
+      {
+        const std::vector<unsigned int>& cell3DAlignedEdgeVertices = cell3DAlignedEdgesVertices.at(ae);
+        const std::vector<unsigned int>& cell3DAlignedEdgeEdges = cell3DAlignedEdgesEdges.at(ae);
+
+        const unsigned int alignedEdgeNumVertices = cell3DAlignedEdgeVertices.size();
+        const bool direction = cell3DAlignedEdgeVertices.at(0) <
+                               cell3DAlignedEdgeVertices.at(alignedEdgeNumVertices - 1);
+
+        const unsigned int alignedEdgeOrigin = direction ?
+                                                 cell3DAlignedEdgeVertices.at(0) :
+                                                 cell3DAlignedEdgeVertices.at(alignedEdgeNumVertices - 1);
+        const unsigned int alignedEdgeEnd = direction ?
+                                              cell3DAlignedEdgeVertices.at(alignedEdgeNumVertices - 1) :
+                                              cell3DAlignedEdgeVertices.at(0);
+        const unsigned int cell0DOrigin = mesh.Cell3DVertex(cell3DIndex,
+                                                            alignedEdgeOrigin);
+        const unsigned int cell0DEnd = mesh.Cell3DVertex(cell3DIndex,
+                                                         alignedEdgeEnd);
+
+        const auto alignedEdge = alignedCell1DsByOrigin[cell0DOrigin].find(cell0DEnd);
+        if (alignedEdge ==
+            alignedCell1DsByOrigin[cell0DOrigin].end())
+        {
+          std::vector<unsigned int> alignedCell1D_Cell0Ds(alignedEdgeNumVertices);
+          std::vector<unsigned int> alignedCell1D_Cell1Ds(alignedEdgeNumVertices - 1);
+
+          for (unsigned int ae_v = 0; ae_v < alignedEdgeNumVertices - 1; ae_v++)
+          {
+            const unsigned int direction_vertex_index = direction ? ae_v :
+                                                                    (alignedEdgeNumVertices - 1) - ae_v;
+            const unsigned int direction_edge_index = direction ? ae_v :
+                                                                  (alignedEdgeNumVertices - 2) - ae_v;
+
+            alignedCell1D_Cell0Ds[ae_v] =  mesh.Cell3DVertex(cell3DIndex,
+                                                             cell3DAlignedEdgeVertices.at(direction_vertex_index));
+            alignedCell1D_Cell1Ds[ae_v] =  mesh.Cell3DEdge(cell3DIndex,
+                                                           cell3DAlignedEdgeEdges.at(direction_edge_index));
+          }
+          alignedCell1D_Cell0Ds[alignedEdgeNumVertices - 1] = cell0DEnd;
+
+          result.Cell3DsAlignedCell1DsIndex[cell3DIndex][ae] = alignedCell1DIndex;
+          alignedCell1DsByOrigin[cell0DOrigin].insert(std::pair<unsigned int,
+                                                      AlignedCell1D>(
+                                                        cell0DEnd,
+                                                        {
+                                                          alignedCell1DIndex++,
+                                                          alignedCell1D_Cell0Ds,
+                                                          alignedCell1D_Cell1Ds
+                                                        }));
+        }
+        else
+          result.Cell3DsAlignedCell1DsIndex[cell3DIndex][ae] = alignedEdge->second.Index;
+      }
+    }
+
+    result.AlignedCell1DsCell0Ds.resize(alignedCell1DIndex);
+    result.AlignedCell1DsCell1Ds.resize(alignedCell1DIndex);
+
+    for (unsigned int cell0DIndex = 0; cell0DIndex < mesh.Cell0DTotalNumber(); cell0DIndex++)
+    {
+      for (const auto& alignedEdge : alignedCell1DsByOrigin[cell0DIndex])
+      {
+        result.AlignedCell1DsCell0Ds[alignedEdge.second.Index] = alignedEdge.second.Cell0Ds;
+        result.AlignedCell1DsCell1Ds[alignedEdge.second.Index] = alignedEdge.second.Cell1Ds;
+      }
+    }
 
     return result;
   }
