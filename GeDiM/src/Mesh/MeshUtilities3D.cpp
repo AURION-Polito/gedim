@@ -608,15 +608,17 @@ namespace Gedim
       }
     }
 
-    result.AlignedCell1DsCell0Ds.resize(alignedCell1DIndex);
-    result.AlignedCell1DsCell1Ds.resize(alignedCell1DIndex);
+    result.AlignedCell1Ds.resize(2, alignedCell1DIndex);
+    result.AlignedCell1Ds_SubCell0Ds.resize(alignedCell1DIndex);
+    result.AlignedCell1Ds_SubCell1Ds.resize(alignedCell1DIndex);
 
     for (unsigned int cell0DIndex = 0; cell0DIndex < mesh.Cell0DTotalNumber(); cell0DIndex++)
     {
       for (const auto& alignedEdge : alignedCell1DsByOrigin[cell0DIndex])
       {
-        result.AlignedCell1DsCell0Ds[alignedEdge.second.Index] = alignedEdge.second.Cell0Ds;
-        result.AlignedCell1DsCell1Ds[alignedEdge.second.Index] = alignedEdge.second.Cell1Ds;
+        result.AlignedCell1Ds_SubCell0Ds[alignedEdge.second.Index] = alignedEdge.second.Cell0Ds;
+        result.AlignedCell1Ds_SubCell1Ds[alignedEdge.second.Index] = alignedEdge.second.Cell1Ds;
+        result.AlignedCell1Ds.col(alignedEdge.second.Index)<< alignedEdge.second.Cell0Ds.at(0), alignedEdge.second.Cell0Ds.at(alignedEdge.second.Cell0Ds.size() - 1);
       }
     }
 

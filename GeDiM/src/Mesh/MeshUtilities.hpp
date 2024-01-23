@@ -92,9 +92,10 @@ namespace Gedim
 
       struct ComputeMesh3DAlignedCell1DsResult final
       {
+          Eigen::MatrixXi AlignedCell1Ds;
           std::vector<std::vector<unsigned int>> Cell3DsAlignedCell1DsIndex;
-          std::vector<std::vector<unsigned int>> AlignedCell1DsCell0Ds;
-          std::vector<std::vector<unsigned int>> AlignedCell1DsCell1Ds;
+          std::vector<std::vector<unsigned int>> AlignedCell1Ds_SubCell0Ds;
+          std::vector<std::vector<unsigned int>> AlignedCell1Ds_SubCell1Ds;
       };
 
       struct MeshGeometricData1D final
