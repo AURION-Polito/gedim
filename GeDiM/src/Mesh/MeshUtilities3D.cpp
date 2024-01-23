@@ -526,6 +526,14 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  MeshUtilities::ComputeMesh3DAlignedCell1DsResult MeshUtilities::ComputeMesh3DAlignedCell1Ds(const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesVertices,
+                                                                                              const std::vector<std::vector<std::vector<unsigned int>>>& cell3DsAlignedEdgesEdges) const
+  {
+    ComputeMesh3DAlignedCell1DsResult result;
+
+    return result;
+  }
+  // ***************************************************************************
   void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfiguration& configuration,
                                                const GeometryUtilities& geometryUtilities,
                                                const IMeshDAO& mesh,

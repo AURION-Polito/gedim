@@ -5,6 +5,7 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
+#include "GraphUtilities.hpp"
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
@@ -725,6 +726,180 @@ namespace GedimUnitTesting
     meshUtilities.CheckMesh3D(checkConfig,
                               geometryUtilities,
                               meshDao);
+  }
+
+  TEST(TestMeshUtilities, TestComputeMesh3DAlignedCell1Ds)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestComputeMesh3DAlignedCell1Ds";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+    Gedim::GraphUtilities graphUtilities;
+
+    Gedim::MeshMatrices meshData;
+    Gedim::MeshMatricesDAO mesh(meshData);
+
+    Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 9)<<
+                                0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0).finished();
+    vertices.col(4)<< 0.5 * (vertices.col(1) + vertices.col(3));
+    vertices.col(5)<< 0.5 * (vertices.col(0) + vertices.col(2));
+    vertices.col(6)<< 0.5 * (vertices.col(4) + vertices.col(2));
+    vertices.col(7)<< 0.5 * (vertices.col(5) + vertices.col(1));
+
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 21)<<
+                                   0, 0, 1, 2, 0, 2, 4, 4, 4, 0, 2, 2, 6, 6, 3, 4, 5, 7, 0, 1, 2,
+                                   3, 1, 2, 3, 4, 6, 6, 7, 5, 5, 5, 7, 5, 7, 4, 1, 7, 1, 8, 8, 8).finished();
+
+    vector<Eigen::MatrixXi> triangles(19);
+    triangles[0] = (Eigen::MatrixXi(2, 3)<<
+                    0,1,4,
+                    1,15,4).finished();
+    triangles[1] = (Eigen::MatrixXi(2, 3)<<
+                    0,4,3,
+                    4,14,0).finished();
+    triangles[2] = (Eigen::MatrixXi(2, 4)<<
+                    0,5,2,3,
+                    9,10,3,0).finished();
+    triangles[3] = (Eigen::MatrixXi(2, 3)<<
+                    0,8,1,
+                    18,19,1).finished();
+    triangles[4] = (Eigen::MatrixXi(2, 4)<<
+                    0,8,2,5,
+                    18,20,10,9).finished();
+    triangles[5] = (Eigen::MatrixXi(2, 4)<<
+                    0,1,7,5,
+                    1,17,16,9).finished();
+    triangles[6] = (Eigen::MatrixXi(2, 3)<<
+                    7,1,2,
+                    17,2,11).finished();
+    triangles[7] = (Eigen::MatrixXi(2, 3)<<
+                    5,7,2,
+                    16,11,10).finished();
+    triangles[8] = (Eigen::MatrixXi(2, 3)<<
+                    2,1,8,
+                    2,19,20).finished();
+    triangles[9] = (Eigen::MatrixXi(2, 3)<<
+                    0,4,5,
+                    4,8,9).finished();
+    triangles[10] = (Eigen::MatrixXi(2, 3)<<
+                     5,4,6,
+                     8,6,12).finished();
+    triangles[11] = (Eigen::MatrixXi(2, 3)<<
+                     5,6,2,
+                     12,5,10).finished();
+    triangles[12] = (Eigen::MatrixXi(2, 3)<<
+                     6,7,5,
+                     13,16,12).finished();
+    triangles[13] = (Eigen::MatrixXi(2, 4)<<
+                     3,4,6,2,
+                     14,6,5,3).finished();
+    triangles[14] = (Eigen::MatrixXi(2, 3)<<
+                     4,7,6,
+                     7,13,6).finished();
+    triangles[15] = (Eigen::MatrixXi(2, 3)<<
+                     6,7,2,
+                     13,11,5).finished();
+
+    triangles[16] = (Eigen::MatrixXi(2, 3)<<
+                     4,1,7,
+                     15,17,7).finished();
+    triangles[17] = (Eigen::MatrixXi(2, 4)<<
+                     4,1,2,6,
+                     15,2,5,6).finished();
+    triangles[18] = (Eigen::MatrixXi(2, 3)<<
+                     4,7,5,
+                     7,16,8).finished();
+
+    const vector<Gedim::MeshUtilities::Mesh3DPolyhedron> polyhedrons =
+    {
+      {
+        { 0,1,2,5,7,8 },
+        { 18,19,20,1,2,9,10,11,16,17 },
+        { 5,6,7,3,4,8 }
+      },
+      {
+        { 0,2,3,4,5,6 },
+        { 0,3,14,4,9,10,5,6,8,12 },
+        { 1,2,9,10,11,13 }
+      },
+      {
+        { 0,1,4,5,7 },
+        { 1,4,15,9,16,17,7,8 },
+        { 0,5,9,16,18 }
+      },
+      {
+        { 4,5,6,7 },
+        { 6,7,8,12,13,16 },
+        { 10,12,14,18 }
+      },
+      {
+        { 2,5,6,7 },
+        { 5,10,11,12,13,16 },
+        { 7,11,12,15 }
+      },
+      {
+        { 1,2,4,6,7 },
+        { 2,5,6,7,11,13,15,17 },
+        { 17,6,14,15,16 }
+      }
+    };
+
+    const std::vector<unsigned int> cell2DsAligned =
+    { 0,1,2,3,4,5,5,5,8,9,9,9,12,13,14,14,16,17,18 };
+
+    meshUtilities.FillMesh3D(vertices,
+                             edges,
+                             triangles,
+                             polyhedrons,
+                             mesh);
+
+    meshUtilities.ExportMeshToVTU(mesh,
+                                  exportFolder,
+                                  "Mesh");
+
+    const Gedim::MeshUtilities::MeshGeometricData3D meshGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                              mesh);
+
+
+    std::vector<std::vector<std::vector<unsigned int>>> cell3DsAlignedEdgesVertices(mesh.Cell3DTotalNumber());
+    std::vector<std::vector<std::vector<unsigned int>>> cell3DsAlignedEdgesEdges(mesh.Cell3DTotalNumber());
+    std::vector<Eigen::VectorXd> cell3DsAlignedEdgesLenght(mesh.Cell3DTotalNumber());
+
+    for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
+    {
+      if (!mesh.Cell3DIsActive(c))
+        continue;
+
+      const Eigen::MatrixXd& cell3DVertices = meshGeometricData.Cell3DsVertices.at(c);
+      const Eigen::MatrixXi& cell3DEdges = meshGeometricData.Cell3DsEdges.at(c);
+      const std::vector<Eigen::MatrixXi>& cell3DFaces = meshGeometricData.Cell3DsFaces.at(c);
+
+      const Gedim::GraphUtilities::GraphAdjacencyData cell3DAdjacency = graphUtilities.GraphConnectivityToGraphAdjacency(cell3DVertices.cols(),
+                                                                                                                         cell3DEdges,
+                                                                                                                         false);
+
+      const Gedim::GeometryUtilities::AlignedPolyhedronEdgesResult alignedEdges = geometryUtilities.AlignedPolyhedronEdges(cell3DVertices,
+                                                                                                                           cell3DAdjacency.GraphAdjacencyVertices,
+                                                                                                                           cell3DAdjacency.GraphAdjacencyEdges,
+                                                                                                                           cell3DAdjacency.GraphAdjacencyVerticesMap,
+                                                                                                                           meshGeometricData.Cell3DsEdgeTangents.at(c),
+                                                                                                                           meshGeometricData.Cell3DsEdgeLengths.at(c).array().square());
+
+      cell3DsAlignedEdgesVertices[c] = alignedEdges.AlignedEdgesVertices;
+      cell3DsAlignedEdgesEdges[c] = alignedEdges.AlignedEdgesEdges;
+    }
+
+    Gedim::MeshUtilities::ComputeMesh3DAlignedCell1DsResult result =
+        meshUtilities.ComputeMesh3DAlignedCell1Ds(cell3DsAlignedEdgesVertices,
+                                                  cell3DsAlignedEdgesEdges);
+
   }
 }
 
