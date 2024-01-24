@@ -561,8 +561,10 @@ namespace Gedim
         const std::vector<unsigned int>& cell3DAlignedEdgeEdges = cell3DAlignedEdgesEdges.at(ae);
 
         const unsigned int alignedEdgeNumVertices = cell3DAlignedEdgeVertices.size();
-        const bool direction = cell3DAlignedEdgeVertices.at(0) <
-                               cell3DAlignedEdgeVertices.at(alignedEdgeNumVertices - 1);
+        const bool direction = mesh.Cell3DVertex(cell3DIndex,
+                                                 cell3DAlignedEdgeVertices.at(0)) <
+                               mesh.Cell3DVertex(cell3DIndex,
+                                                 cell3DAlignedEdgeVertices.at(alignedEdgeNumVertices - 1));
 
         const unsigned int alignedEdgeOrigin = direction ?
                                                  cell3DAlignedEdgeVertices.at(0) :
@@ -627,7 +629,7 @@ namespace Gedim
       result.Cell0DsAlignedCell1DsIndex[c0D].resize(2, cell0DsAlignedCell1DsIndex[c0D].size());
       unsigned int col = 0;
       for (const auto& pair : cell0DsAlignedCell1DsIndex[c0D])
-           result.Cell0DsAlignedCell1DsIndex[c0D].col(col++)<< pair.first, pair.second;
+        result.Cell0DsAlignedCell1DsIndex[c0D].col(col++)<< pair.first, pair.second;
     }
 
     result.Cell1DsAlignedCell1DsIndex.resize(mesh.Cell1DTotalNumber());
@@ -636,7 +638,7 @@ namespace Gedim
       result.Cell1DsAlignedCell1DsIndex[c1D].resize(2, cell1DsAlignedCell1DsIndex[c1D].size());
       unsigned int col = 0;
       for (const auto& pair : cell1DsAlignedCell1DsIndex[c1D])
-           result.Cell1DsAlignedCell1DsIndex[c1D].col(col++)<< pair.first, pair.second;
+        result.Cell1DsAlignedCell1DsIndex[c1D].col(col++)<< pair.first, pair.second;
     }
 
     result.AlignedCell1Ds.resize(2, alignedCell1DIndex);
@@ -655,6 +657,15 @@ namespace Gedim
                                                                                             alignedEdge.second.Cell3Ds.end());
       }
     }
+
+//    std::cout.precision(16);
+//    std::cout<< result.AlignedCell1Ds<< std::endl;
+//    std::cout<< result.AlignedCell1Ds_SubCell0Ds<< std::endl;
+//    std::cout<< result.AlignedCell1Ds_SubCell1Ds<< std::endl;
+//    std::cout<< result.AlignedCell1Ds_Cell3Ds<< std::endl;
+//    std::cout<< result.Cell0DsAlignedCell1DsIndex<< std::endl;
+//    std::cout<< result.Cell1DsAlignedCell1DsIndex<< std::endl;
+//    std::cout<< result.Cell3DsAlignedCell1DsIndex<< std::endl;
 
     return result;
   }

@@ -902,30 +902,8 @@ namespace GedimUnitTesting
                                                   mesh);
 
     Eigen::MatrixXi alignedCell1Ds_expected(2, 24);
-    alignedCell1Ds_expected.col(0)<< 0,8;
-    alignedCell1Ds_expected.col(1)<< 0,1;
-    alignedCell1Ds_expected.col(2)<< 0,2;
-    alignedCell1Ds_expected.col(3)<< 1,8;
-    alignedCell1Ds_expected.col(4)<< 2,8;
-    alignedCell1Ds_expected.col(5)<< 1,2;
-    alignedCell1Ds_expected.col(6)<< 1,5;
-    alignedCell1Ds_expected.col(7)<< 2,7;
-    alignedCell1Ds_expected.col(8)<< 0,3;
-    alignedCell1Ds_expected.col(9)<< 0,4;
-    alignedCell1Ds_expected.col(10)<< 2,3;
-    alignedCell1Ds_expected.col(11)<< 3,4;
-    alignedCell1Ds_expected.col(12)<< 2,4;
-    alignedCell1Ds_expected.col(13)<< 4,5;
-    alignedCell1Ds_expected.col(14)<< 5,6;
-    alignedCell1Ds_expected.col(15)<< 0,5;
-    alignedCell1Ds_expected.col(16)<< 1,4;
-    alignedCell1Ds_expected.col(17)<< 4,7;
-    alignedCell1Ds_expected.col(18)<< 4,6;
-    alignedCell1Ds_expected.col(19)<< 6,7;
-    alignedCell1Ds_expected.col(20)<< 5,7;
-    alignedCell1Ds_expected.col(21)<< 2,6;
-    alignedCell1Ds_expected.col(22)<< 2,5;
-    alignedCell1Ds_expected.col(23)<< 1,7;
+    alignedCell1Ds_expected.row(0)<< 0, 0, 0, 1, 2, 1, 1, 2, 0, 0, 2, 3, 2, 4, 5, 0, 1, 4, 4, 6, 5, 2, 2, 1;
+    alignedCell1Ds_expected.row(1)<< 8, 1, 2, 8, 8, 2, 5, 7, 3, 4, 3, 4, 4, 5, 6, 5, 4, 7, 6, 7, 7, 6, 5, 7;
 
     std::vector<Eigen::MatrixXi> cell0DsAlignedCell1DsIndex_expected =
     {
