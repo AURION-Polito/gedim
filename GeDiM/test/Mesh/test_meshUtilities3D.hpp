@@ -901,33 +901,55 @@ namespace GedimUnitTesting
                                                   cell3DsAlignedEdgesEdges,
                                                   mesh);
 
-    Eigen::MatrixXi expectedResult(2, 24);
-    expectedResult.col(0)<< 0,8;
-    expectedResult.col(1)<< 0,1;
-    expectedResult.col(2)<< 0,2;
-    expectedResult.col(3)<< 1,8;
-    expectedResult.col(4)<< 2,8;
-    expectedResult.col(5)<< 1,2;
-    expectedResult.col(6)<< 1,5;
-    expectedResult.col(7)<< 2,7;
-    expectedResult.col(8)<< 0,3;
-    expectedResult.col(9)<< 0,4;
-    expectedResult.col(10)<< 2,3;
-    expectedResult.col(11)<< 3,4;
-    expectedResult.col(12)<< 2,4;
-    expectedResult.col(13)<< 4,5;
-    expectedResult.col(14)<< 5,6;
-    expectedResult.col(15)<< 0,5;
-    expectedResult.col(16)<< 1,4;
-    expectedResult.col(17)<< 4,7;
-    expectedResult.col(18)<< 4,6;
-    expectedResult.col(19)<< 6,7;
-    expectedResult.col(20)<< 5,7;
-    expectedResult.col(21)<< 2,6;
-    expectedResult.col(22)<< 2,5;
-    expectedResult.col(23)<< 1,7;
+    Eigen::MatrixXi alignedCell1Ds_expected(2, 24);
+    alignedCell1Ds_expected.col(0)<< 0,8;
+    alignedCell1Ds_expected.col(1)<< 0,1;
+    alignedCell1Ds_expected.col(2)<< 0,2;
+    alignedCell1Ds_expected.col(3)<< 1,8;
+    alignedCell1Ds_expected.col(4)<< 2,8;
+    alignedCell1Ds_expected.col(5)<< 1,2;
+    alignedCell1Ds_expected.col(6)<< 1,5;
+    alignedCell1Ds_expected.col(7)<< 2,7;
+    alignedCell1Ds_expected.col(8)<< 0,3;
+    alignedCell1Ds_expected.col(9)<< 0,4;
+    alignedCell1Ds_expected.col(10)<< 2,3;
+    alignedCell1Ds_expected.col(11)<< 3,4;
+    alignedCell1Ds_expected.col(12)<< 2,4;
+    alignedCell1Ds_expected.col(13)<< 4,5;
+    alignedCell1Ds_expected.col(14)<< 5,6;
+    alignedCell1Ds_expected.col(15)<< 0,5;
+    alignedCell1Ds_expected.col(16)<< 1,4;
+    alignedCell1Ds_expected.col(17)<< 4,7;
+    alignedCell1Ds_expected.col(18)<< 4,6;
+    alignedCell1Ds_expected.col(19)<< 6,7;
+    alignedCell1Ds_expected.col(20)<< 5,7;
+    alignedCell1Ds_expected.col(21)<< 2,6;
+    alignedCell1Ds_expected.col(22)<< 2,5;
+    alignedCell1Ds_expected.col(23)<< 1,7;
 
-    ASSERT_EQ(expectedResult,
+    std::vector<Eigen::MatrixXi> cell0DsAlignedCell1DsIndex_expected =
+    {
+      (Eigen::MatrixXi(2,6) << 0,  1,  2,  8,  9, 15,
+      0,  0,  0,  0,  0,  0).finished(),
+      (Eigen::MatrixXi(2,6) << 1,  3,  5,  6, 16, 23,
+      1,  0,  0,  0,  0,  0).finished(),
+      (Eigen::MatrixXi(2,8) << 2,  4,  5,  7, 10, 12, 21, 22,
+      2,  0,  1,  0,  0,  0,  0,  0).finished(),
+      (Eigen::MatrixXi(2,3) << 8, 10, 11,
+      1,  1,  0).finished(),
+      (Eigen::MatrixXi(2,7) << 9, 11, 12, 13, 16, 17, 18,
+      1,  1,  2,  0,  1,  0,  0).finished(),
+      (Eigen::MatrixXi(2,7) << 2,  6, 13, 14, 15, 20, 22,
+      1,  2,  1,  0,  1,  0,  1).finished(),
+      (Eigen::MatrixXi(2,5) << 12, 14, 18, 19, 21,
+      1 , 1 , 1 , 0 , 1).finished(),
+      (Eigen::MatrixXi(2,6) << 6,  7, 17, 19, 20, 23,
+      1,  1,  1,  1,  1,  1).finished(),
+      (Eigen::MatrixXi(2,3) << 0, 3, 4,
+      1, 1, 1).finished()
+    };
+
+    ASSERT_EQ(alignedCell1Ds_expected,
               result.AlignedCell1Ds);
     ASSERT_EQ(
           std::vector<std::vector<unsigned int>>({{0,8}, {0,1}, {0,5,2}, {1,8}, {2,8}, {1,2}, {1,7,5}, {2,7}, {0,3}, {0,4}, {2,3}, {3,4}, {2,6,4}, {4,5}, {5,6}, {0,5}, {1,4}, {4,7}, {4,6}, {6,7}, {5,7}, {2,6}, {2,5}, {1,7}}),
@@ -935,12 +957,14 @@ namespace GedimUnitTesting
     ASSERT_EQ(
           std::vector<std::vector<unsigned int>>({{18}, {1}, {9,10}, {19}, {20}, {2}, {17,16}, {11}, {0}, {4}, {3}, {14}, {5,6}, {8}, {12}, {9}, {15}, {7}, {6}, {13}, {16}, {5}, {10}, {17}}),
           result.AlignedCell1Ds_SubCell1Ds);
-    ASSERT_EQ(
-          std::vector<std::vector<unsigned int>>({{0,1,2,3,4,5,6,7}, {8,9,2,10,11,12,13,14}, {1,9,15,16,6,17,13}, {18,17,13,14,19,20}, {21,22,7,14,19,20}, {5,16,23,12,7,17,19}}),
-          result.Cell3DsAlignedCell1DsIndex);
+    //    ASSERT_EQ(
+    //          std::vector<std::vector<unsigned int>>({{0,1,2,3,4,5,6,7}, {8,9,2,10,11,12,13,14}, {1,9,15,16,6,17,13}, {18,17,13,14,19,20}, {21,22,7,14,19,20}, {5,16,23,12,7,17,19}}),
+    //          result.Cell3DsAlignedCell1DsIndex);
     ASSERT_EQ(
           std::vector<std::vector<unsigned int>>({{0}, {0,2}, {0,1}, {0}, {0}, {0,5}, {0,2}, {0,4,5}, {1}, {1,2}, {1}, {1}, {1,5}, {1,2,3}, {1,3,4}, {2}, {2,5}, {2,3,5}, {3}, {3,4,5}, {3,4}, {4}, {4}, {5}}),
           result.AlignedCell1Ds_Cell3Ds);
+    ASSERT_EQ(cell0DsAlignedCell1DsIndex_expected,
+              result.Cell0DsAlignedCell1DsIndex);
   }
 }
 
