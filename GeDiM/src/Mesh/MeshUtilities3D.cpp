@@ -656,10 +656,6 @@ namespace Gedim
       }
     }
 
-    std::cout<< result.Cell0DsAlignedCell1DsIndex<< std::endl;
-    std::cout<< result.Cell1DsAlignedCell1DsIndex<< std::endl;
-    std::cout<< result.Cell3DsAlignedCell1DsIndex<< std::endl;
-
     return result;
   }
   // ***************************************************************************
