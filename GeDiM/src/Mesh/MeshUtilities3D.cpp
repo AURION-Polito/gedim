@@ -537,6 +537,7 @@ namespace Gedim
         unsigned int Index;
         std::vector<unsigned int> Cell0Ds;
         std::vector<unsigned int> Cell1Ds;
+        std::list<unsigned int> Cell3Ds;
     };
 
     unsigned int alignedCell1DIndex = 0;
@@ -600,17 +601,22 @@ namespace Gedim
                                                         {
                                                           alignedCell1DIndex++,
                                                           alignedCell1D_Cell0Ds,
-                                                          alignedCell1D_Cell1Ds
+                                                          alignedCell1D_Cell1Ds,
+                                                          { cell3DIndex }
                                                         }));
         }
         else
+        {
           result.Cell3DsAlignedCell1DsIndex[cell3DIndex][ae] = alignedEdge->second.Index;
+          alignedEdge->second.Cell3Ds.push_back(cell3DIndex);
+        }
       }
     }
 
     result.AlignedCell1Ds.resize(2, alignedCell1DIndex);
     result.AlignedCell1Ds_SubCell0Ds.resize(alignedCell1DIndex);
     result.AlignedCell1Ds_SubCell1Ds.resize(alignedCell1DIndex);
+    result.AlignedCell1Ds_Cell3Ds.resize(alignedCell1DIndex);
 
     for (unsigned int cell0DIndex = 0; cell0DIndex < mesh.Cell0DTotalNumber(); cell0DIndex++)
     {
@@ -619,6 +625,8 @@ namespace Gedim
         result.AlignedCell1Ds_SubCell0Ds[alignedEdge.second.Index] = alignedEdge.second.Cell0Ds;
         result.AlignedCell1Ds_SubCell1Ds[alignedEdge.second.Index] = alignedEdge.second.Cell1Ds;
         result.AlignedCell1Ds.col(alignedEdge.second.Index)<< alignedEdge.second.Cell0Ds.at(0), alignedEdge.second.Cell0Ds.at(alignedEdge.second.Cell0Ds.size() - 1);
+        result.AlignedCell1Ds_Cell3Ds[alignedEdge.second.Index] = std::vector<unsigned int>(alignedEdge.second.Cell3Ds.begin(),
+                                                                                            alignedEdge.second.Cell3Ds.end());
       }
     }
 

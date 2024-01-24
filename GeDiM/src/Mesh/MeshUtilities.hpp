@@ -96,6 +96,7 @@ namespace Gedim
           std::vector<std::vector<unsigned int>> Cell3DsAlignedCell1DsIndex;
           std::vector<std::vector<unsigned int>> AlignedCell1Ds_SubCell0Ds;
           std::vector<std::vector<unsigned int>> AlignedCell1Ds_SubCell1Ds;
+          std::vector<std::vector<unsigned int>> AlignedCell1Ds_Cell3Ds;
       };
 
       struct MeshGeometricData1D final
