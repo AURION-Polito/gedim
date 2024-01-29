@@ -166,6 +166,7 @@ namespace Gedim
     std::vector<std::vector<unsigned int>> polygonVertices(polygons.size());
     for (unsigned int p = 0; p < polygons.size(); p++)
     {
+      polygonVertices[p].resize(polygons[p].cols());
       for (unsigned int v = 0; v < polygons[p].cols(); v++)
         polygonVertices[p][v] = polygons[p](0, v);
     }
