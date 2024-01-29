@@ -950,6 +950,20 @@ namespace Gedim
     return polygonVertices;
   }
   // ***************************************************************************
+  std::vector<Eigen::MatrixXi> MeshMatricesDAO::Cell2DsExtremes() const
+  {
+    vector<Eigen::MatrixXi> extremes(Cell2DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell2DTotalNumber(); p++)
+    {
+      extremes[p].resize(2, Cell2DNumberVertices(p));
+      for (unsigned int v = 0; v < Cell2DNumberVertices(p); v++)
+        extremes[p].col(v)<< Cell2DVertex(p, v), Cell2DEdge(p, v);
+    }
+
+    return extremes;
+  }
+  // ***************************************************************************
   MatrixXd MeshMatricesDAO::Cell2DVerticesCoordinates(const unsigned int& cell2DIndex) const
   {
     MatrixXd coordinates(3, Cell2DNumberVertices(cell2DIndex));

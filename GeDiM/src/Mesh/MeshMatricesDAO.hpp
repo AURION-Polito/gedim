@@ -660,6 +660,7 @@ namespace Gedim
                                          _mesh.Cell2DVertices.begin() + _mesh.NumberCell2DVertices[cell2DIndex] + Cell2DNumberVertices(cell2DIndex));
       }
       std::vector<std::vector<unsigned int>> Cell2DsVertices() const;
+      std::vector<Eigen::MatrixXi> Cell2DsExtremes() const;
 
       inline unsigned int Cell2DVertex(const unsigned int& cell2DIndex,
                                        const unsigned int& vertexIndex) const

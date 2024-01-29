@@ -160,6 +160,22 @@ namespace Gedim
   }
   // ***************************************************************************
   void VTKUtilities::AddPolygons(const Eigen::MatrixXd& vertices,
+                                 const std::vector<Eigen::MatrixXi>& polygons,
+                                 const std::vector<VTPProperty>& properties)
+  {
+    std::vector<std::vector<unsigned int>> polygonVertices(polygons.size());
+    for (unsigned int p = 0; p < polygons.size(); p++)
+    {
+      for (unsigned int v = 0; v < polygons[p].cols(); v++)
+        polygonVertices[p][v] = polygons[p](0, v);
+    }
+
+    AddPolygons(vertices,
+                polygonVertices,
+                properties);
+  }
+  // ***************************************************************************
+  void VTKUtilities::AddPolygons(const Eigen::MatrixXd& vertices,
                                  const std::vector<std::vector<unsigned int>>& polygons,
                                  const std::vector<VTPProperty>& properties)
   {

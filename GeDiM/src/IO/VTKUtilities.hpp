@@ -187,6 +187,9 @@ namespace Gedim
                       const std::vector<unsigned int>& polygon,
                       const std::vector<VTPProperty>& properties = {});
       void AddPolygons(const Eigen::MatrixXd& vertices,
+                       const std::vector<Eigen::MatrixXi>& polygons,
+                       const std::vector<VTPProperty>& properties = {});
+      void AddPolygons(const Eigen::MatrixXd& vertices,
                        const std::vector<std::vector<unsigned int>>& polygons,
                        const std::vector<VTPProperty>& properties = {});
       void AddPolyhedron(const Eigen::MatrixXd& vertices,
