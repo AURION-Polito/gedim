@@ -42,7 +42,6 @@ namespace Gedim
   RefinementUtilities::RefinePolyhedron_Result RefinementUtilities::RefinePolyhedronCell_ByPlane(const unsigned int& cell3DIndex,
                                                                                                  const Eigen::MatrixXd& cell3DVertices,
                                                                                                  const Eigen::MatrixXi& cell3DEdges,
-                                                                                                 const std::vector<bool>& cell3DEdgesDirection,
                                                                                                  const Eigen::VectorXd& cell3DEdgesLength,
                                                                                                  const std::vector<Eigen::MatrixXi>& cell3DFaces,
                                                                                                  const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
@@ -91,6 +90,20 @@ namespace Gedim
         result.ResultType = RefinePolyhedron_Result::ResultTypes::Cell3DSplitNone;
         return result;
       case Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult::Types::Split:
+      {
+        // check new edges length
+        for (unsigned int nv = 0; nv < split_cell.Vertices.NewVerticesOriginalEdge.size(); nv++)
+        {
+          const unsigned int originalEdgeIndex = split_cell.Vertices.NewVerticesOriginalEdge.at(nv);
+
+          if (geometryUtilities.IsValueZero(0.5 * cell3DEdgesLength[originalEdgeIndex],
+                                            geometryUtilities.Tolerance1D()))
+          {
+            result.ResultType = RefinePolyhedron_Result::ResultTypes::Cell3DSplitUnderTolerance;
+            return result;
+          }
+        }
+      }
         break;
       default:
         throw std::runtime_error("Split polyhedron unknown");

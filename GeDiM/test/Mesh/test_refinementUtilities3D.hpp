@@ -73,7 +73,6 @@ namespace GedimUnitTesting
         refinementUtilities.RefinePolyhedronCell_ByPlane(cell3DToRefineIndex,
                                                          cell3DVertices,
                                                          cell3DEdges,
-                                                         meshGeometricData.Cell3DsEdgeDirections.at(cell3DToRefineIndex),
                                                          meshGeometricData.Cell3DsEdgeLengths.at(cell3DToRefineIndex),
                                                          cell3DFaces,
                                                          meshGeometricData.Cell3DsFaces3DVertices.at(cell3DToRefineIndex),
@@ -225,7 +224,7 @@ namespace GedimUnitTesting
   {
     GTEST_SKIP();
 
-    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTetrahedrons_ByArea";
+    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTetrahedrons_ByVolume";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -372,7 +371,6 @@ namespace GedimUnitTesting
             refinementUtilities.RefinePolyhedronCell_ByPlane(cell3DToRefineIndex,
                                                              cell3DVertices,
                                                              cell3DEdges,
-                                                             meshGeometricData.Cell3DsEdgeDirections.at(cell3DToRefineIndex),
                                                              meshGeometricData.Cell3DsEdgeLengths.at(cell3DToRefineIndex),
                                                              cell3DFaces,
                                                              meshGeometricData.Cell3DsFaces3DVertices.at(cell3DToRefineIndex),

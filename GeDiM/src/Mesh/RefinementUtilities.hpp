@@ -380,7 +380,6 @@ namespace Gedim
       RefinePolyhedron_Result RefinePolyhedronCell_ByPlane(const unsigned int& cell3DIndex,
                                                            const Eigen::MatrixXd& cell3DVertices,
                                                            const Eigen::MatrixXi& cell3DEdges,
-                                                           const std::vector<bool>& cell3DEdgesDirection,
                                                            const Eigen::VectorXd& cell3DEdgesLength,
                                                            const std::vector<Eigen::MatrixXi>& cell3DFaces,
                                                            const std::vector<Eigen::MatrixXd>& cell3DFaces3DVertices,
