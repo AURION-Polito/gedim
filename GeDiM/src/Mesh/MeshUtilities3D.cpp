@@ -658,14 +658,14 @@ namespace Gedim
       }
     }
 
-//    std::cout.precision(16);
-//    std::cout<< result.AlignedCell1Ds<< std::endl;
-//    std::cout<< result.AlignedCell1Ds_SubCell0Ds<< std::endl;
-//    std::cout<< result.AlignedCell1Ds_SubCell1Ds<< std::endl;
-//    std::cout<< result.AlignedCell1Ds_Cell3Ds<< std::endl;
-//    std::cout<< result.Cell0DsAlignedCell1DsIndex<< std::endl;
-//    std::cout<< result.Cell1DsAlignedCell1DsIndex<< std::endl;
-//    std::cout<< result.Cell3DsAlignedCell1DsIndex<< std::endl;
+    //    std::cout.precision(16);
+    //    std::cout<< result.AlignedCell1Ds<< std::endl;
+    //    std::cout<< result.AlignedCell1Ds_SubCell0Ds<< std::endl;
+    //    std::cout<< result.AlignedCell1Ds_SubCell1Ds<< std::endl;
+    //    std::cout<< result.AlignedCell1Ds_Cell3Ds<< std::endl;
+    //    std::cout<< result.Cell0DsAlignedCell1DsIndex<< std::endl;
+    //    std::cout<< result.Cell1DsAlignedCell1DsIndex<< std::endl;
+    //    std::cout<< result.Cell3DsAlignedCell1DsIndex<< std::endl;
 
     return result;
   }
@@ -1294,21 +1294,27 @@ namespace Gedim
         const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f],
                                                                                  false);
 
-        if (geometryUtilities.PolygonOrientation(faceConvexHull) ==
-            Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
+        switch (geometryUtilities.PolygonOrientation(faceConvexHull))
         {
-          face2DCCWOrientation[f] = false;
-          face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
-          face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DVertices[c][f],
-                                                                 face2DsCCW[f]);
-        }
-        else
-        {
-          face2DCCWOrientation[f] = true;
-          face2DVerticesCCW[f] = result.Cell3DsFaces2DVertices[c][f];
+          case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
+          {
+            face2DCCWOrientation[f] = false;
+            face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
+            face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DVertices[c][f],
+                                                                   face2DsCCW[f]);
+          }
+            break;
+          case Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise:
+          {
+            face2DCCWOrientation[f] = true;
+            face2DVerticesCCW[f] = result.Cell3DsFaces2DVertices[c][f];
 
-          face2DsCCW[f].resize(result.Cell3DsFaces2DVertices[c][f].cols());
-          std::iota(face2DsCCW[f].begin(), face2DsCCW[f].end(), 0);
+            face2DsCCW[f].resize(result.Cell3DsFaces2DVertices[c][f].cols());
+            std::iota(face2DsCCW[f].begin(), face2DsCCW[f].end(), 0);
+          }
+            break;
+          default:
+            throw std::runtime_error("Not managed face orientation case");
         }
       }
 

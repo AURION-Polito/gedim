@@ -1134,6 +1134,37 @@ namespace GedimUnitTesting
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonOrientation_2D)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance1D = 1.22e-06;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check convex polygon 2D
+      {
+        Eigen::MatrixXd polygonVertices(3, 5);
+        polygonVertices.row(0)<< 0.0000000000000000e+00, 4.1543019551216149e+00, 2.5157614197492046e+00, -2.8979243921853493e+00, -4.7347560388578103e+00;
+        polygonVertices.row(1)<< 0.0000000000000000e+00, 5.0558484496199263e-07, 1.8668478104369226e+00,  2.0647298475983731e+00,  1.0213037863054941e-06;
+        polygonVertices.row(2)<< 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(polygonVertices,
+                                                                             false);
+        const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(polygonVertices,
+                                                                                   convexHull);
+
+        ASSERT_EQ(geometryUtilities.PolygonOrientation(convexHull),
+                  Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
   TEST(TestGeometryUtilities, TestPolygonRotationMatrix)
   {
     try

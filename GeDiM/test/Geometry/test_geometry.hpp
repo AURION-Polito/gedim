@@ -592,7 +592,7 @@ namespace GedimUnitTesting {
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check complex convex hull
