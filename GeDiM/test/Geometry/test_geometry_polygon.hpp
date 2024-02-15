@@ -2302,14 +2302,10 @@ namespace GedimUnitTesting
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 5);
-        expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
-        expectedResult.Points.col(4)<< Eigen::Vector3d(6.4031434217770300e-01,
-                                                       3.5968565782229700e-01,
-                                                       0.0000000000000000e+00);
-        expectedResult.SubPolygons = { {1, 2, 4}, {0, 1, 4, 3} };
+        expectedResult.Points.block(0, 0, 3, 5)<< polygonVertices;
+        expectedResult.SubPolygons = { {4, 0, 1, 2, 3} };
         expectedResult.SubPolygonTypes =
         {
-          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd,
           Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
         };
 

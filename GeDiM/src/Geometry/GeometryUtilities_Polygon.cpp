@@ -578,6 +578,12 @@ namespace Gedim
           PointSegmentPositionTypes::InsideSegment)
         continue;
 
+      if (resultOrigin.SecondSegmentIntersections[0].Type ==
+          PointSegmentPositionTypes::OnSegmentOrigin &&
+          (e == (curvedEdgeEndIndex + 1) % numPolygonVertices ||
+           e == curvedEdgeEndIndex))
+        continue;
+
       curvedEdgeOriginEdgeIntersectionIndex = e;
       curvedEdgeOriginEdgeIntersection = edgeOrigin +
                                          resultOrigin.SecondSegmentIntersections[0].CurvilinearCoordinate *
@@ -616,6 +622,12 @@ namespace Gedim
           PointSegmentPositionTypes::OnSegmentEnd &&
           resultEnd.SecondSegmentIntersections[0].Type !=
           PointSegmentPositionTypes::InsideSegment)
+        continue;
+
+      if (resultEnd.SecondSegmentIntersections[0].Type ==
+          PointSegmentPositionTypes::OnSegmentEnd &&
+          ((e + 1) % numPolygonVertices == curvedEdgeOriginIndex ||
+           (e + 2) % numPolygonVertices == curvedEdgeOriginIndex))
         continue;
 
       curvedEdgeEndEdgeIntersectionIndex = e;
