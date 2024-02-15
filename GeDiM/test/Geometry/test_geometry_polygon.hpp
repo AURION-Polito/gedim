@@ -1853,6 +1853,9 @@ namespace GedimUnitTesting
 
   TEST(TestGeometryUtilities, TestPolygonDivisionByAngleQuadrant)
   {
+    std::string exportFolder = "./Export/TestPolygonDivisionByAngleQuadrant";
+    Gedim::Output::CreateFolder(exportFolder);
+
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -1881,6 +1884,40 @@ namespace GedimUnitTesting
                                                                           circleCenter,
                                                                           circleRadius,
                                                                           curvedEdgeIndex);
+
+        {
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(polygonVertices);
+            exporter.Export(exportFolder + "/polygon.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoint(circleCenter);
+            exporter.Export(exportFolder + "/circleCenter.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoints(result.Points);
+            exporter.Export(exportFolder + "/split_points.vtu");
+          }
+
+          for (unsigned int paq = 0; paq < result.SubPolygons.size(); paq++)
+          {
+            const Eigen::MatrixXd extractedPolygon = geometryUtilities.ExtractPoints(result.Points,
+                                                                                     result.SubPolygons[paq]);
+
+            {
+              Gedim::VTKUtilities exporter;
+              exporter.AddPoints(extractedPolygon);
+              exporter.Export(exportFolder + "/sub_polygon_" + std::to_string(paq) + ".vtu");
+            }
+          }
+
+
+        }
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 4);
@@ -1911,7 +1948,7 @@ namespace GedimUnitTesting
         polygonEdgeTangents.col(3)<<   1.0000000000000001e-01, -1.0000000000000001e-01, 0.0000000000000000e+00;
 
         const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
-        const double circleRadius = 0.01;
+        const double circleRadius = 0.1;
         const unsigned int curvedEdgeIndex = 3;
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
@@ -1920,6 +1957,38 @@ namespace GedimUnitTesting
                                                                           circleCenter,
                                                                           circleRadius,
                                                                           curvedEdgeIndex);
+
+        {
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(polygonVertices);
+            exporter.Export(exportFolder + "/polygon.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoint(circleCenter);
+            exporter.Export(exportFolder + "/circleCenter.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoints(result.Points);
+            exporter.Export(exportFolder + "/split_points.vtu");
+          }
+
+          for (unsigned int paq = 0; paq < result.SubPolygons.size(); paq++)
+          {
+            const Eigen::MatrixXd extractedPolygon = geometryUtilities.ExtractPoints(result.Points,
+                                                                                     result.SubPolygons[paq]);
+
+            {
+              Gedim::VTKUtilities exporter;
+              exporter.AddPoints(extractedPolygon);
+              exporter.Export(exportFolder + "/sub_polygon_" + std::to_string(paq) + ".vtu");
+            }
+          }
+        }
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 4);
@@ -1961,6 +2030,40 @@ namespace GedimUnitTesting
                                                                           circleCenter,
                                                                           circleRadius,
                                                                           curvedEdgeIndex);
+
+        {
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(polygonVertices);
+            exporter.Export(exportFolder + "/polygon.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoint(circleCenter);
+            exporter.Export(exportFolder + "/circleCenter.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoints(result.Points);
+            exporter.Export(exportFolder + "/split_points.vtu");
+          }
+
+          for (unsigned int paq = 0; paq < result.SubPolygons.size(); paq++)
+          {
+            const Eigen::MatrixXd extractedPolygon = geometryUtilities.ExtractPoints(result.Points,
+                                                                                     result.SubPolygons[paq]);
+
+            {
+              Gedim::VTKUtilities exporter;
+              exporter.AddPoints(extractedPolygon);
+              exporter.Export(exportFolder + "/sub_polygon_" + std::to_string(paq) + ".vtu");
+            }
+          }
+
+
+        }
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 8);
@@ -2097,6 +2200,105 @@ namespace GedimUnitTesting
                                                                           circleCenter,
                                                                           circleRadius,
                                                                           curvedEdgeIndex);
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
+        expectedResult.Points.setZero(3, 5);
+        expectedResult.Points.block(0, 0, 3, 4)<< polygonVertices;
+        expectedResult.Points.col(4)<< Eigen::Vector3d(6.4031434217770300e-01,
+                                                       3.5968565782229700e-01,
+                                                       0.0000000000000000e+00);
+        expectedResult.SubPolygons = { {1, 2, 4}, {0, 1, 4, 3} };
+        expectedResult.SubPolygonTypes =
+        {
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::ExternalEnd,
+          Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types::Internal
+        };
+
+        ASSERT_EQ(result.Points, expectedResult.Points);
+        ASSERT_EQ(result.SubPolygons, expectedResult.SubPolygons);
+        ASSERT_EQ(result.SubPolygonTypes, expectedResult.SubPolygonTypes);
+      }
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPolygonDivisionByAngleQuadrant_OnEdge)
+  {
+    std::string exportFolder = "./Export/TestPolygonDivisionByAngleQuadrant_OnEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+      // check triangle sub-division with center on edge
+      {
+        const string exportTest = exportFolder + "/TriangleWithCenter";
+        Gedim::Output::CreateFolder(exportTest);
+
+        Eigen::MatrixXd polygonVertices(3, 5);
+        polygonVertices.row(0)<< -7.0710678118654779e-02, -1.4999999999999999e-01, -1.4999999999999999e-01,  3.4999999999999998e-01,  7.0710678118654779e-02;
+        polygonVertices.row(1)<<  7.0710678118654779e-02,  1.5000000000000002e-01, -3.4999999999999998e-01, -3.4999999999999998e-01, -7.0710678118654779e-02;
+        polygonVertices.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        Eigen::MatrixXd polygonEdgeTangents(3, 5);
+        polygonEdgeTangents.row(0)<< -7.9289321881345215e-02,  0.0000000000000000e+00,  5.0000000000000000e-01, -2.7928932188134520e-01, -1.4142135623730956e-01;
+        polygonEdgeTangents.row(1)<<  7.9289321881345243e-02, -5.0000000000000000e-01,  0.0000000000000000e+00,  2.7928932188134520e-01,  1.4142135623730956e-01;
+        polygonEdgeTangents.row(2)<<  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00;
+
+        const Eigen::Vector3d circleCenter(0.0, 0.0, 0.0);
+        const double circleRadius = 1.0000000000000001e-01;
+        const unsigned int curvedEdgeIndex = 4;
+
+        {
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(polygonVertices);
+            exporter.Export(exportTest + "/polygon.vtu");
+          }
+
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoint(circleCenter);
+            exporter.Export(exportTest + "/center.vtu");
+          }
+        }
+
+        Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult result =
+            geometryUtilities.PolygonOutsideCircleDivisionByAngleQuadrant(polygonVertices,
+                                                                          polygonEdgeTangents,
+                                                                          circleCenter,
+                                                                          circleRadius,
+                                                                          curvedEdgeIndex);
+
+
+        {
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPoints(result.Points);
+            exporter.Export(exportTest + "/split_points.vtu");
+          }
+
+          for (unsigned int paq = 0; paq < result.SubPolygons.size(); paq++)
+          {
+            const Eigen::MatrixXd extractedPolygon = geometryUtilities.ExtractPoints(result.Points,
+                                                                                     result.SubPolygons[paq]);
+
+            {
+              Gedim::VTKUtilities exporter;
+              exporter.AddPoints(extractedPolygon);
+              exporter.Export(exportTest + "/sub_polygon_" + std::to_string(paq) + ".vtu");
+            }
+          }
+
+
+        }
 
         Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult expectedResult;
         expectedResult.Points.setZero(3, 5);
