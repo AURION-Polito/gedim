@@ -403,24 +403,69 @@ namespace Gedim
       switch (property.Format)
       {
         case VTPProperty::Formats::Points:
+        {
           polyData->GetPointData()->AddArray(vtkSolution);
 
           if (s == 0)
             polyData->GetPointData()->SetActiveScalars(property.Label.c_str());
+
+          vtkSolution->SetNumberOfValues(property.Size);
+          for (unsigned int p = 0; p < property.Size; p++)
+            vtkSolution->SetValue(p, property.Data[p]);
+        }
           break;
+
         case VTPProperty::Formats::Cells:
+        {
           polyData->GetCellData()->AddArray(vtkSolution);
 
           if (s == 0)
             polyData->GetCellData()->SetActiveScalars(property.Label.c_str());
+
+          vtkSolution->SetNumberOfValues(property.Size);
+          for (unsigned int p = 0; p < property.Size; p++)
+            vtkSolution->SetValue(p, property.Data[p]);
+        }
+          break;
+        case VTPProperty::Formats::PointsArray:
+        {
+          polyData->GetPointData()->AddArray(vtkSolution);
+
+          if (s == 0)
+            polyData->GetPointData()->SetActiveVectors(property.Label.c_str());
+
+          vtkSolution->SetNumberOfComponents(3);
+          vtkSolution->SetNumberOfTuples(property.Size);
+          for (unsigned int p = 0; p < property.Size; p++)
+          {
+            vtkSolution->SetTuple3(p,
+                                   property.Data[3 * p],
+                property.Data[3 * p + 1],
+                property.Data[3 * p + 2]);
+          }
+        }
+          break;
+        case VTPProperty::Formats::CellsArray:
+        {
+          polyData->GetCellData()->AddArray(vtkSolution);
+
+          if (s == 0)
+            polyData->GetCellData()->SetActiveVectors(property.Label.c_str());
+
+          vtkSolution->SetNumberOfComponents(3);
+          vtkSolution->SetNumberOfTuples(property.Size);
+          for (unsigned int p = 0; p < property.Size; p++)
+          {
+            vtkSolution->SetTuple3(p,
+                                   property.Data[3 * p],
+                property.Data[3 * p + 1],
+                property.Data[3 * p + 2]);
+          }
+        }
           break;
         default:
           throw runtime_error("Solution Format not supported");
       }
-
-      vtkSolution->SetNumberOfValues(property.Size);
-      for (unsigned int p = 0; p < property.Size; p++)
-        vtkSolution->SetValue(p, property.Data[p]);
     }
   }
   // ***************************************************************************

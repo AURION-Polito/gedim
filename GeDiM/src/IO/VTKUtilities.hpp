@@ -123,7 +123,9 @@ namespace Gedim
       enum Formats
       {
         Points = 0,
-        Cells = 1
+        Cells = 1,
+        PointsArray = 2,
+        CellsArray = 3,
       };
 
       std::string Label;
