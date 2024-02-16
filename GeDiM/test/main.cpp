@@ -30,6 +30,7 @@
 #include "test_CommonUtilities.hpp"
 #include "test_metisUtilities.hpp"
 #include "test_graphUtilities.hpp"
+#include "test_UCDUtilities.hpp"
 
 #include <gtest/gtest.h>
 
