@@ -52,6 +52,30 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void UCDUtilities::ExportPolygons(const std::string& filePath,
+                                    const Eigen::MatrixXd& points,
+                                    const std::vector<std::vector<unsigned int> >& polygons_vertices,
+                                    const std::vector<UCDProperty<double> >& points_properties,
+                                    const std::vector<UCDProperty<double> >& polygons_properties,
+                                    const Eigen::VectorXi& materials) const
+  {
+    ExportFormats format = ExportFormats::Ascii;
+
+    switch (format)
+    {
+      case ExportFormats::Ascii:
+        ExportUCDAscii(points,
+                       points_properties,
+                       CreatePolygonCells(polygons_vertices,
+                                          materials),
+                       polygons_properties,
+                       filePath);
+        break;
+      default:
+        throw std::runtime_error("Unknown format");
+    }
+  }
+  // ***************************************************************************
   std::vector<UCDCell> UCDUtilities::CreatePointCells(const Eigen::MatrixXd& points,
                                                       const Eigen::VectorXi& materials) const
   {
@@ -84,6 +108,33 @@ namespace Gedim
                                 static_cast<unsigned int>(lines(1, l))
                               },
                               materials.size() == lines.cols() ?
+                                materials[l] :
+                                0));
+    }
+
+    return cells;
+  }
+  // ***************************************************************************
+  std::vector<UCDCell> UCDUtilities::CreatePolygonCells(const std::vector<std::vector<unsigned int> >& polygons_vertices,
+                                                        const Eigen::VectorXi& materials) const
+  {
+    std::vector<UCDCell> cells;
+    cells.reserve(polygons_vertices.size());
+
+    for (unsigned int l = 0; l < polygons_vertices.size(); l++)
+    {
+      UCDCell::Types polygon_type = UCDCell::Types::Unknown;
+
+      if (polygons_vertices[l].size() == 3)
+        polygon_type = UCDCell::Types::Triangle;
+      else if (polygons_vertices[l].size() == 4)
+        polygon_type = UCDCell::Types::Quadrilateral;
+      else
+        throw std::runtime_error("Polygon type not supported");
+
+      cells.push_back(UCDCell(polygon_type,
+                              polygons_vertices[l],
+                              materials.size() == static_cast<unsigned int>(polygons_vertices.size()) ?
                                 materials[l] :
                                 0));
     }

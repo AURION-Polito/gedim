@@ -24,6 +24,7 @@ namespace Gedim
     public:
       enum struct Types
       {
+        Unknown = -1,
         Point = 0,
         Line = 1,
         Triangle = 2,
@@ -62,6 +63,8 @@ namespace Gedim
                                             const Eigen::VectorXi& materials) const;
       std::vector<UCDCell> CreateLineCells(const Eigen::MatrixXi& lines,
                                            const Eigen::VectorXi& materials) const;
+      std::vector<UCDCell> CreatePolygonCells(const std::vector<std::vector<unsigned int>>& polygons,
+                                              const Eigen::VectorXi& materials) const;
 
       void ExportUCDAscii(const Eigen::MatrixXd& points,
                           const std::vector<UCDProperty<double>>& point_properties,
@@ -83,6 +86,13 @@ namespace Gedim
                           const Eigen::MatrixXi& segments,
                           const std::vector<UCDProperty<double>>& points_properties = {},
                           const std::vector<UCDProperty<double>>& segmnents_properties = {},
+                          const Eigen::VectorXi& materials = {}) const;
+
+      void ExportPolygons(const std::string& filePath,
+                          const Eigen::MatrixXd& points,
+                          const std::vector<std::vector<unsigned int>>& polygons_vertices,
+                          const std::vector<UCDProperty<double>>& points_properties = {},
+                          const std::vector<UCDProperty<double>>& polygons_properties = {},
                           const Eigen::VectorXi& materials = {}) const;
   };
 }

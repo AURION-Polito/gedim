@@ -125,6 +125,66 @@ namespace GedimUnitTesting
                             material);
   }
   // ***************************************************************************
+  TEST(TestUCDUtilities, UCDUtilities_Test2Ds)
+  {
+    std::string exportFolder = "./Export/TestUCDUtilities";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    const unsigned int numGeometries = 5;
+
+    Gedim::UCDUtilities exporter;
+
+    // Export to UCD
+    const Eigen::MatrixXd points = (Eigen::MatrixXd(3, 4)<< 0.0, 1.0, 1.0, 0.0,
+                                    0.0, 0.0, 1.0, 1.0,
+                                    2.0, 2.0, 2.0, 2.0).finished();
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 5)<< 0, 1, 2, 3, 0,
+                                   1, 2, 3, 0, 2).finished();
+
+    vector<double> id_points = { 1, 2, 3, 4 };
+    vector<double> id(numGeometries);
+    vector<double> data(2 * numGeometries);
+    Eigen::VectorXi material(numGeometries);
+
+    for (unsigned int g = 0; g < numGeometries; g++)
+    {
+      id[g] = g + 1;
+      data[2 * g] = g + 1;
+      data[2 * g + 1] = g + 1;
+      material[g] = g + 1;
+    }
+
+    exporter.ExportSegments(exportFolder + "/Geometry1Ds.inp",
+                            points,
+                            edges,
+                            {
+                              {
+                                "id_points",
+                                "kg",
+                                static_cast<unsigned int>(id_points.size()),
+                                1,
+                                id_points.data()
+                              }
+                            },
+                            {
+                              {
+                                "Id",
+                                "kg",
+                                static_cast<unsigned int>(id.size()),
+                                1,
+                                id.data()
+                              },
+                              {
+                                "Data",
+                                "m",
+                                static_cast<unsigned int>(data.size()),
+                                2,
+                                data.data()
+                              }
+                            },
+                            material);
+  }
+
   TEST(TestUCDUtilities, UCDUtilities_Test2D)
   {
     const unsigned int numGeometries = 4;
