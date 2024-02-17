@@ -501,7 +501,7 @@ namespace Gedim
       }
 
       Gedim::UCDUtilities exporter;
-      exporter.ExportPoints(cell0DsFolder + "/" + fileName + "_Cell0Ds.vtu",
+      exporter.ExportPoints(cell0DsFolder + "/" + fileName + "_Cell0Ds.inp",
                             mesh.Cell0DsCoordinates(),
                             properties);
     }
@@ -566,7 +566,7 @@ namespace Gedim
 
 
       Gedim::UCDUtilities exporter;
-      exporter.ExportSegments(cell1DsFolder + "/" + fileName + "_Cell1Ds.vtu",
+      exporter.ExportSegments(cell1DsFolder + "/" + fileName + "_Cell1Ds.inp",
                               mesh.Cell0DsCoordinates(),
                               mesh.Cell1DsExtremes(),
                               {},
@@ -632,7 +632,7 @@ namespace Gedim
       }
 
       Gedim::UCDUtilities exporter;
-      exporter.ExportPolygons(cell2DsFolder + "/" + fileName + "_Cell2Ds.vtu",
+      exporter.ExportPolygons(cell2DsFolder + "/" + fileName + "_Cell2Ds.inp",
                               mesh.Cell0DsCoordinates(),
                               mesh.Cell2DsVertices(),
                               {},
@@ -698,7 +698,7 @@ namespace Gedim
       }
 
       Gedim::UCDUtilities exporter;
-      exporter.ExportPolygons(cell3DsFolder + "/" + fileName + "_Cell3Ds.vtu",
+      exporter.ExportPolygons(cell3DsFolder + "/" + fileName + "_Cell3Ds.inp",
                               mesh.Cell0DsCoordinates(),
                               mesh.Cell3DsVertices(),
                               {},
