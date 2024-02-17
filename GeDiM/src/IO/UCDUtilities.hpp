@@ -10,15 +10,8 @@ namespace Gedim
   template <typename T>
   struct UCDProperty final
   {
-      enum Formats
-      {
-        Points = 0,
-        Cells = 1
-      };
-
       std::string Label;
       std::string UnitLabel;
-      Formats Format;
 
       unsigned int Size;
       unsigned int NumComponents;
@@ -66,7 +59,9 @@ namespace Gedim
 
     private:
       std::vector<UCDCell> CreatePointCells(const Eigen::MatrixXd& points,
-                                            const Eigen::VectorXi& points_material) const;
+                                            const Eigen::VectorXi& materials) const;
+      std::vector<UCDCell> CreateLineCells(const Eigen::MatrixXi& lines,
+                                           const Eigen::VectorXi& materials) const;
 
       void ExportUCDAscii(const Eigen::MatrixXd& points,
                           const std::vector<UCDProperty<double>>& point_properties,
@@ -81,7 +76,14 @@ namespace Gedim
       void ExportPoints(const std::string& filePath,
                         const Eigen::MatrixXd& points,
                         const std::vector<UCDProperty<double>>& points_properties = {},
-                        const Eigen::VectorXi& points_material = {}) const;
+                        const Eigen::VectorXi& materials = {}) const;
+
+      void ExportSegments(const std::string& filePath,
+                          const Eigen::MatrixXd& points,
+                          const Eigen::MatrixXi& segments,
+                          const std::vector<UCDProperty<double>>& points_properties = {},
+                          const std::vector<UCDProperty<double>>& segmnents_properties = {},
+                          const Eigen::VectorXi& materials = {}) const;
   };
 }
 

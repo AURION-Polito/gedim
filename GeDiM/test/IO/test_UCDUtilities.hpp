@@ -27,8 +27,8 @@ namespace GedimUnitTesting
 
     Gedim::UCDUtilities exporter;
 
-    // Export to VTK
-    Eigen::MatrixXd points(3, 4);
+    // Export to UCD
+    Eigen::MatrixXd points(3, numGeometries);
     vector<double> id(numGeometries);
     vector<double> data(2 * numGeometries);
     Eigen::VectorXi material(numGeometries);
@@ -49,7 +49,6 @@ namespace GedimUnitTesting
                             {
                               "Id",
                               "kg",
-                              Gedim::UCDProperty<double>::Formats::Cells,
                               static_cast<unsigned int>(id.size()),
                               1,
                               id.data()
@@ -57,7 +56,6 @@ namespace GedimUnitTesting
                             {
                               "Data",
                               "m",
-                              Gedim::UCDProperty<double>::Formats::Points,
                               static_cast<unsigned int>(data.size()),
                               2,
                               data.data()
@@ -67,125 +65,64 @@ namespace GedimUnitTesting
 
   }
   // ***************************************************************************
-  TEST(TestUCDUtilities, UCDUtilities_Test1D)
-  {
-    const unsigned int numGeometries = 4;
-
-    Gedim::VTKUtilities vtpUtilities;
-
-    // Export to VTK
-    for (unsigned int g = 0; g < numGeometries; g++)
-    {
-      Eigen::MatrixXd geometry(3, 2);
-
-      geometry.col(0)<< 1.0 + g, 0.0 + g, 0.0 + g;
-      geometry.col(1)<< 0.0 + g, 1.0 + g, 1.0 + g;
-
-      vector<double> id(1, g);
-      vector<double> data(geometry.cols());
-
-      for (unsigned int v = 0; v < geometry.cols(); v++)
-        data[v] = 10.8 + g + v;
-
-      vtpUtilities.AddSegment(geometry,
-                              {
-                                {
-                                  "Id",
-                                  Gedim::VTPProperty::Formats::Cells,
-                                  static_cast<unsigned int>(id.size()),
-                                  id.data()
-                                },
-                                {
-                                  "Data",
-                                  Gedim::VTPProperty::Formats::Points,
-                                  static_cast<unsigned int>(data.size()),
-                                  data.data()
-                                }
-                              });
-    }
-
-    std::string exportFolder = "./Export/TestUCDUtilities";
-    Gedim::Output::CreateFolder(exportFolder);
-
-    vtpUtilities.Export(exportFolder + "/Geometry1D.vtu",
-                        Gedim::VTKUtilities::Ascii);
-  }
-  // ***************************************************************************
   TEST(TestUCDUtilities, UCDUtilities_Test1Ds)
   {
-    const unsigned int numGeometries = 3;
-
-    Gedim::VTKUtilities vtpUtilities;
-
-    // Export to VTK
-    for (unsigned int g = 0; g < numGeometries; g++)
-    {
-      const Eigen::MatrixXd vertices = (Eigen::MatrixXd(3, 4)<< 0.0, 1.0, 1.0, 0.0,
-                                        0.0, 0.0, 1.0, 1.0,
-                                        2.0 + g, 2.0 + g, 2.0 + g, 2.0 + g).finished();
-      const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 5)<< 0, 1, 2, 3, 0,
-                                     1, 2, 3, 0, 2).finished();
-
-      vector<double> id(5);
-      vector<double> data(4);
-
-      for (unsigned int e = 0; e < 5; e++)
-        id[e] = 10.8 + g + e;
-
-      for (unsigned int v = 0; v < 4; v++)
-        data[v] = 10.8 + g + v;
-
-      vector<double> u(3 * 4);
-      for (unsigned int p = 0; p < 4; p++)
-      {
-        u[3 * p] = 10.8 + (p + 1) + g + 1;
-        u[3 * p + 1] = 10.8 + (p + 1) + g + 2;
-        u[3 * p + 2] = 10.8 + (p + 1) + g + 3;
-      }
-
-      vector<double> w(3 * 5);
-      for (unsigned int e = 0; e < 5; e++)
-      {
-        w[3 * e] = 10.8 + (e + 1) + g + 1;
-        w[3 * e + 1] = 10.8 + (e + 1) + g + 2;
-        w[3 * e + 2] = 10.8 + (e + 1) + g + 3;
-      }
-
-      vtpUtilities.AddSegments(vertices,
-                               edges,
-                               {
-                                 {
-                                   "Id",
-                                   Gedim::VTPProperty::Formats::Cells,
-                                   static_cast<unsigned int>(id.size()),
-                                   id.data()
-                                 },
-                                 {
-                                   "Data",
-                                   Gedim::VTPProperty::Formats::Points,
-                                   static_cast<unsigned int>(data.size()),
-                                   data.data()
-                                 },
-                                 {
-                                   "u",
-                                   Gedim::VTPProperty::Formats::PointsArray,
-                                   static_cast<unsigned int>(u.size()),
-                                   u.data()
-                                 },
-                                 {
-                                   "w",
-                                   Gedim::VTPProperty::Formats::CellsArray,
-                                   static_cast<unsigned int>(w.size()),
-                                   w.data()
-                                 }
-                               });
-    }
-
     std::string exportFolder = "./Export/TestUCDUtilities";
     Gedim::Output::CreateFolder(exportFolder);
 
-    vtpUtilities.Export(exportFolder + "/Geometry1Ds.vtu",
-                        Gedim::VTKUtilities::Ascii);
+    const unsigned int numGeometries = 5;
+
+    Gedim::UCDUtilities exporter;
+
+    // Export to UCD
+    const Eigen::MatrixXd points = (Eigen::MatrixXd(3, 4)<< 0.0, 1.0, 1.0, 0.0,
+                                    0.0, 0.0, 1.0, 1.0,
+                                    2.0, 2.0, 2.0, 2.0).finished();
+    const Eigen::MatrixXi edges = (Eigen::MatrixXi(2, 5)<< 0, 1, 2, 3, 0,
+                                   1, 2, 3, 0, 2).finished();
+
+    vector<double> id_points = { 1, 2, 3, 4 };
+    vector<double> id(numGeometries);
+    vector<double> data(2 * numGeometries);
+    Eigen::VectorXi material(numGeometries);
+
+    for (unsigned int g = 0; g < numGeometries; g++)
+    {
+      id[g] = g + 1;
+      data[2 * g] = g + 1;
+      data[2 * g + 1] = g + 1;
+      material[g] = g + 1;
+    }
+
+    exporter.ExportSegments(exportFolder + "/Geometry1Ds.inp",
+                            points,
+                            edges,
+                            {
+                              {
+                                "id_points",
+                                "kg",
+                                static_cast<unsigned int>(id_points.size()),
+                                1,
+                                id_points.data()
+                              }
+                            },
+                            {
+                              {
+                                "Id",
+                                "kg",
+                                static_cast<unsigned int>(id.size()),
+                                1,
+                                id.data()
+                              },
+                              {
+                                "Data",
+                                "m",
+                                static_cast<unsigned int>(data.size()),
+                                2,
+                                data.data()
+                              }
+                            },
+                            material);
   }
   // ***************************************************************************
   TEST(TestUCDUtilities, UCDUtilities_Test2D)

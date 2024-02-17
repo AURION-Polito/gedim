@@ -9,7 +9,7 @@ namespace Gedim
   void UCDUtilities::ExportPoints(const std::string& filePath,
                                   const Eigen::MatrixXd& points,
                                   const std::vector<UCDProperty<double>>& points_properties,
-                                  const Eigen::VectorXi& points_material) const
+                                  const Eigen::VectorXi& materials) const
   {
     ExportFormats format = ExportFormats::Ascii;
 
@@ -19,7 +19,7 @@ namespace Gedim
         ExportUCDAscii(points,
                        { },
                        CreatePointCells(points,
-                                        points_material),
+                                        materials),
                        points_properties,
                        filePath);
         break;
@@ -28,8 +28,32 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void UCDUtilities::ExportSegments(const std::string& filePath,
+                                    const Eigen::MatrixXd& points,
+                                    const Eigen::MatrixXi& segments,
+                                    const std::vector<UCDProperty<double> >& points_properties,
+                                    const std::vector<UCDProperty<double> >& segmnents_properties,
+                                    const Eigen::VectorXi& materials) const
+  {
+    ExportFormats format = ExportFormats::Ascii;
+
+    switch (format)
+    {
+      case ExportFormats::Ascii:
+        ExportUCDAscii(points,
+                       points_properties,
+                       CreateLineCells(segments,
+                                       materials),
+                       segmnents_properties,
+                       filePath);
+        break;
+      default:
+        throw std::runtime_error("Unknown format");
+    }
+  }
+  // ***************************************************************************
   std::vector<UCDCell> UCDUtilities::CreatePointCells(const Eigen::MatrixXd& points,
-                                                      const Eigen::VectorXi& points_material) const
+                                                      const Eigen::VectorXi& materials) const
   {
     std::vector<UCDCell> cells;
     cells.reserve(points.cols());
@@ -38,8 +62,29 @@ namespace Gedim
     {
       cells.push_back(UCDCell(UCDCell::Types::Point,
                               { p },
-                              points_material.size() == points.cols() ?
-                                points_material[p] :
+                              materials.size() == points.cols() ?
+                                materials[p] :
+                                0));
+    }
+
+    return cells;
+  }
+  // ***************************************************************************
+  std::vector<UCDCell> UCDUtilities::CreateLineCells(const Eigen::MatrixXi& lines,
+                                                     const Eigen::VectorXi& materials) const
+  {
+    std::vector<UCDCell> cells;
+    cells.reserve(lines.cols());
+
+    for (unsigned int l = 0; l < lines.cols(); l++)
+    {
+      cells.push_back(UCDCell(UCDCell::Types::Line,
+                              {
+                                static_cast<unsigned int>(lines(0, l)),
+                                static_cast<unsigned int>(lines(1, l))
+                              },
+                              materials.size() == lines.cols() ?
+                                materials[l] :
                                 0));
     }
 
