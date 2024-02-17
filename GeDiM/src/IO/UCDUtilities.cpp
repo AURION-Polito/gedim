@@ -170,8 +170,8 @@ namespace Gedim
     {
       file<< (p + 1) << sep;
       file<< std::scientific<< points(0, p)<< sep;
-      file<< std::scientific<< points(0, p)<< sep;
-      file<< std::scientific<< points(1, p)<< std::endl;
+      file<< std::scientific<< points(1, p)<< sep;
+      file<< std::scientific<< points(2, p)<< std::endl;
     }
 
     // export cells
