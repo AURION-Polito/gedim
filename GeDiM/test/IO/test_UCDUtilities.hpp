@@ -191,143 +191,66 @@ namespace GedimUnitTesting
   // ***************************************************************************
   TEST(TestUCDUtilities, UCDUtilities_Test3D)
   {
-    const unsigned int numGeometries = 1;
-
-
-    double angle = M_PI / 4.0; // 45 degrees
-    Eigen::Matrix3d rotationMatrix;
-    rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
-    rotationMatrix.row(1) << 0.0, 1.0, 0.0;
-    rotationMatrix.row(2) << -sin(angle), 0.0, cos(angle);
-
-    Eigen::Vector3d translation(0.0, 2.0, 0.0);
-
-    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
-
-    Gedim::VTKUtilities vtpUtilities;
-
-    // Export to VTK
-    for (unsigned int g = 0; g < numGeometries; g++)
-    {
-      Gedim::GeometryUtilities::Polyhedron geometry = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0 + g,
-                                                                                                             0.0 + g,
-                                                                                                             0.0 + g),
-                                                                                             1.0);
-
-      geometry.Vertices = geometryUtilities.RotatePoints(geometry.Vertices,
-                                                         rotationMatrix,
-                                                         translation);
-
-      vector<double> id(1, g);
-      vector<double> data(geometry.Vertices.cols());
-
-      for (unsigned int v = 0; v < geometry.Vertices.cols(); v++)
-        data[v] = 10.8 + g + v;
-
-      vtpUtilities.AddPolyhedron(geometry.Vertices,
-                                 geometry.Edges,
-                                 geometry.Faces,
-                                 {
-                                   {
-                                     "Id",
-                                     Gedim::VTPProperty::Formats::Cells,
-                                     static_cast<unsigned int>(id.size()),
-                                     id.data()
-                                   },
-                                   {
-                                     "Data",
-                                     Gedim::VTPProperty::Formats::Points,
-                                     static_cast<unsigned int>(data.size()),
-                                     data.data()
-                                   }
-                                 });
-    }
-
     std::string exportFolder = "./Export/TestUCDUtilities";
     Gedim::Output::CreateFolder(exportFolder);
 
-    vtpUtilities.Export(exportFolder + "/Geometry3D.vtu",
-                        Gedim::VTKUtilities::Ascii);
-  }
-  // ***************************************************************************
-  TEST(TestUCDUtilities, UCDUtilities_Test3Ds)
-  {
-    const unsigned int numGeometries = 1;
+    const unsigned int numGeometries = 2;
 
+    Gedim::UCDUtilities exporter;
 
-    double angle = M_PI / 4.0; // 45 degrees
-    Eigen::Matrix3d rotationMatrix;
-    rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
-    rotationMatrix.row(1) << 0.0, 1.0, 0.0;
-    rotationMatrix.row(2) << -sin(angle), 0.0, cos(angle);
+    // Export to UCD
+    const Eigen::MatrixXd points = (Eigen::MatrixXd(3, 9)<<
+                                    0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0,
+                                    0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0,
+                                    0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 2.0).finished();
+    const vector<vector<unsigned int>> polyhedra =
+    {
+      { 0, 2, 1, 5 },
+      { 5, 4, 7, 8 }
+    };
 
-    Eigen::Vector3d translation(0.0, 2.0, 0.0);
+    vector<double> id_points = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    vector<double> id(numGeometries);
+    vector<double> data(2 * numGeometries);
+    Eigen::VectorXi material(numGeometries);
 
-    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
-
-    Gedim::VTKUtilities vtpUtilities;
-
-    // Export to VTK
     for (unsigned int g = 0; g < numGeometries; g++)
     {
-      Gedim::GeometryUtilities::Polyhedron geometry = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0 + g,
-                                                                                                             0.0 + g,
-                                                                                                             0.0 + g),
-                                                                                             1.0);
-
-      geometry.Vertices = geometryUtilities.RotatePoints(geometry.Vertices,
-                                                         rotationMatrix,
-                                                         translation);
-      const vector<vector<vector<unsigned int>>> polyhedronsFaces =
-      {
-        {
-          { 0, 1, 2 },
-          { 0, 1, 5 },
-          { 0, 2, 5 },
-          { 1, 2, 5 }
-        },
-        {
-          { 0, 2, 3 },
-          { 0, 2, 4 },
-          { 0, 3, 4 },
-          { 2, 3, 4 }
-        }
-      };
-
-
-      vector<double> id(polyhedronsFaces.size());
-      id[0] = 10 + g;
-      id[1] = 20 + g;
-      vector<double> data(geometry.Vertices.cols());
-
-      for (unsigned int v = 0; v < geometry.Vertices.cols(); v++)
-        data[v] = 10.8 + g + v;
-
-      vtpUtilities.AddPolyhedrons(geometry.Vertices,
-                                  polyhedronsFaces,
-                                  {
-                                    {
-                                      "Id",
-                                      Gedim::VTPProperty::Formats::Cells,
-                                      static_cast<unsigned int>(id.size()),
-                                      id.data()
-                                    },
-                                    {
-                                      "Data",
-                                      Gedim::VTPProperty::Formats::Points,
-                                      static_cast<unsigned int>(data.size()),
-                                      data.data()
-                                    }
-                                  });
+      id[g] = g + 1;
+      data[2 * g] = g + 1;
+      data[2 * g + 1] = g + 1;
+      material[g] = g + 1;
     }
 
-    std::string exportFolder = "./Export/TestUCDUtilities";
-    Gedim::Output::CreateFolder(exportFolder);
-
-    vtpUtilities.Export(exportFolder + "/Geometry3Ds.vtu",
-                        Gedim::VTKUtilities::Ascii);
+    exporter.ExportPolyhedra(exportFolder + "/Geometry3Ds.inp",
+                             points,
+                             polyhedra,
+                             {
+                               {
+                                 "id_points",
+                                 "kg",
+                                 static_cast<unsigned int>(id_points.size()),
+                                 1,
+                                 id_points.data()
+                               }
+                             },
+                             {
+                               {
+                                 "Id",
+                                 "kg",
+                                 static_cast<unsigned int>(id.size()),
+                                 1,
+                                 id.data()
+                               },
+                               {
+                                 "Data",
+                                 "m",
+                                 static_cast<unsigned int>(data.size()),
+                                 2,
+                                 data.data()
+                               }
+                             },
+                             material);
   }
   // ***************************************************************************
 }

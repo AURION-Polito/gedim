@@ -63,8 +63,10 @@ namespace Gedim
                                             const Eigen::VectorXi& materials) const;
       std::vector<UCDCell> CreateLineCells(const Eigen::MatrixXi& lines,
                                            const Eigen::VectorXi& materials) const;
-      std::vector<UCDCell> CreatePolygonCells(const std::vector<std::vector<unsigned int>>& polygons,
+      std::vector<UCDCell> CreatePolygonCells(const std::vector<std::vector<unsigned int>>& polygons_vertices,
                                               const Eigen::VectorXi& materials) const;
+      std::vector<UCDCell> CreatePolyhedraCells(const std::vector<std::vector<unsigned int>>& polyhedra_vertices,
+                                                const Eigen::VectorXi& materials) const;
 
       void ExportUCDAscii(const Eigen::MatrixXd& points,
                           const std::vector<UCDProperty<double>>& point_properties,
@@ -94,6 +96,13 @@ namespace Gedim
                           const std::vector<UCDProperty<double>>& points_properties = {},
                           const std::vector<UCDProperty<double>>& polygons_properties = {},
                           const Eigen::VectorXi& materials = {}) const;
+
+      void ExportPolyhedra(const std::string& filePath,
+                           const Eigen::MatrixXd& points,
+                           const std::vector<std::vector<unsigned int>>& polyhedra_vertices,
+                           const std::vector<UCDProperty<double>>& points_properties = {},
+                           const std::vector<UCDProperty<double>>& polyhedra_properties = {},
+                           const Eigen::VectorXi& materials = {}) const;
   };
 }
 

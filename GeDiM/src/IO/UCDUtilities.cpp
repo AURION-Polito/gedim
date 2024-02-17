@@ -76,6 +76,30 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void UCDUtilities::ExportPolyhedra(const std::string& filePath,
+                                     const Eigen::MatrixXd& points,
+                                     const std::vector<std::vector<unsigned int> >& polyhedra_vertices,
+                                     const std::vector<UCDProperty<double> >& points_properties,
+                                     const std::vector<UCDProperty<double> >& polyhedra_properties,
+                                     const Eigen::VectorXi& materials) const
+  {
+    ExportFormats format = ExportFormats::Ascii;
+
+    switch (format)
+    {
+      case ExportFormats::Ascii:
+        ExportUCDAscii(points,
+                       points_properties,
+                       CreatePolyhedraCells(polyhedra_vertices,
+                                            materials),
+                       polyhedra_properties,
+                       filePath);
+        break;
+      default:
+        throw std::runtime_error("Unknown format");
+    }
+  }
+  // ***************************************************************************
   std::vector<UCDCell> UCDUtilities::CreatePointCells(const Eigen::MatrixXd& points,
                                                       const Eigen::VectorXi& materials) const
   {
@@ -135,6 +159,31 @@ namespace Gedim
       cells.push_back(UCDCell(polygon_type,
                               polygons_vertices[l],
                               materials.size() == static_cast<unsigned int>(polygons_vertices.size()) ?
+                                materials[l] :
+                                0));
+    }
+
+    return cells;
+  }
+  // ***************************************************************************
+  std::vector<UCDCell> UCDUtilities::CreatePolyhedraCells(const std::vector<std::vector<unsigned int> >& polyhedra_vertices,
+                                                          const Eigen::VectorXi& materials) const
+  {
+    std::vector<UCDCell> cells;
+    cells.reserve(polyhedra_vertices.size());
+
+    for (unsigned int l = 0; l < polyhedra_vertices.size(); l++)
+    {
+      UCDCell::Types polyhedra_type = UCDCell::Types::Unknown;
+
+      if (polyhedra_vertices[l].size() == 4)
+        polyhedra_type = UCDCell::Types::Tetrahedron;
+      else
+        throw std::runtime_error("Polygon type not supported");
+
+      cells.push_back(UCDCell(polyhedra_type,
+                              polyhedra_vertices[l],
+                              materials.size() == static_cast<unsigned int>(polyhedra_vertices.size()) ?
                                 materials[l] :
                                 0));
     }
