@@ -3,6 +3,7 @@
 #include "MeshDAOExporterToCsv.hpp"
 #include "StringsUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "UCDUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "ObjectFileFormatInterface.hpp"
 
@@ -415,6 +416,293 @@ namespace Gedim
                                   mesh.Cell3DsFacesVertices(),
                                   properties);
       vtpUtilities.Export(cell3DsFolder + "/" + fileName + "_Cell3Ds.vtu");
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::ExportMeshToUCD(const IMeshDAO& mesh,
+                                      const std::string& exportFolder,
+                                      const std::string& fileName,
+                                      const bool& separateFile) const
+  {
+    string cell0DsFolder = exportFolder;
+    string cell1DsFolder = exportFolder;
+    string cell2DsFolder = exportFolder;
+    string cell3DsFolder = exportFolder;
+
+    if (separateFile)
+    {
+      Gedim::Output::CreateFolder(exportFolder + "/Cell0Ds");
+      Gedim::Output::CreateFolder(exportFolder + "/Cell1Ds");
+      Gedim::Output::CreateFolder(exportFolder + "/Cell2Ds");
+      Gedim::Output::CreateFolder(exportFolder + "/Cell3Ds");
+
+      cell0DsFolder = exportFolder + "/Cell0Ds";
+      cell1DsFolder = exportFolder + "/Cell1Ds";
+      cell2DsFolder = exportFolder + "/Cell2Ds";
+      cell3DsFolder = exportFolder + "/Cell3Ds";
+    }
+
+    // Export Cell0Ds
+    if (mesh.Cell0DTotalNumber() > 0)
+    {
+      vector<double> id(mesh.Cell0DTotalNumber());
+      vector<double> marker(mesh.Cell0DTotalNumber());
+      vector<double> active(mesh.Cell0DTotalNumber());
+
+      for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
+      {
+        id[g] = g;
+        marker[g] = mesh.Cell0DMarker(g);
+        active[g] = mesh.Cell0DIsActive(g);
+      }
+
+      vector<UCDProperty<double>> properties(3 + mesh.Cell0DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell0DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        "",
+        static_cast<unsigned int>(id.size()),
+        1,
+        id.data()
+      };
+      properties[1] = {
+        "Marker",
+        "",
+        static_cast<unsigned int>(marker.size()),
+        1,
+        marker.data()
+      };
+      properties[2] = {
+        "Active",
+        "",
+        static_cast<unsigned int>(active.size()),
+        1,
+        active.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell0DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell0DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell0DDoublePropertySize(g, p) == 1 ? mesh.Cell0DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[3 + p] =
+        {
+          mesh.Cell0DDoublePropertyId(p),
+          "",
+          static_cast<unsigned int>(propertyValues[p].size()),
+          1,
+          propertyValues[p].data()
+        };
+      }
+
+      Gedim::UCDUtilities exporter;
+      exporter.ExportPoints(cell0DsFolder + "/" + fileName + "_Cell0Ds.vtu",
+                            mesh.Cell0DsCoordinates(),
+                            properties);
+    }
+
+    // Export Cell1Ds
+    if (mesh.Cell1DTotalNumber() > 0)
+    {
+      vector<double> id(mesh.Cell1DTotalNumber());
+      vector<double> marker(mesh.Cell1DTotalNumber());
+      vector<double> active(mesh.Cell1DTotalNumber());
+
+      for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
+      {
+        id[g] = g;
+        marker[g] = mesh.Cell1DMarker(g);
+        active[g] = mesh.Cell1DIsActive(g);
+      }
+
+      vector<UCDProperty<double>> properties(3 + mesh.Cell1DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell1DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        "",
+        static_cast<unsigned int>(id.size()),
+        1,
+        id.data()
+      };
+      properties[1] = {
+        "Marker",
+        "",
+        static_cast<unsigned int>(marker.size()),
+        1,
+        marker.data()
+      };
+      properties[2] = {
+        "Active",
+        "",
+        static_cast<unsigned int>(active.size()),
+        1,
+        active.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell1DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell1DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell1DDoublePropertySize(g, p) == 1 ? mesh.Cell1DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[3 + p] =
+        {
+          mesh.Cell1DDoublePropertyId(p),
+          "",
+          static_cast<unsigned int>(propertyValues[p].size()),
+          1,
+          propertyValues[p].data()
+        };
+      }
+
+
+      Gedim::UCDUtilities exporter;
+      exporter.ExportSegments(cell1DsFolder + "/" + fileName + "_Cell1Ds.vtu",
+                              mesh.Cell0DsCoordinates(),
+                              mesh.Cell1DsExtremes(),
+                              {},
+                              properties);
+    }
+
+    // Export Cell2Ds
+    if (mesh.Cell2DTotalNumber() > 0)
+    {
+      vector<double> id(mesh.Cell2DTotalNumber());
+      vector<double> marker(mesh.Cell2DTotalNumber());
+      vector<double> active(mesh.Cell2DTotalNumber());
+
+      for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
+      {
+        id[g] = g;
+        marker[g] = mesh.Cell2DMarker(g);
+        active[g] = mesh.Cell2DIsActive(g);
+      }
+
+      vector<UCDProperty<double>> properties(3 + mesh.Cell2DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell2DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        "",
+        static_cast<unsigned int>(id.size()),
+        1,
+        id.data()
+      };
+      properties[1] = {
+        "Marker",
+        "",
+        static_cast<unsigned int>(marker.size()),
+        1,
+        marker.data()
+      };
+      properties[2] = {
+        "Active",
+        "",
+        static_cast<unsigned int>(active.size()),
+        1,
+        active.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell2DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell2DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell2DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell2DDoublePropertySize(g, p) == 1 ? mesh.Cell2DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[3 + p] =
+        {
+          mesh.Cell2DDoublePropertyId(p),
+          "",
+          static_cast<unsigned int>(propertyValues[p].size()),
+          1,
+          propertyValues[p].data()
+        };
+      }
+
+      Gedim::UCDUtilities exporter;
+      exporter.ExportPolygons(cell2DsFolder + "/" + fileName + "_Cell2Ds.vtu",
+                              mesh.Cell0DsCoordinates(),
+                              mesh.Cell2DsVertices(),
+                              {},
+                              properties);
+    }
+
+    // Export Cell3Ds
+    if (mesh.Cell3DTotalNumber() > 0)
+    {
+      vector<double> id(mesh.Cell3DTotalNumber());
+      vector<double> marker(mesh.Cell3DTotalNumber());
+      vector<double> active(mesh.Cell3DTotalNumber());
+
+      for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
+      {
+        id[g] = g;
+        marker[g] = mesh.Cell3DMarker(g);
+        active[g] = mesh.Cell3DIsActive(g);
+      }
+
+      vector<UCDProperty<double>> properties(3 + mesh.Cell3DNumberDoubleProperties());
+      vector<vector<double>> propertyValues(mesh.Cell3DNumberDoubleProperties());
+
+      properties[0] = {
+        "Id",
+        "",
+        static_cast<unsigned int>(id.size()),
+        1,
+        id.data()
+      };
+      properties[1] = {
+        "Marker",
+        "",
+        static_cast<unsigned int>(marker.size()),
+        1,
+        marker.data()
+      };
+      properties[2] = {
+        "Active",
+        "",
+        static_cast<unsigned int>(active.size()),
+        1,
+        active.data()
+      };
+
+      for (unsigned int p = 0; p < mesh.Cell3DNumberDoubleProperties(); p++)
+      {
+        propertyValues[p].resize(mesh.Cell3DTotalNumber());
+        for (unsigned int g = 0; g < mesh.Cell3DTotalNumber(); g++)
+        {
+          propertyValues[p][g] = mesh.Cell3DDoublePropertySize(g, p) == 1 ? mesh.Cell3DDoublePropertyValue(g, p, 0) :
+                                                                            0.0;
+        }
+
+        properties[3 + p] =
+        {
+          mesh.Cell3DDoublePropertyId(p),
+          "",
+          static_cast<unsigned int>(propertyValues[p].size()),
+          1,
+          propertyValues[p].data()
+        };
+      }
+
+      Gedim::UCDUtilities exporter;
+      exporter.ExportPolygons(cell3DsFolder + "/" + fileName + "_Cell3Ds.vtu",
+                              mesh.Cell0DsCoordinates(),
+                              mesh.Cell3DsVertices(),
+                              {},
+                              properties);
     }
   }
   // ***************************************************************************

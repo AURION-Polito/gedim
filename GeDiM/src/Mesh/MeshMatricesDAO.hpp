@@ -1002,6 +1002,7 @@ namespace Gedim
         return _mesh.Cell3DFaces[_mesh.NumberCell3DFaces[cell3DIndex] + faceIndex];
       }
       std::vector<std::vector<std::vector<unsigned int>>> Cell3DsFacesVertices() const;
+      std::vector<std::vector<unsigned int>> Cell3DsVertices() const;
       inline unsigned int Cell3DMarker(const unsigned int& cell3DIndex) const
       {
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());

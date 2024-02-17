@@ -1534,6 +1534,16 @@ namespace Gedim
     return cell3DsFacesVertices;
   }
   // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell3DsVertices() const
+  {
+    vector<std::vector<unsigned int>> cell3DsVertices(Cell3DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell3DTotalNumber(); p++)
+        cell3DsVertices[p] = Cell3DVertices(p);
+
+    return cell3DsVertices;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Compress()
   {
     _mesh.Cell0DCoordinates.shrink_to_fit();

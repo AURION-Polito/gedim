@@ -253,6 +253,22 @@ namespace GedimUnitTesting
                              material);
   }
   // ***************************************************************************
+  TEST(TestUCDUtilities, UCDUtilities_TestMesh3D)
+  {
+    std::string exportFolder = "./Export/TestUCDUtilities/TestMesh3D";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ExportMeshToUCD(mesh,
+                                  exportFolder,
+                                  "Mesh3D",
+                                  false);
+  }
+  // ***************************************************************************
+
 }
 
 #endif // __TEST_UCDUtilities_H
