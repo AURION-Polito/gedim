@@ -92,57 +92,63 @@ namespace Gedim
     }
 
     // export points properties
-    file<< point_properties.size();
-    for (unsigned int pr = 0; pr < point_properties.size(); pr++)
+    if (point_properties.size() > 0)
     {
-      file<< sep<< point_properties[pr].NumComponents;
-    }
-    file<< std::endl;
-
-    for (unsigned int pr = 0; pr < point_properties.size(); pr++)
-    {
-      file<< point_properties[pr].Label<< ','<< sep;
-      file<< point_properties[pr].UnitLabel<< std::endl;
-    }
-
-    for (unsigned int p = 0; p < points.cols(); p++)
-    {
-      file<< (p + 1);
+      file<< point_properties.size();
       for (unsigned int pr = 0; pr < point_properties.size(); pr++)
       {
-        for (unsigned int cp = 0; cp < point_properties[pr].NumComponents; cp++)
-        {
-          file<< sep<< point_properties[pr].Data[point_properties[pr].NumComponents * p + cp];
-        }
+        file<< sep<< point_properties[pr].NumComponents;
       }
       file<< std::endl;
+
+      for (unsigned int pr = 0; pr < point_properties.size(); pr++)
+      {
+        file<< point_properties[pr].Label<< ','<< sep;
+        file<< point_properties[pr].UnitLabel<< std::endl;
+      }
+
+      for (unsigned int p = 0; p < points.cols(); p++)
+      {
+        file<< (p + 1);
+        for (unsigned int pr = 0; pr < point_properties.size(); pr++)
+        {
+          for (unsigned int cp = 0; cp < point_properties[pr].NumComponents; cp++)
+          {
+            file<< sep<< point_properties[pr].Data[point_properties[pr].NumComponents * p + cp];
+          }
+        }
+        file<< std::endl;
+      }
     }
 
     // export cells properties
-    file<< cell_properties.size();
-    for (unsigned int pr = 0; pr < cell_properties.size(); pr++)
+    if (cell_properties.size() > 0)
     {
-      file<< sep<< cell_properties[pr].NumComponents;
-    }
-    file<< std::endl;
-
-    for (unsigned int pr = 0; pr < cell_properties.size(); pr++)
-    {
-      file<< cell_properties[pr].Label<< ','<< sep;
-      file<< cell_properties[pr].UnitLabel<< std::endl;
-    }
-
-    for (unsigned int c = 0; c < cells.size(); c++)
-    {
-      file<< (c + 1);
+      file<< cell_properties.size();
       for (unsigned int pr = 0; pr < cell_properties.size(); pr++)
       {
-        for (unsigned int cp = 0; cp < cell_properties[pr].NumComponents; cp++)
-        {
-          file<< sep<< cell_properties[pr].Data[cell_properties[pr].NumComponents * c + cp];
-        }
+        file<< sep<< cell_properties[pr].NumComponents;
       }
       file<< std::endl;
+
+      for (unsigned int pr = 0; pr < cell_properties.size(); pr++)
+      {
+        file<< cell_properties[pr].Label<< ','<< sep;
+        file<< cell_properties[pr].UnitLabel<< std::endl;
+      }
+
+      for (unsigned int c = 0; c < cells.size(); c++)
+      {
+        file<< (c + 1);
+        for (unsigned int pr = 0; pr < cell_properties.size(); pr++)
+        {
+          for (unsigned int cp = 0; cp < cell_properties[pr].NumComponents; cp++)
+          {
+            file<< sep<< cell_properties[pr].Data[cell_properties[pr].NumComponents * c + cp];
+          }
+        }
+        file<< std::endl;
+      }
     }
 
 
