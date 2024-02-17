@@ -698,11 +698,11 @@ namespace Gedim
       }
 
       Gedim::UCDUtilities exporter;
-      exporter.ExportPolygons(cell3DsFolder + "/" + fileName + "_Cell3Ds.inp",
-                              mesh.Cell0DsCoordinates(),
-                              mesh.Cell3DsVertices(),
-                              {},
-                              properties);
+      exporter.ExportPolyhedra(cell3DsFolder + "/" + fileName + "_Cell3Ds.inp",
+                               mesh.Cell0DsCoordinates(),
+                               mesh.Cell3DsVertices(),
+                               {},
+                               properties);
     }
   }
   // ***************************************************************************
