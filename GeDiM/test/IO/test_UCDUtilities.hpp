@@ -30,17 +30,21 @@ namespace GedimUnitTesting
     // Export to VTK
     Eigen::MatrixXd points(3, 4);
     vector<double> id(numGeometries);
-    vector<double> data(numGeometries);
+    vector<double> data(2 * numGeometries);
+    Eigen::VectorXi material(numGeometries);
 
     for (unsigned int g = 0; g < numGeometries; g++)
     {
       points.col(g)<< 1.0 + g,  0.0 + g, 0.0 + g;
 
       id[g] = g + 1;
-      data[g] = g + 1;
+      data[2 * g] = g + 1;
+      data[2 * g + 1] = g + 1;
+      material[g] = g + 1;
     }
 
-    exporter.ExportPoints(points,
+    exporter.ExportPoints(exportFolder + "/Geometry0Ds.inp",
+                          points,
                           {
                             {
                               "Id",
@@ -55,11 +59,11 @@ namespace GedimUnitTesting
                               "m",
                               Gedim::UCDProperty<double>::Formats::Points,
                               static_cast<unsigned int>(data.size()),
-                              1,
+                              2,
                               data.data()
                             }
                           },
-                          exportFolder + "/Geometry0Ds.inp");
+                          material);
 
   }
   // ***************************************************************************

@@ -25,14 +25,35 @@ namespace Gedim
       const T* Data;
   };
 
-  template<typename pointCollection>
-  struct UCDPoints final
-  {
-      const pointCollection& Points;
 
-      UCDPoints(const pointCollection& points) :
-        Points(points)
+  class UCDCell final
+  {
+    public:
+      enum struct Types
+      {
+        Point = 0,
+        Line = 1,
+        Triangle = 2,
+        Quadrilateral = 3,
+        Hexahedron = 4,
+        Prism = 5,
+        Tetrahedron = 6,
+        Pyramid = 7
+      };
+
+      const Types Type;
+      const std::vector<unsigned int> PointIds;
+      const unsigned int MaterialId;
+
+      UCDCell(const Types type,
+              const std::vector<unsigned int> pointIds,
+              const unsigned int materialId) :
+        Type(type),
+        PointIds(pointIds),
+        MaterialId(materialId)
       { }
+
+      const std::string CellLabel(const UCDCell::Types type) const;
   };
 
   class UCDUtilities final
@@ -44,18 +65,23 @@ namespace Gedim
       };
 
     private:
+      std::vector<UCDCell> CreatePointCells(const Eigen::MatrixXd& points,
+                                            const Eigen::VectorXi& points_material) const;
+
       void ExportUCDAscii(const Eigen::MatrixXd& points,
                           const std::vector<UCDProperty<double>>& point_properties,
+                          const std::vector<UCDCell>& cells,
+                          const std::vector<UCDProperty<double>>& cell_properties,
                           const std::string& filePath) const;
 
     public:
       UCDUtilities() { }
       virtual ~UCDUtilities() { }
 
-      void ExportPoints(const Eigen::MatrixXd& points,
-                        const std::vector<UCDProperty<double>>& points_properties,
-                        const std::string& filePath,
-                        const ExportFormats& format = ExportFormats::Ascii) const;
+      void ExportPoints(const std::string& filePath,
+                        const Eigen::MatrixXd& points,
+                        const std::vector<UCDProperty<double>>& points_properties = {},
+                        const Eigen::VectorXi& points_material = {}) const;
   };
 }
 
