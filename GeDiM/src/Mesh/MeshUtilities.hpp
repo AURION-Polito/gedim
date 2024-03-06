@@ -227,6 +227,10 @@ namespace Gedim
       FilterMeshData FilterMesh2D(const std::vector<unsigned int>& cell2DsFilter,
                                   const IMeshDAO& mesh) const;
 
+      /// \brief Extract mesh3D cells from a mesh
+      FilterMeshData FilterMesh3D(const std::vector<unsigned int>& cell3DsFilter,
+                                  const IMeshDAO& mesh) const;
+
       ExtractMeshData ExtractMesh1D(const std::vector<unsigned int>& cell0DsFilter,
                                     const std::vector<unsigned int>& cell1DsFilter,
                                     const IMeshDAO& originalMesh,

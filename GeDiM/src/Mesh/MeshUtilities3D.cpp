@@ -1948,4 +1948,56 @@ namespace Gedim
     return agglomeratedCell3DIndex;
   }
   // ***************************************************************************
+  MeshUtilities::FilterMeshData MeshUtilities::FilterMesh3D(const std::vector<unsigned int>& cell3DsFilter,
+                                                            const IMeshDAO& mesh) const
+  {
+    list<unsigned int> cell3Ds;
+    std::set<unsigned int> cell0Ds, cell1Ds, cell2Ds;
+
+    for (const unsigned int cell3DIndex : cell3DsFilter)
+    {
+      if (!mesh.Cell3DIsActive(cell3DIndex))
+        continue;
+
+      cell3Ds.push_back(cell3DIndex);
+
+      for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(cell3DIndex); v++)
+      {
+        const unsigned int cell0DIndex = mesh.Cell3DVertex(cell3DIndex, v);
+
+        if (cell0Ds.find(cell0DIndex) == cell0Ds.end())
+          cell0Ds.insert(cell0DIndex);
+      }
+
+      for (unsigned int v = 0; v < mesh.Cell3DNumberEdges(cell3DIndex); v++)
+      {
+        const unsigned int cell1DIndex = mesh.Cell3DEdge(cell3DIndex, v);
+
+        if (cell1Ds.find(cell1DIndex) == cell1Ds.end())
+          cell1Ds.insert(cell1DIndex);
+      }
+
+      for (unsigned int v = 0; v < mesh.Cell3DNumberFaces(cell3DIndex); v++)
+      {
+        const unsigned int cell2DIndex = mesh.Cell3DFace(cell3DIndex, v);
+
+        if (cell2Ds.find(cell2DIndex) == cell2Ds.end())
+          cell2Ds.insert(cell2DIndex);
+      }
+    }
+
+    MeshUtilities::FilterMeshData result;
+
+    result.Cell0Ds = std::vector<unsigned int>(cell0Ds.begin(),
+                                               cell0Ds.end());
+    result.Cell1Ds = std::vector<unsigned int>(cell1Ds.begin(),
+                                               cell1Ds.end());
+    result.Cell2Ds = std::vector<unsigned int>(cell2Ds.begin(),
+                                               cell2Ds.end());
+    result.Cell3Ds = std::vector<unsigned int>(cell3Ds.begin(),
+                                               cell3Ds.end());
+
+    return result;
+  }
+  // ***************************************************************************
 }
