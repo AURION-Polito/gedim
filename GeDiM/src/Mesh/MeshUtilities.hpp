@@ -242,6 +242,13 @@ namespace Gedim
                                     const IMeshDAO& originalMesh,
                                     IMeshDAO& mesh) const;
 
+      ExtractMeshData ExtractMesh3D(const std::vector<unsigned int>& cell0DsFilter,
+                                    const std::vector<unsigned int>& cell1DsFilter,
+                                    const std::vector<unsigned int>& cell2DsFilter,
+                                    const std::vector<unsigned int>& cell3DsFilter,
+                                    const IMeshDAO& originalMesh,
+                                    IMeshDAO& mesh) const;
+
       /// \brief Fill Mesh 1D From segment Coordinates
       /// \param segmentOrigin the segment origin
       /// \param segmentTangent the segment tangent vector
