@@ -2047,8 +2047,8 @@ namespace Gedim
       result.NewCell2DToOldCell2D[p] = oldCell2DIndex;
       result.OldCell2DToNewCell2D[oldCell2DIndex] = p;
 
-      std::vector<unsigned int> vertices = originalMesh.Cell2DVertices(oldCell2DIndex);
-      std::vector<unsigned int> edges = originalMesh.Cell2DEdges(oldCell2DIndex);
+      const std::vector<unsigned int> vertices = originalMesh.Cell2DVertices(oldCell2DIndex);
+      const std::vector<unsigned int> edges = originalMesh.Cell2DEdges(oldCell2DIndex);
 
       Gedim::Output::Assert(vertices.size() == edges.size());
 
@@ -2067,9 +2067,21 @@ namespace Gedim
       result.NewCell3DToOldCell3D[p] = oldCell3DIndex;
       result.OldCell3DToNewCell3D[oldCell3DIndex] = p;
 
-      newCell3Ds[p].VerticesIndex = originalMesh.Cell3DVertices(oldCell3DIndex);
-      newCell3Ds[p].EdgesIndex = originalMesh.Cell3DEdges(oldCell3DIndex);
-      newCell3Ds[p].FacesIndex = originalMesh.Cell3DFaces(oldCell3DIndex);
+      const std::vector<unsigned int> vertices = originalMesh.Cell3DVertices(oldCell3DIndex);
+      const std::vector<unsigned int> edges = originalMesh.Cell3DEdges(oldCell3DIndex);
+      const std::vector<unsigned int> faces = originalMesh.Cell3DFaces(oldCell3DIndex);
+
+      Mesh3DPolyhedron& polyhedron = newCell3Ds.at(p);
+      polyhedron.VerticesIndex.resize(vertices.size());
+      polyhedron.EdgesIndex.resize(edges.size());
+      polyhedron.FacesIndex.resize(faces.size());
+
+      for (unsigned int v = 0; v < vertices.size(); v++)
+        polyhedron.VerticesIndex[v] = result.OldCell0DToNewCell0D.at(vertices[v]);
+      for (unsigned int v = 0; v < edges.size(); v++)
+        polyhedron.EdgesIndex[v] = result.OldCell1DToNewCell1D.at(edges[v]);
+      for (unsigned int v = 0; v < faces.size(); v++)
+        polyhedron.FacesIndex[v] = result.OldCell2DToNewCell2D.at(faces[v]);
     }
 
     FillMesh3D(newCell0Ds,
