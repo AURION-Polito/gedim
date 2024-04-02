@@ -117,17 +117,17 @@ namespace GedimUnitTesting
                                        polyhedron.Edges,
                                        polyhedron.Faces,
                                        9,
-                                       1,
+                                       10,
                                        meshDao);
-
-    Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
-                                                                                                           meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolyhedralMesh";
     Gedim::Output::CreateFolder(exportFolder);
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "TestCreatePolyhedralMesh");
+
+    Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                           meshDao);
   }
 
   TEST(TestMeshUtilities, TestCheckMesh3D)
