@@ -365,6 +365,42 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "CreatedPolygonalMesh");
 
+    {
+      using namespace Gedim;
+      // export mesh data
+      std::ofstream file(exportFolder + "/Mesh.txt");
+
+      Eigen::MatrixXd Cell0Ds = (Eigen::MatrixXd(3, 2)<< 0,1,2,3,4,5).finished();
+      std::cout<< Cell0Ds<< std::endl;
+
+      const auto cell0Ds = meshDao.Cell0DsCoordinates();
+      const auto cell1Ds = meshDao.Cell1DsExtremes();
+      const auto cell2Ds = meshDao.Cell2DsExtremes();
+
+      file.precision(16);
+      file<< Gedim::MatrixToString<Eigen::MatrixXd>(cell0Ds,
+                                                    "Eigen::MatrixXd",
+                                                    "Cell0Ds")<< std::endl;
+      file<< "Eigen::MatrixXd Cell0Ds = (Eigen::MatrixXd(3, "<< cell0Ds.cols()<< ")<< ";
+      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
+        file<< std::scientific<< cell0Ds(0, c)<< ",";
+      file<< std::endl;
+      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
+        file<< std::scientific<< cell0Ds(1, c)<< ",";
+      file<< std::endl;
+      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
+        file<< std::scientific<< (c == 0 ? "" : ",")<< cell0Ds(2, c);
+      file<< ").finished();"<< std::endl;
+
+      file<< std::scientific<< "Eigen::MatrixXi Cell1Ds = "<< meshDao.Cell1DsExtremes()<< std::endl;
+      file<< std::scientific<< "std::vector<Eigen::MatrixXi> Polygons = "<< meshDao.Cell2DsExtremes()<< std::endl;
+      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsVertices = {}"<< std::endl;
+      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsEdges = {}"<< std::endl;
+      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsFaces = {}"<< std::endl;
+
+      file.close();
+    }
+
     Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                            meshDao);
     const unsigned int cell2DToExportIndex = 0;

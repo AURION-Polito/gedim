@@ -228,6 +228,25 @@ namespace Gedim
                             const double& localTime);
   };
 
+  template <typename matrixType>
+  std::string MatrixToString(const matrixType& mat,
+                             const std::string& matrixTypeStr,
+                             const std::string& matrixName)
+  {
+    std::ostringstream str;
+    str.precision(16);
+    str<< matrixTypeStr<< " "<< matrixName<< " = ("<< matrixTypeStr<< "("<< mat.rows()<< ", "<< mat.cols()<< ")<< ";
+    for (unsigned int r = 0; r < mat.rows(); r++)
+    {
+      for (unsigned int c = 0; c < mat.cols(); c++)
+        str<< std::scientific<< (c == 0 ? "" : ",")<< mat(r, c);
+      if (r + 1 < mat.rows())
+        str<< ","<< std::endl;
+    }
+    str<< ").finished();";
+    return str.str();
+  }
+
   /// General print of a vector
   template <typename T>
   std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec)
