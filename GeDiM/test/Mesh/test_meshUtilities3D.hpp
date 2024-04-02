@@ -99,6 +99,37 @@ namespace GedimUnitTesting
               meshDao.Cell3DTotalNumber());
   }
 
+  TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                   1.0);
+
+    meshUtilities.CreatePolyhedralMesh(geometryUtilities,
+                                       polyhedron.Vertices,
+                                       polyhedron.Edges,
+                                       polyhedron.Faces,
+                                       9,
+                                       1,
+                                       meshDao);
+
+    Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                           meshDao);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolyhedralMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "TestCreatePolyhedralMesh");
+  }
+
   TEST(TestMeshUtilities, TestCheckMesh3D)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;

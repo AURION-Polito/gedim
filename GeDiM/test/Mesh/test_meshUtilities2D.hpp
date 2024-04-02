@@ -339,6 +339,44 @@ namespace GedimUnitTesting
         meshDao.Cell1DMarker(23));
   }
 
+
+  TEST(TestMeshUtilities, TestCreatePolygonalMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Eigen::MatrixXd polygon = geometryUtilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                   1.0);
+
+    meshUtilities.CreatePolygonalMesh(geometryUtilities,
+                                      polygon,
+                                      9,
+                                      1,
+                                      meshDao);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolygonalMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "CreatedPolygonalMesh");
+
+    Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
+                                                                                                           meshDao);
+    const unsigned int cell2DToExportIndex = 0;
+    meshUtilities.ExportCell2DToVTU(meshDao,
+                                    cell2DToExportIndex,
+                                    cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
+                                    cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
+                                    exportFolder);
+  }
+
   TEST(TestMeshUtilities, TestCheckMesh2D)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;

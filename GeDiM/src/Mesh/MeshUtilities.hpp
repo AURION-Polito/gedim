@@ -490,6 +490,12 @@ namespace Gedim
                                 IMeshDAO& mesh,
                                 const std::string& options = "-QDzpqnea") const;
 
+      void CreatePolygonalMesh(const GeometryUtilities& geometryUtilities,
+                               const Eigen::MatrixXd& polygonVertices,
+                               const unsigned int numPoints,
+                               const unsigned int numIterations,
+                               IMeshDAO& mesh) const;
+
       /// \brief Create tetrahedral mesh on 3D polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges
@@ -504,6 +510,14 @@ namespace Gedim
                                  const double& maxTetrahedronVolume,
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
+
+      void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
+                                const Eigen::MatrixXd& polyhedronVertices,
+                                const Eigen::MatrixXi& polyhedronEdges,
+                                const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                const unsigned int numPoints,
+                                const unsigned int numIterations,
+                                IMeshDAO& mesh) const;
 
       /// \brief Import 3D mesh from OVM file
       void ImportOpenVolumeMesh(const std::string& ovmFilePath,
