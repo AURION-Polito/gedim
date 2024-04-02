@@ -381,18 +381,9 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixToString<Eigen::MatrixXd>(cell0Ds,
                                                     "Eigen::MatrixXd",
                                                     "Cell0Ds")<< std::endl;
-      file<< "Eigen::MatrixXd Cell0Ds = (Eigen::MatrixXd(3, "<< cell0Ds.cols()<< ")<< ";
-      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
-        file<< std::scientific<< cell0Ds(0, c)<< ",";
-      file<< std::endl;
-      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
-        file<< std::scientific<< cell0Ds(1, c)<< ",";
-      file<< std::endl;
-      for (unsigned int c = 0; c < cell0Ds.cols(); c++)
-        file<< std::scientific<< (c == 0 ? "" : ",")<< cell0Ds(2, c);
-      file<< ").finished();"<< std::endl;
-
-      file<< std::scientific<< "Eigen::MatrixXi Cell1Ds = "<< meshDao.Cell1DsExtremes()<< std::endl;
+      file<< Gedim::MatrixToString<Eigen::MatrixXi>(cell1Ds,
+                                                    "Eigen::MatrixXi",
+                                                    "Cell1Ds")<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::MatrixXi> Polygons = "<< meshDao.Cell2DsExtremes()<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsVertices = {}"<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsEdges = {}"<< std::endl;
