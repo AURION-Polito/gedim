@@ -369,23 +369,16 @@ namespace GedimUnitTesting
       using namespace Gedim;
       std::ofstream file(exportFolder + "/Mesh.txt");
 
-      const auto cell0Ds = meshDao.Cell0DsCoordinates();
-      const auto cell1Ds = meshDao.Cell1DsExtremes();
-      const auto cell2Ds = meshDao.Cell2DsExtremes();
-
       file.precision(16);
-      file<< Gedim::MatrixToString<Eigen::MatrixXd>(cell0Ds,
+      file<< Gedim::MatrixToString<Eigen::MatrixXd>(meshDao.Cell0DsCoordinates(),
                                                     "Eigen::MatrixXd",
                                                     "Cell0Ds")<< std::endl;
-      file<< Gedim::MatrixToString<Eigen::MatrixXi>(cell1Ds,
+      file<< Gedim::MatrixToString<Eigen::MatrixXi>(meshDao.Cell1DsExtremes(),
                                                     "Eigen::MatrixXi",
                                                     "Cell1Ds")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(cell2Ds,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
                                                               "Eigen::MatrixXi",
                                                               "Cell2Ds")<< std::endl;
-      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsVertices = {}"<< std::endl;
-      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsEdges = {}"<< std::endl;
-      file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsFaces = {}"<< std::endl;
 
       file.close();
     }

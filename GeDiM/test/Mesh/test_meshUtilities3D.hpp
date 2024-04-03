@@ -126,6 +126,32 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "TestCreatePolyhedralMesh");
 
+    {
+      using namespace Gedim;
+      std::ofstream file(exportFolder + "/Mesh.txt");
+
+      const auto cell0Ds = meshDao.Cell0DsCoordinates();
+      const auto cell1Ds = meshDao.Cell1DsExtremes();
+      const auto cell2Ds = meshDao.Cell2DsExtremes();
+      const auto cell3DVertices = meshDao.Cell3DsVertices();
+
+      file.precision(16);
+      file<< Gedim::MatrixToString<Eigen::MatrixXd>(meshDao.Cell0DsCoordinates(),
+                                                    "Eigen::MatrixXd",
+                                                    "Cell0Ds")<< std::endl;
+      file<< Gedim::MatrixToString<Eigen::MatrixXi>(meshDao.Cell1DsExtremes(),
+                                                    "Eigen::MatrixXi",
+                                                    "Cell1Ds")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
+                                                              "Eigen::MatrixXi",
+                                                              "Cell2Ds")<< std::endl;
+      file<< "Cell3DsVertices = "<< meshDao.Cell3DsVertices()<< std::endl;
+      file<< "Cell3DsEdges = "<< meshDao.Cell3DsEdges()<< std::endl;
+      file<< "Cell3DsFaces = "<< meshDao.Cell3DsFaces()<< std::endl;
+
+      file.close();
+    }
+
     Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                            meshDao);
   }

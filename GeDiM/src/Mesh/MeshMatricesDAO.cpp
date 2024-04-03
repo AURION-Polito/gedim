@@ -1539,9 +1539,29 @@ namespace Gedim
     vector<std::vector<unsigned int>> cell3DsVertices(Cell3DTotalNumber());
 
     for (unsigned int p = 0; p < Cell3DTotalNumber(); p++)
-        cell3DsVertices[p] = Cell3DVertices(p);
+      cell3DsVertices[p] = Cell3DVertices(p);
 
     return cell3DsVertices;
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell3DsEdges() const
+  {
+    vector<std::vector<unsigned int>> cell3DsEdges(Cell3DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell3DTotalNumber(); p++)
+      cell3DsEdges[p] = Cell3DEdges(p);
+
+    return cell3DsEdges;
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell3DsFaces() const
+  {
+    vector<std::vector<unsigned int>> cell3DsFaces(Cell3DTotalNumber());
+
+    for (unsigned int p = 0; p < Cell3DTotalNumber(); p++)
+      cell3DsFaces[p] = Cell3DFaces(p);
+
+    return cell3DsFaces;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Compress()

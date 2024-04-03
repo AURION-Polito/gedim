@@ -947,6 +947,10 @@ namespace Gedim
       virtual std::vector<std::vector<std::vector<unsigned int>>> Cell3DsFacesVertices() const = 0;
       /// \return the Cell0D index collections of all Cell3Ds, size Cell3DTotalNumber() x Cell3DNumberVertices(cell3DIndex)
       virtual std::vector<std::vector<unsigned int>> Cell3DsVertices() const = 0;
+      /// \return the Cell1D index collections of all Cell3Ds, size Cell3DTotalNumber() x Cell3DNumberEdges(cell3DIndex)
+      virtual std::vector<std::vector<unsigned int>> Cell3DsEdges() const = 0;
+      /// \return the Cell2D index collections of all Cell3Ds, size Cell3DTotalNumber() x Cell3DNumberFaces(cell3DIndex)
+      virtual std::vector<std::vector<unsigned int>> Cell3DsFaces() const = 0;
 
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \param faceIndex the index of cell2D face from 0 to NumberCell3DFaces(cell3DIndex)
