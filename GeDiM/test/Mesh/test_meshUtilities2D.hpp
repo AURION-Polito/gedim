@@ -367,11 +367,7 @@ namespace GedimUnitTesting
 
     {
       using namespace Gedim;
-      // export mesh data
       std::ofstream file(exportFolder + "/Mesh.txt");
-
-      Eigen::MatrixXd Cell0Ds = (Eigen::MatrixXd(3, 2)<< 0,1,2,3,4,5).finished();
-      std::cout<< Cell0Ds<< std::endl;
 
       const auto cell0Ds = meshDao.Cell0DsCoordinates();
       const auto cell1Ds = meshDao.Cell1DsExtremes();
@@ -384,7 +380,9 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixToString<Eigen::MatrixXi>(cell1Ds,
                                                     "Eigen::MatrixXi",
                                                     "Cell1Ds")<< std::endl;
-      file<< std::scientific<< "std::vector<Eigen::MatrixXi> Polygons = "<< meshDao.Cell2DsExtremes()<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(cell2Ds,
+                                                              "Eigen::MatrixXi",
+                                                              "Cell2Ds")<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsVertices = {}"<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsEdges = {}"<< std::endl;
       file<< std::scientific<< "std::vector<Eigen::VectorXi> Cell3DsFaces = {}"<< std::endl;
@@ -394,6 +392,38 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                            meshDao);
+
+    {
+      using namespace Gedim;
+      std::ofstream file(exportFolder + "/MeshGeometricData.txt");
+
+      file.precision(16);
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsVertices,
+                                                              "Eigen::MatrixXd",
+                                                              "PolygonsVertices")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(cell2DsGeometricData.Cell2DsTriangulations,
+                                                              "Eigen::Matrix3d",
+                                                              "PolygonsTriangulations")<< std::endl;
+
+      file<< "PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell2DsGeometricData.Cell2DsCentroids,
+                                                              "Eigen::Vector3d",
+                                                              "PolygonsCentroid")<< std::endl;
+      file<< "PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< std::endl;
+      file<< "PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(cell2DsGeometricData.Cell2DsEdgeLengths,
+                                                              "Eigen::VectorXd",
+                                                              "PolygonsEdgesLength")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeTangents,
+                                                              "Eigen::MatrixXd",
+                                                              "PolygonsEdgesTangent")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeNormals,
+                                                              "Eigen::MatrixXd",
+                                                              "PolygonsEdgesNormal")<< std::endl;
+
+      file.close();
+    }
+
     const unsigned int cell2DToExportIndex = 0;
     meshUtilities.ExportCell2DToVTU(meshDao,
                                     cell2DToExportIndex,

@@ -235,15 +235,53 @@ namespace Gedim
   {
     std::ostringstream str;
     str.precision(16);
-    str<< matrixTypeStr<< " "<< matrixName<< " = ("<< matrixTypeStr<< "("<< mat.rows()<< ", "<< mat.cols()<< ")<< ";
-    for (unsigned int r = 0; r < mat.rows(); r++)
+    str<< matrixName<< " = "<< matrixTypeStr<< "("<< mat.rows()<< ", "<< mat.cols()<< ");"<< std::endl;
+    for (unsigned int c = 0; c < mat.cols(); c++)
     {
-      for (unsigned int c = 0; c < mat.cols(); c++)
-        str<< std::scientific<< (c == 0 ? "" : ",")<< mat(r, c);
-      if (r + 1 < mat.rows())
-        str<< ","<< std::endl;
+      str<< matrixName<< ".col("<< c<< ")<< ";
+      for (unsigned int r = 0; r < mat.rows(); r++)
+        str<< std::scientific<< (r == 0 ? "" : ",")<< mat(r, c);
+      str<< ";"<< std::endl;
     }
-    str<< ").finished();";
+
+    return str.str();
+  }
+
+  template <typename matrixType>
+  std::string MatrixCollectionToString(const std::vector<matrixType>& matCollection,
+                                       const std::string& matrixTypeStr,
+                                       const std::string& matrixName)
+  {
+    std::ostringstream str;
+    str.precision(16);
+
+    str<< matrixName<< " = std::vector<"<< matrixTypeStr<< ">("<< matCollection.size()<< ");"<< std::endl;
+    for (unsigned int v = 0; v < matCollection.size(); v++)
+    {
+      str<< MatrixToString<matrixType>(matCollection.at(v),
+                                       matrixTypeStr,
+                                       matrixName + "[" + std::to_string(v) + "]");
+    }
+
+    return str.str();
+  }
+
+  template <typename matrixType>
+  std::string MatrixCollectionToString(const std::vector<std::vector<matrixType>>& matCollection,
+                                       const std::string& matrixTypeStr,
+                                       const std::string& matrixName)
+  {
+    std::ostringstream str;
+    str.precision(16);
+
+    str<< matrixName<< " = std::vector<std::vector<"<< matrixTypeStr<< ">>("<< matCollection.size()<< ");"<< std::endl;
+    for (unsigned int v = 0; v < matCollection.size(); v++)
+    {
+      str<< MatrixCollectionToString<matrixType>(matCollection.at(v),
+                                                 matrixTypeStr,
+                                                 matrixName + "[" + std::to_string(v) + "]");
+    }
+
     return str.str();
   }
 
@@ -257,10 +295,10 @@ namespace Gedim
     unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
     unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
 
-    out<< "[";
+    out<< "{";
     for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
       out<< (i != startIndexVector ? "," : "")<< vec.at(i);
-    out<< "]";
+    out<< "}";
 
     return out;
   }
@@ -274,10 +312,10 @@ namespace Gedim
     unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
     unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
 
-    out<< "[";
+    out<< "{";
     for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
       out<< (i != startIndexVector ? "," : "")<< *vec.at(i);
-    out<< "]";
+    out<< "}";
 
     return out;
   }
