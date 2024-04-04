@@ -398,12 +398,12 @@ namespace GedimUnitTesting
                                                               "Eigen::Matrix3d",
                                                               "PolygonsTriangulations")<< std::endl;
 
-      file<< std::scientific<< "PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< std::endl;
+      file<< std::scientific<< "PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell2DsGeometricData.Cell2DsCentroids,
                                                               "Eigen::Vector3d",
                                                               "PolygonsCentroid")<< std::endl;
-      file<< std::scientific<< "PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< std::endl;
-      file<< std::scientific<< "PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< std::endl;
+      file<< std::scientific<< "PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< ";"<< std::endl;
+      file<< std::scientific<< "PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(cell2DsGeometricData.Cell2DsEdgeLengths,
                                                               "Eigen::VectorXd",
                                                               "PolygonsEdgesLength")<< std::endl;
