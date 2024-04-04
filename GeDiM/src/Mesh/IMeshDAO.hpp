@@ -71,6 +71,7 @@ namespace Gedim
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return the cell0D marker
       virtual unsigned int Cell0DMarker(const unsigned int& cell0DIndex) const = 0;
+      virtual std::vector<unsigned int> Cell0DsMarker() const = 0;
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return if the cell0D has new cell0Ds associated
       virtual bool Cell0DHasUpdatedCell0Ds(const unsigned int& cell0DIndex) const = 0;
@@ -328,6 +329,7 @@ namespace Gedim
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return the cell1D marker
       virtual unsigned int Cell1DMarker(const unsigned int& cell1DIndex) const = 0;
+      virtual std::vector<unsigned int> Cell1DsMarker() const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \return if the cell1D is active
       virtual bool Cell1DIsActive(const unsigned int& cell1DIndex) const = 0;
@@ -637,6 +639,7 @@ namespace Gedim
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return the cell2D marker
       virtual unsigned int Cell2DMarker(const unsigned int& cell2DIndex) const = 0;
+      virtual std::vector<unsigned int> Cell2DsMarker() const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \return if the cell2D is active
       virtual bool Cell2DIsActive(const unsigned int& cell2DIndex) const = 0;
@@ -960,6 +963,7 @@ namespace Gedim
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return the cell3D marker
       virtual unsigned int Cell3DMarker(const unsigned int& cell3DIndex) const = 0;
+      virtual std::vector<unsigned int> Cell3DsMarker() const = 0;
       /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
       /// \return if the cell3D is active
       virtual bool Cell3DIsActive(const unsigned int& cell3DIndex) const = 0;

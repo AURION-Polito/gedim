@@ -130,6 +130,8 @@ namespace Gedim
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
         return _mesh.Cell0DMarkers[cell0DIndex];
       }
+      inline std::vector<unsigned int> Cell0DsMarker() const
+      { return _mesh.Cell0DMarkers; }
       inline bool Cell0DIsActive(const unsigned int& cell0DIndex) const
       {
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
@@ -440,6 +442,8 @@ namespace Gedim
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         return _mesh.Cell1DMarkers[cell1DIndex];
       }
+      inline std::vector<unsigned int> Cell1DsMarker() const
+      { return _mesh.Cell1DMarkers; }
       inline bool Cell1DIsActive(const unsigned int& cell1DIndex) const
       {
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
@@ -703,6 +707,8 @@ namespace Gedim
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
         return _mesh.Cell2DMarkers[cell2DIndex];
       }
+      inline std::vector<unsigned int> Cell2DsMarker() const
+      { return _mesh.Cell2DMarkers; }
       inline bool Cell2DIsActive(const unsigned int& cell2DIndex) const
       {
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
@@ -1010,6 +1016,8 @@ namespace Gedim
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
         return _mesh.Cell3DMarkers[cell3DIndex];
       }
+      inline std::vector<unsigned int> Cell3DsMarker() const
+      { return _mesh.Cell3DMarkers; }
       inline bool Cell3DIsActive(const unsigned int& cell3DIndex) const
       {
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());

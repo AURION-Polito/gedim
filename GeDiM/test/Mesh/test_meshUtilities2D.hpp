@@ -379,6 +379,9 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
                                                               "Eigen::MatrixXi",
                                                               "Cell2Ds")<< std::endl;
+      file<< std::scientific<< "Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
 
       file.close();
     }

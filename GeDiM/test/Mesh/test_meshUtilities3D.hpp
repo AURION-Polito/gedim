@@ -148,6 +148,10 @@ namespace GedimUnitTesting
       file<< "Cell3DsVertices = "<< meshDao.Cell3DsVertices()<< std::endl;
       file<< "Cell3DsEdges = "<< meshDao.Cell3DsEdges()<< std::endl;
       file<< "Cell3DsFaces = "<< meshDao.Cell3DsFaces()<< std::endl;
+      file<< std::scientific<< "Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "Cell3DsMarker = "<< meshDao.Cell3DsMarker()<< ";"<< std::endl;
 
       file.close();
     }
