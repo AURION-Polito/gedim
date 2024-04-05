@@ -314,10 +314,10 @@ namespace Gedim
     unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
     unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
 
-    out<< "{";
+    out<< "[";
     for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
       out<< (i != startIndexVector ? "," : "")<< vec.at(i);
-    out<< "}";
+    out<< "]";
 
     return out;
   }
@@ -331,10 +331,10 @@ namespace Gedim
     unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
     unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
 
-    out<< "{";
+    out<< "[";
     for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
       out<< (i != startIndexVector ? "," : "")<< *vec.at(i);
-    out<< "}";
+    out<< "]";
 
     return out;
   }

@@ -26,6 +26,20 @@ using namespace std;
 
 namespace GedimUnitTesting
 {
+  template <typename T>
+  std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec)
+  {
+    const unsigned int sizeVector = vec.size();
+    const unsigned int startIndexVector = 0;
+
+    out<< "{";
+    for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
+      out<< (i != startIndexVector ? "," : "")<< vec.at(i);
+    out<< "}";
+
+    return out;
+  }
+
 
   TEST(TestMeshUtilities, TestMesh2DFromPolygon)
   {
@@ -366,7 +380,6 @@ namespace GedimUnitTesting
                                   "CreatedPolygonalMesh");
 
     {
-      using namespace Gedim;
       std::ofstream file(exportFolder + "/Mesh.txt");
 
       file.precision(16);
@@ -390,7 +403,6 @@ namespace GedimUnitTesting
                                                                                                            meshDao);
 
     {
-      using namespace Gedim;
       std::ofstream file(exportFolder + "/MeshGeometricData.txt");
 
       file.precision(16);

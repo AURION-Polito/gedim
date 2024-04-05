@@ -66,7 +66,7 @@ namespace Gedim
   string Output::YellowColor = "";
   string Output::EndColor = "";
 #endif // _WIN32
-  int Output::MaxElementToPrint = 1000;
+  int Output::MaxElementToPrint = 0;
   int Output::StartingIndexToPrint = 0;
   // ***************************************************************************
   void Output::CreateFolder(const string& nameFolder)

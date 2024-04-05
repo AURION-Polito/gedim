@@ -18,6 +18,7 @@
 #include "MeshDAOImporterFromCsv.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "VTKUtilities.hpp"
+#include "test_meshUtilities2D.hpp"
 
 using namespace testing;
 using namespace std;
@@ -127,7 +128,6 @@ namespace GedimUnitTesting
                                   "TestCreatePolyhedralMesh");
 
     {
-      using namespace Gedim;
       std::ofstream file(exportFolder + "/Mesh.txt");
 
       const auto cell0Ds = meshDao.Cell0DsCoordinates();
@@ -160,7 +160,6 @@ namespace GedimUnitTesting
                                                                                                            meshDao);
 
     {
-      using namespace Gedim;
       std::ofstream file(exportFolder + "/MeshGeometricData.txt");
 
       file.precision(16);
