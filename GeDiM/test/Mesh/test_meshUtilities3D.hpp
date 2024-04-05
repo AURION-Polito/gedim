@@ -102,6 +102,10 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
   {
+#if ENABLE_VORO == 0
+    GTEST_SKIP_("Voro module not activated.");
+#endif
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
