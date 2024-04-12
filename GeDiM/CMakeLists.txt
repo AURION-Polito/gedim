@@ -133,6 +133,16 @@ endforeach()
 
 list(APPEND ${GEDIM_LIBRARY_INCLUDE} ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
 
+# Add variables for clang anc cppcheck
+###############################################################################################
+list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_SOURCES}})
+list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_HEADERS}})
+set(CLANGFORMAT_FILES ${CLANGFORMAT_FILES} PARENT_SCOPE)
+
+list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_SOURCES}})
+list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_HEADERS}})
+set(CPPCHECK_FILES ${CPPCHECK_FILES} PARENT_SCOPE)
+
 # Create library
 ###############################################################################################
 add_library(${PROJECT_NAME} STATIC ${${GEDIM_LIBRARY_SOURCES}} ${${GEDIM_LIBRARY_HEADERS}})
