@@ -97,6 +97,16 @@ list(APPEND ${GEDIM_LIBRARY_TEST_SOURCES} ${gedim_test_src_sources})
 list(APPEND ${GEDIM_LIBRARY_TEST_HEADERS} ${gedim_test_src_headers})
 list(APPEND ${GEDIM_LIBRARY_TEST_INCLUDE} ${gedim_test_src_includes})
 
+# Add variables for clang anc cppcheck
+###############################################################################################
+list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_TEST_SOURCES}})
+list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_TEST_HEADERS}})
+set(CLANGFORMAT_FILES ${CLANGFORMAT_FILES} PARENT_SCOPE)
+
+list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_TEST_SOURCES}})
+list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_TEST_HEADERS}})
+set(CPPCHECK_FILES ${CPPCHECK_FILES} PARENT_SCOPE)
+
 # Create library test executable
 ###############################################################################################
 add_executable(${PROJECT_NAME}
