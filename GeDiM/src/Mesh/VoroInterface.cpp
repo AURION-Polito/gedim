@@ -17,31 +17,31 @@ VoroInterface::VoroInterface(const Gedim::GeometryUtilities& geometryUtilities):
 // ************************************************************************* //
 #if ENABLE_VORO == 0
 void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhedronVertices,
-                                    const Eigen::MatrixXi& polyhedronEdges,
-                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                                    const unsigned int &numPoints,
-                                    const unsigned int& numIterations,
-                                    Gedim::IMeshDAO& mesh)
+                                                   const Eigen::MatrixXi& polyhedronEdges,
+                                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                                   const unsigned int &numPoints,
+                                                   const unsigned int& numIterations,
+                                                   Gedim::IMeshDAO& mesh)
 {
-  Gedim::Utilities::Unused(polyhedronVertices);
-  Gedim::Utilities::Unused(polyhedronEdges);
-  Gedim::Utilities::Unused(polyhedronFaces);
-  Gedim::Utilities::Unused(numPoints);
-  Gedim::Utilities::Unused(numIterations);
-  Gedim::Utilities::Unused(mesh);
-  throw runtime_error("Not active module VORO");
+    Gedim::Utilities::Unused(polyhedronVertices);
+    Gedim::Utilities::Unused(polyhedronEdges);
+    Gedim::Utilities::Unused(polyhedronFaces);
+    Gedim::Utilities::Unused(numPoints);
+    Gedim::Utilities::Unused(numIterations);
+    Gedim::Utilities::Unused(mesh);
+    throw runtime_error("Not active module VORO");
 }
 
 void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
-                                    const unsigned int& numPoints,
-                                    const unsigned int& numIterations,
-                                    Gedim::IMeshDAO& mesh)
+                                                   const unsigned int& numPoints,
+                                                   const unsigned int& numIterations,
+                                                   Gedim::IMeshDAO& mesh)
 {
-  Gedim::Utilities::Unused(polygonVertices);
-  Gedim::Utilities::Unused(numPoints);
-  Gedim::Utilities::Unused(numIterations);
-  Gedim::Utilities::Unused(mesh);
-  throw runtime_error("Not active module VORO");
+    Gedim::Utilities::Unused(polygonVertices);
+    Gedim::Utilities::Unused(numPoints);
+    Gedim::Utilities::Unused(numIterations);
+    Gedim::Utilities::Unused(mesh);
+    throw runtime_error("Not active module VORO");
 }
 #else
 // ************************************************************************* //
@@ -1221,9 +1221,10 @@ void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
     const double y_min = domainVertices.row(1).minCoeff(), y_max = domainVertices.row(1).maxCoeff();
     const double z_min = domainVertices.row(2).minCoeff(), z_max = domainVertices.row(2).maxCoeff();
 
-    srand(4);
+    srand((unsigned int) time(0));
     VoronoiPoints = Eigen::MatrixXd::Zero(3, numPoints);
-    for(unsigned int i=0; i < numPoints; i++) {
+    for(unsigned int i=0; i < numPoints; i++)
+    {
         VoronoiPoints(0, i) = x_min + rnd() * ( x_max - x_min );
         VoronoiPoints(1, i) = y_min + rnd() * ( y_max - y_min );
         VoronoiPoints(2, i) = z_min + rnd() * ( z_max - z_min );
@@ -1238,8 +1239,9 @@ void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
     const double y_min = domainVertices.row(1).minCoeff(), y_max = domainVertices.row(1).maxCoeff();
     const double z_min = domainVertices.row(2).minCoeff(), z_max = domainVertices.row(2).maxCoeff();
 
-    srand(4);
-    for(unsigned int i=0; i < numPoints; i++) {
+    srand((unsigned int) time(0));
+    for(unsigned int i=0; i < numPoints; i++)
+    {
         double x = x_min + rnd() * ( x_max - x_min );
         double y = y_min + rnd() * ( y_max - y_min );
         double z = z_min + rnd() * ( z_max - z_min );
