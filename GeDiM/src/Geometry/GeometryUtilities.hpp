@@ -880,6 +880,11 @@ namespace Gedim
       /// \return the maximum distance between the points.
       double PointsMaxDistance(const Eigen::MatrixXd& points) const;
 
+      inline bool IsPointZero(const Eigen::Vector3d& point) const
+      {
+        return IsValueZero(PointDistance(Eigen::Vector3d::Zero(), point), Tolerance1D());
+      }
+
       /// \param firstPoint the first point
       /// \param secondPoint the second point
       /// \return true if the points are coincident
