@@ -9,8 +9,8 @@
 #include "Macro.hpp"
 
 #if ENABLE_SUITESPARSE == 1
-#include <suitesparse/cholmod.h>
-#include <suitesparse/klu.h>
+#include <cholmod.h>
+#include <klu.h>
 #endif
 
 namespace Gedim
