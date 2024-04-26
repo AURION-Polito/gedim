@@ -43,6 +43,7 @@ set(ENABLE_METIS OFF CACHE BOOL "Enable Metis extension")
 set(ENABLE_VTK OFF CACHE BOOL "Enable VTK extension")
 set(ENABLE_MKL OFF CACHE BOOL "Enable MKL extension")
 set(ENABLE_VORO OFF CACHE BOOL "Enable VORO extension")
+set(ENABLE_SUITESPARSE OFF CACHE BOOL "Enable SuiteSparse extension")
 set(VERBOSE 3 CACHE STRING "Select verbosity level (0, 1, 2 3 or 4)")
 set_property(CACHE VERBOSE PROPERTY STRINGS 0 1 2 3 4)
 if(NOT ${VERBOSE} MATCHES 0 AND NOT ${VERBOSE} MATCHES 1 AND NOT ${VERBOSE} MATCHES 2 AND NOT ${VERBOSE} MATCHES 3 AND NOT ${VERBOSE} MATCHES 4)
@@ -101,6 +102,13 @@ endif()
 if(${ENABLE_METIS})
     find_package(metis CONFIG REQUIRED)
     list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} METIS::metis)
+endif()
+
+## SuiteSparse
+if(${ENABLE_SUITESPARSE})
+    find_package(SuiteSparse CONFIG REQUIRED)
+    message("Found SuiteSparse: ${SUITESPARSE_LIBRARIES}")
+    list( APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES}  ${SUITESPARSE_LIBRARIES} )
 endif()
 
 # Insert Sources

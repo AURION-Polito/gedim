@@ -21,6 +21,11 @@
 /// - 1 true
 #cmakedefine01 ENABLE_VORO
 
+/// Enable SUITESPARSE
+/// - 0 false
+/// - 1 true
+#cmakedefine01 ENABLE_SUITESPARSE
+
 /// Use MPI
 /// - 0 false
 /// - 1 true
