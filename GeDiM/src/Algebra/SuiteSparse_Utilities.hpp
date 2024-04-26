@@ -6,6 +6,7 @@
 
 #include "Eigen/Eigen"
 #include "Eigen_Utilities.hpp"
+#include "Macro.hpp"
 
 #if ENABLE_SUITESPARSE == 1
 #include <suitesparse/cholmod.h>

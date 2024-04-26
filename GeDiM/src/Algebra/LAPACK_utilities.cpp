@@ -1,6 +1,4 @@
 #include "LAPACK_utilities.hpp"
-#include "Macro.hpp"
-#include "vtkIOStream.h"
 
 ///  DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A.
 /// ( Double precision, simple driver)
