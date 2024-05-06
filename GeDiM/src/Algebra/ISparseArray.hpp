@@ -66,7 +66,7 @@ namespace Gedim
                                 const bool& append = false) const = 0;
 
       /// \return the condition number of the sparse array in norm 2
-      virtual double Cond() const = 0;
+      virtual double Cond(unsigned int condType = 0) const = 0;
       /// \return the number of non-zeros element
       virtual unsigned int NonZeros() const = 0;
 

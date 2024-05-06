@@ -23,7 +23,7 @@ set(GEDIM_INSTALL_LIB_DIR lib/)
 set(GEDIM_INSTALL_ARCHIVE_DIR lib/)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif()
 Message(STATUS "Gedim Build configuration: " ${CMAKE_BUILD_TYPE})
 
@@ -43,10 +43,11 @@ set(ENABLE_METIS OFF CACHE BOOL "Enable Metis extension")
 set(ENABLE_VTK OFF CACHE BOOL "Enable VTK extension")
 set(ENABLE_MKL OFF CACHE BOOL "Enable MKL extension")
 set(ENABLE_VORO OFF CACHE BOOL "Enable VORO extension")
+set(ENABLE_SUITESPARSE OFF CACHE BOOL "Enable SuiteSparse extension")
 set(VERBOSE 3 CACHE STRING "Select verbosity level (0, 1, 2 3 or 4)")
 set_property(CACHE VERBOSE PROPERTY STRINGS 0 1 2 3 4)
 if(NOT ${VERBOSE} MATCHES 0 AND NOT ${VERBOSE} MATCHES 1 AND NOT ${VERBOSE} MATCHES 2 AND NOT ${VERBOSE} MATCHES 3 AND NOT ${VERBOSE} MATCHES 4)
-        message(SEND_ERROR "VERBOSE variable must be either 0 (None), 1 (Error), 2 (Warning), 3 (Info) or 4 (Debug)")
+    message(SEND_ERROR "VERBOSE variable must be either 0 (None), 1 (Error), 2 (Warning), 3 (Info) or 4 (Debug)")
 endif()
 set(LOGGING 3 CACHE STRING "Select logging level (0, 1, 2 or 3)")
 set_property(CACHE LOGGING PROPERTY STRINGS 0 1 2 3)
@@ -87,20 +88,28 @@ list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
 
 ## VORO
 if(${ENABLE_VORO})
-  find_package(VORO CONFIG REQUIRED)
-  list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC VORO::voro++)
+    find_package(VORO CONFIG REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC VORO::voro++)
 endif()
 
 ## VTK
 if(${ENABLE_VTK})
-  find_package(VTK CONFIG REQUIRED)
-  list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC ${VTK_LIBRARIES})
+    find_package(VTK CONFIG REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC ${VTK_LIBRARIES})
 endif()
 
 ## METIS
 if(${ENABLE_METIS})
     find_package(metis CONFIG REQUIRED)
     list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} METIS::metis)
+endif()
+
+## SuiteSparse
+if(${ENABLE_SUITESPARSE})
+    find_package(SuiteSparse CONFIG REQUIRED)
+    message("Found SuiteSparse: ${SUITESPARSE_LIBRARIES}")
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES}  ${SUITESPARSE_LIBRARIES})
+    list(APPEND ${GEDIM_LIBRARY_INCLUDE}  ${SUITESPARSE_INCLUDE_DIRS})
 endif()
 
 # Insert Sources
@@ -115,20 +124,20 @@ list(APPEND ${GEDIM_LIBRARY_INCLUDE} ${gedim_src_includes})
 set(GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_LIBRARY_ADDITIONAL_INCLUDE})
 
 foreach(header ${${GEDIM_LIBRARY_HEADERS}})
-        get_filename_component(headerDirectory ${header} DIRECTORY)
-        get_filename_component(headerFileName ${header} NAME_WE)
-        get_filename_component(headerExtension ${header} EXT)
+    get_filename_component(headerDirectory ${header} DIRECTORY)
+    get_filename_component(headerFileName ${header} NAME_WE)
+    get_filename_component(headerExtension ${header} EXT)
 
-  if(${headerExtension} MATCHES ".hpp.in")
-    set(headerExtension ".hpp")
-    set(headerDirectory ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
+    if(${headerExtension} MATCHES ".hpp.in")
+        set(headerExtension ".hpp")
+        set(headerDirectory ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
 
-    configure_file(${header} ${headerDirectory}/${headerFileName}${headerExtension} @ONLY)
-  elseif(NOT ${headerExtension} MATCHES ".hpp" AND NOT ${headerExtension} MATCHES ".h")
-    message(SEND_ERROR "Header extension not recognized for file ${headerFileName}${headerExtension}")
-  endif()
+        configure_file(${header} ${headerDirectory}/${headerFileName}${headerExtension} @ONLY)
+    elseif(NOT ${headerExtension} MATCHES ".hpp" AND NOT ${headerExtension} MATCHES ".h")
+        message(SEND_ERROR "Header extension not recognized for file ${headerFileName}${headerExtension}")
+    endif()
 
-  list(APPEND ${GEDIM_LIBRARY_PUBLIC_HEADERS} ${headerDirectory}/${headerFileName}${headerExtension})
+    list(APPEND ${GEDIM_LIBRARY_PUBLIC_HEADERS} ${headerDirectory}/${headerFileName}${headerExtension})
 endforeach()
 
 list(APPEND ${GEDIM_LIBRARY_INCLUDE} ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
@@ -159,12 +168,12 @@ target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
 # Create install target
 ###############################################################################################
 set_target_properties(${PROJECT_NAME} PROPERTIES 
-PUBLIC_HEADER "${${GEDIM_LIBRARY_PUBLIC_HEADERS}}" 
-EXPORT_NAME GeDiM)
+    PUBLIC_HEADER "${${GEDIM_LIBRARY_PUBLIC_HEADERS}}"
+    EXPORT_NAME GeDiM)
 
 install(
-	TARGETS ${PROJECT_NAME} 
-	EXPORT GeDiMTargets
+    TARGETS ${PROJECT_NAME}
+    EXPORT GeDiMTargets
     RUNTIME DESTINATION ${GEDIM_INSTALL_BINARY_DIR} # runtime executable
     LIBRARY DESTINATION ${GEDIM_INSTALL_LIB_DIR} # dynamic libraries
     ARCHIVE DESTINATION ${GEDIM_INSTALL_ARCHIVE_DIR} # static libraries
@@ -175,34 +184,34 @@ install(
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/cmake/GeDiMConfig.cmake.in
-	${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
-	INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
-	PATH_VARS GEDIM_INSTALL_INCLUDE_DIR
-  )
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GeDiMConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    PATH_VARS GEDIM_INSTALL_INCLUDE_DIR
+)
 
 write_basic_package_version_file(
-	${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfigVersion.cmake
-	VERSION ${GeDiM_VERSION}
-	COMPATIBILITY AnyNewerVersion
+    ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfigVersion.cmake
+    VERSION ${GeDiM_VERSION}
+    COMPATIBILITY AnyNewerVersion
 )
 
 export(
-	TARGETS ${PROJECT_NAME} 
-	NAMESPACE GeDiM::
-	FILE ${CMAKE_CURRENT_BINARY_DIR}/GeDiMTargets.cmake
+    TARGETS ${PROJECT_NAME}
+    NAMESPACE GeDiM::
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/GeDiMTargets.cmake
 )
 
 install(
-	EXPORT GeDiMTargets 
-	NAMESPACE GeDiM:: 
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    EXPORT GeDiMTargets
+    NAMESPACE GeDiM::
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
 )
 
 install(
-	FILES
-		${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
-		${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfigVersion.cmake
-	DESTINATION
-		${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfigVersion.cmake
+    DESTINATION
+    ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
 )
