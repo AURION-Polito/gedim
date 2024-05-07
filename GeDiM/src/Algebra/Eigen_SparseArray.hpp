@@ -38,6 +38,8 @@ public:
     { return (Eigen_SparseArrayType&)static_cast<Eigen_SparseArray<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
     inline const Eigen_SparseArrayType& Cast(const ISparseArray& v)
     { return (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
+    inline const Eigen_SparseArrayType& Cast(const ISparseArray& v) const
+    { return (const Eigen_SparseArrayType&)static_cast<const Eigen_SparseArray<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
 
     inline void SetSize(const unsigned int& numRows,
                         const unsigned int& numCols,
@@ -91,6 +93,11 @@ public:
         _matrix /= c;
         return *this;
     }
+    inline unsigned int rows() const
+    {return _matrix.rows();}
+
+    inline unsigned int cols() const
+    {return _matrix.cols();}
 
     Eigen_SparseArray<Eigen_ArrayType, Eigen_SparseArrayType>& operator=(Eigen_SparseArrayType&& matrix)
     {
