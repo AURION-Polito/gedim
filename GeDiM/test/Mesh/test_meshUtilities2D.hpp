@@ -408,29 +408,69 @@ namespace GedimUnitTesting
                                                                                                            meshDao);
 
     {
+      struct MeshGeometricData2D final
+      {
+          std::vector<Eigen::MatrixXd> PolygonsVertices;
+          std::vector<std::vector<Eigen::Matrix3d>> PolygonsTriangulations;
+          std::vector<double> PolygonsArea;
+          std::vector<Eigen::Vector3d> PolygonsCentroid;
+          std::vector<double> PolygonsDiameter;
+          std::vector<std::vector<bool>> PolygonsEdgesDirection;
+          std::vector<Eigen::VectorXd> PolygonsEdgesLength;
+          std::vector<Eigen::MatrixXd> PolygonsEdgesTangent;
+          std::vector<Eigen::MatrixXd> PolygonsEdgesTangentNormalized;
+          std::vector<Eigen::MatrixXd> PolygonsEdgesCentroid;
+          std::vector<Eigen::MatrixXd> PolygonsEdgesNormal;
+      };
+
+      MeshGeometricData2D exportData;
+      exportData.PolygonsVertices = cell2DsGeometricData.Cell2DsVertices;
+      exportData.PolygonsTriangulations = cell2DsGeometricData.Cell2DsTriangulations;
+      exportData.PolygonsArea = cell2DsGeometricData.Cell2DsAreas;
+      exportData.PolygonsCentroid = cell2DsGeometricData.Cell2DsCentroids;
+      exportData.PolygonsDiameter = cell2DsGeometricData.Cell2DsDiameters;
+      exportData.PolygonsEdgesDirection = cell2DsGeometricData.Cell2DsEdgeDirections;
+      exportData.PolygonsEdgesLength = cell2DsGeometricData.Cell2DsEdgeLengths;
+      exportData.PolygonsEdgesTangent = cell2DsGeometricData.Cell2DsEdgeTangents;
+      exportData.PolygonsEdgesTangentNormalized = cell2DsGeometricData.Cell2DsEdgeTangents;
+      exportData.PolygonsEdgesCentroid = cell2DsGeometricData.Cell2DsEdgesCentroid;
+      exportData.PolygonsEdgesNormal = cell2DsGeometricData.Cell2DsEdgeNormals;
+
+      for (unsigned int c = 0; c < exportData.PolygonsEdgesTangentNormalized.size(); c++)
+      {
+        for (unsigned int e = 0; e < exportData.PolygonsEdgesTangentNormalized[c].cols(); e++)
+          exportData.PolygonsEdgesTangentNormalized[c].col(e).normalize();
+      }
+
       std::ofstream file(exportFolder + "/MeshGeometricData.txt");
 
       file.precision(16);
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsVertices,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsVertices,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolygonsVertices")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(cell2DsGeometricData.Cell2DsTriangulations,
+      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(exportData.PolygonsTriangulations,
                                                               "Eigen::Matrix3d",
                                                               "    geometry.PolygonsTriangulations")<< std::endl;
 
-      file<< std::scientific<< "    geometry.PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell2DsGeometricData.Cell2DsCentroids,
+      file<< std::scientific<< "    geometry.PolygonsArea = "<< exportData.PolygonsArea<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolygonsCentroid,
                                                               "Eigen::Vector3d",
                                                               "    geometry.PolygonsCentroid")<< std::endl;
-      file<< std::scientific<< "    geometry.PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< ";"<< std::endl;
-      file<< std::scientific<< "    geometry.PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(cell2DsGeometricData.Cell2DsEdgeLengths,
+      file<< std::scientific<< "    geometry.PolygonsDiameter = "<< exportData.PolygonsDiameter<< ";"<< std::endl;
+      file<< std::scientific<< "    geometry.PolygonsEdgesDirection = "<< exportData.PolygonsEdgesDirection<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolygonsEdgesLength,
                                                               "Eigen::VectorXd",
                                                               "    geometry.PolygonsEdgesLength")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeTangents,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesTangent,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolygonsEdgesTangent")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeNormals,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesTangentNormalized,
+                                                              "Eigen::MatrixXd",
+                                                              "    geometry.PolygonsEdgesTangentNormalized")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesCentroid,
+                                                              "Eigen::MatrixXd",
+                                                              "    geometry.PolygonsEdgesCentroid")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesNormal,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolygonsEdgesNormal")<< std::endl;
 
