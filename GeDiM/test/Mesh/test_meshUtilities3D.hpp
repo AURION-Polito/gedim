@@ -171,55 +171,121 @@ namespace GedimUnitTesting
                                                                                                            meshDao);
 
     {
+      struct MeshGeometricData3D final
+      {
+          std::vector<Eigen::MatrixXd> PolyhedronsVertices;
+          std::vector<Eigen::MatrixXi> PolyhedronsEdges;
+          std::vector<std::vector<Eigen::MatrixXi>> PolyhedronsFaces;
+          std::vector<double> PolyhedronsVolume;
+          std::vector<double> PolyhedronsDiameter;
+          std::vector<Eigen::Vector3d> PolyhedronsCentroid;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsTetrahedronsVertices;
+          std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFacesTranslation;
+          std::vector<std::vector<Eigen::Matrix3d>> PolyhedronsFacesRotationMatrix;
+          std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFacesNormal;
+          std::vector<std::vector<bool>> PolyhedronsFacesNormalDirection;
+          std::vector<std::vector<std::vector<bool>>> PolyhedronsFacesEdgesDirection;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFaces2DVertices;
+          std::vector<std::vector<std::vector<Eigen::Matrix3d>>> PolyhedronsFacesTriangulations2DVertices;
+          std::vector<std::vector<double>> PolyhedronsFacesArea;
+          std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFaces2DCentroid;
+          std::vector<std::vector<double>> PolyhedronsFacesDiameter;
+          std::vector<std::vector<Eigen::VectorXd>> PolyhedronsFacesEdgesLength;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DCentroid;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DTangent;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DTangentNormalized;
+          std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DNormal;
+      };
+
+      MeshGeometricData3D exportData;
+      exportData.PolyhedronsVertices = cell3DsGeometricData.Cell3DsVertices;
+      exportData.PolyhedronsEdges = cell3DsGeometricData.Cell3DsEdges;
+      exportData.PolyhedronsFaces = cell3DsGeometricData.Cell3DsFaces;
+      exportData.PolyhedronsVolume = cell3DsGeometricData.Cell3DsVolumes;
+      exportData.PolyhedronsDiameter = cell3DsGeometricData.Cell3DsDiameters;
+      exportData.PolyhedronsCentroid = cell3DsGeometricData.Cell3DsCentroids;
+      exportData.PolyhedronsTetrahedronsVertices = cell3DsGeometricData.Cell3DsTetrahedronPoints;
+      exportData.PolyhedronsFacesTranslation = cell3DsGeometricData.Cell3DsFacesTranslations;
+      exportData.PolyhedronsFacesRotationMatrix = cell3DsGeometricData.Cell3DsFacesRotationMatrices;
+      exportData.PolyhedronsFacesNormal = cell3DsGeometricData.Cell3DsFacesNormals;
+      exportData.PolyhedronsFacesNormalDirection = cell3DsGeometricData.Cell3DsFacesNormalDirections;
+      exportData.PolyhedronsFacesEdgesDirection = cell3DsGeometricData.Cell3DsFacesEdgeDirections;
+      exportData.PolyhedronsFaces2DVertices = cell3DsGeometricData.Cell3DsFaces2DVertices;
+      exportData.PolyhedronsFacesTriangulations2DVertices = cell3DsGeometricData.Cell3DsFaces2DTriangulations;
+      exportData.PolyhedronsFacesArea = cell3DsGeometricData.Cell3DsFacesAreas;
+      exportData.PolyhedronsFaces2DCentroid = cell3DsGeometricData.Cell3DsFaces2DCentroids;
+      exportData.PolyhedronsFacesDiameter = cell3DsGeometricData.Cell3DsFacesDiameters;
+      exportData.PolyhedronsFacesEdgesLength = cell3DsGeometricData.Cell3DsFacesEdgeLengths;
+      exportData.PolyhedronsFacesEdges2DCentroid = cell3DsGeometricData.Cell3DsFacesEdges2DCentroid;
+      exportData.PolyhedronsFacesEdges2DTangent = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
+      exportData.PolyhedronsFacesEdges2DTangentNormalized = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
+      exportData.PolyhedronsFacesEdges2DNormal = cell3DsGeometricData.Cell3DsFacesEdge2DNormals;
+
+      for (unsigned int c = 0; c < exportData.PolyhedronsFacesEdges2DTangentNormalized.size(); c++)
+      {
+        for (unsigned int f = 0; f < exportData.PolyhedronsFacesEdges2DTangentNormalized[c].size(); f++)
+        {
+          for (unsigned int e = 0; e < exportData.PolyhedronsFacesEdges2DTangentNormalized[c][f].cols(); e++)
+            exportData.PolyhedronsFacesEdges2DTangentNormalized[c][f].col(e).normalize();
+        }
+      }
+
+
       std::ofstream file(exportFolder + "/MeshGeometricData.txt");
 
       file.precision(16);
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell3DsGeometricData.Cell3DsVertices,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsVertices,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsVertices")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(cell3DsGeometricData.Cell3DsEdges,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(exportData.PolyhedronsEdges,
                                                               "Eigen::MatrixXi",
                                                               "    geometry.PolyhedronsEdges")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(cell3DsGeometricData.Cell3DsFaces,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(exportData.PolyhedronsFaces,
                                                               "Eigen::MatrixXi",
                                                               "    geometry.PolyhedronsFaces")<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsVolume = "<< cell3DsGeometricData.Cell3DsVolumes<< ";"<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsDiameter = "<< cell3DsGeometricData.Cell3DsDiameters<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell3DsGeometricData.Cell3DsCentroids,
+      file<< std::scientific<< "    geometry.PolyhedronsVolume = "<< exportData.PolyhedronsVolume<< ";"<< std::endl;
+      file<< std::scientific<< "    geometry.PolyhedronsDiameter = "<< exportData.PolyhedronsDiameter<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsCentroid,
                                                               "Eigen::Vector3d",
                                                               "    geometry.PolyhedronsCentroid")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell3DsGeometricData.Cell3DsTetrahedronPoints,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsTetrahedronsVertices,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsTetrahedronsVertices")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell3DsGeometricData.Cell3DsFacesTranslations,
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFacesTranslation,
                                                               "Eigen::Vector3d",
                                                               "    geometry.PolyhedronsFacesTranslation")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(cell3DsGeometricData.Cell3DsFacesRotationMatrices,
+      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(exportData.PolyhedronsFacesRotationMatrix,
                                                               "Eigen::Matrix3d",
                                                               "    geometry.PolyhedronsFacesRotationMatrix")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell3DsGeometricData.Cell3DsFacesNormals,
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFacesNormal,
                                                               "Eigen::Vector3d",
                                                               "    geometry.PolyhedronsFacesNormal")<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsFacesNormalDirection = "<< cell3DsGeometricData.Cell3DsFacesNormalDirections<< ";"<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsFacesEdgesDirection = "<< cell3DsGeometricData.Cell3DsFacesEdgeDirections<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell3DsGeometricData.Cell3DsFaces2DVertices,
+      file<< std::scientific<< "    geometry.PolyhedronsFacesNormalDirection = "<< exportData.PolyhedronsFacesNormalDirection<< ";"<< std::endl;
+      file<< std::scientific<< "    geometry.PolyhedronsFacesEdgesDirection = "<< exportData.PolyhedronsFacesEdgesDirection<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFaces2DVertices,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsFaces2DVertices")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(cell3DsGeometricData.Cell3DsFaces2DTriangulations,
+      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(exportData.PolyhedronsFacesTriangulations2DVertices,
                                                               "Eigen::Matrix3d",
                                                               "    geometry.PolyhedronsFacesTriangulations2DVertices")<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsFacesArea = "<< cell3DsGeometricData.Cell3DsFacesAreas<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell3DsGeometricData.Cell3DsFaces2DCentroids,
+      file<< std::scientific<< "    geometry.PolyhedronsFacesArea = "<< exportData.PolyhedronsFacesArea<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFaces2DCentroid,
                                                               "Eigen::Vector3d",
                                                               "PolyhedronsFaces2DCentroid")<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsFacesDiameter = "<< cell3DsGeometricData.Cell3DsFacesDiameters<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(cell3DsGeometricData.Cell3DsFacesEdgeLengths,
+      file<< std::scientific<< "    geometry.PolyhedronsFacesDiameter = "<< exportData.PolyhedronsFacesDiameter<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolyhedronsFacesEdgesLength,
                                                               "Eigen::VectorXd",
                                                               "    geometry.PolyhedronsFacesEdgesLength")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell3DsGeometricData.Cell3DsFacesEdge2DTangents,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFacesEdges2DCentroid,
+                                                              "Eigen::MatrixXd",
+                                                              "    geometry.PolyhedronsFacesEdges2DCentroid")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFacesEdges2DTangent,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsFacesEdges2DTangent")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell3DsGeometricData.Cell3DsFacesEdge2DNormals,
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFacesEdges2DTangentNormalized,
+                                                              "Eigen::MatrixXd",
+                                                              "    geometry.PolyhedronsFacesEdges2DTangentNormalized")<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFacesEdges2DNormal,
                                                               "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsFacesEdges2DNormal")<< std::endl;
 
