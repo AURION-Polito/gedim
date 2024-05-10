@@ -1008,6 +1008,7 @@ namespace Gedim
     result.Cell3DsVolumes.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsDiameters.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsCentroids.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsEdgesCentroid.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsEdgeLengths.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsEdgeTangents.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
@@ -1043,6 +1044,8 @@ namespace Gedim
       result.Cell3DsEdges[c] = polyhedron.Edges;
       result.Cell3DsFaces[c] = polyhedron.Faces;
 
+      result.Cell3DsEdgesCentroid[c] = geometryUtilities.PolyhedronEdgesCentroid(result.Cell3DsVertices[c],
+                                                                                 result.Cell3DsEdges[c]);
       result.Cell3DsEdgeLengths[c] = geometryUtilities.PolyhedronEdgesLength(result.Cell3DsVertices[c],
                                                                              result.Cell3DsEdges[c]);
 
@@ -1211,6 +1214,7 @@ namespace Gedim
     result.Cell3DsVolumes.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsDiameters.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsCentroids.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsEdgesCentroid.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsEdgeLengths.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsEdgeTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsEdgeDirections.resize(mesh.Cell3DTotalNumber());
@@ -1249,6 +1253,8 @@ namespace Gedim
       result.Cell3DsEdges[c] = polyhedron.Edges;
       result.Cell3DsFaces[c] = polyhedron.Faces;
 
+      result.Cell3DsEdgesCentroid[c] = geometryUtilities.PolyhedronEdgesCentroid(result.Cell3DsVertices[c],
+                                                                                 result.Cell3DsEdges[c]);
       result.Cell3DsEdgeLengths[c] = geometryUtilities.PolyhedronEdgesLength(result.Cell3DsVertices[c],
                                                                              result.Cell3DsEdges[c]);
 
