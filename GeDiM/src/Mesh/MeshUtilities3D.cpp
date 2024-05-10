@@ -1039,8 +1039,6 @@ namespace Gedim
       if (!convexMesh.Cell3DIsActive(c))
         continue;
 
-      std::cout<< "Cell "<< c<<std::endl;
-
       const GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(convexMesh,
                                                                               c);
 
