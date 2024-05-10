@@ -1144,8 +1144,7 @@ namespace Gedim
       result.Cell3DsFacesEdgeLengths[c].resize(numFaces);
       result.Cell3DsFacesEdge2DNormals[c].resize(numFaces);
       result.Cell3DsFacesEdges3DCentroid[c].resize(numFaces);
-      result.Cell3DsFacesEdges3DCentroid[c].resize(numFaces);
-      result.Cell3DsFacesEdge3DTangents[c].resize(numFaces);
+      result.Cell3DsFacesEdges2DCentroid[c].resize(numFaces);
       result.Cell3DsFacesEdge3DTangents[c].resize(numFaces);
       result.Cell3DsFacesEdge2DTangents[c].resize(numFaces);
 
@@ -1383,7 +1382,7 @@ namespace Gedim
       result.Cell3DsFacesEdgeLengths[c].resize(numFaces);
       result.Cell3DsFacesEdge2DNormals[c].resize(numFaces);
       result.Cell3DsFacesEdges3DCentroid[c].resize(numFaces);
-      result.Cell3DsFacesEdges3DCentroid[c].resize(numFaces);
+      result.Cell3DsFacesEdges2DCentroid[c].resize(numFaces);
       result.Cell3DsFacesEdge3DTangents[c].resize(numFaces);
       result.Cell3DsFacesEdge2DTangents[c].resize(numFaces);
 
