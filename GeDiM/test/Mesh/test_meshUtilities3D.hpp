@@ -106,7 +106,11 @@ namespace GedimUnitTesting
     GTEST_SKIP_("Voro module not activated.");
 #endif
 
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolyhedralMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     Gedim::MeshMatrices mesh;
@@ -125,8 +129,11 @@ namespace GedimUnitTesting
                                        10,
                                        meshDao);
 
-    std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolyhedralMesh";
-    Gedim::Output::CreateFolder(exportFolder);
+    Gedim::MeshUtilities::CheckMesh3DConfiguration checkConfig;
+    meshUtilities.CheckMesh3D(checkConfig,
+                              geometryUtilities,
+                              meshDao);
+
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "TestCreatePolyhedralMesh");

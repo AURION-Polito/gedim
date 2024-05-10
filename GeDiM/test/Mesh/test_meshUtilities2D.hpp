@@ -361,6 +361,7 @@ namespace GedimUnitTesting
 #endif
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     Gedim::MeshMatrices mesh;
