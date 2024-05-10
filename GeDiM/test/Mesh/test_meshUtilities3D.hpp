@@ -156,9 +156,9 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
                                                               "Eigen::MatrixXi",
                                                               "    mesh.Cell2Ds")<< std::endl;
-      file<< "    mesh.Cell3DsVertices = "<< meshDao.Cell3DsVertices()<< std::endl;
-      file<< "    mesh.Cell3DsEdges = "<< meshDao.Cell3DsEdges()<< std::endl;
-      file<< "    mesh.Cell3DsFaces = "<< meshDao.Cell3DsFaces()<< std::endl;
+      file<< "    mesh.Cell3DsVertices = "<< meshDao.Cell3DsVertices()<< ";"<< std::endl;
+      file<< "    mesh.Cell3DsEdges = "<< meshDao.Cell3DsEdges()<< ";"<< std::endl;
+      file<< "    mesh.Cell3DsFaces = "<< meshDao.Cell3DsFaces()<< ";"<< std::endl;
       file<< std::scientific<< "    mesh.Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
       file<< std::scientific<< "    mesh.Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
       file<< std::scientific<< "    mesh.Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
@@ -271,7 +271,7 @@ namespace GedimUnitTesting
       file<< std::scientific<< "    geometry.PolyhedronsFacesArea = "<< exportData.PolyhedronsFacesArea<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFaces2DCentroid,
                                                               "Eigen::Vector3d",
-                                                              "PolyhedronsFaces2DCentroid")<< std::endl;
+                                                              "    geometry.PolyhedronsFaces2DCentroid")<< std::endl;
       file<< std::scientific<< "    geometry.PolyhedronsFacesDiameter = "<< exportData.PolyhedronsFacesDiameter<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolyhedronsFacesEdgesLength,
                                                               "Eigen::VectorXd",
