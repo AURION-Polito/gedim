@@ -390,16 +390,16 @@ namespace GedimUnitTesting
       file.precision(16);
       file<< Gedim::MatrixToString<Eigen::MatrixXd>(meshDao.Cell0DsCoordinates(),
                                                     "Eigen::MatrixXd",
-                                                    "Cell0Ds")<< std::endl;
+                                                    "    mesh.Cell0Ds")<< std::endl;
       file<< Gedim::MatrixToString<Eigen::MatrixXi>(meshDao.Cell1DsExtremes(),
                                                     "Eigen::MatrixXi",
-                                                    "Cell1Ds")<< std::endl;
+                                                    "    mesh.Cell1Ds")<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
                                                               "Eigen::MatrixXi",
-                                                              "Cell2Ds")<< std::endl;
-      file<< std::scientific<< "Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
-      file<< std::scientific<< "Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
-      file<< std::scientific<< "Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
+                                                              "    mesh.Cell2Ds")<< std::endl;
+      file<< std::scientific<< "    mesh.Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "    mesh.Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
+      file<< std::scientific<< "    mesh.Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
 
       file.close();
     }
@@ -413,26 +413,26 @@ namespace GedimUnitTesting
       file.precision(16);
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsVertices,
                                                               "Eigen::MatrixXd",
-                                                              "PolygonsVertices")<< std::endl;
+                                                              "    geometry.PolygonsVertices")<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(cell2DsGeometricData.Cell2DsTriangulations,
                                                               "Eigen::Matrix3d",
-                                                              "PolygonsTriangulations")<< std::endl;
+                                                              "    geometry.PolygonsTriangulations")<< std::endl;
 
-      file<< std::scientific<< "PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< ";"<< std::endl;
+      file<< std::scientific<< "    geometry.PolygonsArea = "<< cell2DsGeometricData.Cell2DsAreas<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(cell2DsGeometricData.Cell2DsCentroids,
                                                               "Eigen::Vector3d",
-                                                              "PolygonsCentroid")<< std::endl;
-      file<< std::scientific<< "PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< ";"<< std::endl;
-      file<< std::scientific<< "PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< ";"<< std::endl;
+                                                              "    geometry.PolygonsCentroid")<< std::endl;
+      file<< std::scientific<< "    geometry.PolygonsDiameter = "<< cell2DsGeometricData.Cell2DsDiameters<< ";"<< std::endl;
+      file<< std::scientific<< "    geometry.PolygonsEdgesDirection = "<< cell2DsGeometricData.Cell2DsEdgeDirections<< ";"<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(cell2DsGeometricData.Cell2DsEdgeLengths,
                                                               "Eigen::VectorXd",
-                                                              "PolygonsEdgesLength")<< std::endl;
+                                                              "    geometry.PolygonsEdgesLength")<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeTangents,
                                                               "Eigen::MatrixXd",
-                                                              "PolygonsEdgesTangent")<< std::endl;
+                                                              "    geometry.PolygonsEdgesTangent")<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(cell2DsGeometricData.Cell2DsEdgeNormals,
                                                               "Eigen::MatrixXd",
-                                                              "PolygonsEdgesNormal")<< std::endl;
+                                                              "    geometry.PolygonsEdgesNormal")<< std::endl;
 
       file.close();
     }
