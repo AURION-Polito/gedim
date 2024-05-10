@@ -1223,6 +1223,11 @@ void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
     const double y_min = domainVertices.row(1).minCoeff(), y_max = domainVertices.row(1).maxCoeff();
     const double z_min = domainVertices.row(2).minCoeff(), z_max = domainVertices.row(2).maxCoeff();
 
+
+    sleep(1);
+    time_t t = time(nullptr);
+    srand((unsigned int) t);
+
     VoronoiPoints = Eigen::MatrixXd::Zero(3, numPoints);
     for(unsigned int i=0; i < numPoints; i++)
     {
