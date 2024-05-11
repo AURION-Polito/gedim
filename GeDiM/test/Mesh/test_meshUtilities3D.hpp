@@ -189,7 +189,7 @@ namespace GedimUnitTesting
           std::vector<std::vector<std::vector<Eigen::Matrix3d>>> PolyhedronsFacesTriangulations2DVertices;
           std::vector<std::vector<double>> PolyhedronsFacesArea;
           std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFaces2DCentroid;
-          std::vector<std::vector<double>> PolyhedronsFacesDiameter;
+          std::vector<Eigen::VectorXd> PolyhedronsFacesDiameter;
           std::vector<std::vector<Eigen::VectorXd>> PolyhedronsFacesEdgesLength;
           std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DCentroid;
           std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFacesEdges2DTangent;
@@ -213,7 +213,6 @@ namespace GedimUnitTesting
       exportData.PolyhedronsFacesTriangulations2DVertices = cell3DsGeometricData.Cell3DsFaces2DTriangulations;
       exportData.PolyhedronsFacesArea = cell3DsGeometricData.Cell3DsFacesAreas;
       exportData.PolyhedronsFaces2DCentroid = cell3DsGeometricData.Cell3DsFaces2DCentroids;
-      exportData.PolyhedronsFacesDiameter = cell3DsGeometricData.Cell3DsFacesDiameters;
       exportData.PolyhedronsFacesEdgesLength = cell3DsGeometricData.Cell3DsFacesEdgeLengths;
       exportData.PolyhedronsFacesEdges2DCentroid = cell3DsGeometricData.Cell3DsFacesEdges2DCentroid;
       exportData.PolyhedronsFacesEdges2DTangent = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
@@ -228,6 +227,17 @@ namespace GedimUnitTesting
         {
           exportData.PolyhedronsFacesNormal[c].col(f) =
               cell3DsGeometricData.Cell3DsFacesNormals[c][f];
+        }
+      }
+
+      exportData.PolyhedronsFacesDiameter.resize(cell3DsGeometricData.Cell3DsFacesDiameters.size());
+      for (unsigned int c = 0; c < cell3DsGeometricData.Cell3DsFacesDiameters.size(); c++)
+      {
+        exportData.PolyhedronsFacesDiameter[c].resize(cell3DsGeometricData.Cell3DsFacesDiameters[c].size());
+        for (unsigned int f = 0; f < cell3DsGeometricData.Cell3DsFacesDiameters[c].size(); f++)
+        {
+          exportData.PolyhedronsFacesDiameter[c][f] =
+              cell3DsGeometricData.Cell3DsFacesDiameters[c][f];
         }
       }
 
@@ -282,7 +292,9 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFaces2DCentroid,
                                                               "Eigen::Vector3d",
                                                               "    geometry.PolyhedronsFaces2DCentroid")<< std::endl;
-      file<< std::scientific<< "    geometry.PolyhedronsFacesDiameter = "<< exportData.PolyhedronsFacesDiameter<< ";"<< std::endl;
+      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolyhedronsFacesDiameter,
+                                                              "Eigen::VectorXd",
+                                                              "    geometry.PolyhedronsFacesDiameter")<< std::endl;
       file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolyhedronsFacesEdgesLength,
                                                               "Eigen::VectorXd",
                                                               "    geometry.PolyhedronsFacesEdgesLength")<< std::endl;
