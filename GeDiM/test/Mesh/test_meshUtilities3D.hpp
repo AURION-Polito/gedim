@@ -182,7 +182,7 @@ namespace GedimUnitTesting
           std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsTetrahedronsVertices;
           std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFacesTranslation;
           std::vector<std::vector<Eigen::Matrix3d>> PolyhedronsFacesRotationMatrix;
-          std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFacesNormal;
+          std::vector<Eigen::MatrixXd> PolyhedronsFacesNormal;
           std::vector<std::vector<bool>> PolyhedronsFacesNormalDirection;
           std::vector<std::vector<std::vector<bool>>> PolyhedronsFacesEdgesDirection;
           std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFaces2DVertices;
@@ -207,7 +207,6 @@ namespace GedimUnitTesting
       exportData.PolyhedronsTetrahedronsVertices = cell3DsGeometricData.Cell3DsTetrahedronPoints;
       exportData.PolyhedronsFacesTranslation = cell3DsGeometricData.Cell3DsFacesTranslations;
       exportData.PolyhedronsFacesRotationMatrix = cell3DsGeometricData.Cell3DsFacesRotationMatrices;
-      exportData.PolyhedronsFacesNormal = cell3DsGeometricData.Cell3DsFacesNormals;
       exportData.PolyhedronsFacesNormalDirection = cell3DsGeometricData.Cell3DsFacesNormalDirections;
       exportData.PolyhedronsFacesEdgesDirection = cell3DsGeometricData.Cell3DsFacesEdgeDirections;
       exportData.PolyhedronsFaces2DVertices = cell3DsGeometricData.Cell3DsFaces2DVertices;
@@ -220,6 +219,17 @@ namespace GedimUnitTesting
       exportData.PolyhedronsFacesEdges2DTangent = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
       exportData.PolyhedronsFacesEdges2DTangentNormalized = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
       exportData.PolyhedronsFacesEdges2DNormal = cell3DsGeometricData.Cell3DsFacesEdge2DNormals;
+
+      exportData.PolyhedronsFacesNormal.resize(cell3DsGeometricData.Cell3DsFacesNormals.size());
+      for (unsigned int c = 0; c < cell3DsGeometricData.Cell3DsFacesNormals.size(); c++)
+      {
+        exportData.PolyhedronsFacesNormal[c].resize(3, cell3DsGeometricData.Cell3DsFacesNormals[c].size());
+        for (unsigned int f = 0; f < cell3DsGeometricData.Cell3DsFacesNormals[c].size(); f++)
+        {
+          exportData.PolyhedronsFacesNormal[c].col(f) =
+              cell3DsGeometricData.Cell3DsFacesNormals[c][f];
+        }
+      }
 
       for (unsigned int c = 0; c < exportData.PolyhedronsFacesEdges2DTangentNormalized.size(); c++)
       {
@@ -257,8 +267,8 @@ namespace GedimUnitTesting
       file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(exportData.PolyhedronsFacesRotationMatrix,
                                                               "Eigen::Matrix3d",
                                                               "    geometry.PolyhedronsFacesRotationMatrix")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolyhedronsFacesNormal,
-                                                              "Eigen::Vector3d",
+      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolyhedronsFacesNormal,
+                                                              "Eigen::MatrixXd",
                                                               "    geometry.PolyhedronsFacesNormal")<< std::endl;
       file<< std::scientific<< "    geometry.PolyhedronsFacesNormalDirection = "<< exportData.PolyhedronsFacesNormalDirection<< ";"<< std::endl;
       file<< std::scientific<< "    geometry.PolyhedronsFacesEdgesDirection = "<< exportData.PolyhedronsFacesEdgesDirection<< ";"<< std::endl;
