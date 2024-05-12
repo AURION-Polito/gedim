@@ -20,27 +20,12 @@
 
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
+#include "test_exportMeshUtilities.hpp"
 
 using namespace testing;
-using namespace std;
 
 namespace GedimUnitTesting
 {
-  template <typename T>
-  std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec)
-  {
-    const unsigned int sizeVector = vec.size();
-    const unsigned int startIndexVector = 0;
-
-    out<< "{";
-    for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
-      out<< (i != startIndexVector ? "," : "")<< vec.at(i);
-    out<< "}";
-
-    return out;
-  }
-
-
   TEST(TestMeshUtilities, TestMesh2DFromPolygon)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -385,45 +370,23 @@ namespace GedimUnitTesting
                                   "CreatedPolygonalMesh");
 
     {
-      std::ofstream file(exportFolder + "/Mesh.txt");
+      ExportMeshData exportData;
+      exportData.Cell0Ds = meshDao.Cell0DsCoordinates();
+      exportData.Cell1Ds = meshDao.Cell1DsExtremes();
+      exportData.Cell2Ds = meshDao.Cell2DsExtremes();
+      exportData.Cell0DsMarker = meshDao.Cell0DsMarker();
+      exportData.Cell1DsMarker = meshDao.Cell1DsMarker();
+      exportData.Cell2DsMarker = meshDao.Cell2DsMarker();
 
-      file.precision(16);
-      file<< Gedim::MatrixToString<Eigen::MatrixXd>(meshDao.Cell0DsCoordinates(),
-                                                    "Eigen::MatrixXd",
-                                                    "    mesh.Cell0Ds")<< std::endl;
-      file<< Gedim::MatrixToString<Eigen::MatrixXi>(meshDao.Cell1DsExtremes(),
-                                                    "Eigen::MatrixXi",
-                                                    "    mesh.Cell1Ds")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXi>(meshDao.Cell2DsExtremes(),
-                                                              "Eigen::MatrixXi",
-                                                              "    mesh.Cell2Ds")<< std::endl;
-      file<< std::scientific<< "    mesh.Cell0DsMarker = "<< meshDao.Cell0DsMarker()<< ";"<< std::endl;
-      file<< std::scientific<< "    mesh.Cell1DsMarker = "<< meshDao.Cell1DsMarker()<< ";"<< std::endl;
-      file<< std::scientific<< "    mesh.Cell2DsMarker = "<< meshDao.Cell2DsMarker()<< ";"<< std::endl;
-
-      file.close();
+      ExportMeshUtilities::ExportMesh2DToText(exportData,
+                                              exportFolder + "/MeshData.txt");
     }
 
     Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                                                            meshDao);
 
     {
-      struct MeshGeometricData2D final
-      {
-          std::vector<Eigen::MatrixXd> PolygonsVertices;
-          std::vector<std::vector<Eigen::Matrix3d>> PolygonsTriangulations;
-          std::vector<double> PolygonsArea;
-          std::vector<Eigen::Vector3d> PolygonsCentroid;
-          std::vector<double> PolygonsDiameter;
-          std::vector<std::vector<bool>> PolygonsEdgesDirection;
-          std::vector<Eigen::VectorXd> PolygonsEdgesLength;
-          std::vector<Eigen::MatrixXd> PolygonsEdgesTangent;
-          std::vector<Eigen::MatrixXd> PolygonsEdgesTangentNormalized;
-          std::vector<Eigen::MatrixXd> PolygonsEdgesCentroid;
-          std::vector<Eigen::MatrixXd> PolygonsEdgesNormal;
-      };
-
-      MeshGeometricData2D exportData;
+      ExportMeshGeometricData2D exportData;
       exportData.PolygonsVertices = cell2DsGeometricData.Cell2DsVertices;
       exportData.PolygonsTriangulations = cell2DsGeometricData.Cell2DsTriangulations;
       exportData.PolygonsArea = cell2DsGeometricData.Cell2DsAreas;
@@ -442,39 +405,8 @@ namespace GedimUnitTesting
           exportData.PolygonsEdgesTangentNormalized[c].col(e).normalize();
       }
 
-      std::ofstream file(exportFolder + "/MeshGeometricData.txt");
-
-      file.precision(16);
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsVertices,
-                                                              "Eigen::MatrixXd",
-                                                              "    geometry.PolygonsVertices")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Matrix3d>(exportData.PolygonsTriangulations,
-                                                              "Eigen::Matrix3d",
-                                                              "    geometry.PolygonsTriangulations")<< std::endl;
-
-      file<< std::scientific<< "    geometry.PolygonsArea = "<< exportData.PolygonsArea<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::Vector3d>(exportData.PolygonsCentroid,
-                                                              "Eigen::Vector3d",
-                                                              "    geometry.PolygonsCentroid")<< std::endl;
-      file<< std::scientific<< "    geometry.PolygonsDiameter = "<< exportData.PolygonsDiameter<< ";"<< std::endl;
-      file<< std::scientific<< "    geometry.PolygonsEdgesDirection = "<< exportData.PolygonsEdgesDirection<< ";"<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::VectorXd>(exportData.PolygonsEdgesLength,
-                                                              "Eigen::VectorXd",
-                                                              "    geometry.PolygonsEdgesLength")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesTangent,
-                                                              "Eigen::MatrixXd",
-                                                              "    geometry.PolygonsEdgesTangent")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesTangentNormalized,
-                                                              "Eigen::MatrixXd",
-                                                              "    geometry.PolygonsEdgesTangentNormalized")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesCentroid,
-                                                              "Eigen::MatrixXd",
-                                                              "    geometry.PolygonsEdgesCentroid")<< std::endl;
-      file<< Gedim::MatrixCollectionToString<Eigen::MatrixXd>(exportData.PolygonsEdgesNormal,
-                                                              "Eigen::MatrixXd",
-                                                              "    geometry.PolygonsEdgesNormal")<< std::endl;
-
-      file.close();
+      ExportMeshUtilities::ExportMeshGeometricData2DToText(exportData,
+                                                           exportFolder + "/MeshGeometricData.txt");
     }
 
     const unsigned int cell2DToExportIndex = 0;
