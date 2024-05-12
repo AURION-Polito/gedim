@@ -360,7 +360,7 @@ namespace GedimUnitTesting
     meshUtilities.CreatePolygonalMesh(geometryUtilities,
                                       polygon,
                                       9,
-                                      1,
+                                      10,
                                       meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolygonalMesh";
