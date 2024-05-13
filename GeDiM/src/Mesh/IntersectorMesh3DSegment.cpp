@@ -133,10 +133,68 @@ namespace Gedim
     return cell3D_index_found;
   }
   // ***************************************************************************
+  std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint> IntersectorMesh3DSegment::FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
+                                                                                                                                         const Eigen::Vector3d& segmentEnd,
+                                                                                                                                         const Eigen::Vector3d& segmentTangent,
+                                                                                                                                         const Gedim::IMeshDAO& mesh3D,
+                                                                                                                                         const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
+                                                                                                                                         const unsigned int starting_cell3D_index) const
+  {
+    SegmentCell3DIntersection(segmentOrigin,
+                              segmentEnd,
+                              segmentTangent,
+                              mesh3D,
+                              mesh3D_geometricData,
+                              starting_cell3D_index);
+
+
+    return {};
+  }
+  // ***************************************************************************
+  void IntersectorMesh3DSegment::SegmentCell3DIntersection(const Eigen::Vector3d& segmentOrigin,
+                                                           const Eigen::Vector3d& segmentEnd,
+                                                           const Eigen::Vector3d& segmentTangent,
+                                                           const Gedim::IMeshDAO& mesh3D,
+                                                           const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
+                                                           const unsigned int cell3D_index) const
+  {
+    const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
+    const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
+    const auto& cell3D_faces_normal = mesh3D_geometricData.Cell3DsFacesNormals.at(cell3D_index);
+
+    for (unsigned int f = 0; f < cell3D_faces.size(); f++)
+    {
+      const unsigned int cell2D_index = mesh3D.Cell3DFace(cell3D_index,
+                                                          f);
+
+      const Eigen::MatrixXd& face_3D_vertices = cell3D_faces_3D_vertices.at(f);
+      const Eigen::Vector3d& face_normal = cell3D_faces_normal.at(f);
+
+      const GeometryUtilities::IntersectionSegmentPlaneResult segment_face_plane_intersection =
+          geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
+                                                     segmentEnd,
+                                                     face_normal,
+                                                     face_3D_vertices.col(0));
+
+      switch (segment_face_plane_intersection.Type)
+      {
+        case GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection:
+          continue;
+        case GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection:
+          std::cout<< "Find one intersection with "<< cell3D_index<< " face "<< cell2D_index<< std::endl;
+          continue;
+        case GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
+          std::cout<< "Find multiple intersection with "<< cell3D_index<< " face "<< cell2D_index<< std::endl;
+          continue;
+        default:
+          throw std::runtime_error("segment face intersection not supported");
+      }
+    }
+  }
+  // ***************************************************************************
   IntersectorMesh3DSegment::IntersectionMesh IntersectorMesh3DSegment::CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                                                                               const Eigen::Vector3d& segmentEnd,
                                                                                               const Eigen::Vector3d& segmentTangent,
-                                                                                              const Eigen::Vector3d& segmentBarycenter,
                                                                                               const double& segmentLength,
                                                                                               const Gedim::IMeshDAO& mesh3D,
                                                                                               const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const
@@ -170,6 +228,13 @@ namespace Gedim
     }
 
     IntersectionMesh mesh1D;
+    mesh1D.Points = FindSegmentIntersectionPoints(segmentOrigin,
+                                                  segmentEnd,
+                                                  segmentTangent,
+                                                  mesh3D,
+                                                  mesh3D_geometricData,
+                                                  segment_origin_cell3D_index);
+    mesh1D.Segments = CreateIntersectionSegments(mesh1D.Points);
 
     return mesh1D;
   }

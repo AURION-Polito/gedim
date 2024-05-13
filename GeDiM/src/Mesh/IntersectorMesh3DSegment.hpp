@@ -42,6 +42,19 @@ namespace Gedim
       unsigned int FindSegmentVertexCell3D(const Eigen::Vector3d& vertex,
                                            const Gedim::IMeshDAO& mesh3D,
                                            const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
+      std::vector<IntersectionMesh::IntersectionMeshPoint> FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
+                                                                                         const Eigen::Vector3d& segmentEnd,
+                                                                                         const Eigen::Vector3d& segmentTangent,
+                                                                                         const Gedim::IMeshDAO& mesh3D,
+                                                                                         const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
+                                                                                         const unsigned int starting_cell3D_index) const;
+
+      void SegmentCell3DIntersection(const Eigen::Vector3d& segmentOrigin,
+                                     const Eigen::Vector3d& segmentEnd,
+                                     const Eigen::Vector3d& segmentTangent,
+                                     const Gedim::IMeshDAO& mesh3D,
+                                     const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
+                                     const unsigned int cell3D_index) const;
 
     public:
       IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities,
@@ -51,7 +64,6 @@ namespace Gedim
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                               const Eigen::Vector3d& segmentEnd,
                                               const Eigen::Vector3d& segmentTangent,
-                                              const Eigen::Vector3d& segmentBarycenter,
                                               const double& segmentLength,
                                               const Gedim::IMeshDAO& mesh3D,
                                               const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
