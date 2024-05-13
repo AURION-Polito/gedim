@@ -107,7 +107,7 @@ namespace GedimUnitTesting
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
                                                                    meshUtilities);
 
-    const Gedim::IntersectorMesh3DSegment::IntersectionMesh result =
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
@@ -115,7 +115,7 @@ namespace GedimUnitTesting
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
-
+    std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
 
 //    EXPECT_EQ(result.Points.size(), 2);
 //    EXPECT_EQ(result.Points[0].CurvilinearCoordinate, 0.0);
@@ -131,7 +131,7 @@ namespace GedimUnitTesting
     Gedim::MeshMatrices mesh_1D_data;
     Gedim::MeshMatricesDAO mesh_1D(mesh_1D_data);
 
-    const std::vector<double> coordinates = Gedim::IntersectorMesh3DSegment::ToCurvilinearCoordinates(result);
+    const std::vector<double> coordinates = Gedim::IntersectorMesh3DSegment::ToCurvilinearCoordinates(intersections);
 
     meshUtilities.FillMesh1D(geometryUtilities,
                              segmentOrigin,

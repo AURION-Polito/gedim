@@ -24,6 +24,31 @@ namespace Gedim
     return curvilinearCoordinates;
   }
   // ***************************************************************************
+  std::string IntersectorMesh3DSegment::ToString(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh)
+  {
+    std::ostringstream stream;
+
+    stream.precision(16);
+    stream<< "Points:\n";
+    for (const auto& intersection_point : intersectingMesh.Points)
+    {
+      stream<< std::scientific << "{ ";
+      stream<< "Coordinate: " << intersection_point.CurvilinearCoordinate<< "; ";
+      stream<< "Value: C3D: "<< intersection_point.Cell3DIds<< " }\n";
+    };
+
+    stream<< "Segments:\n";
+    for (const auto& intersection_segment : intersectingMesh.Segments)
+    {
+      stream<< std::scientific << "{ ";
+      stream<< "Points: ["<< intersection_segment.PointsIndex.at(0)<< ", ";
+      stream<< intersection_segment.PointsIndex.at(1)<< "]; ";
+      stream<< "C3D: "<< intersection_segment.Cell3DIds<< " }\n";
+    };
+
+    return stream.str();
+  }
+  // ***************************************************************************
   IntersectorMesh3DSegment::IntersectionPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
                                                                                                std::map<double, IntersectionPoint>& points,
                                                                                                bool& found) const
@@ -163,13 +188,30 @@ namespace Gedim
                                                         found);
     starting_intersection.Cell3DIds.insert(starting_cell3D_index);
 
-    SegmentCell3DIntersection(segmentOrigin,
-                              segmentEnd,
-                              segmentTangent,
-                              mesh3D,
-                              mesh3D_geometricData,
-                              starting_cell3D_index,
-                              mesh1D_intersections);
+    std::list<unsigned int> cell3Ds_index;
+    cell3Ds_index.push_back(starting_cell3D_index);
+    std::vector<bool> visited(mesh3D.Cell3DTotalNumber(), false);
+
+    while (!cell3Ds_index.empty())
+    {
+      const unsigned int cell3D_index = cell3Ds_index.front();
+      cell3Ds_index.pop_front();
+
+      if (visited.at(cell3D_index))
+        continue;
+
+      std::cout<< "Checking intersection with CELL3D "<< cell3D_index<< std::endl;
+      visited[cell3D_index] = true;
+
+      SegmentCell3DIntersection(segmentOrigin,
+                                segmentEnd,
+                                segmentTangent,
+                                mesh3D,
+                                mesh3D_geometricData,
+                                cell3D_index,
+                                mesh1D_intersections,
+                                cell3Ds_index);
+    }
 
     std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint> result(mesh1D_intersections.size());
 
@@ -195,7 +237,8 @@ namespace Gedim
                                                            const Gedim::IMeshDAO& mesh3D,
                                                            const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
                                                            const unsigned int cell3D_index,
-                                                           std::map<double, IntersectionPoint>& mesh1D_intersections) const
+                                                           std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                                           std::list<unsigned int>& cell3Ds_index) const
   {
     const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
     const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
@@ -238,6 +281,16 @@ namespace Gedim
                   mesh1D_intersection.Cell3DIds.end())
               {
                 mesh1D_intersection.Cell3DIds.insert(cell3D_index);
+              }
+
+              for (unsigned int face_3D_neigh = 0; face_3D_neigh < mesh3D.Cell2DNumberNeighbourCell3D(cell2D_index); face_3D_neigh++)
+              {
+                if (!mesh3D.Cell2DHasNeighbourCell3D(cell2D_index,
+                                                     face_3D_neigh))
+                  continue;
+
+                cell3Ds_index.push_back(mesh3D.Cell2DNeighbourCell3D(cell2D_index,
+                                                                     face_3D_neigh));
               }
             }
               break;

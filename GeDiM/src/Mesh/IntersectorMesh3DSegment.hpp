@@ -60,7 +60,8 @@ namespace Gedim
                                      const Gedim::IMeshDAO& mesh3D,
                                      const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
                                      const unsigned int cell3D_index,
-                                     std::map<double, IntersectionPoint>& mesh1D_intersections) const;
+                                     std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                     std::list<unsigned int>& cell3Ds_index) const;
 
     public:
       IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities,
@@ -68,6 +69,7 @@ namespace Gedim
       ~IntersectorMesh3DSegment();
 
       static std::vector<double> ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
+      static std::string ToString(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
 
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                               const Eigen::Vector3d& segmentEnd,
