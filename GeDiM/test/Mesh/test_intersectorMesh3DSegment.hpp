@@ -135,7 +135,7 @@ namespace GedimUnitTesting
 
     meshUtilities.FillMesh1D(geometryUtilities,
                              segmentOrigin,
-                             segmentEnd,
+                             segmentTangent,
                              coordinates,
                              mesh_1D);
     {

@@ -14,7 +14,7 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  std::vector<double> IntersectorMesh3DSegment::ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh) const
+  std::vector<double> IntersectorMesh3DSegment::ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh)
   {
     std::vector<double> curvilinearCoordinates(intersectingMesh.Points.size());
 
