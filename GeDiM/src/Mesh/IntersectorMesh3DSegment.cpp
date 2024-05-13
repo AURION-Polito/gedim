@@ -14,9 +14,9 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
-                                                                                                                     std::map<double, IntersectionMesh::IntersectionMeshPoint>& points,
-                                                                                                                     bool& found) const
+  IntersectorMesh3DSegment::IntersectionPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
+                                                                                               std::map<double, IntersectionPoint>& points,
+                                                                                               bool& found) const
   {
     double foundCoordinate = -1.0;
     for (auto& it : points)
@@ -36,7 +36,7 @@ namespace Gedim
     }
 
     points.insert(std::make_pair(curvilinearCoordinate,
-                                 IntersectionMesh::IntersectionMeshPoint()));
+                                 IntersectionPoint()));
     found = false;
     return points[curvilinearCoordinate];
   }
@@ -45,6 +45,8 @@ namespace Gedim
   {
     if (mesh1D_points.size() == 0)
       return {};
+
+    Gedim::Output::Assert(mesh1D_points.size() >= 2);
 
     std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment> mesh1D_segments;
 
@@ -143,15 +145,32 @@ namespace Gedim
                                                                                                                                          const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
                                                                                                                                          const unsigned int starting_cell3D_index) const
   {
+    std::map<double, IntersectionPoint> mesh1D_intersections;
+
     SegmentCell3DIntersection(segmentOrigin,
                               segmentEnd,
                               segmentTangent,
                               mesh3D,
                               mesh3D_geometricData,
-                              starting_cell3D_index);
+                              starting_cell3D_index,
+                              mesh1D_intersections);
+
+    std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint> result(mesh1D_intersections.size());
+
+    unsigned int intersection_index = 0;
+    for (const auto& intersection : mesh1D_intersections)
+    {
+      result[intersection_index] =
+      {
+        intersection.first,
+        std::vector<unsigned int>(intersection.second.Cell3DIds.begin(), intersection.second.Cell3DIds.end())
+      };
+
+      intersection_index++;
+    }
 
 
-    return {};
+    return result;
   }
   // ***************************************************************************
   void IntersectorMesh3DSegment::SegmentCell3DIntersection(const Eigen::Vector3d& segmentOrigin,
@@ -159,7 +178,8 @@ namespace Gedim
                                                            const Eigen::Vector3d& segmentTangent,
                                                            const Gedim::IMeshDAO& mesh3D,
                                                            const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
-                                                           const unsigned int cell3D_index) const
+                                                           const unsigned int cell3D_index,
+                                                           std::map<double, IntersectionPoint>& mesh1D_intersections) const
   {
     const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
     const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
@@ -184,8 +204,37 @@ namespace Gedim
         case GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection:
           continue;
         case GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection:
-          std::cout<< "Find one intersection with "<< cell3D_index<< " face "<< cell2D_index<< std::endl;
-          continue;
+        {
+          const auto& segment_intersection = segment_face_plane_intersection.SingleIntersection;
+
+          switch (segment_intersection.Type)
+          {
+            case GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+            case GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+            case GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+            {
+              bool found = false;
+              auto& mesh1D_intersection = InsertNewIntersection(segment_intersection.CurvilinearCoordinate,
+                                                                mesh1D_intersections,
+                                                                found);
+
+              if (mesh1D_intersection.Cell3DIds.find(cell3D_index) ==
+                  mesh1D_intersection.Cell3DIds.end())
+              {
+                mesh1D_intersection.Cell3DIds.insert(cell3D_index);
+              }
+            }
+              break;
+            case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+            case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+            case GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
+            case GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
+              continue;
+            default:
+              throw std::runtime_error("segment face single intersection not supported");
+          }
+        }
+          break;
         case GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
           std::cout<< "Find multiple intersection with "<< cell3D_index<< " face "<< cell2D_index<< std::endl;
           continue;

@@ -30,12 +30,17 @@ namespace Gedim
       };
 
     private:
+      struct IntersectionPoint final
+      {
+          std::set<unsigned int> Cell3DIds;
+      };
+
       const Gedim::GeometryUtilities& geometryUtilities;
       const Gedim::MeshUtilities& meshUtilities;
 
-      IntersectionMesh::IntersectionMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
-                                                                     std::map<double, IntersectionMesh::IntersectionMeshPoint>& points,
-                                                                     bool& found) const;
+      IntersectionPoint& InsertNewIntersection(const double& curvilinearCoordinate,
+                                               std::map<double, IntersectionPoint>& points,
+                                               bool& found) const;
 
       std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
 
@@ -54,7 +59,8 @@ namespace Gedim
                                      const Eigen::Vector3d& segmentTangent,
                                      const Gedim::IMeshDAO& mesh3D,
                                      const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
-                                     const unsigned int cell3D_index) const;
+                                     const unsigned int cell3D_index,
+                                     std::map<double, IntersectionPoint>& mesh1D_intersections) const;
 
     public:
       IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities,
