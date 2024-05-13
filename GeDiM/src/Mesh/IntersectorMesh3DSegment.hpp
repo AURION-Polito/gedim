@@ -4,6 +4,7 @@
 #include "Eigen/Eigen"
 #include "IMeshDAO.hpp"
 #include "GeometryUtilities.hpp"
+#include "MeshUtilities.hpp"
 
 namespace Gedim
 {
@@ -14,16 +15,14 @@ namespace Gedim
       {
           struct IntersectionMeshPoint final
           {
-              std::vector<unsigned int> Cell2DIds = {};
-              std::vector<unsigned int> Edge2DIds = {};
-              std::vector<unsigned int> Vertex2DIds = {};
+              double CurvilinearCoordinate;
+              std::vector<unsigned int> Cell3DIds;
           };
 
           struct IntersectionMeshSegment final
           {
-              std::vector<unsigned int> Points = {};
-              std::vector<unsigned int> Cell2DIds = {};
-              std::vector<unsigned int> Edge2DIds = {};
+              std::array<unsigned int, 2> PointsIndex;
+              std::vector<unsigned int> Cell3DIds;
           };
 
           std::vector<IntersectionMeshPoint> Points;
@@ -31,16 +30,22 @@ namespace Gedim
       };
 
     private:
-      const Gedim::GeometryUtilities& _geometryUtilities;
+      const Gedim::GeometryUtilities& geometryUtilities;
+      const Gedim::MeshUtilities& meshUtilities;
 
       IntersectionMesh::IntersectionMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
                                                                      std::map<double, IntersectionMesh::IntersectionMeshPoint>& points,
                                                                      bool& found) const;
 
-      void CheckOriginAndEndSegmentPosition() const;
+      std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
+
+      unsigned int FindSegmentVertexCell3D(const Eigen::Vector3d& vertex,
+                                           const Gedim::IMeshDAO& mesh3D,
+                                           const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
 
     public:
-      IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities);
+      IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities,
+                               const Gedim::MeshUtilities& meshUtilities);
       ~IntersectorMesh3DSegment();
 
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
@@ -48,7 +53,8 @@ namespace Gedim
                                               const Eigen::Vector3d& segmentTangent,
                                               const Eigen::Vector3d& segmentBarycenter,
                                               const double& segmentLength,
-                                              const Gedim::IMeshDAO& mesh3D) const;
+                                              const Gedim::IMeshDAO& mesh3D,
+                                              const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
   };
 }
 
