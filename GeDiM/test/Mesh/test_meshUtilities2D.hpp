@@ -357,11 +357,42 @@ namespace GedimUnitTesting
     const Eigen::MatrixXd polygon = geometryUtilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                    1.0);
 
-    meshUtilities.CreatePolygonalMesh(geometryUtilities,
-                                      polygon,
-                                      9,
-                                      10,
-                                      meshDao);
+    const unsigned int meshGenerator = 1;
+    const unsigned int numCells1D = 9;
+    switch (meshGenerator)
+    {
+      case 0:
+      {
+        const Eigen::Vector3d rectangleBaseTangent = polygon.col(1) -
+                                                     polygon.col(0);
+        const Eigen::Vector3d rectangleHeightTangent = polygon.rightCols(1) -
+                                                       polygon.col(0);
+
+        const std::vector<double> baseMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numCells1D + 1,
+                                                                                                          0.0, 1.0, 1);
+        const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numCells1D + 1,
+                                                                                                            0.0, 1.0, 1);
+        const Eigen::Vector3d origin = polygon.col(0);
+        meshUtilities.CreateRectangleMesh(origin,
+                                          rectangleBaseTangent,
+                                          rectangleHeightTangent,
+                                          baseMeshCurvilinearCoordinates,
+                                          heightMeshCurvilinearCoordinates,
+                                          meshDao);
+      }
+        break;
+      case 1:
+      {
+        meshUtilities.CreatePolygonalMesh(geometryUtilities,
+                                          polygon,
+                                          numCells1D,
+                                          10,
+                                          meshDao);
+      }
+        break;
+      default:
+        ASSERT_FALSE(true);
+    }
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolygonalMesh";
     Gedim::Output::CreateFolder(exportFolder);

@@ -121,18 +121,51 @@ namespace GedimUnitTesting
     const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                    1.0);
 
-    meshUtilities.CreatePolyhedralMesh(geometryUtilities,
-                                       polyhedron.Vertices,
-                                       polyhedron.Edges,
-                                       polyhedron.Faces,
-                                       9,
-                                       10,
-                                       meshDao);
+    const unsigned int meshGenerator = 1;
+    const unsigned int numCells1D = 9;
+    switch (meshGenerator)
+    {
+      case 0:
+      {
+        const Eigen::Vector3d parallelepipedsLengthTangent = polyhedron.Vertices.col(1) -
+                                                             polyhedron.Vertices.col(0);
+        const Eigen::Vector3d parallelepipedsHeightTangent = polyhedron.Vertices.col(4) -
+                                                             polyhedron.Vertices.col(0);
+        const Eigen::Vector3d parallelepipedsWidthTangent = polyhedron.Vertices.col(3) -
+                                                            polyhedron.Vertices.col(0);
 
-    Gedim::MeshUtilities::CheckMesh3DConfiguration checkConfig;
-    meshUtilities.CheckMesh3D(checkConfig,
-                              geometryUtilities,
-                              meshDao);
+        const std::vector<double> lengthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numCells1D + 1,
+                                                                                                            0.0, 1.0, 1);
+        const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numCells1D + 1,
+                                                                                                            0.0, 1.0, 1);
+        const std::vector<double> widthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(numCells1D + 1,
+                                                                                                           0.0, 1.0, 1);
+
+        const Eigen::Vector3d origin = polyhedron.Vertices.col(0);
+        meshUtilities.CreateParallelepipedMesh(origin,
+                                               parallelepipedsLengthTangent,
+                                               parallelepipedsHeightTangent,
+                                               parallelepipedsWidthTangent,
+                                               lengthMeshCurvilinearCoordinates,
+                                               heightMeshCurvilinearCoordinates,
+                                               widthMeshCurvilinearCoordinates,
+                                               meshDao);
+      }
+        break;
+      case 1:
+      {
+        meshUtilities.CreatePolyhedralMesh(geometryUtilities,
+                                           polyhedron.Vertices,
+                                           polyhedron.Edges,
+                                           polyhedron.Faces,
+                                           numCells1D,
+                                           10,
+                                           meshDao);
+      }
+        break;
+      default:
+        ASSERT_FALSE(true);
+    }
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
