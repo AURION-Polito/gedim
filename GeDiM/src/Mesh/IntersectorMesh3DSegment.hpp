@@ -35,19 +35,20 @@ namespace Gedim
 
       IntersectionMesh::IntersectionMeshPoint& InsertNewIntersection(const double& curvilinearCoordinate,
                                                                      std::map<double, IntersectionMesh::IntersectionMeshPoint>& points,
-                                                                     bool& found);
+                                                                     bool& found) const;
+
+      void CheckOriginAndEndSegmentPosition() const;
 
     public:
       IntersectorMesh3DSegment(const Gedim::GeometryUtilities& geometryUtilities);
       ~IntersectorMesh3DSegment();
 
-      void CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
-                                  const Eigen::Vector3d& segmentEnd,
-                                  const Eigen::Vector3d& segmentTangent,
-                                  const Eigen::Vector3d& segmentBarycenter,
-                                  const double& segmentLength,
-                                  const Gedim::IMeshDAO& mesh3D,
-                                  IntersectionMesh& result);
+      IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
+                                              const Eigen::Vector3d& segmentEnd,
+                                              const Eigen::Vector3d& segmentTangent,
+                                              const Eigen::Vector3d& segmentBarycenter,
+                                              const double& segmentLength,
+                                              const Gedim::IMeshDAO& mesh3D) const;
   };
 }
 

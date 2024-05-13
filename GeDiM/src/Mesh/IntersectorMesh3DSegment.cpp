@@ -14,7 +14,7 @@ namespace Gedim
   // ***************************************************************************
   IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
                                                                                                                      std::map<double, IntersectionMesh::IntersectionMeshPoint>& points,
-                                                                                                                     bool& found)
+                                                                                                                     bool& found) const
   {
     double foundCoordinate = -1.0;
     for (auto& it : points)
@@ -39,15 +39,23 @@ namespace Gedim
     return points[curvilinearCoordinate];
   }
   // ***************************************************************************
-  void IntersectorMesh3DSegment::CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
-                                                        const Eigen::Vector3d& segmentEnd,
-                                                        const Eigen::Vector3d& segmentTangent,
-                                                        const Eigen::Vector3d& segmentBarycenter,
-                                                        const double& segmentLength,
-                                                        const Gedim::IMeshDAO& mesh3D,
-                                                        IntersectionMesh& result)
+  void IntersectorMesh3DSegment::CheckOriginAndEndSegmentPosition() const
   {
 
+  }
+  // ***************************************************************************
+  IntersectorMesh3DSegment::IntersectionMesh IntersectorMesh3DSegment::CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
+                                                                                              const Eigen::Vector3d& segmentEnd,
+                                                                                              const Eigen::Vector3d& segmentTangent,
+                                                                                              const Eigen::Vector3d& segmentBarycenter,
+                                                                                              const double& segmentLength,
+                                                                                              const Gedim::IMeshDAO& mesh3D) const
+  {
+    IntersectionMesh result;
+
+    CheckOriginAndEndSegmentPosition();
+
+    return result;
   }
   // ***************************************************************************
 }

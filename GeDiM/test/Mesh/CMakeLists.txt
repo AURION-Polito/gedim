@@ -21,6 +21,7 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_refinementUt
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OVM_Mesh_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OFF_Mesh_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_exportMeshUtilities.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_intersectorMesh3DSegment.hpp)
 
 list(APPEND gedim_test_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/test_exportMeshUtilities.cpp)
 
