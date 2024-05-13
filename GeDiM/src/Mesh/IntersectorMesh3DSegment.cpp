@@ -43,6 +43,9 @@ namespace Gedim
   // ***************************************************************************
   std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment> IntersectorMesh3DSegment::CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const
   {
+    if (mesh1D_points.size() == 0)
+      return {};
+
     std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment> mesh1D_segments;
 
     mesh1D_segments.resize(mesh1D_points.size() - 1);
