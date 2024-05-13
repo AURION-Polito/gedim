@@ -67,6 +67,8 @@ namespace Gedim
                                const Gedim::MeshUtilities& meshUtilities);
       ~IntersectorMesh3DSegment();
 
+      static std::vector<double> ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
+
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                               const Eigen::Vector3d& segmentEnd,
                                               const Eigen::Vector3d& segmentTangent,

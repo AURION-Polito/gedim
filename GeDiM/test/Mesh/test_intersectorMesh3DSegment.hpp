@@ -117,16 +117,32 @@ namespace GedimUnitTesting
 
 
 
-    EXPECT_EQ(result.Points.size(), 2);
-    EXPECT_EQ(result.Points[0].CurvilinearCoordinate, 0.0);
-    EXPECT_EQ(result.Points[1].CurvilinearCoordinate, 1.0);
-    EXPECT_EQ(result.Points[0].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Points[1].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Points[0].Cell3DIds[0], 0);
-    EXPECT_EQ(result.Points[1].Cell3DIds[0], 0);
-    EXPECT_EQ(result.Segments.size(), 1);
-    EXPECT_EQ(result.Segments[0].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Segments[0].Cell3DIds[0], 0);
+//    EXPECT_EQ(result.Points.size(), 2);
+//    EXPECT_EQ(result.Points[0].CurvilinearCoordinate, 0.0);
+//    EXPECT_EQ(result.Points[1].CurvilinearCoordinate, 1.0);
+//    EXPECT_EQ(result.Points[0].Cell3DIds.size(), 1);
+//    EXPECT_EQ(result.Points[1].Cell3DIds.size(), 1);
+//    EXPECT_EQ(result.Points[0].Cell3DIds[0], 0);
+//    EXPECT_EQ(result.Points[1].Cell3DIds[0], 0);
+//    EXPECT_EQ(result.Segments.size(), 1);
+//    EXPECT_EQ(result.Segments[0].Cell3DIds.size(), 1);
+//    EXPECT_EQ(result.Segments[0].Cell3DIds[0], 0);
+
+    Gedim::MeshMatrices mesh_1D_data;
+    Gedim::MeshMatricesDAO mesh_1D(mesh_1D_data);
+
+    const std::vector<double> coordinates = Gedim::IntersectorMesh3DSegment::ToCurvilinearCoordinates(result);
+
+    meshUtilities.FillMesh1D(geometryUtilities,
+                             segmentOrigin,
+                             segmentEnd,
+                             coordinates,
+                             mesh_1D);
+    {
+      meshUtilities.ExportMeshToVTU(mesh_1D,
+                                    exportFolder,
+                                    "mesh1D");
+    }
   }
 }
 

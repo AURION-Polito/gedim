@@ -14,6 +14,16 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  std::vector<double> IntersectorMesh3DSegment::ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh) const
+  {
+    std::vector<double> curvilinearCoordinates(intersectingMesh.Points.size());
+
+    for (unsigned int i = 0; i < intersectingMesh.Points.size(); i++)
+      curvilinearCoordinates[i] = intersectingMesh.Points[i].CurvilinearCoordinate;
+
+    return curvilinearCoordinates;
+  }
+  // ***************************************************************************
   IntersectorMesh3DSegment::IntersectionPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
                                                                                                std::map<double, IntersectionPoint>& points,
                                                                                                bool& found) const
@@ -146,6 +156,12 @@ namespace Gedim
                                                                                                                                          const unsigned int starting_cell3D_index) const
   {
     std::map<double, IntersectionPoint> mesh1D_intersections;
+
+    bool found = false;
+    auto& starting_intersection = InsertNewIntersection(0.0,
+                                                        mesh1D_intersections,
+                                                        found);
+    starting_intersection.Cell3DIds.insert(starting_cell3D_index);
 
     SegmentCell3DIntersection(segmentOrigin,
                               segmentEnd,
