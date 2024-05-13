@@ -29,7 +29,7 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
 
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
-                                                                                                                 meshDao);
+                                                                                                                 mesh3D);
 
     const Eigen::Vector3d segmentOrigin(0.25, 0.5, 0.0);
     const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.0);
@@ -59,11 +59,11 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Points[1].CurvilinearCoordinate, 1.0);
     EXPECT_EQ(result.Points[0].Cell3DIds.size(), 1);
     EXPECT_EQ(result.Points[1].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Points[0].Cell3DIds, 0);
-    EXPECT_EQ(result.Points[1].Cell3DIds, 0);
+    EXPECT_EQ(result.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(result.Points[1].Cell3DIds[0], 0);
     EXPECT_EQ(result.Segments.size(), 1);
     EXPECT_EQ(result.Segments[0].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Segments[0].Cell3DIds, 0);
+    EXPECT_EQ(result.Segments[0].Cell3DIds[0], 0);
   }
 }
 
