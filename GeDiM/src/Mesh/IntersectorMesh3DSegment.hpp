@@ -42,6 +42,14 @@ namespace Gedim
                                                std::map<double, IntersectionPoint>& points,
                                                bool& found) const;
 
+      void CheckSegmentIntersection(const Gedim::GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
+                                    const double& segment_intersection_coordinate,
+                                    const Gedim::IMeshDAO& mesh3D,
+                                    const unsigned int cell3D_index,
+                                    const unsigned int cell2D_index,
+                                    std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                    std::list<unsigned int>& cell3Ds_index) const;
+
       std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
 
       unsigned int FindSegmentVertexCell3D(const Eigen::Vector3d& vertex,
@@ -50,6 +58,8 @@ namespace Gedim
       std::vector<IntersectionMesh::IntersectionMeshPoint> FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
                                                                                          const Eigen::Vector3d& segmentEnd,
                                                                                          const Eigen::Vector3d& segmentTangent,
+                                                                                         const Eigen::Vector3d& segmentBarycenter,
+                                                                                         const double& segmentLength,
                                                                                          const Gedim::IMeshDAO& mesh3D,
                                                                                          const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
                                                                                          const unsigned int starting_cell3D_index) const;
@@ -57,6 +67,8 @@ namespace Gedim
       void SegmentCell3DIntersection(const Eigen::Vector3d& segmentOrigin,
                                      const Eigen::Vector3d& segmentEnd,
                                      const Eigen::Vector3d& segmentTangent,
+                                     const Eigen::Vector3d& segmentBarycenter,
+                                     const double& segmentLength,
                                      const Gedim::IMeshDAO& mesh3D,
                                      const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData,
                                      const unsigned int cell3D_index,
@@ -74,6 +86,7 @@ namespace Gedim
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
                                               const Eigen::Vector3d& segmentEnd,
                                               const Eigen::Vector3d& segmentTangent,
+                                              const Eigen::Vector3d& segmentBarycenter,
                                               const double& segmentLength,
                                               const Gedim::IMeshDAO& mesh3D,
                                               const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
