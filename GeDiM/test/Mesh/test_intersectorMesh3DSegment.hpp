@@ -53,6 +53,7 @@ namespace GedimUnitTesting
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
+    std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
 
 
     EXPECT_EQ(result.Points.size(), 2);
