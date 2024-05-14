@@ -35,6 +35,12 @@ namespace Gedim
           std::set<unsigned int> Cell3DIds;
       };
 
+      struct FindSegmentStartingCell3DResult final
+      {
+          unsigned int StartingCell3DIndex;
+          bool FoundOtherIntersections;
+      };
+
       const Gedim::GeometryUtilities& geometryUtilities;
       const Gedim::MeshUtilities& meshUtilities;
 
@@ -52,9 +58,10 @@ namespace Gedim
 
       std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
 
-      unsigned int FindSegmentVertexCell3D(const Eigen::Vector3d& vertex,
-                                           const Gedim::IMeshDAO& mesh3D,
-                                           const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
+      FindSegmentStartingCell3DResult FindSegmentStartingCell3D(const Eigen::Vector3d& segmentOrigin,
+                                                                const Eigen::Vector3d& segmentEnd,
+                                                                const Gedim::IMeshDAO& mesh3D,
+                                                                const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
       std::vector<IntersectionMesh::IntersectionMeshPoint> FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
                                                                                          const Eigen::Vector3d& segmentEnd,
                                                                                          const Eigen::Vector3d& segmentTangent,

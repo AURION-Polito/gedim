@@ -163,11 +163,14 @@ namespace Gedim
     return mesh1D_segments;
   }
   // ***************************************************************************
-  unsigned int IntersectorMesh3DSegment::FindSegmentVertexCell3D(const Eigen::Vector3d& vertex,
-                                                                 const Gedim::IMeshDAO& mesh3D,
-                                                                 const MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const
+  IntersectorMesh3DSegment::FindSegmentStartingCell3DResult IntersectorMesh3DSegment::FindSegmentStartingCell3D(const Eigen::Vector3d& segmentOrigin,
+                                                                                                                const Eigen::Vector3d& segmentEnd,
+                                                                                                                const Gedim::IMeshDAO& mesh3D,
+                                                                                                                const MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const
   {
-    unsigned int cell3D_index_found = mesh3D.Cell3DTotalNumber();
+    FindSegmentStartingCell3DResult result;
+    result.StartingCell3DIndex = mesh3D.Cell3DTotalNumber();
+    result.FoundOtherIntersections = true;
 
     for (unsigned int c3D_index = 0; c3D_index < mesh3D.Cell3DTotalNumber(); c3D_index++)
     {
@@ -185,12 +188,12 @@ namespace Gedim
 
       const Eigen::MatrixXd cell3D_BoundingBox = geometryUtilities.PointsBoundingBox(cell3D_vertices);
 
-      if (!geometryUtilities.IsPointInBoundingBox(vertex,
+      if (!geometryUtilities.IsPointInBoundingBox(segmentOrigin,
                                                   cell3D_BoundingBox))
         continue;
 
-      const GeometryUtilities::PointPolyhedronPositionResult vertex_position =
-          geometryUtilities.PointPolyhedronPosition(vertex,
+      const GeometryUtilities::PointPolyhedronPositionResult segment_origin_position =
+          geometryUtilities.PointPolyhedronPosition(segmentOrigin,
                                                     cell3D_faces,
                                                     cell3D_faces_3D_vertices,
                                                     cell3D_faces_2D_vertices,
@@ -199,24 +202,59 @@ namespace Gedim
                                                     cell3D_faces_translation,
                                                     cell3D_faces_rotation);
 
-      switch (vertex_position.Type)
+      switch (segment_origin_position.Type)
       {
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
           continue;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+        {
+          result.StartingCell3DIndex = c3D_index;
+
+          if (!geometryUtilities.IsPointInBoundingBox(segmentEnd,
+                                                      cell3D_BoundingBox))
+            break;
+
+          const GeometryUtilities::PointPolyhedronPositionResult segment_end_position =
+              geometryUtilities.PointPolyhedronPosition(segmentEnd,
+                                                        cell3D_faces,
+                                                        cell3D_faces_3D_vertices,
+                                                        cell3D_faces_2D_vertices,
+                                                        cell3D_faces_normal,
+                                                        cell3D_faces_normal_direction,
+                                                        cell3D_faces_translation,
+                                                        cell3D_faces_rotation);
+
+          switch (segment_end_position.Type)
+          {
+            case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+            {
+              result.FoundOtherIntersections = false;
+              break;
+            }
+              break;
+            case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+            case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+            case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+            case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+              break;
+            default:
+              throw std::runtime_error("Segment end position not supported");
+          }
+        }
+          break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
-        case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
-          cell3D_index_found = c3D_index;
+          result.StartingCell3DIndex = c3D_index;
           break;
         default:
-          throw std::runtime_error("Vertex position not supported");
+          throw std::runtime_error("Segment origin position not supported");
       }
     }
 
-    Gedim::Output::Assert(cell3D_index_found < mesh3D.Cell3DTotalNumber());
+    Gedim::Output::Assert(result.StartingCell3DIndex < mesh3D.Cell3DTotalNumber());
 
-    return cell3D_index_found;
+    return result;
   }
   // ***************************************************************************
   std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshPoint> IntersectorMesh3DSegment::FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
@@ -457,15 +495,12 @@ namespace Gedim
                                                                                               const Gedim::IMeshDAO& mesh3D,
                                                                                               const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const
   {
-    const unsigned int segment_origin_cell3D_index = FindSegmentVertexCell3D(segmentOrigin,
-                                                                             mesh3D,
-                                                                             mesh3D_geometricData);
-    const unsigned int segment_end_cell3D_index = FindSegmentVertexCell3D(segmentEnd,
-                                                                          mesh3D,
-                                                                          mesh3D_geometricData);
+    const auto segment_starting_cell3D = FindSegmentStartingCell3D(segmentOrigin,
+                                                                   segmentEnd,
+                                                                   mesh3D,
+                                                                   mesh3D_geometricData);
 
-    if (segment_origin_cell3D_index ==
-        segment_end_cell3D_index)
+    if (!segment_starting_cell3D.FoundOtherIntersections)
     {
       IntersectionMesh mesh1D;
 
@@ -473,11 +508,11 @@ namespace Gedim
       {
         {
           0.0,
-          { segment_origin_cell3D_index }
+          { segment_starting_cell3D.StartingCell3DIndex }
         },
         {
           1.0,
-          { segment_origin_cell3D_index }
+          { segment_starting_cell3D.StartingCell3DIndex }
         }
       };
       mesh1D.Segments = CreateIntersectionSegments(mesh1D.Points);
@@ -493,7 +528,7 @@ namespace Gedim
                                                   segmentLength,
                                                   mesh3D,
                                                   mesh3D_geometricData,
-                                                  segment_origin_cell3D_index);
+                                                  segment_starting_cell3D.StartingCell3DIndex);
     mesh1D.Segments = CreateIntersectionSegments(mesh1D.Points);
 
     return mesh1D;
