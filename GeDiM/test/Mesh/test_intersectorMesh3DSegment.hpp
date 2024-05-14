@@ -44,7 +44,7 @@ namespace GedimUnitTesting
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
                                                                    meshUtilities);
 
-    const Gedim::IntersectorMesh3DSegment::IntersectionMesh result =
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
@@ -56,16 +56,16 @@ namespace GedimUnitTesting
     std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
 
 
-    EXPECT_EQ(result.Points.size(), 2);
-    EXPECT_EQ(result.Points[0].CurvilinearCoordinate, 0.0);
-    EXPECT_EQ(result.Points[1].CurvilinearCoordinate, 1.0);
-    EXPECT_EQ(result.Points[0].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Points[1].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Points[0].Cell3DIds[0], 0);
-    EXPECT_EQ(result.Points[1].Cell3DIds[0], 0);
-    EXPECT_EQ(result.Segments.size(), 1);
-    EXPECT_EQ(result.Segments[0].Cell3DIds.size(), 1);
-    EXPECT_EQ(result.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].CurvilinearCoordinate, 0.0);
+    EXPECT_EQ(intersections.Points[1].CurvilinearCoordinate, 1.0);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
   }
 
   TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentGeneric)
