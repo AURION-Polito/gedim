@@ -297,6 +297,9 @@ namespace Gedim
     const auto& cell3D_faces_normal = mesh3D_geometricData.Cell3DsFacesNormals.at(cell3D_index);
     const auto& cell3D_faces_3D_edges_tangent = mesh3D_geometricData.Cell3DsFacesEdge3DTangents.at(cell3D_index);
     const auto& cell3D_faces_edges_direction = mesh3D_geometricData.Cell3DsFacesEdgeDirections.at(cell3D_index);
+    const auto& cell3D_faces_2D_vertices = mesh3D_geometricData.Cell3DsFaces2DVertices.at(cell3D_index);
+    const auto& cell3D_faces_translation = mesh3D_geometricData.Cell3DsFacesTranslations.at(cell3D_index);
+    const auto& cell3D_faces_rotation = mesh3D_geometricData.Cell3DsFacesRotationMatrices.at(cell3D_index);
 
     for (unsigned int f = 0; f < cell3D_faces.size(); f++)
     {
@@ -308,6 +311,9 @@ namespace Gedim
       const Eigen::Vector3d& face_normal = cell3D_faces_normal.at(f);
       const Eigen::MatrixXd& face_3D_edges_tangent = cell3D_faces_3D_edges_tangent.at(f);
       const std::vector<bool>& face_edges_direction = cell3D_faces_edges_direction.at(f);
+      const Eigen::MatrixXd& face_2D_vertices = cell3D_faces_2D_vertices.at(f);
+      const Eigen::Vector3d& face_translation = cell3D_faces_translation.at(f);
+      const Eigen::Matrix3d& face_rotation = cell3D_faces_rotation.at(f);
 
       const GeometryUtilities::IntersectionSegmentPlaneResult segment_face_plane_intersection =
           geometryUtilities.IntersectionSegmentPlane(segmentOrigin,
@@ -334,6 +340,37 @@ namespace Gedim
           break;
         case GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
         {
+          const Eigen::Vector3d segment_origin_face_2D = geometryUtilities.RotatePointsFrom3DTo2D(segmentOrigin,
+                                                                                                  face_rotation.transpose(),
+                                                                                                  face_translation);
+
+          if (geometryUtilities.IsPointInsidePolygon(segment_origin_face_2D,
+                                                     face_2D_vertices))
+          {
+            CheckSegmentIntersection(Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin,
+                                     0.0,
+                                     mesh3D,
+                                     cell3D_index,
+                                     cell2D_index,
+                                     mesh1D_intersections,
+                                     cell3Ds_index);
+          }
+
+          const Eigen::Vector3d segment_end_face_2D = geometryUtilities.RotatePointsFrom3DTo2D(segmentEnd,
+                                                                                               face_rotation.transpose(),
+                                                                                               face_translation);
+
+          if (geometryUtilities.IsPointInsidePolygon(segment_end_face_2D,
+                                                     face_2D_vertices))
+          {
+            CheckSegmentIntersection(Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd,
+                                     1.0,
+                                     mesh3D,
+                                     cell3D_index,
+                                     cell2D_index,
+                                     mesh1D_intersections,
+                                     cell3Ds_index);
+          }
 
           for (unsigned int e = 0; e < face_num_edges; e++)
           {
