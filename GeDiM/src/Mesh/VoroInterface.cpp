@@ -56,38 +56,16 @@ bool VoroInterface::InsertNewPoints(Cell0D& cell0D,
         cell0Ds.push_back(cell0D);
         return true;
     }
-    else{
+    else
+    {
         for(auto it = cell0Ds.begin(); it != cell0Ds.end(); it++)
         {
-            if( geometryUtilities.IsValueGreater((*it).x, cell0D.x, geometryUtilities.Tolerance1D()))
-            {
-                cell0D.id = cell0Ds.size();
-                cell0Ds.insert(it, cell0D);
-                return true;
-            }
-            else if(geometryUtilities.IsValueZero((*it).x - cell0D.x, geometryUtilities.Tolerance1D()))
-            {
-                if( geometryUtilities.IsValueGreater((*it).y, cell0D.y, geometryUtilities.Tolerance1D()))
-                {
-                    cell0D.id = cell0Ds.size();
-                    cell0Ds.insert(it, cell0D);
-                    return true;
-                }
-                else if(geometryUtilities.IsValueZero((*it).y - cell0D.y, geometryUtilities.Tolerance1D()))
-                {
-                    if( geometryUtilities.IsValueGreater((*it).z, cell0D.z, geometryUtilities.Tolerance1D()))
-                    {
-                        cell0D.id = cell0Ds.size();
-                        cell0Ds.insert(it, cell0D);
-                        return true;
-                    }
-                    else if(geometryUtilities.IsValueZero((*it).z - cell0D.z, geometryUtilities.Tolerance1D()))
-                    {
-                        cell0D.id = (*it).id;
-                        return false;
-                    }
-                }
-            }
+          if (geometryUtilities.PointsAreCoincident(Eigen::Vector3d((*it).x, (*it).y, (*it).z),
+                                                    Eigen::Vector3d(cell0D.x, cell0D.y, cell0D.z)))
+          {
+              cell0D.id = (*it).id;
+              return false;
+          }
         }
 
         cell0D.id = cell0Ds.size();
@@ -1227,7 +1205,7 @@ void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
     sleep(1);
     time_t t = time(nullptr);
     srand((unsigned int) t);
-    cout << "time in seconds: " << t << endl;
+
     VoronoiPoints = Eigen::MatrixXd::Zero(3, numPoints);
     for(unsigned int i=0; i < numPoints; i++)
     {

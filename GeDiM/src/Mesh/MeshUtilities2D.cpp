@@ -559,6 +559,7 @@ namespace Gedim
     result.Cell2DsCentroids.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsDiameters.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsEdgeDirections.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsEdgesCentroid.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsEdgeLengths.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsEdgeTangents.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsEdgeNormals.resize(convexMesh.Cell2DTotalNumber());
@@ -628,6 +629,7 @@ namespace Gedim
                                                                                  end) == e;
       }
 
+      result.Cell2DsEdgesCentroid[c] = geometryUtilities.PolygonEdgesCentroid(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeLengths[c] = geometryUtilities.PolygonEdgeLengths(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeTangents[c] = geometryUtilities.PolygonEdgeTangents(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeNormals[c] = geometryUtilities.PolygonEdgeNormals(result.Cell2DsVertices[c]);
@@ -648,6 +650,7 @@ namespace Gedim
     result.Cell2DsCentroids.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsDiameters.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeDirections.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgesCentroid.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeLengths.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeTangents.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeNormals.resize(mesh.Cell2DTotalNumber());
@@ -738,6 +741,7 @@ namespace Gedim
                                                                            end) == e;
       }
 
+      result.Cell2DsEdgesCentroid[c] = geometryUtilities.PolygonEdgesCentroid(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeLengths[c] = geometryUtilities.PolygonEdgeLengths(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeTangents[c] = geometryUtilities.PolygonEdgeTangents(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeNormals[c] = geometryUtilities.PolygonEdgeNormals(result.Cell2DsVertices[c]);
@@ -759,6 +763,7 @@ namespace Gedim
     result.Cell2DsCentroids.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsDiameters.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeDirections.resize(mesh.Cell2DTotalNumber());
+    result.Cell2DsEdgesCentroid.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeLengths.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeTangents.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsEdgeNormals.resize(mesh.Cell2DTotalNumber());
@@ -852,6 +857,7 @@ namespace Gedim
                                                                            end) == e;
       }
 
+      result.Cell2DsEdgesCentroid[c] = geometryUtilities.PolygonEdgesCentroid(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeLengths[c] = geometryUtilities.PolygonEdgeLengths(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeTangents[c] = geometryUtilities.PolygonEdgeTangents(result.Cell2DsVertices[c]);
       result.Cell2DsEdgeNormals[c] = geometryUtilities.PolygonEdgeNormals(result.Cell2DsVertices[c]);

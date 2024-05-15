@@ -1482,6 +1482,11 @@ namespace Gedim
       /// \return the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
+      /// \brief Compute the Polygon edges centroid
+      /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
+      /// \return the resulting edges centroid, size 3 x numVertices
+      Eigen::MatrixXd PolygonEdgesCentroid(const Eigen::MatrixXd& polygonVertices) const;
+
       /// \brief Compute the Polygon edge lengths
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \return the resulting edge lengths, size 1 x numVertices
@@ -1988,6 +1993,13 @@ namespace Gedim
       {
         return PointsMaxDistance(polyhedronVertices);
       }
+
+      /// \brief Compute Polyhedron Edges Centroid
+      /// \param polyhedronVertices the polyhedron vertices
+      /// \param polyhedronEdges the polyhedron edges
+      /// \return for each edge the centroid, size 3xnumEdges
+      Eigen::MatrixXd PolyhedronEdgesCentroid(const Eigen::MatrixXd& polyhedronVertices,
+                                              const Eigen::MatrixXi& polyhedronEdges) const;
 
       /// \brief Compute Polyhedron Edges Lenght
       /// \param polyhedronVertices the polyhedron vertices
