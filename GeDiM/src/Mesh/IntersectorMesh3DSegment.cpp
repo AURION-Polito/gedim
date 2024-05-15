@@ -23,6 +23,16 @@ namespace Gedim
 
     return curvilinearCoordinates;
   }
+// ***************************************************************************
+  std::vector<std::vector<unsigned int>> IntersectorMesh3DSegment::MeshSegmentsCell3Ds(const IntersectionMesh& intersectingMesh)
+  {
+    std::vector<std::vector<unsigned int>> segment_Cell1Ds_Cell3Ds(intersectingMesh.Segments.size());
+
+    for (unsigned int s = 0; s < intersectingMesh.Segments.size(); s++)
+      segment_Cell1Ds_Cell3Ds[s] = intersectingMesh.Segments[s].Cell3DIds;
+
+    return segment_Cell1Ds_Cell3Ds;
+  }
   // ***************************************************************************
   std::string IntersectorMesh3DSegment::ToString(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh)
   {

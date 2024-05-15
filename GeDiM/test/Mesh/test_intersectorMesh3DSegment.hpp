@@ -353,6 +353,7 @@ namespace GedimUnitTesting
                                     "mesh1D");
     }
   }
+
 }
 
 #endif // __TEST_IntersectorMesh3DSegment_H

@@ -123,6 +123,7 @@ namespace Gedim
       ~IntersectorMesh3DSegment();
 
       static std::vector<double> ToCurvilinearCoordinates(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
+      static std::vector<std::vector<unsigned int>> MeshSegmentsCell3Ds(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
       static std::string ToString(const IntersectorMesh3DSegment::IntersectionMesh& intersectingMesh);
 
       IntersectionMesh CreateIntersectionMesh(const Eigen::Vector3d& segmentOrigin,
