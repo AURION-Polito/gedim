@@ -49,9 +49,9 @@ namespace Gedim
     return stream.str();
   }
   // ***************************************************************************
-  IntersectorMesh3DSegment::IntersectionPoint& IntersectorMesh3DSegment::InsertNewIntersection(const double& curvilinearCoordinate,
-                                                                                               std::map<double, IntersectionPoint>& points,
-                                                                                               bool& found) const
+  IntersectorMesh3DSegment::IntersectionPoint& IntersectorMesh3DSegment::CreateOrFindNewIntersection(const double& curvilinearCoordinate,
+                                                                                                     std::map<double, IntersectionPoint>& points,
+                                                                                                     bool& found) const
   {
     double foundCoordinate = -1.0;
     for (auto& it : points)
@@ -76,13 +76,18 @@ namespace Gedim
     return points[curvilinearCoordinate];
   }
   // ***************************************************************************
-  void IntersectorMesh3DSegment::CheckSegmentIntersection(const Gedim::GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
-                                                          const double& segment_intersection_coordinate,
-                                                          const Gedim::IMeshDAO& mesh3D,
-                                                          const unsigned int cell3D_index,
-                                                          const unsigned int cell2D_index,
-                                                          std::map<double, IntersectionPoint>& mesh1D_intersections,
-                                                          std::list<unsigned int>& cell3Ds_index) const
+  bool IntersectorMesh3DSegment::CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
+                                                              const Eigen::Vector3d& segment_tangent,
+                                                              const GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
+                                                              const double& segment_intersection_coordinate,
+                                                              const Eigen::Matrix3d& face_rotation,
+                                                              const Eigen::Vector3d& face_translation,
+                                                              const Eigen::MatrixXd& face_2D_vertices,
+                                                              const IMeshDAO& mesh3D,
+                                                              const unsigned int cell3D_index,
+                                                              const unsigned int cell2D_index,
+                                                              std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                                              std::list<unsigned int>& cell3Ds_index) const
   {
     switch (segment_intersection_position)
     {
@@ -90,35 +95,93 @@ namespace Gedim
       case GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
       case GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
       {
-        bool found = false;
-        auto& mesh1D_intersection = InsertNewIntersection(segment_intersection_coordinate,
-                                                          mesh1D_intersections,
-                                                          found);
 
-        if (mesh1D_intersection.Cell3DIds.find(cell3D_index) ==
-            mesh1D_intersection.Cell3DIds.end())
+        const Eigen::Vector3d segment_intersection = segment_origin +
+                                                     segment_intersection_coordinate * segment_tangent;
+        const Eigen::Vector3d segment_intersection_face_2D = geometryUtilities.RotatePointsFrom3DTo2D(segment_intersection,
+                                                                                                      face_rotation.transpose(),
+                                                                                                      face_translation);
+
+        if (geometryUtilities.IsPointInsidePolygon(segment_intersection_face_2D,
+                                                   face_2D_vertices))
         {
-          mesh1D_intersection.Cell3DIds.insert(cell3D_index);
-        }
-
-        for (unsigned int face_3D_neigh = 0; face_3D_neigh < mesh3D.Cell2DNumberNeighbourCell3D(cell2D_index); face_3D_neigh++)
-        {
-          if (!mesh3D.Cell2DHasNeighbourCell3D(cell2D_index,
-                                               face_3D_neigh))
-            continue;
-
-          cell3Ds_index.push_back(mesh3D.Cell2DNeighbourCell3D(cell2D_index,
-                                                               face_3D_neigh));
+          InsertNewIntersection(segment_intersection_coordinate,
+                                mesh3D,
+                                cell3D_index,
+                                cell2D_index,
+                                mesh1D_intersections,
+                                cell3Ds_index);
         }
       }
-        break;
+        return true;
       case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
       case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
       case GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
       case GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
-        return;
+        return false;
       default:
         throw std::runtime_error("segment face single intersection not supported");
+    }
+  }
+  // ***************************************************************************
+  bool IntersectorMesh3DSegment::CheckSegmentEdgeIntersection(const Gedim::GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
+                                                              const double& segment_intersection_coordinate,
+                                                              const Gedim::IMeshDAO& mesh3D,
+                                                              const unsigned int cell3D_index,
+                                                              const unsigned int cell2D_index,
+                                                              std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                                              std::list<unsigned int>& cell3Ds_index) const
+  {
+    switch (segment_intersection_position)
+    {
+      case GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+      case GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+      case GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+      {
+        InsertNewIntersection(segment_intersection_coordinate,
+                              mesh3D,
+                              cell3D_index,
+                              cell2D_index,
+                              mesh1D_intersections,
+                              cell3Ds_index);
+      }
+        return true;
+      case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+      case GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+      case GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
+      case GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
+        return false;
+      default:
+        throw std::runtime_error("segment face single intersection not supported");
+    }
+  }
+  // ***************************************************************************
+  void IntersectorMesh3DSegment::InsertNewIntersection(const double& segment_intersection_coordinate,
+                                                       const IMeshDAO& mesh3D,
+                                                       const unsigned int cell3D_index,
+                                                       const unsigned int cell2D_index,
+                                                       std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                                       std::list<unsigned int>& cell3Ds_index) const
+  {
+    bool found = false;
+    auto& mesh1D_intersection = CreateOrFindNewIntersection(segment_intersection_coordinate,
+                                                            mesh1D_intersections,
+                                                            found);
+
+    if (mesh1D_intersection.Cell3DIds.find(cell3D_index) ==
+        mesh1D_intersection.Cell3DIds.end())
+    {
+      mesh1D_intersection.Cell3DIds.insert(cell3D_index);
+    }
+
+    for (unsigned int face_3D_neigh = 0; face_3D_neigh < mesh3D.Cell2DNumberNeighbourCell3D(cell2D_index); face_3D_neigh++)
+    {
+      if (!mesh3D.Cell2DHasNeighbourCell3D(cell2D_index,
+                                           face_3D_neigh))
+        continue;
+
+      cell3Ds_index.push_back(mesh3D.Cell2DNeighbourCell3D(cell2D_index,
+                                                           face_3D_neigh));
     }
   }
   // ***************************************************************************
@@ -170,10 +233,13 @@ namespace Gedim
   {
     FindSegmentStartingCell3DResult result;
     result.StartingCell3DIndex = mesh3D.Cell3DTotalNumber();
-    result.FoundOtherIntersections = true;
+    result.SegmentFullInsideCell3D = false;
 
     for (unsigned int c3D_index = 0; c3D_index < mesh3D.Cell3DTotalNumber(); c3D_index++)
     {
+      if (result.StartingCell3DIndex < mesh3D.Cell3DTotalNumber())
+        break;
+
       if (!mesh3D.Cell3DIsActive(c3D_index))
         continue;
 
@@ -228,7 +294,7 @@ namespace Gedim
           {
             case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
             {
-              result.FoundOtherIntersections = false;
+              result.SegmentFullInsideCell3D = true;
               break;
             }
               break;
@@ -269,9 +335,9 @@ namespace Gedim
     std::map<double, IntersectionPoint> mesh1D_intersections;
 
     bool found = false;
-    auto& starting_intersection = InsertNewIntersection(0.0,
-                                                        mesh1D_intersections,
-                                                        found);
+    auto& starting_intersection = CreateOrFindNewIntersection(0.0,
+                                                              mesh1D_intersections,
+                                                              found);
     starting_intersection.Cell3DIds.insert(starting_cell3D_index);
 
     std::list<unsigned int> cell3Ds_index;
@@ -330,6 +396,8 @@ namespace Gedim
                                                            std::map<double, IntersectionPoint>& mesh1D_intersections,
                                                            std::list<unsigned int>& cell3Ds_index) const
   {
+    std::cout<< segmentTangent.norm()<< std::endl;
+
     const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
     const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
     const auto& cell3D_faces_normal = mesh3D_geometricData.Cell3DsFacesNormals.at(cell3D_index);
@@ -367,48 +435,47 @@ namespace Gedim
         {
           const auto& segment_intersection = segment_face_plane_intersection.SingleIntersection;
 
-          CheckSegmentIntersection(segment_intersection.Type,
-                                   segment_intersection.CurvilinearCoordinate,
-                                   mesh3D,
-                                   cell3D_index,
-                                   cell2D_index,
-                                   mesh1D_intersections,
-                                   cell3Ds_index);
+          CheckSegmentFaceIntersection(segmentOrigin,
+                                       segmentTangent,
+                                       segment_intersection.Type,
+                                       segment_intersection.CurvilinearCoordinate,
+                                       face_rotation,
+                                       face_translation,
+                                       face_2D_vertices,
+                                       mesh3D,
+                                       cell3D_index,
+                                       cell2D_index,
+                                       mesh1D_intersections,
+                                       cell3Ds_index);
         }
           break;
         case GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
         {
-          const Eigen::Vector3d segment_origin_face_2D = geometryUtilities.RotatePointsFrom3DTo2D(segmentOrigin,
-                                                                                                  face_rotation.transpose(),
-                                                                                                  face_translation);
+          CheckSegmentFaceIntersection(segmentOrigin,
+                                       segmentTangent,
+                                       Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin,
+                                       0.0,
+                                       face_rotation,
+                                       face_translation,
+                                       face_2D_vertices,
+                                       mesh3D,
+                                       cell3D_index,
+                                       cell2D_index,
+                                       mesh1D_intersections,
+                                       cell3Ds_index);
 
-          if (geometryUtilities.IsPointInsidePolygon(segment_origin_face_2D,
-                                                     face_2D_vertices))
-          {
-            CheckSegmentIntersection(Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin,
-                                     0.0,
-                                     mesh3D,
-                                     cell3D_index,
-                                     cell2D_index,
-                                     mesh1D_intersections,
-                                     cell3Ds_index);
-          }
-
-          const Eigen::Vector3d segment_end_face_2D = geometryUtilities.RotatePointsFrom3DTo2D(segmentEnd,
-                                                                                               face_rotation.transpose(),
-                                                                                               face_translation);
-
-          if (geometryUtilities.IsPointInsidePolygon(segment_end_face_2D,
-                                                     face_2D_vertices))
-          {
-            CheckSegmentIntersection(Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd,
-                                     1.0,
-                                     mesh3D,
-                                     cell3D_index,
-                                     cell2D_index,
-                                     mesh1D_intersections,
-                                     cell3Ds_index);
-          }
+          CheckSegmentFaceIntersection(segmentOrigin,
+                                       segmentTangent,
+                                       Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd,
+                                       1.0,
+                                       face_rotation,
+                                       face_translation,
+                                       face_2D_vertices,
+                                       mesh3D,
+                                       cell3D_index,
+                                       cell2D_index,
+                                       mesh1D_intersections,
+                                       cell3Ds_index);
 
           for (unsigned int e = 0; e < face_num_edges; e++)
           {
@@ -439,13 +506,13 @@ namespace Gedim
                   {
                     const auto& segment_intersection = segment_edge_intersection.FirstSegmentIntersections.at(0);
 
-                    CheckSegmentIntersection(segment_intersection.Type,
-                                             segment_intersection.CurvilinearCoordinate,
-                                             mesh3D,
-                                             cell3D_index,
-                                             cell2D_index,
-                                             mesh1D_intersections,
-                                             cell3Ds_index);
+                    CheckSegmentEdgeIntersection(segment_intersection.Type,
+                                                 segment_intersection.CurvilinearCoordinate,
+                                                 mesh3D,
+                                                 cell3D_index,
+                                                 cell2D_index,
+                                                 mesh1D_intersections,
+                                                 cell3Ds_index);
                   }
                     break;
                   case GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections:
@@ -454,20 +521,20 @@ namespace Gedim
                     const auto& segment_second_intersection = segment_edge_intersection.FirstSegmentIntersections.at(1);
 
 
-                    CheckSegmentIntersection(segment_first_intersection.Type,
-                                             segment_first_intersection.CurvilinearCoordinate,
-                                             mesh3D,
-                                             cell3D_index,
-                                             cell2D_index,
-                                             mesh1D_intersections,
-                                             cell3Ds_index);
-                    CheckSegmentIntersection(segment_second_intersection.Type,
-                                             segment_second_intersection.CurvilinearCoordinate,
-                                             mesh3D,
-                                             cell3D_index,
-                                             cell2D_index,
-                                             mesh1D_intersections,
-                                             cell3Ds_index);
+                    CheckSegmentEdgeIntersection(segment_first_intersection.Type,
+                                                 segment_first_intersection.CurvilinearCoordinate,
+                                                 mesh3D,
+                                                 cell3D_index,
+                                                 cell2D_index,
+                                                 mesh1D_intersections,
+                                                 cell3Ds_index);
+                    CheckSegmentEdgeIntersection(segment_second_intersection.Type,
+                                                 segment_second_intersection.CurvilinearCoordinate,
+                                                 mesh3D,
+                                                 cell3D_index,
+                                                 cell2D_index,
+                                                 mesh1D_intersections,
+                                                 cell3Ds_index);
                   }
                     break;
                   default:
@@ -500,7 +567,7 @@ namespace Gedim
                                                                    mesh3D,
                                                                    mesh3D_geometricData);
 
-    if (!segment_starting_cell3D.FoundOtherIntersections)
+    if (segment_starting_cell3D.SegmentFullInsideCell3D)
     {
       IntersectionMesh mesh1D;
 

@@ -38,23 +38,43 @@ namespace Gedim
       struct FindSegmentStartingCell3DResult final
       {
           unsigned int StartingCell3DIndex;
-          bool FoundOtherIntersections;
+          bool SegmentFullInsideCell3D;
       };
 
       const Gedim::GeometryUtilities& geometryUtilities;
       const Gedim::MeshUtilities& meshUtilities;
 
-      IntersectionPoint& InsertNewIntersection(const double& curvilinearCoordinate,
-                                               std::map<double, IntersectionPoint>& points,
-                                               bool& found) const;
+      IntersectionPoint& CreateOrFindNewIntersection(const double& curvilinearCoordinate,
+                                                     std::map<double, IntersectionPoint>& points,
+                                                     bool& found) const;
 
-      void CheckSegmentIntersection(const Gedim::GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
-                                    const double& segment_intersection_coordinate,
-                                    const Gedim::IMeshDAO& mesh3D,
-                                    const unsigned int cell3D_index,
-                                    const unsigned int cell2D_index,
-                                    std::map<double, IntersectionPoint>& mesh1D_intersections,
-                                    std::list<unsigned int>& cell3Ds_index) const;
+      bool CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
+                                        const Eigen::Vector3d& segment_tangent,
+                                        const GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
+                                        const double& segment_intersection_coordinate,
+                                        const Eigen::Matrix3d& face_rotation,
+                                        const Eigen::Vector3d& face_translation,
+                                        const Eigen::MatrixXd& face_2D_vertices,
+                                        const IMeshDAO& mesh3D,
+                                        const unsigned int cell3D_index,
+                                        const unsigned int cell2D_index,
+                                        std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                        std::list<unsigned int>& cell3Ds_index) const;
+
+      bool CheckSegmentEdgeIntersection(const Gedim::GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
+                                        const double& segment_intersection_coordinate,
+                                        const Gedim::IMeshDAO& mesh3D,
+                                        const unsigned int cell3D_index,
+                                        const unsigned int cell2D_index,
+                                        std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                        std::list<unsigned int>& cell3Ds_index) const;
+
+      void InsertNewIntersection(const double& segment_intersection_coordinate,
+                                 const IMeshDAO& mesh3D,
+                                 const unsigned int cell3D_index,
+                                 const unsigned int cell2D_index,
+                                 std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                 std::list<unsigned int>& cell3Ds_index) const;
 
       std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
 
