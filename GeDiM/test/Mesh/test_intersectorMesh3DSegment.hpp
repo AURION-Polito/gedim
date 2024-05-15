@@ -19,6 +19,9 @@ namespace GedimUnitTesting
 {
   TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentInside)
   {
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentInside";
+    Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -32,14 +35,28 @@ namespace GedimUnitTesting
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
 
-    const Eigen::Vector3d segmentOrigin(0.25, 0.5, 0.0);
-    const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.0);
+    const Eigen::Vector3d segmentOrigin(0.25, 0.5, 0.75);
+    const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.25);
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
     const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
                                                                                   segmentEnd);
     const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
                                                                  segmentEnd);
+
+    {
+      meshUtilities.ExportMeshToVTU(mesh3D,
+                                    exportFolder,
+                                    "mesh3D");
+
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddSegment(segmentOrigin,
+                            segmentEnd);
+
+        exporter.Export(exportFolder + "/segment.vtu");
+      }
+    }
 
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
                                                                    meshUtilities);
