@@ -277,8 +277,12 @@ namespace GedimUnitTesting
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
 
-    const Eigen::Vector3d segmentOrigin(0.25, 0.5, 0.75);
-    const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.25);
+    const Eigen::Vector3d segmentOrigin(3.1628787878787878e-01,
+                                        3.1628787878787878e-01,
+                                        3.1628787878787878e-01);
+    const Eigen::Vector3d segmentEnd(2.9578836930455638e-01,
+                                     6.7768285371702630e-01,
+                                     3.2231714628297359e-01);
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
     const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
