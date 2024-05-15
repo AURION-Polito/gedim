@@ -417,7 +417,6 @@ namespace Gedim
       if (visited.at(cell3D_index))
         continue;
 
-      std::cout<< "Checking intersection with CELL3D "<< cell3D_index<< std::endl;
       visited[cell3D_index] = true;
 
       SegmentCell3DIntersection(segmentOrigin,
