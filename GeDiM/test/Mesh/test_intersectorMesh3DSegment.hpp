@@ -41,10 +41,6 @@ namespace GedimUnitTesting
     const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.25);
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
-    const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
-                                                                                  segmentEnd);
-    const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
-                                                                 segmentEnd);
 
     {
       meshUtilities.ExportMeshToVTU(mesh3D,
@@ -67,8 +63,6 @@ namespace GedimUnitTesting
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
-                                                        segmentBarycenter,
-                                                        segmentLength,
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
@@ -124,10 +118,6 @@ namespace GedimUnitTesting
     const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.25);
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
-    const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
-                                                                                  segmentEnd);
-    const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
-                                                                 segmentEnd);
 
     {
       meshUtilities.ExportMeshToVTU(mesh3D,
@@ -150,8 +140,6 @@ namespace GedimUnitTesting
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
-                                                        segmentBarycenter,
-                                                        segmentLength,
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
@@ -203,10 +191,6 @@ namespace GedimUnitTesting
     const Eigen::Vector3d segmentEnd(0.5, 0.25, 0.25);
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
-    const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
-                                                                                  segmentEnd);
-    const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
-                                                                 segmentEnd);
 
     {
       meshUtilities.ExportMeshToVTU(mesh3D,
@@ -229,8 +213,6 @@ namespace GedimUnitTesting
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
-                                                        segmentBarycenter,
-                                                        segmentLength,
                                                         mesh3D,
                                                         mesh3D_geometricData);
     EXPECT_EQ(intersections.Points.size(), 2);
@@ -290,10 +272,6 @@ namespace GedimUnitTesting
     const Eigen::Vector3d segmentEnd = segment_test_Origin + 1.1 * segment_test_Tangent;
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
                                                                             segmentEnd);
-    const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin,
-                                                                                  segmentEnd);
-    const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin,
-                                                                 segmentEnd);
 
     {
       meshUtilities.ExportMeshToVTU(mesh3D,
@@ -316,8 +294,6 @@ namespace GedimUnitTesting
         intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
                                                         segmentEnd,
                                                         segmentTangent,
-                                                        segmentBarycenter,
-                                                        segmentLength,
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
