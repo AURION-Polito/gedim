@@ -76,14 +76,28 @@ namespace Gedim
     return points[curvilinearCoordinate];
   }
   // ***************************************************************************
-  bool IntersectorMesh3DSegment::CheckSegmentPolyhedronIntersection(const Eigen::MatrixXd& cell3D_BoundingBox) const
+  bool IntersectorMesh3DSegment::CheckSegmentPolyhedronIntersection(const double& segment_intersection_coordinate,
+                                                                    const Eigen::Vector3d& segment_vertex,
+                                                                    const IMeshDAO& mesh3D,
+                                                                    const unsigned int cell3D_index,
+                                                                    const Eigen::MatrixXd& cell3D_BoundingBox,
+                                                                    const std::vector<Eigen::MatrixXi>& cell3D_faces,
+                                                                    const std::vector<Eigen::MatrixXd>& cell3D_faces_3D_vertices,
+                                                                    const std::vector<Eigen::MatrixXd>& cell3D_faces_2D_vertices,
+                                                                    const std::vector<Eigen::Vector3d>& cell3D_faces_normal,
+                                                                    const std::vector<bool>& cell3D_faces_normal_direction,
+                                                                    const std::vector<Eigen::Vector3d>& cell3D_faces_translation,
+                                                                    const std::vector<Eigen::Matrix3d>& cell3D_faces_rotation,
+                                                                    std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                                                    std::list<unsigned int>& cell3Ds_index) const
   {
-    if (geometryUtilities.IsPointInBoundingBox(segmentOrigin,
+    if (!geometryUtilities.IsPointInBoundingBox(segment_vertex,
                                                 cell3D_BoundingBox))
+      return false;
 
 
-    const GeometryUtilities::PointPolyhedronPositionResult segment_origin_position =
-        geometryUtilities.PointPolyhedronPosition(segmentOrigin,
+    const GeometryUtilities::PointPolyhedronPositionResult segment_vertex_position =
+        geometryUtilities.PointPolyhedronPosition(segment_vertex,
                                                   cell3D_faces,
                                                   cell3D_faces_3D_vertices,
                                                   cell3D_faces_2D_vertices,
@@ -92,42 +106,26 @@ namespace Gedim
                                                   cell3D_faces_translation,
                                                   cell3D_faces_rotation);
 
-    switch (segment_origin_position.Type)
+    switch (segment_vertex_position.Type)
     {
       case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
-        break;
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+        return false;
       case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
       {
-        if (!geometryUtilities.IsPointInBoundingBox(segmentEnd,
-                                                    cell3D_BoundingBox))
-          break;
-
-        const GeometryUtilities::PointPolyhedronPositionResult segment_end_position =
-            geometryUtilities.PointPolyhedronPosition(segmentEnd,
-                                                      cell3D_faces,
-                                                      cell3D_faces_3D_vertices,
-                                                      cell3D_faces_2D_vertices,
-                                                      cell3D_faces_normal,
-                                                      cell3D_faces_normal_direction,
-                                                      cell3D_faces_translation,
-                                                      cell3D_faces_rotation);
-
-        switch (segment_end_position.Type)
-        {
-          case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
-          {
-            result.SegmentFullInsideCell3D = true;
-            break;
-          }
-            break;
-          case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
-          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
-          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
-          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
-            break;
-          default:
-            throw std::runtime_error("Segment origin position not supported");
-        }
+        InsertNewIntersection(segment_intersection_coordinate,
+                              mesh3D,
+                              cell3D_index,
+                              mesh3D.Cell2DTotalNumber(),
+                              mesh1D_intersections,
+                              cell3Ds_index);
+        return true;
+      }
+      default:
+        throw std::runtime_error("Segment origin position not supported");
+    }
   }
   // ***************************************************************************
   bool IntersectorMesh3DSegment::CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
@@ -453,16 +451,48 @@ namespace Gedim
                                                            std::map<double, IntersectionPoint>& mesh1D_intersections,
                                                            std::list<unsigned int>& cell3Ds_index) const
   {
+    const auto& cell3D_vertices = mesh3D_geometricData.Cell3DsVertices.at(cell3D_index);
     const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
     const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
     const auto& cell3D_faces_normal = mesh3D_geometricData.Cell3DsFacesNormals.at(cell3D_index);
+    const auto& cell3D_faces_normal_direction = mesh3D_geometricData.Cell3DsFacesNormalDirections.at(cell3D_index);
     const auto& cell3D_faces_3D_edges_tangent = mesh3D_geometricData.Cell3DsFacesEdge3DTangents.at(cell3D_index);
     const auto& cell3D_faces_edges_direction = mesh3D_geometricData.Cell3DsFacesEdgeDirections.at(cell3D_index);
     const auto& cell3D_faces_2D_vertices = mesh3D_geometricData.Cell3DsFaces2DVertices.at(cell3D_index);
     const auto& cell3D_faces_translation = mesh3D_geometricData.Cell3DsFacesTranslations.at(cell3D_index);
     const auto& cell3D_faces_rotation = mesh3D_geometricData.Cell3DsFacesRotationMatrices.at(cell3D_index);
 
-    const Eigen::MatrixXd cell3D_BoundingBox = geometryUtilities.PointsBoundingBox(cell3D_index);
+    const Eigen::MatrixXd cell3D_BoundingBox = geometryUtilities.PointsBoundingBox(cell3D_vertices);
+
+    CheckSegmentPolyhedronIntersection(0.0,
+                                       segmentOrigin,
+                                       mesh3D,
+                                       cell3D_index,
+                                       cell3D_BoundingBox,
+                                       cell3D_faces,
+                                       cell3D_faces_3D_vertices,
+                                       cell3D_faces_2D_vertices,
+                                       cell3D_faces_normal,
+                                       cell3D_faces_normal_direction,
+                                       cell3D_faces_translation,
+                                       cell3D_faces_rotation,
+                                       mesh1D_intersections,
+                                       cell3Ds_index);
+
+    CheckSegmentPolyhedronIntersection(1.0,
+                                       segmentEnd,
+                                       mesh3D,
+                                       cell3D_index,
+                                       cell3D_BoundingBox,
+                                       cell3D_faces,
+                                       cell3D_faces_3D_vertices,
+                                       cell3D_faces_2D_vertices,
+                                       cell3D_faces_normal,
+                                       cell3D_faces_normal_direction,
+                                       cell3D_faces_translation,
+                                       cell3D_faces_rotation,
+                                       mesh1D_intersections,
+                                       cell3Ds_index);
 
     for (unsigned int f = 0; f < cell3D_faces.size(); f++)
     {

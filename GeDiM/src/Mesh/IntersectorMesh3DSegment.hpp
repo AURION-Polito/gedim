@@ -48,7 +48,20 @@ namespace Gedim
                                                      std::map<double, IntersectionPoint>& points,
                                                      bool& found) const;
 
-      bool CheckSegmentPolyhedronIntersection() const;
+      bool CheckSegmentPolyhedronIntersection(const double& segment_intersection_coordinate,
+                                              const Eigen::Vector3d& segment_vertex,
+                                              const IMeshDAO& mesh3D,
+                                              const unsigned int cell3D_index,
+                                              const Eigen::MatrixXd& cell3D_BoundingBox,
+                                              const std::vector<Eigen::MatrixXi>& cell3D_faces,
+                                              const std::vector<Eigen::MatrixXd>& cell3D_faces_3D_vertices,
+                                              const std::vector<Eigen::MatrixXd>& cell3D_faces_2D_vertices,
+                                              const std::vector<Eigen::Vector3d>& cell3D_faces_normal,
+                                              const std::vector<bool>& cell3D_faces_normal_direction,
+                                              const std::vector<Eigen::Vector3d>& cell3D_faces_translation,
+                                              const std::vector<Eigen::Matrix3d>& cell3D_faces_rotation,
+                                              std::map<double, IntersectionPoint>& mesh1D_intersections,
+                                              std::list<unsigned int>& cell3Ds_index) const;
 
       bool CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
                                         const Eigen::Vector3d& segment_tangent,
