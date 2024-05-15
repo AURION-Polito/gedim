@@ -111,20 +111,20 @@ public:
     inline double Norm() const
     { return _matrix.norm(); }
 
-    inline double Cond(unsigned int condType = 0) const
+    inline double Cond(const ISparseArray::ConditionNumberAlgorithm& algorithm = ISparseArray::ConditionNumberAlgorithm::SVDLapack) const
     {
-        switch(condType)
+        switch(algorithm)
         {
-        case 0: // Lapack -> cond 2
+        case ISparseArray::ConditionNumberAlgorithm::SVDLapack: // Lapack -> cond 2
             return LAPACK_utilities::cond(LAPACK_utilities::svd(Eigen::MatrixXd(_matrix)));
-        case 1: // Lapack -> cond 1
+        case ISparseArray::ConditionNumberAlgorithm::CondestLapack: // Lapack -> cond 1
             return 1.0 / LAPACK_utilities::rcondest(_matrix);
 #if ENABLE_SUITESPARSE == 1
-        case 2: // SuiteSparse
+        case ISparseArray::ConditionNumberAlgorithm::CondestSuiteSparse: // SuiteSparse
             return Gedim::SuiteSparse_Utilities::condest(_matrix);
 #endif
         default:
-            throw std::runtime_error("Not valid condition type.");
+            throw std::runtime_error("Not valid method to compute the condition number.");
         }
     }
 

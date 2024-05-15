@@ -134,6 +134,9 @@ namespace Gedim
 
       inline void Copy(const IArray& v)
       { _vector = Cast(v); }
+
+      inline Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType> Segment(const unsigned int starter, const unsigned int numElements) const
+      { return Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>(_vector.segment(starter, numElements)); }
   };
 }
 
