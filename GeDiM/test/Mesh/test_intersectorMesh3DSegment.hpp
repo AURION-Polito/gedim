@@ -321,8 +321,6 @@ namespace GedimUnitTesting
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
-    std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
-
     EXPECT_EQ(intersections.Points.size(), 4);
     EXPECT_EQ(intersections.Points[0].CurvilinearCoordinate, 0.0000000000000000e+00);
     EXPECT_EQ(intersections.Points[1].CurvilinearCoordinate, 3.1249999999999967e-01);
