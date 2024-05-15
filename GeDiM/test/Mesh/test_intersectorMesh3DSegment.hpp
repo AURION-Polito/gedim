@@ -70,8 +70,6 @@ namespace GedimUnitTesting
                                                         mesh3D,
                                                         mesh3D_geometricData);
 
-    std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
-
 
     EXPECT_EQ(intersections.Points.size(), 2);
     EXPECT_EQ(intersections.Points[0].CurvilinearCoordinate, 0.0);
@@ -83,11 +81,27 @@ namespace GedimUnitTesting
     EXPECT_EQ(intersections.Segments.size(), 1);
     EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
     EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+
+    Gedim::MeshMatrices mesh_1D_data;
+    Gedim::MeshMatricesDAO mesh_1D(mesh_1D_data);
+
+    const std::vector<double> coordinates = Gedim::IntersectorMesh3DSegment::ToCurvilinearCoordinates(intersections);
+
+    meshUtilities.FillMesh1D(geometryUtilities,
+                             segmentOrigin,
+                             segmentTangent,
+                             coordinates,
+                             mesh_1D);
+    {
+      meshUtilities.ExportMeshToVTU(mesh_1D,
+                                    exportFolder,
+                                    "mesh1D");
+    }
   }
 
-  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentGeneric)
+  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnFace)
   {
-    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentGeneric";
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentOnFace";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -141,16 +155,13 @@ namespace GedimUnitTesting
 
     std::cout<< Gedim::IntersectorMesh3DSegment::ToString(intersections)<< std::endl;
 
-//    EXPECT_EQ(result.Points.size(), 2);
-//    EXPECT_EQ(result.Points[0].CurvilinearCoordinate, 0.0);
-//    EXPECT_EQ(result.Points[1].CurvilinearCoordinate, 1.0);
-//    EXPECT_EQ(result.Points[0].Cell3DIds.size(), 1);
-//    EXPECT_EQ(result.Points[1].Cell3DIds.size(), 1);
-//    EXPECT_EQ(result.Points[0].Cell3DIds[0], 0);
-//    EXPECT_EQ(result.Points[1].Cell3DIds[0], 0);
-//    EXPECT_EQ(result.Segments.size(), 1);
-//    EXPECT_EQ(result.Segments[0].Cell3DIds.size(), 1);
-//    EXPECT_EQ(result.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].CurvilinearCoordinate, 0.0);
+    EXPECT_EQ(intersections.Points[1].CurvilinearCoordinate, 1.0);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds, std::vector<unsigned int>({ 6, 11 }));
+    EXPECT_EQ(intersections.Points[1].Cell3DIds, std::vector<unsigned int>({ 0,2,6,9,11,12 }));
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds, std::vector<unsigned int>({ 6, 11 }));
 
     Gedim::MeshMatrices mesh_1D_data;
     Gedim::MeshMatricesDAO mesh_1D(mesh_1D_data);
