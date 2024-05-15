@@ -48,6 +48,8 @@ namespace Gedim
                                                      std::map<double, IntersectionPoint>& points,
                                                      bool& found) const;
 
+      bool CheckSegmentPolyhedronIntersection() const;
+
       bool CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
                                         const Eigen::Vector3d& segment_tangent,
                                         const GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,

@@ -76,6 +76,60 @@ namespace Gedim
     return points[curvilinearCoordinate];
   }
   // ***************************************************************************
+  bool IntersectorMesh3DSegment::CheckSegmentPolyhedronIntersection(const Eigen::MatrixXd& cell3D_BoundingBox) const
+  {
+    if (geometryUtilities.IsPointInBoundingBox(segmentOrigin,
+                                                cell3D_BoundingBox))
+
+
+    const GeometryUtilities::PointPolyhedronPositionResult segment_origin_position =
+        geometryUtilities.PointPolyhedronPosition(segmentOrigin,
+                                                  cell3D_faces,
+                                                  cell3D_faces_3D_vertices,
+                                                  cell3D_faces_2D_vertices,
+                                                  cell3D_faces_normal,
+                                                  cell3D_faces_normal_direction,
+                                                  cell3D_faces_translation,
+                                                  cell3D_faces_rotation);
+
+    switch (segment_origin_position.Type)
+    {
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+        break;
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+      {
+        if (!geometryUtilities.IsPointInBoundingBox(segmentEnd,
+                                                    cell3D_BoundingBox))
+          break;
+
+        const GeometryUtilities::PointPolyhedronPositionResult segment_end_position =
+            geometryUtilities.PointPolyhedronPosition(segmentEnd,
+                                                      cell3D_faces,
+                                                      cell3D_faces_3D_vertices,
+                                                      cell3D_faces_2D_vertices,
+                                                      cell3D_faces_normal,
+                                                      cell3D_faces_normal_direction,
+                                                      cell3D_faces_translation,
+                                                      cell3D_faces_rotation);
+
+        switch (segment_end_position.Type)
+        {
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+          {
+            result.SegmentFullInsideCell3D = true;
+            break;
+          }
+            break;
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+            break;
+          default:
+            throw std::runtime_error("Segment origin position not supported");
+        }
+  }
+  // ***************************************************************************
   bool IntersectorMesh3DSegment::CheckSegmentFaceIntersection(const Eigen::Vector3d& segment_origin,
                                                               const Eigen::Vector3d& segment_tangent,
                                                               const GeometryUtilities::PointSegmentPositionTypes segment_intersection_position,
@@ -174,14 +228,17 @@ namespace Gedim
       mesh1D_intersection.Cell3DIds.insert(cell3D_index);
     }
 
-    for (unsigned int face_3D_neigh = 0; face_3D_neigh < mesh3D.Cell2DNumberNeighbourCell3D(cell2D_index); face_3D_neigh++)
+    if (cell2D_index < mesh3D.Cell2DTotalNumber())
     {
-      if (!mesh3D.Cell2DHasNeighbourCell3D(cell2D_index,
-                                           face_3D_neigh))
-        continue;
+      for (unsigned int face_3D_neigh = 0; face_3D_neigh < mesh3D.Cell2DNumberNeighbourCell3D(cell2D_index); face_3D_neigh++)
+      {
+        if (!mesh3D.Cell2DHasNeighbourCell3D(cell2D_index,
+                                             face_3D_neigh))
+          continue;
 
-      cell3Ds_index.push_back(mesh3D.Cell2DNeighbourCell3D(cell2D_index,
-                                                           face_3D_neigh));
+        cell3Ds_index.push_back(mesh3D.Cell2DNeighbourCell3D(cell2D_index,
+                                                             face_3D_neigh));
+      }
     }
   }
   // ***************************************************************************
@@ -396,8 +453,6 @@ namespace Gedim
                                                            std::map<double, IntersectionPoint>& mesh1D_intersections,
                                                            std::list<unsigned int>& cell3Ds_index) const
   {
-    std::cout<< segmentTangent.norm()<< std::endl;
-
     const auto& cell3D_faces = mesh3D_geometricData.Cell3DsFaces.at(cell3D_index);
     const auto& cell3D_faces_3D_vertices = mesh3D_geometricData.Cell3DsFaces3DVertices.at(cell3D_index);
     const auto& cell3D_faces_normal = mesh3D_geometricData.Cell3DsFacesNormals.at(cell3D_index);
@@ -406,6 +461,8 @@ namespace Gedim
     const auto& cell3D_faces_2D_vertices = mesh3D_geometricData.Cell3DsFaces2DVertices.at(cell3D_index);
     const auto& cell3D_faces_translation = mesh3D_geometricData.Cell3DsFacesTranslations.at(cell3D_index);
     const auto& cell3D_faces_rotation = mesh3D_geometricData.Cell3DsFacesRotationMatrices.at(cell3D_index);
+
+    const Eigen::MatrixXd cell3D_BoundingBox = geometryUtilities.PointsBoundingBox(cell3D_index);
 
     for (unsigned int f = 0; f < cell3D_faces.size(); f++)
     {
