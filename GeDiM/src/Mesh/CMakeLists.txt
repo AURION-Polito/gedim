@@ -20,6 +20,7 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/RefinementUtilities2D.
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/RefinementUtilities3D.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMeshInterface.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/ObjectFileFormatInterface.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/IntersectorMesh3DSegment.cpp)
 
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IMeshDAO.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshDAOExporterToCsv.hpp)
@@ -39,6 +40,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ConformMeshUtilities.h
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/RefinementUtilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMeshInterface.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ObjectFileFormatInterface.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IntersectorMesh3DSegment.hpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 

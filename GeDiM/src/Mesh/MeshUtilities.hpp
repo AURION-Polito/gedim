@@ -119,6 +119,7 @@ namespace Gedim
           std::vector<Eigen::Vector3d> Cell2DsCentroids; ///< cell2D centroids
           std::vector<double> Cell2DsDiameters; ///< cell2D diameters
           std::vector<std::vector<bool>> Cell2DsEdgeDirections; ///< cell2D edge directions
+          std::vector<Eigen::MatrixXd> Cell2DsEdgesCentroid; ///< cell2D edge centroid
           std::vector<Eigen::VectorXd> Cell2DsEdgeLengths; ///< cell2D edge lengths
           std::vector<Eigen::MatrixXd> Cell2DsEdgeTangents; ///< cell2D edge tangents
           std::vector<Eigen::MatrixXd> Cell2DsEdgeNormals; ///< cell2D edge normals
@@ -132,6 +133,7 @@ namespace Gedim
           std::vector<double> Cell3DsVolumes;
           std::vector<double> Cell3DsDiameters;
           std::vector<Eigen::Vector3d> Cell3DsCentroids;
+          std::vector<Eigen::MatrixXd> Cell3DsEdgesCentroid;
           std::vector<Eigen::VectorXd> Cell3DsEdgeLengths;
           std::vector<Eigen::MatrixXd> Cell3DsEdgeTangents;
           std::vector<std::vector<bool>> Cell3DsEdgeDirections;
@@ -141,7 +143,6 @@ namespace Gedim
           std::vector<std::vector<Eigen::Vector3d>> Cell3DsFacesNormals;
           std::vector<std::vector<bool>> Cell3DsFacesNormalDirections;
           std::vector<std::vector<std::vector<bool>>> Cell3DsFacesEdgeDirections;
-
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces3DVertices; ///< faces vertices 3D coordinates
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces2DVertices; ///< faces vertices 2D coordinates
           std::vector<std::vector<std::vector<Eigen::Matrix3d>>> Cell3DsFaces3DTriangulations; ///< faces triangulations 2D
@@ -151,7 +152,9 @@ namespace Gedim
           std::vector<std::vector<double>> Cell3DsFacesDiameters; ///< faces diameters
           std::vector<std::vector<Eigen::VectorXd>> Cell3DsFacesEdgeLengths; ///< faces edge lengths
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge3DTangents; ///< faces edge 3D tangents
+          std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdges3DCentroid;
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DTangents; ///< faces edge 2D tangents
+          std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdges2DCentroid;
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DNormals; ///< faces edge normals
       };
 

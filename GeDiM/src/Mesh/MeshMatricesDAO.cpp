@@ -332,6 +332,22 @@ namespace Gedim
     return false;
   }
   // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell0DsNeighbourCell1Ds() const
+  {
+    const unsigned int numCells = Cell0DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell0DNumberNeighbourCell1D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell0DNeighbourCell1D(c, n);
+    }
+
+    return neighbours;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell0DsInitializeNeighbourCell1Ds(const std::vector<unsigned int>& numberNeighbourCell1Ds)
   {
     Output::Assert(numberNeighbourCell1Ds.size() == Cell0DTotalNumber());
@@ -352,6 +368,22 @@ namespace Gedim
                                             cell0DIndex,
                                             numberNeighbourCell1Ds,
                                             std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell0DsNeighbourCell2Ds() const
+  {
+    const unsigned int numCells = Cell0DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell0DNumberNeighbourCell2D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell0DNeighbourCell2D(c, n);
+    }
+
+    return neighbours;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds)
@@ -583,6 +615,22 @@ namespace Gedim
     return Cell1DTotalNumber();
   }
   // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell1DsNeighbourCell2Ds() const
+  {
+    const unsigned int numCells = Cell1DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell1DNumberNeighbourCell2D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell1DNeighbourCell2D(c, n);
+    }
+
+    return neighbours;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds)
   {
     InitializeNuberVectorWithConstantElements(_mesh.NumberCell1DNeighbourCell2D,
@@ -652,6 +700,22 @@ namespace Gedim
     _mesh.Cell1DDoublePropertyIds.reserve(numberDoubleProperties);
     _mesh.Cell1DDoublePropertySizes.reserve(numberDoubleProperties);
     _mesh.Cell1DDoublePropertyValues.reserve(numberDoubleProperties);
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell1DsNeighbourCell3Ds() const
+  {
+    const unsigned int numCells = Cell1DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell1DNumberNeighbourCell3D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell1DNeighbourCell3D(c, n);
+    }
+
+    return neighbours;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell1DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds)
@@ -1045,6 +1109,22 @@ namespace Gedim
     }
 
     return false;
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell2DsNeighbourCell3Ds() const
+  {
+    const unsigned int numCells = Cell2DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell2DNumberNeighbourCell3D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell2DNeighbourCell3D(c, n);
+    }
+
+    return neighbours;
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds)

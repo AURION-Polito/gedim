@@ -29,6 +29,22 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
+  MatrixXd GeometryUtilities::PolygonEdgesCentroid(const Eigen::MatrixXd& polygonVertices) const
+  {
+    Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
+
+    const unsigned int& numVertices = polygonVertices.cols();
+
+    MatrixXd edgesCentroid(3, numVertices);
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
+      edgesCentroid.col(v) = SegmentBarycenter(polygonVertices.col(v),
+                                               polygonVertices.col((v + 1) % numVertices));
+    }
+
+    return edgesCentroid;
+  }
+  // ***************************************************************************
   VectorXd GeometryUtilities::PolygonEdgeLengths(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
