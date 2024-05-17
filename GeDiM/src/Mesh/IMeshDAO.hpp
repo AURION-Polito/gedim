@@ -95,6 +95,7 @@ namespace Gedim
       virtual bool Cell0DUpdatedCell0Ds(const unsigned int& cell0DIndex,
                                         std::list<unsigned int>& updatedCell0DIds) const = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell0DsNeighbourCell1Ds() const = 0;
       /// \brief Initialize the Cell0Ds Cell1D neighbours number
       /// \param numbersNeighbourCell1Ds the number of Cell1D neighbours of each Cell0D, size 1 x Cell0DTotalNumber()
       virtual void Cell0DsInitializeNeighbourCell1Ds(const std::vector<unsigned int>& numbersNeighbourCell1Ds) = 0;
@@ -131,6 +132,7 @@ namespace Gedim
       virtual void Cell0DResetNeighbourCell1D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex) = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell0DsNeighbourCell2Ds() const = 0;
       /// \brief Initialize the Cell0Ds Cell2D neighbours number
       /// \param numbersNeighbourCell2Ds the number of Cell2D neighbours of each Cell0D, size 1 x Cell0DTotalNumber()
       virtual void Cell0DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numbersNeighbourCell2Ds) = 0;
@@ -166,6 +168,7 @@ namespace Gedim
       virtual void Cell0DResetNeighbourCell2D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex) = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell0DsNeighbourCell3Ds() const = 0;
       /// \brief Initialize the Cell0Ds Cell3D neighbours number
       /// \param numbersNeighbourCell3Ds the number of Cell3D neighbours of each Cell0D, size 1 x Cell0DTotalNumber()
       virtual void Cell0DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numbersNeighbourCell3Ds) = 0;
@@ -363,6 +366,7 @@ namespace Gedim
       virtual bool Cell1DUpdatedCell1Ds(const unsigned int& cell1DIndex,
                                         std::list<unsigned int>& updatedCell1DIds) const = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell1DsNeighbourCell2Ds() const = 0;
       /// \brief Initialize the Cell1Ds Cell2D neighbours number
       /// \param numbersNeighbourCell2Ds the number of Cell2D neighbours of each Cell1D, size 1 x Cell1DTotalNumber()
       virtual void Cell1DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numbersNeighbourCell2Ds) = 0;
@@ -402,6 +406,7 @@ namespace Gedim
       virtual void Cell1DResetNeighbourCell2D(const unsigned int& cell1DIndex,
                                               const unsigned int& neighbourIndex) = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell1DsNeighbourCell3Ds() const = 0;
       /// \brief Initialize the Cell1Ds Cell3D neighbours number
       /// \param numbersNeighbourCell3Ds the number of Cell2D neighbours of each Cell1D, size 1 x Cell1DTotalNumber()
       virtual void Cell1DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numbersNeighbourCell3Ds) = 0;
@@ -674,6 +679,7 @@ namespace Gedim
       virtual bool Cell2DUpdatedCell2Ds(const unsigned int& cell2DIndex,
                                         std::list<unsigned int>& updatedCell2DIds) const = 0;
 
+      virtual std::vector<std::vector<unsigned int>> Cell2DsNeighbourCell3Ds() const = 0;
       /// \brief Initialize the Cell2Ds Cell3D neighbours number
       /// \param numbersNeighbourCell3Ds the number of Cell3D neighbours of each Cell2D, size 1 x Cell2DTotalNumber()
       virtual void Cell2DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numbersNeighbourCell3Ds) = 0;
