@@ -32,6 +32,13 @@ public:
         Reset();
     }
 
+    Eigen_SparseArray(const Eigen_SparseArrayType& matrix,
+                      const SparseArrayTypes& type = SparseArrayTypes::None)
+    {
+        _matrix = matrix;
+        _matrixType = type;
+    }
+
     operator Eigen_SparseArrayType&() { return _matrix; }
     operator const Eigen_SparseArrayType&() const { return _matrix; }
     inline Eigen_SparseArrayType& Cast(ISparseArray& v)
