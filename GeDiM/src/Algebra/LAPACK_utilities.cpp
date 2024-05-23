@@ -103,11 +103,11 @@ extern "C" double dlange_(const char *norm,
 
 namespace LAPACK_utilities
 {
-// ***************************************************************************
-void MGS(const Eigen::MatrixXd& X,
-         Eigen::MatrixXd& Q,
-         Eigen::MatrixXd& R)
-{
+  // ***************************************************************************
+  void MGS(const Eigen::MatrixXd& X,
+           Eigen::MatrixXd& Q,
+           Eigen::MatrixXd& R)
+  {
     // Modified Gram-Schmidt.  [Q,R] = MGS(X);
     // G. W. Stewart, "Matrix Algorithms, Volume 1", SIAM, 1998.
     const unsigned int m = X.rows();
@@ -118,21 +118,21 @@ void MGS(const Eigen::MatrixXd& X,
 
     for (unsigned int i = 0; i < n; i++)
     {
-        Q.col(i) = X.col(i);
+      Q.col(i) = X.col(i);
 
-        for (unsigned int j = 0; j < i; j++)
-        {
-            R(j, i) = Q.col(i).transpose() * Q.col(j);
-            Q.col(i) = Q.col(i) - R(j,i) * Q.col(j);
-        }
+      for (unsigned int j = 0; j < i; j++)
+      {
+        R(j, i) = Q.col(i).transpose() * Q.col(j);
+        Q.col(i) = Q.col(i) - R(j,i) * Q.col(j);
+      }
 
-        R(i, i) = Q.col(i).norm();
-        Q.col(i) = Q.col(i) / R(i,i);
+      R(i, i) = Q.col(i).norm();
+      Q.col(i) = Q.col(i) / R(i,i);
     }
-}
-// ***************************************************************************
-double rcondest(const Eigen::SparseMatrix<double>& sparseA)
-{
+  }
+  // ***************************************************************************
+  double rcondest(const Eigen::SparseMatrix<double>& sparseA)
+  {
     double rcond = 0.0;
 
     Eigen::MatrixXd A(sparseA);
@@ -152,20 +152,20 @@ double rcondest(const Eigen::SparseMatrix<double>& sparseA)
     /* Modifies x in place with a LU decomposition */
     dgetrf_(&N, &N, Aptr, &LDA, IWORK.data(), &INFO);
     if (INFO != 0)
-        throw std::runtime_error("Error occurs in dgetrf");
+      throw std::runtime_error("Error occurs in dgetrf");
 
     /* Computes the reciprocal norm */
     dgecon_("1", &N, Aptr, &LDA, &anorm, &rcond, WORK.data(), IWORK.data(), &INFO, 1);
     if (INFO != 0)
-        throw std::runtime_error("Error occurs in dgecon");
+      throw std::runtime_error("Error occurs in dgecon");
 
     return rcond;
-}
-// ***************************************************************************
-/// Extract the upper triangular matrix of matrix X. If i > 0, it returns the elements on and above the ith diagonal of A.
-Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
-                     const unsigned int& i)
-{
+  }
+  // ***************************************************************************
+  /// Extract the upper triangular matrix of matrix X. If i > 0, it returns the elements on and above the ith diagonal of A.
+  Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
+                       const unsigned int& i)
+  {
     unsigned int m = X.rows();
     unsigned int n = X.cols();
 
@@ -173,18 +173,18 @@ Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
 
     for (unsigned int yy = 0; yy < m - i; yy++)
     {
-        for(unsigned int jj = i + yy; jj < n; jj++)
-            A(yy, jj) = X(yy, jj);
+      for(unsigned int jj = i + yy; jj < n; jj++)
+        A(yy, jj) = X(yy, jj);
     }
 
     return A;
-}
-// ***************************************************************************
-/// Given A = U * S * V' returns only S and V'
-void svd(Eigen::MatrixXd A,
-         Eigen::MatrixXd& V,
-         Eigen::VectorXd& S)
-{
+  }
+  // ***************************************************************************
+  /// Given A = U * S * V' returns only S and V'
+  void svd(Eigen::MatrixXd A,
+           Eigen::MatrixXd& V,
+           Eigen::VectorXd& S)
+  {
     char JOBU = 'N'; // all M columns of U are returned in array U
     char JOBVT = 'A'; // all N rows of V**T are returned in the array VT;
 
@@ -210,16 +210,16 @@ void svd(Eigen::MatrixXd A,
     dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, V.data(), &LDVT, WORK.data(), &LWORK, &INFO);
 
     if (INFO != 0)
-        throw std::runtime_error("Error occurs in svd");
+      throw std::runtime_error("Error occurs in svd");
 
     WORK.resize(0);
-}
-// ***************************************************************************
-void inverseTri(const Eigen::MatrixXd A,
-                Eigen::MatrixXd& InvA,
-                const char& UPLO,
-                const char& DIAG)
-{
+  }
+  // ***************************************************************************
+  void inverseTri(const Eigen::MatrixXd A,
+                  Eigen::MatrixXd& InvA,
+                  const char& UPLO,
+                  const char& DIAG)
+  {
     ///UPLO is CHARACTER*1 = 'U':  A is upper triangular or = 'L':  A is lower triangular.
     /// DIAG is CHARACTER*1 = 'N':  A is non-unit triangular; or = 'U':  A is unit triangular.
 
@@ -232,13 +232,13 @@ void inverseTri(const Eigen::MatrixXd A,
     dtrtri_(&UPLO, &DIAG, &N, InvA.data(), &LDA, &INFO );
 
     if(INFO != 0)
-        throw std::runtime_error("Error occurs in svd");
-}
-// ***************************************************************************
-void eig(const Eigen::MatrixXd A,
-         Eigen::VectorXd& D,
-         Eigen::MatrixXd& R)
-{
+      throw std::runtime_error("Error occurs in svd");
+  }
+  // ***************************************************************************
+  void eig(const Eigen::MatrixXd A,
+           Eigen::VectorXd& D,
+           Eigen::MatrixXd& R)
+  {
     char UPLO = 'U'; //Upper triangle of A is stored;
     char JOBZ = 'V'; //Compute eigenvalues and eigenvectors.
 
@@ -264,12 +264,12 @@ void eig(const Eigen::MatrixXd A,
     dsyev_(&JOBZ, &UPLO, &N, R.data(), &LDA, D.data(), WORK.data(), &LWORK, &INFO);
 
     if(INFO != 0)
-        throw std::runtime_error("Error occurs in eig");
-}
-// ***************************************************************************
-/// Given A = U * S * V' returns only S
-Eigen::VectorXd svd(Eigen::MatrixXd A)
-{
+      throw std::runtime_error("Error occurs in eig");
+  }
+  // ***************************************************************************
+  /// Given A = U * S * V' returns only S
+  Eigen::VectorXd svd(Eigen::MatrixXd A)
+  {
     const char JOBU = 'N'; //no columns of U are returned in array U
     const char JOBVT = 'N'; // no rows of V**T are returned in the array VT;
 
@@ -294,17 +294,17 @@ Eigen::VectorXd svd(Eigen::MatrixXd A)
     dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), nullptr, &LDU, nullptr, &LDVT, WORK.data(), &LWORK, &INFO);
 
     if(INFO != 0)
-        throw std::runtime_error("Error occurs in svd");
+      throw std::runtime_error("Error occurs in svd");
 
     return S;
-}
-// ***************************************************************************
-/// Given A = U * S * V' returns U, S and V'
-void svd(Eigen::MatrixXd A,
-         Eigen::MatrixXd& U,
-         Eigen::MatrixXd& V,
-         Eigen::VectorXd& S)
-{
+  }
+  // ***************************************************************************
+  /// Given A = U * S * V' returns U, S and V'
+  void svd(Eigen::MatrixXd A,
+           Eigen::MatrixXd& U,
+           Eigen::MatrixXd& V,
+           Eigen::VectorXd& S)
+  {
     char JOBU = 'A'; //all M columns of U are returned in array U
     char JOBVT = 'A'; // all N rows of V**T are returned in the array VT;
 
@@ -331,8 +331,47 @@ void svd(Eigen::MatrixXd A,
     dgesvd_(&JOBU, &JOBVT, &M, &N, A.data(), &LDA, S.data(), U.data(), &LDU, V.data(), &LDVT, WORK.data(), &LWORK, &INFO);
 
     if(INFO != 0)
-        throw std::runtime_error("Error occurs in svd");
+      throw std::runtime_error("Error occurs in svd");
 
-}
-// ***************************************************************************
+  }
+  // ***************************************************************************
+  QR_Factorization MGS(const Eigen::MatrixXd& X,
+                       const double& tolerance)
+  {
+    // Modified Gram-Schmidt.  [Q,R] = MGS(X);
+    // X can have no max rank
+    // G. W. Stewart, "Matrix Algorithms, Volume 1", SIAM, 1998.
+    const unsigned int m = X.rows();
+    const unsigned int n = X.cols();
+
+    QR_Factorization factorization =
+    {
+      Eigen::MatrixXd::Zero(m, n),
+      Eigen::MatrixXd::Zero(n, n)
+    };
+
+    Eigen::MatrixXd& Q = factorization.Q;
+    Eigen::MatrixXd& R = factorization.R;
+
+    for (unsigned int i = 0; i < n; i++)
+    {
+      Q.col(i) = X.col(i);
+
+      for (unsigned int j = 0; j < i; j++)
+      {
+        R(j, i) = Q.col(i).transpose() * Q.col(j);
+        Q.col(i) = Q.col(i) - R(j,i) * Q.col(j);
+      }
+
+      R(i, i) = Q.col(i).norm();
+
+      if (std::abs(R(i, i)) <= tolerance)
+        Q.col(i) = Eigen::VectorXd::Zero(m);
+      else
+        Q.col(i) /= R(i,i);
+    }
+
+    return factorization;
+  }
+  // ***************************************************************************
 }
