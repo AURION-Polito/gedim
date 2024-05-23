@@ -37,7 +37,7 @@ namespace LAPACK_utilities
 
   /// Compute the modified Gram-Schmidt factorization of matrix X with no maximum rank
   QR_Factorization MGS(const Eigen::MatrixXd& X,
-                       const double& tolerance);
+                       const double& tolerance = std::numeric_limits<double>::epsilon());
 
   /// Extract upper triangular part of matrix X
   Eigen::MatrixXd triu(const Eigen::MatrixXd& X,
