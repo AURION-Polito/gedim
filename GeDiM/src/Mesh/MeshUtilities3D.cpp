@@ -1961,7 +1961,8 @@ namespace Gedim
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell0Ds,
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell1Ds,
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
-                                                 IMeshDAO& mesh) const
+                                                 IMeshDAO& mesh,
+                                                 std::vector<std::vector<unsigned int> >& meshCell3DToConvexCell3DIndices) const
   {
     if (subCell3DsIndex.size() == 0)
       return mesh.Cell3DTotalNumber();
@@ -1972,13 +1973,22 @@ namespace Gedim
     const unsigned int agglomeratedCell3DIndex = mesh.Cell3DAppend(1);
 
     unsigned int max_marker = 0;
+    std::list<unsigned int> agglomeratedCell3DConvexCells;
     for (const auto subCell3DIndex : subCell3DsIndex)
     {
       mesh.Cell3DSetState(subCell3DIndex, false);
 
       if (mesh.Cell3DMarker(subCell3DIndex) > max_marker)
         max_marker = mesh.Cell3DMarker(subCell3DIndex);
+
+      const auto& convexCells = meshCell3DToConvexCell3DIndices.at(subCell3DIndex);
+      for (const auto& convexCell : convexCells)
+        agglomeratedCell3DConvexCells.push_back(convexCell);
     }
+    meshCell3DToConvexCell3DIndices.resize(meshCell3DToConvexCell3DIndices.size() + 1);
+    meshCell3DToConvexCell3DIndices.at(agglomeratedCell3DIndex) =
+        std::vector<unsigned int>(agglomeratedCell3DConvexCells.begin(),
+                                  agglomeratedCell3DConvexCells.end());
 
     mesh.Cell3DAddVertices(agglomeratedCell3DIndex,
                            agglomerateCell3DVertices);

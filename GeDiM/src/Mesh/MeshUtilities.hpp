@@ -669,7 +669,8 @@ namespace Gedim
                                       const std::vector<unsigned int>& subCell3DsRemovedVertices,
                                       const std::vector<unsigned int>& subCell3DsRemovedEdges,
                                       const std::vector<unsigned int>& subCell3DsRemovedFaces,
-                                      IMeshDAO& mesh) const;
+                                      IMeshDAO& mesh,
+                                      std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
 
       void CreateRandomlyDeformedQuadrilaterals(const GeometryUtilities& geometryUtilities,
                                                 const Eigen::Vector3d& rectangleOrigin,

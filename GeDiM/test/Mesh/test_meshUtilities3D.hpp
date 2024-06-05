@@ -1174,6 +1174,12 @@ namespace GedimUnitTesting
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+    std::vector<std::vector<unsigned int>> meshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
+    for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
+    {
+      meshCell3DToConvexCell3DIndices.at(c3D_index) =
+          std::vector<unsigned int>({ c3D_index });
+    }
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
@@ -1193,7 +1199,8 @@ namespace GedimUnitTesting
                                                                                     agglomerationInfo.SubCell3DsRemovedVertices,
                                                                                     agglomerationInfo.SubCell3DsRemovedEdges,
                                                                                     agglomerationInfo.SubCell3DsRemovedFaces,
-                                                                                    meshDao);
+                                                                                    meshDao,
+                                                                                    meshCell3DToConvexCell3DIndices);
 
       ASSERT_EQ(0,
                 agglomeratedCell3DIndex);
@@ -1222,10 +1229,13 @@ namespace GedimUnitTesting
                                                                                     agglomerationInfo.SubCell3DsRemovedVertices,
                                                                                     agglomerationInfo.SubCell3DsRemovedEdges,
                                                                                     agglomerationInfo.SubCell3DsRemovedFaces,
-                                                                                    meshDao);
+                                                                                    meshDao,
+                                                                                    meshCell3DToConvexCell3DIndices);
 
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 10 }),
+                meshCell3DToConvexCell3DIndices.at(22));
     }
 
     {
@@ -1250,10 +1260,13 @@ namespace GedimUnitTesting
                                                                                     agglomerationInfo.SubCell3DsRemovedVertices,
                                                                                     agglomerationInfo.SubCell3DsRemovedEdges,
                                                                                     agglomerationInfo.SubCell3DsRemovedFaces,
-                                                                                    meshDao);
+                                                                                    meshDao,
+                                                                                    meshCell3DToConvexCell3DIndices);
 
       ASSERT_EQ(23,
                 agglomeratedCell3DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 10, 12 }),
+                meshCell3DToConvexCell3DIndices.at(23));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
