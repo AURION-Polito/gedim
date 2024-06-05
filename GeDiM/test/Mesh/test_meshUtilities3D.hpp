@@ -1203,12 +1203,6 @@ namespace GedimUnitTesting
       const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(4,
                                                                            meshDao);
 
-      using namespace Gedim;
-      std::cout<< agglomerationInfo.SubCell3DsIndex<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DVertices<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DEdges<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DFaces<< std::endl;
-      std::cout<< agglomerationInfo.SubCell3DsRemovedFaces<< std::endl;
 
       ASSERT_EQ(std::vector<unsigned int>({ 1, 10 }),
                 agglomerationInfo.SubCell3DsIndex);
@@ -1233,6 +1227,45 @@ namespace GedimUnitTesting
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
     }
+
+    {
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(7,
+                                                                           meshDao);
+
+      using namespace Gedim;
+      std::cout<< agglomerationInfo.SubCell3DsIndex<< std::endl;
+      std::cout<< agglomerationInfo.AgglomerateCell3DVertices<< std::endl;
+      std::cout<< agglomerationInfo.AgglomerateCell3DEdges<< std::endl;
+      std::cout<< agglomerationInfo.AgglomerateCell3DFaces<< std::endl;
+      std::cout<< agglomerationInfo.SubCell3DsRemovedFaces<< std::endl;
+
+      ASSERT_EQ(std::vector<unsigned int>({ 22,12 }),
+                agglomerationInfo.SubCell3DsIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 14,8,13,12,19,5 }),
+                agglomerationInfo.AgglomerateCell3DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 2,35,9,11,37,8,6,23,10,36,7,38 }),
+                agglomerationInfo.AgglomerateCell3DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ 5,6,35,33,34,20,38,32 }),
+                agglomerationInfo.AgglomerateCell3DFaces);
+      ASSERT_EQ(std::vector<unsigned int>({ 7 }),
+                agglomerationInfo.SubCell3DsRemovedFaces);
+
+      const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
+                                                                                    agglomerationInfo.AgglomerateCell3DVertices,
+                                                                                    agglomerationInfo.AgglomerateCell3DEdges,
+                                                                                    agglomerationInfo.AgglomerateCell3DFaces,
+                                                                                    agglomerationInfo.SubCell3DsRemovedVertices,
+                                                                                    agglomerationInfo.SubCell3DsRemovedEdges,
+                                                                                    agglomerationInfo.SubCell3DsRemovedFaces,
+                                                                                    meshDao);
+
+      ASSERT_EQ(23,
+                agglomeratedCell3DIndex);
+    }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    activeMeshData);
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
