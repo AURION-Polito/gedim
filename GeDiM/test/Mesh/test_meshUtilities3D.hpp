@@ -1232,13 +1232,6 @@ namespace GedimUnitTesting
       const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(7,
                                                                            meshDao);
 
-      using namespace Gedim;
-      std::cout<< agglomerationInfo.SubCell3DsIndex<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DVertices<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DEdges<< std::endl;
-      std::cout<< agglomerationInfo.AgglomerateCell3DFaces<< std::endl;
-      std::cout<< agglomerationInfo.SubCell3DsRemovedFaces<< std::endl;
-
       ASSERT_EQ(std::vector<unsigned int>({ 22,12 }),
                 agglomerationInfo.SubCell3DsIndex);
       ASSERT_EQ(std::vector<unsigned int>({ 14,8,13,12,19,5 }),
