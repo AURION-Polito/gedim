@@ -1272,6 +1272,12 @@ namespace GedimUnitTesting
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
     meshUtilities.ExtractActiveMesh(meshDao,
                                     activeMeshData);
+    std::vector<std::vector<unsigned int>> activeMeshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
+    for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
+    {
+      activeMeshCell3DToConvexCell3DIndices.at(c3D_index) =
+          meshCell3DToConvexCell3DIndices.at(activeMeshData.NewCell3DToOldCell3D.at(c3D_index));
+    }
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
