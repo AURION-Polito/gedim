@@ -1880,6 +1880,39 @@ namespace Gedim
     return newCell3DsIndex;
   }
   // ***************************************************************************
+  MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3DByFace(const unsigned int cell2DIndex,
+                                                                                     const IMeshDAO& mesh) const
+  {
+    AgglomerateCell3DInformation result;
+
+    std::list<unsigned int> subCell3DsIndex;
+
+    for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(cell2DIndex); n++)
+    {
+      if (!mesh.Cell2DHasNeighbourCell3D(cell2DIndex, n))
+        continue;
+
+      subCell3DsIndex.push_back(mesh.Cell2DNeighbourCell3D(cell2DIndex,
+                                                           n));
+    }
+
+    if (subCell3DsIndex.size() == 0)
+      return result;
+
+    if (subCell3DsIndex.size() == 1)
+    {
+      result.SubCell3DsIndex = std::vector<unsigned int>(subCell3DsIndex.begin(),
+                                                         subCell3DsIndex.end());
+      return result;
+    }
+
+    Gedim::Output::Assert(subCell3DsIndex.size() == 2);
+
+
+
+    return result;
+  }
+  // ***************************************************************************
   unsigned int MeshUtilities::AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                                  const std::vector<unsigned int>& agglomerateCell3DVertices,
                                                  const std::vector<unsigned int>& agglomerateCell3DEdges,
@@ -1889,6 +1922,12 @@ namespace Gedim
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
                                                  IMeshDAO& mesh) const
   {
+    if (subCell3DsIndex.size() == 0)
+      return mesh.Cell3DTotalNumber();
+
+    if (subCell3DsIndex.size() == 1)
+      return subCell3DsIndex[0];
+
     const unsigned int agglomeratedCell3DIndex = mesh.Cell3DAppend(1);
 
     unsigned int max_marker = 0;

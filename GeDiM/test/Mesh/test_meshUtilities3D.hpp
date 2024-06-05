@@ -1177,6 +1177,22 @@ namespace GedimUnitTesting
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "OriginalMesh");
+
+    const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(1,
+                                                                         meshDao);
+
+    const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
+                                                                                  agglomerationInfo.AgglomerateCell3DVertices,
+                                                                                  agglomerationInfo.AgglomerateCell3DEdges,
+                                                                                  agglomerationInfo.AgglomerateCell3DFaces,
+                                                                                  agglomerationInfo.SubCell3DsRemovedVertices,
+                                                                                  agglomerationInfo.SubCell3DsRemovedEdges,
+                                                                                  agglomerationInfo.SubCell3DsRemovedFaces,
+                                                                                  meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "AgglomeratedMesh");
   }
 }
 
