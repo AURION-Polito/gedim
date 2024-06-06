@@ -1671,7 +1671,7 @@ namespace Gedim
                                               const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
                                               const std::vector<std::vector<Vector3d> >& cell3DsFaceTranslations,
                                               const std::vector<std::vector<Matrix3d> >& cell3DsFaceRotationMatrices,
-                                              const std::vector<MatrixXd>& cell3DsBoundingBox)
+                                              const std::vector<MatrixXd>& cell3DsBoundingBox) const
   {
     for (unsigned int c3D_index = 0; c3D_index < mesh.Cell3DTotalNumber(); ++c3D_index)
     {

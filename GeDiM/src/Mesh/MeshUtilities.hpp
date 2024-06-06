@@ -726,7 +726,7 @@ namespace Gedim
                                    const std::vector<std::vector<bool>>& cell3DsFaceNormalDirections,
                                    const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
                                    const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
-                                   const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox);
+                                   const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const;
 
       /// \brief Agglomerate Triangles with one vertex in common
       /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh
