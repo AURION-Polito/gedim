@@ -1661,6 +1661,53 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  unsigned int MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
+                                              const Eigen::Vector3d& point,
+                                              const IMeshDAO& mesh,
+                                              const std::vector<std::vector<MatrixXi> >& cell3DsFaces,
+                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceVertices,
+                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceRotatedVertices,
+                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceNormals,
+                                              const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
+                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceTranslations,
+                                              const std::vector<std::vector<Matrix3d> >& cell3DsFaceRotationMatrices,
+                                              const std::vector<MatrixXd>& cell3DsBoundingBox)
+  {
+    for (unsigned int c3D_index = 0; c3D_index < mesh.Cell3DTotalNumber(); ++c3D_index)
+    {
+      if (!mesh.Cell3DIsActive(c3D_index))
+        continue;
+
+      if (!geometryUtilities.IsPointInBoundingBox(point,
+                                                  cell3DsBoundingBox.at(c3D_index)))
+        continue;
+
+      const GeometryUtilities::PointPolyhedronPositionResult pointPosition = geometryUtilities.PointPolyhedronPosition(point,
+                                                                                                                       cell3DsFaces.at(c3D_index),
+                                                                                                                       cell3DsFaceVertices.at(c3D_index),
+                                                                                                                       cell3DsFaceRotatedVertices.at(c3D_index),
+                                                                                                                       cell3DsFaceNormals.at(c3D_index),
+                                                                                                                       cell3DsFaceNormalDirections.at(c3D_index),
+                                                                                                                       cell3DsFaceTranslations.at(c3D_index),
+                                                                                                                       cell3DsFaceRotationMatrices.at(c3D_index));
+
+      switch (pointPosition.Type)
+      {
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+          break;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+          return c3D_index;
+        default:
+          throw std::runtime_error("Unknown point polyhedron position");
+      }
+    }
+
+    return mesh.Cell3DTotalNumber();
+  }
+  // ***************************************************************************
   void MeshUtilities::ComputeCell1DCell3DNeighbours(IMeshDAO& mesh) const
   {
     // Compute Cell1D neighbours starting from cell3Ds
