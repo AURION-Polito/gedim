@@ -1240,8 +1240,8 @@ namespace Gedim
     result.Cell3DsFaces2DCentroids.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesDiameters.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeLengths.resize(mesh.Cell3DTotalNumber());
-    result.Cell3DsFacesEdges3DCentroid.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DsFacesEdges2DCentroid.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdges3DCentroid.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdges2DCentroid.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge3DTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge2DTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge2DNormals.resize(mesh.Cell3DTotalNumber());
