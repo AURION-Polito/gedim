@@ -215,6 +215,10 @@ namespace Gedim
 
       /// Start time with nameTime if not exist
       static void StartTime(const std::string& nameTime);
+      /// Insert time with nameTime if not exist
+      static void InsertTime(const std::string& nameTime,
+                             const double& globalTime,
+                             const double& localTime);
       /// Split time with nameTime if exists and return the global time and local time
       static void SplitTime(const std::string& nameTime,
                             double& globalTime,

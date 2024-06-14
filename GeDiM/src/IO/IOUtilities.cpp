@@ -930,6 +930,24 @@ namespace Gedim
     else
       localTimes.insert(pair<string, double>(nameTime, time));
   }
+// *************************************************************************
+  void Profiler::InsertTime(const std::string& nameTime,
+                            const double& globalTime,
+                            const double& localTime)
+  {
+    map<string, double>::iterator timeFound = times.find(nameTime);
+    map<string, double>::iterator localTimeFound = localTimes.find(nameTime);
+
+    if(timeFound != times.end())
+      timeFound->second = globalTime;
+    else
+      times.insert(std::pair<string, double>(nameTime, globalTime));
+
+    if(localTimeFound != localTimes.end())
+      localTimeFound->second = localTime;
+    else
+      localTimes.insert(std::pair<string, double>(nameTime, localTime));
+  }
   // *************************************************************************
   void Profiler::SplitTime(const string& nameTime, double& globalTime, double& localTime)
   {
