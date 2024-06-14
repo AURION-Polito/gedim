@@ -64,7 +64,24 @@ struct SuiteSparse_Utilities
      * MATLAB’s condest */
         int info = klu_l_condest(Ap, Ax, Symbolic, Numeric, &Common);
 
-        return Common.condest;
+        if(!info)
+        {
+            cholmod_l_free_sparse(&G, &CholCommon);
+            cholmod_l_free_triplet(&Gct, &CholCommon);
+            klu_l_free_numeric(&Numeric, &Common);
+            klu_l_free_symbolic(&Symbolic, &Common);
+            throw std::runtime_error("Suitesparse fails.");
+        }
+        else
+        {
+            double condest = Common.condest;
+
+            cholmod_free_sparse(&G, &CholCommon);
+            cholmod_l_free_triplet(&Gct, &CholCommon);
+            klu_l_free_numeric(&Numeric, &Common);
+            klu_l_free_symbolic(&Symbolic, &Common);
+            return condest;
+        }
     }
 };
 #endif
