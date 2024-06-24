@@ -25,6 +25,9 @@ namespace Gedim
                       const IArray& rightHandSide,
                       IArray& solution);
 
+      void Initialize(const IArray& rightHandSide,
+                      IArray& solution);
+
       void Solve() const;
 
       void Initialize(const ISparseArray& matrix);

@@ -60,12 +60,12 @@ bool VoroInterface::InsertNewPoints(Cell0D& cell0D,
     {
         for(auto it = cell0Ds.begin(); it != cell0Ds.end(); it++)
         {
-          if (geometryUtilities.PointsAreCoincident(Eigen::Vector3d((*it).x, (*it).y, (*it).z),
-                                                    Eigen::Vector3d(cell0D.x, cell0D.y, cell0D.z)))
-          {
-              cell0D.id = (*it).id;
-              return false;
-          }
+            if (geometryUtilities.PointsAreCoincident(Eigen::Vector3d((*it).x, (*it).y, (*it).z),
+                                                      Eigen::Vector3d(cell0D.x, cell0D.y, cell0D.z)))
+            {
+                cell0D.id = (*it).id;
+                return false;
+            }
         }
 
         cell0D.id = cell0Ds.size();
@@ -77,6 +77,23 @@ bool VoroInterface::InsertNewPoints(Cell0D& cell0D,
 void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
                                                    const unsigned int& numPoints,
                                                    const unsigned int& numIterations,
+                                                   Gedim::IMeshDAO& mesh)
+{
+    Eigen::MatrixXd VoronoiPoints;
+    GenerateRandomPoints(polygonVertices,
+                         numPoints,
+                         VoronoiPoints);
+
+    VoroInterface::GenerateVoronoiTassellations2D(polygonVertices,
+                                                  numIterations,
+                                                  VoronoiPoints,
+                                                  mesh);
+
+}
+// ************************************************************************* //
+void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
+                                                   const unsigned int& numIterations,
+                                                   Eigen::MatrixXd& VoronoiPoints,
                                                    Gedim::IMeshDAO& mesh)
 {
     const unsigned int numVerticesDomain = polygonVertices.cols();
@@ -105,11 +122,6 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygo
 
     // Set up the number of blocks that the container is divided into
     const int n_x = 6, n_y = 6, n_z = 6;
-
-    Eigen::MatrixXd VoronoiPoints;
-    GenerateRandomPoints(polygonVertices,
-                         numPoints,
-                         VoronoiPoints);
 
 
     // Loop on Voronoi cells
@@ -1281,4 +1293,3 @@ void VoroInterface::GenerateCartesianPoints3D(const Eigen::MatrixXd& polyhedronV
 #endif
 // ************************************************************************* //
 }
-

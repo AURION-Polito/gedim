@@ -56,6 +56,11 @@ public:
                                         const unsigned int& numIterations,
                                         Gedim::IMeshDAO& mesh);
 
+    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
+                                        const unsigned int &numIterations,
+                                        Eigen::MatrixXd &VoronoiPoints,
+                                        Gedim::IMeshDAO &mesh);
+
 private:
 
 #if ENABLE_VORO == 1
