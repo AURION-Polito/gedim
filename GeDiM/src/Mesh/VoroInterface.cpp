@@ -274,7 +274,9 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygo
             while(vl.inc());
         }
 
-        if(abs(cvol - vvol) > 1.0e-12)
+        if(!geometryUtilities.AreValuesEqual(cvol,
+                                            vvol,
+                                            geometryUtilities.Tolerance3D()))
             throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
     }
 
@@ -455,7 +457,9 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygo
     //    if(!geometryUtilities.IsValue3DZero(cvol - vvol))
     //        throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
 
-    if(abs(cvol - vvol) > 1.0e-12)
+    if(!geometryUtilities.AreValuesEqual(cvol,
+                                         vvol,
+                                         geometryUtilities.Tolerance3D()))
         throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
 
     /// <li> Set Cell0Ds
@@ -757,7 +761,9 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
             while(vl.inc());
         }
 
-        if(abs(cvol - vvol) > 1.0e-12)
+        if(!geometryUtilities.AreValuesEqual(cvol,
+                                             vvol,
+                                             geometryUtilities.Tolerance3D()))
             throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
 
     }
@@ -1074,7 +1080,9 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
         while(vl.inc());
     }
 
-    if(abs(cvol - vvol) > 1.0e-12)
+    if(!geometryUtilities.AreValuesEqual(cvol,
+                                         vvol,
+                                         geometryUtilities.Tolerance3D()))
         throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
 
     /// <li> Set Cell0Ds

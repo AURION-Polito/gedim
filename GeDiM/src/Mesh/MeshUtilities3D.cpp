@@ -1240,8 +1240,8 @@ namespace Gedim
     result.Cell3DsFaces2DCentroids.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesDiameters.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeLengths.resize(mesh.Cell3DTotalNumber());
-    result.Cell3DsFacesEdges3DCentroid.resize(convexMesh.Cell3DTotalNumber());
-    result.Cell3DsFacesEdges2DCentroid.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdges3DCentroid.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesEdges2DCentroid.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge3DTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge2DTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdge2DNormals.resize(mesh.Cell3DTotalNumber());
@@ -1661,6 +1661,53 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  unsigned int MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
+                                              const Eigen::Vector3d& point,
+                                              const IMeshDAO& mesh,
+                                              const std::vector<std::vector<MatrixXi> >& cell3DsFaces,
+                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceVertices,
+                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceRotatedVertices,
+                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceNormals,
+                                              const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
+                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceTranslations,
+                                              const std::vector<std::vector<Matrix3d> >& cell3DsFaceRotationMatrices,
+                                              const std::vector<MatrixXd>& cell3DsBoundingBox) const
+  {
+    for (unsigned int c3D_index = 0; c3D_index < mesh.Cell3DTotalNumber(); ++c3D_index)
+    {
+      if (!mesh.Cell3DIsActive(c3D_index))
+        continue;
+
+      if (!geometryUtilities.IsPointInBoundingBox(point,
+                                                  cell3DsBoundingBox.at(c3D_index)))
+        continue;
+
+      const GeometryUtilities::PointPolyhedronPositionResult pointPosition = geometryUtilities.PointPolyhedronPosition(point,
+                                                                                                                       cell3DsFaces.at(c3D_index),
+                                                                                                                       cell3DsFaceVertices.at(c3D_index),
+                                                                                                                       cell3DsFaceRotatedVertices.at(c3D_index),
+                                                                                                                       cell3DsFaceNormals.at(c3D_index),
+                                                                                                                       cell3DsFaceNormalDirections.at(c3D_index),
+                                                                                                                       cell3DsFaceTranslations.at(c3D_index),
+                                                                                                                       cell3DsFaceRotationMatrices.at(c3D_index));
+
+      switch (pointPosition.Type)
+      {
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+          break;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+          return c3D_index;
+        default:
+          throw std::runtime_error("Unknown point polyhedron position");
+      }
+    }
+
+    return mesh.Cell3DTotalNumber();
+  }
+  // ***************************************************************************
   void MeshUtilities::ComputeCell1DCell3DNeighbours(IMeshDAO& mesh) const
   {
     // Compute Cell1D neighbours starting from cell3Ds
@@ -1880,6 +1927,80 @@ namespace Gedim
     return newCell3DsIndex;
   }
   // ***************************************************************************
+  MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3DByFace(const unsigned int cell2DIndex,
+                                                                                     const IMeshDAO& mesh) const
+  {
+    AgglomerateCell3DInformation result;
+
+    std::list<unsigned int> subCell3DsIndex;
+
+    for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(cell2DIndex); n++)
+    {
+      if (!mesh.Cell2DHasNeighbourCell3D(cell2DIndex, n))
+        continue;
+
+      subCell3DsIndex.push_back(mesh.Cell2DNeighbourCell3D(cell2DIndex,
+                                                           n));
+    }
+
+    if (subCell3DsIndex.size() == 0)
+      return result;
+
+    if (subCell3DsIndex.size() == 1)
+    {
+      result.SubCell3DsIndex = std::vector<unsigned int>(subCell3DsIndex.begin(),
+                                                         subCell3DsIndex.end());
+      return result;
+    }
+
+    Gedim::Output::Assert(subCell3DsIndex.size() == 2);
+
+    std::unordered_set<unsigned int> agglomerated_cell0Ds, agglomerated_cell1Ds;
+    std::list<unsigned int> agglomerated_cell2Ds;
+
+    for (const unsigned int c3D_index : subCell3DsIndex)
+    {
+      for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(c3D_index); v++)
+      {
+        const unsigned int c0D_index = mesh.Cell3DVertex(c3D_index, v);
+        if (agglomerated_cell0Ds.find(c0D_index) != agglomerated_cell0Ds.end())
+          continue;
+
+        agglomerated_cell0Ds.insert(c0D_index);
+      }
+
+      for (unsigned int e = 0; e < mesh.Cell3DNumberEdges(c3D_index); e++)
+      {
+        const unsigned int c1D_index = mesh.Cell3DEdge(c3D_index, e);
+        if (agglomerated_cell1Ds.find(c1D_index) != agglomerated_cell1Ds.end())
+          continue;
+
+        agglomerated_cell1Ds.insert(c1D_index);
+      }
+
+      for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(c3D_index); f++)
+      {
+        const unsigned int c2D_index = mesh.Cell3DFace(c3D_index, f);
+        if (c2D_index == cell2DIndex)
+          continue;
+
+        agglomerated_cell2Ds.push_back(c2D_index);
+      }
+    }
+
+    result.SubCell3DsIndex = std::vector<unsigned int>(subCell3DsIndex.begin(),
+                                                       subCell3DsIndex.end());
+    result.AgglomerateCell3DVertices = std::vector<unsigned int>(agglomerated_cell0Ds.begin(),
+                                                                 agglomerated_cell0Ds.end());
+    result.AgglomerateCell3DEdges = std::vector<unsigned int>(agglomerated_cell1Ds.begin(),
+                                                              agglomerated_cell1Ds.end());
+    result.AgglomerateCell3DFaces = std::vector<unsigned int>(agglomerated_cell2Ds.begin(),
+                                                              agglomerated_cell2Ds.end());
+    result.SubCell3DsRemovedFaces = { cell2DIndex };
+
+    return result;
+  }
+  // ***************************************************************************
   unsigned int MeshUtilities::AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                                  const std::vector<unsigned int>& agglomerateCell3DVertices,
                                                  const std::vector<unsigned int>& agglomerateCell3DEdges,
@@ -1887,18 +2008,34 @@ namespace Gedim
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell0Ds,
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell1Ds,
                                                  const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
-                                                 IMeshDAO& mesh) const
+                                                 IMeshDAO& mesh,
+                                                 std::vector<std::vector<unsigned int> >& meshCell3DToConvexCell3DIndices) const
   {
+    if (subCell3DsIndex.size() == 0)
+      return mesh.Cell3DTotalNumber();
+
+    if (subCell3DsIndex.size() == 1)
+      return subCell3DsIndex[0];
+
     const unsigned int agglomeratedCell3DIndex = mesh.Cell3DAppend(1);
 
     unsigned int max_marker = 0;
+    std::list<unsigned int> agglomeratedCell3DConvexCells;
     for (const auto subCell3DIndex : subCell3DsIndex)
     {
       mesh.Cell3DSetState(subCell3DIndex, false);
 
       if (mesh.Cell3DMarker(subCell3DIndex) > max_marker)
         max_marker = mesh.Cell3DMarker(subCell3DIndex);
+
+      const auto& convexCells = meshCell3DToConvexCell3DIndices.at(subCell3DIndex);
+      for (const auto& convexCell : convexCells)
+        agglomeratedCell3DConvexCells.push_back(convexCell);
     }
+    meshCell3DToConvexCell3DIndices.resize(meshCell3DToConvexCell3DIndices.size() + 1);
+    meshCell3DToConvexCell3DIndices.at(agglomeratedCell3DIndex) =
+        std::vector<unsigned int>(agglomeratedCell3DConvexCells.begin(),
+                                  agglomeratedCell3DConvexCells.end());
 
     mesh.Cell3DAddVertices(agglomeratedCell3DIndex,
                            agglomerateCell3DVertices);

@@ -365,6 +365,12 @@ namespace Gedim
 
       const MatrixXd cell2DVertices = mesh2D.Cell2DVerticesCoordinates(c);
 
+      const Eigen::MatrixXd cell2D_bounding_box = _geometryUtilities.PointsBoundingBox(cell2DVertices);
+
+      if (!_geometryUtilities.IsPointInBoundingBox(newPoint2D,
+                                                   cell2D_bounding_box))
+        continue;
+
       GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(newPoint2D,
                                                                                                                          cell2DVertices);
 

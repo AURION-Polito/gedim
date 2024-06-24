@@ -342,7 +342,40 @@ namespace Gedim
 
     return out;
   }
+  /// General print of an array
+  template <typename T, size_t s>
+  std::ostream& operator<<(std::ostream& out, const std::array<T, s>& vec)
+  {
+    const int& maxElementToPrint = Output::MaxElementToPrint;
+    const int& startingIndex = Output::StartingIndexToPrint;
 
+    unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
+    unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
+
+    out<< "[";
+    for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
+      out<< (i != startIndexVector ? "," : "")<< vec.at(i);
+    out<< "]";
+
+    return out;
+  }
+  /// General print of an array
+  template <typename T, size_t s>
+  std::ostream& operator<<(std::ostream& out, const std::array<T*, s>& vec)
+  {
+    const int& maxElementToPrint = Output::MaxElementToPrint;
+    const int& startingIndex = Output::StartingIndexToPrint;
+
+    unsigned int sizeVector = (maxElementToPrint == 0 || maxElementToPrint > (int)vec.size()) ? vec.size() : maxElementToPrint;
+    unsigned int startIndexVector = (startingIndex >= (int)vec.size()) ? 0 : startingIndex;
+
+    out<< "[";
+    for (unsigned int i = startIndexVector; i < startIndexVector + sizeVector && i < vec.size(); i++)
+      out<< (i != startIndexVector ? "," : "")<< *vec.at(i);
+    out<< "]";
+
+    return out;
+  }
   /// General print of a list
   template <typename T>
   std::ostream& operator<<(std::ostream& out,

@@ -211,11 +211,67 @@ namespace Gedim
     ConformerMeshSegment::CreateConformSegments(mesh1D);
   }
   // ***************************************************************************
+  std::vector<unsigned int> ConformerMeshPolygon::Cell2DOrderNewEdges(const IMeshDAO& mesh2DReader,
+                                                                      const unsigned int& cell1DMesh2DId,
+                                                                      const std::vector<unsigned int>& cell1DMesh2DUpdated) const
+  {
+    unsigned int num_new_edges = cell1DMesh2DUpdated.size();
+
+    std::vector<unsigned int> ordered_cell1Ds(num_new_edges);
+    std::vector<bool> is_selected_cell1Ds(num_new_edges, false);
+    std::map<unsigned int, unsigned int> cell1Ds_origin, cell1Ds_end;
+
+    for (unsigned int e = 0; e < num_new_edges; e++)
+    {
+      const unsigned int cell1D = cell1DMesh2DUpdated.at(e);
+      cell1Ds_origin.insert(std::make_pair(mesh2DReader.Cell1DOrigin(cell1D),
+                                           e));
+      cell1Ds_end.insert(std::make_pair(mesh2DReader.Cell1DEnd(cell1D),
+                                        e));
+    }
+
+    unsigned int cell1D_origin = mesh2DReader.Cell1DOrigin(cell1DMesh2DId);
+
+    unsigned int num_found_edges = 0;
+    while (num_found_edges < num_new_edges)
+    {
+      const auto& origin_found = cell1Ds_origin.find(cell1D_origin);
+
+      if (origin_found != cell1Ds_origin.end() &&
+          !is_selected_cell1Ds.at(origin_found->second))
+      {
+        const unsigned int cell1D = cell1DMesh2DUpdated.at(origin_found->second);
+        ordered_cell1Ds[num_found_edges] = cell1D;
+        is_selected_cell1Ds[origin_found->second] = true;
+        cell1D_origin = mesh2DReader.Cell1DEnd(cell1D);
+        num_found_edges++;
+        continue;
+      }
+
+      const auto& end_found = cell1Ds_end.find(cell1D_origin);
+
+      if (end_found != cell1Ds_end.end() &&
+          !is_selected_cell1Ds.at(end_found->second))
+      {
+        const unsigned int cell1D = cell1DMesh2DUpdated.at(end_found->second);
+        ordered_cell1Ds[num_found_edges] = cell1D;
+        is_selected_cell1Ds[end_found->second] = true;
+        cell1D_origin = mesh2DReader.Cell1DOrigin(cell1D);
+        num_found_edges++;
+        continue;
+      }
+
+      throw std::runtime_error("Error in cell1Ds list order");
+    }
+
+    return ordered_cell1Ds;
+  }
+  // ***************************************************************************
   void ConformerMeshPolygon::Cell2DMesh2DListCell1DToListCell0D(const Gedim::IMeshDAO& mesh2DReader,
                                                                 const unsigned int& cell1DMesh2DId,
-                                                                const list<unsigned int>& cell1DMesh2DUpdated,
-                                                                vector<unsigned int>& cell0DMesh2Ds,
-                                                                vector<unsigned int>& cell1DMesh2Ds)
+                                                                const std::vector<unsigned int>& cell1DMesh2DUpdated,
+                                                                std::vector<unsigned int>& cell0DMesh2Ds,
+                                                                std::vector<unsigned int>& cell1DMesh2Ds)
   {
     cell0DMesh2Ds.resize(cell1DMesh2DUpdated.size() + 1);
     cell1DMesh2Ds.resize(cell1DMesh2DUpdated.size());
@@ -230,7 +286,7 @@ namespace Gedim
     unsigned int counter = 1;
     if (edgeListDirection)
     {
-      for (list<unsigned int>::const_iterator iter = cell1DMesh2DUpdated.begin();
+      for (vector<unsigned int>::const_iterator iter = cell1DMesh2DUpdated.begin();
            iter != cell1DMesh2DUpdated.end();
            iter++)
       {
@@ -242,7 +298,7 @@ namespace Gedim
     }
     else
     {
-      for (list<unsigned int>::const_reverse_iterator iter = cell1DMesh2DUpdated.rbegin();
+      for (vector<unsigned int>::const_reverse_iterator iter = cell1DMesh2DUpdated.rbegin();
            iter != cell1DMesh2DUpdated.rend();
            iter++)
       {
@@ -1319,11 +1375,18 @@ namespace Gedim
         {
           // edge is updated, update the neighbour cell2Ds
 
+          // order edge list by starting and ending point
+          const std::vector<unsigned int> new_edges_ordered =
+              Cell2DOrderNewEdges(mesh2D,
+                                  cell1DId,
+                                  std::vector<unsigned int>(newEdges.begin(),
+                                                            newEdges.end()));
+
           // get new points to insert between origin and end of old edge
           vector<unsigned int> newCell1DPoints, newCell1DEdges;
           Cell2DMesh2DListCell1DToListCell0D(mesh2D,
                                              cell1DId,
-                                             newEdges,
+                                             new_edges_ordered,
                                              newCell1DPoints,
                                              newCell1DEdges);
 
