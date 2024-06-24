@@ -59,6 +59,12 @@ endif()
 ###########################################################################################
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+## MPI
+if(${USE_MPI})
+    find_package(MPI REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC MPI::MPI_CXX)
+endif()
+
 ## Eigen3
 find_package(Eigen3 CONFIG REQUIRED)
 list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC Eigen3::Eigen)

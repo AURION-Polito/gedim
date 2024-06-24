@@ -38,9 +38,13 @@ namespace Gedim
                                                  ConformerMeshSegment::ConformMesh& mesh1D,
                                                  const Gedim::IMeshDAO& mesh2DReader);
 
+      std::vector<unsigned int> Cell2DOrderNewEdges(const Gedim::IMeshDAO& mesh2DReader,
+                                                    const unsigned int& cell1DMesh2DId,
+                                                    const std::vector<unsigned int>& cell1DMesh2DUpdated) const;
+
       void Cell2DMesh2DListCell1DToListCell0D(const Gedim::IMeshDAO& mesh2DReader,
                                               const unsigned int& cell1DMesh2DId,
-                                              const std::list<unsigned int>& cell1DMesh2DUpdated,
+                                              const std::vector<unsigned int>& cell1DMesh2DUpdated,
                                               std::vector<unsigned int>& cell0DMesh2Ds,
                                               std::vector<unsigned int>& cell1DMesh2Ds);
       void Cell2DMesh2DUpdatedPointsAndEdges(const Gedim::IMeshDAO& mesh2DReader,
