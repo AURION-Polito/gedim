@@ -9,6 +9,7 @@ namespace LAPACK_utilities
   {
       Eigen::MatrixXd Q;
       Eigen::MatrixXd R;
+      unsigned int Space_Dimension;
   };
 
   /// Compute SVD: A = U * S * V'. It returns U, S and V'
