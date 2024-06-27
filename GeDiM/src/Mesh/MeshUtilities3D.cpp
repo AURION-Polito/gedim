@@ -2276,4 +2276,11 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  void MeshUtilities::MakeMeshTriangularFaces(const GeometryUtilities& geometryUtilities,
+                                              const std::vector<std::vector<unsigned int>>& faces_triangulation,
+                                              IMeshDAO& mesh) const
+  {
+
+  }
+  // ***************************************************************************
 }
