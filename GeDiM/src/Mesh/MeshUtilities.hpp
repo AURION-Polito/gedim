@@ -439,6 +439,9 @@ namespace Gedim
                                                   const IMeshDAO& convexMesh,
                                                   const std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
 
+      void ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const;
+      void ComputeCell0DCell2DNeighbours(IMeshDAO &mesh) const;
+
       /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
       /// \param mesh the resulting mesh
       void ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const;
@@ -787,7 +790,6 @@ namespace Gedim
                                     const std::vector<std::vector<unsigned int>>& convexCell2DsIndex,
                                     const char& separator,
                                     const std::string& exportFolderPath) const;
-
   };
 
 }

@@ -19,8 +19,8 @@ using namespace testing;
 
 namespace GedimUnitTesting
 {
-  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentFullInsideOneCell)
-  {
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentFullInsideOneCell)
+{
     std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentInside";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -43,17 +43,17 @@ namespace GedimUnitTesting
                                                                             segmentEnd);
 
     {
-      meshUtilities.ExportMeshToVTU(mesh3D,
-                                    exportFolder,
-                                    "mesh3D");
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
 
-      {
-        Gedim::VTKUtilities exporter;
-        exporter.AddSegment(segmentOrigin,
-                            segmentEnd);
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
 
-        exporter.Export(exportFolder + "/segment.vtu");
-      }
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
     }
 
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
@@ -74,9 +74,15 @@ namespace GedimUnitTesting
     EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
     EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
     EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Points[0].Positions[0].BorderIndex, 0);
+    EXPECT_EQ(intersections.Points[1].Positions[0].BorderIndex, 0);
     EXPECT_EQ(intersections.Segments.size(), 1);
     EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
     EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].BorderIndex, 0);
 
     Gedim::MeshMatrices mesh_1D_data;
     Gedim::MeshMatricesDAO mesh_1D(mesh_1D_data);
@@ -89,14 +95,14 @@ namespace GedimUnitTesting
                              coordinates,
                              mesh_1D);
     {
-      meshUtilities.ExportMeshToVTU(mesh_1D,
-                                    exportFolder,
-                                    "mesh1D");
+        meshUtilities.ExportMeshToVTU(mesh_1D,
+                                      exportFolder,
+                                      "mesh1D");
     }
-  }
+}
 
-  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnFace)
-  {
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnFace)
+{
     std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentOnFace";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -110,6 +116,7 @@ namespace GedimUnitTesting
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
     meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
 
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
@@ -120,17 +127,17 @@ namespace GedimUnitTesting
                                                                             segmentEnd);
 
     {
-      meshUtilities.ExportMeshToVTU(mesh3D,
-                                    exportFolder,
-                                    "mesh3D");
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
 
-      {
-        Gedim::VTKUtilities exporter;
-        exporter.AddSegment(segmentOrigin,
-                            segmentEnd);
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
 
-        exporter.Export(exportFolder + "/segment.vtu");
-      }
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
     }
 
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
@@ -162,14 +169,14 @@ namespace GedimUnitTesting
                              coordinates,
                              mesh_1D);
     {
-      meshUtilities.ExportMeshToVTU(mesh_1D,
-                                    exportFolder,
-                                    "mesh1D");
+        meshUtilities.ExportMeshToVTU(mesh_1D,
+                                      exportFolder,
+                                      "mesh1D");
     }
-  }
+}
 
-  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentInsideOneCell)
-  {
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentInsideOneCell)
+{
     std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentInsideOneCell";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -183,6 +190,7 @@ namespace GedimUnitTesting
     GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
     meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
 
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
@@ -193,17 +201,17 @@ namespace GedimUnitTesting
                                                                             segmentEnd);
 
     {
-      meshUtilities.ExportMeshToVTU(mesh3D,
-                                    exportFolder,
-                                    "mesh3D");
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
 
-      {
-        Gedim::VTKUtilities exporter;
-        exporter.AddSegment(segmentOrigin,
-                            segmentEnd);
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
 
-        exporter.Export(exportFolder + "/segment.vtu");
-      }
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
     }
 
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
@@ -234,14 +242,14 @@ namespace GedimUnitTesting
                              coordinates,
                              mesh_1D);
     {
-      meshUtilities.ExportMeshToVTU(mesh_1D,
-                                    exportFolder,
-                                    "mesh1D");
+        meshUtilities.ExportMeshToVTU(mesh_1D,
+                                      exportFolder,
+                                      "mesh1D");
     }
-  }
+}
 
-  TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnEdge)
-  {
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnEdge)
+{
     std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_SegmentOnEdge";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -255,6 +263,7 @@ namespace GedimUnitTesting
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
     meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
 
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
@@ -274,17 +283,17 @@ namespace GedimUnitTesting
                                                                             segmentEnd);
 
     {
-      meshUtilities.ExportMeshToVTU(mesh3D,
-                                    exportFolder,
-                                    "mesh3D");
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
 
-      {
-        Gedim::VTKUtilities exporter;
-        exporter.AddSegment(segmentOrigin,
-                            segmentEnd);
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
 
-        exporter.Export(exportFolder + "/segment.vtu");
-      }
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
     }
 
     const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
@@ -322,11 +331,1243 @@ namespace GedimUnitTesting
                              coordinates,
                              mesh_1D);
     {
-      meshUtilities.ExportMeshToVTU(mesh_1D,
-                                    exportFolder,
-                                    "mesh1D");
+        meshUtilities.ExportMeshToVTU(mesh_1D,
+                                      exportFolder,
+                                      "mesh1D");
     }
-  }
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_FullInside)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_FullInside";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        0.9);
+    const Eigen::Vector3d segmentEnd(0.2,
+                                     0.2,
+                                     0.6);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Points[0].Positions[0].BorderIndex, 0);
+    EXPECT_EQ(intersections.Points[1].Positions[0].BorderIndex, 0);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].BorderIndex, 0);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceInside)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_FaceInside";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.2,
+                                     0.2,
+                                     0.6);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Points[0].Positions[0].BorderIndex, 1);
+    EXPECT_EQ(intersections.Points[1].Positions[0].BorderIndex, 0);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].BorderIndex, 0);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceFace)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_FaceFace";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.2,
+                                     0.2,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[0].Positions[0].BorderIndex, 1);
+    EXPECT_EQ(intersections.Points[1].Positions[0].BorderIndex, 0);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].BorderIndex, 0);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceFace)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_FaceFace";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.4,
+                                     0.4,
+                                     1.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_FaceVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_FaceVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     1.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceEdge)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_FaceEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.2,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceEdge)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_FaceEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.2,
+                                     0.0,
+                                     1.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_EdgeEdge)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_EdgeEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.2,
+                                        0.0,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.2,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_EdgeEdge)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_EdgeEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.2,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_EdgeEdge)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Edge_EdgeEdge";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.2,
+                                        1.0);
+
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.5,
+                                     1.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderEdge);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_EdgeVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_EdgeVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(1.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_EdgeVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_EdgeVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.2,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_EdgeVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Edge_EdgeVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.0,
+                                        0.9);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderEdge);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_VertexVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Inside_VertexVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell1DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(1.0,
+                                        1.0,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::Inside);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_VertexVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Face_VertexVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell1DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        1.0,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace);
+}
+
+TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_VertexVertex)
+{
+
+    std::string exportFolder = "./Export/TestIntersectorMesh3DSegment/TestIntersectMesh_Positions_Edge_VertexVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    // segment inside mesh3D
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
+    Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell2DNeighbours(mesh3D);
+    meshUtilities.ComputeCell0DCell1DNeighbours(mesh3D);
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                                 mesh3D);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration configuration;
+    meshUtilities.CheckMesh3D(configuration, geometryUtilities, mesh3D);
+
+    const Eigen::Vector3d segmentOrigin(0.0,
+                                        0.0,
+                                        1.0);
+    const Eigen::Vector3d segmentEnd(0.0,
+                                     0.0,
+                                     0.0);
+
+    {
+        meshUtilities.ExportMeshToVTU(mesh3D,
+                                      exportFolder,
+                                      "mesh3D");
+
+        {
+            Gedim::VTKUtilities exporter;
+            exporter.AddSegment(segmentOrigin,
+                                segmentEnd);
+
+            exporter.Export(exportFolder + "/segment.vtu");
+        }
+    }
+
+    const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin,
+                                                                            segmentEnd);
+
+    const Gedim::IntersectorMesh3DSegment intersectorMesh3DSegment(geometryUtilities,
+                                                                   meshUtilities);
+
+    const Gedim::IntersectorMesh3DSegment::IntersectionMesh intersections =
+        intersectorMesh3DSegment.CreateIntersectionMesh(segmentOrigin,
+                                                        segmentEnd,
+                                                        segmentTangent,
+                                                        mesh3D,
+                                                        mesh3D_geometricData);
+
+    EXPECT_EQ(intersections.Points.size(), 2);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Points[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[1].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Points[0].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Points[1].Positions[0].Type, Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+    EXPECT_EQ(intersections.Segments.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds.size(), 1);
+    EXPECT_EQ(intersections.Segments[0].Cell3DIds[0], 0);
+    EXPECT_EQ(intersections.Segments[0].Positions[0].Type, Gedim::GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderEdge);
+}
+
 
 }
 

@@ -594,6 +594,21 @@ namespace Gedim
           Types Type = Types::Unknown;
       };
 
+      struct SegmentPolyhedronPositionResult final
+      {
+          enum struct Types
+          {
+              Unknown = 0,
+              Outside = 1,
+              BorderFace = 2,
+              BorderEdge = 3,
+              Inside = 4
+          };
+
+          unsigned int BorderIndex = 0; ///< index of edge/face of border
+          Types Type = Types::Unknown;
+      };
+
       struct Polyhedron final
       {
           Eigen::MatrixXd Vertices; ///< vertices, size 3 x numVertices

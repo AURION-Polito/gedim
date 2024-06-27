@@ -120,6 +120,10 @@ namespace Gedim
       /// \return the Cell1D index of Neighbour Cell1Ds of Cell0D from 0 to Cell1DTotalNumber()
       virtual unsigned int Cell0DNeighbourCell1D(const unsigned int& cell0DIndex,
                                                  const unsigned int& neighbourIndex) const = 0;
+
+
+      virtual std::vector<unsigned int> Cell0DNeighbourCell1Ds(const unsigned int& cell0DIndex) const = 0;
+
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \param neighbourIndex the number of neigbourh Cell1D from 0 to Cell0DNumberNeighbourCell1D(cell0DIndex)
       /// \return true if Neighbour Cell1Ds of Cell0D at position neighbourIndex exists
@@ -157,6 +161,9 @@ namespace Gedim
       /// \return the Cell2D index of Neighbour Cell2Ds of Cell0D from 0 to Cell2DTotalNumber()
       virtual unsigned int Cell0DNeighbourCell2D(const unsigned int& cell0DIndex,
                                                  const unsigned int& neighbourIndex) const = 0;
+
+      virtual std::vector<unsigned int> Cell0DNeighbourCell2Ds(const unsigned int& cell0DIndex) const = 0;
+
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \param neighbourIndex the number of neigbourh Cell2D from 0 to Cell0DNumberNeighbourCell2D(cell0DIndex)
       /// \return true if Neighbour Cell2Ds of Cell0D at position neighbourIndex exists
@@ -395,6 +402,9 @@ namespace Gedim
       /// \return the Cell2D index of Neighbour Cell2Ds of Cell1D from 0 to Cell2DTotalNumber()
       virtual unsigned int Cell1DNeighbourCell2D(const unsigned int& cell1DIndex,
                                                  const unsigned int& neighbourIndex) const = 0;
+
+      virtual inline std::vector<unsigned int> Cell1DNeighbourCell2Ds(const unsigned int& cell1DIndex) const = 0;
+
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \param neighbourIndex the number of neigbourh Cell2D from 0 to Cell1DNumberNeighbourCell2D(cell1DIndex)
       /// \return true if Neighbour Cell2Ds of Cell1D at position neighbourIndex exists
