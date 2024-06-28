@@ -2280,6 +2280,8 @@ namespace Gedim
                                               IMeshDAO& mesh) const
   {
     const unsigned int num_faces = mesh.Cell2DTotalNumber();
+    std::vector<std::vector<unsigned int>> cell2Ds_new_faces(num_faces);
+    std::vector<std::vector<unsigned int>> cell2Ds_new_edges(num_faces);
 
     for (unsigned int f = 0; f < num_faces; f++)
     {
@@ -2300,11 +2302,16 @@ namespace Gedim
 
       // add new edges
       const unsigned int new_cell1D_starting = mesh.Cell1DAppend(numTriangles - 1);
+      cell2Ds_new_edges[f].resize(numTriangles - 1);
+
       for (unsigned int t = 0; t < numTriangles - 1; t++)
       {
         const unsigned int new_cell1D_index = new_cell1D_starting + t;
+
+        cell2Ds_new_edges[f][t] = new_cell1D_index;
         mesh.Cell1DSetState(new_cell1D_index, true);
-        mesh.Cell1DSetMarker(new_cell1D_index,0);
+        mesh.Cell1DSetMarker(new_cell1D_index,
+                             mesh.Cell2DMarker(f));
         mesh.Cell1DInsertExtremes(new_cell1D_index,
                                   face_cell0Ds_idex.at(face_triangles.at(3 * t + 1)),
                                   face_cell0Ds_idex.at(face_triangles.at(3 * t + 2)));
@@ -2312,10 +2319,15 @@ namespace Gedim
 
       // add new faces
       const unsigned int new_cell2D_starting = mesh.Cell2DAppend(numTriangles);
+      cell2Ds_new_faces[f].resize(numTriangles);
+
+      const unsigned int num_cell3Ds_neighbour = mesh.Cell2DNumberNeighbourCell3D(f);
 
       for (unsigned int t = 0; t < numTriangles; t++)
       {
         const unsigned int new_cell2D_index = new_cell2D_starting + t;
+
+        cell2Ds_new_faces[f][t] = new_cell2D_index;
         mesh.Cell2DSetMarker(new_cell2D_index,
                              mesh.Cell2DMarker(f));
         mesh.Cell2DSetState(new_cell2D_index, true);
@@ -2341,9 +2353,41 @@ namespace Gedim
         mesh.Cell2DAddVerticesAndEdges(new_cell2D_index,
                                        vertices_edges);
         mesh.Cell2DInsertUpdatedCell2D(f, new_cell2D_index);
+        mesh.Cell2DInitializeNeighbourCell3Ds(new_cell2D_index,
+                                              num_cell3Ds_neighbour);
       }
 
       mesh.Cell2DSetState(f, false);
+    }
+
+    const unsigned int num_cell3Ds = mesh.Cell3DTotalNumber();
+    for (unsigned int c = 0; c < num_cell3Ds; c++)
+    {
+      if (!mesh.Cell3DIsActive(c))
+        continue;
+
+      const auto& vertices = mesh.Cell3DVertices(c);
+      const auto& edges = mesh.Cell3DEdges(c);
+      const auto& faces = mesh.Cell3DFaces(c);
+
+      unsigned int num_cell3D_new_edges = 0;
+      unsigned int num_cell3D_new_faces = 0;
+      for (const auto& cell2D_index : faces)
+      {
+        num_cell3D_new_edges += cell2Ds_new_edges.at(cell2D_index).size();
+        num_cell3D_new_faces += cell2Ds_new_faces.at(cell2D_index).size();
+      }
+
+      if (num_cell3D_new_faces == 0)
+        continue;
+
+      const unsigned int new_cell3D_index = mesh.Cell3DAppend(1);
+      mesh.Cell3DSetMarker(new_cell3D_index,
+                           mesh.Cell3DMarker(c));
+      mesh.Cell3DSetState(new_cell3D_index,
+                          true);
+
+      mesh.Cell3DSetState(c, false);
     }
   }
   // ***************************************************************************
