@@ -2324,8 +2324,6 @@ namespace Gedim
       const unsigned int new_cell2D_starting = mesh.Cell2DAppend(numTriangles);
       cell2Ds_new_faces[f].resize(numTriangles);
 
-      const unsigned int num_cell3Ds_neighbour = mesh.Cell2DNumberNeighbourCell3D(f);
-
       for (unsigned int t = 0; t < numTriangles; t++)
       {
         const unsigned int new_cell2D_index = new_cell2D_starting + t;
@@ -2356,8 +2354,6 @@ namespace Gedim
         mesh.Cell2DAddVerticesAndEdges(new_cell2D_index,
                                        vertices_edges);
         mesh.Cell2DInsertUpdatedCell2D(f, new_cell2D_index);
-        mesh.Cell2DInitializeNeighbourCell3Ds(new_cell2D_index,
-                                              num_cell3Ds_neighbour);
       }
 
       mesh.Cell2DSetState(f, false);
