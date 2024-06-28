@@ -2291,7 +2291,10 @@ namespace Gedim
       const unsigned int num_face_vertices = mesh.Cell2DNumberVertices(f);
 
       if (num_face_vertices == 3)
+      {
+        cell2Ds_new_faces[f].push_back(f);
         continue;
+      }
 
       const auto& face_cell0Ds_idex = mesh.Cell2DVertices(f);
       const auto& face_cell1Ds_idex = mesh.Cell2DEdges(f);
@@ -2370,15 +2373,18 @@ namespace Gedim
       const auto& edges = mesh.Cell3DEdges(c);
       const auto& faces = mesh.Cell3DFaces(c);
 
-      unsigned int num_cell3D_new_edges = 0;
-      unsigned int num_cell3D_new_faces = 0;
+      std::list<unsigned int> cell3D_new_edges;
+      std::list<unsigned int> cell3D_new_faces;
       for (const auto& cell2D_index : faces)
       {
-        num_cell3D_new_edges += cell2Ds_new_edges.at(cell2D_index).size();
-        num_cell3D_new_faces += cell2Ds_new_faces.at(cell2D_index).size();
+        for (const auto& cell1D_index : cell2Ds_new_edges.at(cell2D_index))
+          cell3D_new_edges.push_back(cell1D_index);
+
+        for (const auto& new_cell2D_index : cell2Ds_new_faces.at(cell2D_index))
+          cell3D_new_faces.push_back(new_cell2D_index);
       }
 
-      if (num_cell3D_new_faces == 0)
+      if (cell3D_new_faces.size() == faces.size())
         continue;
 
       const unsigned int new_cell3D_index = mesh.Cell3DAppend(1);
@@ -2386,6 +2392,35 @@ namespace Gedim
                            mesh.Cell3DMarker(c));
       mesh.Cell3DSetState(new_cell3D_index,
                           true);
+
+      mesh.Cell3DInitializeVertices(new_cell3D_index,
+                                    vertices.size());
+      mesh.Cell3DInitializeEdges(new_cell3D_index,
+                                 edges.size() + cell3D_new_edges.size());
+      mesh.Cell3DInitializeFaces(new_cell3D_index,
+                                 cell3D_new_faces.size());
+
+      for (unsigned int v = 0; v < vertices.size(); v++)
+        mesh.Cell3DInsertVertex(new_cell3D_index,
+                                v,
+                                vertices.at(v));
+
+      for (unsigned int e = 0; e < edges.size(); e++)
+        mesh.Cell3DInsertEdge(new_cell3D_index,
+                              e,
+                              edges.at(e));
+
+      unsigned int e = 0;
+      for (const auto& cell1D_index : cell3D_new_edges)
+        mesh.Cell3DInsertEdge(new_cell3D_index,
+                              edges.size() + e++,
+                              cell1D_index);
+
+      unsigned int f = 0;
+      for (const unsigned int& cell2D_index : cell3D_new_faces)
+        mesh.Cell3DInsertFace(new_cell3D_index,
+                              f++,
+                              cell2D_index);
 
       mesh.Cell3DSetState(c, false);
     }
