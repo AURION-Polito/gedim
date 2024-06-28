@@ -1283,6 +1283,81 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "AgglomeratedMesh");
   }
+
+  TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                             1.0);
+    const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
+    const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
+    const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
+
+    const std::vector<double> lengthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(10 + 1,
+                                                                                                        0.0, 1.0, 1);
+    const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(8 + 1,
+                                                                                                        0.0, 1.0, 1);
+    const std::vector<double> widthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(6 + 1,
+                                                                                                       0.0, 1.0, 1);
+
+
+    const Eigen::Vector3d origin = cube.Vertices.col(0);
+    meshUtilities.CreateParallelepipedMesh(origin,
+                                           parallelepipedsLengthTangent,
+                                           parallelepipedsHeightTangent,
+                                           parallelepipedsWidthTangent,
+                                           lengthMeshCurvilinearCoordinates,
+                                           heightMeshCurvilinearCoordinates,
+                                           widthMeshCurvilinearCoordinates,
+                                           meshDao);
+
+    std::string exportFolder = "./Export/TestMakeMeshTriangularFaces/";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    std::vector<std::vector<unsigned int>> cell2Ds_triangles(meshDao.Cell2DTotalNumber());
+
+    for (unsigned int f = 0; f < meshDao.Cell2DTotalNumber(); f++)
+    {
+      const Eigen::MatrixXd face_vertices =
+          meshDao.Cell2DVerticesCoordinates(f);
+
+      const auto face_translation =
+          geometryUtilities.PolygonTranslation(face_vertices);
+      const auto face_normal =
+          geometryUtilities.PolygonNormal(face_vertices);
+      const auto face_rotation =
+          geometryUtilities.PolygonRotationMatrix(face_vertices,
+                                                  face_normal,
+                                                  face_translation);
+      const auto face_vertices_2D =
+          geometryUtilities.RotatePointsFrom3DTo2D(face_vertices,
+                                                   face_rotation.transpose(),
+                                                   face_translation);
+
+      cell2Ds_triangles[f] =
+          geometryUtilities.PolygonTriangulationByFirstVertex(face_vertices_2D);
+
+    }
+
+    meshUtilities.MakeMeshTriangularFaces(cell2Ds_triangles,
+                                          meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "TriangularFaceMesh");
+
+
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H
