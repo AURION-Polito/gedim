@@ -1324,6 +1324,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    Gedim::MeshMatrices new_mesh;
+    Gedim::MeshMatricesDAO new_meshDao(new_mesh);
     std::vector<std::vector<unsigned int>> cell2Ds_triangles(meshDao.Cell2DTotalNumber());
 
     for (unsigned int f = 0; f < meshDao.Cell2DTotalNumber(); f++)
@@ -1350,12 +1352,25 @@ namespace GedimUnitTesting
     }
 
     meshUtilities.MakeMeshTriangularFaces(cell2Ds_triangles,
-                                          meshDao);
+                                          new_meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao,
+    Gedim::MeshUtilities::ExtractActiveMeshData extract_data;
+    meshUtilities.ExtractActiveMesh(new_meshDao,
+                                    extract_data);
+
+    meshUtilities.ExportMeshToVTU(new_meshDao,
                                   exportFolder,
                                   "TriangularFaceMesh");
 
+    ASSERT_EQ(meshDao.Cell0DTotalNumber(),
+              new_meshDao.Cell0DTotalNumber());
+    ASSERT_EQ(meshDao.Cell1DTotalNumber() +
+              meshDao.Cell2DTotalNumber(),
+              new_meshDao.Cell1DTotalNumber());
+    ASSERT_EQ(2 * meshDao.Cell2DTotalNumber(),
+              new_meshDao.Cell2DTotalNumber());
+    ASSERT_EQ(meshDao.Cell3DTotalNumber(),
+              new_meshDao.Cell3DTotalNumber());
 
   }
 }
