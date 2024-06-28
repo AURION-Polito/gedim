@@ -2276,11 +2276,75 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void MeshUtilities::MakeMeshTriangularFaces(const GeometryUtilities& geometryUtilities,
-                                              const std::vector<std::vector<unsigned int>>& faces_triangulation,
+  void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>>& faces_triangulation,
                                               IMeshDAO& mesh) const
   {
+    const unsigned int num_faces = mesh.Cell2DTotalNumber();
 
+    for (unsigned int f = 0; f < num_faces; f++)
+    {
+      if (!mesh.Cell2DIsActive(f))
+        continue;
+
+      const unsigned int num_face_vertices = mesh.Cell2DNumberVertices(f);
+
+      if (num_face_vertices == 3)
+        continue;
+
+      const auto& face_cell0Ds_idex = mesh.Cell2DVertices(f);
+      const auto& face_cell1Ds_idex = mesh.Cell2DEdges(f);
+      const auto& face_triangles = faces_triangulation.at(f);
+      Gedim::Output::Assert(3 * (num_face_vertices - 2) == face_triangles.size());
+
+      const unsigned int numTriangles = face_triangles.size() / 3;
+
+      // add new edges
+      const unsigned int new_cell1D_starting = mesh.Cell1DAppend(numTriangles - 1);
+      for (unsigned int t = 0; t < numTriangles - 1; t++)
+      {
+        const unsigned int new_cell1D_index = new_cell1D_starting + t;
+        mesh.Cell1DSetState(new_cell1D_index, true);
+        mesh.Cell1DSetMarker(new_cell1D_index,0);
+        mesh.Cell1DInsertExtremes(new_cell1D_index,
+                                  face_cell0Ds_idex.at(face_triangles.at(3 * t + 1)),
+                                  face_cell0Ds_idex.at(face_triangles.at(3 * t + 2)));
+      }
+
+      // add new faces
+      const unsigned int new_cell2D_starting = mesh.Cell2DAppend(numTriangles);
+
+      for (unsigned int t = 0; t < numTriangles; t++)
+      {
+        const unsigned int new_cell2D_index = new_cell2D_starting + t;
+        mesh.Cell2DSetMarker(new_cell2D_index,
+                             mesh.Cell2DMarker(f));
+        mesh.Cell2DSetState(new_cell2D_index, true);
+
+
+
+        Eigen::MatrixXi vertices_edges(2, 3);
+        vertices_edges.row(0)<<
+                                face_cell0Ds_idex.at(face_triangles.at(3 * t)),
+            face_cell0Ds_idex.at(face_triangles.at(3 * t + 1)),
+            face_cell0Ds_idex.at(face_triangles.at(3 * t + 2));
+
+        const unsigned int new_cell2D_first_edge =
+            (t == 0) ? face_cell1Ds_idex.at(0) :
+                       new_cell1D_starting + (t - 1);
+        const unsigned int new_cell2D_third_edge =
+            (t == numTriangles - 1) ? face_cell1Ds_idex.at(num_face_vertices - 1) :
+                                      new_cell1D_starting + t;
+        vertices_edges.row(1)<< new_cell2D_first_edge,
+            face_cell1Ds_idex.at(t + 1),
+            new_cell2D_third_edge;
+
+        mesh.Cell2DAddVerticesAndEdges(new_cell2D_index,
+                                       vertices_edges);
+        mesh.Cell2DInsertUpdatedCell2D(f, new_cell2D_index);
+      }
+
+      mesh.Cell2DSetState(f, false);
+    }
   }
   // ***************************************************************************
 }

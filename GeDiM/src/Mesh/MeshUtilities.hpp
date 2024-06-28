@@ -536,8 +536,7 @@ namespace Gedim
                                 const unsigned int numIterations,
                                 IMeshDAO& mesh) const;
 
-      void MakeMeshTriangularFaces(const GeometryUtilities& geometryUtilities,
-                                   const std::vector<std::vector<unsigned int>>& faces_triangulation,
+      void MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>>& faces_triangulation,
                                    IMeshDAO& mesh) const;
 
       /// \brief Import 3D mesh from OVM file
