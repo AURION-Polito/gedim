@@ -49,12 +49,14 @@ public:
                                         const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                         const unsigned int &numPoints,
                                         const unsigned int& numIterations,
-                                        Gedim::IMeshDAO& mesh);
+                                        Gedim::IMeshDAO& mesh,
+                                        const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
 
     void GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
                                         const unsigned int& numPoints,
                                         const unsigned int& numIterations,
-                                        Gedim::IMeshDAO& mesh);
+                                        Gedim::IMeshDAO& mesh,
+                                        const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
 
     void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
                                         const unsigned int &numIterations,
@@ -65,11 +67,12 @@ private:
 
 #if ENABLE_VORO == 1
     bool InsertNewPoints(Cell0D& cell0D, list<Cell0D>& cell0Ds);
-    inline double rnd() {return double(rand())/RAND_MAX;}
+    inline double rnd() { return double(rand())/RAND_MAX; }
 
     void GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
                               const unsigned int& numPoints,
-                              voro::container& con);
+                              voro::container& con,
+                              const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
 
     void GenerateCartesianPoints3D(const Eigen::MatrixXd &polyhedronVertices,
                                    const unsigned int &numPoints,
@@ -77,7 +80,8 @@ private:
 
     void GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
                               const unsigned int& numPoints,
-                              Eigen::MatrixXd& VoronoiPoints);
+                              Eigen::MatrixXd& VoronoiPoints,
+                              const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
 #endif
 };
 

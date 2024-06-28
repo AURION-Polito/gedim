@@ -511,7 +511,8 @@ namespace Gedim
                                const Eigen::MatrixXd& polygonVertices,
                                const unsigned int numPoints,
                                const unsigned int numIterations,
-                               IMeshDAO& mesh) const;
+                               IMeshDAO& mesh,
+                               const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
 
       /// \brief Create tetrahedral mesh on 3D polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
@@ -534,7 +535,8 @@ namespace Gedim
                                 const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                 const unsigned int numPoints,
                                 const unsigned int numIterations,
-                                IMeshDAO& mesh) const;
+                                IMeshDAO& mesh,
+                                const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
 
       void MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>>& faces_triangulation,
                                    IMeshDAO& mesh) const;

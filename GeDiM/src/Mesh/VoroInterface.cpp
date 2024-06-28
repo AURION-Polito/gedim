@@ -77,12 +77,14 @@ bool VoroInterface::InsertNewPoints(Cell0D& cell0D,
 void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
                                                    const unsigned int& numPoints,
                                                    const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
+                                                   Gedim::IMeshDAO& mesh,
+                                                   const unsigned int random_seed)
 {
     Eigen::MatrixXd VoronoiPoints;
     GenerateRandomPoints(polygonVertices,
                          numPoints,
-                         VoronoiPoints);
+                         VoronoiPoints,
+                         random_seed);
 
     VoroInterface::GenerateVoronoiTassellations2D(polygonVertices,
                                                   numIterations,
@@ -574,7 +576,8 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
                                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                    const unsigned int& numPoints,
                                                    const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
+                                                   Gedim::IMeshDAO& mesh,
+                                                   const unsigned int random_seed)
 {
     const unsigned int numVerticesDomain = polyhedronVertices.cols();
     const unsigned int numEdgesDomain = polyhedronEdges.cols();
@@ -623,7 +626,8 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
     Eigen::MatrixXd VoronoiPoints;
     GenerateRandomPoints(polyhedronVertices,
                          numPoints,
-                         VoronoiPoints);
+                         VoronoiPoints,
+                         random_seed);
 
     // Loop on Voronoi cells
     for(unsigned int it = 0; it < numIterations; it++)
@@ -1215,16 +1219,14 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
 // ************************************************************************* //
 void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
                                          const unsigned int& numPoints,
-                                         Eigen::MatrixXd& VoronoiPoints)
+                                         Eigen::MatrixXd& VoronoiPoints,
+                                         const unsigned int random_seed)
 {
     const double x_min = domainVertices.row(0).minCoeff(), x_max = domainVertices.row(0).maxCoeff();
     const double y_min = domainVertices.row(1).minCoeff(), y_max = domainVertices.row(1).maxCoeff();
     const double z_min = domainVertices.row(2).minCoeff(), z_max = domainVertices.row(2).maxCoeff();
 
-
-    sleep(1);
-    time_t t = time(nullptr);
-    srand((unsigned int) t);
+    srand(random_seed);
 
     VoronoiPoints = Eigen::MatrixXd::Zero(3, numPoints);
     for(unsigned int i=0; i < numPoints; i++)
@@ -1237,13 +1239,15 @@ void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
 // ************************************************************************* //
 void VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
                                          const unsigned int& numPoints,
-                                         voro::container& con)
+                                         voro::container& con,
+                                         const unsigned int random_seed)
 {
     const double x_min = domainVertices.row(0).minCoeff(), x_max = domainVertices.row(0).maxCoeff();
     const double y_min = domainVertices.row(1).minCoeff(), y_max = domainVertices.row(1).maxCoeff();
     const double z_min = domainVertices.row(2).minCoeff(), z_max = domainVertices.row(2).maxCoeff();
 
-    srand((unsigned int) time(0));
+    srand(random_seed);
+
     for(unsigned int i=0; i < numPoints; i++)
     {
         double x = x_min + rnd() * ( x_max - x_min );
