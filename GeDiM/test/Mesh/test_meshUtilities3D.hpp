@@ -1324,7 +1324,7 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
-    Gedim::MeshMatrices new_mesh;
+    Gedim::MeshMatrices new_mesh = mesh;
     Gedim::MeshMatricesDAO new_meshDao(new_mesh);
     std::vector<std::vector<unsigned int>> cell2Ds_triangles(meshDao.Cell2DTotalNumber());
 
