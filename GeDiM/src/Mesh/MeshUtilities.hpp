@@ -223,6 +223,13 @@ namespace Gedim
           std::vector<unsigned int> FacesIndex;
       };
 
+      struct FindPointCell3DResult final
+      {
+          bool Found;
+          unsigned int Cell3D_index;
+          GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
+      };
+
     public:
       MeshUtilities() { };
       ~MeshUtilities() { };
@@ -724,17 +731,30 @@ namespace Gedim
                                                                                   const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
                                                                                   const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
 
-      unsigned int FindPointCell3D(const GeometryUtilities& geometryUtilities,
-                                   const Eigen::Vector3d& point,
-                                   const IMeshDAO& mesh,
-                                   const std::vector<std::vector<Eigen::MatrixXi>>& cell3DsFaces,
-                                   const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceVertices,
-                                   const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceRotatedVertices,
-                                   const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceNormals,
-                                   const std::vector<std::vector<bool>>& cell3DsFaceNormalDirections,
-                                   const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
-                                   const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
-                                   const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const;
+      void FindPointMeshPosition(const GeometryUtilities& geometryUtilities,
+                                 const Eigen::Vector3d& point,
+                                 const IMeshDAO& mesh,
+                                 const std::vector<std::vector<Eigen::MatrixXi> >& cell3DsFaces,
+                                 const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceVertices,
+                                 const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceRotatedVertices,
+                                 const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceNormals,
+                                 const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
+                                 const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
+                                 const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
+                                 const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const;
+
+      FindPointCell3DResult FindPointCell3D(const GeometryUtilities& geometryUtilities,
+                                            const Eigen::Vector3d& point,
+                                            const IMeshDAO& mesh,
+                                            const std::vector<std::vector<Eigen::MatrixXi>>& cell3DsFaces,
+                                            const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceVertices,
+                                            const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceRotatedVertices,
+                                            const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceNormals,
+                                            const std::vector<std::vector<bool>>& cell3DsFaceNormalDirections,
+                                            const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
+                                            const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
+                                            const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox,
+                                            const unsigned int starting_cell3D_index = 0) const;
 
       /// \brief Agglomerate Triangles with one vertex in common
       /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh

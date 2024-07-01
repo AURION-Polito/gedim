@@ -1661,20 +1661,38 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  unsigned int MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
-                                              const Eigen::Vector3d& point,
-                                              const IMeshDAO& mesh,
-                                              const std::vector<std::vector<MatrixXi> >& cell3DsFaces,
-                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceVertices,
-                                              const std::vector<std::vector<MatrixXd> >& cell3DsFaceRotatedVertices,
-                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceNormals,
-                                              const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
-                                              const std::vector<std::vector<Vector3d> >& cell3DsFaceTranslations,
-                                              const std::vector<std::vector<Matrix3d> >& cell3DsFaceRotationMatrices,
-                                              const std::vector<MatrixXd>& cell3DsBoundingBox) const
+  void MeshUtilities::FindPointMeshPosition(const GeometryUtilities& geometryUtilities,
+                                            const Eigen::Vector3d& point,
+                                            const IMeshDAO& mesh,
+                                            const std::vector<std::vector<Eigen::MatrixXi> >& cell3DsFaces,
+                                            const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceVertices,
+                                            const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceRotatedVertices,
+                                            const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceNormals,
+                                            const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
+                                            const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
+                                            const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
+                                            const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const
   {
-    for (unsigned int c3D_index = 0; c3D_index < mesh.Cell3DTotalNumber(); ++c3D_index)
+
+  }
+  // ***************************************************************************
+  MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
+                                                                      const Eigen::Vector3d& point,
+                                                                      const IMeshDAO& mesh,
+                                                                      const std::vector<std::vector<Eigen::MatrixXi> >& cell3DsFaces,
+                                                                      const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceVertices,
+                                                                      const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceRotatedVertices,
+                                                                      const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceNormals,
+                                                                      const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
+                                                                      const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
+                                                                      const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
+                                                                      const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox,
+                                                                      const unsigned int starting_cell3D_index) const
+  {
+    for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); ++c)
     {
+      unsigned int c3D_index = (starting_cell3D_index + c) % mesh.Cell3DTotalNumber();
+
       if (!mesh.Cell3DIsActive(c3D_index))
         continue;
 
@@ -1699,13 +1717,13 @@ namespace Gedim
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
-          return c3D_index;
+          return  { true, c3D_index, pointPosition };
         default:
           throw std::runtime_error("Unknown point polyhedron position");
       }
     }
 
-    return mesh.Cell3DTotalNumber();
+    return { false, mesh.Cell3DTotalNumber(), {} };
   }
   // ***************************************************************************
   void MeshUtilities::ComputeCell1DCell3DNeighbours(IMeshDAO& mesh) const
