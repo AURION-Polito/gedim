@@ -1300,11 +1300,11 @@ namespace GedimUnitTesting
     const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
     const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-    const std::vector<double> lengthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(10 + 1,
+    const std::vector<double> lengthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(2 + 1,
                                                                                                         0.0, 1.0, 1);
-    const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(8 + 1,
+    const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(1 + 1,
                                                                                                         0.0, 1.0, 1);
-    const std::vector<double> widthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(6 + 1,
+    const std::vector<double> widthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(2 + 1,
                                                                                                        0.0, 1.0, 1);
 
 
