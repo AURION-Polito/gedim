@@ -1283,6 +1283,249 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "AgglomeratedMesh");
   }
+
+  TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                             1.0);
+    const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
+    const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
+    const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
+
+    const std::vector<double> lengthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(2 + 1,
+                                                                                                        0.0, 1.0, 1);
+    const std::vector<double> heightMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(1 + 1,
+                                                                                                        0.0, 1.0, 1);
+    const std::vector<double> widthMeshCurvilinearCoordinates = geometryUtilities.EquispaceCoordinates(2 + 1,
+                                                                                                       0.0, 1.0, 1);
+
+
+    const Eigen::Vector3d origin = cube.Vertices.col(0);
+    meshUtilities.CreateParallelepipedMesh(origin,
+                                           parallelepipedsLengthTangent,
+                                           parallelepipedsHeightTangent,
+                                           parallelepipedsWidthTangent,
+                                           lengthMeshCurvilinearCoordinates,
+                                           heightMeshCurvilinearCoordinates,
+                                           widthMeshCurvilinearCoordinates,
+                                           meshDao);
+
+    std::string exportFolder = "./Export/TestMakeMeshTriangularFaces/";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    Gedim::MeshMatrices new_mesh = mesh;
+    Gedim::MeshMatricesDAO new_meshDao(new_mesh);
+    std::vector<std::vector<unsigned int>> cell2Ds_triangles(meshDao.Cell2DTotalNumber());
+
+    for (unsigned int f = 0; f < meshDao.Cell2DTotalNumber(); f++)
+    {
+      const Eigen::MatrixXd face_vertices =
+          meshDao.Cell2DVerticesCoordinates(f);
+
+      const auto face_translation =
+          geometryUtilities.PolygonTranslation(face_vertices);
+      const auto face_normal =
+          geometryUtilities.PolygonNormal(face_vertices);
+      const auto face_rotation =
+          geometryUtilities.PolygonRotationMatrix(face_vertices,
+                                                  face_normal,
+                                                  face_translation);
+      const auto face_vertices_2D =
+          geometryUtilities.RotatePointsFrom3DTo2D(face_vertices,
+                                                   face_rotation.transpose(),
+                                                   face_translation);
+
+      cell2Ds_triangles[f] =
+          geometryUtilities.PolygonTriangulationByFirstVertex(face_vertices_2D);
+
+    }
+
+    meshUtilities.MakeMeshTriangularFaces(cell2Ds_triangles,
+                                          new_meshDao);
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extract_data;
+    meshUtilities.ExtractActiveMesh(new_meshDao,
+                                    extract_data);
+
+    meshUtilities.ExportMeshToVTU(new_meshDao,
+                                  exportFolder,
+                                  "TriangularFaceMesh");
+
+    ASSERT_EQ(meshDao.Cell0DTotalNumber(),
+              new_meshDao.Cell0DTotalNumber());
+    ASSERT_EQ(meshDao.Cell1DTotalNumber() +
+              meshDao.Cell2DTotalNumber(),
+              new_meshDao.Cell1DTotalNumber());
+    ASSERT_EQ(2 * meshDao.Cell2DTotalNumber(),
+              new_meshDao.Cell2DTotalNumber());
+    ASSERT_EQ(meshDao.Cell3DTotalNumber(),
+              new_meshDao.Cell3DTotalNumber());
+
+  }
+
+  TEST(TestMeshUtilities, TestFindPointCell3D)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestFindPointCell3D";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    const Gedim::MeshUtilities::MeshGeometricData3D mesh_geometry_data =
+        meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                              meshDao);
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.0, 0.0, 1.1),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
+
+      ASSERT_FALSE(result.Found);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Outside,
+                result_position.Type);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.1, 0.1, 0.1),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox,
+                                                        48);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(48, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside,
+                result.Cell3D_Position.Type);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell3D,
+                result_position.Type);
+      ASSERT_EQ(48,
+                result_position.Cell_index);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.2, 0.2),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(1, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace,
+                result.Cell3D_Position.Type);
+      ASSERT_EQ(2,
+                result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell2D,
+                result_position.Type);
+      ASSERT_EQ(5,
+                result_position.Cell_index);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.25, 0.25),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(1, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge,
+                result.Cell3D_Position.Type);
+      ASSERT_EQ(3,
+                result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell1D,
+                result_position.Type);
+      ASSERT_EQ(6,
+                result_position.Cell_index);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(1, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex,
+                result.Cell3D_Position.Type);
+      ASSERT_EQ(2,
+                result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell0D,
+                result_position.Type);
+      ASSERT_EQ(44,
+                result_position.Cell_index);
+    }
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H

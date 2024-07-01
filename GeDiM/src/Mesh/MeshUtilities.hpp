@@ -130,6 +130,7 @@ namespace Gedim
           std::vector<Eigen::MatrixXd> Cell3DsVertices;
           std::vector<Eigen::MatrixXi> Cell3DsEdges;
           std::vector<std::vector<Eigen::MatrixXi>> Cell3DsFaces;
+          std::vector<Eigen::MatrixXd> Cell3DsBoundingBox;
           std::vector<double> Cell3DsVolumes;
           std::vector<double> Cell3DsDiameters;
           std::vector<Eigen::Vector3d> Cell3DsCentroids;
@@ -221,6 +222,29 @@ namespace Gedim
           std::vector<unsigned int> VerticesIndex;
           std::vector<unsigned int> EdgesIndex;
           std::vector<unsigned int> FacesIndex;
+      };
+
+      struct FindPointMeshPositionResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            Outside = 1,
+            Cell0D = 2,
+            Cell1D = 2,
+            Cell2D = 3,
+            Cell3D = 4
+          };
+
+          Types Type;
+          unsigned int Cell_index;
+      };
+
+      struct FindPointCell3DResult final
+      {
+          bool Found;
+          unsigned int Cell3D_index;
+          GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
       };
 
     public:
@@ -511,7 +535,8 @@ namespace Gedim
                                const Eigen::MatrixXd& polygonVertices,
                                const unsigned int numPoints,
                                const unsigned int numIterations,
-                               IMeshDAO& mesh) const;
+                               IMeshDAO& mesh,
+                               const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
 
       /// \brief Create tetrahedral mesh on 3D polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
@@ -534,7 +559,11 @@ namespace Gedim
                                 const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                 const unsigned int numPoints,
                                 const unsigned int numIterations,
-                                IMeshDAO& mesh) const;
+                                IMeshDAO& mesh,
+                                const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
+
+      void MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>>& faces_triangulation,
+                                   IMeshDAO& mesh) const;
 
       /// \brief Import 3D mesh from OVM file
       void ImportOpenVolumeMesh(const std::string& ovmFilePath,
@@ -719,17 +748,21 @@ namespace Gedim
                                                                                   const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
                                                                                   const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
 
-      unsigned int FindPointCell3D(const GeometryUtilities& geometryUtilities,
-                                   const Eigen::Vector3d& point,
-                                   const IMeshDAO& mesh,
-                                   const std::vector<std::vector<Eigen::MatrixXi>>& cell3DsFaces,
-                                   const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceVertices,
-                                   const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceRotatedVertices,
-                                   const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceNormals,
-                                   const std::vector<std::vector<bool>>& cell3DsFaceNormalDirections,
-                                   const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
-                                   const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
-                                   const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const;
+      FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult& find_cell3D_result,
+                                                        const IMeshDAO& mesh) const;
+
+      FindPointCell3DResult FindPointCell3D(const GeometryUtilities& geometryUtilities,
+                                            const Eigen::Vector3d& point,
+                                            const IMeshDAO& mesh,
+                                            const std::vector<std::vector<Eigen::MatrixXi>>& cell3DsFaces,
+                                            const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceVertices,
+                                            const std::vector<std::vector<Eigen::MatrixXd>>& cell3DsFaceRotatedVertices,
+                                            const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceNormals,
+                                            const std::vector<std::vector<bool>>& cell3DsFaceNormalDirections,
+                                            const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
+                                            const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
+                                            const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox,
+                                            const unsigned int starting_cell3D_index = 0) const;
 
       /// \brief Agglomerate Triangles with one vertex in common
       /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh

@@ -2206,7 +2206,8 @@ namespace Gedim
                                           const Eigen::MatrixXd& polygonVertices,
                                           const unsigned int numPoints,
                                           const unsigned int numIterations,
-                                          IMeshDAO& mesh) const
+                                          IMeshDAO& mesh,
+                                          const unsigned int random_seed) const
   {
     VoroInterface voroInterface(geometryUtilities);
 
@@ -2214,7 +2215,8 @@ namespace Gedim
     voroInterface.GenerateVoronoiTassellations2D(polygonVertices,
                                                  numPoints,
                                                  numIterations,
-                                                 mesh);
+                                                 mesh,
+                                                 random_seed);
   }
   // ***************************************************************************
   void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd& polyhedronVertices,
@@ -2240,7 +2242,8 @@ namespace Gedim
                                            const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                            const unsigned int numPoints,
                                            const unsigned int numIterations,
-                                           IMeshDAO& mesh) const
+                                           IMeshDAO& mesh,
+                                           const unsigned int random_seed) const
   {
     VoroInterface voroInterface(geometryUtilities);
 
@@ -2250,7 +2253,8 @@ namespace Gedim
                                                  polyhedronFaces,
                                                  numPoints,
                                                  numIterations,
-                                                 mesh);
+                                                 mesh,
+                                                 random_seed);
   }
   // ***************************************************************************
 }

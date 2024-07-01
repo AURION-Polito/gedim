@@ -347,7 +347,8 @@ namespace LAPACK_utilities
     QR_Factorization factorization =
     {
       Eigen::MatrixXd::Zero(m, n),
-      Eigen::MatrixXd::Zero(n, n)
+      Eigen::MatrixXd::Zero(n, n),
+      0
     };
 
     Eigen::MatrixXd& Q = factorization.Q;
@@ -368,7 +369,10 @@ namespace LAPACK_utilities
       if (std::abs(R(i, i)) <= tolerance)
         Q.col(i) = Eigen::VectorXd::Zero(m);
       else
+      {
         Q.col(i) /= R(i,i);
+        factorization.Space_Dimension++;
+      }
     }
 
     return factorization;
