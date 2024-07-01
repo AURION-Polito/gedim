@@ -1394,15 +1394,6 @@ namespace GedimUnitTesting
         meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                               meshDao);
 
-    std::vector<Eigen::MatrixXd> cell3DsBoundingBox(meshDao.Cell3DTotalNumber());
-    for (unsigned int c3_index = 0; c3_index < meshDao.Cell3DTotalNumber(); ++c3_index)
-    {
-      if (!meshDao.Cell3DIsActive(c3_index))
-        continue;
-
-      cell3DsBoundingBox[c3_index] = geometryUtilities.PointsBoundingBox(mesh_geometry_data.Cell3DsVertices.at(c3_index));
-    }
-
     {
       const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
                                                         Eigen::Vector3d(0.0, 0.0, 1.1),
@@ -1414,7 +1405,7 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_FALSE(result.Found);
       ASSERT_EQ(meshDao.Cell3DTotalNumber(),
@@ -1432,7 +1423,8 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox,
+                                                        48);
 
       ASSERT_TRUE(result.Found);
       ASSERT_EQ(48, result.Cell3D_index);
@@ -1451,7 +1443,7 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_TRUE(result.Found);
       ASSERT_EQ(48, result.Cell3D_index);
@@ -1470,7 +1462,7 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_TRUE(result.Found);
       ASSERT_EQ(1, result.Cell3D_index);
@@ -1491,7 +1483,7 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_TRUE(result.Found);
       ASSERT_EQ(1, result.Cell3D_index);
@@ -1512,7 +1504,7 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsFacesNormalDirections,
                                                         mesh_geometry_data.Cell3DsFacesTranslations,
                                                         mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        cell3DsBoundingBox);
+                                                        mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_TRUE(result.Found);
       ASSERT_EQ(1, result.Cell3D_index);

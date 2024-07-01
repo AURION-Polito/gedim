@@ -1005,6 +1005,7 @@ namespace Gedim
     result.Cell3DsVertices.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsEdges.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFaces.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsBoundingBox.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsVolumes.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsDiameters.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsCentroids.resize(convexMesh.Cell3DTotalNumber());
@@ -1045,6 +1046,8 @@ namespace Gedim
       result.Cell3DsVertices[c] = polyhedron.Vertices;
       result.Cell3DsEdges[c] = polyhedron.Edges;
       result.Cell3DsFaces[c] = polyhedron.Faces;
+
+      result.Cell3DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell3DsVertices[c]);
 
       result.Cell3DsEdgesCentroid[c] = geometryUtilities.PolyhedronEdgesCentroid(result.Cell3DsVertices[c],
                                                                                  result.Cell3DsEdges[c]);
@@ -1217,6 +1220,7 @@ namespace Gedim
     result.Cell3DsVertices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsEdges.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFaces.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsBoundingBox.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsVolumes.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsDiameters.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsCentroids.resize(mesh.Cell3DTotalNumber());
@@ -1260,6 +1264,8 @@ namespace Gedim
       result.Cell3DsVertices[c] = polyhedron.Vertices;
       result.Cell3DsEdges[c] = polyhedron.Edges;
       result.Cell3DsFaces[c] = polyhedron.Faces;
+
+      result.Cell3DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell3DsVertices[c]);
 
       result.Cell3DsEdgesCentroid[c] = geometryUtilities.PolyhedronEdgesCentroid(result.Cell3DsVertices[c],
                                                                                  result.Cell3DsEdges[c]);

@@ -130,6 +130,7 @@ namespace Gedim
           std::vector<Eigen::MatrixXd> Cell3DsVertices;
           std::vector<Eigen::MatrixXi> Cell3DsEdges;
           std::vector<std::vector<Eigen::MatrixXi>> Cell3DsFaces;
+          std::vector<Eigen::MatrixXd> Cell3DsBoundingBox;
           std::vector<double> Cell3DsVolumes;
           std::vector<double> Cell3DsDiameters;
           std::vector<Eigen::Vector3d> Cell3DsCentroids;
