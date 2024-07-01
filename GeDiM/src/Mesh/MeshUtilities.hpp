@@ -224,6 +224,22 @@ namespace Gedim
           std::vector<unsigned int> FacesIndex;
       };
 
+      struct FindPointMeshPositionResult final
+      {
+          enum struct Types
+          {
+            Unknown = 0,
+            Outside = 1,
+            Cell0D = 2,
+            Cell1D = 2,
+            Cell2D = 3,
+            Cell3D = 4
+          };
+
+          Types Type;
+          unsigned int Cell_index;
+      };
+
       struct FindPointCell3DResult final
       {
           bool Found;
@@ -732,17 +748,8 @@ namespace Gedim
                                                                                   const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
                                                                                   const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
 
-      void FindPointMeshPosition(const GeometryUtilities& geometryUtilities,
-                                 const Eigen::Vector3d& point,
-                                 const IMeshDAO& mesh,
-                                 const std::vector<std::vector<Eigen::MatrixXi> >& cell3DsFaces,
-                                 const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceVertices,
-                                 const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceRotatedVertices,
-                                 const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceNormals,
-                                 const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
-                                 const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
-                                 const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
-                                 const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const;
+      FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult& find_cell3D_result,
+                                                        const IMeshDAO& mesh) const;
 
       FindPointCell3DResult FindPointCell3D(const GeometryUtilities& geometryUtilities,
                                             const Eigen::Vector3d& point,

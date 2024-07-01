@@ -1408,8 +1408,11 @@ namespace GedimUnitTesting
                                                         mesh_geometry_data.Cell3DsBoundingBox);
 
       ASSERT_FALSE(result.Found);
-      ASSERT_EQ(meshDao.Cell3DTotalNumber(),
-                result.Cell3D_index);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Outside,
+                result_position.Type);
     }
 
     {
@@ -1430,25 +1433,13 @@ namespace GedimUnitTesting
       ASSERT_EQ(48, result.Cell3D_index);
       ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside,
                 result.Cell3D_Position.Type);
-    }
 
-    {
-      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
-                                                        Eigen::Vector3d(0.1, 0.1, 0.1),
-                                                        meshDao,
-                                                        mesh_geometry_data.Cell3DsFaces,
-                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
-                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
-                                                        mesh_geometry_data.Cell3DsFacesNormals,
-                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
-                                                        mesh_geometry_data.Cell3DsFacesTranslations,
-                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
-                                                        mesh_geometry_data.Cell3DsBoundingBox);
-
-      ASSERT_TRUE(result.Found);
-      ASSERT_EQ(48, result.Cell3D_index);
-      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside,
-                result.Cell3D_Position.Type);
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell3D,
+                result_position.Type);
+      ASSERT_EQ(48,
+                result_position.Cell_index);
     }
 
     {
@@ -1470,6 +1461,13 @@ namespace GedimUnitTesting
                 result.Cell3D_Position.Type);
       ASSERT_EQ(2,
                 result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell2D,
+                result_position.Type);
+      ASSERT_EQ(5,
+                result_position.Cell_index);
     }
 
     {
@@ -1491,6 +1489,13 @@ namespace GedimUnitTesting
                 result.Cell3D_Position.Type);
       ASSERT_EQ(3,
                 result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell1D,
+                result_position.Type);
+      ASSERT_EQ(6,
+                result_position.Cell_index);
     }
 
     {
@@ -1512,6 +1517,13 @@ namespace GedimUnitTesting
                 result.Cell3D_Position.Type);
       ASSERT_EQ(2,
                 result.Cell3D_Position.BorderIndex);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::Types::Cell0D,
+                result_position.Type);
+      ASSERT_EQ(44,
+                result_position.Cell_index);
     }
   }
 }

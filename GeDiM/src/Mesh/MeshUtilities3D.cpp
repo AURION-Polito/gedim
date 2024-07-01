@@ -1667,19 +1667,50 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  void MeshUtilities::FindPointMeshPosition(const GeometryUtilities& geometryUtilities,
-                                            const Eigen::Vector3d& point,
-                                            const IMeshDAO& mesh,
-                                            const std::vector<std::vector<Eigen::MatrixXi> >& cell3DsFaces,
-                                            const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceVertices,
-                                            const std::vector<std::vector<Eigen::MatrixXd> >& cell3DsFaceRotatedVertices,
-                                            const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceNormals,
-                                            const std::vector<std::vector<bool> >& cell3DsFaceNormalDirections,
-                                            const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
-                                            const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
-                                            const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox) const
+  MeshUtilities::FindPointMeshPositionResult MeshUtilities::FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult& find_point_cell3D_result,
+                                                                                  const IMeshDAO& mesh) const
   {
+    if (!find_point_cell3D_result.Found)
+    {
+      return
+      {
+        FindPointMeshPositionResult::Types::Outside,
+            mesh.Cell3DTotalNumber()
+      };
+    }
 
+    switch (find_point_cell3D_result.Cell3D_Position.Type)
+    {
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+        return
+        {
+          FindPointMeshPositionResult::Types::Cell3D,
+              find_point_cell3D_result.Cell3D_index
+        };
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+        return
+        {
+          FindPointMeshPositionResult::Types::Cell2D,
+              mesh.Cell3DFace(find_point_cell3D_result.Cell3D_index,
+                              find_point_cell3D_result.Cell3D_Position.BorderIndex)
+        };
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+        return
+        {
+          FindPointMeshPositionResult::Types::Cell1D,
+              mesh.Cell3DEdge(find_point_cell3D_result.Cell3D_index,
+                              find_point_cell3D_result.Cell3D_Position.BorderIndex)
+        };
+      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+        return
+        {
+          FindPointMeshPositionResult::Types::Cell0D,
+              mesh.Cell3DVertex(find_point_cell3D_result.Cell3D_index,
+                                find_point_cell3D_result.Cell3D_Position.BorderIndex)
+        };
+      default:
+        throw std::runtime_error("Unknonw PointPolyhedronPositionResult");
+    }
   }
   // ***************************************************************************
   MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
