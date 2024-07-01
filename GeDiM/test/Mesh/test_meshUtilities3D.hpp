@@ -1405,6 +1405,24 @@ namespace GedimUnitTesting
 
     {
       const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.0, 0.0, 1.1),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        cell3DsBoundingBox);
+
+      ASSERT_FALSE(result.Found);
+      ASSERT_EQ(meshDao.Cell3DTotalNumber(),
+                result.Cell3D_index);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
                                                         Eigen::Vector3d(0.1, 0.1, 0.1),
                                                         meshDao,
                                                         mesh_geometry_data.Cell3DsFaces,
@@ -1458,7 +1476,48 @@ namespace GedimUnitTesting
       ASSERT_EQ(1, result.Cell3D_index);
       ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace,
                 result.Cell3D_Position.Type);
-      std::cout<< meshDao.Cell3DFace(result.Cell3D_index, result.Cell3D_Position.BorderIndex)<< std::endl;
+      ASSERT_EQ(2,
+                result.Cell3D_Position.BorderIndex);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.25, 0.25),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        cell3DsBoundingBox);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(1, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge,
+                result.Cell3D_Position.Type);
+      ASSERT_EQ(3,
+                result.Cell3D_Position.BorderIndex);
+    }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.5, 0.0),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        cell3DsBoundingBox);
+
+      ASSERT_TRUE(result.Found);
+      ASSERT_EQ(1, result.Cell3D_index);
+      ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex,
+                result.Cell3D_Position.Type);
       ASSERT_EQ(2,
                 result.Cell3D_Position.BorderIndex);
     }
