@@ -31,7 +31,7 @@ public:
         std::vector<IntersectionMeshSegment> Segments;
     };
 
-private:
+
     struct IntersectionPoint final
     {
         std::set<unsigned int> Cell3DIds;
@@ -43,7 +43,7 @@ private:
         bool SegmentFullInsideCell3D;
         GeometryUtilities::PointPolyhedronPositionResult Position;
     };
-
+private:
     const Gedim::GeometryUtilities& geometryUtilities;
     const Gedim::MeshUtilities& meshUtilities;
 
@@ -97,10 +97,7 @@ private:
     std::vector<IntersectionMesh::IntersectionMeshSegment> CreateIntersectionSegments(const Gedim::IMeshDAO& mesh3D,
                                                                                       const std::vector<IntersectionMesh::IntersectionMeshPoint>& mesh1D_points) const;
 
-    FindSegmentStartingCell3DResult FindSegmentStartingCell3D(const Eigen::Vector3d& segmentOrigin,
-                                                              const Eigen::Vector3d& segmentEnd,
-                                                              const Gedim::IMeshDAO& mesh3D,
-                                                              const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
+
     std::vector<IntersectionMesh::IntersectionMeshPoint> FindSegmentIntersectionPoints(const Eigen::Vector3d& segmentOrigin,
                                                                                        const Eigen::Vector3d& segmentEnd,
                                                                                        const Eigen::Vector3d& segmentTangent,
@@ -131,6 +128,11 @@ public:
                                             const Eigen::Vector3d& segmentTangent,
                                             const Gedim::IMeshDAO& mesh3D,
                                             const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
+
+    FindSegmentStartingCell3DResult FindSegmentStartingCell3D(const Eigen::Vector3d& segmentOrigin,
+                                                              const Eigen::Vector3d& segmentEnd,
+                                                              const Gedim::IMeshDAO& mesh3D,
+                                                              const Gedim::MeshUtilities::MeshGeometricData3D& mesh3D_geometricData) const;
 };
 }
 
