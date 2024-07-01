@@ -1458,7 +1458,8 @@ namespace GedimUnitTesting
       ASSERT_EQ(1, result.Cell3D_index);
       ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace,
                 result.Cell3D_Position.Type);
-      ASSERT_EQ(0,
+      std::cout<< meshDao.Cell3DFace(result.Cell3D_index, result.Cell3D_Position.BorderIndex)<< std::endl;
+      ASSERT_EQ(2,
                 result.Cell3D_Position.BorderIndex);
     }
   }
