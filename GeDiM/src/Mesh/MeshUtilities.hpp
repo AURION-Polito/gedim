@@ -231,9 +231,9 @@ namespace Gedim
             Unknown = 0,
             Outside = 1,
             Cell0D = 2,
-            Cell1D = 2,
-            Cell2D = 3,
-            Cell3D = 4
+            Cell1D = 3,
+            Cell2D = 4,
+            Cell3D = 5
           };
 
           Types Type;
