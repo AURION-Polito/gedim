@@ -226,25 +226,34 @@ namespace Gedim
 
       struct FindPointMeshPositionResult final
       {
-          enum struct Types
+          struct PointMeshPosition final
           {
-            Unknown = 0,
-            Outside = 1,
-            Cell0D = 2,
-            Cell1D = 3,
-            Cell2D = 4,
-            Cell3D = 5
+              enum struct Types
+              {
+                Unknown = 0,
+                Outside = 1,
+                Cell0D = 2,
+                Cell1D = 3,
+                Cell2D = 4,
+                Cell3D = 5
+              };
+
+              Types Type;
+              unsigned int Cell_index;
           };
 
-          Types Type;
-          unsigned int Cell_index;
+          std::vector<PointMeshPosition> MeshPositions;
       };
 
       struct FindPointCell3DResult final
       {
-          bool Found;
-          unsigned int Cell3D_index;
-          GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
+          struct PointCell3DFound final
+          {
+              unsigned int Cell3D_index;
+              GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
+          };
+
+          std::vector<PointCell3DFound> Cell3Ds_found;
       };
 
     public:
@@ -762,6 +771,7 @@ namespace Gedim
                                             const std::vector<std::vector<Eigen::Vector3d>>& cell3DsFaceTranslations,
                                             const std::vector<std::vector<Eigen::Matrix3d>>& cell3DsFaceRotationMatrices,
                                             const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox,
+                                            const bool find_only_first_cell3D = true,
                                             const unsigned int starting_cell3D_index = 0) const;
 
       /// \brief Agglomerate Triangles with one vertex in common
