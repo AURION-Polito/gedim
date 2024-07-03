@@ -1529,6 +1529,41 @@ namespace GedimUnitTesting
       ASSERT_EQ(44,
                 result_position.MeshPositions[0].Cell_index);
     }
+
+    {
+      const auto result = meshUtilities.FindPointCell3D(geometryUtilities,
+                                                        Eigen::Vector3d(0.5, 0.25, 0.25),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell3DsFaces,
+                                                        mesh_geometry_data.Cell3DsFaces3DVertices,
+                                                        mesh_geometry_data.Cell3DsFaces2DVertices,
+                                                        mesh_geometry_data.Cell3DsFacesNormals,
+                                                        mesh_geometry_data.Cell3DsFacesNormalDirections,
+                                                        mesh_geometry_data.Cell3DsFacesTranslations,
+                                                        mesh_geometry_data.Cell3DsFacesRotationMatrices,
+                                                        mesh_geometry_data.Cell3DsBoundingBox,
+                                                        false);
+
+      ASSERT_TRUE(result.Cell3Ds_found.size() == 6);
+      ASSERT_EQ(1, result.Cell3Ds_found[0].Cell3D_index);
+      ASSERT_EQ(17, result.Cell3Ds_found[1].Cell3D_index);
+      ASSERT_EQ(27, result.Cell3Ds_found[2].Cell3D_index);
+      ASSERT_EQ(50, result.Cell3Ds_found[3].Cell3D_index);
+      ASSERT_EQ(52, result.Cell3Ds_found[4].Cell3D_index);
+      ASSERT_EQ(62, result.Cell3Ds_found[5].Cell3D_index);
+      for (unsigned int i = 0; i < 6; i++)
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge,
+                  result.Cell3Ds_found[i].Cell3D_Position.Type);
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result,
+                                                                       meshDao);
+      ASSERT_TRUE(result_position.MeshPositions.size() == 6);
+      for (unsigned int i = 0; i < 6; i++)
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
+                  result_position.MeshPositions[i].Type);
+      ASSERT_EQ(6,
+                result_position.MeshPositions[0].Cell_index);
+    }
   }
 }
 
