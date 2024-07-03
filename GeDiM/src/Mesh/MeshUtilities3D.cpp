@@ -1670,47 +1670,55 @@ namespace Gedim
   MeshUtilities::FindPointMeshPositionResult MeshUtilities::FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult& find_point_cell3D_result,
                                                                                   const IMeshDAO& mesh) const
   {
-    if (!find_point_cell3D_result.Found)
+    if (find_point_cell3D_result.Cell3Ds_found.empty())
+      return {};
+
+    FindPointMeshPositionResult result;
+    result.MeshPositions.resize(find_point_cell3D_result.Cell3Ds_found.size());
+
+    for (unsigned int p = 0; p < find_point_cell3D_result.Cell3Ds_found.size(); p++)
     {
-      return
+      const auto& cell3D_found = find_point_cell3D_result.Cell3Ds_found.at(p);
+
+      switch (cell3D_found.Cell3D_Position.Type)
       {
-        FindPointMeshPositionResult::Types::Outside,
-            mesh.Cell3DTotalNumber()
-      };
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+          result.MeshPositions[p] =
+          {
+            FindPointMeshPositionResult::PointMeshPosition::Types::Cell3D,
+            cell3D_found.Cell3D_index
+          };
+          break;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+          result.MeshPositions[p] =
+          {
+            FindPointMeshPositionResult::PointMeshPosition::Types::Cell2D,
+            mesh.Cell3DFace(cell3D_found.Cell3D_index,
+            cell3D_found.Cell3D_Position.BorderIndex)
+          };
+          break;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+          result.MeshPositions[p] =
+          {
+            FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
+            mesh.Cell3DEdge(cell3D_found.Cell3D_index,
+            cell3D_found.Cell3D_Position.BorderIndex)
+          };
+          break;
+        case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+          result.MeshPositions[p] =
+          {
+            FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+            mesh.Cell3DVertex(cell3D_found.Cell3D_index,
+            cell3D_found.Cell3D_Position.BorderIndex)
+          };
+          break;
+        default:
+          throw std::runtime_error("Unknown PointPolyhedronPositionResult");
+      }
     }
 
-    switch (find_point_cell3D_result.Cell3D_Position.Type)
-    {
-      case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
-        return
-        {
-          FindPointMeshPositionResult::Types::Cell3D,
-              find_point_cell3D_result.Cell3D_index
-        };
-      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
-        return
-        {
-          FindPointMeshPositionResult::Types::Cell2D,
-              mesh.Cell3DFace(find_point_cell3D_result.Cell3D_index,
-                              find_point_cell3D_result.Cell3D_Position.BorderIndex)
-        };
-      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
-        return
-        {
-          FindPointMeshPositionResult::Types::Cell1D,
-              mesh.Cell3DEdge(find_point_cell3D_result.Cell3D_index,
-                              find_point_cell3D_result.Cell3D_Position.BorderIndex)
-        };
-      case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
-        return
-        {
-          FindPointMeshPositionResult::Types::Cell0D,
-              mesh.Cell3DVertex(find_point_cell3D_result.Cell3D_index,
-                                find_point_cell3D_result.Cell3D_Position.BorderIndex)
-        };
-      default:
-        throw std::runtime_error("Unknonw PointPolyhedronPositionResult");
-    }
+    return result;
   }
   // ***************************************************************************
   MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(const GeometryUtilities& geometryUtilities,
@@ -1724,8 +1732,11 @@ namespace Gedim
                                                                       const std::vector<std::vector<Eigen::Vector3d> >& cell3DsFaceTranslations,
                                                                       const std::vector<std::vector<Eigen::Matrix3d> >& cell3DsFaceRotationMatrices,
                                                                       const std::vector<Eigen::MatrixXd>& cell3DsBoundingBox,
+                                                                      const bool find_only_first_cell3D,
                                                                       const unsigned int starting_cell3D_index) const
   {
+    std::list<FindPointCell3DResult::PointCell3DFound> cell3Ds_found;
+
     for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); ++c)
     {
       unsigned int c3D_index = (starting_cell3D_index + c) % mesh.Cell3DTotalNumber();
@@ -1754,13 +1765,19 @@ namespace Gedim
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
-          return  { true, c3D_index, pointPosition };
+          cell3Ds_found.push_back({ c3D_index, pointPosition });
+          break;
         default:
           throw std::runtime_error("Unknown point polyhedron position");
       }
+
+      if (find_only_first_cell3D &&
+          cell3Ds_found.size() > 0)
+        break;
     }
 
-    return { false, mesh.Cell3DTotalNumber(), {} };
+    return { std::vector<FindPointCell3DResult::PointCell3DFound>(cell3Ds_found.begin(),
+                                                                  cell3Ds_found.end()) };
   }
   // ***************************************************************************
   void MeshUtilities::ComputeCell1DCell3DNeighbours(IMeshDAO& mesh) const
