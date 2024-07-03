@@ -1688,6 +1688,7 @@ namespace Gedim
             FindPointMeshPositionResult::PointMeshPosition::Types::Cell3D,
             cell3D_found.Cell3D_index
           };
+          break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
           result.MeshPositions[p] =
           {
@@ -1695,6 +1696,7 @@ namespace Gedim
             mesh.Cell3DFace(cell3D_found.Cell3D_index,
             cell3D_found.Cell3D_Position.BorderIndex)
           };
+          break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
           result.MeshPositions[p] =
           {
@@ -1702,6 +1704,7 @@ namespace Gedim
             mesh.Cell3DEdge(cell3D_found.Cell3D_index,
             cell3D_found.Cell3D_Position.BorderIndex)
           };
+          break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
           result.MeshPositions[p] =
           {
@@ -1709,8 +1712,9 @@ namespace Gedim
             mesh.Cell3DVertex(cell3D_found.Cell3D_index,
             cell3D_found.Cell3D_Position.BorderIndex)
           };
+          break;
         default:
-          throw std::runtime_error("Unknonw PointPolyhedronPositionResult");
+          throw std::runtime_error("Unknown PointPolyhedronPositionResult");
       }
     }
 
