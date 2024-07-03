@@ -1559,10 +1559,12 @@ namespace GedimUnitTesting
                                                                        meshDao);
       ASSERT_TRUE(result_position.MeshPositions.size() == 6);
       for (unsigned int i = 0; i < 6; i++)
+      {
         ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
                   result_position.MeshPositions[i].Type);
-      ASSERT_EQ(6,
-                result_position.MeshPositions[0].Cell_index);
+        ASSERT_EQ(6,
+                  result_position.MeshPositions[i].Cell_index);
+      }
     }
   }
 }
