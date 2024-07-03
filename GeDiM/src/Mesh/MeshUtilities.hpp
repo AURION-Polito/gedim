@@ -66,10 +66,10 @@ namespace Gedim
 
       struct FilterMeshData final
       {
-          std::vector<unsigned int> Cell0Ds = {};
-          std::vector<unsigned int> Cell1Ds = {};
-          std::vector<unsigned int> Cell2Ds = {};
-          std::vector<unsigned int> Cell3Ds = {};
+          std::vector<unsigned int> Cell0Ds;
+          std::vector<unsigned int> Cell1Ds;
+          std::vector<unsigned int> Cell2Ds;
+          std::vector<unsigned int> Cell3Ds;
       };
 
       struct ExtractMeshData final
@@ -265,6 +265,8 @@ namespace Gedim
       /// \note the resulting mesh has no inactive elements
       void ExtractActiveMesh(IMeshDAO& mesh,
                              ExtractActiveMeshData& extractionData) const;
+
+      FilterMeshData FilterActiveMesh(const IMeshDAO& mesh) const;
 
       /// \brief Extract mesh1D cells from a mesh
       FilterMeshData FilterMesh1D(const std::vector<unsigned int>& cell1DsFilter,
