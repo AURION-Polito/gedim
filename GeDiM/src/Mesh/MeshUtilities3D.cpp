@@ -2157,7 +2157,7 @@ namespace Gedim
         if (removed_cell2Ds.find(c2D_index) != removed_cell2Ds.end())
           continue;
 
-        if (mesh.Cell3DFindVertex(c2D_index,
+        if (mesh.Cell2DFindVertex(c2D_index,
                                   cell0DIndex))
         {
           if (removed_cell2Ds.find(c2D_index) == removed_cell2Ds.end())
