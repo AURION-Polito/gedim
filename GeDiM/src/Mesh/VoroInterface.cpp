@@ -23,7 +23,8 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
                                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                    const unsigned int &numPoints,
                                                    const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
+                                                   Gedim::IMeshDAO& mesh,
+                                                   const unsigned int random_seed)
 {
     Gedim::Utilities::Unused(polyhedronVertices);
     Gedim::Utilities::Unused(polyhedronEdges);
@@ -31,18 +32,21 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
     Gedim::Utilities::Unused(numPoints);
     Gedim::Utilities::Unused(numIterations);
     Gedim::Utilities::Unused(mesh);
+    Gedim::Utilities::Unused(random_seed);
     throw runtime_error("Not active module VORO");
 }
 
 void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
                                                    const unsigned int& numPoints,
                                                    const unsigned int& numIterations,
-                                                   Gedim::IMeshDAO& mesh)
+                                                   Gedim::IMeshDAO& mesh,
+                                                   const unsigned int random_seed)
 {
     Gedim::Utilities::Unused(polygonVertices);
     Gedim::Utilities::Unused(numPoints);
     Gedim::Utilities::Unused(numIterations);
     Gedim::Utilities::Unused(mesh);
+    Gedim::Utilities::Unused(random_seed);
     throw runtime_error("Not active module VORO");
 }
 #else
