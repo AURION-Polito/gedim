@@ -180,6 +180,7 @@ namespace Gedim
     _mesh.ActiveCell0D.resize(_mesh.NumberCell0D, false);
     _mesh.NumberCell0DNeighbourCell1D.resize(_mesh.NumberCell0D + 1, 0);
     _mesh.NumberCell0DNeighbourCell2D.resize(_mesh.NumberCell0D + 1, 0);
+    _mesh.NumberCell0DNeighbourCell3D.resize(_mesh.NumberCell0D + 1, 0);
     for (unsigned int p = 0; p < Cell0DNumberDoubleProperties(); p++)
       _mesh.Cell0DDoublePropertySizes[p].resize(_mesh.NumberCell0D + 1, 0);
   }
@@ -198,6 +199,7 @@ namespace Gedim
       _mesh.ActiveCell0D.push_back(false);
       _mesh.NumberCell0DNeighbourCell1D.push_back(0);
       _mesh.NumberCell0DNeighbourCell2D.push_back(0);
+      _mesh.NumberCell0DNeighbourCell3D.push_back(0);
       for (unsigned int p = 0; p < Cell0DNumberDoubleProperties(); p++)
         _mesh.Cell0DDoublePropertySizes[p].push_back(0);
     }
@@ -207,6 +209,9 @@ namespace Gedim
 
     for (unsigned c = 0; c < numberCell0Ds; c++)
       _mesh.NumberCell0DNeighbourCell2D[oldNumberCell0Ds + c + 1] = _mesh.NumberCell0DNeighbourCell2D[oldNumberCell0Ds];
+
+    for (unsigned c = 0; c < numberCell0Ds; c++)
+      _mesh.NumberCell0DNeighbourCell3D[oldNumberCell0Ds + c + 1] = _mesh.NumberCell0DNeighbourCell3D[oldNumberCell0Ds];
 
 
     for (unsigned int p = 0; p < Cell0DNumberDoubleProperties(); p++)
@@ -247,6 +252,14 @@ namespace Gedim
                                             cell0DIndex,
                                             0);
     _mesh.NumberCell0DNeighbourCell2D.erase(std::next(_mesh.NumberCell0DNeighbourCell2D.begin(),
+                                                      cell0DIndex));
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell0DNeighbourCell3D,
+                                            _mesh.Cell0DNeighbourCell3Ds,
+                                            _mesh.NumberCell0D,
+                                            cell0DIndex,
+                                            0);
+    _mesh.NumberCell0DNeighbourCell3D.erase(std::next(_mesh.NumberCell0DNeighbourCell3D.begin(),
                                                       cell0DIndex));
 
 
@@ -1350,6 +1363,9 @@ namespace Gedim
     _mesh.ActiveCell3D.erase(std::next(_mesh.ActiveCell3D.begin(), cell3DIndex));
     _mesh.NumberCell3D--;
 
+    AlignContainerHigherElements(_mesh.Cell0DNeighbourCell3Ds,
+                                 cell3DIndex,
+                                 std::numeric_limits<unsigned int>::max());
     AlignContainerHigherElements(_mesh.Cell1DNeighbourCell3Ds,
                                  cell3DIndex,
                                  std::numeric_limits<unsigned int>::max());
@@ -1692,6 +1708,8 @@ namespace Gedim
     _mesh.Cell0DNeighbourCell1Ds.shrink_to_fit();
     _mesh.NumberCell0DNeighbourCell2D.shrink_to_fit();
     _mesh.Cell0DNeighbourCell2Ds.shrink_to_fit();
+    _mesh.NumberCell0DNeighbourCell3D.shrink_to_fit();
+    _mesh.Cell0DNeighbourCell3Ds.shrink_to_fit();
     _mesh.Cell0DDoublePropertyIds.shrink_to_fit();
     _mesh.Cell0DDoublePropertySizes.shrink_to_fit();
     for (unsigned int s = 0; s < _mesh.Cell0DDoublePropertySizes.size(); s++)
@@ -1767,6 +1785,8 @@ namespace Gedim
     converter<< scientific<< "Cell0DNeighbourCell1Ds = "<< _mesh.Cell0DNeighbourCell1Ds<< ";"<< endl;
     converter<< scientific<< "NumberCell0DNeighbourCell2D = "<< _mesh.NumberCell0DNeighbourCell2D<< ";"<< endl;
     converter<< scientific<< "Cell0DNeighbourCell2Ds = "<< _mesh.Cell0DNeighbourCell2Ds<< ";"<< endl;
+    converter<< scientific<< "NumberCell0DNeighbourCell3D = "<< _mesh.NumberCell0DNeighbourCell3D<< ";"<< endl;
+    converter<< scientific<< "Cell0DNeighbourCell3Ds = "<< _mesh.Cell0DNeighbourCell3Ds<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertyIds = "<< _mesh.Cell0DDoublePropertyIds<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertyIndices = "<< _mesh.Cell0DDoublePropertyIndices<< ";"<< endl;
     converter<< scientific<< "Cell0DDoublePropertySizes = "<< _mesh.Cell0DDoublePropertySizes<< ";"<< endl;
