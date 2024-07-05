@@ -2106,6 +2106,8 @@ namespace Gedim
     std::unordered_set<unsigned int> removed_cell1Ds;
     std::unordered_set<unsigned int> removed_cell2Ds;
 
+    throw std::runtime_error("to remove only some faces...to think");
+
     for (const unsigned int c3D_index : subCell3DsIndex)
     {
       for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(c3D_index); v++)
