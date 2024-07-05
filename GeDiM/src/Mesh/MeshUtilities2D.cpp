@@ -944,7 +944,7 @@ void MeshUtilities::ComputeCell0DCell3DNeighbours(IMeshDAO& mesh) const
       const unsigned int numCell3DVertices = mesh.Cell3DNumberVertices(c3D);
       for (unsigned int v = 0; v < numCell3DVertices; v++)
       {
-          const unsigned int cell0D = mesh.Cell2DVertex(c3D, v);
+          const unsigned int cell0D = mesh.Cell3DVertex(c3D, v);
           cell0DsNeighbours[cell0D].push_back(c3D);
       }
   }
