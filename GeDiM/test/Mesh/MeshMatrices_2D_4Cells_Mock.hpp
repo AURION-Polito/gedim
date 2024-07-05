@@ -27,6 +27,8 @@ namespace GedimUnitTesting
         Mesh.Cell0DNeighbourCell1Ds = { };
         Mesh.NumberCell0DNeighbourCell2D = { 0,0,0,0,0,0 };
         Mesh.Cell0DNeighbourCell2Ds = { };
+        Mesh.NumberCell0DNeighbourCell3D.resize(Mesh.NumberCell0D + 1, 0);
+        Mesh.Cell0DNeighbourCell3Ds = {};
         Mesh.NumberCell1D = 8;
         Mesh.Cell1DVertices = { 1,2,
                                 2,4,

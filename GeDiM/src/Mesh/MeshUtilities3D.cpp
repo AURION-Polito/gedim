@@ -2073,6 +2073,12 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
+  MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3DByVertex(const unsigned int cell0DIndex,
+                                                                                       const IMeshDAO& mesh) const
+  {
+
+  }
+  // ***************************************************************************
   unsigned int MeshUtilities::AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                                  const std::vector<unsigned int>& agglomerateCell3DVertices,
                                                  const std::vector<unsigned int>& agglomerateCell3DEdges,

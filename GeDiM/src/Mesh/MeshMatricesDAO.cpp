@@ -395,7 +395,8 @@ namespace Gedim
                            std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex, const unsigned int& numberNeighbourCell2Ds)
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
+                                                         const unsigned int& numberNeighbourCell2Ds)
   {
     Output::Assert(cell0DIndex < Cell0DTotalNumber());
 
@@ -404,6 +405,44 @@ namespace Gedim
                                             _mesh.NumberCell0D,
                                             cell0DIndex,
                                             numberNeighbourCell2Ds,
+                                            std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  std::vector<std::vector<unsigned int> > MeshMatricesDAO::Cell0DsNeighbourCell3Ds() const
+  {
+    const unsigned int numCells = Cell0DTotalNumber();
+    std::vector<std::vector<unsigned int>> neighbours(numCells);
+
+    for (unsigned int c = 0; c < numCells; c++)
+    {
+      const unsigned int numNeighs = Cell0DNumberNeighbourCell3D(c);
+      neighbours[c].resize(numNeighs);
+      for (unsigned int n = 0; n < numNeighs; n++)
+        neighbours[c][n] = Cell0DNeighbourCell3D(c, n);
+    }
+
+    return neighbours;
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell0DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds)
+  {
+    Output::Assert(numberNeighbourCell3Ds.size() == Cell0DTotalNumber());
+    InitializeNumberVector(_mesh.NumberCell0DNeighbourCell3D,
+                           _mesh.Cell0DNeighbourCell3Ds,
+                           numberNeighbourCell3Ds,
+                           std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
+                                                         const unsigned int& numberNeighbourCell3Ds)
+  {
+    Output::Assert(cell0DIndex < Cell0DTotalNumber());
+
+    ResizeNumberVectorWithNewNumberElements(_mesh.NumberCell0DNeighbourCell3D,
+                                            _mesh.Cell0DNeighbourCell3Ds,
+                                            _mesh.NumberCell0D,
+                                            cell0DIndex,
+                                            numberNeighbourCell3Ds,
                                             std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************

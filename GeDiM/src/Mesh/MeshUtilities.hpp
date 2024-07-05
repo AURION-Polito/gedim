@@ -476,6 +476,7 @@ namespace Gedim
 
       void ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const;
       void ComputeCell0DCell2DNeighbours(IMeshDAO &mesh) const;
+      void ComputeCell0DCell3DNeighbours(IMeshDAO &mesh) const;
 
       /// \brief Compute Cell1D Cell2DNeighbours with given mesh data
       /// \param mesh the resulting mesh
@@ -704,6 +705,8 @@ namespace Gedim
 
       AgglomerateCell3DInformation AgglomerateCell3DByFace(const unsigned int cell2DIndex,
                                                            const IMeshDAO& mesh) const;
+      AgglomerateCell3DInformation AgglomerateCell3DByVertex(const unsigned int cell0DIndex,
+                                                             const IMeshDAO& mesh) const;
 
       unsigned int AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell3DVertices,
