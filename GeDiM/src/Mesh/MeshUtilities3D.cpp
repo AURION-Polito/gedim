@@ -2238,6 +2238,28 @@ namespace Gedim
     mesh.Cell3DSetState(agglomeratedCell3DIndex,
                         true);
 
+    for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(agglomeratedCell3DIndex); v++)
+    {
+      const unsigned int cell0DIndex = mesh.Cell3DVertex(agglomeratedCell3DIndex, v);
+
+      for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell3D(cell0DIndex); n++)
+      {
+        if (!mesh.Cell0DHasNeighbourCell3D(cell0DIndex, n))
+          continue;
+
+        const unsigned int neighCell3DIndex = mesh.Cell0DNeighbourCell3D(cell0DIndex, n);
+
+        if (std::find(subCell3DsIndex.begin(),
+                      subCell3DsIndex.end(),
+                      neighCell3DIndex) != subCell3DsIndex.end())
+        {
+          mesh.Cell0DInsertNeighbourCell3D(cell0DIndex,
+                                           n,
+                                           agglomeratedCell3DIndex);
+        }
+      }
+    }
+
     for (unsigned int e = 0; e < mesh.Cell3DNumberEdges(agglomeratedCell3DIndex); e++)
     {
       const unsigned int cell1DIndex = mesh.Cell3DEdge(agglomeratedCell3DIndex, e);
