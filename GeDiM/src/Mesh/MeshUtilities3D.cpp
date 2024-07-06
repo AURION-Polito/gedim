@@ -2124,6 +2124,7 @@ namespace Gedim
 
         bool to_remove = true;
 
+        unsigned int num_neigh_cell3Ds = 0;
         for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(c2D_index); n++)
         {
           if (!mesh.Cell2DHasNeighbourCell3D(c2D_index, n))
@@ -2140,7 +2141,12 @@ namespace Gedim
             to_remove = false;
             break;
           }
+
+          num_neigh_cell3Ds++;
         }
+
+        if (num_neigh_cell3Ds < 2)
+          to_remove = false;
 
         if (to_remove)
         {

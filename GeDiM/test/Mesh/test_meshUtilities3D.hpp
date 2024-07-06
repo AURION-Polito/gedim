@@ -1318,8 +1318,20 @@ namespace GedimUnitTesting
       const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByVertex(18,
                                                                              meshDao);
 
-      ASSERT_EQ(std::vector<unsigned int>({ 0 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 21,20,9,3,13,0 }),
                 agglomerationInfo.SubCell3DsIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 6,14,13,2,18,10,9,8 }),
+                agglomerationInfo.AgglomerateCell3DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 5,40,41,42,16,3,55,18,57,15,2,58,0,56,17,35,8,1 }),
+                agglomerationInfo.AgglomerateCell3DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ 3,39,41,11,1,40,14,32,59,57,60,61 }),
+                agglomerationInfo.AgglomerateCell3DFaces);
+      ASSERT_EQ(std::vector<unsigned int>({ }),
+                agglomerationInfo.SubCell3DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+                agglomerationInfo.SubCell3DsRemovedEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ 31,2,12,13,0,58 }),
+                agglomerationInfo.SubCell3DsRemovedFaces);
 
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
                                                                                     agglomerationInfo.AgglomerateCell3DVertices,
