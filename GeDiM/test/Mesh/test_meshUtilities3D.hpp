@@ -1299,6 +1299,10 @@ namespace GedimUnitTesting
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     meshUtilities.ComputeCell0DCell3DNeighbours(meshDao);
+    meshUtilities.ComputeCell0DCell1DNeighbours(meshDao);
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     std::vector<std::vector<unsigned int>> meshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
     for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
     {
