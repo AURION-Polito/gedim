@@ -707,6 +707,8 @@ namespace Gedim
                                                            const IMeshDAO& mesh) const;
       AgglomerateCell3DInformation AgglomerateCell3DByVertex(const unsigned int cell0DIndex,
                                                              const IMeshDAO& mesh) const;
+      AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int>& cell3DsIndex,
+                                                      const IMeshDAO& mesh) const;
 
       unsigned int AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell3DVertices,
