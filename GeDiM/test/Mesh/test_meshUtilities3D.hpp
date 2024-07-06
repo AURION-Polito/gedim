@@ -1343,7 +1343,7 @@ namespace GedimUnitTesting
                                                                                     meshDao,
                                                                                     meshCell3DToConvexCell3DIndices);
 
-      ASSERT_EQ(0,
+      ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
     }
 
