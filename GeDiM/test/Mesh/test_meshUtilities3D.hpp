@@ -1234,7 +1234,7 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 1, 10 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 10, 1 }),
                 meshCell3DToConvexCell3DIndices.at(22));
     }
 
@@ -1265,7 +1265,7 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(23,
                 agglomeratedCell3DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 1, 10, 12 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 12, 10, 1 }),
                 meshCell3DToConvexCell3DIndices.at(23));
     }
 
