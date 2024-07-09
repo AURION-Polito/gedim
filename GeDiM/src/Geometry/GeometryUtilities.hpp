@@ -598,11 +598,11 @@ namespace Gedim
       {
           enum struct Types
           {
-              Unknown = 0,
-              Outside = 1,
-              BorderFace = 2,
-              BorderEdge = 3,
-              Inside = 4
+            Unknown = 0,
+            Outside = 1,
+            BorderFace = 2,
+            BorderEdge = 3,
+            Inside = 4
           };
 
           unsigned int BorderIndex = 0; ///< index of edge/face of border
@@ -1098,6 +1098,9 @@ namespace Gedim
         return segmentOrigin.y() -
             segmentOrigin.x() * (segmentEnd.y() - segmentOrigin.y()) / (segmentEnd.x() - segmentOrigin.x());
       }
+
+      Eigen::MatrixXi MakeConcatenation(const Eigen::MatrixXi& segments,
+                                        const unsigned int starting_vertex) const;
 
       /// \brief Check if two spheres do not intersect
       /// \param firstSphereCenter the first sphere center

@@ -313,7 +313,7 @@ namespace Gedim
     return coordinates;
   }
   // ***************************************************************************
-  MatrixXd MeshMatricesDAO::Cell0DsCoordinates(std::vector<unsigned int>& cell0Ds) const
+  MatrixXd MeshMatricesDAO::Cell0DsCoordinates(const std::vector<unsigned int>& cell0Ds) const
   {
     MatrixXd coordinates(3, cell0Ds.size());
     for (unsigned int v = 0; v < cell0Ds.size(); v++)
@@ -697,6 +697,16 @@ namespace Gedim
 
     for (unsigned int e = 0; e < _mesh.NumberCell1D; e++)
       extremes.col(e)<< Cell1DOrigin(e), Cell1DEnd(e);
+
+    return extremes;
+  }
+  // ***************************************************************************
+  MatrixXi MeshMatricesDAO::Cell1DsExtremes(const std::vector<unsigned int>& cell1Ds) const
+  {
+    Eigen::MatrixXi extremes(2, cell1Ds.size());
+
+    for (unsigned int e = 0; e < cell1Ds.size(); e++)
+      extremes.col(e)<< Cell1DOrigin(cell1Ds.at(e)), Cell1DEnd(cell1Ds.at(e));
 
     return extremes;
   }

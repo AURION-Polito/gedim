@@ -65,7 +65,7 @@ namespace Gedim
       virtual Eigen::Vector3d Cell0DCoordinates(const unsigned int& cell0DIndex) const = 0;
       /// \return the coordinates as Eigen MatrixXd of cell0D, size 3xCell0DTotalNumber()
       virtual Eigen::MatrixXd Cell0DsCoordinates() const = 0;
-      virtual Eigen::MatrixXd Cell0DsCoordinates(std::vector<unsigned int>& cell0Ds) const = 0;
+      virtual Eigen::MatrixXd Cell0DsCoordinates(const std::vector<unsigned int>& cell0Ds) const = 0;
       /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
       /// \return if the cell0D is active
       virtual bool Cell0DIsActive(const unsigned int& cell0DIndex) const = 0;
@@ -302,6 +302,7 @@ namespace Gedim
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       virtual Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const = 0;
+      virtual Eigen::MatrixXi Cell1DsExtremes(const std::vector<unsigned int>& cell1Ds) const = 0;
       /// \return the Cell1D Index if Cell1D (origin->end) exists, Cell1DTotalNumber() otherwise
       /// \param originCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()
       /// \param endCell0DIndex the Cell0D Id of origin from 0 to Cell0DTotalNumber()

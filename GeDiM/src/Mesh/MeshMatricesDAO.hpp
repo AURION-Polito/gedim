@@ -125,7 +125,7 @@ namespace Gedim
                                Cell0DCoordinateZ(cell0DIndex));
       }
       Eigen::MatrixXd Cell0DsCoordinates() const;
-      Eigen::MatrixXd Cell0DsCoordinates(std::vector<unsigned int>& cell0Ds) const;
+      Eigen::MatrixXd Cell0DsCoordinates(const std::vector<unsigned int>& cell0Ds) const;
       inline unsigned int Cell0DMarker(const unsigned int& cell0DIndex) const
       {
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
@@ -413,6 +413,7 @@ namespace Gedim
       void Cell1DsInsertExtremes(const Eigen::MatrixXi& cell1DExtremes);
 
       Eigen::MatrixXi Cell1DsExtremes() const;
+      Eigen::MatrixXi Cell1DsExtremes(const std::vector<unsigned int>& cell1Ds) const;
       /// \return the extrems as Eigen MatrixXi of cell1D, size 2
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       inline Eigen::VectorXi Cell1DExtremes(const unsigned int& cell1DIndex) const

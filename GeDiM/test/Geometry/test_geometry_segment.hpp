@@ -93,6 +93,30 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, MakeConcatenation)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Eigen::MatrixXi segments(2, 5);
+    segments.col(0)<< 5, 4;
+    segments.col(1)<< 5, 3;
+    segments.col(2)<< 2, 4;
+    segments.col(3)<< 0, 1;
+    segments.col(4)<< 0, 3;
+
+    Eigen::MatrixXi expected_result(2, 5);
+    expected_result.col(0)<< 1, 3;
+    expected_result.col(1)<< 0, 4;
+    expected_result.col(2)<< 3, 1;
+    expected_result.col(3)<< 5, 0;
+    expected_result.col(4)<< 4, 2;
+
+    ASSERT_EQ(expected_result,
+              geometryUtilities.MakeConcatenation(segments,
+                                                  1));
+  }
 }
 
 #endif // __TEST_GEOMETRY_SEGMENT_H
