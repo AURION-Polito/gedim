@@ -2087,6 +2087,7 @@ namespace Gedim
 
     unsigned int max_marker = 0;
     std::list<unsigned int> agglomeratedCell2DConvexCells;
+    std::unordered_set<unsigned int> neigh_cell3Ds;
     for (const auto subCell2DIndex : subCell2DsIndex)
     {
       mesh.Cell2DSetState(subCell2DIndex, false);
@@ -2097,6 +2098,17 @@ namespace Gedim
       const auto& convexCells = meshCell2DToConvexCell2DIndices.at(subCell2DIndex);
       for (const auto& convexCell : convexCells)
         agglomeratedCell2DConvexCells.push_back(convexCell);
+
+      for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(subCell2DIndex); n++)
+      {
+        if (!mesh.Cell2DHasNeighbourCell3D(subCell2DIndex, n))
+          continue;
+
+        const unsigned int neighCell3DIndex = mesh.Cell2DNeighbourCell3D(subCell2DIndex, n);
+
+        if (neigh_cell3Ds.find(neighCell3DIndex) == neigh_cell3Ds.end())
+          neigh_cell3Ds.insert(neighCell3DIndex);
+      }
     }
     meshCell2DToConvexCell2DIndices.resize(meshCell2DToConvexCell2DIndices.size() + 1);
     meshCell2DToConvexCell2DIndices.at(agglomeratedCell2DIndex) =
@@ -2112,6 +2124,13 @@ namespace Gedim
                          max_marker);
     mesh.Cell2DSetState(agglomeratedCell2DIndex,
                         true);
+
+    if (!neigh_cell3Ds.empty())
+    {
+      mesh.Cell2DInitializeNeighbourCell3Ds(agglomeratedCell2DIndex,
+                                            std::vector<unsigned int>(neigh_cell3Ds.begin(),
+                                                                      neigh_cell3Ds.end()));
+    }
 
     for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(agglomeratedCell2DIndex); v++)
     {
