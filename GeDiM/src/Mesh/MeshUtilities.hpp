@@ -724,7 +724,8 @@ namespace Gedim
                                       const std::vector<unsigned int>& agglomerateCell1DVertices,
                                       const std::vector<unsigned int>& subCell1DsRemovedCell0Ds,
                                       IMeshDAO& mesh,
-                                      std::vector<std::vector<unsigned int>>& meshCell1DToConvexCell1DIndices) const;
+                                      std::vector<std::vector<unsigned int>>& meshCell1DToConvexCell1DIndices,
+                                      const bool mantain_neigh2D_order = false) const;
 
       unsigned int AgglomerateCell2Ds(const std::unordered_set<unsigned int>& subCell2DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell2DVertices,
