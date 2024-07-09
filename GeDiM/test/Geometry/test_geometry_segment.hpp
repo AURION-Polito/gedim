@@ -148,15 +148,14 @@ namespace GedimUnitTesting {
       segments.col(4)<< 0, 3;
 
       Eigen::MatrixXi expected_result(2, 5);
-      expected_result.col(0)<< 2, 3;
-      expected_result.col(1)<< 0, 4;
-      expected_result.col(2)<< 3, 1;
-      expected_result.col(3)<< 6, 0;
-      expected_result.col(4)<< 12, 2;
-
+      expected_result.col(0)<< 2, 2;
+      expected_result.col(1)<< 12, 0;
+      expected_result.col(2)<< 6, 1;
+      expected_result.col(3)<< 3, 4;
+      expected_result.col(4)<< 0, 3;
       ASSERT_EQ(expected_result,
                 geometryUtilities.MakeConcatenation(segments,
-                                                    1));
+                                                    2));
     }
   }
 }
