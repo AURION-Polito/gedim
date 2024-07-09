@@ -104,6 +104,8 @@ namespace Gedim
       /// \param numberNeighbourCell1Ds the number of Cell1D neighbours of the Cell0D
       virtual void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                     const unsigned int& numberNeighbourCell1Ds) = 0;
+      virtual void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell1Ds) = 0;
       /// \brief Insert the Cell0D Cell1D neighbour
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param neighbourIndex the number of Cell1D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell1D(cell0DIndex)
@@ -145,6 +147,8 @@ namespace Gedim
       /// \param numberNeighbourCell2Ds the number of Cell2D neighbours of the Cell0D
       virtual void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
                                                     const unsigned int& numberNeighbourCell2Ds) = 0;
+      virtual void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell2Ds) = 0;
       /// \brief Insert the Cell0D Cell2D neighbour
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param neighbourIndex the number of Cell2D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell2D(cell0DIndex)
@@ -389,6 +393,8 @@ namespace Gedim
       /// \param numberNeighbourCell2Ds the number of Cell2D neighbours of the Cell1D
       virtual void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                                     const unsigned int& numberNeighbourCell2Ds) = 0;
+      virtual void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell2Ds) = 0;
       /// \brief Insert the Cell1D Cell2D neighbour
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param neighbourIndex the number of Cell2D neighbour of the Cell1D from 0 to Cell1DNumberNeighbourCell2D(cell1DIndex)
@@ -428,6 +434,8 @@ namespace Gedim
       /// \param numberNeighbourCell3Ds the number of Cell3D neighbours of the Cell1D
       virtual void Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
                                                     const unsigned int& numberNeighbourCell3Ds) = 0;
+      virtual void Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell3Ds) = 0;
       /// \brief Insert the Cell1D Cell3D neighbour
       /// \param cell1DIndex the index of Cell1D from 0 to Cell1DTotalNumber()
       /// \param neighbourIndex the number of Cell3D neighbour of the Cell1D from 0 to Cell1DNumberNeighbourCell3D(cell1DIndex)
@@ -701,6 +709,8 @@ namespace Gedim
       /// \param numberNeighbourCell3Ds the number of Cell3D neighbours of the Cell2D
       virtual void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
                                                     const unsigned int& numberNeighbourCell3Ds) = 0;
+      virtual void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell3Ds) = 0;
       /// \brief Insert the Cell2D Cell3D neighbour
       /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
       /// \param neighbourIndex the number of Cell3D neighbour of the Cell2D from 0 to Cell2DNumberNeighbourCell3D(cell2DIndex)

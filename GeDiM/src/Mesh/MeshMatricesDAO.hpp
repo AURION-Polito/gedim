@@ -164,6 +164,8 @@ namespace Gedim
       inline void Cell0DsInitializeNeighbourCell1Ds(const std::vector<unsigned int>& numberNeighbourCell1Ds);
       inline void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell1Ds);
+      void Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
+                                            const std::vector<unsigned int>& neighbourCell1Ds);
       inline void Cell0DInsertNeighbourCell1D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex,
                                               const unsigned int& neigbourCell1DIndex)
@@ -217,6 +219,8 @@ namespace Gedim
       inline void Cell0DsInitializeNeighbourCell2Ds(const std::vector<unsigned int>& numberNeighbourCell2Ds);
       inline void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
                                                    const unsigned int& numberNeighbourCell2Ds);
+      void Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
+                                            const std::vector<unsigned int>& neighbourCell2Ds);
       inline void Cell0DInsertNeighbourCell2D(const unsigned int& cell0DIndex,
                                               const unsigned int& neighbourIndex,
                                               const unsigned int& neigbourCell2DIndex)
@@ -412,6 +416,8 @@ namespace Gedim
       inline void Cell1DsInitializeNeighbourCell2Ds(const unsigned int& numberNeighbourCell2Ds);
       void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
                                             const unsigned int& numberNeighbourCell2Ds);
+      void Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
+                                            const std::vector<unsigned int>& neighbourCell2Ds);
       inline void Cell1DInsertNeighbourCell2D(const unsigned int& cell1DIndex,
                                               const unsigned int& neighbourIndex,
                                               const unsigned int& neigbourCell2DIndex)
@@ -553,6 +559,8 @@ namespace Gedim
       void Cell1DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds);
       void Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
                                             const unsigned int& numberNeighbourCell3Ds);
+      void Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
+                                            const std::vector<unsigned int>& neighbourCell3Ds);
       inline void Cell1DInsertNeighbourCell3D(const unsigned int& cell1DIndex,
                                               const unsigned int& neighbourIndex,
                                               const unsigned int& neigbourCell3DIndex)
@@ -819,6 +827,8 @@ namespace Gedim
       inline void Cell2DsInitializeNeighbourCell3Ds(const std::vector<unsigned int>& numberNeighbourCell3Ds);
       void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
                                             const unsigned int& numberNeighbourCell3Ds);
+      void Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
+                                            const std::vector<unsigned int>& neighbourCell3Ds);
       inline void Cell2DInsertNeighbourCell3D(const unsigned int& cell2DIndex,
                                               const unsigned int& neighbourIndex,
                                               const unsigned int& neigbourCell3DIndex)

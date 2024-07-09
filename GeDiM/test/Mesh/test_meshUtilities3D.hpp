@@ -1333,6 +1333,12 @@ namespace GedimUnitTesting
       ASSERT_EQ(std::vector<unsigned int>({ 31,2,12,13,0,58 }),
                 agglomerationInfo.SubCell3DsRemovedFaces);
 
+      for (unsigned int v = 0; v < agglomerationInfo.AgglomerateCell3DVertices.size(); v++)
+      {
+        std::cout<< "Vertex "<< agglomerationInfo.AgglomerateCell3DVertices.at(v)<< " ";
+        std::cout<< "neighs "<< meshDao.Cell0DNeighbourCell3Ds(agglomerationInfo.AgglomerateCell3DVertices.at(v))<< std::endl;
+      }
+
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
                                                                                     agglomerationInfo.AgglomerateCell3DVertices,
                                                                                     agglomerationInfo.AgglomerateCell3DEdges,

@@ -383,6 +383,20 @@ namespace Gedim
                                             std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell1Ds(const unsigned int& cell0DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell1Ds)
+  {
+    Cell0DInitializeNeighbourCell1Ds(cell0DIndex,
+                                     neighbourCell1Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell1Ds.size(); n++)
+    {
+      Cell0DInsertNeighbourCell1D(cell0DIndex,
+                                  n,
+                                  neighbourCell1Ds.at(n));
+    }
+  }
+  // ***************************************************************************
   std::vector<std::vector<unsigned int>> MeshMatricesDAO::Cell0DsNeighbourCell2Ds() const
   {
     const unsigned int numCells = Cell0DTotalNumber();
@@ -421,17 +435,17 @@ namespace Gedim
                                             std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
-  void MeshMatricesDAO::Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
-                                                         const std::vector<unsigned int>& neighbourCell3Ds)
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell2Ds(const unsigned int& cell0DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell2Ds)
   {
-    Cell0DInitializeNeighbourCell3Ds(cell0DIndex,
-                                     neighbourCell3Ds.size());
+    Cell0DInitializeNeighbourCell2Ds(cell0DIndex,
+                                     neighbourCell2Ds.size());
 
-    for (unsigned int n = 0; n < neighbourCell3Ds.size(); n++)
+    for (unsigned int n = 0; n < neighbourCell2Ds.size(); n++)
     {
-      Cell0DInsertNeighbourCell3D(cell0DIndex,
+      Cell0DInsertNeighbourCell2D(cell0DIndex,
                                   n,
-                                  neighbourCell3Ds.at(n));
+                                  neighbourCell2Ds.at(n));
     }
   }
   // ***************************************************************************
@@ -471,6 +485,20 @@ namespace Gedim
                                             cell0DIndex,
                                             numberNeighbourCell3Ds,
                                             std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell3Ds)
+  {
+    Cell0DInitializeNeighbourCell3Ds(cell0DIndex,
+                                     neighbourCell3Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell3Ds.size(); n++)
+    {
+      Cell0DInsertNeighbourCell3D(cell0DIndex,
+                                  n,
+                                  neighbourCell3Ds.at(n));
+    }
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell0DInitializeDoubleProperties(const unsigned int& numberDoubleProperties)
@@ -728,6 +756,20 @@ namespace Gedim
                                             std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell1DInitializeNeighbourCell2Ds(const unsigned int& cell1DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell2Ds)
+  {
+    Cell1DInitializeNeighbourCell2Ds(cell1DIndex,
+                                     neighbourCell2Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell2Ds.size(); n++)
+    {
+      Cell1DInsertNeighbourCell2D(cell1DIndex,
+                                  n,
+                                  neighbourCell2Ds.at(n));
+    }
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell1DInsertUpdatedCell1D(const unsigned int& cell1DIndex,
                                                   const unsigned int& updatedCell1DIdex)
   {
@@ -804,6 +846,20 @@ namespace Gedim
                                             cell1DIndex,
                                             numberNeighbourCell3Ds,
                                             std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell1DInitializeNeighbourCell3Ds(const unsigned int& cell1DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell3Ds)
+  {
+    Cell1DInitializeNeighbourCell3Ds(cell1DIndex,
+                                     neighbourCell3Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell3Ds.size(); n++)
+    {
+      Cell1DInsertNeighbourCell3D(cell1DIndex,
+                                  n,
+                                  neighbourCell3Ds.at(n));
+    }
   }
   // ***************************************************************************
   unsigned int MeshMatricesDAO::Cell1DAddDoubleProperty(const string& propertyId)
@@ -1213,6 +1269,20 @@ namespace Gedim
                                             cell2DIndex,
                                             numberNeighbourCell3Ds,
                                             std::numeric_limits<unsigned int>::max());
+  }
+  // ***************************************************************************
+  void MeshMatricesDAO::Cell2DInitializeNeighbourCell3Ds(const unsigned int& cell2DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell3Ds)
+  {
+    Cell2DInitializeNeighbourCell3Ds(cell2DIndex,
+                                     neighbourCell3Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell3Ds.size(); n++)
+    {
+      Cell2DInsertNeighbourCell3D(cell2DIndex,
+                                  n,
+                                  neighbourCell3Ds.at(n));
+    }
   }
   // ***************************************************************************
   void MeshMatricesDAO::Cell2DInitializeDoubleProperties(const unsigned int& numberDoubleProperties)
