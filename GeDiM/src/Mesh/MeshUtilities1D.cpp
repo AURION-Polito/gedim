@@ -322,9 +322,13 @@ namespace Gedim
       }
       else
       {
+        std::vector<unsigned int> neighs_2D;
+        neighs_2D.reserve(neigh_cell2Ds.size());
+        for (const auto& neigh : neigh_cell2Ds)
+          neighs_2D.push_back(neigh.first);
+
         mesh.Cell1DInitializeNeighbourCell2Ds(agglomeratedCell1DIndex,
-                                              std::vector<unsigned int>(neigh_cell2Ds.begin(),
-                                                                        neigh_cell2Ds.end()));
+                                              neighs_2D);
 
       }
     }
