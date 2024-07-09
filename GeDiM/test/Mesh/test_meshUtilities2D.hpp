@@ -1174,15 +1174,16 @@ namespace GedimUnitTesting
 
     {
       const auto cell2Ds = meshDao.Cell1DNeighbourCell2Ds(4);
-      const auto agglomerationInfo = meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                                                      std::unordered_set<unsigned int>(cell2Ds.rbegin(),
                                                                                                        cell2Ds.rend()),
                                                                       meshDao);
 
       ASSERT_EQ(std::unordered_set<unsigned int>({ 1, 5 }),
                 agglomerationInfo.SubCell2DsIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 25, 6, 9, 12 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 6, 9, 12, 25 }),
                 agglomerationInfo.AgglomerateCell2DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 3, 14, 15, 5 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 14, 15, 5, 3 }),
                 agglomerationInfo.AgglomerateCell2DEdges);
       ASSERT_EQ(std::vector<unsigned int>({ }),
                 agglomerationInfo.SubCell2DsRemovedVertices);
@@ -1197,7 +1198,7 @@ namespace GedimUnitTesting
                                                                                     meshDao,
                                                                                     meshCell2DToConvexCell2DIndices);
 
-      ASSERT_EQ(22,
+      ASSERT_EQ(34,
                 agglomeratedCell2DIndex);
       ASSERT_EQ(std::vector<unsigned int>({ 1, 5 }),
                 meshCell2DToConvexCell2DIndices.at(34));

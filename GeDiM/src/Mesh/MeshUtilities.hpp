@@ -712,7 +712,8 @@ namespace Gedim
                                             const std::vector<std::vector<unsigned int>>& subCell3DsFaces,
                                             IMeshDAO& mesh) const;
 
-      AgglomerateCell2DInformation AgglomerateCell2Ds(const std::unordered_set<unsigned int>& cell2DsIndex,
+      AgglomerateCell2DInformation AgglomerateCell2Ds(const GeometryUtilities& geometryUtilities,
+                                                      const std::unordered_set<unsigned int>& cell2DsIndex,
                                                       const IMeshDAO& mesh) const;
 
       AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int>& cell3DsIndex,

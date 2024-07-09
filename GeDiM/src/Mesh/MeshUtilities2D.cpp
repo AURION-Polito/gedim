@@ -1885,7 +1885,8 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  MeshUtilities::AgglomerateCell2DInformation MeshUtilities::AgglomerateCell2Ds(const std::unordered_set<unsigned int>& cell2DsIndex,
+  MeshUtilities::AgglomerateCell2DInformation MeshUtilities::AgglomerateCell2Ds(const GeometryUtilities& geometryUtilities,
+                                                                                const std::unordered_set<unsigned int>& cell2DsIndex,
                                                                                 const IMeshDAO& mesh) const
   {
     AgglomerateCell2DInformation result;
@@ -1899,7 +1900,7 @@ namespace Gedim
       return result;
     }
 
-    std::unordered_set<unsigned int> agglomerated_cell1Ds;
+    std::unordered_map<unsigned int, bool> agglomerated_cell1Ds;
     std::unordered_set<unsigned int> removed_cell1Ds;
 
     for (const unsigned int c2D_index : cell2DsIndex)
@@ -1949,7 +1950,11 @@ namespace Gedim
         if (agglomerated_cell1Ds.find(c1D_index) != agglomerated_cell1Ds.end())
           continue;
 
-        agglomerated_cell1Ds.insert(c1D_index);
+        bool cell1D_orientation = mesh.Cell1DOrigin(c1D_index) ==
+                                  mesh.Cell2DVertex(c2D_index, e);
+
+        agglomerated_cell1Ds.insert(std::make_pair(c1D_index,
+                                                   cell1D_orientation));
       }
     }
 
@@ -2001,13 +2006,69 @@ namespace Gedim
       }
     }
 
+    std::vector<unsigned int> agglomerated_cell1Ds_index;
+    std::vector<bool> agglomerated_cell1Ds_orientation;
+    agglomerated_cell1Ds_index.reserve(agglomerated_cell1Ds.size());
+    agglomerated_cell1Ds_orientation.reserve(agglomerated_cell1Ds.size());
 
+    for (const auto& agglomerated_cell1D : agglomerated_cell1Ds)
+    {
+      agglomerated_cell1Ds_index.push_back(agglomerated_cell1D.first);
+      agglomerated_cell1Ds_orientation.push_back(agglomerated_cell1D.second);
+    }
+
+    const Eigen::MatrixXi cell1Ds_extremes =
+        mesh.Cell1DsExtremes(agglomerated_cell1Ds_index);
+
+    const Eigen::MatrixXi cell1Ds_concatenation =
+        geometryUtilities.MakeConcatenation(cell1Ds_extremes,
+                                            *agglomerated_cell0Ds.begin());
+
+    const unsigned int num_cell1Ds_concat = cell1Ds_concatenation.cols();
+    Gedim::Output::Assert(num_cell1Ds_concat ==
+                          agglomerated_cell0Ds.size());
+
+    result.AgglomerateCell2DVertices.resize(num_cell1Ds_concat);
+    result.AgglomerateCell2DEdges.resize(num_cell1Ds_concat);
+    const unsigned int edge_first_index = cell1Ds_concatenation(1, 0);
+
+    if ((agglomerated_cell1Ds_orientation.at(edge_first_index) &&
+         cell1Ds_extremes(edge_first_index, 0) == cell1Ds_concatenation(0, 0)) ||
+        (!agglomerated_cell1Ds_orientation.at(edge_first_index) &&
+         cell1Ds_extremes(edge_first_index, 1) == cell1Ds_concatenation(0, 0)))
+    {
+      for (unsigned int e = 0; e < num_cell1Ds_concat; e++)
+      {
+        result.AgglomerateCell2DVertices[e] = cell1Ds_concatenation(0, e);
+        result.AgglomerateCell2DEdges[e] = agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, e));
+      }
+    }
+    else
+    {
+      for (unsigned int e = 0; e < num_cell1Ds_concat; e++)
+      {
+        const unsigned int edge_position = num_cell1Ds_concat - e - 1;
+        result.AgglomerateCell2DVertices[e] = cell1Ds_concatenation(0, edge_position);
+        result.AgglomerateCell2DEdges[e] = agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, edge_position));
+      }
+    }
+
+
+    //    const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f],
+    //                                                                             false);
+
+    //    switch (geometryUtilities.PolygonOrientation(faceConvexHull))
+    //    {
+    //      case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
+    //      {
+    //        face2DCCWOrientation[f] = false;
+    //        face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
+    //        face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DVertices[c][f],
+    //                                                               face2DsCCW[f]);
+    //      }
+    //    }
 
     result.SubCell2DsIndex = cell2DsIndex;
-    result.AgglomerateCell2DVertices = std::vector<unsigned int>(agglomerated_cell0Ds.begin(),
-                                                                 agglomerated_cell0Ds.end());
-    result.AgglomerateCell2DEdges = std::vector<unsigned int>(agglomerated_cell1Ds.begin(),
-                                                              agglomerated_cell1Ds.end());
     result.SubCell2DsRemovedVertices = std::vector<unsigned int>(removed_cell0Ds.begin(),
                                                                  removed_cell0Ds.end());
     result.SubCell2DsRemovedEdges = std::vector<unsigned int>(removed_cell1Ds.begin(),
