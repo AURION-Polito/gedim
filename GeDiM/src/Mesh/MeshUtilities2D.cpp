@@ -2053,9 +2053,6 @@ namespace Gedim
           result.AgglomerateCell2DVertices[e + 1] = cell1Ds_concatenation(0, edge_position);
 
         result.AgglomerateCell2DEdges[e] = agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, edge_position));
-        std::cout<< "e "<< e<< " edge_pos "<< edge_position<< " ";
-        std::cout<< "cell1Ds_concatenation "<< cell1Ds_concatenation(1, edge_position)<< " ";
-        std::cout<< "aggl "<< agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, edge_position))<< std::endl;
       }
     }
 
