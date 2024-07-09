@@ -138,6 +138,26 @@ namespace GedimUnitTesting {
                 geometryUtilities.MakeConcatenation(segments,
                                                     1));
     }
+
+    {
+      Eigen::MatrixXi segments(2, 5);
+      segments.col(0)<< 6, 12;
+      segments.col(1)<< 6, 3;
+      segments.col(2)<< 2, 12;
+      segments.col(3)<< 0, 2;
+      segments.col(4)<< 0, 3;
+
+      Eigen::MatrixXi expected_result(2, 5);
+      expected_result.col(0)<< 2, 3;
+      expected_result.col(1)<< 0, 4;
+      expected_result.col(2)<< 3, 1;
+      expected_result.col(3)<< 6, 0;
+      expected_result.col(4)<< 12, 2;
+
+      ASSERT_EQ(expected_result,
+                geometryUtilities.MakeConcatenation(segments,
+                                                    1));
+    }
   }
 }
 
