@@ -710,13 +710,22 @@ namespace Gedim
       AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int>& cell3DsIndex,
                                                       const IMeshDAO& mesh) const;
 
+      unsigned int AgglomerateCell2Ds(const std::vector<unsigned int>& subCell2DsIndex,
+                                      const std::vector<unsigned int>& agglomerateCell2DVertices,
+                                      const std::vector<unsigned int>& agglomerateCell2DEdges,
+                                      const std::vector<unsigned int>& subCell2DsRemovedCell0Ds,
+                                      const std::vector<unsigned int>& subCell2DsRemovedCell1Ds,
+                                      IMeshDAO& mesh,
+                                      std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
+
+
       unsigned int AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell3DVertices,
                                       const std::vector<unsigned int>& agglomerateCell3DEdges,
                                       const std::vector<unsigned int>& agglomerateCell3DFaces,
-                                      const std::vector<unsigned int>& subCell3DsRemovedVertices,
-                                      const std::vector<unsigned int>& subCell3DsRemovedEdges,
-                                      const std::vector<unsigned int>& subCell3DsRemovedFaces,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell0Ds,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell1Ds,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
                                       IMeshDAO& mesh,
                                       std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
 
