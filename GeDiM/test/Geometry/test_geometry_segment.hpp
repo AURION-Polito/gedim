@@ -121,7 +121,7 @@ namespace GedimUnitTesting {
 
     {
       Eigen::MatrixXi segments(2, 5);
-      segments.col(0)<< 6, 12;
+      segments.col(0)<< 6, 4;
       segments.col(1)<< 6, 3;
       segments.col(2)<< 2, 12;
       segments.col(3)<< 0, 1;

@@ -208,7 +208,7 @@ namespace Gedim
     if (num_segments == 1)
       return Eigen::MatrixXi::Zero(2, 1);
 
-    Eigen::MatrixXi concatenation(2, num_segments);
+    Eigen::MatrixXi concatenation = Eigen::MatrixXi::Zero(2, num_segments);
 
     std::vector<bool> taken(num_segments, false);
     unsigned int num_taken = 0;
@@ -255,6 +255,8 @@ namespace Gedim
       num_visited++;
       segment_index = (segment_index + 1) % num_segments;
     }
+
+    concatenation.conservativeResize(2, num_taken);
 
     return concatenation;
   }
