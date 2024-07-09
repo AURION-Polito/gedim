@@ -1344,11 +1344,6 @@ namespace GedimUnitTesting
                                                                                     meshCell3DToConvexCell3DIndices);
 
 
-      for (unsigned int e = 0; e < agglomerationInfo.AgglomerateCell3DEdges.size(); e++)
-      {
-        std::cout<< "Edge "<< agglomerationInfo.AgglomerateCell3DEdges.at(e)<< " ";
-        std::cout<< "neighs "<< meshDao.Cell1DNeighbourCell3Ds(agglomerationInfo.AgglomerateCell3DEdges.at(e))<< std::endl;
-      }
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
     }

@@ -1897,7 +1897,7 @@ namespace Gedim
       return mesh.Cell2DTotalNumber();
 
     if (subCell2DsIndex.size() == 1)
-      return subCell2DsIndex[0];
+      return *subCell2DsIndex.begin();
 
     const unsigned int agglomeratedCell2DIndex = mesh.Cell2DAppend(1);
 
