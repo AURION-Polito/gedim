@@ -1885,7 +1885,7 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  unsigned int MeshUtilities::AgglomerateCell2Ds(const std::vector<unsigned int>& subCell2DsIndex,
+  unsigned int MeshUtilities::AgglomerateCell2Ds(const std::unordered_set<unsigned int>& subCell2DsIndex,
                                                  const std::vector<unsigned int>& agglomerateCell2DVertices,
                                                  const std::vector<unsigned int>& agglomerateCell2DEdges,
                                                  const std::vector<unsigned int>& subCell2DsRemovedCell0Ds,
@@ -1924,32 +1924,35 @@ namespace Gedim
     mesh.Cell2DAddEdges(agglomeratedCell2DIndex,
                         agglomerateCell2DEdges);
 
-    mesh.Cell3DSetMarker(agglomeratedCell2DIndex,
+    mesh.Cell2DSetMarker(agglomeratedCell2DIndex,
                          max_marker);
-    mesh.Cell3DSetState(agglomeratedCell2DIndex,
+    mesh.Cell2DSetState(agglomeratedCell2DIndex,
                         true);
 
     for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(agglomeratedCell2DIndex); v++)
     {
       const unsigned int cell0DIndex = mesh.Cell2DVertex(agglomeratedCell2DIndex, v);
 
+      std::list<unsigned int> neighCell2Ds;
+
       for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell2D(cell0DIndex); n++)
       {
         if (!mesh.Cell0DHasNeighbourCell2D(cell0DIndex, n))
           continue;
 
-        const unsigned int neighCell2DIndex = mesh.Cell0DNeighbourCell2D(cell0DIndex,
-                                                                         n);
+        const unsigned int neighCell2DIndex = mesh.Cell0DNeighbourCell2D(cell0DIndex, n);
 
-        if (std::find(subCell2DsIndex.begin(),
-                      subCell2DsIndex.end(),
-                      neighCell2DIndex) != subCell2DsIndex.end())
-        {
-          mesh.Cell0DInsertNeighbourCell2D(cell0DIndex,
-                                           n,
-                                           agglomeratedCell2DIndex);
-        }
+        if (subCell2DsIndex.find(neighCell2DIndex) == subCell2DsIndex.end())
+          neighCell2Ds.push_back(neighCell2DIndex);
       }
+
+      if (neighCell2Ds.empty())
+        continue;
+
+      neighCell2Ds.push_back(agglomeratedCell2DIndex);
+      mesh.Cell0DInitializeNeighbourCell2Ds(cell0DIndex,
+                                            std::vector<unsigned int>(neighCell2Ds.begin(),
+                                                                      neighCell2Ds.end()));
     }
 
     for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(agglomeratedCell2DIndex); e++)
