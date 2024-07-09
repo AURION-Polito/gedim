@@ -1178,13 +1178,13 @@ namespace GedimUnitTesting
                                                                                                        cell2Ds.rend()),
                                                                       meshDao);
 
-      ASSERT_EQ(std::unordered_set<unsigned int>({ 1, 10 }),
+      ASSERT_EQ(std::unordered_set<unsigned int>({ 1, 5 }),
                 agglomerationInfo.SubCell2DsIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 5,19,12,13,8 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 25, 6, 9, 12 }),
                 agglomerationInfo.AgglomerateCell2DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 38,7,36,10,6,8,37,11,9 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 3, 14, 15, 5 }),
                 agglomerationInfo.AgglomerateCell2DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+      ASSERT_EQ(std::vector<unsigned int>({ }),
                 agglomerationInfo.SubCell2DsRemovedVertices);
       ASSERT_EQ(std::vector<unsigned int>({ 4 }),
                 agglomerationInfo.SubCell2DsRemovedEdges);
@@ -1199,8 +1199,8 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(22,
                 agglomeratedCell2DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 1, 10 }),
-                meshCell2DToConvexCell2DIndices.at(22));
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 5 }),
+                meshCell2DToConvexCell2DIndices.at(34));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
