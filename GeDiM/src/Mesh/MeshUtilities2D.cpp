@@ -932,6 +932,38 @@ void MeshUtilities::ComputeCell0DCell2DNeighbours(IMeshDAO& mesh) const
 
 }
 // ***************************************************************************
+void MeshUtilities::ComputeCell0DCell3DNeighbours(IMeshDAO& mesh) const
+{
+  // Compute Cell0D neighbours starting from cell3Ds
+  std::vector<std::list<unsigned int>> cell0DsNeighbours(mesh.Cell0DTotalNumber());
+  for (unsigned int c3D = 0; c3D < mesh.Cell3DTotalNumber(); c3D++)
+  {
+      if (!mesh.Cell3DIsActive(c3D))
+          continue;
+
+      const unsigned int numCell3DVertices = mesh.Cell3DNumberVertices(c3D);
+      for (unsigned int v = 0; v < numCell3DVertices; v++)
+      {
+          const unsigned int cell0D = mesh.Cell3DVertex(c3D, v);
+          cell0DsNeighbours[cell0D].push_back(c3D);
+      }
+  }
+
+  std::vector<unsigned int> cell0DsNumNeighbours3D(mesh.Cell0DTotalNumber());
+  for (unsigned int c0D = 0; c0D < mesh.Cell0DTotalNumber(); c0D++)
+      cell0DsNumNeighbours3D[c0D] = cell0DsNeighbours[c0D].size();
+
+  mesh.Cell0DsInitializeNeighbourCell3Ds(cell0DsNumNeighbours3D);
+  for (unsigned int c0D = 0; c0D < mesh.Cell0DTotalNumber(); c0D++)
+  {
+      unsigned int n = 0;
+      for (const auto& cell3DIndex : cell0DsNeighbours[c0D])
+          mesh.Cell0DInsertNeighbourCell3D(c0D,
+                                           n++,
+                                           cell3DIndex);
+  }
+}
+// ***************************************************************************
 void MeshUtilities::ComputeCell1DCell2DNeighbours(IMeshDAO& mesh) const
 {
     if(mesh.Dimension() == 2)

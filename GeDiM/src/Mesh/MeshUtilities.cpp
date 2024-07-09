@@ -119,6 +119,50 @@ namespace Gedim
     mesh.Compress();
   }
   // ***************************************************************************
+  MeshUtilities::FilterMeshData MeshUtilities::FilterActiveMesh(const IMeshDAO& mesh) const
+  {
+    std::list<unsigned int> active_cell0Ds;
+    std::list<unsigned int> active_cell1Ds;
+    std::list<unsigned int> active_cell2Ds;
+    std::list<unsigned int> active_cell3Ds;
+
+    for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); c++)
+    {
+      if (mesh.Cell0DIsActive(c))
+        active_cell0Ds.push_back(c);
+    }
+
+    for (unsigned int c = 0; c < mesh.Cell1DTotalNumber(); c++)
+    {
+      if (mesh.Cell1DIsActive(c))
+        active_cell1Ds.push_back(c);
+    }
+
+    for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); c++)
+    {
+      if (mesh.Cell2DIsActive(c))
+        active_cell2Ds.push_back(c);
+    }
+
+    for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
+    {
+      if (mesh.Cell3DIsActive(c))
+        active_cell3Ds.push_back(c);
+    }
+
+    return
+    {
+      std::vector<unsigned int>(active_cell0Ds.begin(),
+                                active_cell0Ds.end()),
+          std::vector<unsigned int>(active_cell1Ds.begin(),
+                                    active_cell1Ds.end()),
+          std::vector<unsigned int>(active_cell2Ds.begin(),
+                                    active_cell2Ds.end()),
+          std::vector<unsigned int>(active_cell3Ds.begin(),
+                                    active_cell3Ds.end())
+    };
+  }
+  // ***************************************************************************
   void MeshUtilities::ImportOpenVolumeMesh(const std::string& ovmFilePath,
                                            IMeshDAO& mesh,
                                            std::vector<std::vector<bool>>& meshCell3DsFacesOrientation) const

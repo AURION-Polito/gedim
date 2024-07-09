@@ -17,6 +17,8 @@ namespace Gedim
       std::vector<unsigned int> Cell0DNeighbourCell1Ds = {}; ///< Cell0D neighbour Cell1D indices, size 1 x NumberCell0DNeighbourCell1D[NumberCell0D]
       std::vector<unsigned int> NumberCell0DNeighbourCell2D = { 0 }; ///< Cell0D neighbour Cell2D indices per cell, size  1 x NumberCell0D + 1
       std::vector<unsigned int> Cell0DNeighbourCell2Ds = {}; ///< Cell0D neighbour Cell2D indices, size 1 x NumberCell0DNeighbourCell2D[NumberCell0D]
+      std::vector<unsigned int> NumberCell0DNeighbourCell3D = { 0 }; ///< Cell0D neighbour Cell2D indices per cell, size  1 x NumberCell0D + 1
+      std::vector<unsigned int> Cell0DNeighbourCell3Ds = {}; ///< Cell0D neighbour Cell3D indices, size 1 x NumberCell0DNeighbourCell3D[NumberCell0D]
       std::vector<bool> ActiveCell0D = {}; ///< active Cell0D
       std::unordered_map<unsigned int, std::unordered_set<unsigned int>> UpdatedCell0Ds = {}; ///< for each cell0D the list to the new cell0Ds
       std::vector<std::string> Cell0DDoublePropertyIds = {}; ///< Cell0D double property id - double property index

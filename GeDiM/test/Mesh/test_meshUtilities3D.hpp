@@ -1284,6 +1284,86 @@ namespace GedimUnitTesting
                                   "AgglomeratedMesh");
   }
 
+  TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByVertex)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell3Ds_ByVertex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    meshUtilities.ComputeCell0DCell3DNeighbours(meshDao);
+    meshUtilities.ComputeCell0DCell1DNeighbours(meshDao);
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
+    std::vector<std::vector<unsigned int>> meshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
+    for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
+    {
+      meshCell3DToConvexCell3DIndices.at(c3D_index) =
+          std::vector<unsigned int>({ c3D_index });
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "OriginalMesh");
+
+    {
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByVertex(18,
+                                                                             meshDao);
+
+      ASSERT_EQ(std::vector<unsigned int>({ 21,20,9,3,13,0 }),
+                agglomerationInfo.SubCell3DsIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 6,14,13,2,18,10,9,8 }),
+                agglomerationInfo.AgglomerateCell3DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 5,40,41,42,16,3,55,18,57,15,2,58,0,56,17,35,8,1 }),
+                agglomerationInfo.AgglomerateCell3DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ 3,39,41,11,1,40,14,32,59,57,60,61 }),
+                agglomerationInfo.AgglomerateCell3DFaces);
+      ASSERT_EQ(std::vector<unsigned int>({ }),
+                agglomerationInfo.SubCell3DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+                agglomerationInfo.SubCell3DsRemovedEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ 31,2,12,13,0,58 }),
+                agglomerationInfo.SubCell3DsRemovedFaces);
+
+      const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
+                                                                                    agglomerationInfo.AgglomerateCell3DVertices,
+                                                                                    agglomerationInfo.AgglomerateCell3DEdges,
+                                                                                    agglomerationInfo.AgglomerateCell3DFaces,
+                                                                                    agglomerationInfo.SubCell3DsRemovedVertices,
+                                                                                    agglomerationInfo.SubCell3DsRemovedEdges,
+                                                                                    agglomerationInfo.SubCell3DsRemovedFaces,
+                                                                                    meshDao,
+                                                                                    meshCell3DToConvexCell3DIndices);
+
+      ASSERT_EQ(22,
+                agglomeratedCell3DIndex);
+    }
+
+
+
+    Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    activeMeshData);
+    std::vector<std::vector<unsigned int>> activeMeshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
+    for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
+    {
+      activeMeshCell3DToConvexCell3DIndices.at(c3D_index) =
+          meshCell3DToConvexCell3DIndices.at(activeMeshData.NewCell3DToOldCell3D.at(c3D_index));
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "AgglomeratedMesh");
+  }
+
   TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
