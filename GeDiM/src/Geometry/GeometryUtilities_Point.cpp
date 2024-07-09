@@ -253,6 +253,9 @@ namespace Gedim
       segment_index = (segment_index + 1) % num_segments;
     }
 
+    if (num_taken == 0)
+      return Eigen::MatrixXi();
+
     concatenation.conservativeResize(2, num_taken);
 
     return concatenation;
