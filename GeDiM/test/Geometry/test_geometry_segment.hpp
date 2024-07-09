@@ -100,6 +100,39 @@ namespace GedimUnitTesting {
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     {
+      Eigen::MatrixXi segments;
+
+      ASSERT_EQ(Eigen::MatrixXi(),
+                geometryUtilities.MakeConcatenation(segments,
+                                                    1));
+    }
+
+    {
+      Eigen::MatrixXi segments(2, 1);
+      segments.col(0)<< 5, 4;
+
+      Eigen::MatrixXi expected_result(2, 1);
+      expected_result.col(0)<< 4, 0;
+
+      ASSERT_EQ(expected_result,
+                geometryUtilities.MakeConcatenation(segments,
+                                                    4));
+    }
+
+    {
+      Eigen::MatrixXi segments(2, 5);
+      segments.col(0)<< 5, 4;
+      segments.col(1)<< 5, 3;
+      segments.col(2)<< 2, 4;
+      segments.col(3)<< 0, 1;
+      segments.col(4)<< 0, 3;
+
+      ASSERT_EQ(Eigen::MatrixXi(),
+                geometryUtilities.MakeConcatenation(segments,
+                                                    12));
+    }
+
+    {
       Eigen::MatrixXi segments(2, 5);
       segments.col(0)<< 5, 4;
       segments.col(1)<< 5, 3;

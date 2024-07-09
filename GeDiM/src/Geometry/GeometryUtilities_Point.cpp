@@ -205,9 +205,6 @@ namespace Gedim
     if (num_segments == 0)
       return Eigen::MatrixXi();
 
-    if (num_segments == 1)
-      return Eigen::MatrixXi::Zero(2, 1);
-
     Eigen::MatrixXi concatenation = Eigen::MatrixXi::Zero(2, num_segments);
 
     std::vector<bool> taken(num_segments, false);
