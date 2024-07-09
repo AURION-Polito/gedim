@@ -2073,27 +2073,6 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3DByVertex(const unsigned int cell0DIndex,
-                                                                                       const IMeshDAO& mesh) const
-  {
-    AgglomerateCell3DInformation result;
-
-    std::list<unsigned int> subCell3DsIndex;
-
-    for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell3D(cell0DIndex); n++)
-    {
-      if (!mesh.Cell0DHasNeighbourCell3D(cell0DIndex, n))
-        continue;
-
-      subCell3DsIndex.push_back(mesh.Cell0DNeighbourCell3D(cell0DIndex,
-                                                           n));
-    }
-
-    return AgglomerateCell3Ds(std::unordered_set<unsigned int>(subCell3DsIndex.begin(),
-                                                               subCell3DsIndex.end()),
-                              mesh);
-  }
-  // ***************************************************************************
   MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3Ds(const std::unordered_set<unsigned int>& cell3DsIndex,
                                                                                 const IMeshDAO& mesh) const
   {

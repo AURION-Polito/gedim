@@ -1315,8 +1315,10 @@ namespace GedimUnitTesting
                                   "OriginalMesh");
 
     {
-      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByVertex(18,
-                                                                             meshDao);
+      const auto cell3Ds = meshDao.Cell0DNeighbourCell3Ds(18);
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.begin(),
+                                                                                                       cell3Ds.end()),
+                                                                      meshDao);
 
       ASSERT_EQ(std::unordered_set<unsigned int>({ 21,20,9,3,13,0 }),
                 agglomerationInfo.SubCell3DsIndex);
