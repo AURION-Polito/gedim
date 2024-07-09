@@ -313,6 +313,14 @@ namespace Gedim
     return coordinates;
   }
   // ***************************************************************************
+  MatrixXd MeshMatricesDAO::Cell0DsCoordinates(std::vector<unsigned int>& cell0Ds) const
+  {
+    MatrixXd coordinates(3, cell0Ds.size());
+    for (unsigned int v = 0; v < cell0Ds.size(); v++)
+      coordinates.col(v) << Cell0DCoordinates(cell0Ds.at(v));
+    return coordinates;
+  }
+  // ***************************************************************************
   void MeshMatricesDAO::Cell0DInsertUpdatedCell0D(const unsigned int& cell0DIndex,
                                                   const unsigned int& updatedCell0DIdex)
   {

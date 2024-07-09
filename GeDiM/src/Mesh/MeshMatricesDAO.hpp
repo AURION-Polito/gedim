@@ -125,6 +125,7 @@ namespace Gedim
                                Cell0DCoordinateZ(cell0DIndex));
       }
       Eigen::MatrixXd Cell0DsCoordinates() const;
+      Eigen::MatrixXd Cell0DsCoordinates(std::vector<unsigned int>& cell0Ds) const;
       inline unsigned int Cell0DMarker(const unsigned int& cell0DIndex) const
       {
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
