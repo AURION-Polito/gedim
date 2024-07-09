@@ -194,12 +194,19 @@ namespace Gedim
       }
       inline std::vector<unsigned int> Cell0DNeighbourCell1Ds(const unsigned int& cell0DIndex) const
       {
-        const unsigned int numNeighs = Cell0DNumberNeighbourCell1D(cell0DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell0DNeighbourCell1D(cell0DIndex, n);
+        Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
 
-        return neighbours;
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell0DNumberNeighbourCell1D(cell0DIndex); n++)
+        {
+          if (!Cell0DHasNeighbourCell1D(cell0DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell0DNeighbourCell1D(cell0DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell0DHasNeighbourCell1D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const
@@ -250,11 +257,18 @@ namespace Gedim
       inline std::vector<unsigned int> Cell0DNeighbourCell2Ds(const unsigned int& cell0DIndex) const
       {
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
-        const unsigned int numNeighs = Cell0DNumberNeighbourCell2D(cell0DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell0DNeighbourCell2D(cell0DIndex, n);
-        return neighbours;
+
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell0DNumberNeighbourCell2D(cell0DIndex); n++)
+        {
+          if (!Cell0DHasNeighbourCell2D(cell0DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell0DNeighbourCell2D(cell0DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell0DHasNeighbourCell2D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const
@@ -304,11 +318,18 @@ namespace Gedim
       inline std::vector<unsigned int> Cell0DNeighbourCell3Ds(const unsigned int& cell0DIndex) const
       {
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
-        const unsigned int numNeighs = Cell0DNumberNeighbourCell3D(cell0DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell0DNeighbourCell3D(cell0DIndex, n);
-        return neighbours;
+
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell0DNumberNeighbourCell3D(cell0DIndex); n++)
+        {
+          if (!Cell0DHasNeighbourCell3D(cell0DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell0DNeighbourCell3D(cell0DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell0DHasNeighbourCell3D(const unsigned int& cell0DIndex,
                                            const unsigned int& neighbourIndex) const
@@ -490,11 +511,18 @@ namespace Gedim
       inline std::vector<unsigned int> Cell1DNeighbourCell2Ds(const unsigned int& cell1DIndex) const
       {
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
-        const unsigned int numNeighs = Cell1DNumberNeighbourCell2D(cell1DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell1DNeighbourCell2D(cell1DIndex, n);
-        return neighbours;
+
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
+        {
+          if (!Cell1DHasNeighbourCell2D(cell1DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell1DNeighbourCell2D(cell1DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell1DHasNeighbourCell2D(const unsigned int& cell1DIndex,
                                            const unsigned int& neighbourIndex) const
@@ -590,11 +618,18 @@ namespace Gedim
       inline std::vector<unsigned int> Cell1DNeighbourCell3Ds(const unsigned int& cell1DIndex) const
       {
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
-        const unsigned int numNeighs = Cell1DNumberNeighbourCell3D(cell1DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell1DNeighbourCell3D(cell1DIndex, n);
-        return neighbours;
+
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell1DNumberNeighbourCell3D(cell1DIndex); n++)
+        {
+          if (!Cell1DHasNeighbourCell3D(cell1DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell1DNeighbourCell3D(cell1DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell1DHasNeighbourCell3D(const unsigned int& cell1DIndex,
                                            const unsigned int& neighbourIndex) const
@@ -867,11 +902,18 @@ namespace Gedim
       inline std::vector<unsigned int> Cell2DNeighbourCell3Ds(const unsigned int& cell2DIndex) const
       {
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
-        const unsigned int numNeighs = Cell2DNumberNeighbourCell3D(cell2DIndex);
-        std::vector<unsigned int> neighbours(numNeighs);
-        for (unsigned int n = 0; n < numNeighs; n++)
-          neighbours[n] = Cell2DNeighbourCell3D(cell2DIndex, n);
-        return neighbours;
+
+        std::list<unsigned int> neighbours;
+        for (unsigned int n = 0; n < Cell2DNumberNeighbourCell3D(cell2DIndex); n++)
+        {
+          if (!Cell2DHasNeighbourCell3D(cell2DIndex, n))
+            continue;
+
+          neighbours.push_back(Cell2DNeighbourCell3D(cell2DIndex, n));
+        }
+
+        return std::vector<unsigned int>(neighbours.begin(),
+                                         neighbours.end());
       }
       inline bool Cell2DHasNeighbourCell3D(const unsigned int& cell2DIndex,
                                            const unsigned int& neighbourIndex) const
