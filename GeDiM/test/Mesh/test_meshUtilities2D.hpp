@@ -1204,6 +1204,38 @@ namespace GedimUnitTesting
                 meshCell2DToConvexCell2DIndices.at(34));
     }
 
+    {
+      const auto cell2Ds = std::vector<unsigned int>({ 34, 15 });
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                                                      std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+                                                                                                       cell2Ds.rend()),
+                                                                      meshDao);
+
+      ASSERT_EQ(std::unordered_set<unsigned int>({ 34, 15 }),
+                agglomerationInfo.SubCell2DsIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 25, 6, 9, 12 }),
+                agglomerationInfo.AgglomerateCell2DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 3, 14, 15, 5 }),
+                agglomerationInfo.AgglomerateCell2DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ }),
+                agglomerationInfo.SubCell2DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+                agglomerationInfo.SubCell2DsRemovedEdges);
+
+      const unsigned int agglomeratedCell2DIndex = meshUtilities.AgglomerateCell2Ds(agglomerationInfo.SubCell2DsIndex,
+                                                                                    agglomerationInfo.AgglomerateCell2DVertices,
+                                                                                    agglomerationInfo.AgglomerateCell2DEdges,
+                                                                                    agglomerationInfo.SubCell2DsRemovedVertices,
+                                                                                    agglomerationInfo.SubCell2DsRemovedEdges,
+                                                                                    meshDao,
+                                                                                    meshCell2DToConvexCell2DIndices);
+
+      ASSERT_EQ(34,
+                agglomeratedCell2DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 5, 1 }),
+                meshCell2DToConvexCell2DIndices.at(34));
+    }
+
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
     meshUtilities.ExtractActiveMesh(meshDao,
                                     activeMeshData);
