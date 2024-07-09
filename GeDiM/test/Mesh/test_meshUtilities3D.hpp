@@ -1173,7 +1173,11 @@ namespace GedimUnitTesting
 
     GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    meshUtilities.ComputeCell0DCell3DNeighbours(meshDao);
+    meshUtilities.ComputeCell0DCell1DNeighbours(meshDao);
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     std::vector<std::vector<unsigned int>> meshCell3DToConvexCell3DIndices(meshDao.Cell3DTotalNumber());
     for (unsigned int c3D_index = 0; c3D_index < meshDao.Cell3DTotalNumber(); c3D_index++)
     {
@@ -1186,8 +1190,10 @@ namespace GedimUnitTesting
                                   "OriginalMesh");
 
     {
-      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(1,
-                                                                           meshDao);
+      const auto cell3Ds = meshDao.Cell2DNeighbourCell3Ds(1);
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
+                                                                                                       cell3Ds.rend()),
+                                                                      meshDao);
 
       ASSERT_EQ(std::unordered_set<unsigned int>({ 0 }),
                 agglomerationInfo.SubCell3DsIndex);
@@ -1207,9 +1213,10 @@ namespace GedimUnitTesting
     }
 
     {
-      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(4,
-                                                                           meshDao);
-
+      const auto cell3Ds = meshDao.Cell2DNeighbourCell3Ds(4);
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
+                                                                                                       cell3Ds.rend()),
+                                                                      meshDao);
 
       ASSERT_EQ(std::unordered_set<unsigned int>({ 1, 10 }),
                 agglomerationInfo.SubCell3DsIndex);
@@ -1217,7 +1224,7 @@ namespace GedimUnitTesting
                 agglomerationInfo.AgglomerateCell3DVertices);
       ASSERT_EQ(std::vector<unsigned int>({ 38,7,36,10,6,8,37,11,9 }),
                 agglomerationInfo.AgglomerateCell3DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 7,5,6,35,33,34 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 34, 35, 6, 5, 33, 7 }),
                 agglomerationInfo.AgglomerateCell3DFaces);
       ASSERT_EQ(std::vector<unsigned int>({ 4 }),
                 agglomerationInfo.SubCell3DsRemovedFaces);
@@ -1234,21 +1241,22 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 10, 1 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 10 }),
                 meshCell3DToConvexCell3DIndices.at(22));
     }
 
     {
-      const auto agglomerationInfo = meshUtilities.AgglomerateCell3DByFace(7,
-                                                                           meshDao);
-
+      const auto cell3Ds = meshDao.Cell2DNeighbourCell3Ds(7);
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
+                                                                                                       cell3Ds.rend()),
+                                                                      meshDao);
       ASSERT_EQ(std::unordered_set<unsigned int>({ 22,12 }),
                 agglomerationInfo.SubCell3DsIndex);
       ASSERT_EQ(std::vector<unsigned int>({ 14,8,13,12,19,5 }),
                 agglomerationInfo.AgglomerateCell3DVertices);
       ASSERT_EQ(std::vector<unsigned int>({ 2,35,9,11,37,8,6,23,10,36,7,38 }),
                 agglomerationInfo.AgglomerateCell3DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 5,6,35,33,34,20,38,32 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 38, 20, 33, 5, 32, 6, 35, 34 }),
                 agglomerationInfo.AgglomerateCell3DFaces);
       ASSERT_EQ(std::vector<unsigned int>({ 7 }),
                 agglomerationInfo.SubCell3DsRemovedFaces);
@@ -1265,7 +1273,7 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(23,
                 agglomeratedCell3DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 12, 10, 1 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 10, 12 }),
                 meshCell3DToConvexCell3DIndices.at(23));
     }
 

@@ -728,6 +728,7 @@ namespace Gedim
       /// \return the Cell3D index of Neighbour Cell3Ds of Cell2D from 0 to Cell3DTotalNumber()
       virtual unsigned int Cell2DNeighbourCell3D(const unsigned int& cell2DIndex,
                                                  const unsigned int& neighbourIndex) const = 0;
+      virtual std::vector<unsigned int> Cell2DNeighbourCell3Ds(const unsigned int& cell2DIndex) const = 0;
       /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
       /// \param neighbourIndex the number of neigbourh Cell3D from 0 to Cell2DNumberNeighbourCell3D(cell2DIndex)
       /// \return true if Neighbour Cell3Ds of Cell2D at position neighbourIndex exists
