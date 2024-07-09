@@ -2031,11 +2031,11 @@ namespace Gedim
     result.AgglomerateCell2DVertices.resize(num_cell1Ds_concat);
     result.AgglomerateCell2DEdges.resize(num_cell1Ds_concat);
     const unsigned int edge_first_index = cell1Ds_concatenation(1, 0);
+    const bool unclockwise = agglomerated_cell1Ds_orientation.at(edge_first_index) ?
+                               cell1Ds_extremes(0, edge_first_index) == cell1Ds_concatenation(0, 0) :
+                               cell1Ds_extremes(1, edge_first_index) == cell1Ds_concatenation(0, 0);
 
-    if ((agglomerated_cell1Ds_orientation.at(edge_first_index) &&
-         cell1Ds_extremes(edge_first_index, 0) == cell1Ds_concatenation(0, 0)) ||
-        (!agglomerated_cell1Ds_orientation.at(edge_first_index) &&
-         cell1Ds_extremes(edge_first_index, 1) == cell1Ds_concatenation(0, 0)))
+    if (unclockwise)
     {
       for (unsigned int e = 0; e < num_cell1Ds_concat; e++)
       {

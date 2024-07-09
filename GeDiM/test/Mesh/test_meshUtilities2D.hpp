@@ -1213,13 +1213,13 @@ namespace GedimUnitTesting
 
       ASSERT_EQ(std::unordered_set<unsigned int>({ 34, 15 }),
                 agglomerationInfo.SubCell2DsIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 25, 6, 9, 12 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 4, 12, 25, 6, 9 }),
                 agglomerationInfo.AgglomerateCell2DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 3, 14, 15, 5 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 37, 5, 3, 14, 16 }),
                 agglomerationInfo.AgglomerateCell2DEdges);
       ASSERT_EQ(std::vector<unsigned int>({ }),
                 agglomerationInfo.SubCell2DsRemovedVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 15 }),
                 agglomerationInfo.SubCell2DsRemovedEdges);
 
       const unsigned int agglomeratedCell2DIndex = meshUtilities.AgglomerateCell2Ds(agglomerationInfo.SubCell2DsIndex,
@@ -1230,9 +1230,9 @@ namespace GedimUnitTesting
                                                                                     meshDao,
                                                                                     meshCell2DToConvexCell2DIndices);
 
-      ASSERT_EQ(34,
+      ASSERT_EQ(35,
                 agglomeratedCell2DIndex);
-      ASSERT_EQ(std::vector<unsigned int>({ 5, 1 }),
+      ASSERT_EQ(std::vector<unsigned int>({ 15, 5, 1 }),
                 meshCell2DToConvexCell2DIndices.at(34));
     }
 
