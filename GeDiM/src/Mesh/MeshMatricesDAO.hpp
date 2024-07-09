@@ -586,6 +586,15 @@ namespace Gedim
         return _mesh.Cell1DNeighbourCell3Ds[_mesh.NumberCell1DNeighbourCell3D[cell1DIndex] +
             neighbourIndex];
       }
+      inline std::vector<unsigned int> Cell1DNeighbourCell3Ds(const unsigned int& cell1DIndex) const
+      {
+        Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
+        const unsigned int numNeighs = Cell1DNumberNeighbourCell3D(cell1DIndex);
+        std::vector<unsigned int> neighbours(numNeighs);
+        for (unsigned int n = 0; n < numNeighs; n++)
+          neighbours[n] = Cell1DNeighbourCell3D(cell1DIndex, n);
+        return neighbours;
+      }
       inline bool Cell1DHasNeighbourCell3D(const unsigned int& cell1DIndex,
                                            const unsigned int& neighbourIndex) const
       {

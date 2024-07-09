@@ -452,6 +452,7 @@ namespace Gedim
       /// \return the Cell3D index of Neighbour Cell3Ds of Cell1D from 0 to Cell3DTotalNumber()
       virtual unsigned int Cell1DNeighbourCell3D(const unsigned int& cell1DIndex,
                                                  const unsigned int& neighbourIndex) const = 0;
+      virtual std::vector<unsigned int> Cell1DNeighbourCell3Ds(const unsigned int& cell1DIndex) const = 0;
       /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
       /// \param neighbourIndex the number of neigbourh Cell3D from 0 to Cell1DNumberNeighbourCell3D(cell1DIndex)
       /// \return true if Neighbour Cell3Ds of Cell1D at position neighbourIndex exists

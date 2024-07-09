@@ -1333,12 +1333,6 @@ namespace GedimUnitTesting
       ASSERT_EQ(std::vector<unsigned int>({ 31,2,12,13,0,58 }),
                 agglomerationInfo.SubCell3DsRemovedFaces);
 
-      for (unsigned int v = 0; v < agglomerationInfo.AgglomerateCell3DVertices.size(); v++)
-      {
-        std::cout<< "Vertex "<< agglomerationInfo.AgglomerateCell3DVertices.at(v)<< " ";
-        std::cout<< "neighs "<< meshDao.Cell0DNeighbourCell3Ds(agglomerationInfo.AgglomerateCell3DVertices.at(v))<< std::endl;
-      }
-
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(agglomerationInfo.SubCell3DsIndex,
                                                                                     agglomerationInfo.AgglomerateCell3DVertices,
                                                                                     agglomerationInfo.AgglomerateCell3DEdges,
@@ -1350,10 +1344,10 @@ namespace GedimUnitTesting
                                                                                     meshCell3DToConvexCell3DIndices);
 
 
-      for (unsigned int v = 0; v < agglomerationInfo.AgglomerateCell3DVertices.size(); v++)
+      for (unsigned int e = 0; e < agglomerationInfo.AgglomerateCell3DEdges.size(); e++)
       {
-        std::cout<< "Vertex "<< agglomerationInfo.AgglomerateCell3DVertices.at(v)<< " ";
-        std::cout<< "neighs "<< meshDao.Cell0DNeighbourCell3Ds(agglomerationInfo.AgglomerateCell3DVertices.at(v))<< std::endl;
+        std::cout<< "Edge "<< agglomerationInfo.AgglomerateCell3DEdges.at(e)<< " ";
+        std::cout<< "neighs "<< meshDao.Cell1DNeighbourCell3Ds(agglomerationInfo.AgglomerateCell3DEdges.at(e))<< std::endl;
       }
       ASSERT_EQ(22,
                 agglomeratedCell3DIndex);
