@@ -197,7 +197,7 @@ namespace Gedim
 
       struct AgglomerateCell3DInformation final
       {
-          std::vector<unsigned int> SubCell3DsIndex;
+          std::unordered_set<unsigned int> SubCell3DsIndex;
           std::vector<unsigned int> AgglomerateCell3DVertices;
           std::vector<unsigned int> AgglomerateCell3DEdges;
           std::vector<unsigned int> AgglomerateCell3DFaces;
@@ -719,7 +719,7 @@ namespace Gedim
                                       std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
 
 
-      unsigned int AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
+      unsigned int AgglomerateCell3Ds(const std::unordered_set<unsigned int>& subCell3DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell3DVertices,
                                       const std::vector<unsigned int>& agglomerateCell3DEdges,
                                       const std::vector<unsigned int>& agglomerateCell3DFaces,

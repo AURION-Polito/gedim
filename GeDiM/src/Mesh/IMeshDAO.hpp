@@ -184,6 +184,8 @@ namespace Gedim
       /// \param numberNeighbourCell3Ds the number of Cell3D neighbours of the Cell0D
       virtual void Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
                                                     const unsigned int& numberNeighbourCell3Ds) = 0;
+      virtual void Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
+                                                    const std::vector<unsigned int>& neighbourCell3Ds) = 0;
       /// \brief Insert the Cell0D Cell3D neighbour
       /// \param cell0DIndex the index of Cell0D from 0 to Cell0DTotalNumber()
       /// \param neighbourIndex the number of Cell3D neighbour of the Cell0D from 0 to Cell0DNumberNeighbourCell3D(cell0DIndex)

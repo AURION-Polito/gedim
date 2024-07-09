@@ -421,6 +421,20 @@ namespace Gedim
                                             std::numeric_limits<unsigned int>::max());
   }
   // ***************************************************************************
+  void MeshMatricesDAO::Cell0DInitializeNeighbourCell3Ds(const unsigned int& cell0DIndex,
+                                                         const std::vector<unsigned int>& neighbourCell3Ds)
+  {
+    Cell0DInitializeNeighbourCell3Ds(cell0DIndex,
+                                     neighbourCell3Ds.size());
+
+    for (unsigned int n = 0; n < neighbourCell3Ds.size(); n++)
+    {
+      Cell0DInsertNeighbourCell3D(cell0DIndex,
+                                  n,
+                                  neighbourCell3Ds.at(n));
+    }
+  }
+  // ***************************************************************************
   std::vector<std::vector<unsigned int> > MeshMatricesDAO::Cell0DsNeighbourCell3Ds() const
   {
     const unsigned int numCells = Cell0DTotalNumber();
