@@ -1233,7 +1233,7 @@ namespace GedimUnitTesting
       ASSERT_EQ(35,
                 agglomeratedCell2DIndex);
       ASSERT_EQ(std::vector<unsigned int>({ 15, 5, 1 }),
-                meshCell2DToConvexCell2DIndices.at(34));
+                meshCell2DToConvexCell2DIndices.at(35));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
