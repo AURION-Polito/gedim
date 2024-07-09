@@ -2045,28 +2045,19 @@ namespace Gedim
     }
     else
     {
+      result.AgglomerateCell2DVertices[0] = cell1Ds_concatenation(0, 0);
       for (unsigned int e = 0; e < num_cell1Ds_concat; e++)
       {
         const unsigned int edge_position = num_cell1Ds_concat - e - 1;
-        result.AgglomerateCell2DVertices[e] = cell1Ds_concatenation(0, edge_position);
+        if (e + 1 < num_cell1Ds_concat)
+          result.AgglomerateCell2DVertices[e + 1] = cell1Ds_concatenation(0, edge_position);
+
         result.AgglomerateCell2DEdges[e] = agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, edge_position));
+        std::cout<< "e "<< e<< " edge_pos "<< edge_position<< " ";
+        std::cout<< "cell1Ds_concatenation "<< cell1Ds_concatenation(1, edge_position)<< " ";
+        std::cout<< "aggl "<< agglomerated_cell1Ds_index.at(cell1Ds_concatenation(1, edge_position))<< std::endl;
       }
     }
-
-
-    //    const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f],
-    //                                                                             false);
-
-    //    switch (geometryUtilities.PolygonOrientation(faceConvexHull))
-    //    {
-    //      case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
-    //      {
-    //        face2DCCWOrientation[f] = false;
-    //        face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
-    //        face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DVertices[c][f],
-    //                                                               face2DsCCW[f]);
-    //      }
-    //    }
 
     result.SubCell2DsIndex = cell2DsIndex;
     result.SubCell2DsRemovedVertices = std::vector<unsigned int>(removed_cell0Ds.begin(),
