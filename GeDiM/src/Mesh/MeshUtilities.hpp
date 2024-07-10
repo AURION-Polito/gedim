@@ -874,6 +874,10 @@ namespace Gedim
                                     const std::vector<std::vector<unsigned int>>& convexCell2DsIndex,
                                     const char& separator,
                                     const std::string& exportFolderPath) const;
+
+      std::vector<unsigned int> MarkCells(const std::function<Eigen::VectorXi(const Eigen::MatrixXd&)>& marking_function,
+                                          const std::vector<Eigen::MatrixXd>& cells_points,
+                                          const unsigned int default_mark) const;
   };
 
 }

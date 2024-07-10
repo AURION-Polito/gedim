@@ -1653,6 +1653,92 @@ namespace GedimUnitTesting
       }
     }
   }
+
+  TEST(TestMeshUtilities, TestMarkCell3Ds)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestMarkCell3Ds";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    auto marking_function = [&geometryUtilities](const Eigen::MatrixXd& points)
+    {
+      Eigen::VectorXi marks(points.cols());
+      const Eigen::Vector3d center(0.5, 0.5, 0.5);
+
+      for (unsigned int p = 0; p < points.cols(); p++)
+      {
+        const Eigen::Vector3d point = points.col(p);
+
+        if (geometryUtilities.IsValueGreater((center - point).norm(),
+                                             0.25,
+                                             geometryUtilities.Tolerance1D()))
+        {
+          marks[p] = 0;
+          continue;
+        }
+
+        if (geometryUtilities.IsValueGreater(point.x(),
+                                             0.5,
+                                             geometryUtilities.Tolerance1D()))
+          marks[p] = 1;
+        else
+          marks[p] = 2;
+      }
+
+      return marks;
+    };
+
+    const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                           meshDao);
+
+    std::vector<Eigen::MatrixXd> cell3Ds_points(meshDao.Cell3DTotalNumber());
+    for (unsigned int c = 0; c < meshDao.Cell3DTotalNumber(); c++)
+    {
+      if (!meshDao.Cell3DIsActive(c))
+        continue;
+
+      cell3Ds_points[c].resize(3, 1);
+      cell3Ds_points[c].col(0)<< mesh_geometric_data.Cell3DsCentroids.at(c);
+    }
+
+    const auto cell3Ds_marked = meshUtilities.MarkCells(marking_function,
+                                                        cell3Ds_points,
+                                                        0);
+
+    ASSERT_EQ(std::vector<unsigned int>({0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0}),
+              cell3Ds_marked);
+
+    {
+      Gedim::VTKUtilities exporter;
+      std::vector<double> marks(cell3Ds_marked.begin(),
+                                cell3Ds_marked.end());
+
+      exporter.AddPolyhedrons(meshDao.Cell0DsCoordinates(),
+                              meshDao.Cell3DsFacesVertices(),
+                              {
+                                {
+                                  "Mark",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(marks.size()),
+                                  marks.data()
+                                }
+                              });
+      exporter.Export(exportFolder + "/cell3Ds_mark.vtu");
+    }
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H

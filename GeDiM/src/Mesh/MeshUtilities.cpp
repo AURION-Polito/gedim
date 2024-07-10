@@ -1216,4 +1216,25 @@ namespace Gedim
                     mesh);
   }
   // ***************************************************************************
+  std::vector<unsigned int> MeshUtilities::MarkCells(const std::function<Eigen::VectorXi(const Eigen::MatrixXd&)>& marking_function,
+                                                     const std::vector<Eigen::MatrixXd>& cells_points,
+                                                     const unsigned int default_mark) const
+  {
+    std::vector<unsigned int> cells_marks(cells_points.size());
+    for (unsigned int c = 0; c < cells_points.size(); c++)
+    {
+      if (cells_points.at(c).size() == 0)
+      {
+        cells_marks[c] = default_mark;
+        continue;
+      }
+
+      const auto cell_marks = marking_function(cells_points.at(c));
+
+      cells_marks[c] = cell_marks.maxCoeff();
+    }
+
+    return cells_marks;
+  }
+  // ***************************************************************************
 }
