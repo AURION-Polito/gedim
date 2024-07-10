@@ -184,14 +184,12 @@ namespace GedimUnitTesting
                                                                       std::unordered_set<unsigned int>({ 1, 2 }),
                                                                       meshDao);
 
-      ASSERT_EQ(std::unordered_set<unsigned int>({ 1, 2 }),
-                agglomerationInfo.SubCell1DsIndex);
       ASSERT_EQ(std::vector<unsigned int>({ 1, 3 }),
                 agglomerationInfo.AgglomerateCell1DVertices);
       ASSERT_EQ(std::vector<unsigned int>({ 2 }),
                 agglomerationInfo.SubCell1DsRemovedVertices);
 
-      const unsigned int agglomeratedCell1DIndex = meshUtilities.AgglomerateCell1Ds(agglomerationInfo.SubCell1DsIndex,
+      const unsigned int agglomeratedCell1DIndex = meshUtilities.AgglomerateCell1Ds(std::unordered_set<unsigned int>({ 1, 2 }),
                                                                                     agglomerationInfo.AgglomerateCell1DVertices,
                                                                                     agglomerationInfo.SubCell1DsRemovedVertices,
                                                                                     meshDao,

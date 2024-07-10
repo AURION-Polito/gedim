@@ -197,14 +197,12 @@ namespace Gedim
 
       struct AgglomerateCell1DInformation final
       {
-          std::unordered_set<unsigned int> SubCell1DsIndex;
           std::vector<unsigned int> AgglomerateCell1DVertices;
           std::vector<unsigned int> SubCell1DsRemovedVertices;
       };
 
       struct AgglomerateCell2DInformation final
       {
-          std::unordered_set<unsigned int> SubCell2DsIndex;
           std::vector<unsigned int> AgglomerateCell2DVertices;
           std::vector<unsigned int> AgglomerateCell2DEdges;
           std::vector<unsigned int> SubCell2DsRemovedVertices;
@@ -213,7 +211,6 @@ namespace Gedim
 
       struct AgglomerateCell3DInformation final
       {
-          std::unordered_set<unsigned int> SubCell3DsIndex;
           std::vector<unsigned int> AgglomerateCell3DVertices;
           std::vector<unsigned int> AgglomerateCell3DEdges;
           std::vector<unsigned int> AgglomerateCell3DFaces;
@@ -736,7 +733,7 @@ namespace Gedim
                                       const std::vector<unsigned int>& agglomerateCell1DVertices,
                                       const std::vector<unsigned int>& subCell1DsRemovedCell0Ds,
                                       IMeshDAO& mesh,
-                                      std::vector<std::vector<unsigned int>>& meshCell1DToConvexCell1DIndices,
+                                      std::vector<std::vector<unsigned int>>& meshCell1DsOriginalCell1Ds,
                                       const bool mantain_neigh2D_order = false) const;
 
       unsigned int AgglomerateCell2Ds(const std::unordered_set<unsigned int>& subCell2DsIndex,
@@ -745,7 +742,7 @@ namespace Gedim
                                       const std::vector<unsigned int>& subCell2DsRemovedCell0Ds,
                                       const std::vector<unsigned int>& subCell2DsRemovedCell1Ds,
                                       IMeshDAO& mesh,
-                                      std::vector<std::vector<unsigned int>>& meshCell2DToConvexCell2DIndices) const;
+                                      std::vector<std::vector<unsigned int>>& meshCell2DsOriginalCell2Ds) const;
 
 
       unsigned int AgglomerateCell3Ds(const std::unordered_set<unsigned int>& subCell3DsIndex,
@@ -756,7 +753,7 @@ namespace Gedim
                                       const std::vector<unsigned int>& subCell3DsRemovedCell1Ds,
                                       const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
                                       IMeshDAO& mesh,
-                                      std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
+                                      std::vector<std::vector<unsigned int>>& meshCell3DsOriginalCell3Ds) const;
 
       void CreateRandomlyDeformedQuadrilaterals(const GeometryUtilities& geometryUtilities,
                                                 const Eigen::Vector3d& rectangleOrigin,

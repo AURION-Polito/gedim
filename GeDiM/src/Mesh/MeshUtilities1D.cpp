@@ -243,14 +243,8 @@ namespace Gedim
   {
     AgglomerateCell1DInformation result;
 
-    if (cell1DsIndex.size() == 0)
+    if (cell1DsIndex.size() < 2)
       return result;
-
-    if (cell1DsIndex.size() == 1)
-    {
-      result.SubCell1DsIndex = cell1DsIndex;
-      return result;
-    }
 
     std::unordered_set<unsigned int> agglomerated_cell0Ds;
     std::unordered_set<unsigned int> removed_cell0Ds;
@@ -306,7 +300,6 @@ namespace Gedim
       }
     }
 
-    result.SubCell1DsIndex = cell1DsIndex;
     result.AgglomerateCell1DVertices = std::vector<unsigned int>(agglomerated_cell0Ds.begin(),
                                                                  agglomerated_cell0Ds.end());
     result.SubCell1DsRemovedVertices = std::vector<unsigned int>(removed_cell0Ds.begin(),
@@ -319,7 +312,7 @@ namespace Gedim
                                                  const std::vector<unsigned int>& agglomerateCell1DVertices,
                                                  const std::vector<unsigned int>& subCell1DsRemovedCell0Ds,
                                                  IMeshDAO& mesh,
-                                                 std::vector<std::vector<unsigned int>>& meshCell1DToConvexCell1DIndices,
+                                                 std::vector<std::vector<unsigned int>>& meshCell1DsOriginalCell1Ds,
                                                  const bool mantain_neigh2D_order) const
 
   {
@@ -343,7 +336,7 @@ namespace Gedim
       if (mesh.Cell1DMarker(subCell1DIndex) > max_marker)
         max_marker = mesh.Cell1DMarker(subCell1DIndex);
 
-      const auto& convexCells = meshCell1DToConvexCell1DIndices.at(subCell1DIndex);
+      const auto& convexCells = meshCell1DsOriginalCell1Ds.at(subCell1DIndex);
       for (const auto& convexCell : convexCells)
         agglomeratedCell1DConvexCells.push_back(convexCell);
 
@@ -369,8 +362,8 @@ namespace Gedim
           neigh_cell3Ds.insert(neighCell3DIndex);
       }
     }
-    meshCell1DToConvexCell1DIndices.resize(meshCell1DToConvexCell1DIndices.size() + 1);
-    meshCell1DToConvexCell1DIndices.at(agglomeratedCell1DIndex) =
+    meshCell1DsOriginalCell1Ds.resize(meshCell1DsOriginalCell1Ds.size() + 1);
+    meshCell1DsOriginalCell1Ds.at(agglomeratedCell1DIndex) =
         std::vector<unsigned int>(agglomeratedCell1DConvexCells.begin(),
                                   agglomeratedCell1DConvexCells.end());
 
