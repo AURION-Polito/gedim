@@ -145,6 +145,75 @@ namespace GedimUnitTesting
     EXPECT_EQ(result.Cell1DsTangents, expectedResult.Cell1DsTangents);
     EXPECT_EQ(result.Cell1DsVertices, expectedResult.Cell1DsVertices);
   }
+
+  TEST(TestMeshUtilities, TestAgglomerateCell1Ds)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell1Ds";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO meshDao(mesh_data);
+
+    meshUtilities.FillMesh1D(geometryUtilities,
+                             Eigen::Vector3d(1.0, 1.0, 0.0),
+                             Eigen::Vector3d(1.0, 1.0, 0.0),
+                             { 0.0, 0.25, 0.75, 1.0 },
+                             meshDao);
+    meshUtilities.ComputeCell0DCell1DNeighbours(meshDao);
+
+    std::vector<std::vector<unsigned int>> meshCell1DToConvexCell1DIndices(meshDao.Cell1DTotalNumber());
+    for (unsigned int c1D_index = 0; c1D_index < meshDao.Cell1DTotalNumber(); c1D_index++)
+    {
+      meshCell1DToConvexCell1DIndices.at(c1D_index) =
+          std::vector<unsigned int>({ c1D_index });
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "OriginalMesh");
+
+    {
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell1Ds(std::unordered_set<unsigned int>({ 1, 0, 2 }),
+                                                                      meshDao);
+
+      ASSERT_EQ(std::vector<unsigned int>({ 0, 3 }),
+                agglomerationInfo.AgglomerateCell1DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 1, 2 }),
+                agglomerationInfo.SubCell1DsRemovedVertices);
+
+      const unsigned int agglomeratedCell1DIndex = meshUtilities.AgglomerateCell1Ds(std::unordered_set<unsigned int>({ 1, 0, 2 }),
+                                                                                    agglomerationInfo.AgglomerateCell1DVertices,
+                                                                                    agglomerationInfo.SubCell1DsRemovedVertices,
+                                                                                    meshDao,
+                                                                                    meshCell1DToConvexCell1DIndices);
+
+      ASSERT_EQ(3,
+                agglomeratedCell1DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 2, 0, 1 }),
+                meshCell1DToConvexCell1DIndices.at(3));
+    }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    activeMeshData);
+    std::vector<std::vector<unsigned int>> activeMeshCell1DToConvexCell1DIndices(meshDao.Cell1DTotalNumber());
+    for (unsigned int c1D_index = 0; c1D_index < meshDao.Cell1DTotalNumber(); c1D_index++)
+    {
+      activeMeshCell1DToConvexCell1DIndices.at(c1D_index) =
+          meshCell1DToConvexCell1DIndices.at(activeMeshData.NewCell1DToOldCell1D.at(c1D_index));
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "AgglomeratedMesh");
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES1D_H

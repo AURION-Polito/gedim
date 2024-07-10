@@ -1143,6 +1143,111 @@ namespace GedimUnitTesting
                                            ',',
                                            exportConcaveMeshFolder);
   }
+
+  TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell2Ds_ByFace";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    meshUtilities.ComputeCell0DCell1DNeighbours(meshDao);
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    std::vector<std::vector<unsigned int>> meshCell2DToConvexCell2DIndices(meshDao.Cell2DTotalNumber());
+    for (unsigned int c2D_index = 0; c2D_index < meshDao.Cell2DTotalNumber(); c2D_index++)
+    {
+      meshCell2DToConvexCell2DIndices.at(c2D_index) =
+          std::vector<unsigned int>({ c2D_index });
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "OriginalMesh");
+
+    {
+      const auto cell2Ds = meshDao.Cell1DNeighbourCell2Ds(4);
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                                                      std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+                                                                                                       cell2Ds.rend()),
+                                                                      meshDao);
+
+      ASSERT_EQ(std::vector<unsigned int>({ 25, 6, 9, 12 }),
+                agglomerationInfo.AgglomerateCell2DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 3, 14, 15, 5 }),
+                agglomerationInfo.AgglomerateCell2DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ }),
+                agglomerationInfo.SubCell2DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
+                agglomerationInfo.SubCell2DsRemovedEdges);
+
+      const unsigned int agglomeratedCell2DIndex = meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+                                                                                                                     cell2Ds.rend()),
+                                                                                    agglomerationInfo.AgglomerateCell2DVertices,
+                                                                                    agglomerationInfo.AgglomerateCell2DEdges,
+                                                                                    agglomerationInfo.SubCell2DsRemovedVertices,
+                                                                                    agglomerationInfo.SubCell2DsRemovedEdges,
+                                                                                    meshDao,
+                                                                                    meshCell2DToConvexCell2DIndices);
+
+      ASSERT_EQ(34,
+                agglomeratedCell2DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 5, 1 }),
+                meshCell2DToConvexCell2DIndices.at(34));
+    }
+
+    {
+      const auto cell2Ds = std::vector<unsigned int>({ 34, 15 });
+      const auto agglomerationInfo = meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                                                      std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+                                                                                                       cell2Ds.rend()),
+                                                                      meshDao);
+
+      ASSERT_EQ(std::vector<unsigned int>({ 4, 12, 25, 6, 9 }),
+                agglomerationInfo.AgglomerateCell2DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 37, 5, 3, 14, 16 }),
+                agglomerationInfo.AgglomerateCell2DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({ }),
+                agglomerationInfo.SubCell2DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({ 15 }),
+                agglomerationInfo.SubCell2DsRemovedEdges);
+
+      const unsigned int agglomeratedCell2DIndex = meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(),
+                                                                                                                     cell2Ds.rend()),
+                                                                                    agglomerationInfo.AgglomerateCell2DVertices,
+                                                                                    agglomerationInfo.AgglomerateCell2DEdges,
+                                                                                    agglomerationInfo.SubCell2DsRemovedVertices,
+                                                                                    agglomerationInfo.SubCell2DsRemovedEdges,
+                                                                                    meshDao,
+                                                                                    meshCell2DToConvexCell2DIndices);
+
+      ASSERT_EQ(35,
+                agglomeratedCell2DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({ 5, 1, 15 }),
+                meshCell2DToConvexCell2DIndices.at(35));
+    }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
+    meshUtilities.ExtractActiveMesh(meshDao,
+                                    activeMeshData);
+    std::vector<std::vector<unsigned int>> activeMeshCell2DToConvexCell2DIndices(meshDao.Cell2DTotalNumber());
+    for (unsigned int c2D_index = 0; c2D_index < meshDao.Cell2DTotalNumber(); c2D_index++)
+    {
+      activeMeshCell2DToConvexCell2DIndices.at(c2D_index) =
+          meshCell2DToConvexCell2DIndices.at(activeMeshData.NewCell2DToOldCell2D.at(c2D_index));
+    }
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "AgglomeratedMesh");
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES2D_H

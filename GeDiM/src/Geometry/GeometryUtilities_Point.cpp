@@ -197,6 +197,70 @@ namespace Gedim
       return PointPlanePositionTypes::Positive;
   }
   // ***************************************************************************
+  Eigen::MatrixXi GeometryUtilities::MakeConcatenation(const Eigen::MatrixXi& segments,
+                                                       const unsigned int starting_vertex) const
+  {
+    const unsigned int num_segments = segments.cols();
+
+    if (num_segments == 0)
+      return Eigen::MatrixXi();
+
+    Eigen::MatrixXi concatenation = Eigen::MatrixXi::Zero(2, num_segments);
+
+    std::vector<bool> taken(num_segments, false);
+    unsigned int num_taken = 0;
+    int next_vertex = starting_vertex;
+    unsigned int num_visited = 0;
+    unsigned int segment_index = 0;
+
+    while (num_visited < num_segments &&
+           num_taken < num_segments)
+    {
+      if (taken[segment_index])
+      {
+        num_visited++;
+        segment_index = (segment_index + 1) % num_segments;
+        continue;
+      }
+
+      if (segments(0, segment_index) == next_vertex)
+      {
+        concatenation.col(num_taken)<< next_vertex, segment_index;
+        next_vertex = segments(1, segment_index);
+
+        taken[segment_index] = true;
+        num_taken++;
+
+        num_visited = 1;
+        segment_index = (segment_index + 1) % num_segments;
+        continue;
+      }
+
+      if (segments(1, segment_index) == next_vertex)
+      {
+        concatenation.col(num_taken)<< next_vertex, segment_index;
+        next_vertex = segments(0, segment_index);
+
+        taken[segment_index] = true;
+        num_taken++;
+
+        num_visited = 1;
+        segment_index = (segment_index + 1) % num_segments;
+        continue;
+      }
+
+      num_visited++;
+      segment_index = (segment_index + 1) % num_segments;
+    }
+
+    if (num_taken == 0)
+      return Eigen::MatrixXi();
+
+    concatenation.conservativeResize(2, num_taken);
+
+    return concatenation;
+  }
+  // ***************************************************************************
   GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPosition(const Vector3d& point,
                                                                                         const MatrixXd& polygonVertices) const
   {

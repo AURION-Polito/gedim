@@ -195,9 +195,22 @@ namespace Gedim
           std::vector<std::vector<unsigned int>> AgglomeratedCell2DToOriginalCell2Ds = {};
       };
 
+      struct AgglomerateCell1DInformation final
+      {
+          std::vector<unsigned int> AgglomerateCell1DVertices;
+          std::vector<unsigned int> SubCell1DsRemovedVertices;
+      };
+
+      struct AgglomerateCell2DInformation final
+      {
+          std::vector<unsigned int> AgglomerateCell2DVertices;
+          std::vector<unsigned int> AgglomerateCell2DEdges;
+          std::vector<unsigned int> SubCell2DsRemovedVertices;
+          std::vector<unsigned int> SubCell2DsRemovedEdges;
+      };
+
       struct AgglomerateCell3DInformation final
       {
-          std::vector<unsigned int> SubCell3DsIndex;
           std::vector<unsigned int> AgglomerateCell3DVertices;
           std::vector<unsigned int> AgglomerateCell3DEdges;
           std::vector<unsigned int> AgglomerateCell3DFaces;
@@ -703,22 +716,43 @@ namespace Gedim
                                             const std::vector<std::vector<unsigned int>>& subCell3DsFaces,
                                             IMeshDAO& mesh) const;
 
-      AgglomerateCell3DInformation AgglomerateCell3DByFace(const unsigned int cell2DIndex,
-                                                           const IMeshDAO& mesh) const;
-      AgglomerateCell3DInformation AgglomerateCell3DByVertex(const unsigned int cell0DIndex,
-                                                             const IMeshDAO& mesh) const;
+      AgglomerateCell1DInformation AgglomerateCell1Ds(const std::unordered_set<unsigned int>& cell1DsIndex,
+                                                      const IMeshDAO& mesh) const;
+
+
+      AgglomerateCell2DInformation AgglomerateCell2Ds(const GeometryUtilities& geometryUtilities,
+                                                      const std::unordered_set<unsigned int>& cell2DsIndex,
+                                                      const IMeshDAO& mesh) const;
+
       AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int>& cell3DsIndex,
                                                       const IMeshDAO& mesh) const;
 
-      unsigned int AgglomerateCell3Ds(const std::vector<unsigned int>& subCell3DsIndex,
+
+      unsigned int AgglomerateCell1Ds(const std::unordered_set<unsigned int>& subCell1DsIndex,
+                                      const std::vector<unsigned int>& agglomerateCell1DVertices,
+                                      const std::vector<unsigned int>& subCell1DsRemovedCell0Ds,
+                                      IMeshDAO& mesh,
+                                      std::vector<std::vector<unsigned int>>& meshCell1DsOriginalCell1Ds,
+                                      const bool mantain_neigh2D_order = false) const;
+
+      unsigned int AgglomerateCell2Ds(const std::unordered_set<unsigned int>& subCell2DsIndex,
+                                      const std::vector<unsigned int>& agglomerateCell2DVertices,
+                                      const std::vector<unsigned int>& agglomerateCell2DEdges,
+                                      const std::vector<unsigned int>& subCell2DsRemovedCell0Ds,
+                                      const std::vector<unsigned int>& subCell2DsRemovedCell1Ds,
+                                      IMeshDAO& mesh,
+                                      std::vector<std::vector<unsigned int>>& meshCell2DsOriginalCell2Ds) const;
+
+
+      unsigned int AgglomerateCell3Ds(const std::unordered_set<unsigned int>& subCell3DsIndex,
                                       const std::vector<unsigned int>& agglomerateCell3DVertices,
                                       const std::vector<unsigned int>& agglomerateCell3DEdges,
                                       const std::vector<unsigned int>& agglomerateCell3DFaces,
-                                      const std::vector<unsigned int>& subCell3DsRemovedVertices,
-                                      const std::vector<unsigned int>& subCell3DsRemovedEdges,
-                                      const std::vector<unsigned int>& subCell3DsRemovedFaces,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell0Ds,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell1Ds,
+                                      const std::vector<unsigned int>& subCell3DsRemovedCell2Ds,
                                       IMeshDAO& mesh,
-                                      std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
+                                      std::vector<std::vector<unsigned int>>& meshCell3DsOriginalCell3Ds) const;
 
       void CreateRandomlyDeformedQuadrilaterals(const GeometryUtilities& geometryUtilities,
                                                 const Eigen::Vector3d& rectangleOrigin,
@@ -840,6 +874,10 @@ namespace Gedim
                                     const std::vector<std::vector<unsigned int>>& convexCell2DsIndex,
                                     const char& separator,
                                     const std::string& exportFolderPath) const;
+
+      std::vector<unsigned int> MarkCells(const std::function<Eigen::VectorXi(const Eigen::MatrixXd&)>& marking_function,
+                                          const std::vector<Eigen::MatrixXd>& cells_points,
+                                          const unsigned int default_mark) const;
   };
 
 }
