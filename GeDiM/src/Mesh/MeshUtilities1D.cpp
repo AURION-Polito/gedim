@@ -237,8 +237,7 @@ namespace Gedim
     return newCell1DsIndex;
   }
   // ***************************************************************************
-  MeshUtilities::AgglomerateCell1DInformation MeshUtilities::AgglomerateCell1Ds(const GeometryUtilities& geometryUtilities,
-                                                                                const std::unordered_set<unsigned int>& cell1DsIndex,
+  MeshUtilities::AgglomerateCell1DInformation MeshUtilities::AgglomerateCell1Ds(const std::unordered_set<unsigned int>& cell1DsIndex,
                                                                                 const IMeshDAO& mesh) const
   {
     AgglomerateCell1DInformation result;
