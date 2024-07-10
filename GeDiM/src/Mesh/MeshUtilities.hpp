@@ -195,6 +195,13 @@ namespace Gedim
           std::vector<std::vector<unsigned int>> AgglomeratedCell2DToOriginalCell2Ds = {};
       };
 
+      struct AgglomerateCell1DInformation final
+      {
+          std::unordered_set<unsigned int> SubCell1DsIndex;
+          std::vector<unsigned int> AgglomerateCell1DVertices;
+          std::vector<unsigned int> SubCell1DsRemovedVertices;
+      };
+
       struct AgglomerateCell2DInformation final
       {
           std::unordered_set<unsigned int> SubCell2DsIndex;
@@ -711,6 +718,11 @@ namespace Gedim
                                             const std::vector<std::vector<unsigned int>>& subCell3DsEdges,
                                             const std::vector<std::vector<unsigned int>>& subCell3DsFaces,
                                             IMeshDAO& mesh) const;
+
+      AgglomerateCell1DInformation AgglomerateCell1Ds(const GeometryUtilities& geometryUtilities,
+                                                      const std::unordered_set<unsigned int>& cell1DsIndex,
+                                                      const IMeshDAO& mesh) const;
+
 
       AgglomerateCell2DInformation AgglomerateCell2Ds(const GeometryUtilities& geometryUtilities,
                                                       const std::unordered_set<unsigned int>& cell2DsIndex,
