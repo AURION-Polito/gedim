@@ -35,7 +35,7 @@ namespace GedimUnitTesting
       std::vector<std::vector<std::vector<bool>>> PolyhedronsFacesEdgesDirection;
       std::vector<std::vector<Eigen::MatrixXd>> PolyhedronsFaces2DVertices;
       std::vector<std::vector<std::vector<Eigen::Matrix3d>>> PolyhedronsFacesTriangulations2DVertices;
-      std::vector<std::vector<double>> PolyhedronsFacesArea;
+      std::vector<Eigen::VectorXd> PolyhedronsFacesArea;
       std::vector<std::vector<Eigen::Vector3d>> PolyhedronsFaces2DCentroid;
       std::vector<Eigen::VectorXd> PolyhedronsFacesDiameter;
       std::vector<std::vector<Eigen::VectorXd>> PolyhedronsFacesEdgesLength;
