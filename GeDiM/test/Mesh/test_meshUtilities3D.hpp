@@ -121,8 +121,8 @@ namespace GedimUnitTesting
     const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                    1.0);
 
-    const unsigned int meshGenerator = 1;
-    const unsigned int numCells1D = 9;
+    const unsigned int meshGenerator = 0;
+    const unsigned int numCells1D = 2;
     switch (meshGenerator)
     {
       case 0:
@@ -206,13 +206,23 @@ namespace GedimUnitTesting
       exportData.PolyhedronsFacesEdgesDirection = cell3DsGeometricData.Cell3DsFacesEdgeDirections;
       exportData.PolyhedronsFaces2DVertices = cell3DsGeometricData.Cell3DsFaces2DVertices;
       exportData.PolyhedronsFacesTriangulations2DVertices = cell3DsGeometricData.Cell3DsFaces2DTriangulations;
-      exportData.PolyhedronsFacesArea = cell3DsGeometricData.Cell3DsFacesAreas;
       exportData.PolyhedronsFaces2DCentroid = cell3DsGeometricData.Cell3DsFaces2DCentroids;
       exportData.PolyhedronsFacesEdgesLength = cell3DsGeometricData.Cell3DsFacesEdgeLengths;
       exportData.PolyhedronsFacesEdges2DCentroid = cell3DsGeometricData.Cell3DsFacesEdges2DCentroid;
       exportData.PolyhedronsFacesEdges2DTangent = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
       exportData.PolyhedronsFacesEdges2DTangentNormalized = cell3DsGeometricData.Cell3DsFacesEdge2DTangents;
       exportData.PolyhedronsFacesEdges2DNormal = cell3DsGeometricData.Cell3DsFacesEdge2DNormals;
+
+      exportData.PolyhedronsFacesArea.resize(cell3DsGeometricData.Cell3DsFacesAreas.size());
+      for (unsigned int c = 0; c < cell3DsGeometricData.Cell3DsFacesAreas.size(); c++)
+      {
+        exportData.PolyhedronsFacesArea[c].resize(cell3DsGeometricData.Cell3DsFacesAreas[c].size());
+        for (unsigned int f = 0; f < cell3DsGeometricData.Cell3DsFacesAreas[c].size(); f++)
+        {
+          exportData.PolyhedronsFacesArea[c][f] =
+              cell3DsGeometricData.Cell3DsFacesAreas[c][f];
+        }
+      }
 
       exportData.PolyhedronsFacesNormal.resize(cell3DsGeometricData.Cell3DsFacesNormals.size());
       for (unsigned int c = 0; c < cell3DsGeometricData.Cell3DsFacesNormals.size(); c++)
