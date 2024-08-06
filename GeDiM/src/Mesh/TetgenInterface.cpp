@@ -253,12 +253,9 @@ namespace Gedim
   {
     tetgenbehavior b;
 
-    ostringstream options;
-    options.precision(16);
-    options<< tetgenOptions;
-    size_t sizeOptions = options.str().size();
+    size_t sizeOptions = tetgenOptions.size();
     char* optionPointer = new char[sizeOptions + 1];
-    options.str().copy(optionPointer, sizeOptions);
+    tetgenOptions.copy(optionPointer, sizeOptions);
     optionPointer[sizeOptions] = '\0';
 
     b.parse_commandline(optionPointer);
