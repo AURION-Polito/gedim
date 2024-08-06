@@ -578,6 +578,11 @@ namespace Gedim
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
 
+      void CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
+                              const Eigen::MatrixXi& polyhedronEdges,
+                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                              IMeshDAO& mesh) const;
+
       void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                 const Eigen::MatrixXd& polyhedronVertices,
                                 const Eigen::MatrixXi& polyhedronEdges,

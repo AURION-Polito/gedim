@@ -62,6 +62,42 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 6);
   }
 
+  TEST(TestMeshUtilities, TestCreateDelaunayMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                   1.0);
+
+    meshUtilities.CreateDelaunayMesh(polyhedron.Vertices,
+                                     polyhedron.Edges,
+                                     polyhedron.Faces,
+                                     meshDao);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    EXPECT_EQ(3,
+              meshDao.Dimension());
+    EXPECT_EQ(8,
+              meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(19,
+              meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(18,
+              meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(6,
+              meshDao.Cell3DTotalNumber());
+  }
+
   TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
