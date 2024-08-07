@@ -581,7 +581,8 @@ namespace Gedim
       void CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
                               const Eigen::MatrixXi& polyhedronEdges,
                               const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                              IMeshDAO& mesh) const;
+                              IMeshDAO& mesh,
+                              const Eigen::MatrixXd& constrained_points = Eigen::MatrixXd()) const;
 
       void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                 const Eigen::MatrixXd& polyhedronVertices,

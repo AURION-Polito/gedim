@@ -74,11 +74,14 @@ namespace GedimUnitTesting
 
     const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                    1.0);
+    Eigen::MatrixXd constrained_points(3, 1);
+    constrained_points.col(0)<< 0.5, 0.5, 0.5;
 
     meshUtilities.CreateDelaunayMesh(polyhedron.Vertices,
                                      polyhedron.Edges,
                                      polyhedron.Faces,
-                                     meshDao);
+                                     meshDao,
+                                     constrained_points);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -88,13 +91,13 @@ namespace GedimUnitTesting
 
     EXPECT_EQ(3,
               meshDao.Dimension());
-    EXPECT_EQ(8,
+    EXPECT_EQ(9,
               meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(19,
+    EXPECT_EQ(26,
               meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(18,
+    EXPECT_EQ(30,
               meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(6,
+    EXPECT_EQ(12,
               meshDao.Cell3DTotalNumber());
   }
 

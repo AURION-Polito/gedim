@@ -39,7 +39,8 @@ namespace Gedim
   void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& polyhedronVertices,
                                        const Eigen::MatrixXi& polyhedronEdges,
                                        const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                                       IMeshDAO& mesh) const
+                                       IMeshDAO& mesh,
+                                       const Eigen::MatrixXd& constrained_points) const
   {
     tetgenio* tetgenInput = new tetgenio();
     tetgenio* tetgenOutput = new tetgenio();
@@ -47,7 +48,8 @@ namespace Gedim
     CreateTetgenInput(polyhedronVertices,
                       polyhedronEdges,
                       polyhedronFaces,
-                      *tetgenInput);
+                      *tetgenInput,
+                      constrained_points);
     CreateTetgenOutput(*tetgenInput,
                        *tetgenOutput,
                        "QYYqfezn");
