@@ -1853,12 +1853,12 @@ namespace Gedim
       const FindConcaveCell3DFacesConvexCell2DResult convexCell2Ds = FindConcaveCell3DFacesConvexCell2D(geometryUtilities,
                                                                                                         c,
                                                                                                         mesh,
-                                                                                                        result.Cell3DsTetrahedronPoints[c],
-                                                                                                        result.Cell3DsFaces3DVertices[c],
-                                                                                                        face2DVerticesCCW,
-                                                                                                        result.Cell3DsFacesTranslations[c],
-                                                                                                        result.Cell3DsFacesRotationMatrices[c],
-                                                                                                        result.Cell3DsFacesNormals[c],
+                                                                                                        result.Cell3DsTetrahedronPoints.at(c),
+                                                                                                        result.Cell3DsFaces2DTriangulations.at(c),
+                                                                                                        result.Cell3DsFaces3DVertices.at(c),
+                                                                                                        result.Cell3DsFacesTranslations.at(c),
+                                                                                                        result.Cell3DsFacesRotationMatrices.at(c),
+                                                                                                        result.Cell3DsFacesNormals.at(c),
                                                                                                         cell3D_tetra_faces_3D_vertices,
                                                                                                         cell3D_tetra_faces_unaligned_vertices);
 
@@ -1996,8 +1996,8 @@ namespace Gedim
                                                                                                             const unsigned int& concaveCell3DIndex,
                                                                                                             const IMeshDAO& mesh,
                                                                                                             const std::vector<Eigen::MatrixXd>& concaveCell3DTetra,
+                                                                                                            const std::vector<std::vector<Eigen::Matrix3d>>& concaveCell3D_faces_2D_triangles,
                                                                                                             const std::vector<Eigen::MatrixXd>& concaveCell3DFaces3DVertices,
-                                                                                                            const std::vector<Eigen::MatrixXd>& concaveCell3DFaces2DVertices,
                                                                                                             const std::vector<Eigen::Vector3d>& concaveCell3DFacesTranslation,
                                                                                                             const std::vector<Eigen::Matrix3d>& concaveCell3DFacesRotationMatrix,
                                                                                                             const std::vector<Eigen::Vector3d>& concaveCell3DFacesNormal,
@@ -2017,17 +2017,11 @@ namespace Gedim
 
       const Eigen::MatrixXd& faceVertices = concaveCell3DFaces3DVertices[f];
       const Eigen::Vector3d& faceOrigin = faceVertices.col(0);
-      const Eigen::MatrixXd& face2DVertices = concaveCell3DFaces2DVertices[f];
       const Eigen::Matrix3d& faceRotationMatrix = concaveCell3DFacesRotationMatrix[f];
       const Eigen::Vector3d& faceTranslation = concaveCell3DFacesTranslation[f];
       const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
 
-      if (concaveCell3DIndex == 113)
-      {
-        Gedim::VTKUtilities exporter;
-        exporter.AddPolygon(faceVertices);
-        exporter.Export("./TEST/POL.vtu");
-      }
+      const Eigen::Matrix3d& face_2D_triangle = concaveCell3D_faces_2D_triangles.at(f).at(0);
 
       int convexCellFound = -1, convexFaceFound = -1;
 
@@ -2046,13 +2040,6 @@ namespace Gedim
           const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
           const std::vector<unsigned int>& convexFaceUnalignedVertices = convexCell3DsFacesUnalignedVertices[cc][ccf];
 
-          if (concaveCell3DIndex == 113)
-          {
-            Gedim::VTKUtilities exporter;
-            exporter.AddPolygon(convexFaceVertices3D);
-            exporter.Export("./TEST/ccf_" + std::to_string(ccf) + ".vtu");
-          }
-
           Eigen::Matrix3d convexFaceTriangle;
           convexFaceTriangle.col(0)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[0]);
           convexFaceTriangle.col(1)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[1]);
@@ -2067,22 +2054,9 @@ namespace Gedim
                                                 geometryUtilities.Tolerance1D()))
             convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
 
-          // TODO: use https://rosettacode.org/wiki/Determine_if_two_triangles_overlap
-
-          // check if convex face point is inside concave cell
-          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(0),
-                                                                 face2DVertices))
-            continue;
-          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(1),
-                                                                 face2DVertices))
-            continue;
-          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(2),
-                                                                 face2DVertices))
-            continue;
-
-          // check if convex cell centroid is inside concave cell
-          if (!geometryUtilities.IsPointInsidePolygon_RayCasting(geometryUtilities.PolygonBarycenter(convexFace2DTriangle),
-                                                                 face2DVertices))
+          if (!geometryUtilities.CheckTrianglesIntersection(face_2D_triangle,
+                                                            convexFace2DTriangle,
+                                                            false))
             continue;
 
           convexFaceFound = ccf;
