@@ -10,6 +10,50 @@ using namespace Eigen;
 namespace Gedim
 {
   // ***************************************************************************
+  bool GeometryUtilities::CheckTrianglesIntersection(const Eigen::MatrixX3d& triangle_one,
+                                                     const Eigen::MatrixX3d& triangle_two,
+                                                     const bool admit_boundary) const
+  {
+    auto det_2D = [](const Eigen::Vector3d& p1,
+                  const Eigen::Vector3d& p2,
+                  const Eigen::Vector3d& p3)
+    {
+      return
+          p1.x() * (p2.y() - p3.y()) +
+          p2.x() * (p3.y() - p1.y()) +
+          p3.x() * (p1.y() - p2.y());
+    };
+
+    const auto check_overlap = [&](const Eigen::Vector3d& p1,
+                               const Eigen::Vector3d& p2,
+                               const Eigen::Vector3d& p3) {
+      return admit_boundary ?
+            !IsValueGreaterOrEqual(det_2D(p1, p2, p3), 0.0, Tolerance1D()) :
+            !IsValueGreater(det_2D(p1, p2, p3), 0.0, Tolerance1D()); };
+
+    for(unsigned int i = 0; i < 3; ++i)
+    {
+      const unsigned int j = (i + 1) % 3;
+
+      if (check_overlap(triangle_one.col(i), triangle_one.col(j), triangle_two.col(0)) &&
+          check_overlap(triangle_one.col(i), triangle_one.col(j), triangle_two.col(1)) &&
+          check_overlap(triangle_one.col(i), triangle_one.col(j), triangle_two.col(2)))
+        return false;
+    }
+
+    for(unsigned int i = 0; i < 3; ++i)
+    {
+      const unsigned int j = (i + 1) % 3;
+
+      if (check_overlap(triangle_two.col(i), triangle_two.col(j), triangle_one.col(0)) &&
+          check_overlap(triangle_two.col(i), triangle_two.col(j), triangle_one.col(1)) &&
+          check_overlap(triangle_two.col(i), triangle_two.col(j), triangle_one.col(2)))
+        return false;
+    }
+
+    return true;
+  }
+  // ***************************************************************************
   Eigen::Vector3d GeometryUtilities::PolygonNormal(const MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);

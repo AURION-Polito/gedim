@@ -2022,14 +2022,19 @@ namespace Gedim
       const Eigen::Vector3d& faceTranslation = concaveCell3DFacesTranslation[f];
       const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
 
+      if (concaveCell3DIndex == 113)
+      {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPolygon(faceVertices);
+        exporter.Export("./TEST/POL.vtu");
+      }
+
       int convexCellFound = -1, convexFaceFound = -1;
 
       // find convex cell3D face parallel to concave face normal
       for (unsigned int cc = 0; cc < numConvexCell3Ds; cc++)
       {
-        const unsigned int numConvexFaces = 4;
-
-        for (unsigned int ccf = 0; ccf < numConvexFaces; ccf++)
+        for (unsigned int ccf = 0; ccf < 4; ++ccf)
         {
           // verify if the convex face is in the same plane of the concave face
           if (!geometryUtilities.IsPolygonCoplanar(faceNormal,
@@ -2040,6 +2045,13 @@ namespace Gedim
 
           const Eigen::MatrixXd& convexFaceVertices3D = convexCell3DsFaces3DVertices[cc][ccf];
           const std::vector<unsigned int>& convexFaceUnalignedVertices = convexCell3DsFacesUnalignedVertices[cc][ccf];
+
+          if (concaveCell3DIndex == 113)
+          {
+            Gedim::VTKUtilities exporter;
+            exporter.AddPolygon(convexFaceVertices3D);
+            exporter.Export("./TEST/ccf_" + std::to_string(ccf) + ".vtu");
+          }
 
           Eigen::Matrix3d convexFaceTriangle;
           convexFaceTriangle.col(0)<< convexFaceVertices3D.col(convexFaceUnalignedVertices[0]);
@@ -2054,6 +2066,8 @@ namespace Gedim
           if (geometryUtilities.IsValueNegative(faceRotationMatrix.determinant(),
                                                 geometryUtilities.Tolerance1D()))
             convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
+
+          // TODO: use https://rosettacode.org/wiki/Determine_if_two_triangles_overlap
 
           // check if convex face point is inside concave cell
           if (!geometryUtilities.IsPointInsidePolygon_RayCasting(convexFace2DTriangle.col(0),
