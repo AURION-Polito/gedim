@@ -1766,31 +1766,65 @@ namespace GedimUnitTesting {
       ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
     }
 
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(5,0),TriPoint(0,5)};
-    //      TriPoint t2[] = {TriPoint(-10,0),TriPoint(-5,0),TriPoint(-1,6)};
-    //      cout << TriTri2D(t1, t2) << "," << false << endl;}
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
 
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(5,0),TriPoint(2.5,5)};
-    //      TriPoint t2[] = {TriPoint(0,4),TriPoint(2.5,-1),TriPoint(5,4)};
-    //      cout << TriTri2D(t1, t2) << "," << true << endl;}
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 5.0, 0.0, 0.0;
+      triangle_one.col(2)<< 2.5, 5.0, 0.0;
 
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(1,1),TriPoint(0,2)};
-    //      TriPoint t2[] = {TriPoint(2,1),TriPoint(3,0),TriPoint(3,2)};
-    //      cout << TriTri2D(t1, t2) << "," << false << endl;}
+      triangle_two.col(0)<< 0.0, 4.0, 0.0;
+      triangle_two.col(1)<< 2.5, -1.0, 0.0;
+      triangle_two.col(2)<< 5.0, 4.0, 0.0;
 
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(1,1),TriPoint(0,2)};
-    //      TriPoint t2[] = {TriPoint(2,1),TriPoint(3,-2),TriPoint(3,4)};
-    //      cout << TriTri2D(t1, t2) << "," << false << endl;}
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
 
-    //    //Barely touching
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(1,0),TriPoint(0,1)};
-    //      TriPoint t2[] = {TriPoint(1,0),TriPoint(2,0),TriPoint(1,1)};
-    //      cout << TriTri2D(t1, t2, 0.0, false, true) << "," << true << endl;}
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
 
-    //    //Barely touching
-    //    {TriPoint t1[] = {TriPoint(0,0),TriPoint(1,0),TriPoint(0,1)};
-    //      TriPoint t2[] = {TriPoint(1,0),TriPoint(2,0),TriPoint(1,1)};
-    //      cout << TriTri2D(t1, t2, 0.0, false, false) << "," << false << endl;}
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 1.0, 0.0;
+      triangle_one.col(2)<< 0.0, 2.0, 0.0;
+
+      triangle_two.col(0)<< 2.0, 1.0, 0.0;
+      triangle_two.col(1)<< 3.0, 0.0, 0.0;
+      triangle_two.col(2)<< 3.0, 2.0, 0.0;
+
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 1.0, 0.0;
+      triangle_one.col(2)<< 0.0, 2.0, 0.0;
+
+      triangle_two.col(0)<< 2.0, 1.0, 0.0;
+      triangle_two.col(1)<< 3.0, -2.0, 0.0;
+      triangle_two.col(2)<< 3.0, 4.0, 0.0;
+
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 0.0, 0.0;
+      triangle_one.col(2)<< 0.0, 1.0, 0.0;
+
+      triangle_two.col(0)<< 1.0, 0.0, 0.0;
+      triangle_two.col(1)<< 2.0, 0.0, 0.0;
+      triangle_two.col(2)<< 1.0, 1.0, 0.0;
+
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
   }
 }
 
