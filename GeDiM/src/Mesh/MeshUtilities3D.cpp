@@ -2011,6 +2011,17 @@ namespace Gedim
 
     result.ConcaveCell3DFacesConvexCell2D.resize(numConcaveFaces);
 
+    auto det_2D = [](const Eigen::Vector3d& p1,
+                  const Eigen::Vector3d& p2,
+                  const Eigen::Vector3d& p3)
+    {
+      return
+          p1.x() * (p2.y() - p3.y()) +
+          p2.x() * (p3.y() - p1.y()) +
+          p3.x() * (p1.y() - p2.y());
+    };
+
+
     for (unsigned int f = 0; f < numConcaveFaces; f++)
     {
       FindConcaveCell3DFacesConvexCell2DResult::ConvexCell2D& convexCell2D = result.ConcaveCell3DFacesConvexCell2D[f];
@@ -2024,6 +2035,14 @@ namespace Gedim
       const Eigen::Matrix3d& face_2D_triangle = concaveCell3D_faces_2D_triangles.at(f).at(0);
 
       int convexCellFound = -1, convexFaceFound = -1;
+
+      if (geometryUtilities.IsValueNegative(det_2D(face_2D_triangle.col(0),
+                                                   face_2D_triangle.col(1),
+                                                   face_2D_triangle.col(2)),
+                                            geometryUtilities.Tolerance1D()))
+      {
+        throw std::runtime_error("Face triangle not unclockwise " + std::to_string(concaveCell3DIndex) + " " + std::to_string(f));
+      }
 
       // find convex cell3D face parallel to concave face normal
       for (unsigned int cc = 0; cc < numConvexCell3Ds; cc++)
@@ -2050,9 +2069,14 @@ namespace Gedim
                                                                                           faceRotationMatrix.transpose(),
                                                                                           faceTranslation);
 
-          if (geometryUtilities.IsValueNegative(faceRotationMatrix.determinant(),
+
+          if (geometryUtilities.IsValueNegative(det_2D(convexFace2DTriangle.col(0),
+                                                       convexFace2DTriangle.col(1),
+                                                       convexFace2DTriangle.col(2)),
                                                 geometryUtilities.Tolerance1D()))
+          {
             convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
+          }
 
           if (!geometryUtilities.CheckTrianglesIntersection(face_2D_triangle,
                                                             convexFace2DTriangle,
