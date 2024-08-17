@@ -2236,6 +2236,21 @@ namespace Gedim
                                options);
   }
   // ***************************************************************************
+  void MeshUtilities::CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
+                                         const Eigen::MatrixXi& polyhedronEdges,
+                                         const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                         IMeshDAO& mesh,
+                                         const Eigen::MatrixXd& constrained_points) const
+  {
+    TetgenInterface tetgenInterface;
+
+    tetgenInterface.CreateDelaunay(polyhedronVertices,
+                                   polyhedronEdges,
+                                   polyhedronFaces,
+                                   mesh,
+                                   constrained_points);
+  }
+  // ***************************************************************************
   void MeshUtilities::CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                            const Eigen::MatrixXd& polyhedronVertices,
                                            const Eigen::MatrixXi& polyhedronEdges,

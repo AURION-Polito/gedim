@@ -36,6 +36,33 @@ namespace Gedim
     delete[] tetgenInput.facetlist; tetgenInput.facetlist = NULL;
   }
   // ***************************************************************************
+  void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& polyhedronVertices,
+                                       const Eigen::MatrixXi& polyhedronEdges,
+                                       const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                       IMeshDAO& mesh,
+                                       const Eigen::MatrixXd& constrained_points) const
+  {
+    tetgenio* tetgenInput = new tetgenio();
+    tetgenio* tetgenOutput = new tetgenio();
+
+    CreateTetgenInput(polyhedronVertices,
+                      polyhedronEdges,
+                      polyhedronFaces,
+                      *tetgenInput,
+                      constrained_points);
+    CreateTetgenOutput(*tetgenInput,
+                       *tetgenOutput,
+                       "QYYqfezn");
+
+    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
+                                 mesh);
+
+    DeleteTetgenStructure(*tetgenInput,
+                          *tetgenOutput);
+    delete tetgenInput;
+    delete tetgenOutput;
+  }
+  // ***************************************************************************
   void TetgenInterface::CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
                                    const Eigen::MatrixXi& polyhedronEdges,
                                    const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -212,15 +239,25 @@ namespace Gedim
   {
     Output::Assert(maxTetrahedronArea > 0.0);
 
-    tetgenbehavior b;
-
     ostringstream options;
     options.precision(16);
     options<< tetgenOptions;
     options<< maxTetrahedronArea;
-    size_t sizeOptions = options.str().size();
+
+    CreateTetgenOutput(tetgenInput,
+                       tetgenOutput,
+                       options.str());
+  }
+  // ***************************************************************************
+  void TetgenInterface::CreateTetgenOutput(tetgenio& tetgenInput,
+                                           tetgenio& tetgenOutput,
+                                           const std::string& tetgenOptions) const
+  {
+    tetgenbehavior b;
+
+    size_t sizeOptions = tetgenOptions.size();
     char* optionPointer = new char[sizeOptions + 1];
-    options.str().copy(optionPointer, sizeOptions);
+    tetgenOptions.copy(optionPointer, sizeOptions);
     optionPointer[sizeOptions] = '\0';
 
     b.parse_commandline(optionPointer);

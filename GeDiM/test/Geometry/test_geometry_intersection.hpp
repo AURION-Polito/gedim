@@ -1714,6 +1714,118 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestCheckTrianglesIntersection)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 5.0, 0.0, 0.0;
+      triangle_one.col(2)<< 0.0, 5.0, 0.0;
+
+      triangle_two.col(0)<< 0.0, 0.0, 0.0;
+      triangle_two.col(1)<< 5.0, 0.0, 0.0;
+      triangle_two.col(2)<< 0.0, 6.0, 0.0;
+
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 5.0, 0.0, 0.0;
+      triangle_one.col(2)<< 0.0, 5.0, 0.0;
+
+      triangle_two.col(0)<< 0.0, 0.0, 0.0;
+      triangle_two.col(1)<< 5.0, 0.0, 0.0;
+      triangle_two.col(2)<< 0.0, 5.0, 0.0;
+
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 5.0, 0.0, 0.0;
+      triangle_one.col(2)<< 0.0, 5.0, 0.0;
+
+      triangle_two.col(0)<< -10.0, 0.0, 0.0;
+      triangle_two.col(1)<< -5.0, 0.0, 0.0;
+      triangle_two.col(2)<< -1.0, 6.0, 0.0;
+
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 5.0, 0.0, 0.0;
+      triangle_one.col(2)<< 2.5, 5.0, 0.0;
+
+      triangle_two.col(0)<< 0.0, 4.0, 0.0;
+      triangle_two.col(1)<< 2.5, -1.0, 0.0;
+      triangle_two.col(2)<< 5.0, 4.0, 0.0;
+
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 1.0, 0.0;
+      triangle_one.col(2)<< 0.0, 2.0, 0.0;
+
+      triangle_two.col(0)<< 2.0, 1.0, 0.0;
+      triangle_two.col(1)<< 3.0, 0.0, 0.0;
+      triangle_two.col(2)<< 3.0, 2.0, 0.0;
+
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 1.0, 0.0;
+      triangle_one.col(2)<< 0.0, 2.0, 0.0;
+
+      triangle_two.col(0)<< 2.0, 1.0, 0.0;
+      triangle_two.col(1)<< 3.0, -2.0, 0.0;
+      triangle_two.col(2)<< 3.0, 4.0, 0.0;
+
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+
+    {
+      Eigen::Matrix3d triangle_one, triangle_two;
+
+      triangle_one.col(0)<< 0.0, 0.0, 0.0;
+      triangle_one.col(1)<< 1.0, 0.0, 0.0;
+      triangle_one.col(2)<< 0.0, 1.0, 0.0;
+
+      triangle_two.col(0)<< 1.0, 0.0, 0.0;
+      triangle_two.col(1)<< 2.0, 0.0, 0.0;
+      triangle_two.col(2)<< 1.0, 1.0, 0.0;
+
+      ASSERT_TRUE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, true));
+      ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_INTERSECTION_H

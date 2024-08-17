@@ -1,12 +1,15 @@
 #include "test_exportMeshUtilities.hpp"
 #include <sys/stat.h>
 #include <fstream>
+#include "ImportExportUtilities.hpp"
 
 namespace GedimUnitTesting
 {
   // ***************************************************************************
   ExportMeshData ExportMeshUtilities::ImportMesh2DFromText(const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     ExportMeshData mesh;
 
     std::ifstream inFile;
@@ -30,6 +33,8 @@ namespace GedimUnitTesting
   void ExportMeshUtilities::ExportMesh2DToText(const ExportMeshData& mesh_data,
                                                const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     std::ofstream file(file_path);
 
     if (!file.is_open())
@@ -49,6 +54,8 @@ namespace GedimUnitTesting
   // ***************************************************************************
   ExportMeshGeometricData2D ExportMeshUtilities::ImportMeshGeometricData2DFromText(const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     ExportMeshGeometricData2D mesh_geometric_data;
 
     std::ifstream inFile;
@@ -75,6 +82,8 @@ namespace GedimUnitTesting
   void ExportMeshUtilities::ExportMeshGeometricData2DToText(const ExportMeshGeometricData2D& mesh_geometric_data,
                                                             const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     std::ofstream file(file_path);
 
     if (!file.is_open())
@@ -99,6 +108,8 @@ namespace GedimUnitTesting
   // ***************************************************************************
   ExportMeshData ExportMeshUtilities::ImportMesh3DFromText(const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     ExportMeshData mesh;
 
     std::ifstream inFile;
@@ -126,6 +137,8 @@ namespace GedimUnitTesting
   void ExportMeshUtilities::ExportMesh3DToText(const ExportMeshData& mesh_data,
                                                const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     std::ofstream file(file_path);
 
     if (!file.is_open())
@@ -149,6 +162,8 @@ namespace GedimUnitTesting
   // ***************************************************************************
   ExportMeshGeometricData3D ExportMeshUtilities::ImportMeshGeometricData3DFromText(const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     ExportMeshGeometricData3D mesh_geometric_data;
 
     std::ifstream inFile;
@@ -186,6 +201,8 @@ namespace GedimUnitTesting
   void ExportMeshUtilities::ExportMeshGeometricData3DToText(const ExportMeshGeometricData3D& mesh_geometric_data,
                                                             const std::string& file_path)
   {
+    using namespace Gedim_ImportExport_Utilities;
+
     std::ofstream file(file_path);
 
     if (!file.is_open())

@@ -62,6 +62,45 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 6);
   }
 
+  TEST(TestMeshUtilities, TestCreateDelaunayMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                   1.0);
+    Eigen::MatrixXd constrained_points(3, 1);
+    constrained_points.col(0)<< 0.5, 0.5, 0.5;
+
+    meshUtilities.CreateDelaunayMesh(polyhedron.Vertices,
+                                     polyhedron.Edges,
+                                     polyhedron.Faces,
+                                     meshDao,
+                                     constrained_points);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh");
+
+    EXPECT_EQ(3,
+              meshDao.Dimension());
+    EXPECT_EQ(9,
+              meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(26,
+              meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(30,
+              meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(12,
+              meshDao.Cell3DTotalNumber());
+  }
+
   TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -361,6 +400,158 @@ namespace GedimUnitTesting
                                                                                                    meshDao,
                                                                                                    meshDao,
                                                                                                    std::vector<std::vector<unsigned int>> { { 0 } });
+
+    {
+      for (unsigned int c = 0; c < meshDao.Cell3DTotalNumber(); c++)
+      {
+        const unsigned int numFaces = result.Cell3DsFaces[c].size();
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < result.Cell3DsFaces3DTriangulations[c].size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            for (unsigned int t = 0; t < result.Cell3DsFaces3DTriangulations[c][f].size(); t++)
+            {
+              exporter.AddPolygon(result.Cell3DsFaces3DTriangulations[c][f][t],
+                                  {
+                                    {
+                                      "Face",
+                                      Gedim::VTPProperty::Formats::Cells,
+                                      static_cast<unsigned int>(faceIndex.size()),
+                                      faceIndex.data()
+                                    }
+                                  });
+            }
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_Faces2DTriangulations.vtu");
+        }
+
+        std::vector<Eigen::Vector3d> faceInternalPoints(numFaces);
+        for (unsigned int f = 0; f < numFaces; f++)
+          faceInternalPoints[f] = geometryUtilities.PolygonBarycenter(result.Cell3DsFaces3DTriangulations[c][f][0]);
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddPoint(faceInternalPoints[f],
+                              {
+                                {
+                                  "Face",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(faceIndex.size()),
+                                  faceIndex.data()
+                                }
+                              });
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_FacesInternalPoint.vtu");
+        }
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          for (unsigned int f = 0; f < faceInternalPoints.size(); f++)
+          {
+            std::vector<double> faceIndex(1, f);
+            exporter.AddSegment(faceInternalPoints[f],
+                                faceInternalPoints[f] + result.Cell3DsFacesNormals[c][f],
+                                {
+                                  {
+                                    "Face",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(faceIndex.size()),
+                                    faceIndex.data()
+                                  }
+                                });
+          }
+
+          exporter.Export(exportFolder + "/Cell3D_" +
+                          to_string(c) + "_FacesNormal.vtu");
+        }
+      }
+    }
+
+    Gedim::MeshUtilities::MeshGeometricData3D expectedResult;
+    expectedResult.Cell3DsVolumes = { 1.0 };
+    expectedResult.Cell3DsCentroids = { Eigen::Vector3d(0.5, 0.5, 0.5) };
+    expectedResult.Cell3DsDiameters = { sqrt(3.0) };
+    expectedResult.Cell3DsVertices = { cube.Vertices };
+    expectedResult.Cell3DsEdges = { cube.Edges };
+    expectedResult.Cell3DsFaces = { cube.Faces };
+    expectedResult.Cell3DsFacesNormalDirections = { { false, true, false, true, true, false } };
+
+    ASSERT_EQ(result.Cell3DsVertices, expectedResult.Cell3DsVertices);
+    ASSERT_EQ(result.Cell3DsEdges, expectedResult.Cell3DsEdges);
+    ASSERT_EQ(result.Cell3DsFaces, expectedResult.Cell3DsFaces);
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsVolumes[0], expectedResult.Cell3DsVolumes[0], geometryUtilities.Tolerance3D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].x(), expectedResult.Cell3DsCentroids[0].z(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].y(), expectedResult.Cell3DsCentroids[0].y(), geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(result.Cell3DsCentroids[0].z(), expectedResult.Cell3DsCentroids[0].x(), geometryUtilities.Tolerance1D()));
+    ASSERT_EQ(result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+    ASSERT_EQ(result.Cell3DsFacesNormalDirections,
+              expectedResult.Cell3DsFacesNormalDirections);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration checkMeshGeometricDataConfig;
+    ASSERT_NO_THROW(meshUtilities.CheckMeshGeometricData3D(checkMeshGeometricDataConfig,
+                                                           geometryUtilities,
+                                                           meshDao,
+                                                           result));
+  }
+
+  TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave_Tetra)
+  {
+    std::string exportFolder = "./Export/TestFillMesh3DGeometricData_Concave_Tetra";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    geometryUtilitiesConfig.Tolerance3D = 1.0e-10;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    const Gedim::GeometryUtilities::Polyhedron cube = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                             1.0);
+
+    GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ConcaveMesh");
+
+    const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                           meshDao);
+    std::vector<std::vector<Eigen::MatrixXd>> cell3Ds_tetra_vertices(meshDao.Cell3DTotalNumber());
+    std::vector<std::vector<Eigen::Matrix3d>> cell2Ds_triangles_vertices(meshDao.Cell2DTotalNumber());
+
+    for (unsigned int c = 0; c < meshDao.Cell3DTotalNumber(); c++)
+    {
+      if (!meshDao.Cell3DIsActive(c))
+        continue;
+
+      cell3Ds_tetra_vertices[c] = mesh_geometric_data.Cell3DsTetrahedronPoints.at(c);
+
+      for (unsigned int f = 0; f < meshDao.Cell3DNumberFaces(c); f++)
+      {
+        const unsigned int c2D_index = meshDao.Cell3DFace(c, f);
+        cell2Ds_triangles_vertices[c2D_index] = mesh_geometric_data.Cell3DsFaces3DTriangulations.at(c).at(f);
+      }
+    }
+
+
+    const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                                                   meshDao,
+                                                                                                   cell3Ds_tetra_vertices,
+                                                                                                   cell2Ds_triangles_vertices);
 
     {
       for (unsigned int c = 0; c < meshDao.Cell3DTotalNumber(); c++)

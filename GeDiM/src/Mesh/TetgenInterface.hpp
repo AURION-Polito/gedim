@@ -22,6 +22,9 @@ namespace Gedim
                               tetgenio& tetgenInput,
                               tetgenio& tetgenOutput,
                               const std::string& tetgenOptions = "Qpqfezna") const;
+      void CreateTetgenOutput(tetgenio& tetgenInput,
+                              tetgenio& tetgenOutput,
+                              const std::string& tetgenOptions) const;
       void ConvertTetgenOutputToMeshDAO(const tetgenio& tetgenOutput,
                                         IMeshDAO& mesh) const;
 
@@ -31,6 +34,12 @@ namespace Gedim
     public:
       TetgenInterface();
       ~TetgenInterface();
+
+      void CreateDelaunay(const Eigen::MatrixXd& polyhedronVertices,
+                          const Eigen::MatrixXi& polyhedronEdges,
+                          const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                          IMeshDAO& mesh,
+                          const Eigen::MatrixXd& constrained_points = Eigen::MatrixXd()) const;
 
       void CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
                       const Eigen::MatrixXi& polyhedronEdges,

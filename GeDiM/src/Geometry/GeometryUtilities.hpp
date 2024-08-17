@@ -1119,6 +1119,12 @@ namespace Gedim
                               Tolerance1D());
       }
 
+      /// \note works only for 2D triangles
+      /// \see https://rosettacode.org/wiki/Determine_if_two_triangles_overlap#C++
+      bool CheckTrianglesIntersection(const Eigen::MatrixX3d& triangle_one,
+                                      const Eigen::MatrixX3d& triangle_two,
+                                      const bool admit_boundary = true) const;
+
       /// \param firstLineOrigin first line origin
       /// \param firstLineTangent first line tangent
       /// \param secondLineOrigin second line origin

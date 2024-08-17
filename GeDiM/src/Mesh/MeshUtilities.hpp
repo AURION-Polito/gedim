@@ -487,6 +487,11 @@ namespace Gedim
                                                   const IMeshDAO& convexMesh,
                                                   const std::vector<std::vector<unsigned int>>& meshCell3DToConvexCell3DIndices) const;
 
+      MeshGeometricData3D FillMesh3DGeometricData(const GeometryUtilities& geometryUtilities,
+                                                  const IMeshDAO& mesh,
+                                                  const std::vector<std::vector<Eigen::MatrixXd>>& cell3Ds_tetra_vertices,
+                                                  const std::vector<std::vector<Eigen::Matrix3d>>& cell2Ds_triangles_3D_vertices) const;
+
       void ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const;
       void ComputeCell0DCell2DNeighbours(IMeshDAO &mesh) const;
       void ComputeCell0DCell3DNeighbours(IMeshDAO &mesh) const;
@@ -577,6 +582,12 @@ namespace Gedim
                                  const double& maxTetrahedronVolume,
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
+
+      void CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
+                              const Eigen::MatrixXi& polyhedronEdges,
+                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                              IMeshDAO& mesh,
+                              const Eigen::MatrixXd& constrained_points = Eigen::MatrixXd()) const;
 
       void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                 const Eigen::MatrixXd& polyhedronVertices,
@@ -797,6 +808,19 @@ namespace Gedim
                                                                                   const std::vector<Eigen::Vector3d>& concaveCell3DFacesNormal,
                                                                                   const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
                                                                                   const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
+
+      FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(const GeometryUtilities& geometryUtilities,
+                                                                                  const unsigned int& concaveCell3DIndex,
+                                                                                  const IMeshDAO& mesh,
+                                                                                  const std::vector<Eigen::MatrixXd>& concaveCell3DTetra,
+                                                                                  const std::vector<std::vector<Eigen::Matrix3d>>& concaveCell3D_faces_2D_triangles,
+                                                                                  const std::vector<Eigen::MatrixXd>& concaveCell3DFaces3DVertices,
+                                                                                  const std::vector<Eigen::Vector3d>& concaveCell3DFacesTranslation,
+                                                                                  const std::vector<Eigen::Matrix3d>& concaveCell3DFacesRotationMatrix,
+                                                                                  const std::vector<Eigen::Vector3d>& concaveCell3DFacesNormal,
+                                                                                  const std::vector<std::vector<Eigen::MatrixXd>>& convexCell3DsFaces3DVertices,
+                                                                                  const std::vector<std::vector<std::vector<unsigned int>>>& convexCell3DsFacesUnalignedVertices) const;
+
 
       FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult& find_cell3D_result,
                                                         const IMeshDAO& mesh) const;
