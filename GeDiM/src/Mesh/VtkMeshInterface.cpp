@@ -362,17 +362,30 @@ namespace Gedim
       std::cout << "output has " << output->GetNumberOfCells() << " cells." << std::endl;
       std::cout << "first cell type has " << output->GetCellType(0) << "." << std::endl;
 
-      const unsigned int num_points = output->GetNumberOfPoints();
-      const auto point_data = output->GetPoints();
-      for (unsigned int p = 0; p < num_points; p++)
+      const vtkIdType num_points = output->GetNumberOfPoints();
+      const vtkSmartPointer<vtkPoints> points_data = output->GetPoints();
+      for (vtkIdType p = 0; p < num_points; p++)
       {
-        const auto& point = point_data[p];
-        std::cout<< "Point p "<< p<< std::endl;
+        std::array<double, 3> point;
+        points_data->GetPoint(p, point.data());
+        std::cout<< "Point p "<< point<< std::endl;
       }
 
-        const unsigned int num_cells = output->GetNumberOfCells();
-      const auto cell_data = output->GetCells();
+      const unsigned int num_cells = output->GetNumberOfCells();
+      for (vtkIdType c = 0; c < num_cells; c++)
+      {
+        const vtkSmartPointer<vtkCell> cell = output->GetCell(c);
+        const vtkIdType cell_type = cell->GetCellType();
+        const vtkSmartPointer<vtkIdList> pointIds = cell->GetPointIds();
 
+        std::cout<< "cell "<< c<< " type "<< cell_type<< ": ";
+        for (vtkIdType p = 0; p < pointIds->GetNumberOfIds(); ++p)
+        {
+          const vtkIdType pointId = pointIds->GetId(p);
+          std::cout<< pointId<< " ";
+        }
+        std::cout<< std::endl;
+      }
     }
 
     //    vector<string> fileLines;
