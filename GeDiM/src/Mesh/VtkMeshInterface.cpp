@@ -360,6 +360,19 @@ namespace Gedim
       vtkUnstructuredGrid* output = reader->GetUnstructuredGridOutput();
       std::cout << "output has " << output->GetNumberOfPoints() << " points." << std::endl;
       std::cout << "output has " << output->GetNumberOfCells() << " cells." << std::endl;
+      std::cout << "first cell type has " << output->GetCellType(0) << "." << std::endl;
+
+      const unsigned int num_points = output->GetNumberOfPoints();
+      const auto point_data = output->GetPoints();
+      for (unsigned int p = 0; p < num_points; p++)
+      {
+        const auto& point = point_data[p];
+        std::cout<< "Point p "<< p<< std::endl;
+      }
+
+        const unsigned int num_cells = output->GetNumberOfCells();
+      const auto cell_data = output->GetCells();
+
     }
 
     //    vector<string> fileLines;
