@@ -6,6 +6,7 @@
 #include "UCDUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "ObjectFileFormatInterface.hpp"
+#include "VtkMeshInterface.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -181,6 +182,14 @@ namespace Gedim
     openVolumeMeshInterface.ExportMeshToFile(mesh,
                                              meshCell3DsFacesOrientation,
                                              ovmFilePath);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ImportVtkMesh(const std::string& vtkFilePath,
+                                    IMeshDAO& mesh) const
+  {
+    VtkMeshInterface vtkMeshInterface;
+    vtkMeshInterface.ImportMeshFromFile(vtkFilePath,
+                                        mesh);
   }
   // ***************************************************************************
   void MeshUtilities::ImportObjectFileFormat(const std::string& offFilePath,

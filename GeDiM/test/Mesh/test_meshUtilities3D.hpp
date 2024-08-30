@@ -1940,6 +1940,25 @@ namespace GedimUnitTesting
       exporter.Export(exportFolder + "/cell3Ds_mark.vtu");
     }
   }
+
+  TEST(TestMeshUtilities, TestImportVtkMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ImportVtkMesh("/home/geoscore/Downloads/TEST/151681092-64-r4781-02/pippo.vtk",
+                                meshDao);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestImportVtkMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ImportedMesh");
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H
