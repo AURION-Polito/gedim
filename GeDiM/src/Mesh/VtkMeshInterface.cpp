@@ -1,4 +1,3 @@
-#include "FileTextReader.hpp"
 #include "VtkMeshInterface.hpp"
 
 #include <vtkUnstructuredGrid.h>

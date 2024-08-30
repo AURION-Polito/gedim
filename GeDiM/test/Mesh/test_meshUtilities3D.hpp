@@ -19,6 +19,7 @@
 #include "OpenVolumeMeshInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "test_meshUtilities2D.hpp"
+#include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
 
 using namespace testing;
 using namespace std;
@@ -1949,12 +1950,18 @@ namespace GedimUnitTesting
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
-    Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ImportVtkMesh("/home/geoscore/Downloads/TEST/ugrid.vtk",
-                                meshDao);
-
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportVtkMesh";
     Gedim::Output::CreateFolder(exportFolder);
+
+    const std::string file_test_path = exportFolder +
+                                       "/test_file.vtk";
+
+    GedimUnitTesting::VTK_Unstructured_Grid_Mesh_Mock::ExportFile(file_test_path);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ImportVtkMesh(file_test_path,
+                                meshDao);
+
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ImportedMesh");
