@@ -1950,7 +1950,7 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ImportVtkMesh("/home/geoscore/Downloads/TEST/151681092-64-r4781-02/pippo.vtk",
+    meshUtilities.ImportVtkMesh("/home/geoscore/Downloads/TEST/ugrid.vtk",
                                 meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportVtkMesh";

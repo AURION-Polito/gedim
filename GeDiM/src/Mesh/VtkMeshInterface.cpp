@@ -1,9 +1,9 @@
 #include "FileTextReader.hpp"
 #include "VtkMeshInterface.hpp"
 
-#include <vtkPolyData.h>
-#include <vtkXMLGenericDataObjectReader.h>
-#include <vtkXMLPolyDataReader.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkGenericDataObjectReader.h>
+#include <vtkPolyDataReader.h>
 #include <vtkSmartPointer.h>
 
 using namespace std;
@@ -348,15 +348,16 @@ namespace Gedim
   void VtkMeshInterface::ImportMeshFromFile(const std::string& vtkFilePath,
                                             IMeshDAO& mesh) const
   {
-    vtkSmartPointer<vtkXMLGenericDataObjectReader> reader =
-        vtkSmartPointer<vtkXMLGenericDataObjectReader>::New();
+    vtkSmartPointer<vtkGenericDataObjectReader> reader =
+        vtkSmartPointer<vtkGenericDataObjectReader>::New();
     reader->SetFileName(vtkFilePath.c_str());
     reader->Update();
 
     // All of the standard data types can be checked and obtained like this:
+    if (reader->IsFileUnstructuredGrid())
     {
       std::cout << "output is a polydata" << std::endl;
-      vtkPolyData* output = reader->GetPolyDataOutput();
+      vtkUnstructuredGrid* output = reader->GetUnstructuredGridOutput();
       std::cout << "output has " << output->GetNumberOfPoints() << " points." << std::endl;
     }
 
