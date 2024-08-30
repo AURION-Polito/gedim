@@ -356,9 +356,10 @@ namespace Gedim
     // All of the standard data types can be checked and obtained like this:
     if (reader->IsFileUnstructuredGrid())
     {
-      std::cout << "output is a polydata" << std::endl;
+      std::cout << "output is a ugrid" << std::endl;
       vtkUnstructuredGrid* output = reader->GetUnstructuredGridOutput();
       std::cout << "output has " << output->GetNumberOfPoints() << " points." << std::endl;
+      std::cout << "output has " << output->GetNumberOfCells() << " cells." << std::endl;
     }
 
     //    vector<string> fileLines;
