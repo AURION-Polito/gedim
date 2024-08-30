@@ -77,7 +77,7 @@ namespace Gedim
           case 10:
             cell3D.Type = VtkMesh::Cell3D::Types::Tetrahedron;
             break;
-          case 11:
+          case 12:
             cell3D.Type = VtkMesh::Cell3D::Types::Hexahedron;
             break;
           default:
