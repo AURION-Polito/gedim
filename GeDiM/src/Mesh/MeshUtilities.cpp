@@ -188,8 +188,13 @@ namespace Gedim
                                     IMeshDAO& mesh) const
   {
     VtkMeshInterface vtkMeshInterface;
-    vtkMeshInterface.ImportMeshFromFile(vtkFilePath,
-                                        mesh);
+    const auto vtk_mesh = vtkMeshInterface.ImportMesh3DFromFile(vtkFilePath);
+
+    FillMesh3D(vtk_mesh.Cell0Ds,
+               vtk_mesh.Cell1Ds,
+               vtk_mesh.Cell2Ds,
+               vtk_mesh.Cell3Ds,
+               mesh);
   }
   // ***************************************************************************
   void MeshUtilities::ImportObjectFileFormat(const std::string& offFilePath,

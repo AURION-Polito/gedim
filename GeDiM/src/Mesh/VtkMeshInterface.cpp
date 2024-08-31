@@ -18,20 +18,88 @@ namespace Gedim
   {
   }
   // ***************************************************************************
-  void VtkMeshInterface::VtkMeshToMeshDAO(const VtkMesh& originalMesh,
-                                          IMeshDAO& convertedMesh) const
+  VtkMeshInterface::VtkMesh3D VtkMeshInterface::ComputeVtkMesh3D(VtkMesh& originalMesh) const
   {
-    convertedMesh.InitializeDimension(3);
+    VtkMesh3D result;
 
-    // Create Cell0Ds
-    convertedMesh.Cell0DsInitialize(originalMesh.NumCell0Ds);
-    convertedMesh.Cell0DsInsertCoordinates(originalMesh.Cell0Ds);
-    for (unsigned int v = 0; v < originalMesh.NumCell0Ds; v++)
-      convertedMesh.Cell0DSetState(v, true);
+    result.Cell0Ds = originalMesh.Cell0Ds;
+
+    // Create Cell1Ds
+    Eigen::SparseMatrix<unsigned int> edges;
+    edges.resize(originalMesh.NumCell0Ds,
+                 originalMesh.NumCell0Ds);
+
+    std::list<Eigen::Triplet<unsigned int>> triplets;
+    for (unsigned int c = 0; c < originalMesh.NumCell3Ds; c++)
+    {
+      const auto& cell3D = originalMesh.Cell3Ds.at(c);
+
+      switch (cell3D.Type)
+      {
+        case VtkMesh::Cell3D::Types::Tetrahedron:
+          break;
+        default:
+          throw std::runtime_error("VTK mesh Cell type not supported");
+      }
+
+      const auto& cell3D_vertices = cell3D.Cell0D_Id;
+      Gedim::Output::Assert(cell3D_vertices.size() == 4);
+
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(0),
+                                                          cell3D_vertices.at(1)),
+                                                      MAX(cell3D_vertices.at(0),
+                                                          cell3D_vertices.at(1)),
+                                                      1));
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(1),
+                                                          cell3D_vertices.at(2)),
+                                                      MAX(cell3D_vertices.at(1),
+                                                          cell3D_vertices.at(2)),
+                                                      1));
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(2),
+                                                          cell3D_vertices.at(0)),
+                                                      MAX(cell3D_vertices.at(2),
+                                                          cell3D_vertices.at(0)),
+                                                      1));
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(0),
+                                                          cell3D_vertices.at(3)),
+                                                      MAX(cell3D_vertices.at(0),
+                                                          cell3D_vertices.at(3)),
+                                                      1));
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(1),
+                                                          cell3D_vertices.at(3)),
+                                                      MAX(cell3D_vertices.at(1),
+                                                          cell3D_vertices.at(3)),
+                                                      1));
+      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(2),
+                                                          cell3D_vertices.at(3)),
+                                                      MAX(cell3D_vertices.at(2),
+                                                          cell3D_vertices.at(3)),
+                                                      1));
+    }
+
+    edges.setFromTriplets(triplets.begin(), triplets.end());
+    edges.makeCompressed();
+
+    unsigned int num_cell1Ds = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+        it.valueRef() = 1 + num_cell1Ds++;
+    }
+
+    result.Cell1Ds.resize(2, num_cell1Ds);
+
+    num_cell1Ds = 0;
+    for (int k = 0; k < edges.outerSize(); k++)
+    {
+      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+        result.Cell1Ds.col(num_cell1Ds++)<< it.row(), it.col();
+    }
+
+    return result;
   }
   // ***************************************************************************
-  void VtkMeshInterface::ImportMeshFromFile(const std::string& vtkFilePath,
-                                            IMeshDAO& mesh) const
+  VtkMeshInterface::VtkMesh3D VtkMeshInterface::ImportMesh3DFromFile(const std::string& vtkFilePath) const
   {
     vtkSmartPointer<vtkGenericDataObjectReader> reader =
         vtkSmartPointer<vtkGenericDataObjectReader>::New();
@@ -46,7 +114,7 @@ namespace Gedim
       const vtkIdType num_points = output->GetNumberOfPoints();
 
       if (num_points == 0)
-        return;
+        return {};
 
       vtk_mesh.NumCell0Ds = num_points;
       vtk_mesh.Cell0Ds.resize(3, num_points);
@@ -93,9 +161,10 @@ namespace Gedim
         }
       }
 
-      VtkMeshToMeshDAO(vtk_mesh,
-                       mesh);
+      return ComputeVtkMesh3D(vtk_mesh);
     }
+
+    return {};
   }
   // ***************************************************************************
 }

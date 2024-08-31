@@ -2,6 +2,7 @@
 #define __VtkMeshInterface_H
 
 #include "IMeshDAO.hpp"
+#include "MeshUtilities.hpp"
 
 namespace Gedim
 {
@@ -30,14 +31,23 @@ namespace Gedim
           std::vector<Cell3D> Cell3Ds;
       };
 
+      struct VtkMesh3D final
+      {
+          Eigen::MatrixXd Cell0Ds;
+          Eigen::MatrixXi Cell1Ds;
+          std::vector<Eigen::MatrixXi> Cell2Ds;
+          std::vector<Gedim::MeshUtilities::Mesh3DPolyhedron> Cell3Ds;
+      };
+
+    private:
+      VtkMesh3D ComputeVtkMesh3D(VtkMesh& originalMesh) const;
+
+    public:
+
       VtkMeshInterface();
       ~VtkMeshInterface();
 
-      void VtkMeshToMeshDAO(const VtkMesh& originalMesh,
-                            IMeshDAO& convertedMesh) const;
-
-      void ImportMeshFromFile(const std::string& vtkFilePath,
-                              IMeshDAO& mesh) const;
+      VtkMesh3D ImportMesh3DFromFile(const std::string& vtkFilePath) const;
 
   };
 }
