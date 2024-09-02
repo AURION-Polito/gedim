@@ -408,6 +408,7 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
 
                         std::vector<unsigned int> segment_cell2Ds;
                         std::vector<unsigned int> faces = mesh3D.Cell3DFaces(segment_cell3Ds[c]);
+                        std::sort(faces.begin(), faces.end());
                         std::set_intersection(faces.begin(),
                                               faces.end(),
                                               all_segment_cell2Ds.begin(),
@@ -450,6 +451,7 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
 
                         std::vector<unsigned int> segment_cell2Ds;
                         std::vector<unsigned int> faces = mesh3D.Cell3DFaces(segment_cell3Ds[c]);
+                        std::sort(faces.begin(), faces.end());
                         std::set_intersection(faces.begin(),
                                               faces.end(),
                                               all_segment_cell2Ds.begin(),
@@ -501,8 +503,10 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
                                       neighbours_1D_second.end(),
                                       std::back_inserter(all_segment_cell1Ds));
 
+
                 std::vector<unsigned int> segment_cell1Ds;
                 std::vector<unsigned int> edges = mesh3D.Cell3DEdges(segment_cell3Ds[c]);
+                std::sort(edges.begin(), edges.end());
                 std::set_intersection(edges.begin(),
                                       edges.end(),
                                       all_segment_cell1Ds.begin(),
@@ -525,6 +529,7 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
 
                     std::vector<unsigned int> segment_cell2Ds;
                     std::vector<unsigned int> faces = mesh3D.Cell3DFaces(segment_cell3Ds[c]);
+                    std::sort(faces.begin(), faces.end());
                     std::set_intersection(faces.begin(),
                                           faces.end(),
                                           all_segment_cell2Ds.begin(),
