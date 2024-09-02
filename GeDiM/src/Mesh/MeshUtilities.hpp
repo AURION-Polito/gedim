@@ -611,6 +611,10 @@ namespace Gedim
                                   const std::vector<std::vector<bool>>& meshCell3DsFacesOrientation,
                                   const std::string& ovmFilePath) const;
 
+      /// \brief Import 3D mesh from VTK file
+      void ImportVtkMesh3D(const std::string& vtkFilePath,
+                         IMeshDAO& mesh) const;
+
       /// \brief Import 2D mesh from OFF file
       void ImportObjectFileFormat(const std::string& offFilePath,
                                   IMeshDAO& mesh) const;

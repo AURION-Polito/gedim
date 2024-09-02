@@ -6,6 +6,7 @@
 #include "UCDUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "ObjectFileFormatInterface.hpp"
+#include "VtkMeshInterface.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -181,6 +182,28 @@ namespace Gedim
     openVolumeMeshInterface.ExportMeshToFile(mesh,
                                              meshCell3DsFacesOrientation,
                                              ovmFilePath);
+  }
+  // ***************************************************************************
+  void MeshUtilities::ImportVtkMesh3D(const std::string& vtkFilePath,
+                                    IMeshDAO& mesh) const
+  {
+    VtkMeshInterface vtkMeshInterface;
+    const auto vtk_mesh = vtkMeshInterface.ImportMesh3DFromFile(vtkFilePath);
+
+    FillMesh3D(vtk_mesh.Cell0Ds,
+               vtk_mesh.Cell1Ds,
+               vtk_mesh.Cell2Ds,
+               vtk_mesh.Cell3Ds,
+               mesh);
+
+    for (unsigned int v = 0; v < vtk_mesh.Markers[0].size(); v++)
+      mesh.Cell0DSetMarker(v, vtk_mesh.Markers[0][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[1].size(); v++)
+      mesh.Cell1DSetMarker(v, vtk_mesh.Markers[1][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[2].size(); v++)
+      mesh.Cell2DSetMarker(v, vtk_mesh.Markers[2][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[3].size(); v++)
+      mesh.Cell3DSetMarker(v, vtk_mesh.Markers[3][v]);
   }
   // ***************************************************************************
   void MeshUtilities::ImportObjectFileFormat(const std::string& offFilePath,

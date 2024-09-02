@@ -5,6 +5,8 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
+#include "Macro.hpp"
+
 #include "GraphUtilities.hpp"
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -19,6 +21,7 @@
 #include "OpenVolumeMeshInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "test_meshUtilities2D.hpp"
+#include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
 
 using namespace testing;
 using namespace std;
@@ -1939,6 +1942,42 @@ namespace GedimUnitTesting
                               });
       exporter.Export(exportFolder + "/cell3Ds_mark.vtu");
     }
+  }
+
+  TEST(TestMeshUtilities, TestImportVtkMesh)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestImportVtkMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    const std::string file_test_path = exportFolder +
+                                       "/test_file.vtk";
+
+    GedimUnitTesting::VTK_Unstructured_Grid_Mesh_Mock::ExportFile(file_test_path);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ImportVtkMesh3D(file_test_path,
+                                  meshDao);
+
+#if ENABLE_VTK == 1
+    ASSERT_EQ(5,
+              meshDao.Cell0DTotalNumber());
+    ASSERT_EQ(9,
+              meshDao.Cell1DTotalNumber());
+    ASSERT_EQ(7,
+              meshDao.Cell2DTotalNumber());
+    ASSERT_EQ(2,
+              meshDao.Cell3DTotalNumber());
+#endif
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "ImportedMesh");
   }
 }
 
