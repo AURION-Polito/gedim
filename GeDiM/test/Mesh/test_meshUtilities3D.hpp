@@ -5,6 +5,8 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
+#include "Macro.hpp"
+
 #include "GraphUtilities.hpp"
 #include "MeshMatrices.hpp"
 #include "MeshMatricesDAO.hpp"
@@ -1962,6 +1964,7 @@ namespace GedimUnitTesting
     meshUtilities.ImportVtkMesh3D(file_test_path,
                                   meshDao);
 
+#if ENABLE_VTK == 1
     ASSERT_EQ(5,
               meshDao.Cell0DTotalNumber());
     ASSERT_EQ(9,
@@ -1970,6 +1973,7 @@ namespace GedimUnitTesting
               meshDao.Cell2DTotalNumber());
     ASSERT_EQ(2,
               meshDao.Cell3DTotalNumber());
+#endif
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,

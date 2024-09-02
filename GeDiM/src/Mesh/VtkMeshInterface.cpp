@@ -1,9 +1,15 @@
 #include "VtkMeshInterface.hpp"
 
+#include "Macro.hpp"
+
+#include "CommonUtilities.hpp"
+
+#if ENABLE_VTK == 1
 #include <vtkUnstructuredGrid.h>
 #include <vtkGenericDataObjectReader.h>
 #include <vtkPolyDataReader.h>
 #include <vtkSmartPointer.h>
+#endif
 
 using namespace std;
 using namespace Eigen;
@@ -207,6 +213,7 @@ namespace Gedim
   // ***************************************************************************
   VtkMeshInterface::VtkMesh3D VtkMeshInterface::ImportMesh3DFromFile(const std::string& vtkFilePath) const
   {
+#if ENABLE_VTK == 1
     vtkSmartPointer<vtkGenericDataObjectReader> reader =
         vtkSmartPointer<vtkGenericDataObjectReader>::New();
     reader->SetFileName(vtkFilePath.c_str());
@@ -269,6 +276,9 @@ namespace Gedim
 
       return ComputeVtkMesh3D(vtk_mesh);
     }
+#else
+    Gedim::Utilities::Unused(vtkFilePath);
+#endif
 
     return {};
   }

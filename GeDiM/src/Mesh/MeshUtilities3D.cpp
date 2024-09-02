@@ -20,6 +20,7 @@ namespace Gedim
     mesh.InitializeDimension(3);
 
     // Create Cell0Ds
+    if (cell0Ds.size() > 0)
     {
       Output::Assert(cell0Ds.rows() == 3);
       const unsigned int numCell0Ds = cell0Ds.cols();
@@ -30,6 +31,7 @@ namespace Gedim
     }
 
     // Create Cell1Ds
+    if (cell1Ds.size() > 0)
     {
       Output::Assert(cell1Ds.rows() == 2);
       unsigned int numCell1Ds = cell1Ds.cols();
@@ -40,6 +42,7 @@ namespace Gedim
     }
 
     // Create Cell2Ds
+    if (cell2Ds.size() > 0)
     {
       const unsigned int& numCell2Ds = cell2Ds.size();
       mesh.Cell2DsInitialize(numCell2Ds);
@@ -71,6 +74,7 @@ namespace Gedim
     }
 
     // Create Cell3Ds
+    if (cell3Ds.size() > 0)
     {
       const unsigned int& numCell3Ds = cell3Ds.size();
       mesh.Cell3DsInitialize(numCell3Ds);
