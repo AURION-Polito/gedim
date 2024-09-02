@@ -612,7 +612,7 @@ namespace Gedim
                                   const std::string& ovmFilePath) const;
 
       /// \brief Import 3D mesh from VTK file
-      void ImportVtkMesh(const std::string& vtkFilePath,
+      void ImportVtkMesh3D(const std::string& vtkFilePath,
                          IMeshDAO& mesh) const;
 
       /// \brief Import 2D mesh from OFF file

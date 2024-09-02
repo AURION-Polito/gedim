@@ -1959,8 +1959,8 @@ namespace GedimUnitTesting
     GedimUnitTesting::VTK_Unstructured_Grid_Mesh_Mock::ExportFile(file_test_path);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ImportVtkMesh(file_test_path,
-                                meshDao);
+    meshUtilities.ImportVtkMesh3D("/home/geoscore/Downloads/TEST/151681092-64-r4781-02/pippo.vtk",
+                                  meshDao);
 
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,

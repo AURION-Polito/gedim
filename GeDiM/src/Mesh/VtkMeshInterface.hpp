@@ -33,6 +33,8 @@ namespace Gedim
 
       struct VtkMesh3D final
       {
+          std::array<std::vector<unsigned int>, 4> Markers;
+
           Eigen::MatrixXd Cell0Ds;
           Eigen::MatrixXi Cell1Ds;
           std::vector<Eigen::MatrixXi> Cell2Ds;
@@ -44,6 +46,7 @@ namespace Gedim
       {
           Eigen::MatrixXi Extremes;
           unsigned int Index;
+          unsigned int Marker;
       };
 
       unsigned int InsertNewEdge(const unsigned int origin,

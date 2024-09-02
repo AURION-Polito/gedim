@@ -49,13 +49,17 @@ namespace Gedim
 
       const auto face_id = faces.find(face);
       if (face_id != faces.end())
+      {
+        face_id->second.Marker = 0;
         return face_id->second.Index;
+      }
     }
 
     Mesh_Face new_face =
     {
       Eigen::MatrixXi(2, 3),
-      static_cast<unsigned int>(faces.size())
+      static_cast<unsigned int>(faces.size()),
+      1
     };
     new_face.Extremes.row(0)<< face_vertices.at(0), face_vertices.at(1), face_vertices.at(2);
     new_face.Extremes.row(1)<< face_edges.at(0), face_edges.at(1), face_edges.at(2);
@@ -72,7 +76,10 @@ namespace Gedim
     VtkMesh3D result;
 
     result.Cell0Ds = originalMesh.Cell0Ds;
+    result.Markers[0].resize(originalMesh.NumCell0Ds, 0);
+
     result.Cell3Ds.resize(originalMesh.NumCell3Ds);
+    result.Markers[3].resize(originalMesh.NumCell3Ds, 0);
 
     std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds;
     std::map<std::pair<unsigned int, unsigned int>, Mesh_Face> cell2Ds;
@@ -167,24 +174,32 @@ namespace Gedim
                                         cell3D_edges.at(2),
                                       },
                                       cell2Ds);
-
-      std::cout<< "Cell3D "<< c<< " ";
-      std::cout<< "vertices "<< cell3D_vertices<< " ";
-      std::cout<< "edges "<< cell3D_edges<< " ";
-      std::cout<< "faces "<< cell3D_faces<< std::endl;
     }
 
     result.Cell1Ds.resize(2, cell1Ds.size());
+    result.Markers[1].resize(cell1Ds.size(), 0);
     for (const auto& cell1D : cell1Ds)
     {
       result.Cell1Ds.col(cell1D.second)<< cell1D.first.first, cell1D.first.second;
     }
 
     result.Cell2Ds.resize(cell2Ds.size());
+    result.Markers[2].resize(cell2Ds.size(), 0);
     for (const auto& cell2D : cell2Ds)
     {
-      auto& cell2D_data = result.Cell2Ds.at(cell2D.second.Index);
+      const unsigned int cell2D_index = cell2D.second.Index;
+      auto& cell2D_data = result.Cell2Ds.at(cell2D_index);
       cell2D_data = cell2D.second.Extremes;
+      result.Markers[2][cell2D_index] = cell2D.second.Marker;
+
+      if (cell2D.second.Marker > 0)
+      {
+        for (unsigned int v = 0; v < cell2D.second.Extremes.cols(); v++)
+        {
+          result.Markers[0][cell2D.second.Extremes(0, v)] = cell2D.second.Marker;
+          result.Markers[1][cell2D.second.Extremes(1, v)] = cell2D.second.Marker;
+        }
+      }
     }
 
     return result;

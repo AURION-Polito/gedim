@@ -184,7 +184,7 @@ namespace Gedim
                                              ovmFilePath);
   }
   // ***************************************************************************
-  void MeshUtilities::ImportVtkMesh(const std::string& vtkFilePath,
+  void MeshUtilities::ImportVtkMesh3D(const std::string& vtkFilePath,
                                     IMeshDAO& mesh) const
   {
     VtkMeshInterface vtkMeshInterface;
@@ -195,6 +195,15 @@ namespace Gedim
                vtk_mesh.Cell2Ds,
                vtk_mesh.Cell3Ds,
                mesh);
+
+    for (unsigned int v = 0; v < vtk_mesh.Markers[0].size(); v++)
+      mesh.Cell0DSetMarker(v, vtk_mesh.Markers[0][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[1].size(); v++)
+      mesh.Cell1DSetMarker(v, vtk_mesh.Markers[1][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[2].size(); v++)
+      mesh.Cell2DSetMarker(v, vtk_mesh.Markers[2][v]);
+    for (unsigned int v = 0; v < vtk_mesh.Markers[3].size(); v++)
+      mesh.Cell3DSetMarker(v, vtk_mesh.Markers[3][v]);
   }
   // ***************************************************************************
   void MeshUtilities::ImportObjectFileFormat(const std::string& offFilePath,
