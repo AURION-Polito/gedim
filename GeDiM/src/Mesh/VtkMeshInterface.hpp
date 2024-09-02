@@ -40,6 +40,18 @@ namespace Gedim
       };
 
     private:
+      struct Mesh_Face final
+      {
+          Eigen::MatrixXi Extremes;
+          unsigned int Index;
+      };
+
+      unsigned int InsertNewEdge(const unsigned int origin,
+                                 const unsigned int end,
+                                 std::map<std::pair<unsigned int, unsigned int>, unsigned int>& edges) const;
+      unsigned int InsertNewFace(const std::vector<unsigned int>& face_vertices,
+                                 const std::vector<unsigned int>& face_edges,
+                                 std::map<std::pair<unsigned int, unsigned int>, Mesh_Face>& faces) const;
       VtkMesh3D ComputeVtkMesh3D(VtkMesh& originalMesh) const;
 
     public:

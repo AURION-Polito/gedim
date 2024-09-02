@@ -18,18 +18,65 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  unsigned int VtkMeshInterface::InsertNewEdge(const unsigned int origin,
+                                               const unsigned int end,
+                                               std::map<std::pair<unsigned int, unsigned int>, unsigned int>& edges) const
+  {
+    const auto edge = std::make_pair(MIN(origin,
+                                         end),
+                                     MAX(origin,
+                                         end));
+
+    const auto edge_id = edges.find(edge);
+    if (edge_id != edges.end())
+      return edge_id->second;
+
+    const unsigned int new_edge_id = edges.size();
+    edges.insert(std::make_pair(edge,
+                                new_edge_id));
+
+    return new_edge_id;
+  }
+  // ***************************************************************************
+  unsigned int VtkMeshInterface::InsertNewFace(const std::vector<unsigned int>& face_vertices,
+                                               const std::vector<unsigned int>& face_edges,
+                                               std::map<std::pair<unsigned int, unsigned int>, Mesh_Face>& faces) const
+  {
+    for (unsigned int v = 0; v < 3; v++)
+    {
+      const auto face = std::make_pair(face_edges.at(v),
+                                       face_vertices.at((v + 2) % 3));
+
+      const auto face_id = faces.find(face);
+      if (face_id != faces.end())
+        return face_id->second.Index;
+    }
+
+    Mesh_Face new_face =
+    {
+      Eigen::MatrixXi(2, 3),
+      static_cast<unsigned int>(faces.size())
+    };
+    new_face.Extremes.row(0)<< face_vertices.at(0), face_vertices.at(1), face_vertices.at(2);
+    new_face.Extremes.row(1)<< face_edges.at(0), face_edges.at(1), face_edges.at(2);
+
+    faces.insert(std::make_pair(std::make_pair(face_edges.at(0),
+                                               face_vertices.at(2)),
+                                new_face));
+
+    return new_face.Index;
+  }
+  // ***************************************************************************
   VtkMeshInterface::VtkMesh3D VtkMeshInterface::ComputeVtkMesh3D(VtkMesh& originalMesh) const
   {
     VtkMesh3D result;
 
     result.Cell0Ds = originalMesh.Cell0Ds;
+    result.Cell3Ds.resize(originalMesh.NumCell3Ds);
 
-    // Create Cell1Ds
-    Eigen::SparseMatrix<unsigned int> edges;
-    edges.resize(originalMesh.NumCell0Ds,
-                 originalMesh.NumCell0Ds);
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds;
+    std::map<std::pair<unsigned int, unsigned int>, Mesh_Face> cell2Ds;
 
-    std::list<Eigen::Triplet<unsigned int>> triplets;
     for (unsigned int c = 0; c < originalMesh.NumCell3Ds; c++)
     {
       const auto& cell3D = originalMesh.Cell3Ds.at(c);
@@ -42,58 +89,102 @@ namespace Gedim
           throw std::runtime_error("VTK mesh Cell type not supported");
       }
 
-      const auto& cell3D_vertices = cell3D.Cell0D_Id;
-      Gedim::Output::Assert(cell3D_vertices.size() == 4);
+      Gedim::Output::Assert(cell3D.Cell0D_Id.size() == 4);
 
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(0),
-                                                          cell3D_vertices.at(1)),
-                                                      MAX(cell3D_vertices.at(0),
-                                                          cell3D_vertices.at(1)),
-                                                      1));
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(1),
-                                                          cell3D_vertices.at(2)),
-                                                      MAX(cell3D_vertices.at(1),
-                                                          cell3D_vertices.at(2)),
-                                                      1));
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(2),
-                                                          cell3D_vertices.at(0)),
-                                                      MAX(cell3D_vertices.at(2),
-                                                          cell3D_vertices.at(0)),
-                                                      1));
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(0),
-                                                          cell3D_vertices.at(3)),
-                                                      MAX(cell3D_vertices.at(0),
-                                                          cell3D_vertices.at(3)),
-                                                      1));
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(1),
-                                                          cell3D_vertices.at(3)),
-                                                      MAX(cell3D_vertices.at(1),
-                                                          cell3D_vertices.at(3)),
-                                                      1));
-      triplets.push_back(Eigen::Triplet<unsigned int>(MIN(cell3D_vertices.at(2),
-                                                          cell3D_vertices.at(3)),
-                                                      MAX(cell3D_vertices.at(2),
-                                                          cell3D_vertices.at(3)),
-                                                      1));
+      auto& new_cell3D = result.Cell3Ds.at(c);
+
+      new_cell3D.VerticesIndex = cell3D.Cell0D_Id;
+      new_cell3D.EdgesIndex.resize(6);
+      new_cell3D.FacesIndex.resize(4);
+
+      const auto& cell3D_vertices = new_cell3D.VerticesIndex;
+      auto& cell3D_edges = new_cell3D.EdgesIndex;
+      auto& cell3D_faces = new_cell3D.FacesIndex;
+
+      cell3D_edges[0] = InsertNewEdge(cell3D_vertices.at(0),
+                                      cell3D_vertices.at(1),
+                                      cell1Ds);
+      cell3D_edges[1] = InsertNewEdge(cell3D_vertices.at(1),
+                                      cell3D_vertices.at(2),
+                                      cell1Ds);
+      cell3D_edges[2] = InsertNewEdge(cell3D_vertices.at(2),
+                                      cell3D_vertices.at(0),
+                                      cell1Ds);
+      cell3D_edges[3] = InsertNewEdge(cell3D_vertices.at(0),
+                                      cell3D_vertices.at(3),
+                                      cell1Ds);
+      cell3D_edges[4] = InsertNewEdge(cell3D_vertices.at(1),
+                                      cell3D_vertices.at(3),
+                                      cell1Ds);
+      cell3D_edges[5] = InsertNewEdge(cell3D_vertices.at(2),
+                                      cell3D_vertices.at(3),
+                                      cell1Ds);
+
+      cell3D_faces[0] = InsertNewFace({
+                                        cell3D_vertices.at(0),
+                                        cell3D_vertices.at(1),
+                                        cell3D_vertices.at(2)
+                                      },
+                                      {
+                                        cell3D_edges.at(0),
+                                        cell3D_edges.at(1),
+                                        cell3D_edges.at(2),
+                                      },
+                                      cell2Ds);
+
+      cell3D_faces[1] = InsertNewFace({
+                                        cell3D_vertices.at(0),
+                                        cell3D_vertices.at(1),
+                                        cell3D_vertices.at(3)
+                                      },
+                                      {
+                                        cell3D_edges.at(0),
+                                        cell3D_edges.at(4),
+                                        cell3D_edges.at(3),
+                                      },
+                                      cell2Ds);
+
+      cell3D_faces[2] = InsertNewFace({
+                                        cell3D_vertices.at(1),
+                                        cell3D_vertices.at(2),
+                                        cell3D_vertices.at(3)
+                                      },
+                                      {
+                                        cell3D_edges.at(1),
+                                        cell3D_edges.at(5),
+                                        cell3D_edges.at(4),
+                                      },
+                                      cell2Ds);
+
+      cell3D_faces[3] = InsertNewFace({
+                                        cell3D_vertices.at(2),
+                                        cell3D_vertices.at(3),
+                                        cell3D_vertices.at(0)
+                                      },
+                                      {
+                                        cell3D_edges.at(5),
+                                        cell3D_edges.at(3),
+                                        cell3D_edges.at(2),
+                                      },
+                                      cell2Ds);
+
+      std::cout<< "Cell3D "<< c<< " ";
+      std::cout<< "vertices "<< cell3D_vertices<< " ";
+      std::cout<< "edges "<< cell3D_edges<< " ";
+      std::cout<< "faces "<< cell3D_faces<< std::endl;
     }
 
-    edges.setFromTriplets(triplets.begin(), triplets.end());
-    edges.makeCompressed();
-
-    unsigned int num_cell1Ds = 0;
-    for (int k = 0; k < edges.outerSize(); k++)
+    result.Cell1Ds.resize(2, cell1Ds.size());
+    for (const auto& cell1D : cell1Ds)
     {
-      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
-        it.valueRef() = 1 + num_cell1Ds++;
+      result.Cell1Ds.col(cell1D.second)<< cell1D.first.first, cell1D.first.second;
     }
 
-    result.Cell1Ds.resize(2, num_cell1Ds);
-
-    num_cell1Ds = 0;
-    for (int k = 0; k < edges.outerSize(); k++)
+    result.Cell2Ds.resize(cell2Ds.size());
+    for (const auto& cell2D : cell2Ds)
     {
-      for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
-        result.Cell1Ds.col(num_cell1Ds++)<< it.row(), it.col();
+      auto& cell2D_data = result.Cell2Ds.at(cell2D.second.Index);
+      cell2D_data = cell2D.second.Extremes;
     }
 
     return result;
