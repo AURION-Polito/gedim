@@ -22,7 +22,10 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMeshInterfac
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/ObjectFileFormatInterface.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/IntersectorMesh3DSegment.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/VtkMeshInterface.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PlatonicSolid.cpp)
 
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/SphereMeshUtilities.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PlatonicSolid.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IMeshDAO.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshDAOExporterToCsv.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshDAOImporterFromCsv.hpp)
