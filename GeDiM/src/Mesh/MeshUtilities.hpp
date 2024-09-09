@@ -583,11 +583,9 @@ namespace Gedim
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
 
-      void CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
-                              const Eigen::MatrixXi& polyhedronEdges,
-                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                              IMeshDAO& mesh,
-                              const Eigen::MatrixXd& constrained_points = Eigen::MatrixXd()) const;
+      void CreateDelaunayMesh3D(const Eigen::MatrixXd& points,
+                                const std::vector<unsigned int>& points_marker,
+                                IMeshDAO& mesh) const;
 
       void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                 const Eigen::MatrixXd& polyhedronVertices,
@@ -613,7 +611,7 @@ namespace Gedim
 
       /// \brief Import 3D mesh from VTK file
       void ImportVtkMesh3D(const std::string& vtkFilePath,
-                         IMeshDAO& mesh) const;
+                           IMeshDAO& mesh) const;
 
       /// \brief Import 2D mesh from OFF file
       void ImportObjectFileFormat(const std::string& offFilePath,

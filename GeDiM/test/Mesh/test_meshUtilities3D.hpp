@@ -75,16 +75,51 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities meshUtilities;
 
-    const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                                   1.0);
-    Eigen::MatrixXd constrained_points(3, 1);
-    constrained_points.col(0)<< 0.5, 0.5, 0.5;
 
-    meshUtilities.CreateDelaunayMesh(polyhedron.Vertices,
-                                     polyhedron.Edges,
-                                     polyhedron.Faces,
-                                     meshDao,
-                                     constrained_points);
+    Eigen::MatrixXd points(3,27);
+
+    points.col(0)<< 0.0, 0.5, 0.0;
+    points.col(1)<< 0.5, 0.0, 0.0;
+    points.col(2)<< 0.5, 0.5, 0.0;
+    points.col(3)<< 0.0, 0.0, 0.5;
+    points.col(4)<< 0.5, 0.0, 0.5;
+    points.col(5)<< 0.0, 0.5, 0.5;
+    points.col(6)<< 0.5, 0.5, 0.5;
+    points.col(7)<< 0.5, 1.0, 0.0;
+    points.col(8)<< 0.5, 1.0, 0.5;
+    points.col(9)<< 0.0, 1.0, 0.5;
+    points.col(10)<< 1.0, 0.0, 0.5;
+    points.col(11)<< 1.0, 0.5, 0.0;
+    points.col(12)<< 1.0, 0.5, 0.5;
+    points.col(13)<< 1.0, 1.0, 0.5;
+    points.col(14)<< 0.0, 0.5, 1.0;
+    points.col(15)<< 0.5, 0.0, 1.0;
+    points.col(16)<< 0.5, 0.5, 1.0;
+    points.col(17)<< 1.0, 0.5, 1.0;
+    points.col(18)<< 0.5, 1.0, 1.0;
+    points.col(19)<< 0.0, 0.0, 0.0;
+    points.col(20)<< 1.0, 0.0, 0.0;
+    points.col(21)<< 1.0, 1.0, 0.0;
+    points.col(22)<< 0.0, 1.0, 0.0;
+    points.col(23)<< 0.0, 0.0, 1.0;
+    points.col(24)<< 1.0, 0.0, 1.0;
+    points.col(25)<< 1.0, 1.0, 1.0;
+    points.col(26)<< 0.0, 1.0, 1.0;
+
+    std::vector<unsigned int> points_marker(27, 0);
+    points_marker[19] = 1;
+    points_marker[20] = 2;
+    points_marker[21] = 3;
+    points_marker[22] = 4;
+    points_marker[23] = 5;
+    points_marker[24] = 6;
+    points_marker[25] = 7;
+    points_marker[26] = 8;
+
+
+    meshUtilities.CreateDelaunayMesh3D(points,
+                                       points_marker,
+                                       meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -94,13 +129,13 @@ namespace GedimUnitTesting
 
     EXPECT_EQ(3,
               meshDao.Dimension());
-    EXPECT_EQ(9,
+    EXPECT_EQ(27,
               meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(26,
+    EXPECT_EQ(98,
               meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(30,
+    EXPECT_EQ(120,
               meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(12,
+    EXPECT_EQ(48,
               meshDao.Cell3DTotalNumber());
   }
 
