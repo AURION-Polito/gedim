@@ -127,6 +127,14 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    std::vector<std::vector<bool>> cell3Ds_faces_orientation(meshDao.Cell3DTotalNumber(),
+                                                             std::vector<bool>(4, true));
+
+
+    meshUtilities.ExportMeshToOpenVolume(meshDao,
+                                         cell3Ds_faces_orientation,
+                                         exportFolder + "/mesh.ovm");
+
     EXPECT_EQ(3,
               meshDao.Dimension());
     EXPECT_EQ(27,
