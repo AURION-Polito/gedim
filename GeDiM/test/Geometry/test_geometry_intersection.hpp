@@ -1826,6 +1826,36 @@ namespace GedimUnitTesting {
       ASSERT_FALSE(geometryUtilities.CheckTrianglesIntersection(triangle_one, triangle_two, false));
     }
   }
+
+  TEST(TestGeometryUtilities, TestIntersectionPolyhedronPolyhedron_Cubes)
+  {
+    try
+    {
+      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-12;
+      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+
+      const Gedim::GeometryUtilities::Polyhedron polyhedron_one = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                                   Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                                                                                   Eigen::Vector3d(0.0, 1.0, 0.0));
+      const Gedim::GeometryUtilities::Polyhedron polyhedron_two = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                                   Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                                                   Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                                                                                   Eigen::Vector3d(0.0, 1.0, 0.0));
+
+
+
+      const auto result = geometryUtilities.IntersectionPolyhedronPolyhedron(polyhedron_one,
+                                                                             polyhedron_two);
+    }
+    catch (const exception& exception)
+    {
+      cerr<< exception.what()<< endl;
+      FAIL();
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_INTERSECTION_H
