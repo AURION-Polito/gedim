@@ -1292,8 +1292,7 @@ namespace Gedim
                                                                           const Eigen::Vector3d& segmentEnd,
                                                                           const Eigen::Vector3d& segmentTangent) const;
 
-      IntersectionPolyhedronPolyhedronResult IntersectionPolyhedronPolyhedron(const Polyhedron& first_polyhedron,
-                                                                              const Polyhedron& second_polyhedron) const;
+      IntersectionPolyhedronPolyhedronResult IntersectionPolyhedronPolyhedron(const std::array<Polyhedron, 2>& polyhedrons) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point

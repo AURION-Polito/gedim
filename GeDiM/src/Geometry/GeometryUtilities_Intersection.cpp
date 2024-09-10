@@ -977,9 +977,24 @@ namespace Gedim
     return result;
   }
   // ***************************************************************************
-  GeometryUtilities::IntersectionPolyhedronPolyhedronResult GeometryUtilities::IntersectionPolyhedronPolyhedron(const Polyhedron& first_polyhedron,
-                                                                                                                const Polyhedron& second_polyhedron) const
+  GeometryUtilities::IntersectionPolyhedronPolyhedronResult GeometryUtilities::IntersectionPolyhedronPolyhedron(const std::array<Polyhedron, 2>& polyhedrons) const
   {
+    for (unsigned int p = 0; p < polyhedrons.size(); p++)
+    {
+      const unsigned int polyhedron_first_index = p;
+      const unsigned int polyhedron_second_index = (p + 1) % polyhedrons.size();
+
+      const auto& polyhedron_first = polyhedrons.at(polyhedron_first_index);
+      const auto& polyhedron_second = polyhedrons.at(polyhedron_second_index);
+
+      for (unsigned int e = 0; e < polyhedron_first.Edges.size(); e++)
+      {
+        for (unsigned int f = 0; f < polyhedron_second.Faces.size(); f++)
+        {
+        }
+      }
+    }
+
     return {};
   }
   // ***************************************************************************
