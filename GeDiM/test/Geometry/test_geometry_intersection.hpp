@@ -1849,6 +1849,11 @@ namespace GedimUnitTesting {
 
       const auto result = geometryUtilities.IntersectionPolyhedronPolyhedron(polyhedron_one,
                                                                              polyhedron_two);
+
+      ASSERT_EQ(Gedim::GeometryUtilities::IntersectionPolyhedronPolyhedronResult::Types::Vertices,
+                result.Type);
+      ASSERT_EQ(8,
+                result.Intersections.size());
     }
     catch (const exception& exception)
     {
