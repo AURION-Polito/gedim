@@ -277,7 +277,7 @@ namespace Gedim
             Vertices = 2, ///< Vertices
           };
 
-          struct Intersection final
+          struct Polyhedron_Intersection final
           {
               enum struct Types
               {
@@ -287,13 +287,26 @@ namespace Gedim
                 Polyhedron = 4
               };
 
-              std::array<Types, 2> Type;
-              std::array<unsigned int, 2> GeometryIndex;
-              Eigen::Vector3d Coordinates;
+              Types Type;
+              unsigned int Geometry_index;
+              std::vector<unsigned int> Cell0Ds_index;
+              std::vector<unsigned int> Cell1Ds_index;
+              std::vector<unsigned int> Cell2Ds_index;
+              std::vector<unsigned int> Cell3Ds_index;
           };
 
-          Types Type; ///< The intersection type
-          std::vector<Intersection> Intersections; ///< The resulting intersections
+          struct Mesh_Intersections final
+          {
+              std::map<unsigned int, unsigned int> Cell0Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell1Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell2Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell3Ds_intersections;
+          };
+
+          Types Type;
+          Eigen::MatrixXd Intersections_Coordinates;
+          std::vector<Polyhedron_Intersection> Polyhedron_intersections;
+          Mesh_Intersections Mesh_intersections;
       };
 
     public:
@@ -933,7 +946,13 @@ namespace Gedim
                                           const unsigned int default_mark) const;
 
       Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
-                                                                 const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+                                                                 const std::vector<Eigen::MatrixXi>& polyhedron_faces,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& polyhedron_faces_normals,
+                                                                 const std::vector<bool>& polyhedron_faces_normal_direction,
+                                                                 const std::vector<Eigen::Vector3d>& polyhedron_face_translations,
+                                                                 const std::vector<Eigen::Matrix3d>& polyhedron_face_rotation_matrix,
                                                                  const Eigen::MatrixXd& polyhedron_boudingBox,
                                                                  const IMeshDAO& mesh) const;
   };

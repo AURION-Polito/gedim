@@ -2102,10 +2102,27 @@ namespace GedimUnitTesting
       exporter.Export(exportFolder + "/polyhedron.vtu");
     }
 
+    const auto polyhedron_faces_vertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                    polyhedron.Faces);
+    const auto polyhedron_faces_translation = geometryUtilities.PolyhedronFaceTranslations(polyhedron_faces_vertices);
+    const auto polyhedron_faces_normal = geometryUtilities.PolyhedronFaceNormals(polyhedron_faces_vertices);
+    const std::vector<bool> polyhedron_faces_normal_direction(polyhedron.Faces.size(), true);
+    const auto polyhedron_faces_rotation_matrix = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedron_faces_vertices,
+                                                                                                   polyhedron_faces_normal,
+                                                                                                   polyhedron_faces_translation);
+    const auto polyhedron_faces_rotated_vertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedron_faces_vertices,
+                                                                                                   polyhedron_faces_translation,
+                                                                                                   polyhedron_faces_rotation_matrix);
     const auto polyhedron_bounding_box = geometryUtilities.PointsBoundingBox(polyhedron.Vertices);
 
     const auto result = meshUtilities.Intersect_mesh_polyhedron(geometryUtilities,
-                                                                polyhedron,
+                                                                polyhedron.Faces,
+                                                                polyhedron_faces_vertices,
+                                                                polyhedron_faces_rotated_vertices,
+                                                                polyhedron_faces_normal,
+                                                                polyhedron_faces_normal_direction,
+                                                                polyhedron_faces_translation,
+                                                                polyhedron_faces_rotation_matrix,
                                                                 polyhedron_bounding_box,
                                                                 mesh_3D);
 
@@ -2113,7 +2130,9 @@ namespace GedimUnitTesting
     ASSERT_EQ(Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices,
               result.Type);
     ASSERT_EQ(8,
-              result.Intersections.size());
+              result.Intersections_Coordinates.cols());
+    ASSERT_EQ(8,
+              result.Polyhedron_intersections.size());
 
   }
 }
