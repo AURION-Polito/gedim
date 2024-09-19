@@ -2039,9 +2039,9 @@ namespace GedimUnitTesting
     const double domain_3D_length = 1.0;
     const double domain_3D_height = 1.0;
     const double domain_3D_width = 1.0;
-    const unsigned int domain_3D_length_num_cells = 1;
-    const unsigned int domain_3D_height_num_cells = 1;
-    const unsigned int domain_3D_width_num_cells = 1;
+    const unsigned int domain_3D_length_num_cells = 4;
+    const unsigned int domain_3D_height_num_cells = 4;
+    const unsigned int domain_3D_width_num_cells = 4;
     const Eigen::Vector3d domain_3D_origin(0.0, 0.0, 0.0);
     const Eigen::Vector3d domain_3D_length_direction(domain_3D_length, 0.0, 0.0);
     const Eigen::Vector3d domain_3D_height_direction(0.0, 0.0, domain_3D_height);
@@ -2089,8 +2089,10 @@ namespace GedimUnitTesting
                                     "Mesh3D");
     }
 
-    const auto polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                   1.0);
+    const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.25, 0.25, 0.25),
+                                                                             Eigen::Vector3d(0.1, 0.1, 0.0),
+                                                                             Eigen::Vector3d(-0.1, 0.1, 0.0),
+                                                                             Eigen::Vector3d(0.0, 0.0, 0.1));
 
     {
       Gedim::VTKUtilities exporter;
@@ -2126,6 +2128,8 @@ namespace GedimUnitTesting
                                                                 polyhedron_bounding_box,
                                                                 mesh_3D);
 
+    if (result.Type ==
+        Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices)
     {
       Gedim::VTKUtilities exporter;
 

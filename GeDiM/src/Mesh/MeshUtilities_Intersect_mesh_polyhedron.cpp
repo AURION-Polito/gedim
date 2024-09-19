@@ -109,6 +109,14 @@ namespace Gedim
       }
     }
 
+    for (unsigned int p = 0; p < mesh.Cell1DTotalNumber(); ++p)
+    {
+      if (!mesh.Cell1DIsActive(p))
+        continue;
+
+
+    }
+
     if (intersections.empty())
     {
       return
