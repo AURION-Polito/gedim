@@ -15,7 +15,10 @@ namespace Gedim
                                                   const std::vector<Eigen::Vector3d>& polyhedron_face_translations,
                                                   const std::vector<Eigen::Matrix3d>& polyhedron_face_rotation_matrix,
                                                   const Eigen::MatrixXd& polyhedron_boudingBox,
-                                                  const IMeshDAO& mesh) const
+                                                  const IMeshDAO& mesh,
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const
   {
     struct Intersection final
     {
@@ -109,9 +112,13 @@ namespace Gedim
       }
     }
 
-    for (unsigned int p = 0; p < mesh.Cell1DTotalNumber(); ++p)
+    for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
     {
-      if (!mesh.Cell1DIsActive(p))
+      if (!mesh.Cell1DIsActive(e))
+        continue;
+
+      if (!geometry_utilities.BoundingBoxesIntersects(mesh_cell1Ds_boudingBox.at(e),
+                                                      polyhedron_boudingBox))
         continue;
 
 

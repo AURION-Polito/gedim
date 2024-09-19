@@ -2089,6 +2089,19 @@ namespace GedimUnitTesting
                                     "Mesh3D");
     }
 
+    std::vector<Eigen::MatrixXd> cell1Ds_bounding_box(mesh_3D.Cell1DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell1DTotalNumber());
+
+    for (unsigned int e = 0; e < mesh_3D.Cell1DTotalNumber(); e++)
+      cell1Ds_bounding_box[e] = geometryUtilities.PointsBoundingBox(mesh_3D.Cell1DCoordinates(e));
+
+    for (unsigned int p = 0; p < mesh_3D.Cell2DTotalNumber(); p++)
+      cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(mesh_3D.Cell2DVerticesCoordinates(p));
+
+    const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                              mesh_3D);
+
+
     const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.25, 0.25, 0.25),
                                                                              Eigen::Vector3d(0.1, 0.1, 0.0),
                                                                              Eigen::Vector3d(-0.1, 0.1, 0.0),
@@ -2126,7 +2139,10 @@ namespace GedimUnitTesting
                                                                 polyhedron_faces_translation,
                                                                 polyhedron_faces_rotation_matrix,
                                                                 polyhedron_bounding_box,
-                                                                mesh_3D);
+                                                                mesh_3D,
+                                                                cell1Ds_bounding_box,
+                                                                cell2Ds_bounding_box,
+                                                                cell3Ds_geometric_data.Cell3DsBoundingBox);
 
     if (result.Type ==
         Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices)

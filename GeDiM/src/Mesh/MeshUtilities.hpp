@@ -954,7 +954,10 @@ namespace Gedim
                                                                  const std::vector<Eigen::Vector3d>& polyhedron_face_translations,
                                                                  const std::vector<Eigen::Matrix3d>& polyhedron_face_rotation_matrix,
                                                                  const Eigen::MatrixXd& polyhedron_boudingBox,
-                                                                 const IMeshDAO& mesh) const;
+                                                                 const IMeshDAO& mesh,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const;
   };
 
 }
