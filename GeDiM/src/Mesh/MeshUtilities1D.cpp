@@ -142,6 +142,7 @@ namespace Gedim
   {
     MeshGeometricData1D result;
 
+    result.Cell1DsBoundingBox.resize(convexMesh.Cell1DTotalNumber());
     result.Cell1DsVertices.resize(convexMesh.Cell1DTotalNumber());
     result.Cell1DsTangents.resize(convexMesh.Cell1DTotalNumber());
     result.Cell1DsLengths.resize(convexMesh.Cell1DTotalNumber());
@@ -156,6 +157,7 @@ namespace Gedim
       // Extract original cell1D geometric information
 
       result.Cell1DsVertices[c] = convexMesh.Cell1DCoordinates(c);
+      result.Cell1DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell1DsVertices[c]);
       result.Cell1DsTangents[c] = geometryUtilities.SegmentTangent(result.Cell1DsVertices[c].col(0),
                                                                    result.Cell1DsVertices[c].col(1));
       result.Cell1DsLengths[c] = geometryUtilities.SegmentLength(result.Cell1DsVertices[c].col(0),

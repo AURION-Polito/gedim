@@ -104,6 +104,7 @@ namespace Gedim
 
       struct MeshGeometricData1D final
       {
+          std::vector<Eigen::MatrixXd> Cell1DsBoundingBox;
           std::vector<Eigen::MatrixXd> Cell1DsVertices; ///< cell1D vertices coordinates
           std::vector<Eigen::Vector3d> Cell1DsTangents; ///< cell1D tangents
           std::vector<double> Cell1DsLengths; ///< cell1D lengths
@@ -113,6 +114,7 @@ namespace Gedim
 
       struct MeshGeometricData2D final
       {
+          std::vector<Eigen::MatrixXd> Cell2DsBoundingBox;
           std::vector<Eigen::MatrixXd> Cell2DsVertices; ///< cell2D vertices coordinates
           std::vector<std::vector<Eigen::Matrix3d>> Cell2DsTriangulations; ///< cell2D triangulations
           std::vector<double> Cell2DsAreas; ///< cell2D areas
@@ -946,6 +948,8 @@ namespace Gedim
                                           const unsigned int default_mark) const;
 
       Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
+                                                                 const Eigen::MatrixXd& polyhedron_vertices,
+                                                                 const Eigen::MatrixXi& polyhedron_edges,
                                                                  const std::vector<Eigen::MatrixXi>& polyhedron_faces,
                                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
                                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
@@ -956,6 +960,8 @@ namespace Gedim
                                                                  const Eigen::MatrixXd& polyhedron_boudingBox,
                                                                  const IMeshDAO& mesh,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& mesh_cell1Ds_tangent,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const;
   };

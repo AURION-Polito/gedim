@@ -2089,14 +2089,13 @@ namespace GedimUnitTesting
                                     "Mesh3D");
     }
 
-    std::vector<Eigen::MatrixXd> cell1Ds_bounding_box(mesh_3D.Cell1DTotalNumber());
     std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell1DTotalNumber());
-
-    for (unsigned int e = 0; e < mesh_3D.Cell1DTotalNumber(); e++)
-      cell1Ds_bounding_box[e] = geometryUtilities.PointsBoundingBox(mesh_3D.Cell1DCoordinates(e));
-
     for (unsigned int p = 0; p < mesh_3D.Cell2DTotalNumber(); p++)
       cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(mesh_3D.Cell2DVerticesCoordinates(p));
+
+
+    const auto cell1Ds_geometric_data = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
+                                                                              mesh_3D);
 
     const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                               mesh_3D);
@@ -2131,6 +2130,8 @@ namespace GedimUnitTesting
     const auto polyhedron_bounding_box = geometryUtilities.PointsBoundingBox(polyhedron.Vertices);
 
     const auto result = meshUtilities.Intersect_mesh_polyhedron(geometryUtilities,
+                                                                polyhedron.Vertices,
+                                                                polyhedron.Edges,
                                                                 polyhedron.Faces,
                                                                 polyhedron_faces_vertices,
                                                                 polyhedron_faces_rotated_vertices,
@@ -2140,7 +2141,9 @@ namespace GedimUnitTesting
                                                                 polyhedron_faces_rotation_matrix,
                                                                 polyhedron_bounding_box,
                                                                 mesh_3D,
-                                                                cell1Ds_bounding_box,
+                                                                cell1Ds_geometric_data.Cell1DsBoundingBox,
+                                                                cell1Ds_geometric_data.Cell1DsVertices,
+                                                                cell1Ds_geometric_data.Cell1DsTangents,
                                                                 cell2Ds_bounding_box,
                                                                 cell3Ds_geometric_data.Cell3DsBoundingBox);
 

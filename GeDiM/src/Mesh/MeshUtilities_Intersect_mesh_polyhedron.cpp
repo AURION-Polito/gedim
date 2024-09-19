@@ -7,6 +7,8 @@ namespace Gedim
   // ***************************************************************************
   Gedim::MeshUtilities::Intersect_mesh_polyhedron_result
   Gedim::MeshUtilities::Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
+                                                  const Eigen::MatrixXd& polyhedron_vertices,
+                                                  const Eigen::MatrixXi& polyhedron_edges,
                                                   const std::vector<Eigen::MatrixXi>& polyhedron_faces,
                                                   const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
                                                   const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
@@ -17,6 +19,8 @@ namespace Gedim
                                                   const Eigen::MatrixXd& polyhedron_boudingBox,
                                                   const IMeshDAO& mesh,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_vertices,
+                                                  const std::vector<Eigen::Vector3d>& mesh_cell1Ds_tangent,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const
   {
@@ -121,7 +125,13 @@ namespace Gedim
                                                       polyhedron_boudingBox))
         continue;
 
-
+      const auto intersection_polyhedron_line = geometry_utilities.IntersectionPolyhedronLine(polyhedron_vertices,
+                                                                                              polyhedron_edges,
+                                                                                              polyhedron_faces,
+                                                                                              polyhedron_faces_normals,
+                                                                                              polyhedron_faces_normal_direction,
+                                                                                              mesh_cell1Ds_vertices.at(e).col(0),
+                                                                                              mesh_cell1Ds_tangent.at(e));
     }
 
     if (intersections.empty())
