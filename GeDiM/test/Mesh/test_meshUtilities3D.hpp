@@ -2102,7 +2102,11 @@ namespace GedimUnitTesting
       exporter.Export(exportFolder + "/polyhedron.vtu");
     }
 
-    const auto result = meshUtilities.Intersect_mesh_polyhedron(polyhedron,
+    const auto polyhedron_bounding_box = geometryUtilities.PointsBoundingBox(polyhedron.Vertices);
+
+    const auto result = meshUtilities.Intersect_mesh_polyhedron(geometryUtilities,
+                                                                polyhedron,
+                                                                polyhedron_bounding_box,
                                                                 mesh_3D);
 
 

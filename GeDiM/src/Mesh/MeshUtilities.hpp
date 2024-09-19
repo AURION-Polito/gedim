@@ -932,7 +932,9 @@ namespace Gedim
                                           const std::vector<Eigen::MatrixXd>& cells_points,
                                           const unsigned int default_mark) const;
 
-      Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+      Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
+                                                                 const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+                                                                 const Eigen::MatrixXd& polyhedron_boudingBox,
                                                                  const IMeshDAO& mesh) const;
   };
 
