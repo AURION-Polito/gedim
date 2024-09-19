@@ -62,7 +62,7 @@ namespace Gedim
       switch (cell0D_polyhedron_position.Type)
       {
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
-          break;
+          continue;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
         {
           unsigned int new_intersection_index = intersections.size();
@@ -130,8 +130,25 @@ namespace Gedim
                                                                                               polyhedron_faces,
                                                                                               polyhedron_faces_normals,
                                                                                               polyhedron_faces_normal_direction,
-                                                                                              mesh_cell1Ds_vertices.at(e).col(0),
-                                                                                              mesh_cell1Ds_tangent.at(e));
+                                                                                              mesh_cell1Ds_tangent.at(e),
+                                                                                              mesh_cell1Ds_vertices.at(e).col(0));
+
+      switch (intersection_polyhedron_line.Type)
+      {
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::None:
+        {
+          std::cout.precision(2);
+          std::cout<< std::scientific<< "pol "<< polyhedron_boudingBox<< std::endl;
+          std::cout<< std::scientific<< "e "<< e<< ": "<< mesh_cell1Ds_boudingBox.at(e)<< std::endl;
+        }
+          continue;
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection:
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections:
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::MultipleIntersections:
+          break;
+        default:
+          throw std::runtime_error("Unexpected cell1D intersection");
+      }
     }
 
     if (intersections.empty())
