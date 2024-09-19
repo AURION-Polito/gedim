@@ -64,6 +64,7 @@ namespace Gedim
           new_intersection.Geometry_index = 0;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
+          intersections.push_back(new_intersection);
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
@@ -75,6 +76,7 @@ namespace Gedim
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
+          intersections.push_back(new_intersection);
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
@@ -86,6 +88,7 @@ namespace Gedim
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
+          intersections.push_back(new_intersection);
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
@@ -97,6 +100,7 @@ namespace Gedim
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
+          intersections.push_back(new_intersection);
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
