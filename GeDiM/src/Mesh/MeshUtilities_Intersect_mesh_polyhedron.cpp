@@ -26,6 +26,7 @@ namespace Gedim
   {
     struct Intersection final
     {
+        unsigned int Intersection_index;
         Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types Type;
         unsigned int Geometry_index;
         std::list<unsigned int> Cell0Ds_index;
@@ -33,6 +34,28 @@ namespace Gedim
         std::list<unsigned int> Cell2Ds_index;
         std::list<unsigned int> Cell3Ds_index;
         Eigen::Vector3d Intersection_coordinates;
+    };
+
+    auto find_intersection = [&geometry_utilities](
+                             std::list<Intersection>& intersections,
+        Eigen::Vector3d new_intersection_coordinates)
+    {
+      std::list<Intersection>::iterator it_found = intersections.end();
+      for (std::list<Intersection>::iterator it = intersections.begin();
+           it != intersections.end();
+           it++)
+      {
+        const Intersection& intersection = *it;
+
+        if (!geometry_utilities.PointsAreCoincident(intersection.Intersection_coordinates,
+                                                    new_intersection_coordinates))
+          continue;
+
+        it_found = it;
+        break;
+      }
+
+      return it_found;
     };
 
     std::list<Intersection> intersections;
@@ -66,48 +89,60 @@ namespace Gedim
         case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
         {
           unsigned int new_intersection_index = intersections.size();
-          Intersection new_intersection;
+          intersections.push_back({});
+
+          Intersection& new_intersection = intersections.back();
+          new_intersection.Intersection_index = new_intersection_index;
           new_intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Polyhedron;
           new_intersection.Geometry_index = 0;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
-          intersections.push_back(new_intersection);
+
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
         {
           unsigned int new_intersection_index = intersections.size();
-          Intersection new_intersection;
+          intersections.push_back({});
+
+          Intersection& new_intersection = intersections.back();
+          new_intersection.Intersection_index = new_intersection_index;
           new_intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Face;
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
-          intersections.push_back(new_intersection);
+
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
         {
           unsigned int new_intersection_index = intersections.size();
-          Intersection new_intersection;
+          intersections.push_back({});
+
+          Intersection& new_intersection = intersections.back();
+          new_intersection.Intersection_index = new_intersection_index;
           new_intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Edge;
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
-          intersections.push_back(new_intersection);
+
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
         case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
         {
           unsigned int new_intersection_index = intersections.size();
-          Intersection new_intersection;
+          intersections.push_back({});
+
+          Intersection& new_intersection = intersections.back();
+          new_intersection.Intersection_index = new_intersection_index;
           new_intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Vertex;
           new_intersection.Geometry_index = cell0D_polyhedron_position.BorderIndex;
           new_intersection.Intersection_coordinates = cell0D_coordinates;
           new_intersection.Cell0Ds_index = { p };
-          intersections.push_back(new_intersection);
+
           mesh_intersections.Cell0Ds_intersections.insert(std::make_pair(p, new_intersection_index));
         }
           break;
@@ -125,26 +160,108 @@ namespace Gedim
                                                       polyhedron_boudingBox))
         continue;
 
+      const auto& cell1D_vertices = mesh_cell1Ds_vertices.at(e);
+      const auto& cell1D_tangent = mesh_cell1Ds_tangent.at(e);
+
       const auto intersection_polyhedron_line = geometry_utilities.IntersectionPolyhedronLine(polyhedron_vertices,
                                                                                               polyhedron_edges,
                                                                                               polyhedron_faces,
                                                                                               polyhedron_faces_normals,
                                                                                               polyhedron_faces_normal_direction,
-                                                                                              mesh_cell1Ds_tangent.at(e),
-                                                                                              mesh_cell1Ds_vertices.at(e).col(0));
+                                                                                              cell1D_tangent,
+                                                                                              cell1D_vertices.col(0));
 
       switch (intersection_polyhedron_line.Type)
       {
         case GeometryUtilities::IntersectionPolyhedronLineResult::Types::None:
-        {
-          std::cout.precision(2);
-          std::cout<< std::scientific<< "pol "<< polyhedron_boudingBox<< std::endl;
-          std::cout<< std::scientific<< "e "<< e<< ": "<< mesh_cell1Ds_boudingBox.at(e)<< std::endl;
-        }
           continue;
         case GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection:
         case GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections:
         case GeometryUtilities::IntersectionPolyhedronLineResult::Types::MultipleIntersections:
+          break;
+        default:
+          throw std::runtime_error("Unexpected cell1D intersection");
+      }
+
+      const auto intersection_polyhedron_segment = geometry_utilities.IntersectionPolyhedronSegment(polyhedron_vertices,
+                                                                                                    polyhedron_edges,
+                                                                                                    polyhedron_faces,
+                                                                                                    cell1D_vertices.col(0),
+                                                                                                    cell1D_vertices.col(1),
+                                                                                                    cell1D_tangent,
+                                                                                                    intersection_polyhedron_line);
+
+      switch (intersection_polyhedron_segment.Type)
+      {
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::None:
+          continue;
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::OneIntersection:
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::TwoIntersections:
+        case GeometryUtilities::IntersectionPolyhedronLineResult::Types::MultipleIntersections:
+        {
+          for (const auto& segment_intersection : intersection_polyhedron_segment.LineIntersections)
+          {
+            const Eigen::Vector3d intersection_coordinate = cell1D_vertices.col(0) +
+                                                            segment_intersection.CurvilinearCoordinate *
+                                                            cell1D_tangent;
+
+
+            auto intersection_found = find_intersection(intersections,
+                                                        intersection_coordinate);
+
+            const bool new_intersection = (intersection_found == intersections.end());
+
+            if (new_intersection)
+            {
+              unsigned int new_intersection_index = intersections.size();
+              intersections.push_back({});
+
+              intersection_found = std::next(intersections.end(), -1);
+
+              Intersection& new_intersection = *intersection_found;
+              new_intersection.Intersection_index = new_intersection_index;
+              new_intersection.Intersection_coordinates = intersection_coordinate;
+            }
+
+            Intersection& intersection = *intersection_found;
+            intersection.Cell1Ds_index.push_back(e);
+            mesh_intersections.Cell1Ds_intersections.insert(std::make_pair(e,
+                                                                           intersection.Intersection_index));
+
+            if (!new_intersection)
+              continue;
+
+            switch (segment_intersection.PolyhedronType)
+            {
+              case GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::Inside:
+              {
+                intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Polyhedron;
+                intersection.Geometry_index = 0;
+              }
+                break;
+              case GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnFace:
+              {
+                intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Face;
+                intersection.Geometry_index = segment_intersection.PolyhedronIndex;
+              }
+                break;
+              case GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnEdge:
+              {
+                intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Edge;
+                intersection.Geometry_index = segment_intersection.PolyhedronIndex;
+              }
+                break;
+              case GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::OnVertex:
+              {
+                intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Vertex;
+                intersection.Geometry_index = segment_intersection.PolyhedronIndex;
+              }
+                break;
+              default:
+                throw std::runtime_error("Unexpected cell1D intersection type");
+            }
+          }
+        }
           break;
         default:
           throw std::runtime_error("Unexpected cell1D intersection");
