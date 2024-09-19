@@ -2126,6 +2126,13 @@ namespace GedimUnitTesting
                                                                 polyhedron_bounding_box,
                                                                 mesh_3D);
 
+    {
+      Gedim::VTKUtilities exporter;
+
+      exporter.AddPoints(result.Intersections_Coordinates);
+
+      exporter.Export(exportFolder + "/intersections.vtu");
+    }
 
     ASSERT_EQ(Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices,
               result.Type);
