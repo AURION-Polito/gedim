@@ -269,6 +269,33 @@ namespace Gedim
           std::vector<PointCell3DFound> Cell3Ds_found;
       };
 
+      struct Intersect_mesh_polyhedron_result final
+      {
+          enum struct Types
+          {
+            None = 1, ///< No intersection found
+            Vertices = 2, ///< Vertices
+          };
+
+          struct Intersection final
+          {
+              enum struct Types
+              {
+                Vertex = 1,
+                Edge = 2,
+                Face = 3,
+                Polyhedron = 4
+              };
+
+              std::array<Types, 2> Type;
+              std::array<unsigned int, 2> GeometryIndex;
+              Eigen::Vector3d Coordinates;
+          };
+
+          Types Type; ///< The intersection type
+          std::vector<Intersection> Intersections; ///< The resulting intersections
+      };
+
     public:
       MeshUtilities() { };
       ~MeshUtilities() { };
@@ -904,6 +931,9 @@ namespace Gedim
       std::vector<unsigned int> MarkCells(const std::function<Eigen::VectorXi(const Eigen::MatrixXd&)>& marking_function,
                                           const std::vector<Eigen::MatrixXd>& cells_points,
                                           const unsigned int default_mark) const;
+
+      Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+                                                                 const IMeshDAO& mesh) const;
   };
 
 }

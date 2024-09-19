@@ -3069,4 +3069,11 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  Gedim::MeshUtilities::Intersect_mesh_polyhedron_result
+  Gedim::MeshUtilities::Intersect_mesh_polyhedron(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+                                                  const IMeshDAO& mesh) const
+  {
+    return {};
+  }
+  // ***************************************************************************
 }

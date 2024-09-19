@@ -525,32 +525,6 @@ namespace Gedim
           Eigen::MatrixXd IntersectionCoordinates; ///< The resulting intersection coordinates
       };
 
-      struct IntersectionPolyhedronPolyhedronResult final
-      {
-          enum struct Types
-          {
-            None = 1, ///< No intersection found
-            Vertices = 2, ///< Vertices
-          };
-
-          struct Intersection final
-          {
-              enum struct Types
-              {
-                Vertex = 1,
-                Edge = 2,
-                Face = 3
-              };
-
-              std::array<Types, 2> Type;
-              std::array<unsigned int, 2> GeometryIndex;
-              Eigen::Vector3d Coordinates;
-          };
-
-          Types Type; ///< The intersection type
-          std::vector<Intersection> Intersections; ///< The resulting intersections
-      };
-
       enum struct PointCirclePositionResult
       {
         Unknown = 0,
@@ -1291,8 +1265,6 @@ namespace Gedim
                                                                           const Eigen::Vector3d& segmentOrigin,
                                                                           const Eigen::Vector3d& segmentEnd,
                                                                           const Eigen::Vector3d& segmentTangent) const;
-
-      IntersectionPolyhedronPolyhedronResult IntersectionPolyhedronPolyhedron(const std::array<Polyhedron, 2>& polyhedrons) const;
 
       /// \brief Check if point is inside a polygon
       /// \param point the point

@@ -2022,6 +2022,96 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ImportedMesh");
   }
+
+  TEST(TestMeshUtilities, TestIntersect_mesh_polyhedron)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestIntersect_mesh_polyhedron";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    // Create domain 3D
+    const double domain_3D_length = 1.0;
+    const double domain_3D_height = 1.0;
+    const double domain_3D_width = 1.0;
+    const unsigned int domain_3D_length_num_cells = 1;
+    const unsigned int domain_3D_height_num_cells = 1;
+    const unsigned int domain_3D_width_num_cells = 1;
+    const Eigen::Vector3d domain_3D_origin(0.0, 0.0, 0.0);
+    const Eigen::Vector3d domain_3D_length_direction(domain_3D_length, 0.0, 0.0);
+    const Eigen::Vector3d domain_3D_height_direction(0.0, 0.0, domain_3D_height);
+    const Eigen::Vector3d domain_3D_width_direction(0.0, domain_3D_width, 0.0);
+
+
+    {
+      const auto domain_3D = geometryUtilities.CreateParallelepipedWithOrigin(domain_3D_origin,
+                                                                              domain_3D_length_direction,
+                                                                              domain_3D_height_direction,
+                                                                              domain_3D_width_direction);
+
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolyhedron(domain_3D.Vertices,
+                             domain_3D.Edges,
+                             domain_3D.Faces);
+      exporter.Export(exportFolder + "/Domain_3D.vtu");
+    }
+
+    // Create mesh 3D
+    const std::vector<double> domain_3D_mesh_length_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_length_num_cells + 1,
+                                                                                                         0.0, 1.0, 1);
+    const std::vector<double> domain_3D_mesh_height_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_height_num_cells + 1,
+                                                                                                         0.0, 1.0, 1);
+    const std::vector<double> domain_3D_mesh_width_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_width_num_cells + 1,
+                                                                                                        0.0, 1.0, 1);
+
+
+    Gedim::MeshMatrices mesh_3D_data;
+    Gedim::MeshMatricesDAO mesh_3D(mesh_3D_data);
+    meshUtilities.CreateParallelepipedMesh(domain_3D_origin,
+                                           domain_3D_length_direction,
+                                           domain_3D_height_direction,
+                                           domain_3D_width_direction,
+                                           domain_3D_mesh_length_coordinates,
+                                           domain_3D_mesh_height_coordinates,
+                                           domain_3D_mesh_width_coordinates,
+                                           mesh_3D);
+
+    {
+      std::string mesh_3D_export_folder = exportFolder + "/Mesh3D";
+      Gedim::Output::CreateFolder(mesh_3D_export_folder);
+      meshUtilities.ExportMeshToVTU(mesh_3D,
+                                    mesh_3D_export_folder,
+                                    "Mesh3D");
+    }
+
+    const auto polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                   1.0);
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      exporter.AddPolyhedron(polyhedron.Vertices,
+                             polyhedron.Edges,
+                             polyhedron.Faces);
+
+      exporter.Export(exportFolder + "/polyhedron.vtu");
+    }
+
+    const auto result = meshUtilities.Intersect_mesh_polyhedron(polyhedron,
+                                                                mesh_3D);
+
+
+    ASSERT_EQ(Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices,
+              result.Type);
+    ASSERT_EQ(8,
+              result.Intersections.size());
+
+  }
 }
 
 #endif // __TEST_MESH_UTILITIES3D_H
