@@ -2090,13 +2090,23 @@ namespace GedimUnitTesting
     }
 
     std::vector<Eigen::MatrixXd> cell2Ds_vertices(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_2D_vertices(mesh_3D.Cell2DTotalNumber());
     std::vector<Eigen::Vector3d> cell2Ds_normal(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Vector3d> cell2Ds_translation(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Matrix3d> cell2Ds_rotation_matrix(mesh_3D.Cell2DTotalNumber());
     std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell2DTotalNumber());
     for (unsigned int p = 0; p < mesh_3D.Cell2DTotalNumber(); p++)
     {
       cell2Ds_vertices[p] = mesh_3D.Cell2DVerticesCoordinates(p);
       cell2Ds_normal[p] = geometryUtilities.PolygonNormal(cell2Ds_vertices[p]);
       cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(cell2Ds_vertices[p]);
+      cell2Ds_translation[p] = geometryUtilities.PolygonTranslation(cell2Ds_vertices[p]);
+      cell2Ds_rotation_matrix[p] = geometryUtilities.PolygonRotationMatrix(cell2Ds_vertices[p],
+                                                                           cell2Ds_normal[p],
+                                                                           cell2Ds_translation[p]);
+      cell2Ds_2D_vertices[p] = geometryUtilities.RotatePointsFrom3DTo2D(cell2Ds_vertices[p],
+                                                                        cell2Ds_rotation_matrix[p].transpose(),
+                                                                        cell2Ds_translation[p]);
     }
 
 
@@ -2169,6 +2179,9 @@ namespace GedimUnitTesting
                                                                 cell1Ds_geometric_data.Cell1DsTangents,
                                                                 cell2Ds_vertices,
                                                                 cell2Ds_normal,
+                                                                cell2Ds_2D_vertices,
+                                                                cell2Ds_translation,
+                                                                cell2Ds_rotation_matrix,
                                                                 cell2Ds_bounding_box,
                                                                 cell3Ds_geometric_data.Cell3DsBoundingBox);
 
