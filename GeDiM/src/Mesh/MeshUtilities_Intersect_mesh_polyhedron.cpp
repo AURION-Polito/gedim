@@ -436,7 +436,47 @@ namespace Gedim
                                                                                       cell3D_faces_normal_directions,
                                                                                       cell3D_faces_translation,
                                                                                       cell3D_faces_rotation_matrix);
+        switch (point_cell3D_position.Type)
+        {
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::Outside:
+            continue;
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::Inside:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge:
+          case GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex:
+          {
+            auto intersection_found = find_intersection(intersections,
+                                                        vertex);
 
+            const bool new_intersection = (intersection_found == intersections.end());
+
+            if (new_intersection)
+            {
+              unsigned int new_intersection_index = intersections.size();
+              intersections.push_back({});
+
+              intersection_found = std::next(intersections.end(), -1);
+
+              Intersection& new_intersection = *intersection_found;
+              new_intersection.Intersection_index = new_intersection_index;
+              new_intersection.Intersection_coordinates = vertex;
+            }
+
+            Intersection& intersection = *intersection_found;
+            intersection.Cell3Ds_index.push_back(c);
+            mesh_intersections.Cell3Ds_intersections.insert(std::make_pair(c,
+                                                                           intersection.Intersection_index));
+
+            if (!new_intersection)
+              continue;
+
+            intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Polyhedron;
+            intersection.Geometry_index = 0;
+          }
+            break;
+          default:
+            throw std::runtime_error("Unexpected cell3D intersection");
+        }
       }
     }
 
