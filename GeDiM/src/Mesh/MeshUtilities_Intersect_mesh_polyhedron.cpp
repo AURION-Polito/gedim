@@ -36,7 +36,7 @@ namespace Gedim
         unsigned int Geometry_index;
         std::list<unsigned int> Cell0Ds_index;
         std::list<unsigned int> Cell1Ds_index;
-        std::list<unsigned int> Cell2Ds_index;
+        std::set<unsigned int> Cell2Ds_index;
         std::list<unsigned int> Cell3Ds_index;
         Eigen::Vector3d Intersection_coordinates;
     };
@@ -310,8 +310,76 @@ namespace Gedim
             throw std::runtime_error("Unexpected cell2D intersection");
         }
 
-        std::cout<< "Intersect face "<< f<< " with edge "<< p_e<< std::endl;
+        switch (intersection_cell2D_plane_edge.SingleIntersection.Type)
+        {
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+            continue;
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+            break;
+          default:
+            throw std::runtime_error("Unexpected cell2D edge intersection");
+        }
 
+        const Eigen::Vector3d intersection_coordinate = polyhedron_edge_vertices.col(0) +
+                                                        intersection_cell2D_plane_edge.SingleIntersection.CurvilinearCoordinate *
+                                                        polyhedron_edge_tangent;
+
+
+        auto intersection_found = find_intersection(intersections,
+                                                    intersection_coordinate);
+
+        const bool new_intersection = (intersection_found == intersections.end());
+
+        if (new_intersection)
+        {
+          unsigned int new_intersection_index = intersections.size();
+          intersections.push_back({});
+
+          intersection_found = std::next(intersections.end(), -1);
+
+          Intersection& new_intersection = *intersection_found;
+          new_intersection.Intersection_index = new_intersection_index;
+          new_intersection.Intersection_coordinates = intersection_coordinate;
+        }
+
+        Intersection& intersection = *intersection_found;
+        if (intersection.Cell2Ds_index.find(f) == intersection.Cell2Ds_index.end())
+          intersection.Cell2Ds_index.insert(f);
+        if (mesh_intersections.Cell2Ds_intersections.find(f) == mesh_intersections.Cell2Ds_intersections.end())
+          mesh_intersections.Cell2Ds_intersections.insert(std::make_pair(f,
+                                                                         intersection.Intersection_index));
+
+        if (!new_intersection)
+          continue;
+
+        switch (intersection_cell2D_plane_edge.SingleIntersection.Type)
+        {
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+          {
+            intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Vertex;
+            intersection.Geometry_index = polyhedron_edges(0, p_e);
+          }
+            break;
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+          {
+            intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Vertex;
+            intersection.Geometry_index = polyhedron_edges(1, p_e);
+          }
+            break;
+          case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+          {
+            intersection.Type = Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types::Edge;
+            intersection.Geometry_index = p_e;
+          }
+            break;
+          default:
+            throw std::runtime_error("Unexpected cell1D intersection type");
+        }
       }
     }
 
