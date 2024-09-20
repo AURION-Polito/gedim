@@ -286,7 +286,10 @@ namespace Gedim
         continue;
 
       const auto& cell2D_vertices = mesh_cell2Ds_vertices.at(f);
+      const auto& cell2D_2D_vertices = mesh_cell2Ds_2D_vertices.at(f);
       const auto& cell2D_normal = mesh_cell2Ds_normal.at(f);
+      const auto& cell2D_translation = mesh_cell2Ds_translation.at(f);
+      const auto& cell2D_rotation_matrix = mesh_cell2Ds_rotation_matrix.at(f);
 
       for (unsigned int p_e = 0; p_e < polyhedron_edges.cols(); ++p_e)
       {
@@ -332,6 +335,13 @@ namespace Gedim
                                                         intersection_cell2D_plane_edge.SingleIntersection.CurvilinearCoordinate *
                                                         polyhedron_edge_tangent;
 
+        const Eigen::Vector3d intersection_2D = geometry_utilities.RotatePointsFrom3DTo2D(intersection_coordinate,
+                                                                                          cell2D_rotation_matrix.transpose(),
+                                                                                          cell2D_translation);
+
+        if (!geometry_utilities.IsPointInsidePolygon(intersection_2D,
+                                                     cell2D_2D_vertices))
+          continue;
 
         auto intersection_found = find_intersection(intersections,
                                                     intersection_coordinate);
