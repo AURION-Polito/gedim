@@ -2089,9 +2089,15 @@ namespace GedimUnitTesting
                                     "Mesh3D");
     }
 
-    std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell1DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_vertices(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Vector3d> cell2Ds_normal(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell2DTotalNumber());
     for (unsigned int p = 0; p < mesh_3D.Cell2DTotalNumber(); p++)
-      cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(mesh_3D.Cell2DVerticesCoordinates(p));
+    {
+      cell2Ds_vertices[p] = mesh_3D.Cell2DVerticesCoordinates(p);
+      cell2Ds_normal[p] = geometryUtilities.PolygonNormal(cell2Ds_vertices[p]);
+      cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(cell2Ds_vertices[p]);
+    }
 
 
     const auto cell1Ds_geometric_data = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
@@ -2116,6 +2122,20 @@ namespace GedimUnitTesting
       exporter.Export(exportFolder + "/polyhedron.vtu");
     }
 
+    std::vector<Eigen::MatrixXd> polyhedron_edges_vertices(polyhedron.Edges.cols());
+    std::vector<Eigen::MatrixXd> polyhedron_edges_bounding_box(polyhedron.Edges.cols());
+    for (unsigned int e = 0; e < polyhedron.Edges.cols(); e++)
+    {
+      polyhedron_edges_vertices[e].resize(3, 2);
+      polyhedron_edges_vertices[e].col(0)<< polyhedron.Vertices.col(polyhedron.Edges(0, e));
+      polyhedron_edges_vertices[e].col(1)<< polyhedron.Vertices.col(polyhedron.Edges(1, e));
+
+      polyhedron_edges_bounding_box[e] = geometryUtilities.PointsBoundingBox(polyhedron_edges_vertices[e]);
+    }
+
+    const auto polyhedron_edges_tangent = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
+                                                                                   polyhedron.Edges);
+
     const auto polyhedron_faces_vertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                     polyhedron.Faces);
     const auto polyhedron_faces_translation = geometryUtilities.PolyhedronFaceTranslations(polyhedron_faces_vertices);
@@ -2132,6 +2152,9 @@ namespace GedimUnitTesting
     const auto result = meshUtilities.Intersect_mesh_polyhedron(geometryUtilities,
                                                                 polyhedron.Vertices,
                                                                 polyhedron.Edges,
+                                                                polyhedron_edges_vertices,
+                                                                polyhedron_edges_tangent,
+                                                                polyhedron_edges_bounding_box,
                                                                 polyhedron.Faces,
                                                                 polyhedron_faces_vertices,
                                                                 polyhedron_faces_rotated_vertices,

@@ -950,6 +950,9 @@ namespace Gedim
       Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
                                                                  const Eigen::MatrixXd& polyhedron_vertices,
                                                                  const Eigen::MatrixXi& polyhedron_edges,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_edges_vertices,
+                                                                 const Eigen::MatrixXd& polyhedron_edges_tangent,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_edges_boudingBox,
                                                                  const std::vector<Eigen::MatrixXi>& polyhedron_faces,
                                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
                                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
@@ -962,6 +965,8 @@ namespace Gedim
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_vertices,
                                                                  const std::vector<Eigen::Vector3d>& mesh_cell1Ds_tangent,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& mesh_cell2Ds_normal,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const;
   };

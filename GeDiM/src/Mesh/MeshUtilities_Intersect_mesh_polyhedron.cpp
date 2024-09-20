@@ -9,6 +9,9 @@ namespace Gedim
   Gedim::MeshUtilities::Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
                                                   const Eigen::MatrixXd& polyhedron_vertices,
                                                   const Eigen::MatrixXi& polyhedron_edges,
+                                                  const std::vector<Eigen::MatrixXd>& polyhedron_edges_vertices,
+                                                  const Eigen::MatrixXd& polyhedron_edges_tangent,
+                                                  const std::vector<Eigen::MatrixXd>& polyhedron_edges_boudingBox,
                                                   const std::vector<Eigen::MatrixXi>& polyhedron_faces,
                                                   const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
                                                   const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
@@ -21,6 +24,8 @@ namespace Gedim
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_vertices,
                                                   const std::vector<Eigen::Vector3d>& mesh_cell1Ds_tangent,
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_vertices,
+                                                  const std::vector<Eigen::Vector3d>& mesh_cell2Ds_normal,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const
   {
@@ -265,6 +270,48 @@ namespace Gedim
           break;
         default:
           throw std::runtime_error("Unexpected cell1D intersection");
+      }
+    }
+
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); ++f)
+    {
+      if (!mesh.Cell2DIsActive(f))
+        continue;
+
+      if (!geometry_utilities.BoundingBoxesIntersects(mesh_cell2Ds_boudingBox.at(f),
+                                                      polyhedron_boudingBox))
+        continue;
+
+      const auto& cell2D_vertices = mesh_cell2Ds_vertices.at(f);
+      const auto& cell2D_normal = mesh_cell2Ds_normal.at(f);
+
+      for (unsigned int p_e = 0; p_e < polyhedron_edges.cols(); ++p_e)
+      {
+        if (!geometry_utilities.BoundingBoxesIntersects(mesh_cell2Ds_boudingBox.at(f),
+                                                        polyhedron_edges_boudingBox.at(p_e)))
+          continue;
+
+        const auto& polyhedron_edge_vertices = polyhedron_edges_vertices.at(p_e);
+        const auto& polyhedron_edge_tangent = polyhedron_edges_tangent.col(p_e);
+
+        const auto intersection_cell2D_plane_edge = geometry_utilities.IntersectionSegmentPlane(polyhedron_edge_vertices.col(0),
+                                                                                                polyhedron_edge_vertices.col(1),
+                                                                                                cell2D_normal,
+                                                                                                cell2D_vertices.col(0));
+
+        switch (intersection_cell2D_plane_edge.Type)
+        {
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection:
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
+            continue;
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection:
+            break;
+          default:
+            throw std::runtime_error("Unexpected cell2D intersection");
+        }
+
+        std::cout<< "Intersect face "<< f<< " with edge "<< p_e<< std::endl;
+
       }
     }
 
