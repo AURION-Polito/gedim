@@ -2167,6 +2167,8 @@ namespace GedimUnitTesting
                                                                 cell1Ds_geometric_data.Cell1DsBoundingBox,
                                                                 cell1Ds_geometric_data.Cell1DsVertices,
                                                                 cell1Ds_geometric_data.Cell1DsTangents,
+                                                                cell2Ds_vertices,
+                                                                cell2Ds_normal,
                                                                 cell2Ds_bounding_box,
                                                                 cell3Ds_geometric_data.Cell3DsBoundingBox);
 
