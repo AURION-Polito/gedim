@@ -2157,6 +2157,13 @@ namespace GedimUnitTesting
 
     const auto polyhedron_faces_vertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                     polyhedron.Faces);
+
+    std::vector<Eigen::MatrixXd> polyhedron_faces_bounding_box(polyhedron.Faces.size());
+    for (unsigned int f = 0; f < polyhedron.Faces.size(); f++)
+    {
+      polyhedron_faces_bounding_box[f] = geometryUtilities.PointsBoundingBox(polyhedron_faces_vertices[f]);
+    }
+
     const auto polyhedron_faces_translation = geometryUtilities.PolyhedronFaceTranslations(polyhedron_faces_vertices);
     const auto polyhedron_faces_normal = geometryUtilities.PolyhedronFaceNormals(polyhedron_faces_vertices);
     const std::vector<bool> polyhedron_faces_normal_direction(polyhedron.Faces.size(), true);
@@ -2181,7 +2188,7 @@ namespace GedimUnitTesting
                                                                 polyhedron_faces_normal_direction,
                                                                 polyhedron_faces_translation,
                                                                 polyhedron_faces_rotation_matrix,
-                                                                polyhedron_bounding_box,
+                                                                polyhedron_faces_bounding_box,                                                                polyhedron_bounding_box,
                                                                 mesh_3D,
                                                                 cell1Ds_geometric_data.Cell1DsBoundingBox,
                                                                 cell1Ds_geometric_data.Cell1DsVertices,
