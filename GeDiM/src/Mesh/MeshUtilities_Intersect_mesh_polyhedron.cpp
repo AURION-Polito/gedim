@@ -396,6 +396,16 @@ namespace Gedim
       }
     }
 
+    for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); ++c)
+    {
+      if (!mesh.Cell3DIsActive(c))
+        continue;
+
+      if (!geometry_utilities.BoundingBoxesIntersects(mesh_cell3Ds_boudingBox.at(c),
+                                                      polyhedron_boudingBox))
+        continue;
+    }
+
     if (intersections.empty())
     {
       return
