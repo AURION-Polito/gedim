@@ -20,6 +20,7 @@
 #include "MeshDAOImporterFromCsv.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "PlatonicSolid.hpp"
+#include "SphereMeshUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "test_meshUtilities2D.hpp"
 #include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
@@ -2118,13 +2119,20 @@ namespace GedimUnitTesting
                                                                               mesh_3D);
 
 
-    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities,
-                                                                    meshUtilities);
+    //    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities,
+    //                                                                    meshUtilities);
 
-    //    Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
+    //        const Gedim::GeometryUtilities::Polyhedron ico = platonicSolid.icosahedron();
+    //         Gedim::GeometryUtilities::Polyhedron dual = platonicSolid.first_class_geodesic_polyhedron(ico, 4);
+    //        Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.goldberg_polyhedron(dual);
 
-    //    polyhedron.Vertices = (1.0 * polyhedron.Vertices).colwise() +
-    //                          Eigen::Vector3d(0.25, 0.25, 0.25);
+    //    const Gedim::SphereMeshUtilities sphereMeshUtilities(geometryUtilities,
+    //                                                         meshUtilities);
+
+    //    Gedim::GeometryUtilities::Polyhedron polyhedron = sphereMeshUtilities.uv_sphere(10, 7);
+
+    //    polyhedron.Vertices = (0.1 * polyhedron.Vertices).colwise() +
+    //                          Eigen::Vector3d(0.3, 0.3, 0.3);
 
     const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.25, 0.25, 0.25),
                                                                              Eigen::Vector3d(0.1, 0.1, 0.0),

@@ -1251,6 +1251,7 @@ namespace Gedim
       /// \param lineTangent the line tangent
       /// \param lineOrigin the line origin
       /// \return the intersection result
+      /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronLineResult IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
                                                                   const Eigen::MatrixXi& polyhedronEdges,
                                                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -1268,6 +1269,7 @@ namespace Gedim
       /// \param segmentTangent the segment tangent
       /// \param polyhedronLineIntersections the intersection between the polyhedron and the line of the segment
       /// \return the intersection result
+      /// /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronLineResult IntersectionPolyhedronSegment(const Eigen::MatrixXd& polyhedronVertices,
                                                                      const Eigen::MatrixXi& polyhedronEdges,
                                                                      const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -1283,6 +1285,7 @@ namespace Gedim
       /// \param segmentEnd the segment end
       /// \param segmentTangent the segment tangent
       /// \return the intersection result
+      /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronsSegmentResult IntersectionPolyhedronsSegment(const std::vector<Polyhedron>& polyhedrons,
                                                                           const std::vector<std::vector<Eigen::Vector3d>>& polyhedronFaceNormals,
                                                                           const std::vector<std::vector<bool>>& polyhedronFaceNormalDirections,
