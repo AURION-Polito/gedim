@@ -30,7 +30,14 @@ namespace Gedim
                                                   const std::vector<Eigen::Vector3d>& mesh_cell2Ds_translation,
                                                   const std::vector<Eigen::Matrix3d>& mesh_cell2Ds_rotation_matrix,
                                                   const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
-                                                  const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const
+                                                  const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox,
+                                                  const std::vector<std::vector<Eigen::MatrixXi>>& mesh_cell3Ds_faces,
+                                                  const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_vertices,
+                                                  const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_2D_vertices,
+                                                  const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_normal,
+                                                  const std::vector<std::vector<bool>>& mesh_cell3Ds_faces_normal_directions,
+                                                  const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_translation,
+                                                  const std::vector<std::vector<Eigen::Matrix3d>>& mesh_cell3Ds_faces_rotation_matrix) const
   {
     struct Intersection final
     {
@@ -404,6 +411,33 @@ namespace Gedim
       if (!geometry_utilities.BoundingBoxesIntersects(mesh_cell3Ds_boudingBox.at(c),
                                                       polyhedron_boudingBox))
         continue;
+
+      const auto& cell3D_faces = mesh_cell3Ds_faces.at(c);
+      const auto& cell3D_faces_vertices = mesh_cell3Ds_faces_vertices.at(c);
+      const auto& cell3D_faces_2D_vertices = mesh_cell3Ds_faces_2D_vertices.at(c);
+      const auto& cell3D_faces_normal = mesh_cell3Ds_faces_normal.at(c);
+      const auto& cell3D_faces_normal_directions = mesh_cell3Ds_faces_normal_directions.at(c);
+      const auto& cell3D_faces_translation = mesh_cell3Ds_faces_translation.at(c);
+      const auto& cell3D_faces_rotation_matrix = mesh_cell3Ds_faces_rotation_matrix.at(c);
+
+      for (unsigned int p_v = 0; p_v < polyhedron_vertices.cols(); ++p_v)
+      {
+        const Eigen::Vector3d vertex = polyhedron_vertices.col(p_v);
+
+        if (!geometry_utilities.IsPointInBoundingBox(vertex,
+                                                     mesh_cell3Ds_boudingBox.at(c)))
+          continue;
+
+        const auto point_cell3D_position = geometry_utilities.PointPolyhedronPosition(vertex,
+                                                                                      cell3D_faces,
+                                                                                      cell3D_faces_vertices,
+                                                                                      cell3D_faces_2D_vertices,
+                                                                                      cell3D_faces_normal,
+                                                                                      cell3D_faces_normal_directions,
+                                                                                      cell3D_faces_translation,
+                                                                                      cell3D_faces_rotation_matrix);
+
+      }
     }
 
     if (intersections.empty())

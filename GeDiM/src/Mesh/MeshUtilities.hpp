@@ -971,7 +971,14 @@ namespace Gedim
                                                                  const std::vector<Eigen::Vector3d>& mesh_cell2Ds_translation,
                                                                  const std::vector<Eigen::Matrix3d>& mesh_cell2Ds_rotation_matrix,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
-                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox) const;
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox,
+                                                                 const std::vector<std::vector<Eigen::MatrixXi>>& mesh_cell3Ds_faces,
+                                                                 const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_vertices,
+                                                                 const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_2D_vertices,
+                                                                 const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_normal,
+                                                                 const std::vector<std::vector<bool>>& mesh_cell3Ds_faces_normal_directions,
+                                                                 const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_translation,
+                                                                 const std::vector<std::vector<Eigen::Matrix3d>>& mesh_cell3Ds_faces_rotation_matrix) const;
   };
 
 }

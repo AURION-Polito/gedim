@@ -2183,7 +2183,14 @@ namespace GedimUnitTesting
                                                                 cell2Ds_translation,
                                                                 cell2Ds_rotation_matrix,
                                                                 cell2Ds_bounding_box,
-                                                                cell3Ds_geometric_data.Cell3DsBoundingBox);
+                                                                cell3Ds_geometric_data.Cell3DsBoundingBox,
+                                                                cell3Ds_geometric_data.Cell3DsFaces,
+                                                                cell3Ds_geometric_data.Cell3DsFaces3DVertices,
+                                                                cell3Ds_geometric_data.Cell3DsFaces2DVertices,
+                                                                cell3Ds_geometric_data.Cell3DsFacesNormals,
+                                                                cell3Ds_geometric_data.Cell3DsFacesNormalDirections,
+                                                                cell3Ds_geometric_data.Cell3DsFacesTranslations,
+                                                                cell3Ds_geometric_data.Cell3DsFacesRotationMatrices);
 
     if (result.Type ==
         Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices)
