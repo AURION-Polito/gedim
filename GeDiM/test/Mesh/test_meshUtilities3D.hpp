@@ -19,6 +19,7 @@
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "OpenVolumeMeshInterface.hpp"
+#include "PlatonicSolid.hpp"
 #include "VTKUtilities.hpp"
 #include "test_meshUtilities2D.hpp"
 #include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
@@ -2116,6 +2117,14 @@ namespace GedimUnitTesting
     const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                               mesh_3D);
 
+
+    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities,
+                                                                    meshUtilities);
+
+    //    Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
+
+    //    polyhedron.Vertices = (1.0 * polyhedron.Vertices).colwise() +
+    //                          Eigen::Vector3d(0.25, 0.25, 0.25);
 
     const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.25, 0.25, 0.25),
                                                                              Eigen::Vector3d(0.1, 0.1, 0.0),

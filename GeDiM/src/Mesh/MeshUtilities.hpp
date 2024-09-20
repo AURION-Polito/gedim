@@ -960,6 +960,7 @@ namespace Gedim
                                                                  const std::vector<bool>& polyhedron_faces_normal_direction,
                                                                  const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
                                                                  const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_boudingBox,
                                                                  const Eigen::MatrixXd& polyhedron_boudingBox,
                                                                  const IMeshDAO& mesh,
                                                                  const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
