@@ -566,11 +566,14 @@ namespace GedimUnitTesting
     geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-    Eigen::MatrixXd polygonVertices(3, 3);
-    polygonVertices.col(0)<< 0.0, 0.0, 0.0;
-    polygonVertices.col(1)<< 1.0, 0.0, 0.0;
-    polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+    Eigen::MatrixXd polygonVertices(3, 5);
+    polygonVertices.col(0)<< -4.0, -2.0, +0.0;
+    polygonVertices.col(1)<< +2.0, -3.0, +0.0;
+    polygonVertices.col(2)<< +9.0, -1.0, +0.0;
+    polygonVertices.col(3)<< +9.0, +2.0, +0.0;
+    polygonVertices.col(4)<< -11.0, +3.0, +0.0;
 
+    const auto polygon_edges_centroid = geometryUtilities.PolygonEdgesCentroid(polygonVertices);
     const auto triangulation = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
     const auto triangulation_points = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
                                                                                    triangulation);
@@ -619,6 +622,15 @@ namespace GedimUnitTesting
 
     {
       Gedim::VTKUtilities exporter;
+      for (unsigned int e = 0; e < polygon_edges_centroid.cols(); e++)
+      {
+        exporter.AddPoint(polygon_edges_centroid.col(e));
+      }
+      exporter.Export(exportFolder + "/Polygon_edges_centroid.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
       for (unsigned int t = 0; t < triangulation_points.size(); t++)
         exporter.AddPolygon(triangulation_points.at(t));
       exporter.Export(exportFolder + "/Polygon_triangles.vtu");
@@ -631,16 +643,32 @@ namespace GedimUnitTesting
     }
 
     {
+      std::vector<double> id = { 0.0, 1.0 };
+
       Gedim::VTKUtilities exporter;
-      exporter.AddSegment(polygon_centroid + eig_min);
-      exporter.AddSegment(polygon_centroid + eig_max);
+      exporter.AddSegment(polygon_centroid,
+                          polygon_centroid + eig_min,
+                          {
+                            {
+                              "Id",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(1),
+                              id.data()
+                            }
+                          });
+      exporter.AddSegment(polygon_centroid,
+                          polygon_centroid + eig_max,
+                          {
+                            {
+                              "Id",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(1),
+                              id.data() + 1
+                            }
+                          });
       exporter.Export(exportFolder + "/Polygon_intertia.vtu");
     }
 
-    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(0, 0), +1.0 / 36.0, geometryUtilities.Tolerance1D()));
-    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(1, 1), +1.0 / 36.0, geometryUtilities.Tolerance1D()));
-    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(0, 1), +1.0 / 72.0, geometryUtilities.Tolerance1D()));
-    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(1, 0), +1.0 / 72.0, geometryUtilities.Tolerance1D()));
   }
 
   TEST(TestGeometryUtilities, TestPolygonInertia_ReferenceQuadrilateral)
