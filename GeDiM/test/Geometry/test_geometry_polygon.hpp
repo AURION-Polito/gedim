@@ -557,6 +557,92 @@ namespace GedimUnitTesting
     }
   }
 
+  TEST(TestGeometryUtilities, TestPolygonInertia_Export)
+  {
+    std::string exportFolder = "./Export/TestPolygonInertia_Export";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Eigen::MatrixXd polygonVertices(3, 3);
+    polygonVertices.col(0)<< 0.0, 0.0, 0.0;
+    polygonVertices.col(1)<< 1.0, 0.0, 0.0;
+    polygonVertices.col(2)<< 0.0, 1.0, 0.0;
+
+    const auto triangulation = geometryUtilities.PolygonTriangulationByEarClipping(polygonVertices);
+    const auto triangulation_points = geometryUtilities.ExtractTriangulationPoints(polygonVertices,
+                                                                                   triangulation);
+    const double polygonArea = geometryUtilities.PolygonAreaByInternalIntegral(triangulation_points);
+
+    Eigen::VectorXd triangles_area(triangulation.size());
+    Eigen::MatrixXd triagles_centroid(3, triangulation.size());
+    for (unsigned int t = 0; t < triangulation_points.size(); t++)
+    {
+      triangles_area[t] = geometryUtilities.PolygonArea(triangulation_points.at(t));
+      triagles_centroid.col(t)<< geometryUtilities.PolygonBarycenter(triangulation_points.at(t));
+    }
+
+
+    const Eigen::Vector3d polygon_centroid = geometryUtilities.PolygonCentroid(triagles_centroid,
+                                                                               triangles_area,
+                                                                               polygonArea);
+
+    const Eigen::Matrix3d polygon_inertia = geometryUtilities.PolygonInertia(polygon_centroid,
+                                                                             triangulation_points);
+
+    Eigen::Vector3d eig_min(0.0, 0.0, 0.0), eig_max(0.0, 0.0, 0.0);
+    {
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix2d> eigensolver;
+
+      Eigen::Matrix2d eig_inertia = polygon_inertia.block(0, 0, 2, 2);
+      if (eig_inertia.isDiagonal())
+      {
+        eig_inertia(0, 1) = 0.0;
+        eig_inertia(1, 0) = 0.0;
+      }
+
+      eigensolver.computeDirect(eig_inertia);
+      if (eigensolver.info() != Eigen::Success)
+        throw std::runtime_error("Inertia not correct");
+
+      eig_min.segment(0, 2) = eigensolver.eigenvectors().col(0);
+      eig_max.segment(0, 2) = eigensolver.eigenvectors().col(1);
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolygon(polygonVertices);
+      exporter.Export(exportFolder + "/Polygon.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      for (unsigned int t = 0; t < triangulation_points.size(); t++)
+        exporter.AddPolygon(triangulation_points.at(t));
+      exporter.Export(exportFolder + "/Polygon_triangles.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoint(polygon_centroid);
+      exporter.Export(exportFolder + "/Polygon_centroid.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddSegment(polygon_centroid + eig_min);
+      exporter.AddSegment(polygon_centroid + eig_max);
+      exporter.Export(exportFolder + "/Polygon_intertia.vtu");
+    }
+
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(0, 0), +1.0 / 36.0, geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(1, 1), +1.0 / 36.0, geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(0, 1), +1.0 / 72.0, geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygon_inertia(1, 0), +1.0 / 72.0, geometryUtilities.Tolerance1D()));
+  }
+
   TEST(TestGeometryUtilities, TestPolygonInertia_ReferenceQuadrilateral)
   {
     try
