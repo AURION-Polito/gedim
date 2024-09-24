@@ -553,6 +553,7 @@ namespace Gedim
   {
     MeshGeometricData2D result;
 
+    result.Cell2DsBoundingBox.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsVertices.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsTriangulations.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsAreas.resize(convexMesh.Cell2DTotalNumber());
@@ -605,6 +606,7 @@ namespace Gedim
                                                                                      convexCell2DArea);
 
       result.Cell2DsVertices[c] = convexCell2DVertices;
+      result.Cell2DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell2DsVertices[c]);
 
       // Compute cell2D triangulation from original cell2Ds
       result.Cell2DsTriangulations[c].resize(cell2DTriangulationSize);
@@ -644,6 +646,7 @@ namespace Gedim
   {
     MeshGeometricData2D result;
 
+    result.Cell2DsBoundingBox.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsVertices.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsTriangulations.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsAreas.resize(mesh.Cell2DTotalNumber());
@@ -718,6 +721,7 @@ namespace Gedim
                                                                                cell2DArea);
 
       result.Cell2DsVertices[c] = cell2DVertices;
+      result.Cell2DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell2DsVertices[c]);
 
       result.Cell2DsTriangulations[c].resize(cell2DTriangulationSize);
       unsigned int triangulationCounter = 0;
@@ -757,6 +761,7 @@ namespace Gedim
   {
     MeshGeometricData2D result;
 
+    result.Cell2DsBoundingBox.resize(convexMesh.Cell2DTotalNumber());
     result.Cell2DsVertices.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsTriangulations.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsAreas.resize(mesh.Cell2DTotalNumber());
@@ -828,6 +833,7 @@ namespace Gedim
       }
 
       result.Cell2DsVertices[c] = mesh.Cell2DVerticesCoordinates(domainCell2DIndex);
+      result.Cell2DsBoundingBox[c] = geometryUtilities.PointsBoundingBox(result.Cell2DsVertices[c]);
 
       // Compute cell2D triangulation from original cell2Ds
       result.Cell2DsTriangulations[c].resize(cell2DTriangulationSize);

@@ -36,23 +36,19 @@ namespace Gedim
     delete[] tetgenInput.facetlist; tetgenInput.facetlist = NULL;
   }
   // ***************************************************************************
-  void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& polyhedronVertices,
-                                       const Eigen::MatrixXi& polyhedronEdges,
-                                       const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                                       IMeshDAO& mesh,
-                                       const Eigen::MatrixXd& constrained_points) const
+  void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& points,
+                                       const std::vector<unsigned int>& points_marker,
+                                       IMeshDAO& mesh) const
   {
     tetgenio* tetgenInput = new tetgenio();
     tetgenio* tetgenOutput = new tetgenio();
 
-    CreateTetgenInput(polyhedronVertices,
-                      polyhedronEdges,
-                      polyhedronFaces,
-                      *tetgenInput,
-                      constrained_points);
+    CreateDelaunayInput(points,
+                        points_marker,
+                        *tetgenInput);
     CreateTetgenOutput(*tetgenInput,
                        *tetgenOutput,
-                       "QYYqfezn");
+                       "Qfezn");
 
     ConvertTetgenOutputToMeshDAO(*tetgenOutput,
                                  mesh);
@@ -229,6 +225,33 @@ namespace Gedim
                                                 numberOfFaces +
                                                 numFac + 1;
       }
+    }
+  }
+  // ***************************************************************************
+  void TetgenInterface::CreateDelaunayInput(const Eigen::MatrixXd& points,
+                                            const std::vector<unsigned int>& points_marker,
+                                            tetgenio& tetgenInput) const
+  {
+    const unsigned int& number_of_points = points.cols();
+
+    Output::Assert(number_of_points > 0);
+
+    tetgenInput.firstnumber = 0;
+    tetgenInput.numberofpoints = number_of_points;
+    tetgenInput.pointlist = new REAL[(number_of_points) * 3];
+    tetgenInput.pointmarkerlist = new int[number_of_points];
+
+    double* point_list = tetgenInput.pointlist;
+    int* point_markerlist = tetgenInput.pointmarkerlist;
+
+    for (unsigned int v = 0; v < number_of_points; v++)
+    {
+      const Eigen::Vector3d& point = points.col(v);
+      point_list[3 * v] = point(0);
+      point_list[3 * v + 1] = point(1);
+      point_list[3 * v + 2] = point(2);
+
+      point_markerlist[v] = points_marker.at(v);
     }
   }
   // ***************************************************************************

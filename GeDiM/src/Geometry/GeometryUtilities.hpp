@@ -765,6 +765,7 @@ namespace Gedim
                              tolerance) == CompareTypes::SecondBeforeFirst;
       }
 
+
       /// \param first the first value
       /// \param second the second value
       /// \return true if first is greater or equal than second
@@ -778,6 +779,20 @@ namespace Gedim
 
         return result == CompareTypes::SecondBeforeFirst ||
             result == CompareTypes::Coincident;
+      }
+
+      inline bool IsValueLower(const double& first,
+                               const double& second,
+                               const double& tolerance) const
+      {
+        return !IsValueGreaterOrEqual(first, second, tolerance);
+      }
+
+      inline bool IsValueLowerOrEqual(const double& first,
+                                      const double& second,
+                                      const double& tolerance) const
+      {
+        return !IsValueGreater(first, second, tolerance);
       }
 
       /// \param value the value
@@ -890,6 +905,15 @@ namespace Gedim
       { return (IsValueGreaterOrEqual(point.x(), boudingBox(0, 0), Tolerance1D()) && IsValueGreaterOrEqual(boudingBox(0, 1), point.x(), Tolerance1D())) &&
             (IsValueGreaterOrEqual(point.y(), boudingBox(1, 0), Tolerance1D()) && IsValueGreaterOrEqual(boudingBox(1, 1), point.y(), Tolerance1D())) &&
             (IsValueGreaterOrEqual(point.z(), boudingBox(2, 0), Tolerance1D()) && IsValueGreaterOrEqual(boudingBox(2, 1), point.z(), Tolerance1D())); }
+
+      inline bool BoundingBoxesIntersects(const Eigen::MatrixXd& boudingBox_1,
+                                          const Eigen::MatrixXd& boudingBox_2) const
+      { return IsValueLowerOrEqual(boudingBox_1(0, 0), boudingBox_2(0, 1), Tolerance1D()) &&
+               IsValueGreaterOrEqual(boudingBox_1(0, 1), boudingBox_2(0, 0), Tolerance1D()) &&
+               IsValueLowerOrEqual(boudingBox_1(1, 0), boudingBox_2(1, 1), Tolerance1D()) &&
+               IsValueGreaterOrEqual(boudingBox_1(1, 1), boudingBox_2(1, 0), Tolerance1D()) &&
+               IsValueLowerOrEqual(boudingBox_1(2, 0), boudingBox_2(2, 1), Tolerance1D()) &&
+               IsValueGreaterOrEqual(boudingBox_1(2, 1), boudingBox_2(2, 0), Tolerance1D()); }
 
       /// \param points the point collection, size 3 x numPoints
       /// \return the maximum distance between the points.
@@ -1227,6 +1251,7 @@ namespace Gedim
       /// \param lineTangent the line tangent
       /// \param lineOrigin the line origin
       /// \return the intersection result
+      /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronLineResult IntersectionPolyhedronLine(const Eigen::MatrixXd& polyhedronVertices,
                                                                   const Eigen::MatrixXi& polyhedronEdges,
                                                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -1244,6 +1269,7 @@ namespace Gedim
       /// \param segmentTangent the segment tangent
       /// \param polyhedronLineIntersections the intersection between the polyhedron and the line of the segment
       /// \return the intersection result
+      /// /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronLineResult IntersectionPolyhedronSegment(const Eigen::MatrixXd& polyhedronVertices,
                                                                      const Eigen::MatrixXi& polyhedronEdges,
                                                                      const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -1259,6 +1285,7 @@ namespace Gedim
       /// \param segmentEnd the segment end
       /// \param segmentTangent the segment tangent
       /// \return the intersection result
+      /// \warning NOT TESTED PROPERLY
       IntersectionPolyhedronsSegmentResult IntersectionPolyhedronsSegment(const std::vector<Polyhedron>& polyhedrons,
                                                                           const std::vector<std::vector<Eigen::Vector3d>>& polyhedronFaceNormals,
                                                                           const std::vector<std::vector<bool>>& polyhedronFaceNormalDirections,

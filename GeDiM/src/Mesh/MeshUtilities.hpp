@@ -104,6 +104,7 @@ namespace Gedim
 
       struct MeshGeometricData1D final
       {
+          std::vector<Eigen::MatrixXd> Cell1DsBoundingBox;
           std::vector<Eigen::MatrixXd> Cell1DsVertices; ///< cell1D vertices coordinates
           std::vector<Eigen::Vector3d> Cell1DsTangents; ///< cell1D tangents
           std::vector<double> Cell1DsLengths; ///< cell1D lengths
@@ -113,6 +114,7 @@ namespace Gedim
 
       struct MeshGeometricData2D final
       {
+          std::vector<Eigen::MatrixXd> Cell2DsBoundingBox;
           std::vector<Eigen::MatrixXd> Cell2DsVertices; ///< cell2D vertices coordinates
           std::vector<std::vector<Eigen::Matrix3d>> Cell2DsTriangulations; ///< cell2D triangulations
           std::vector<double> Cell2DsAreas; ///< cell2D areas
@@ -267,6 +269,46 @@ namespace Gedim
           };
 
           std::vector<PointCell3DFound> Cell3Ds_found;
+      };
+
+      struct Intersect_mesh_polyhedron_result final
+      {
+          enum struct Types
+          {
+            None = 1, ///< No intersection found
+            Vertices = 2, ///< Vertices
+          };
+
+          struct Polyhedron_Intersection final
+          {
+              enum struct Types
+              {
+                Vertex = 1,
+                Edge = 2,
+                Face = 3,
+                Polyhedron = 4
+              };
+
+              Types Type;
+              unsigned int Geometry_index;
+              std::vector<unsigned int> Cell0Ds_index;
+              std::vector<unsigned int> Cell1Ds_index;
+              std::vector<unsigned int> Cell2Ds_index;
+              std::vector<unsigned int> Cell3Ds_index;
+          };
+
+          struct Mesh_Intersections final
+          {
+              std::map<unsigned int, unsigned int> Cell0Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell1Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell2Ds_intersections;
+              std::map<unsigned int, unsigned int> Cell3Ds_intersections;
+          };
+
+          Types Type;
+          Eigen::MatrixXd Intersections_Coordinates;
+          std::vector<Polyhedron_Intersection> Polyhedron_intersections;
+          Mesh_Intersections Mesh_intersections;
       };
 
     public:
@@ -583,11 +625,9 @@ namespace Gedim
                                  IMeshDAO& mesh,
                                  const std::string& options = "Qpqfezna") const;
 
-      void CreateDelaunayMesh(const Eigen::MatrixXd& polyhedronVertices,
-                              const Eigen::MatrixXi& polyhedronEdges,
-                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                              IMeshDAO& mesh,
-                              const Eigen::MatrixXd& constrained_points = Eigen::MatrixXd()) const;
+      void CreateDelaunayMesh3D(const Eigen::MatrixXd& points,
+                                const std::vector<unsigned int>& points_marker,
+                                IMeshDAO& mesh) const;
 
       void CreatePolyhedralMesh(const GeometryUtilities& geometryUtilities,
                                 const Eigen::MatrixXd& polyhedronVertices,
@@ -613,7 +653,7 @@ namespace Gedim
 
       /// \brief Import 3D mesh from VTK file
       void ImportVtkMesh3D(const std::string& vtkFilePath,
-                         IMeshDAO& mesh) const;
+                           IMeshDAO& mesh) const;
 
       /// \brief Import 2D mesh from OFF file
       void ImportObjectFileFormat(const std::string& offFilePath,
@@ -906,6 +946,40 @@ namespace Gedim
       std::vector<unsigned int> MarkCells(const std::function<Eigen::VectorXi(const Eigen::MatrixXd&)>& marking_function,
                                           const std::vector<Eigen::MatrixXd>& cells_points,
                                           const unsigned int default_mark) const;
+
+      Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(const Gedim::GeometryUtilities& geometry_utilities,
+                                                                 const Eigen::MatrixXd& polyhedron_vertices,
+                                                                 const Eigen::MatrixXi& polyhedron_edges,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_edges_vertices,
+                                                                 const Eigen::MatrixXd& polyhedron_edges_tangent,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_edges_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXi>& polyhedron_faces,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_rotated_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& polyhedron_faces_normals,
+                                                                 const std::vector<bool>& polyhedron_faces_normal_direction,
+                                                                 const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
+                                                                 const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
+                                                                 const std::vector<Eigen::MatrixXd>& polyhedron_faces_boudingBox,
+                                                                 const Eigen::MatrixXd& polyhedron_boudingBox,
+                                                                 const IMeshDAO& mesh,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell1Ds_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& mesh_cell1Ds_tangent,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& mesh_cell2Ds_normal,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_2D_vertices,
+                                                                 const std::vector<Eigen::Vector3d>& mesh_cell2Ds_translation,
+                                                                 const std::vector<Eigen::Matrix3d>& mesh_cell2Ds_rotation_matrix,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell2Ds_boudingBox,
+                                                                 const std::vector<Eigen::MatrixXd>& mesh_cell3Ds_boudingBox,
+                                                                 const std::vector<std::vector<Eigen::MatrixXi>>& mesh_cell3Ds_faces,
+                                                                 const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_vertices,
+                                                                 const std::vector<std::vector<Eigen::MatrixXd>>& mesh_cell3Ds_faces_2D_vertices,
+                                                                 const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_normal,
+                                                                 const std::vector<std::vector<bool>>& mesh_cell3Ds_faces_normal_directions,
+                                                                 const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_translation,
+                                                                 const std::vector<std::vector<Eigen::Matrix3d>>& mesh_cell3Ds_faces_rotation_matrix) const;
   };
 
 }

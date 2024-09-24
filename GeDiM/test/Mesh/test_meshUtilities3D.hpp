@@ -19,6 +19,8 @@
 #include "MeshFromCsvUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "OpenVolumeMeshInterface.hpp"
+#include "PlatonicSolid.hpp"
+#include "SphereMeshUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "test_meshUtilities2D.hpp"
 #include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
@@ -75,16 +77,51 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities meshUtilities;
 
-    const Gedim::GeometryUtilities::Polyhedron polyhedron = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                                   1.0);
-    Eigen::MatrixXd constrained_points(3, 1);
-    constrained_points.col(0)<< 0.5, 0.5, 0.5;
 
-    meshUtilities.CreateDelaunayMesh(polyhedron.Vertices,
-                                     polyhedron.Edges,
-                                     polyhedron.Faces,
-                                     meshDao,
-                                     constrained_points);
+    Eigen::MatrixXd points(3,27);
+
+    points.col(0)<< 0.0, 0.5, 0.0;
+    points.col(1)<< 0.5, 0.0, 0.0;
+    points.col(2)<< 0.5, 0.5, 0.0;
+    points.col(3)<< 0.0, 0.0, 0.5;
+    points.col(4)<< 0.5, 0.0, 0.5;
+    points.col(5)<< 0.0, 0.5, 0.5;
+    points.col(6)<< 0.5, 0.5, 0.5;
+    points.col(7)<< 0.5, 1.0, 0.0;
+    points.col(8)<< 0.5, 1.0, 0.5;
+    points.col(9)<< 0.0, 1.0, 0.5;
+    points.col(10)<< 1.0, 0.0, 0.5;
+    points.col(11)<< 1.0, 0.5, 0.0;
+    points.col(12)<< 1.0, 0.5, 0.5;
+    points.col(13)<< 1.0, 1.0, 0.5;
+    points.col(14)<< 0.0, 0.5, 1.0;
+    points.col(15)<< 0.5, 0.0, 1.0;
+    points.col(16)<< 0.5, 0.5, 1.0;
+    points.col(17)<< 1.0, 0.5, 1.0;
+    points.col(18)<< 0.5, 1.0, 1.0;
+    points.col(19)<< 0.0, 0.0, 0.0;
+    points.col(20)<< 1.0, 0.0, 0.0;
+    points.col(21)<< 1.0, 1.0, 0.0;
+    points.col(22)<< 0.0, 1.0, 0.0;
+    points.col(23)<< 0.0, 0.0, 1.0;
+    points.col(24)<< 1.0, 0.0, 1.0;
+    points.col(25)<< 1.0, 1.0, 1.0;
+    points.col(26)<< 0.0, 1.0, 1.0;
+
+    std::vector<unsigned int> points_marker(27, 0);
+    points_marker[19] = 1;
+    points_marker[20] = 2;
+    points_marker[21] = 3;
+    points_marker[22] = 4;
+    points_marker[23] = 5;
+    points_marker[24] = 6;
+    points_marker[25] = 7;
+    points_marker[26] = 8;
+
+
+    meshUtilities.CreateDelaunayMesh3D(points,
+                                       points_marker,
+                                       meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -92,15 +129,23 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    std::vector<std::vector<bool>> cell3Ds_faces_orientation(meshDao.Cell3DTotalNumber(),
+                                                             std::vector<bool>(4, true));
+
+
+    meshUtilities.ExportMeshToOpenVolume(meshDao,
+                                         cell3Ds_faces_orientation,
+                                         exportFolder + "/mesh.ovm");
+
     EXPECT_EQ(3,
               meshDao.Dimension());
-    EXPECT_EQ(9,
+    EXPECT_EQ(27,
               meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(26,
+    EXPECT_EQ(98,
               meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(30,
+    EXPECT_EQ(120,
               meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(12,
+    EXPECT_EQ(48,
               meshDao.Cell3DTotalNumber());
   }
 
@@ -1978,6 +2023,216 @@ namespace GedimUnitTesting
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ImportedMesh");
+  }
+
+  TEST(TestMeshUtilities, TestIntersect_mesh_polyhedron)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestIntersect_mesh_polyhedron";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.MinTolerance = 1.0e-14;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-6;
+    geometryUtilitiesConfig.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    // Create domain 3D
+    const double domain_3D_length = 1.0;
+    const double domain_3D_height = 1.0;
+    const double domain_3D_width = 1.0;
+    const unsigned int domain_3D_length_num_cells = 4;
+    const unsigned int domain_3D_height_num_cells = 4;
+    const unsigned int domain_3D_width_num_cells = 4;
+    const Eigen::Vector3d domain_3D_origin(0.0, 0.0, 0.0);
+    const Eigen::Vector3d domain_3D_length_direction(domain_3D_length, 0.0, 0.0);
+    const Eigen::Vector3d domain_3D_height_direction(0.0, 0.0, domain_3D_height);
+    const Eigen::Vector3d domain_3D_width_direction(0.0, domain_3D_width, 0.0);
+
+
+    {
+      const auto domain_3D = geometryUtilities.CreateParallelepipedWithOrigin(domain_3D_origin,
+                                                                              domain_3D_length_direction,
+                                                                              domain_3D_height_direction,
+                                                                              domain_3D_width_direction);
+
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolyhedron(domain_3D.Vertices,
+                             domain_3D.Edges,
+                             domain_3D.Faces);
+      exporter.Export(exportFolder + "/Domain_3D.vtu");
+    }
+
+    // Create mesh 3D
+    const std::vector<double> domain_3D_mesh_length_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_length_num_cells + 1,
+                                                                                                         0.0, 1.0, 1);
+    const std::vector<double> domain_3D_mesh_height_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_height_num_cells + 1,
+                                                                                                         0.0, 1.0, 1);
+    const std::vector<double> domain_3D_mesh_width_coordinates = geometryUtilities.EquispaceCoordinates(domain_3D_width_num_cells + 1,
+                                                                                                        0.0, 1.0, 1);
+
+
+    Gedim::MeshMatrices mesh_3D_data;
+    Gedim::MeshMatricesDAO mesh_3D(mesh_3D_data);
+    meshUtilities.CreateParallelepipedMesh(domain_3D_origin,
+                                           domain_3D_length_direction,
+                                           domain_3D_height_direction,
+                                           domain_3D_width_direction,
+                                           domain_3D_mesh_length_coordinates,
+                                           domain_3D_mesh_height_coordinates,
+                                           domain_3D_mesh_width_coordinates,
+                                           mesh_3D);
+
+    {
+      std::string mesh_3D_export_folder = exportFolder + "/Mesh3D";
+      Gedim::Output::CreateFolder(mesh_3D_export_folder);
+      meshUtilities.ExportMeshToVTU(mesh_3D,
+                                    mesh_3D_export_folder,
+                                    "Mesh3D");
+    }
+
+    std::vector<Eigen::MatrixXd> cell2Ds_vertices(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_2D_vertices(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Vector3d> cell2Ds_normal(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Vector3d> cell2Ds_translation(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::Matrix3d> cell2Ds_rotation_matrix(mesh_3D.Cell2DTotalNumber());
+    std::vector<Eigen::MatrixXd> cell2Ds_bounding_box(mesh_3D.Cell2DTotalNumber());
+    for (unsigned int p = 0; p < mesh_3D.Cell2DTotalNumber(); p++)
+    {
+      cell2Ds_vertices[p] = mesh_3D.Cell2DVerticesCoordinates(p);
+      cell2Ds_normal[p] = geometryUtilities.PolygonNormal(cell2Ds_vertices[p]);
+      cell2Ds_bounding_box[p] = geometryUtilities.PointsBoundingBox(cell2Ds_vertices[p]);
+      cell2Ds_translation[p] = geometryUtilities.PolygonTranslation(cell2Ds_vertices[p]);
+      cell2Ds_rotation_matrix[p] = geometryUtilities.PolygonRotationMatrix(cell2Ds_vertices[p],
+                                                                           cell2Ds_normal[p],
+                                                                           cell2Ds_translation[p]);
+      cell2Ds_2D_vertices[p] = geometryUtilities.RotatePointsFrom3DTo2D(cell2Ds_vertices[p],
+                                                                        cell2Ds_rotation_matrix[p].transpose(),
+                                                                        cell2Ds_translation[p]);
+    }
+
+
+    const auto cell1Ds_geometric_data = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
+                                                                              mesh_3D);
+
+    const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                              mesh_3D);
+
+
+    //    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities,
+    //                                                                    meshUtilities);
+
+    //        const Gedim::GeometryUtilities::Polyhedron ico = platonicSolid.icosahedron();
+    //         Gedim::GeometryUtilities::Polyhedron dual = platonicSolid.first_class_geodesic_polyhedron(ico, 4);
+    //        Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.goldberg_polyhedron(dual);
+
+    //    const Gedim::SphereMeshUtilities sphereMeshUtilities(geometryUtilities,
+    //                                                         meshUtilities);
+
+    //    Gedim::GeometryUtilities::Polyhedron polyhedron = sphereMeshUtilities.uv_sphere(10, 7);
+
+    //    polyhedron.Vertices = (0.1 * polyhedron.Vertices).colwise() +
+    //                          Eigen::Vector3d(0.3, 0.3, 0.3);
+
+    const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.25, 0.25, 0.25),
+                                                                             Eigen::Vector3d(0.1, 0.1, 0.0),
+                                                                             Eigen::Vector3d(-0.1, 0.1, 0.0),
+                                                                             Eigen::Vector3d(0.0, 0.0, 0.1));
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      exporter.AddPolyhedron(polyhedron.Vertices,
+                             polyhedron.Edges,
+                             polyhedron.Faces);
+
+      exporter.Export(exportFolder + "/polyhedron.vtu");
+    }
+
+    std::vector<Eigen::MatrixXd> polyhedron_edges_vertices(polyhedron.Edges.cols());
+    std::vector<Eigen::MatrixXd> polyhedron_edges_bounding_box(polyhedron.Edges.cols());
+    for (unsigned int e = 0; e < polyhedron.Edges.cols(); e++)
+    {
+      polyhedron_edges_vertices[e].resize(3, 2);
+      polyhedron_edges_vertices[e].col(0)<< polyhedron.Vertices.col(polyhedron.Edges(0, e));
+      polyhedron_edges_vertices[e].col(1)<< polyhedron.Vertices.col(polyhedron.Edges(1, e));
+
+      polyhedron_edges_bounding_box[e] = geometryUtilities.PointsBoundingBox(polyhedron_edges_vertices[e]);
+    }
+
+    const auto polyhedron_edges_tangent = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices,
+                                                                                   polyhedron.Edges);
+
+    const auto polyhedron_faces_vertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                    polyhedron.Faces);
+
+    std::vector<Eigen::MatrixXd> polyhedron_faces_bounding_box(polyhedron.Faces.size());
+    for (unsigned int f = 0; f < polyhedron.Faces.size(); f++)
+    {
+      polyhedron_faces_bounding_box[f] = geometryUtilities.PointsBoundingBox(polyhedron_faces_vertices[f]);
+    }
+
+    const auto polyhedron_faces_translation = geometryUtilities.PolyhedronFaceTranslations(polyhedron_faces_vertices);
+    const auto polyhedron_faces_normal = geometryUtilities.PolyhedronFaceNormals(polyhedron_faces_vertices);
+    const std::vector<bool> polyhedron_faces_normal_direction(polyhedron.Faces.size(), true);
+    const auto polyhedron_faces_rotation_matrix = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedron_faces_vertices,
+                                                                                                   polyhedron_faces_normal,
+                                                                                                   polyhedron_faces_translation);
+    const auto polyhedron_faces_rotated_vertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedron_faces_vertices,
+                                                                                                   polyhedron_faces_translation,
+                                                                                                   polyhedron_faces_rotation_matrix);
+    const auto polyhedron_bounding_box = geometryUtilities.PointsBoundingBox(polyhedron.Vertices);
+
+    const auto result = meshUtilities.Intersect_mesh_polyhedron(geometryUtilities,
+                                                                polyhedron.Vertices,
+                                                                polyhedron.Edges,
+                                                                polyhedron_edges_vertices,
+                                                                polyhedron_edges_tangent,
+                                                                polyhedron_edges_bounding_box,
+                                                                polyhedron.Faces,
+                                                                polyhedron_faces_vertices,
+                                                                polyhedron_faces_rotated_vertices,
+                                                                polyhedron_faces_normal,
+                                                                polyhedron_faces_normal_direction,
+                                                                polyhedron_faces_translation,
+                                                                polyhedron_faces_rotation_matrix,
+                                                                polyhedron_faces_bounding_box,                                                                polyhedron_bounding_box,
+                                                                mesh_3D,
+                                                                cell1Ds_geometric_data.Cell1DsBoundingBox,
+                                                                cell1Ds_geometric_data.Cell1DsVertices,
+                                                                cell1Ds_geometric_data.Cell1DsTangents,
+                                                                cell2Ds_vertices,
+                                                                cell2Ds_normal,
+                                                                cell2Ds_2D_vertices,
+                                                                cell2Ds_translation,
+                                                                cell2Ds_rotation_matrix,
+                                                                cell2Ds_bounding_box,
+                                                                cell3Ds_geometric_data.Cell3DsBoundingBox,
+                                                                cell3Ds_geometric_data.Cell3DsFaces,
+                                                                cell3Ds_geometric_data.Cell3DsFaces3DVertices,
+                                                                cell3Ds_geometric_data.Cell3DsFaces2DVertices,
+                                                                cell3Ds_geometric_data.Cell3DsFacesNormals,
+                                                                cell3Ds_geometric_data.Cell3DsFacesNormalDirections,
+                                                                cell3Ds_geometric_data.Cell3DsFacesTranslations,
+                                                                cell3Ds_geometric_data.Cell3DsFacesRotationMatrices);
+
+    if (result.Type ==
+        Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices)
+    {
+      Gedim::VTKUtilities exporter;
+
+      exporter.AddPoints(result.Intersections_Coordinates);
+
+      exporter.Export(exportFolder + "/intersections.vtu");
+    }
+
+    ASSERT_EQ(Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types::Vertices,
+              result.Type);
+    ASSERT_EQ(8,
+              result.Intersections_Coordinates.cols());
+    ASSERT_EQ(8,
+              result.Polyhedron_intersections.size());
+
   }
 }
 

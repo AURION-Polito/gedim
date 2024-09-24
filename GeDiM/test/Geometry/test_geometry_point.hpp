@@ -1019,6 +1019,49 @@ namespace GedimUnitTesting {
       FAIL();
     }
   }
+
+  TEST(TestGeometryUtilities, TestBoundingBoxesIntersect)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-08;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    {
+      Eigen::MatrixXd bounding_box_1(3, 2);
+      bounding_box_1.col(0)<< 1, 1, 1;
+      bounding_box_1.col(1)<< 3, 3, 3;
+      Eigen::MatrixXd bounding_box_2(3, 2);
+      bounding_box_2.col(0)<< 5, 5, 5;
+      bounding_box_2.col(1)<< 6, 6, 6;
+
+      ASSERT_FALSE(geometryUtilities.BoundingBoxesIntersects(bounding_box_1,
+                                                             bounding_box_2));
+    }
+
+    {
+      Eigen::MatrixXd bounding_box_1(3, 2);
+      bounding_box_1.col(0)<< 1, 1, 1;
+      bounding_box_1.col(1)<< 3, 3, 3;
+      Eigen::MatrixXd bounding_box_2(3, 2);
+      bounding_box_2.col(0)<< 3, 3, 3;
+      bounding_box_2.col(1)<< 6, 6, 6;
+
+      ASSERT_TRUE(geometryUtilities.BoundingBoxesIntersects(bounding_box_1,
+                                                            bounding_box_2));
+    }
+
+    {
+      Eigen::MatrixXd bounding_box_1(3, 2);
+      bounding_box_1.col(0)<< 1, 1, 1;
+      bounding_box_1.col(1)<< 3, 3, 3;
+      Eigen::MatrixXd bounding_box_2(3, 2);
+      bounding_box_2.col(0)<< 2, 2, 2;
+      bounding_box_2.col(1)<< 4, 4, 3;
+
+      ASSERT_TRUE(geometryUtilities.BoundingBoxesIntersects(bounding_box_1,
+                                                            bounding_box_2));
+    }
+  }
 }
 
 #endif // __TEST_GEOMETRY_POINT_H
