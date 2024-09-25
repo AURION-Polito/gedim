@@ -674,11 +674,16 @@ namespace Gedim
                                     const std::vector<unsigned int>& cell1DMarkers,
                                     IMeshDAO& mesh) const;
 
-      void ChangePolyhedronMeshMarkers(const Eigen::MatrixXd& polyhedron_vertices,
+      void ChangePolyhedronMeshMarkers(const GeometryUtilities& geometryUtilities,
+                                       const Eigen::MatrixXd& polyhedron_vertices,
                                        const Eigen::MatrixXi& polyhedron_edges,
                                        const std::vector<Eigen::MatrixXi>& polyhedron_faces,
-                                       const std::vector<unsigned int>& cell1DMarkers,
-                                       const std::vector<unsigned int>& cell2DMarkers,
+                                       const Eigen::MatrixXd& polyhedron_edges_tangent,
+                                       const Eigen::VectorXd& polyhedron_edges_length,
+                                       const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
+                                       const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                       const std::vector<unsigned int>& polyhedron_edges_marker,
+                                       const std::vector<unsigned int>& polyhedron_faces_marker,
                                        IMeshDAO& mesh) const;
 
       /// \brief Export Mesh To VTU

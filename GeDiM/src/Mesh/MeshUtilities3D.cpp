@@ -3069,59 +3069,62 @@ namespace Gedim
     }
   }
   // ***************************************************************************
-  void MeshUtilities::ChangePolyhedronMeshMarkers(const Eigen::MatrixXd& polyhedron_vertices,
+  void MeshUtilities::ChangePolyhedronMeshMarkers(const GeometryUtilities& geometryUtilities,
+                                                  const Eigen::MatrixXd& polyhedron_vertices,
                                                   const Eigen::MatrixXi& polyhedron_edges,
                                                   const std::vector<Eigen::MatrixXi>& polyhedron_faces,
-                                                  const std::vector<unsigned int>& cell1DMarkers,
-                                                  const std::vector<unsigned int>& cell2DMarkers,
+                                                  const Eigen::MatrixXd& polyhedron_edges_tangent,
+                                                  const Eigen::VectorXd& polyhedron_edges_length,
+                                                  const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
+                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                                  const std::vector<unsigned int>& polyhedron_edges_marker,
+                                                  const std::vector<unsigned int>& polyhedron_faces_marker,
                                                   IMeshDAO& mesh) const
   {
     const unsigned int num_polyhedron_vertices = polyhedron_vertices.cols();
     const unsigned int num_polyhedron_edges = polyhedron_edges.cols();
     const unsigned int num_polyhedron_faces = polyhedron_faces.size();
 
-    std::list<Eigen::Triplet<unsigned int>> edges_adj_tripls;
+    const auto cell0Ds_original_markers = mesh.Cell0DsMarker();
+
+    for (unsigned int f = 0; f < num_polyhedron_faces; ++f)
+    {
+      const auto face_plane_normal = polyhedron_faces_normal.at(f);
+      const Eigen::Vector3d face_plane_origin = polyhedron_faces_vertices.at(f).col(0);
+      const unsigned int face_marker = polyhedron_faces_marker.at(f);
+
+      SetMeshMarkersOnPlane(geometryUtilities,
+                            face_plane_normal,
+                            face_plane_origin,
+                            face_marker,
+                            mesh);
+    }
+
     for (unsigned int e = 0; e < num_polyhedron_edges; ++e)
     {
-      edges_adj_tripls.push_back({
-                                  polyhedron_edges(0, e),
-                                  polyhedron_edges(1, e),
-                                  e
-                                });
-      edges_adj_tripls.push_back({
-                                  polyhedron_edges(1, e),
-                                  polyhedron_edges(0, e),
-                                  e
-                                });
+      const auto edge_line_tangent = polyhedron_edges_tangent.col(e);
+      const auto edge_length = polyhedron_edges_length[e];
+      const Eigen::VectorXd edge_line_origin = polyhedron_vertices.col(polyhedron_edges(0, e));
+      const unsigned int edge_marker = polyhedron_edges_marker.at(e);
+
+      SetMeshMarkersOnLine(geometryUtilities,
+                           edge_line_origin,
+                           edge_line_tangent,
+                           edge_length * edge_length,
+                           edge_marker,
+                           mesh);
     }
-    Eigen::SparseMatrix<unsigned int> edges_adj(num_polyhedron_vertices,
-                                                num_polyhedron_vertices);
-    edges_adj.setFromTriplets(edges_adj_tripls.begin(),
-                              edges_adj_tripls.end());
-    edges_adj.makeCompressed();
 
-    for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+    for (unsigned int c_0D = 0; c_0D < cell0Ds_original_markers.size(); ++c_0D)
     {
-      const unsigned int cell1D_origin_id = mesh.Cell1DOrigin(e);
-      const unsigned int cell1D_origin_marker = mesh.Cell0DMarker(cell1D_origin_id);
+      const auto& cell0D_original_marker = cell0Ds_original_markers.at(c_0D);
 
-      if (cell1D_origin_marker < 1 ||
-          cell1D_origin_marker > num_polyhedron_vertices)
+      if (cell0D_original_marker < 1 ||
+          cell0D_original_marker > num_polyhedron_vertices)
         continue;
 
-      const unsigned int cell1D_end_id = mesh.Cell1DEnd(e);
-      const unsigned int cell1D_end_marker = mesh.Cell0DMarker(cell1D_end_id);
-
-      if (cell1D_end_marker < 1 ||
-          cell1D_end_marker > num_polyhedron_vertices)
-        continue;
-
-      const unsigned int edge_index = edges_adj.coeff(cell1D_origin_marker - 1,
-                                                      cell1D_end_marker - 1);
-
-
-      mesh.Cell1DSetMarker(e,
-                           cell1DMarkers.at(edge_index));
+      mesh.Cell0DSetMarker(c_0D,
+                           cell0D_original_marker);
     }
   }
   // ***************************************************************************
