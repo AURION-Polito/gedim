@@ -300,9 +300,9 @@ namespace Gedim
           struct Mesh_Intersections final
           {
               std::map<unsigned int, unsigned int> Cell0Ds_intersections;
-              std::map<unsigned int, unsigned int> Cell1Ds_intersections;
-              std::map<unsigned int, unsigned int> Cell2Ds_intersections;
-              std::map<unsigned int, unsigned int> Cell3Ds_intersections;
+              std::map<unsigned int, std::vector<unsigned int>> Cell1Ds_intersections;
+              std::map<unsigned int, std::vector<unsigned int>> Cell2Ds_intersections;
+              std::map<unsigned int, std::vector<unsigned int>> Cell3Ds_intersections;
           };
 
           Types Type;

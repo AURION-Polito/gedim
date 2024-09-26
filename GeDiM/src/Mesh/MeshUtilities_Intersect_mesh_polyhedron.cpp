@@ -52,6 +52,10 @@ namespace Gedim
         Eigen::Vector3d Intersection_coordinates;
     };
 
+    std::map<unsigned int, std::list<unsigned int>> cell1Ds_intersections;
+    std::map<unsigned int, std::list<unsigned int>> cell2Ds_intersections;
+    std::map<unsigned int, std::list<unsigned int>> cell3Ds_intersections;
+
     auto find_intersection = [&geometry_utilities](
                              std::list<Intersection>& intersections,
         Eigen::Vector3d new_intersection_coordinates)
@@ -258,9 +262,10 @@ namespace Gedim
         Intersection& intersection = *intersection_found;
         if (intersection.Cell1Ds_index.find(e) == intersection.Cell1Ds_index.end())
           intersection.Cell1Ds_index.insert(e);
-        if (mesh_intersections.Cell1Ds_intersections.find(e) == mesh_intersections.Cell1Ds_intersections.end())
-          mesh_intersections.Cell1Ds_intersections.insert(std::make_pair(e,
-                                                                         intersection.Intersection_index));
+        if (cell1Ds_intersections.find(e) == cell1Ds_intersections.end())
+          cell1Ds_intersections.insert(std::make_pair(e, std::list<unsigned int>()));
+        cell1Ds_intersections[e].push_back(intersection.Intersection_index);
+
         if (!new_intersection)
           continue;
 
@@ -377,9 +382,9 @@ namespace Gedim
         Intersection& intersection = *intersection_found;
         if (intersection.Cell2Ds_index.find(f) == intersection.Cell2Ds_index.end())
           intersection.Cell2Ds_index.insert(f);
-        if (mesh_intersections.Cell2Ds_intersections.find(f) == mesh_intersections.Cell2Ds_intersections.end())
-          mesh_intersections.Cell2Ds_intersections.insert(std::make_pair(f,
-                                                                         intersection.Intersection_index));
+        if (cell2Ds_intersections.find(f) == cell2Ds_intersections.end())
+          cell2Ds_intersections.insert(std::make_pair(f, std::list<unsigned int>()));
+        cell2Ds_intersections[f].push_back(intersection.Intersection_index);
 
         if (!new_intersection)
           continue;
@@ -471,8 +476,10 @@ namespace Gedim
 
             Intersection& intersection = *intersection_found;
             intersection.Cell3Ds_index.push_back(c);
-            mesh_intersections.Cell3Ds_intersections.insert(std::make_pair(c,
-                                                                           intersection.Intersection_index));
+
+            if (cell3Ds_intersections.find(c) == cell3Ds_intersections.end())
+              cell3Ds_intersections.insert(std::make_pair(c, std::list<unsigned int>()));
+            cell3Ds_intersections[c].push_back(intersection.Intersection_index);
 
             if (!new_intersection)
               continue;
@@ -521,6 +528,27 @@ namespace Gedim
                                                                                    intersection.Cell3Ds_index.end());
 
       i++;
+    }
+
+    for (const auto& cell1D_intersections : cell1Ds_intersections)
+    {
+      result.Mesh_intersections.Cell1Ds_intersections.insert(std::make_pair(cell1D_intersections.first,
+                                                                            std::vector<unsigned int>(cell1D_intersections.second.begin(),
+                                                                                                      cell1D_intersections.second.end())));
+    }
+
+    for (const auto& cell2D_intersections : cell2Ds_intersections)
+    {
+      result.Mesh_intersections.Cell2Ds_intersections.insert(std::make_pair(cell2D_intersections.first,
+                                                                            std::vector<unsigned int>(cell2D_intersections.second.begin(),
+                                                                                                      cell2D_intersections.second.end())));
+    }
+
+    for (const auto& cell3D_intersections : cell3Ds_intersections)
+    {
+      result.Mesh_intersections.Cell3Ds_intersections.insert(std::make_pair(cell3D_intersections.first,
+                                                                            std::vector<unsigned int>(cell3D_intersections.second.begin(),
+                                                                                                      cell3D_intersections.second.end())));
     }
 
     return result;
