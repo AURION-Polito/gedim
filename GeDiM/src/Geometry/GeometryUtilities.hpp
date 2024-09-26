@@ -1568,7 +1568,7 @@ namespace Gedim
 
         Eigen::MatrixXd measure_matrix(vertices.cols(), 4);
         measure_matrix.block(0, 0, vertices.cols(), 3) = vertices.transpose();
-        measure_matrix.col(vertices.cols()).setOnes();
+        measure_matrix.col(4).setOnes();
         const double div_dim = vertices.cols() == 3 ? 0.5 : 1.0 / 6.0;
 
         return div_dim * measure_matrix.determinant();
