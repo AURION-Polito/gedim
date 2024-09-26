@@ -1644,6 +1644,8 @@ namespace GedimUnitTesting
                                                                                                             Eigen::Vector3d(0.0,0.0,1.0),
                                                                                                             Eigen::Vector3d(0.0,1.0,0.0));
 
+      const double test = geometryUtilities.SimplexMeasure(polyhedron.Vertices);
+
       ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0 / 6.0,
                                                    geometryUtilities.SimplexMeasure(polyhedron.Vertices),
                                                    geometryUtilities.Tolerance3D()));

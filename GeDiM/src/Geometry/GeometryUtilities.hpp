@@ -1571,7 +1571,7 @@ namespace Gedim
         measure_matrix.col(3).setOnes();
         const double div_dim = vertices.cols() == 3 ? 0.5 : 1.0 / 6.0;
 
-        return div_dim * measure_matrix.determinant();
+        return div_dim * std::abs(measure_matrix.determinant());
       }
 
       /// \brief Compute the segment barycenter as a mean of all vertices
