@@ -2172,9 +2172,12 @@ namespace GedimUnitTesting
       polyhedron_faces_bounding_box[f] = geometryUtilities.PointsBoundingBox(polyhedron_faces_vertices[f]);
     }
 
+    const auto polyhedron_internal_point = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
     const auto polyhedron_faces_translation = geometryUtilities.PolyhedronFaceTranslations(polyhedron_faces_vertices);
     const auto polyhedron_faces_normal = geometryUtilities.PolyhedronFaceNormals(polyhedron_faces_vertices);
-    const std::vector<bool> polyhedron_faces_normal_direction(polyhedron.Faces.size(), true);
+    const auto polyhedron_faces_normal_direction = geometryUtilities.PolyhedronFaceNormalDirections(polyhedron_faces_vertices,
+                                                                                                    polyhedron_internal_point,
+                                                                                                    polyhedron_faces_normal);
     const auto polyhedron_faces_rotation_matrix = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedron_faces_vertices,
                                                                                                    polyhedron_faces_normal,
                                                                                                    polyhedron_faces_translation);
