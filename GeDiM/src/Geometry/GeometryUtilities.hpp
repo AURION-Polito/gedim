@@ -1566,7 +1566,7 @@ namespace Gedim
         Gedim::Output::Assert(vertices.rows() == 3 &&
                               vertices.cols() < 5);
 
-        Eigen::MatrixXd measure_matrix(vertices.cols() + 1, 4);
+        Eigen::MatrixXd measure_matrix(vertices.cols(), 4);
         measure_matrix.block(0, 0, vertices.cols(), 3) = vertices.transpose();
         measure_matrix.col(vertices.cols()).setOnes();
         const double div_dim = vertices.cols() == 3 ? 0.5 : 1.0 / 6.0;
