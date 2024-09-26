@@ -909,11 +909,11 @@ namespace Gedim
       inline bool BoundingBoxesIntersects(const Eigen::MatrixXd& boudingBox_1,
                                           const Eigen::MatrixXd& boudingBox_2) const
       { return IsValueLowerOrEqual(boudingBox_1(0, 0), boudingBox_2(0, 1), Tolerance1D()) &&
-               IsValueGreaterOrEqual(boudingBox_1(0, 1), boudingBox_2(0, 0), Tolerance1D()) &&
-               IsValueLowerOrEqual(boudingBox_1(1, 0), boudingBox_2(1, 1), Tolerance1D()) &&
-               IsValueGreaterOrEqual(boudingBox_1(1, 1), boudingBox_2(1, 0), Tolerance1D()) &&
-               IsValueLowerOrEqual(boudingBox_1(2, 0), boudingBox_2(2, 1), Tolerance1D()) &&
-               IsValueGreaterOrEqual(boudingBox_1(2, 1), boudingBox_2(2, 0), Tolerance1D()); }
+            IsValueGreaterOrEqual(boudingBox_1(0, 1), boudingBox_2(0, 0), Tolerance1D()) &&
+            IsValueLowerOrEqual(boudingBox_1(1, 0), boudingBox_2(1, 1), Tolerance1D()) &&
+            IsValueGreaterOrEqual(boudingBox_1(1, 1), boudingBox_2(1, 0), Tolerance1D()) &&
+            IsValueLowerOrEqual(boudingBox_1(2, 0), boudingBox_2(2, 1), Tolerance1D()) &&
+            IsValueGreaterOrEqual(boudingBox_1(2, 1), boudingBox_2(2, 0), Tolerance1D()); }
 
       /// \param points the point collection, size 3 x numPoints
       /// \return the maximum distance between the points.
@@ -1559,6 +1559,19 @@ namespace Gedim
       {
         Gedim::Output::Assert(vertices.rows() == 3);
         return vertices.rowwise().mean();
+      }
+
+      inline double SimplexMeasure(const Eigen::MatrixXd& vertices) const
+      {
+        Gedim::Output::Assert(vertices.rows() == 3 &&
+                              vertices.cols() < 5);
+
+        Eigen::MatrixXd measure_matrix(vertices.cols() + 1, 4);
+        measure_matrix.block(0, 0, vertices.cols(), 3) = vertices.transpose();
+        measure_matrix.col(vertices.cols()).setOnes();
+        const double div_dim = vertices.cols() == 3 ? 0.5 : 1.0 / 6.0;
+
+        return div_dim * measure_matrix.determinant();
       }
 
       /// \brief Compute the segment barycenter as a mean of all vertices

@@ -1644,6 +1644,10 @@ namespace GedimUnitTesting
                                                                                                             Eigen::Vector3d(0.0,0.0,1.0),
                                                                                                             Eigen::Vector3d(0.0,1.0,0.0));
 
+      ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0 / 6.0,
+                                                   geometryUtilities.SimplexMeasure(polyhedron.Vertices),
+                                                   geometryUtilities.Tolerance3D()));
+
       const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
       const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
                                                                                                         polyhedron.Faces);

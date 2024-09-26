@@ -1794,6 +1794,7 @@ namespace Gedim
       for (unsigned int t = 0; t < num_cell3D_tetra; ++t)
       {
         const auto& tetra_vertices = result.Cell3DsTetrahedronPoints.at(c).at(t);
+
         const auto tetra = geometryUtilities.CreateTetrahedronWithVertices(tetra_vertices.col(0),
                                                                            tetra_vertices.col(1),
                                                                            tetra_vertices.col(2),
