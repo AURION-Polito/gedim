@@ -1001,6 +1001,77 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities& geometryUtilities,
+                                              const Eigen::Vector3d& polygon_plane_normal,
+                                              const Eigen::Vector3d& polygon_plane_origin,
+                                              const MatrixXd& polygon_vertices_2D,
+                                              const Vector3d& polygon_translation,
+                                              const Matrix3d& polygon_rotation_matrix,
+                                              const unsigned int& marker, IMeshDAO& mesh) const
+  {
+    // set cell0Ds markers
+    std::vector<bool> vertices_on_polygon(mesh.Cell0DTotalNumber(),
+                                          false);
+
+    for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+    {
+      const Eigen::Vector3d vertex = mesh.Cell0DCoordinates(v);
+
+      if (!geometryUtilities.IsPointOnPlane(vertex,
+                                            polygon_plane_normal,
+                                            polygon_plane_origin))
+        continue;
+
+      const Eigen::Vector3d vertex_2D = geometryUtilities.RotatePointsFrom3DTo2D(vertex,
+                                                                                 polygon_rotation_matrix.transpose(),
+                                                                                 polygon_translation);
+
+      if (!geometryUtilities.IsPointInsidePolygon(vertex_2D,
+                                                  polygon_vertices_2D))
+        continue;
+
+
+      vertices_on_polygon[v] = true;
+      mesh.Cell0DSetMarker(v,
+                           marker);
+    }
+
+    // set cell1Ds markers
+    for (unsigned int s = 0; s < mesh.Cell1DTotalNumber(); s++)
+    {
+      const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
+
+      if (vertices_on_polygon[extremes[0]] &&
+          vertices_on_polygon[extremes[1]])
+      {
+        mesh.Cell1DSetMarker(s,
+                             marker);
+      }
+    }
+
+    // set cell2Ds markers
+    for (unsigned int p = 0; p < mesh.Cell2DTotalNumber(); p++)
+    {
+      const vector<unsigned int> extremes = mesh.Cell2DVertices(p);
+
+      bool is_on_polygon = true;
+      for (unsigned int v = 0; v < extremes.size(); v++)
+      {
+        if (!vertices_on_polygon[extremes[v]])
+        {
+          is_on_polygon = false;
+          break;
+        }
+      }
+
+      if (!is_on_polygon)
+        continue;
+
+      mesh.Cell2DSetMarker(p,
+                           marker);
+    }
+  }
+  // ***************************************************************************
   MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const GeometryUtilities& geometryUtilities,
                                                                             const IMeshDAO& convexMesh) const
   {
@@ -3078,6 +3149,10 @@ namespace Gedim
                                                   const Eigen::VectorXd& polyhedron_edges_length,
                                                   const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
                                                   const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                                  const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices_2D,
+                                                  const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
+                                                  const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
+                                                  const std::vector<unsigned int>& polyhedron_vertices_marker,
                                                   const std::vector<unsigned int>& polyhedron_edges_marker,
                                                   const std::vector<unsigned int>& polyhedron_faces_marker,
                                                   IMeshDAO& mesh) const
@@ -3086,19 +3161,23 @@ namespace Gedim
     const unsigned int num_polyhedron_edges = polyhedron_edges.cols();
     const unsigned int num_polyhedron_faces = polyhedron_faces.size();
 
-    const auto cell0Ds_original_markers = mesh.Cell0DsMarker();
-
     for (unsigned int f = 0; f < num_polyhedron_faces; ++f)
     {
-      const auto face_plane_normal = polyhedron_faces_normal.at(f);
+      const auto& face_vertices_2d = polyhedron_faces_vertices_2D.at(f);
+      const auto& face_plane_normal = polyhedron_faces_normal.at(f);
       const Eigen::Vector3d face_plane_origin = polyhedron_faces_vertices.at(f).col(0);
+      const auto& face_translation = polyhedron_faces_translation.at(f);
+      const auto& face_rotation_matrix = polyhedron_faces_rotation_matrix.at(f);
       const unsigned int face_marker = polyhedron_faces_marker.at(f);
 
-      SetMeshMarkersOnPlane(geometryUtilities,
-                            face_plane_normal,
-                            face_plane_origin,
-                            face_marker,
-                            mesh);
+      SetMeshMarkersOnPolygon(geometryUtilities,
+                              face_plane_normal,
+                              face_plane_origin,
+                              face_vertices_2d,
+                              face_translation,
+                              face_rotation_matrix,
+                              face_marker,
+                              mesh);
     }
 
     for (unsigned int e = 0; e < num_polyhedron_edges; ++e)
@@ -3116,16 +3195,19 @@ namespace Gedim
                               mesh);
     }
 
-    for (unsigned int c_0D = 0; c_0D < cell0Ds_original_markers.size(); ++c_0D)
+
+    for (unsigned int c_0D = 0; c_0D < mesh.Cell0DTotalNumber(); ++c_0D)
     {
-      const auto& cell0D_original_marker = cell0Ds_original_markers.at(c_0D);
+      const Eigen::Vector3d cell0D_coordinate = mesh.Cell0DCoordinates(c_0D);
 
-      if (cell0D_original_marker < 1 ||
-          cell0D_original_marker > num_polyhedron_vertices)
-        continue;
+      const auto vertex_found = geometryUtilities.FindPointInPoints(cell0D_coordinate,
+                                                                    polyhedron_vertices);
 
-      mesh.Cell0DSetMarker(c_0D,
-                           cell0D_original_marker);
+      for (const auto& vertex_index : vertex_found)
+      {
+        mesh.Cell0DSetMarker(c_0D,
+                             polyhedron_vertices_marker.at(vertex_index));
+      }
     }
   }
   // ***************************************************************************

@@ -484,6 +484,15 @@ namespace Gedim
                                  const unsigned int& marker,
                                  IMeshDAO& mesh) const;
 
+      void SetMeshMarkersOnPolygon(const GeometryUtilities& geometryUtilities,
+                                   const Eigen::Vector3d& polygon_plane_normal,
+                                   const Eigen::Vector3d& polygon_plane_origin,
+                                   const Eigen::MatrixXd& polygon_vertices_2D,
+                                   const Eigen::Vector3d& polygon_translation,
+                                   const Eigen::Matrix3d& polygon_rotation_matrix,
+                                   const unsigned int& marker,
+                                   IMeshDAO& mesh) const;
+
       /// \brief Extract the mesh Cell2D Roots
       /// \param mesh the mesh
       /// \return the root cell for each cell2D, size 1xCell2DTotalNumber()
@@ -689,6 +698,10 @@ namespace Gedim
                                        const Eigen::VectorXd& polyhedron_edges_length,
                                        const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
                                        const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices,
+                                       const std::vector<Eigen::MatrixXd>& polyhedron_faces_vertices_2D,
+                                       const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
+                                       const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
+                                       const std::vector<unsigned int>& polyhedron_vertices_marker,
                                        const std::vector<unsigned int>& polyhedron_edges_marker,
                                        const std::vector<unsigned int>& polyhedron_faces_marker,
                                        IMeshDAO& mesh) const;

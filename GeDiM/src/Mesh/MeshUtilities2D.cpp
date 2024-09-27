@@ -564,10 +564,6 @@ namespace Gedim
           continue;
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
-        {
-          vertices_on_segment[v] = true;
-        }
-          break;
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
         {
           vertices_on_segment[v] = true;
