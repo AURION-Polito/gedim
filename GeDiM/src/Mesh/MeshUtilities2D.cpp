@@ -545,10 +545,10 @@ namespace Gedim
     {
       const Eigen::Vector3d vertex_coordinate = mesh.Cell0DCoordinates(v);
 
-      if (geometryUtilities.IsPointOnLine(vertex_coordinate,
-                                          segment_origin,
-                                          segment_tangent,
-                                          segment_tangent_squared_length))
+      if (!geometryUtilities.IsPointOnLine(vertex_coordinate,
+                                           segment_origin,
+                                           segment_tangent,
+                                           segment_tangent_squared_length))
         continue;
 
       const auto point_position = geometryUtilities.PointSegmentPosition(vertex_coordinate,
