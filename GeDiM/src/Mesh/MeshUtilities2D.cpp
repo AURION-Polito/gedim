@@ -561,18 +561,23 @@ namespace Gedim
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+          continue;
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
-          continue;
+        {
+          vertices_on_segment[v] = true;
+        }
+          break;
         case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+        {
+          vertices_on_segment[v] = true;
+          mesh.Cell0DSetMarker(v,
+                               marker);
+        }
           break;
         default:
           throw std::runtime_error("unexpected point position");
       }
-
-      vertices_on_segment[v] = true;
-      mesh.Cell0DSetMarker(v,
-                           marker);
     }
 
     // set cell1Ds markers
