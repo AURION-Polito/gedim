@@ -450,6 +450,13 @@ namespace Gedim
                                 const unsigned int& marker,
                                 IMeshDAO& mesh) const;
 
+      void SetMeshMarkersOnSegment(const GeometryUtilities& geometryUtilities,
+                                   const Eigen::Vector3d& segment_origin,
+                                   const Eigen::Vector3d& segment_tangent,
+                                   const double& segment_tangent_squared_length,
+                                   const unsigned int& marker,
+                                   IMeshDAO& mesh) const;
+
       /// \brief Create a Mesh 3D with a polyhedron
       /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
       /// \param polyhedronEdges the polyhedron edges, size 2 x numEdges

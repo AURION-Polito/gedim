@@ -503,8 +503,8 @@ namespace Gedim
                                            IMeshDAO& mesh) const
   {
     // set cell0Ds markers
-    std::vector<bool> vertices_on_plane(mesh.Cell0DTotalNumber(),
-                                        false);
+    std::vector<bool> vertices_on_line(mesh.Cell0DTotalNumber(),
+                                       false);
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
       if (geometryUtilities.IsPointOnLine(mesh.Cell0DCoordinates(v),
@@ -512,7 +512,7 @@ namespace Gedim
                                           lineTangent,
                                           lineTangentSquaredLength))
       {
-        vertices_on_plane[v] = true;
+        vertices_on_line[v] = true;
         mesh.Cell0DSetMarker(v,
                              marker);
       }
@@ -523,8 +523,65 @@ namespace Gedim
     {
       const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
 
-      if (vertices_on_plane[extremes[0]] &&
-          vertices_on_plane[extremes[1]])
+      if (vertices_on_line[extremes[0]] &&
+          vertices_on_line[extremes[1]])
+      {
+        mesh.Cell1DSetMarker(s,
+                             marker);
+      }
+    }
+  }
+  // ***************************************************************************
+  void MeshUtilities::SetMeshMarkersOnSegment(const GeometryUtilities& geometryUtilities,
+                                              const Eigen::Vector3d& segment_origin,
+                                              const Eigen::Vector3d& segment_tangent,
+                                              const double& segment_tangent_squared_length,
+                                              const unsigned int& marker, IMeshDAO& mesh) const
+  {
+    // set cell0Ds markers
+    std::vector<bool> vertices_on_segment(mesh.Cell0DTotalNumber(),
+                                          false);
+    for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+    {
+      const Eigen::Vector3d vertex_coordinate = mesh.Cell0DCoordinates(v);
+
+      if (geometryUtilities.IsPointOnLine(vertex_coordinate,
+                                          segment_origin,
+                                          segment_tangent,
+                                          segment_tangent_squared_length))
+        continue;
+
+      const auto point_position = geometryUtilities.PointSegmentPosition(vertex_coordinate,
+                                                                         segment_origin,
+                                                                         segment_origin + segment_tangent);
+
+      switch (point_position)
+      {
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+          continue;
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+          break;
+        default:
+          throw std::runtime_error("unexpected point position");
+      }
+
+      vertices_on_segment[v] = true;
+      mesh.Cell0DSetMarker(v,
+                           marker);
+    }
+
+    // set cell1Ds markers
+    for (unsigned int s = 0; s < mesh.Cell1DTotalNumber(); s++)
+    {
+      const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
+
+      if (vertices_on_segment[extremes[0]] &&
+          vertices_on_segment[extremes[1]])
       {
         mesh.Cell1DSetMarker(s,
                              marker);

@@ -3108,12 +3108,12 @@ namespace Gedim
       const Eigen::VectorXd edge_line_origin = polyhedron_vertices.col(polyhedron_edges(0, e));
       const unsigned int edge_marker = polyhedron_edges_marker.at(e);
 
-      SetMeshMarkersOnLine(geometryUtilities,
-                           edge_line_origin,
-                           edge_line_tangent,
-                           edge_length * edge_length,
-                           edge_marker,
-                           mesh);
+      SetMeshMarkersOnSegment(geometryUtilities,
+                              edge_line_origin,
+                              edge_line_tangent,
+                              edge_length * edge_length,
+                              edge_marker,
+                              mesh);
     }
 
     for (unsigned int c_0D = 0; c_0D < cell0Ds_original_markers.size(); ++c_0D)
