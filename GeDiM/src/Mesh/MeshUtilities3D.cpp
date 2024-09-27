@@ -1007,7 +1007,8 @@ namespace Gedim
                                               const MatrixXd& polygon_vertices_2D,
                                               const Vector3d& polygon_translation,
                                               const Matrix3d& polygon_rotation_matrix,
-                                              const unsigned int& marker, IMeshDAO& mesh) const
+                                              const unsigned int& marker,
+                                              IMeshDAO& mesh) const
   {
     // set cell0Ds markers
     std::vector<bool> vertices_on_polygon(mesh.Cell0DTotalNumber(),
@@ -1026,8 +1027,8 @@ namespace Gedim
                                                                                  polygon_rotation_matrix.transpose(),
                                                                                  polygon_translation);
 
-      if (!geometryUtilities.IsPointInsidePolygon_RayCasting(vertex_2D,
-                                                             polygon_vertices_2D))
+      if (!geometryUtilities.IsPointInsidePolygon(vertex_2D,
+                                                  polygon_vertices_2D))
         continue;
 
 

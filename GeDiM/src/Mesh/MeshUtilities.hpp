@@ -484,6 +484,7 @@ namespace Gedim
                                  const unsigned int& marker,
                                  IMeshDAO& mesh) const;
 
+      /// \warning Only for convex points
       void SetMeshMarkersOnPolygon(const GeometryUtilities& geometryUtilities,
                                    const Eigen::Vector3d& polygon_plane_normal,
                                    const Eigen::Vector3d& polygon_plane_origin,
