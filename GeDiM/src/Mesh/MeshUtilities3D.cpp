@@ -3199,8 +3199,8 @@ namespace Gedim
     {
       const Eigen::Vector3d cell0D_coordinate = mesh.Cell0DCoordinates(c_0D);
 
-      const auto vertex_found = geometryUtilities.FindPointInPoints(cell0D_coordinate,
-                                                                    polyhedron_vertices);
+      const auto vertex_found = geometryUtilities.FindPointInPoints(polyhedron_vertices,
+                                                                    cell0D_coordinate);
 
       for (const auto& vertex_index : vertex_found)
       {
