@@ -1026,8 +1026,8 @@ namespace Gedim
                                                                                  polygon_rotation_matrix.transpose(),
                                                                                  polygon_translation);
 
-      if (!geometryUtilities.IsPointInsidePolygon(vertex_2D,
-                                                  polygon_vertices_2D))
+      if (!geometryUtilities.IsPointInsidePolygon_RayCasting(vertex_2D,
+                                                             polygon_vertices_2D))
         continue;
 
 
@@ -3157,7 +3157,6 @@ namespace Gedim
                                                   const std::vector<unsigned int>& polyhedron_faces_marker,
                                                   IMeshDAO& mesh) const
   {
-    const unsigned int num_polyhedron_vertices = polyhedron_vertices.cols();
     const unsigned int num_polyhedron_edges = polyhedron_edges.cols();
     const unsigned int num_polyhedron_faces = polyhedron_faces.size();
 
