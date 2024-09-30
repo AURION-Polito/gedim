@@ -1001,6 +1001,53 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::SetMeshMarkersByFaceNormal(const GeometryUtilities& geometryUtilities,
+                                                 const Eigen::Vector3d& normal,
+                                                 const std::vector<Eigen::Vector3d>& cell2Ds_normal,
+                                                 const unsigned int& marker,
+                                                 IMeshDAO& mesh) const
+  {
+    const double normal_norm = normal.norm();
+
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); ++f)
+    {
+      unsigned int num_cell3D_neighs = 0;
+
+      for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(f); ++n)
+      {
+        if (!mesh.Cell2DHasNeighbourCell3D(f, n))
+          continue;
+
+        num_cell3D_neighs++;
+      }
+
+      if (num_cell3D_neighs != 1)
+        continue;
+
+      const auto& cell2D_normal = cell2Ds_normal.at(f);
+
+      if (!geometryUtilities.AreValuesEqual(normal_norm * cell2D_normal.norm(),
+                                            std::abs(cell2D_normal.dot(normal)),
+                                            geometryUtilities.Tolerance1DSquared()))
+        continue;
+
+      for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(f); ++v)
+      {
+        mesh.Cell0DSetMarker(mesh.Cell2DVertex(f, v),
+                             marker);
+      }
+
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(f); ++e)
+      {
+        mesh.Cell1DSetMarker(mesh.Cell2DEdge(f, e),
+                             marker);
+      }
+
+      mesh.Cell2DSetMarker(f,
+                           marker);
+    }
+  }
+  // ***************************************************************************
   void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities& geometryUtilities,
                                               const Eigen::Vector3d& polygon_plane_normal,
                                               const Eigen::Vector3d& polygon_plane_origin,

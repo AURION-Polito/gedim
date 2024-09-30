@@ -765,6 +765,93 @@ namespace GedimUnitTesting
     ASSERT_EQ(100, meshDao.Cell2DMarker(52));
   }
 
+  TEST(TestMeshUtilities, TestSetMeshMarkersByFaceNormal)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestSetMeshMarkersByFaceNormal";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_3D_22Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh_Original");
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
+    std::vector<Eigen::Vector3d> cell2Ds_normal(meshDao.Cell2DTotalNumber());
+    for (unsigned int f = 0; f < meshDao.Cell2DTotalNumber(); f++)
+    {
+      cell2Ds_normal[f] =
+          geometryUtilities.PolygonNormal(meshDao.Cell2DVerticesCoordinates(f));
+    }
+
+    meshUtilities.SetMeshMarkersByFaceNormal(geometryUtilities,
+                                             Eigen::Vector3d { -1.0, 0.0, 0.0 },
+                                             cell2Ds_normal,
+                                             100,
+                                             meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "Mesh_Modified");
+
+    ASSERT_EQ(100, meshDao.Cell0DMarker(0));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(3));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(4));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(7));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(11));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(15));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(16));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(17));
+
+    ASSERT_EQ(100, meshDao.Cell1DMarker(27));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(28));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(32));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(33));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(34));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(39));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(45));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(46));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(47));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(48));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(50));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(52));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(53));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(38));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(36));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(10));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(22));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(19));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(21));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(16));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(41));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(17));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(40));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(15));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(55));
+    ASSERT_EQ(100, meshDao.Cell1DMarker(57));
+
+    ASSERT_EQ(100, meshDao.Cell2DMarker(25));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(28));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(42));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(47));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(49));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(52));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(33));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(19));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(15));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(11));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(40));
+    ASSERT_EQ(100, meshDao.Cell2DMarker(59));
+  }
+
   TEST(TestMeshUtilities, TestImportOVMMesh)
   {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
