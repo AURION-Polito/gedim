@@ -810,6 +810,14 @@ namespace GedimUnitTesting
     ASSERT_EQ(100, meshDao.Cell0DMarker(15));
     ASSERT_EQ(100, meshDao.Cell0DMarker(16));
     ASSERT_EQ(100, meshDao.Cell0DMarker(17));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(5));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(19));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(1));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(9));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(13));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(6));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(18));
+    ASSERT_EQ(100, meshDao.Cell0DMarker(2));
 
     ASSERT_EQ(100, meshDao.Cell1DMarker(27));
     ASSERT_EQ(100, meshDao.Cell1DMarker(28));
