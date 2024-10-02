@@ -1887,7 +1887,6 @@ namespace Gedim
       // fix orientation for concave cells
       std::vector<bool> face2DCCWOrientation(numFaces);
       std::vector<Eigen::MatrixXd> face2DVerticesCCW(numFaces);
-      std::vector<std::vector<unsigned int>> face2DsCCW(numFaces);
 
       for (unsigned int f = 0; f < numFaces; f++)
       {
@@ -1899,18 +1898,15 @@ namespace Gedim
           case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
           {
             face2DCCWOrientation[f] = false;
-            face2DsCCW[f] = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
+            const auto new_orientation_points = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DVertices[c][f].cols());
             face2DVerticesCCW[f] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DVertices[c][f],
-                                                                   face2DsCCW[f]);
+                                                                   new_orientation_points);
           }
             break;
           case Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise:
           {
             face2DCCWOrientation[f] = true;
             face2DVerticesCCW[f] = result.Cell3DsFaces2DVertices[c][f];
-
-            face2DsCCW[f].resize(result.Cell3DsFaces2DVertices[c][f].cols());
-            std::iota(face2DsCCW[f].begin(), face2DsCCW[f].end(), 0);
           }
             break;
           default:
@@ -1949,6 +1945,24 @@ namespace Gedim
                 geometryUtilities.RotatePointsFrom3DTo2D(result.Cell3DsFaces3DTriangulations[c][f][t],
                                                          face_rotation.transpose(),
                                                          face_translation);
+
+            const vector<unsigned int> face_triangle_convex_hull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DTriangulations[c][f][t],
+                                                                                                false);
+
+            switch (geometryUtilities.PolygonOrientation(face_triangle_convex_hull))
+            {
+              case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
+              {
+                const auto new_orientation = geometryUtilities.ChangePolygonOrientation(result.Cell3DsFaces2DTriangulations[c][f][t].cols());
+                result.Cell3DsFaces2DTriangulations[c][f][t] = geometryUtilities.ExtractPoints(result.Cell3DsFaces2DTriangulations[c][f][t],
+                                                                                               new_orientation);
+              }
+                break;
+              case Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise:
+                break;
+              default:
+                throw std::runtime_error("Not managed face orientation case");
+            }
           }
         }
       }
@@ -2252,7 +2266,7 @@ namespace Gedim
       const Eigen::Vector3d& faceTranslation = concaveCell3DFacesTranslation[f];
       const Eigen::Vector3d& faceNormal = concaveCell3DFacesNormal[f];
 
-      const Eigen::Matrix3d& face_2D_triangle = concaveCell3D_faces_2D_triangles.at(f).at(0);
+      Eigen::Matrix3d face_2D_triangle = concaveCell3D_faces_2D_triangles.at(f).at(0);
 
       int convexCellFound = -1, convexFaceFound = -1;
 
@@ -2262,6 +2276,8 @@ namespace Gedim
                                             geometryUtilities.Tolerance1D()))
       {
         throw std::runtime_error("Face triangle not unclockwise " + std::to_string(concaveCell3DIndex) + " " + std::to_string(f));
+        // std::cout<< "WARNING: concave face triangle not unclockwise "<< concaveCell3DIndex<< " "<< f<< std::endl;
+        //face_2D_triangle.block(0, 1, 3, face_2D_triangle.cols() - 1).rowwise().reverseInPlace();
       }
 
       // find convex cell3D face parallel to concave face normal
@@ -2295,6 +2311,7 @@ namespace Gedim
                                                        convexFace2DTriangle.col(2)),
                                                 geometryUtilities.Tolerance1D()))
           {
+            // std::cout<< "WARNING: convex face triangle not unclockwise "<< cc<< " "<< ccf<< std::endl;
             convexFace2DTriangle.block(0, 1, 3, convexFace2DTriangle.cols() - 1).rowwise().reverseInPlace();
           }
 
