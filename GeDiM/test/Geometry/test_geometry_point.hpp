@@ -7,6 +7,11 @@
 
 #include "GeometryUtilities.hpp"
 
+#include "MeshDAOImporterFromCsv.hpp"
+#include "ImportExportUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
+#include "MeshUtilities.hpp"
+
 using namespace testing;
 using namespace std;
 
@@ -979,7 +984,87 @@ namespace GedimUnitTesting {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
 
+    {
+      Gedim::MeshMatrices mesh;
+      Gedim::MeshMatricesDAO mesh_dao(mesh);
+
+      std::vector<unsigned int> cell3Ds_mark;
+      std::vector<std::vector<Eigen::MatrixXd>> cell3Ds_tetra_vertices;
+      std::vector<std::vector<Eigen::Matrix3d>> cell2Ds_triangles_vertices;
+
+      const string importer_folder = "/home/geoscore/Dropbox/Polito/Articles/3D1D_VEMFEM/Art-3D-1D-Root/Simulations/Meshes/Rocks";
+
+      Gedim::MeshFromCsvUtilities importerUtilities;
+      Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+      meshImporterConfiguration.Folder = importer_folder;
+      meshImporterConfiguration.Separator = ';';
+      Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+      importer.Import(meshImporterConfiguration,
+                      mesh_dao);
+
+      {
+        using namespace Gedim_ImportExport_Utilities;
+
+        const std::string file_path = importer_folder +
+                                      "/Cell3Ds_Additional_Info.txt";
+
+        std::ifstream file(file_path);
+
+        if (!file.is_open())
+          throw std::runtime_error("Export file '" + file_path + "' not opened");
+
+        file >> cell3Ds_mark;
+        file >> cell3Ds_tetra_vertices;
+
+        file.close();
+      }
+
+      {
+        using namespace Gedim_ImportExport_Utilities;
+
+        const std::string file_path = importer_folder +
+                                      "/Cell2Ds_Additional_Info.txt";
+
+        std::ifstream file(file_path);
+
+        if (!file.is_open())
+          throw std::runtime_error("Export file '" + file_path + "' not opened");
+
+        file >> cell2Ds_triangles_vertices;
+
+        file.close();
+      }
+
+      {
+        meshUtilities.ExportMeshToVTU(mesh_dao,
+                                      exportFolder,
+                                      "mesh");
+      }
+
+      const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
+                                                                             mesh_dao,
+                                                                             cell3Ds_tetra_vertices,
+                                                                             cell2Ds_triangles_vertices);
+
+      const unsigned int cell3D_index = 904;
+
+      {
+        using namespace Gedim;
+        std::cout.precision(16);
+        std::cout<< std::scientific<< "vertices\n"<< mesh_geometric_data.Cell3DsVertices.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "edges\n"<< mesh_geometric_data.Cell3DsEdges.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces\n"<< mesh_geometric_data.Cell3DsFaces.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "centroid\n"<< mesh_geometric_data.Cell3DsCentroids.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_3D_vertices\n"<< mesh_geometric_data.Cell3DsFaces3DVertices.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_2D_vertices\n"<< mesh_geometric_data.Cell3DsFaces2DVertices.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_normal\n"<< mesh_geometric_data.Cell3DsFacesNormals.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_normal_direction\n"<< mesh_geometric_data.Cell3DsFacesNormalDirections.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_translation\n"<< mesh_geometric_data.Cell3DsFacesTranslations.at(cell3D_index)<< std::endl;
+        std::cout<< std::scientific<< "faces_rotation_matrix\n"<< mesh_geometric_data.Cell3DsFacesRotationMatrices.at(cell3D_index)<< std::endl;
+      }
+    }
 
     const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                                                                     1.0);
