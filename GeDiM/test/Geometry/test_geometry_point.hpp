@@ -1159,7 +1159,8 @@ namespace GedimUnitTesting {
 
     {
       Gedim::VTKUtilities exporter;
-      for (const auto tetra : polyhedron_tetrahedrons)
+      double index = 0;
+      for (const auto& tetra : polyhedron_tetrahedrons)
       {
         const auto poly_tetra = geometryUtilities.CreateTetrahedronWithVertices(tetra.col(0),
                                                                                 tetra.col(1),
@@ -1167,10 +1168,33 @@ namespace GedimUnitTesting {
                                                                                 tetra.col(3));
         exporter.AddPolyhedron(poly_tetra.Vertices,
                                poly_tetra.Edges,
-                               poly_tetra.Faces);
+                               poly_tetra.Faces,
+                               {
+                                 {
+                                     "Id",
+                                     Gedim::VTPProperty::Formats::Cells,
+                                     static_cast<unsigned int>(1),
+                                     &index
+                                 }
+                               });
+        index++;
       }
 
       exporter.Export(exportFolder + "/polyhedron_tetrahedrons.vtu");
+    }
+
+
+    // check point inside
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(polyhedron_centroid,
+                                                    polyhedron.Faces,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
     }
 
     // check point outside
@@ -1184,19 +1208,6 @@ namespace GedimUnitTesting {
                                                     polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside);
-    }
-
-    // check point inside
-    {
-      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-          geometryUtilities.PointPolyhedronPosition(polyhedron_centroid,
-                                                    polyhedron.Faces,
-                                                    polyhedronFace2DVertices,
-                                                    polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices,
-                                                    polyhedron_tetrahedrons);
-      ASSERT_EQ(result.Type,
-                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
     }
 
     // check point on face

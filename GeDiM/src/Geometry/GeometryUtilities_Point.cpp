@@ -1,6 +1,7 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
 #include "MapTetrahedron.hpp"
+#include "VTKUtilities.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -580,8 +581,12 @@ namespace Gedim
       }
     }
 
+    unsigned int index = 0;
     for (const auto& tetrahedron : polyhedron_tetrahedrons)
     {
+      std::cout<< "test "<< index<< std::endl;
+      index++;
+
       if (!IsPointInsideTetrahedron(tetrahedron,
                                     point))
         continue;
@@ -604,23 +609,68 @@ namespace Gedim
                                    tetrahedron.col(2),
                                    tetrahedron.col(3)).inverse();
 
-    const auto result = Q_inv * (point - tetrahedron.col(0));
+    const auto ref_point = Q_inv * (point - tetrahedron.col(0));
+    std::cout<< "res "<< ref_point.transpose()<< " sum "<< ref_point.sum()<< std::endl;
 
-    if (!IsValueGreaterOrEqual(result[0], 0.0, Tolerance1D()))
+    {
+      const auto ref_tetra = Q_inv * (tetrahedron.colwise() - tetrahedron.col(0));
+
+      const auto poly_tetra_ref = CreateTetrahedronWithVertices(ref_tetra.col(0),
+                                                                ref_tetra.col(1),
+                                                                ref_tetra.col(2),
+                                                                ref_tetra.col(3));
+
+      const auto poly_tetra = CreateTetrahedronWithVertices(tetrahedron.col(0),
+                                                            tetrahedron.col(1),
+                                                            tetrahedron.col(2),
+                                                            tetrahedron.col(3));
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolyhedron(poly_tetra.Vertices,
+                               poly_tetra.Edges,
+                               poly_tetra.Faces);
+        exporter.Export("./TEST/tetra.vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPolyhedron(poly_tetra_ref.Vertices,
+                               poly_tetra_ref.Edges,
+                               poly_tetra_ref.Faces);
+        exporter.Export("./TEST/ref_tetra.vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPoint(point);
+        exporter.Export("./TEST/point.vtu");
+      }
+
+      {
+        VTKUtilities exporter;
+        exporter.AddPoint(ref_point);
+        exporter.Export("./TEST/ref_point.vtu");
+      }
+    }
+
+
+
+    if (!IsValueGreaterOrEqual(ref_point[0], 0.0, Tolerance1D()))
       return false;
-    if (!IsValueGreaterOrEqual(result[1], 0.0, Tolerance1D()))
+    if (!IsValueGreaterOrEqual(ref_point[1], 0.0, Tolerance1D()))
       return false;
-    if (!IsValueGreaterOrEqual(result[2], 0.0, Tolerance1D()))
+    if (!IsValueGreaterOrEqual(ref_point[2], 0.0, Tolerance1D()))
       return false;
 
-    if (!IsValueLowerOrEqual(result[0], 1.0, Tolerance1D()))
+    if (!IsValueLowerOrEqual(ref_point[0], 1.0, Tolerance1D()))
       return false;
-    if (!IsValueGreaterOrEqual(result[1], 1.0, Tolerance1D()))
+    if (!IsValueGreaterOrEqual(ref_point[1], 1.0, Tolerance1D()))
       return false;
-    if (!IsValueGreaterOrEqual(result[2], 1.0, Tolerance1D()))
+    if (!IsValueGreaterOrEqual(ref_point[2], 1.0, Tolerance1D()))
       return false;
 
-    return IsValueLowerOrEqual(result.sum(), 1.0, Tolerance1D());
+    return IsValueLowerOrEqual(ref_point.sum(), 1.0, Tolerance1D());
   }
   // ***************************************************************************
   GeometryUtilities::PointCirclePositionResult GeometryUtilities::PointCirclePosition(const Eigen::Vector3d& point,
