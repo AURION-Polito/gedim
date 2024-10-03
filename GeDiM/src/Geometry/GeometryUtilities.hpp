@@ -1332,7 +1332,7 @@ namespace Gedim
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
       /// \param result the resulting position
 
-      /// \brief Check if point is inside a polygon
+      /// \brief Check if point is inside a polyhedron
       /// \param point the point
       /// \param polyhedronFaces the polyhedron faces, size numPolyhedronFaces
       /// \param polyhedronFaceVertices the polyhedron face 3D vertices, size numPolyhedronFaces
@@ -1342,6 +1342,7 @@ namespace Gedim
       /// \param polyhedronFaceTranslations the polyhedron face translation from 2D to 3D
       /// \param polyhedronFaceRotationMatrices the polyhedron face rotation matrix from 2D to 3D
       /// \return the point position respect the polyhedron
+      /// \note works only for convex polyhedrons
       PointPolyhedronPositionResult PointPolyhedronPosition(const Eigen::Vector3d& point,
                                                             const std::vector<Eigen::MatrixXi>& polyhedronFaces,
                                                             const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
@@ -1350,6 +1351,30 @@ namespace Gedim
                                                             const std::vector<bool>& polyhedronFaceNormalDirections,
                                                             const std::vector<Eigen::Vector3d>& polyhedronFaceTranslations,
                                                             const std::vector<Eigen::Matrix3d>& polyhedronFaceRotationMatrices) const;
+      /// \brief Check if point is inside a polyhedron
+      /// \param point the point
+      /// \param polyhedronFaces the polyhedron faces, size numPolyhedronFaces
+      /// \param polyhedronFaceVertices the polyhedron face 3D vertices, size numPolyhedronFaces
+      /// \param polyhedronFaceRotatedVertices the polyhedron face 2D vertices, size numPolyhedronFaces
+      /// \param polyhedronFaceNormals the polyhedron face normals
+      /// \param polyhedronFaceNormalDirections the polyhedron face normal directions
+      /// \param polyhedronFaceTranslations the polyhedron face translation from 2D to 3D
+      /// \param polyhedronFaceRotationMatrices the polyhedron face rotation matrix from 2D to 3D
+      /// \return the point position respect the polyhedron
+      /// \note works for concave and convex polyhedrons
+      PointPolyhedronPositionResult PointPolyhedronPosition(const Eigen::Vector3d& point,
+                                                            const std::vector<Eigen::MatrixXi>& polyhedron_faces,
+                                                            const std::vector<Eigen::MatrixXd>& polyhedron_faces_3D_vertices,
+                                                            const std::vector<Eigen::MatrixXd>& polyhedron_faces_2D_vertices,
+                                                            const std::vector<Eigen::Vector3d>& polyhedron_faces_normals,
+                                                            const std::vector<bool>& polyhedron_faces_normal_direction,
+                                                            const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
+                                                            const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
+                                                            const std::vector<Eigen::MatrixXd>& polyhedron_tetrahedrons) const;
+
+      bool IsPointInsideTetrahedron(const Eigen::MatrixXd& tetrahedron,
+                                    const Eigen::Vector3d& point) const;
+
 
       /// \brief Check if point is inside a circle
       /// \param point the point

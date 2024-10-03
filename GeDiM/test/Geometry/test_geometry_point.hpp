@@ -7,6 +7,12 @@
 
 #include "GeometryUtilities.hpp"
 
+#include "MeshDAOImporterFromCsv.hpp"
+#include "ImportExportUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
+#include "MeshUtilities.hpp"
+#include "VTKUtilities.hpp"
+
 using namespace testing;
 using namespace std;
 
@@ -869,113 +875,417 @@ namespace GedimUnitTesting {
 
   TEST(TestGeometryUtilities, TestPoint_PointPolyhedronPosition)
   {
-    try
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                    1.0);
+    const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+    const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                      polyhedron.Faces);
+    const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+    const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
+                                                                                                         polyhedronBarycenter,
+                                                                                                         polyhedronFaceNormals);
+    const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+    const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                    polyhedronFaceNormals,
+                                                                                                                    polyhedronFaceTranslations);
+
+    const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                             polyhedronFaceTranslations,
+                                                                                                             polyhedronFaceRotationMatrices);
+    // check point outside
     {
-      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
-
-      const Gedim::GeometryUtilities::Polyhedron polyhedron =  geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                                      1.0);
-      const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
-      const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
-                                                                                                        polyhedron.Faces);
-      const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
-      const vector<bool> polyhedronFaceNormalDirections = geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices,
-                                                                                                           polyhedronBarycenter,
-                                                                                                           polyhedronFaceNormals);
-      const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
-      const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
-                                                                                                                      polyhedronFaceNormals,
-                                                                                                                      polyhedronFaceTranslations);
-
-      const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
-                                                                                                               polyhedronFaceTranslations,
-                                                                                                               polyhedronFaceRotationMatrices);
-      // check point outside
-      {
-        Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
-                                                      polyhedron.Faces,
-                                                      polyhedronFace3DVertices,
-                                                      polyhedronFace2DVertices,
-                                                      polyhedronFaceNormals,
-                                                      polyhedronFaceNormalDirections,
-                                                      polyhedronFaceTranslations,
-                                                      polyhedronFaceRotationMatrices);
-        ASSERT_EQ(result.Type,
-                  Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside);
-      }
-
-      // check point inside
-      {
-        Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 0.25),
-                                                      polyhedron.Faces,
-                                                      polyhedronFace3DVertices,
-                                                      polyhedronFace2DVertices,
-                                                      polyhedronFaceNormals,
-                                                      polyhedronFaceNormalDirections,
-                                                      polyhedronFaceTranslations,
-                                                      polyhedronFaceRotationMatrices);
-        ASSERT_EQ(result.Type,
-                  Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
-      }
-
-      // check point on face
-      {
-        Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 1.0),
-                                                      polyhedron.Faces,
-                                                      polyhedronFace3DVertices,
-                                                      polyhedronFace2DVertices,
-                                                      polyhedronFaceNormals,
-                                                      polyhedronFaceNormalDirections,
-                                                      polyhedronFaceTranslations,
-                                                      polyhedronFaceRotationMatrices);
-        ASSERT_EQ(result.Type,
-                  Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
-        ASSERT_EQ(result.BorderIndex,
-                  1);
-      }
-
-      // check point on edge
-      {
-        Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.0, 0.5, 1.0),
-                                                      polyhedron.Faces,
-                                                      polyhedronFace3DVertices,
-                                                      polyhedronFace2DVertices,
-                                                      polyhedronFaceNormals,
-                                                      polyhedronFaceNormalDirections,
-                                                      polyhedronFaceTranslations,
-                                                      polyhedronFaceRotationMatrices);
-        ASSERT_EQ(result.Type,
-                  Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
-        ASSERT_EQ(result.BorderIndex,
-                  7);
-      }
-
-      // check point on vertex
-      {
-        Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
-            geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.0, 1.0, 1.0),
-                                                      polyhedron.Faces,
-                                                      polyhedronFace3DVertices,
-                                                      polyhedronFace2DVertices,
-                                                      polyhedronFaceNormals,
-                                                      polyhedronFaceNormalDirections,
-                                                      polyhedronFaceTranslations,
-                                                      polyhedronFaceRotationMatrices);
-        ASSERT_EQ(result.Type,
-                  Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
-        ASSERT_EQ(result.BorderIndex,
-                  6);
-      }
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside);
     }
-    catch (const exception& exception)
+
+    // check point inside
     {
-      cerr<< exception.what()<< endl;
-      FAIL();
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 0.25),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    }
+
+    // check point on face
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.5, 0.75, 1.0),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+      ASSERT_EQ(result.BorderIndex,
+                1);
+    }
+
+    // check point on edge
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(0.0, 0.5, 1.0),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+      ASSERT_EQ(result.BorderIndex,
+                7);
+    }
+
+    // check point on vertex
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.0, 1.0, 1.0),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+      ASSERT_EQ(result.BorderIndex,
+                6);
+    }
+  }
+
+  TEST(TestGeometryUtilities, TestPoint_PointPolyhedronPosition_Concave)
+  {
+    const string exportFolder = "./Export/TestGeometryUtilities/TestPoint_PointPolyhedronPosition_Concave";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::GeometryUtilities::Polyhedron polyhedron;
+    polyhedron.Vertices.resize(3, 18);
+    polyhedron.Vertices.row(0)<< +6.2500000000000000e-01,  7.1378679656440336e-01,  7.5000000000000000e-01,  6.6426785900258878e-01,  7.5000000000000000e-01,  7.0050252531694168e-01,  7.5000000000000000e-01,  6.9401923788646680e-01,  6.2500000000000000e-01,  7.5000000000000000e-01,  6.8000000000000005e-01,  7.1041562349352971e-01,  6.2500000000000000e-01,  6.2500000000000000e-01,  6.2500000000000000e-01,  6.5100505063388336e-01,  7.5000000000000000e-01,  6.2875644347017856e-01;
+    polyhedron.Vertices.row(1)<< +7.5000000000000000e-01,  7.5000000000000000e-01,  6.2500000000000000e-01,  6.8000000000000005e-01,  6.8000000000000005e-01,  6.2875644347017856e-01,  6.2500000000000000e-01,  6.2500000000000000e-01,  6.2500000000000000e-01,  6.2875644347017856e-01,  6.2875644347017856e-01,  6.2500000000000000e-01,  7.5000000000000000e-01,  6.2500000000000000e-01,  6.9401923788646669e-01,  7.5000000000000000e-01,  6.9401923788646713e-01,  6.8000000000000005e-01;
+    polyhedron.Vertices.row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6212435565298213e+00, -1.5494974746830583e+00, -1.5559807621135333e+00, -1.5000000000000000e+00, -1.6250000000000000e+00, -1.5700000000000001e+00, -1.5000000000000000e+00, -1.5395843765064703e+00, -1.5362132034355964e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5989949493661166e+00, -1.6250000000000000e+00, -1.5000000000000000e+00;
+
+    polyhedron.Edges.resize(2, 36);
+    polyhedron.Edges.row(0)<< 3, 13, 17,  3, 13, 12,  6,  3,  5, 14,  3,  7, 16,  6,  8, 11,  6,  7,  5,  1,  3,  3,  3,  8,  3, 11, 10,  3, 14,  2,  9,  8,  5,  0, 12, 15;
+    polyhedron.Edges.row(1)<< 1, 14, 10, 10,  7, 15, 11, 14,  6, 12, 12, 11,  4,  9, 13, 10,  2, 10,  4, 16,  5,  4, 15,  2, 16,  5,  5, 17, 17, 16,  4,  0,  9,  1,  0,  1;
+
+    polyhedron.Faces.resize(20);
+    polyhedron.Faces[0].resize(2, 3);
+    polyhedron.Faces[0].row(0)<< 3,  1, 16;
+    polyhedron.Faces[0].row(1)<< 0, 19, 24;
+    polyhedron.Faces[1].resize(2, 3);
+    polyhedron.Faces[1].row(0)<< 3,  1, 15;
+    polyhedron.Faces[1].row(1)<< 0, 35, 22;
+    polyhedron.Faces[2].resize(2, 5);
+    polyhedron.Faces[2].row(0)<< 0, 12, 14, 13, 8;
+    polyhedron.Faces[2].row(1)<< 34,  9,  1, 14, 31;
+    polyhedron.Faces[3].resize(2, 3);
+    polyhedron.Faces[3].row(0)<< 3,  5, 10;
+    polyhedron.Faces[3].row(1)<< 20, 26,  3;
+    polyhedron.Faces[4].resize(2, 5);
+    polyhedron.Faces[4].row(0)<< 2, 16,  1,  0,  8;
+    polyhedron.Faces[4].row(1)<< 29, 19, 33, 31, 23;
+    polyhedron.Faces[5].resize(2, 5);
+    polyhedron.Faces[5].row(0)<< 7, 10, 17, 14, 13;
+    polyhedron.Faces[5].row(1)<< 17,  2, 28,  1,  4;
+    polyhedron.Faces[6].resize(2, 3);
+    polyhedron.Faces[6].row(0)<< 3, 10, 17;
+    polyhedron.Faces[6].row(1)<< 3,  2, 27;
+    polyhedron.Faces[7].resize(2, 3);
+    polyhedron.Faces[7].row(0)<< 3,  4,  5;
+    polyhedron.Faces[7].row(1)<< 21, 18, 20;
+    polyhedron.Faces[8].resize(2, 3);
+    polyhedron.Faces[8].row(0)<< 7, 10, 11;
+    polyhedron.Faces[8].row(1)<< 17, 15, 11;
+    polyhedron.Faces[9].resize(2, 3);
+    polyhedron.Faces[9].row(0)<< 6,  9,  5;
+    polyhedron.Faces[9].row(1)<< 13, 32,  8;
+    polyhedron.Faces[10].resize(2, 3);
+    polyhedron.Faces[10].row(0)<< 12, 15,  3;
+    polyhedron.Faces[10].row(1)<<  5, 22, 10;
+    polyhedron.Faces[11].resize(2, 4);
+    polyhedron.Faces[11].row(0)<< 1,  0, 12, 15;
+    polyhedron.Faces[11].row(1)<< 33, 34,  5, 35;
+    polyhedron.Faces[12].resize(2, 3);
+    polyhedron.Faces[12].row(0)<< 3,  4, 16;
+    polyhedron.Faces[12].row(1)<< 21, 12, 24;
+    polyhedron.Faces[13].resize(2, 3);
+    polyhedron.Faces[13].row(0)<< 11,  6,  5;
+    polyhedron.Faces[13].row(1)<<  6,  8, 25;
+    polyhedron.Faces[14].resize(2, 3);
+    polyhedron.Faces[14].row(0)<< 12,  3, 14;
+    polyhedron.Faces[14].row(1)<< 10,  7,  9;
+    polyhedron.Faces[15].resize(2, 5);
+    polyhedron.Faces[15].row(0)<< 16,  4,  9,  6,  2;
+    polyhedron.Faces[15].row(1)<< 12, 30, 13, 16, 29;
+    polyhedron.Faces[16].resize(2, 3);
+    polyhedron.Faces[16].row(0)<< 11, 10,  5;
+    polyhedron.Faces[16].row(1)<< 15, 26, 25;
+    polyhedron.Faces[17].resize(2, 3);
+    polyhedron.Faces[17].row(0)<< 14,  3, 17;
+    polyhedron.Faces[17].row(1)<<  7, 27, 28;
+    polyhedron.Faces[18].resize(2, 3);
+    polyhedron.Faces[18].row(0)<< 5,  4,  9;
+    polyhedron.Faces[18].row(1)<< 18, 30, 32;
+    polyhedron.Faces[19].resize(2, 6);
+    polyhedron.Faces[19].row(0)<< 6,  2,  8, 13,  7, 11;
+    polyhedron.Faces[19].row(1)<< 16, 23, 14,  4, 11,  6;
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolyhedron(polyhedron.Vertices,
+                             polyhedron.Edges,
+                             polyhedron.Faces);
+      exporter.Export(exportFolder + "/polyhedron.vtu");
+    }
+
+    const Eigen::Vector3d polyhedron_centroid(6.6632096372914240e-01,
+                                              6.6948258178081699e-01,
+                                              -1.5836790362708513e+00);
+    const vector<Eigen::MatrixXd> polyhedronFace3DVertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices,
+                                                                                                      polyhedron.Faces);
+
+    const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+    const vector<bool> polyhedronFaceNormalDirections = { 0,1,0,0,0,1,0,0,0,1,0,1,1,1,0,1,0,0,0,0 };
+    const vector<Eigen::Vector3d> polyhedronFaceTranslations = geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
+    const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices,
+                                                                                                                    polyhedronFaceNormals,
+                                                                                                                    polyhedronFaceTranslations);
+
+    const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
+                                                                                                             polyhedronFaceTranslations,
+                                                                                                             polyhedronFaceRotationMatrices);
+    std::vector<Eigen::MatrixXd> polyhedron_tetrahedrons(24, Eigen::MatrixXd(3, 4));
+    polyhedron_tetrahedrons[0].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[0].row(1)<< 6.2500000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[0].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[1].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 6.5100505063388336e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[1].row(1)<< 7.5000000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[1].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.5989949493661166e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[2].row(0)<< 7.1041562349352971e-01, 6.9401923788646680e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[2].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[2].row(2)<< -1.5395843765064703e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[3].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[3].row(1)<< 6.9401923788646713e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[3].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6212435565298213e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[4].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[4].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.9401923788646669e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[4].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[5].row(0)<< 7.1378679656440336e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[5].row(1)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 6.9401923788646713e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[5].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[6].row(0)<< 7.1041562349352971e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[6].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[6].row(2)<< -1.5395843765064703e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[7].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[7].row(1)<< 6.9401923788646713e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[7].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6212435565298213e+00;
+    polyhedron_tetrahedrons[8].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[8].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[8].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[9].row(0)<< 7.5000000000000000e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.1041562349352971e-01;
+    polyhedron_tetrahedrons[9].row(1)<< 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[9].row(2)<< -1.5559807621135333e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5395843765064703e+00;
+    polyhedron_tetrahedrons[10].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 7.1378679656440336e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[10].row(1)<< 6.2500000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[10].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[11].row(0)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[11].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[11].row(2)<< -1.5000000000000000e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[12].row(0)<< 7.1041562349352971e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[12].row(1)<< 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[12].row(2)<< -1.5395843765064703e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[13].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[13].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.9401923788646669e-01;
+    polyhedron_tetrahedrons[13].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[14].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 7.0050252531694168e-01;
+    polyhedron_tetrahedrons[14].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[14].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5494974746830583e+00;
+    polyhedron_tetrahedrons[15].row(0)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[15].row(1)<< 6.2500000000000000e-01, 6.9401923788646669e-01, 6.8000000000000005e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[15].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[16].row(0)<< 6.6426785900258878e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[16].row(1)<< 6.8000000000000005e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[16].row(2)<< -1.5857321409974112e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5700000000000001e+00;
+    polyhedron_tetrahedrons[17].row(0)<< 7.5000000000000000e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[17].row(1)<< 6.2875644347017856e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[17].row(2)<< -1.5700000000000001e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5559807621135333e+00;
+    polyhedron_tetrahedrons[18].row(0)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.9401923788646680e-01;
+    polyhedron_tetrahedrons[18].row(1)<< 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[18].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[19].row(0)<< 7.5000000000000000e-01, 6.6426785900258878e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[19].row(1)<< 6.8000000000000005e-01, 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[19].row(2)<< -1.6212435565298213e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5700000000000001e+00;
+    polyhedron_tetrahedrons[20].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[20].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[20].row(2)<< -1.6212435565298213e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[21].row(0)<< 6.2875644347017856e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[21].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[21].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[22].row(0)<< 6.2875644347017856e-01, 6.6426785900258878e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[22].row(1)<< 6.8000000000000005e-01, 6.8000000000000005e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[22].row(2)<< -1.5000000000000000e+00, -1.5857321409974112e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[23].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 7.1378679656440336e-01, 6.5100505063388336e-01;
+    polyhedron_tetrahedrons[23].row(1)<< 7.5000000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[23].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5989949493661166e+00;
+
+    {
+      Gedim::VTKUtilities exporter;
+      double index = 0;
+      for (const auto& tetra : polyhedron_tetrahedrons)
+      {
+        const auto poly_tetra = geometryUtilities.CreateTetrahedronWithVertices(tetra.col(0),
+                                                                                tetra.col(1),
+                                                                                tetra.col(2),
+                                                                                tetra.col(3));
+        exporter.AddPolyhedron(poly_tetra.Vertices,
+                               poly_tetra.Edges,
+                               poly_tetra.Faces,
+                               {
+                                 {
+                                     "Id",
+                                     Gedim::VTPProperty::Formats::Cells,
+                                     static_cast<unsigned int>(1),
+                                     &index
+                                 }
+                               });
+        index++;
+      }
+
+      exporter.Export(exportFolder + "/polyhedron_tetrahedrons.vtu");
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoint(polyhedron_centroid);
+
+      exporter.Export(exportFolder + "/polyhedron_centroid.vtu");
+    }
+
+
+    // check point inside
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(polyhedron_centroid,
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
+    }
+
+    // check point outside
+    {
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside);
+    }
+
+    // check point on face
+    {
+      const unsigned int face_index = 8;
+      const auto point_to_test = geometryUtilities.SimplexBarycenter(polyhedronFace3DVertices[face_index]);
+
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(point_to_test,
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+      ASSERT_EQ(result.BorderIndex,
+                face_index);
+    }
+
+    // check point on edge
+    {
+      const unsigned int edge_index = 2;
+      const auto edge_origin = polyhedron.Vertices.col(polyhedron.Edges(0, edge_index));
+      const auto edge_end = polyhedron.Vertices.col(polyhedron.Edges(1, edge_index));
+      const auto edge_tangent = edge_end - edge_origin;
+      const Eigen::Vector3d point_to_test = edge_origin + 0.5 * edge_tangent;
+
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(point_to_test,
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+      ASSERT_EQ(result.BorderIndex,
+                edge_index);
+    }
+
+    // check point on vertex
+    {
+      const unsigned int vertex_index = 2;
+      Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
+          geometryUtilities.PointPolyhedronPosition(polyhedron.Vertices.col(vertex_index),
+                                                    polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
+                                                    polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
+                                                    polyhedronFaceTranslations,
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
+      ASSERT_EQ(result.Type,
+                Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+      ASSERT_EQ(result.BorderIndex,
+                vertex_index);
+
     }
   }
 

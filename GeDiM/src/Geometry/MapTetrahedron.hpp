@@ -25,6 +25,11 @@ namespace Gedim
                                 const unsigned int& fourthVertexIndex,
                                 MapTetrahedron::MapTetrahedronData& result) const;
 
+    public:
+      MapTetrahedron(const GeometryUtilities& geometryUtilities) :
+        geometryUtilities(geometryUtilities) {}
+      ~MapTetrahedron() {}
+
       /// Matrix Q for linear map x = Q * x_r + b from reference tetrahedron [0,1]x[0,1]x[0,1]/2 to tetrahedron with x points
       /// vertices the tetrahedron to map vertices, size 3 x 4
       /// return the resulting value, size 3 x 3
@@ -49,11 +54,6 @@ namespace Gedim
         return firstVertex;
       }
 
-    public:
-      MapTetrahedron(const GeometryUtilities& geometryUtilities) :
-        geometryUtilities(geometryUtilities) {}
-      ~MapTetrahedron() {}
-
       /// Map from the tetrahedron reference element [0,1]x[0,1]x[0,1]/2 to the polygon x = F(x_r) = Q * x_r + b
       /// \param vertices the tetrahedron to map vertices, size 3 x 4
       /// \return the map data
@@ -66,6 +66,11 @@ namespace Gedim
       inline Eigen::MatrixXd F(const MapTetrahedronData& mapData,
                                const Eigen::MatrixXd& x) const
       { return (mapData.Q * x).colwise() + mapData.b; }
+
+      inline Eigen::MatrixXd FInv(const MapTetrahedronData& mapData,
+                                  const Eigen::MatrixXd& x) const
+      { return mapData.Q.inverse() * (x.colwise() - mapData.b); }
+
       /// Compute the jacobian matrix of the transformation F
       /// \param mapData the map data computed
       /// \param x points in reference tetrahedron, size 3 x numPoints
