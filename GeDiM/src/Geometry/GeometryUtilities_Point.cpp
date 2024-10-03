@@ -1,5 +1,6 @@
 #include "IOUtilities.hpp"
 #include "GeometryUtilities.hpp"
+#include "MapTetrahedron.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -533,48 +534,24 @@ namespace Gedim
   GeometryUtilities::PointPolyhedronPositionResult
   GeometryUtilities::PointPolyhedronPosition(const Eigen::Vector3d& point,
                                              const std::vector<Eigen::MatrixXi>& polyhedron_faces,
-                                             const std::vector<Eigen::MatrixXd>& polyhedron_faces_3D_vertices,
                                              const std::vector<Eigen::MatrixXd>& polyhedron_faces_2D_vertices,
-                                             const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
-                                             const std::vector<bool>& polyhedron_faces_normal_direction,
                                              const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
                                              const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
                                              const std::vector<Eigen::MatrixXd>& polyhedron_tetrahedrons) const
   {
     PointPolyhedronPositionResult result;
 
-    unsigned int negativeFacePositions = 0;
     for (unsigned int f = 0; f < polyhedron_faces.size(); f++)
     {
-      const Eigen::MatrixXd& faceVertices3D = polyhedron_faces_3D_vertices[f];
       const Eigen::MatrixXd& faceVertices2D = polyhedron_faces_2D_vertices[f];
-      const double faceOutgoingNormal = polyhedron_faces_normal_direction[f] ? 1.0 : -1.0;
-
-      const PointPlanePositionTypes pointFacePlanePosition = PointPlanePosition(
-                                                               PointPlaneDistance(point,
-                                                                                  faceOutgoingNormal * polyhedron_faces_normal[f],
-                                                                                  faceVertices3D.col(0)));
-
-      switch (pointFacePlanePosition)
-      {
-        case PointPlanePositionTypes::Positive:
-          continue;
-        case PointPlanePositionTypes::Negative:
-          negativeFacePositions++;
-          continue;
-        case PointPlanePositionTypes::Unknown:
-          throw runtime_error("Not managed pointFacePlanePosition");
-        default:
-          break;
-      }
 
       // Point is on face
       const Eigen::Vector3d point2D = RotatePointsFrom3DTo2D(point,
                                                              polyhedron_faces_rotation_matrix[f].transpose(),
                                                              polyhedron_faces_translation[f]);
 
-      PointPolygonPositionResult pointFacePosition = PointPolygonPosition(point2D,
-                                                                          faceVertices2D);
+      PointPolygonPositionResult pointFacePosition = PointPolygonPosition_RayCasting(point2D,
+                                                                                     faceVertices2D);
 
       switch (pointFacePosition.Type)
       {
@@ -603,10 +580,47 @@ namespace Gedim
       }
     }
 
-    result.Type = (negativeFacePositions == polyhedron_faces.size()) ?
-                    GeometryUtilities::PointPolyhedronPositionResult::Types::Inside :
-                    GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+    for (const auto& tetrahedron : polyhedron_tetrahedrons)
+    {
+      if (!IsPointInsideTetrahedron(tetrahedron,
+                                    point))
+        continue;
+
+      result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+      return result;
+    }
+
+    result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+
     return result;
+  }
+  // ***************************************************************************
+  bool GeometryUtilities::IsPointInsideTetrahedron(const Eigen::MatrixXd& tetrahedron,
+                                                   const Eigen::Vector3d& point) const
+  {
+    MapTetrahedron map_tetra(*this);
+    const auto Q_inv = map_tetra.Q(tetrahedron.col(0),
+                                   tetrahedron.col(1),
+                                   tetrahedron.col(2),
+                                   tetrahedron.col(3)).inverse();
+
+    const auto result = Q_inv * (point - tetrahedron.col(0));
+
+    if (!IsValueGreaterOrEqual(result[0], 0.0, Tolerance1D()))
+      return false;
+    if (!IsValueGreaterOrEqual(result[1], 0.0, Tolerance1D()))
+      return false;
+    if (!IsValueGreaterOrEqual(result[2], 0.0, Tolerance1D()))
+      return false;
+
+    if (!IsValueLowerOrEqual(result[0], 1.0, Tolerance1D()))
+      return false;
+    if (!IsValueGreaterOrEqual(result[1], 1.0, Tolerance1D()))
+      return false;
+    if (!IsValueGreaterOrEqual(result[2], 1.0, Tolerance1D()))
+      return false;
+
+    return IsValueLowerOrEqual(result.sum(), 1.0, Tolerance1D());
   }
   // ***************************************************************************
   GeometryUtilities::PointCirclePositionResult GeometryUtilities::PointCirclePosition(const Eigen::Vector3d& point,

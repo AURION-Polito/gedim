@@ -1083,17 +1083,105 @@ namespace GedimUnitTesting {
     const vector<Eigen::MatrixXd> polyhedronFace2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices,
                                                                                                              polyhedronFaceTranslations,
                                                                                                              polyhedronFaceRotationMatrices);
+    std::vector<Eigen::MatrixXd> polyhedron_tetrahedrons(24, Eigen::MatrixXd(3, 4));
+    polyhedron_tetrahedrons[0].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[0].row(1)<< 6.2500000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[0].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[1].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 6.5100505063388336e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[1].row(1)<< 7.5000000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[1].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.5989949493661166e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[2].row(0)<< 7.1041562349352971e-01, 6.9401923788646680e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[2].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[2].row(2)<< -1.5395843765064703e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[3].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[3].row(1)<< 6.9401923788646713e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[3].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6212435565298213e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[4].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[4].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.9401923788646669e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[4].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5362132034355964e+00;
+    polyhedron_tetrahedrons[5].row(0)<< 7.1378679656440336e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[5].row(1)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 6.9401923788646713e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[5].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[6].row(0)<< 7.1041562349352971e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[6].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[6].row(2)<< -1.5395843765064703e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[7].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[7].row(1)<< 6.9401923788646713e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[7].row(2)<< -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.6212435565298213e+00;
+    polyhedron_tetrahedrons[8].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[8].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[8].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[9].row(0)<< 7.5000000000000000e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.1041562349352971e-01;
+    polyhedron_tetrahedrons[9].row(1)<< 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[9].row(2)<< -1.5559807621135333e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5395843765064703e+00;
+    polyhedron_tetrahedrons[10].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 7.1378679656440336e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[10].row(1)<< 6.2500000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[10].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[11].row(0)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[11].row(1)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[11].row(2)<< -1.5000000000000000e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[12].row(0)<< 7.1041562349352971e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[12].row(1)<< 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[12].row(2)<< -1.5395843765064703e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[13].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[13].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.8000000000000005e-01, 6.9401923788646669e-01;
+    polyhedron_tetrahedrons[13].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[14].row(0)<< 6.6426785900258878e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 7.0050252531694168e-01;
+    polyhedron_tetrahedrons[14].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[14].row(2)<< -1.5857321409974112e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5494974746830583e+00;
+    polyhedron_tetrahedrons[15].row(0)<< 6.2500000000000000e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[15].row(1)<< 6.2500000000000000e-01, 6.9401923788646669e-01, 6.8000000000000005e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[15].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.6250000000000000e+00;
+    polyhedron_tetrahedrons[16].row(0)<< 6.6426785900258878e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[16].row(1)<< 6.8000000000000005e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[16].row(2)<< -1.5857321409974112e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5700000000000001e+00;
+    polyhedron_tetrahedrons[17].row(0)<< 7.5000000000000000e-01, 7.0050252531694168e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[17].row(1)<< 6.2875644347017856e-01, 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[17].row(2)<< -1.5700000000000001e+00, -1.5494974746830583e+00, -1.6250000000000000e+00, -1.5559807621135333e+00;
+    polyhedron_tetrahedrons[18].row(0)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.9401923788646680e-01;
+    polyhedron_tetrahedrons[18].row(1)<< 6.2875644347017856e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[18].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[19].row(0)<< 7.5000000000000000e-01, 6.6426785900258878e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[19].row(1)<< 6.8000000000000005e-01, 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[19].row(2)<< -1.6212435565298213e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5700000000000001e+00;
+    polyhedron_tetrahedrons[20].row(0)<< 7.5000000000000000e-01, 6.2500000000000000e-01, 7.5000000000000000e-01, 6.6426785900258878e-01;
+    polyhedron_tetrahedrons[20].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2500000000000000e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[20].row(2)<< -1.6212435565298213e+00, -1.6250000000000000e+00, -1.6250000000000000e+00, -1.5857321409974112e+00;
+    polyhedron_tetrahedrons[21].row(0)<< 6.2875644347017856e-01, 6.2500000000000000e-01, 7.0050252531694168e-01, 6.8000000000000005e-01;
+    polyhedron_tetrahedrons[21].row(1)<< 6.8000000000000005e-01, 6.2500000000000000e-01, 6.2875644347017856e-01, 6.2875644347017856e-01;
+    polyhedron_tetrahedrons[21].row(2)<< -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[22].row(0)<< 6.2875644347017856e-01, 6.6426785900258878e-01, 7.0050252531694168e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[22].row(1)<< 6.8000000000000005e-01, 6.8000000000000005e-01, 6.2875644347017856e-01, 6.2500000000000000e-01;
+    polyhedron_tetrahedrons[22].row(2)<< -1.5000000000000000e+00, -1.5857321409974112e+00, -1.5494974746830583e+00, -1.5000000000000000e+00;
+    polyhedron_tetrahedrons[23].row(0)<< 6.2500000000000000e-01, 6.6426785900258878e-01, 7.1378679656440336e-01, 6.5100505063388336e-01;
+    polyhedron_tetrahedrons[23].row(1)<< 7.5000000000000000e-01, 6.8000000000000005e-01, 7.5000000000000000e-01, 7.5000000000000000e-01;
+    polyhedron_tetrahedrons[23].row(2)<< -1.6250000000000000e+00, -1.5857321409974112e+00, -1.6250000000000000e+00, -1.5989949493661166e+00;
+
+    {
+      Gedim::VTKUtilities exporter;
+      for (const auto tetra : polyhedron_tetrahedrons)
+      {
+        const auto poly_tetra = geometryUtilities.CreateTetrahedronWithVertices(tetra.col(0),
+                                                                                tetra.col(1),
+                                                                                tetra.col(2),
+                                                                                tetra.col(3));
+        exporter.AddPolyhedron(poly_tetra.Vertices,
+                               poly_tetra.Edges,
+                               poly_tetra.Faces);
+      }
+
+      exporter.Export(exportFolder + "/polyhedron_tetrahedrons.vtu");
+    }
+
     // check point outside
     {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
                                                     polyhedron.Faces,
-                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
-                                                    polyhedronFaceNormals,
-                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices);
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside);
     }
@@ -1103,12 +1191,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(polyhedron_centroid,
                                                     polyhedron.Faces,
-                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
-                                                    polyhedronFaceNormals,
-                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices);
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
     }
@@ -1121,12 +1207,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(point_to_test,
                                                     polyhedron.Faces,
-                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
-                                                    polyhedronFaceNormals,
-                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices);
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
       ASSERT_EQ(result.BorderIndex,
@@ -1144,12 +1228,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(point_to_test,
                                                     polyhedron.Faces,
-                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
-                                                    polyhedronFaceNormals,
-                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices);
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
       ASSERT_EQ(result.BorderIndex,
@@ -1162,12 +1244,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(polyhedron.Vertices.col(vertex_index),
                                                     polyhedron.Faces,
-                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
-                                                    polyhedronFaceNormals,
-                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
-                                                    polyhedronFaceRotationMatrices);
+                                                    polyhedronFaceRotationMatrices,
+                                                    polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
       ASSERT_EQ(result.BorderIndex,

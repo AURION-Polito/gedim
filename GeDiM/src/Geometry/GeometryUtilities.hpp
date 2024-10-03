@@ -1364,13 +1364,13 @@ namespace Gedim
       /// \note works for concave and convex polyhedrons
       PointPolyhedronPositionResult PointPolyhedronPosition(const Eigen::Vector3d& point,
                                                             const std::vector<Eigen::MatrixXi>& polyhedron_faces,
-                                                            const std::vector<Eigen::MatrixXd>& polyhedron_faces_3D_vertices,
                                                             const std::vector<Eigen::MatrixXd>& polyhedron_faces_2D_vertices,
-                                                            const std::vector<Eigen::Vector3d>& polyhedron_faces_normal,
-                                                            const std::vector<bool>& polyhedron_faces_normal_direction,
                                                             const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
                                                             const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
                                                             const std::vector<Eigen::MatrixXd>& polyhedron_tetrahedrons) const;
+
+      bool IsPointInsideTetrahedron(const Eigen::MatrixXd& tetrahedron,
+                                    const Eigen::Vector3d& point) const;
 
 
       /// \brief Check if point is inside a circle
