@@ -1183,6 +1183,13 @@ namespace GedimUnitTesting {
       exporter.Export(exportFolder + "/polyhedron_tetrahedrons.vtu");
     }
 
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoint(polyhedron_centroid);
+
+      exporter.Export(exportFolder + "/polyhedron_centroid.vtu");
+    }
+
 
     // check point inside
     {

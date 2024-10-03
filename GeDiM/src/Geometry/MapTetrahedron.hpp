@@ -66,6 +66,11 @@ namespace Gedim
       inline Eigen::MatrixXd F(const MapTetrahedronData& mapData,
                                const Eigen::MatrixXd& x) const
       { return (mapData.Q * x).colwise() + mapData.b; }
+
+      inline Eigen::MatrixXd FInv(const MapTetrahedronData& mapData,
+                                  const Eigen::MatrixXd& x) const
+      { return mapData.Q.inverse() * (x.colwise() - mapData.b); }
+
       /// Compute the jacobian matrix of the transformation F
       /// \param mapData the map data computed
       /// \param x points in reference tetrahedron, size 3 x numPoints
