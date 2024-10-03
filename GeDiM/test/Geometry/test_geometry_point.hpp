@@ -1189,7 +1189,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(polyhedron_centroid,
                                                     polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
                                                     polyhedronFaceRotationMatrices,
                                                     polyhedron_tetrahedrons);
@@ -1202,7 +1205,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(Eigen::Vector3d(1.2, 1.7, -15.0),
                                                     polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
                                                     polyhedronFaceRotationMatrices,
                                                     polyhedron_tetrahedrons);
@@ -1218,7 +1224,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(point_to_test,
                                                     polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
                                                     polyhedronFaceRotationMatrices,
                                                     polyhedron_tetrahedrons);
@@ -1239,7 +1248,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(point_to_test,
                                                     polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
                                                     polyhedronFaceRotationMatrices,
                                                     polyhedron_tetrahedrons);
@@ -1255,7 +1267,10 @@ namespace GedimUnitTesting {
       Gedim::GeometryUtilities::PointPolyhedronPositionResult result =
           geometryUtilities.PointPolyhedronPosition(polyhedron.Vertices.col(vertex_index),
                                                     polyhedron.Faces,
+                                                    polyhedronFace3DVertices,
                                                     polyhedronFace2DVertices,
+                                                    polyhedronFaceNormals,
+                                                    polyhedronFaceNormalDirections,
                                                     polyhedronFaceTranslations,
                                                     polyhedronFaceRotationMatrices,
                                                     polyhedron_tetrahedrons);
@@ -1263,6 +1278,7 @@ namespace GedimUnitTesting {
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
       ASSERT_EQ(result.BorderIndex,
                 vertex_index);
+
     }
   }
 

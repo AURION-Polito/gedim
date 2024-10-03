@@ -485,10 +485,10 @@ namespace Gedim
         case PointPlanePositionTypes::Negative:
           negativeFacePositions++;
           continue;
-        case PointPlanePositionTypes::Unknown:
-          throw runtime_error("Not managed pointFacePlanePosition");
-        default:
+        case PointPlanePositionTypes::OnPlane:
           break;
+        default:
+          throw runtime_error("Not managed pointFacePlanePosition");
       }
 
       // Point is on face
@@ -535,7 +535,10 @@ namespace Gedim
   GeometryUtilities::PointPolyhedronPositionResult
   GeometryUtilities::PointPolyhedronPosition(const Eigen::Vector3d& point,
                                              const std::vector<Eigen::MatrixXi>& polyhedron_faces,
+                                             const std::vector<Eigen::MatrixXd>& polyhedron_faces_3D_vertices,
                                              const std::vector<Eigen::MatrixXd>& polyhedron_faces_2D_vertices,
+                                             const std::vector<Eigen::Vector3d>& polyhedron_faces_normals,
+                                             const std::vector<bool>& polyhedron_faces_normal_direction,
                                              const std::vector<Eigen::Vector3d>& polyhedron_faces_translation,
                                              const std::vector<Eigen::Matrix3d>& polyhedron_faces_rotation_matrix,
                                              const std::vector<Eigen::MatrixXd>& polyhedron_tetrahedrons) const
@@ -544,11 +547,32 @@ namespace Gedim
 
     for (unsigned int f = 0; f < polyhedron_faces.size(); f++)
     {
+      const Eigen::MatrixXd& faceVertices3D = polyhedron_faces_3D_vertices[f];
       const Eigen::MatrixXd& faceVertices2D = polyhedron_faces_2D_vertices[f];
+      const double faceOutgoingNormal = polyhedron_faces_normal_direction[f] ? 1.0 : -1.0;
+
+      const PointPlanePositionTypes pointFacePlanePosition = PointPlanePosition(
+                                                               PointPlaneDistance(point,
+                                                                                  faceOutgoingNormal * polyhedron_faces_normals[f],
+                                                                                  faceVertices3D.col(0)));
+
+      switch (pointFacePlanePosition)
+      {
+        case PointPlanePositionTypes::Negative:
+        case PointPlanePositionTypes::Positive:
+          continue;
+        case PointPlanePositionTypes::OnPlane:
+          break;
+        default:
+          throw runtime_error("Not managed pointFacePlanePosition");
+      }
 
       // Point is on face
       const Eigen::Vector3d point2D = RotatePointsFrom3DTo2D(point,
                                                              polyhedron_faces_rotation_matrix[f].transpose(),
+                                                             polyhedron_faces_translation[f]);
+      const Eigen::Vector3d point3D = RotatePointsFrom2DTo3D(point2D,
+                                                             polyhedron_faces_rotation_matrix[f],
                                                              polyhedron_faces_translation[f]);
 
       PointPolygonPositionResult pointFacePosition = PointPolygonPosition_RayCasting(point2D,
