@@ -1208,7 +1208,7 @@ namespace GedimUnitTesting {
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside);
       ASSERT_EQ(result.Internal_indices,
-                std::vector<unsigned int>({ 0 }));
+                std::vector<unsigned int>({ 8, 14 }));
     }
 
     // check point outside
