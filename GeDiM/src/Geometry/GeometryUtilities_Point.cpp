@@ -529,6 +529,11 @@ namespace Gedim
     result.Type = (negativeFacePositions == polyhedronFaces.size()) ?
                     GeometryUtilities::PointPolyhedronPositionResult::Types::Inside :
                     GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+
+    if (result.Type ==
+        GeometryUtilities::PointPolyhedronPositionResult::Types::Inside)
+      result.Internal_indices = { 0 };
+
     return result;
   }
   // ***************************************************************************
@@ -602,17 +607,27 @@ namespace Gedim
       }
     }
 
-    for (const auto& tetrahedron : polyhedron_tetrahedrons)
+    std::list<unsigned int> find_tetra;
+    for (unsigned int t = 0; t < polyhedron_tetrahedrons.size(); ++t)
     {
+      const auto& tetrahedron = polyhedron_tetrahedrons.at(t);
+
       if (!IsPointInsideTetrahedron(tetrahedron,
                                     point))
         continue;
 
-      result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+      find_tetra.push_back(t);
+    }
+
+    if (find_tetra.empty())
+    {
+      result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
       return result;
     }
 
-    result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+    result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+    result.Internal_indices = std::vector<unsigned int>(find_tetra.begin(),
+                                                        find_tetra.end());
 
     return result;
   }
