@@ -591,6 +591,7 @@ namespace Gedim
           };
 
           unsigned int BorderIndex = 0; ///< index of vertex/edge/face of border
+          std::vector<unsigned int> Internal_indices; ///< list of index of internal cell (usually tetrahedrons)
           Types Type = Types::Unknown;
       };
 
