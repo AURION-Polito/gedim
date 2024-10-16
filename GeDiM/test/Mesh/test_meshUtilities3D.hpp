@@ -1505,6 +1505,16 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByFace)
   {
+    auto sort_result = [](const auto& array)
+    {
+      std::vector<unsigned int> array_copy(array.begin(),
+                                           array.end());
+      std::sort(array_copy.begin(),
+                array_copy.end());
+
+      return array_copy;
+    };
+
     std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell3Ds_ByFace";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -1560,14 +1570,15 @@ namespace GedimUnitTesting
                                                                                                        cell3Ds.rend()),
                                                                       meshDao);
 
-      ASSERT_EQ(std::vector<unsigned int>({ 5,19,12,13,8 }),
-                agglomerationInfo.AgglomerateCell3DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 38,7,36,10,6,8,37,11,9 }),
-                agglomerationInfo.AgglomerateCell3DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 34, 35, 6, 5, 33, 7 }),
-                agglomerationInfo.AgglomerateCell3DFaces);
-      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
-                agglomerationInfo.SubCell3DsRemovedFaces);
+
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 5,19,12,13,8 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DVertices));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 38,7,36,10,6,8,37,11,9 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DEdges));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 34, 35, 6, 5, 33, 7 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DFaces));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 4 })),
+                sort_result(agglomerationInfo.SubCell3DsRemovedFaces));
 
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
                                                                                                                      cell3Ds.rend()),
@@ -1591,14 +1602,14 @@ namespace GedimUnitTesting
       const auto agglomerationInfo = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
                                                                                                        cell3Ds.rend()),
                                                                       meshDao);
-      ASSERT_EQ(std::vector<unsigned int>({ 14,8,13,12,19,5 }),
-                agglomerationInfo.AgglomerateCell3DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 2,35,9,11,37,8,6,23,10,36,7,38 }),
-                agglomerationInfo.AgglomerateCell3DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 38, 20, 33, 5, 32, 6, 35, 34 }),
-                agglomerationInfo.AgglomerateCell3DFaces);
-      ASSERT_EQ(std::vector<unsigned int>({ 7 }),
-                agglomerationInfo.SubCell3DsRemovedFaces);
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 14,8,13,12,19,5 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DVertices));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 2,35,9,11,37,8,6,23,10,36,7,38 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DEdges));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 38, 20, 33, 5, 32, 6, 35, 34 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DFaces));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 7 })),
+                sort_result(agglomerationInfo.SubCell3DsRemovedFaces));
 
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
                                                                                                                      cell3Ds.rend()),
@@ -1634,6 +1645,16 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByVertex)
   {
+    auto sort_result = [](const auto& array)
+    {
+      std::vector<unsigned int> array_copy(array.begin(),
+                                           array.end());
+      std::sort(array_copy.begin(),
+                array_copy.end());
+
+      return array_copy;
+    };
+
     std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell3Ds_ByVertex";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -1668,18 +1689,18 @@ namespace GedimUnitTesting
                                                                                                        cell3Ds.end()),
                                                                       meshDao);
 
-      ASSERT_EQ(std::vector<unsigned int>({ 6,14,13,2,18,10,9,8 }),
-                agglomerationInfo.AgglomerateCell3DVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 5,40,41,42,16,3,55,18,57,15,2,58,0,56,17,35,8,1 }),
-                agglomerationInfo.AgglomerateCell3DEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 3,39,41,11,1,40,14,32,59,57,60,61 }),
-                agglomerationInfo.AgglomerateCell3DFaces);
-      ASSERT_EQ(std::vector<unsigned int>({ }),
-                agglomerationInfo.SubCell3DsRemovedVertices);
-      ASSERT_EQ(std::vector<unsigned int>({ 4 }),
-                agglomerationInfo.SubCell3DsRemovedEdges);
-      ASSERT_EQ(std::vector<unsigned int>({ 31,2,12,13,0,58 }),
-                agglomerationInfo.SubCell3DsRemovedFaces);
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 6,14,13,2,18,10,9,8 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DVertices));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 5,40,41,42,16,3,55,18,57,15,2,58,0,56,17,35,8,1 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DEdges));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 3,39,41,11,1,40,14,32,59,57,60,61 })),
+                sort_result(agglomerationInfo.AgglomerateCell3DFaces));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ })),
+                sort_result(agglomerationInfo.SubCell3DsRemovedVertices));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 4 })),
+                sort_result(agglomerationInfo.SubCell3DsRemovedEdges));
+      ASSERT_EQ(sort_result(std::vector<unsigned int>({ 31,2,12,13,0,58 })),
+                sort_result(agglomerationInfo.SubCell3DsRemovedFaces));
 
       const unsigned int agglomeratedCell3DIndex = meshUtilities.AgglomerateCell3Ds(std::unordered_set<unsigned int>(cell3Ds.rbegin(),
                                                                                                                      cell3Ds.rend()),
