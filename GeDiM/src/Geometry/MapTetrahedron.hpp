@@ -13,6 +13,9 @@ namespace Gedim
       {
           Eigen::Matrix3d Q;
           Eigen::Vector3d b;
+          Eigen::Matrix3d QInv;
+          double DetQ;
+          double DetQInv;
       };
 
     private:
@@ -69,7 +72,7 @@ namespace Gedim
 
       inline Eigen::MatrixXd FInv(const MapTetrahedronData& mapData,
                                   const Eigen::MatrixXd& x) const
-      { return mapData.Q.inverse() * (x.colwise() - mapData.b); }
+      { return mapData.QInv * (x.colwise() - mapData.b); }
 
       /// Compute the jacobian matrix of the transformation F
       /// \param mapData the map data computed
@@ -89,7 +92,7 @@ namespace Gedim
       /// \return the determinant of Jacobian matrix
       inline double DetJ(const MapTetrahedronData& mapData) const
       {
-        return mapData.Q.determinant();
+        return mapData.DetQ;
       };
   };
 }
