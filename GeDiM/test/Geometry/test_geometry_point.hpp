@@ -1244,6 +1244,8 @@ namespace GedimUnitTesting {
                                                     polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace);
+      ASSERT_EQ(result.Internal_indices,
+                std::vector<unsigned int>({ 18 }));
       ASSERT_EQ(result.BorderIndex,
                 face_index);
     }
@@ -1268,6 +1270,8 @@ namespace GedimUnitTesting {
                                                     polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge);
+      ASSERT_EQ(result.Internal_indices,
+                std::vector<unsigned int>({ 21 }));
       ASSERT_EQ(result.BorderIndex,
                 edge_index);
     }
@@ -1287,6 +1291,8 @@ namespace GedimUnitTesting {
                                                     polyhedron_tetrahedrons);
       ASSERT_EQ(result.Type,
                 Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex);
+      ASSERT_EQ(result.Internal_indices,
+                std::vector<unsigned int>({ 7, 9, 12, 14, 16, 17, 19, 20 }));
       ASSERT_EQ(result.BorderIndex,
                 vertex_index);
 

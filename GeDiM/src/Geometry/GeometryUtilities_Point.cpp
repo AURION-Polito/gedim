@@ -549,7 +549,7 @@ namespace Gedim
                                              const std::vector<Eigen::MatrixXd>& polyhedron_tetrahedrons) const
   {
     PointPolyhedronPositionResult result;
-
+    result.Type = PointPolyhedronPositionResult::Types::Unknown;
     for (unsigned int f = 0; f < polyhedron_faces.size(); f++)
     {
       const Eigen::MatrixXd& faceVertices3D = polyhedron_faces_3D_vertices[f];
@@ -580,31 +580,37 @@ namespace Gedim
       const PointPolygonPositionResult pointFacePosition = PointPolygonPosition_RayCasting(point2D,
                                                                                            faceVertices2D);
 
+
+
       switch (pointFacePosition.Type)
       {
         case PointPolygonPositionResult::Types::BorderVertex:
         {
           result.Type = PointPolyhedronPositionResult::Types::BorderVertex;
           result.BorderIndex = polyhedron_faces[f](0, pointFacePosition.BorderIndex);
-          return result;
         }
+        break;
         case PointPolygonPositionResult::Types::BorderEdge:
         {
           result.Type = PointPolyhedronPositionResult::Types::BorderEdge;
           result.BorderIndex = polyhedron_faces[f](1, pointFacePosition.BorderIndex);
-          return result;
         }
+        break;
         case PointPolygonPositionResult::Types::Inside:
         {
           result.Type = PointPolyhedronPositionResult::Types::BorderFace;
           result.BorderIndex = f;
-          return result;
         }
+        break;
         case PointPolygonPositionResult::Types::Unknown:
           throw runtime_error("Not managed pointFacePosition");
         default:
           continue;
       }
+
+
+      if(result.Type != PointPolyhedronPositionResult::Types::Unknown)
+          break;
     }
 
     std::list<unsigned int> find_tetra;
@@ -625,7 +631,9 @@ namespace Gedim
       return result;
     }
 
-    result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+    if(result.Type == PointPolyhedronPositionResult::Types::Unknown)
+        result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+
     result.Internal_indices = std::vector<unsigned int>(find_tetra.begin(),
                                                         find_tetra.end());
 
