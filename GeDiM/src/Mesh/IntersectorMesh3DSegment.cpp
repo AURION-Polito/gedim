@@ -166,8 +166,8 @@ namespace Gedim
                                                                                                       face_rotation.transpose(),
                                                                                                       face_translation);
 
-        if (geometryUtilities.IsPointInsidePolygon(segment_intersection_face_2D,
-                                                   face_2D_vertices))
+        if (geometryUtilities.IsPointInsidePolygon_RayCasting(segment_intersection_face_2D,
+                                                              face_2D_vertices))
         {
           InsertNewIntersection(segment_intersection_coordinate,
                                 mesh3D,
