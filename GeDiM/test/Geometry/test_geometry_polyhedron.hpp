@@ -2370,6 +2370,7 @@ namespace GedimUnitTesting
     try
     {
       Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+      geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
       Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
       // check inertia of reference tetra 3D
@@ -2434,12 +2435,12 @@ namespace GedimUnitTesting
         ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 0), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
         ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 1), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
         ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 2), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 1), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 0), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 2), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 0), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 2), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 1), -1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
       }
     }
     catch (const exception& exception)
