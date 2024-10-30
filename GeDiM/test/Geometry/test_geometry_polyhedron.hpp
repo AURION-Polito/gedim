@@ -2429,18 +2429,18 @@ namespace GedimUnitTesting
 
 
 
-        const Eigen::Matrix3d polygonInertia = geometryUtilities.PolyhedronInertia(polyhedronCentroid,
+        const Eigen::Matrix3d polyhedronInertia = geometryUtilities.PolyhedronInertia(polyhedronCentroid,
                                                                                    polyhedronTetrahedronPoints);
 
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 0), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 1), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 2), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(0, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(1, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polygonInertia(2, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(0, 0), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(1, 1), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(2, 2), +1.0 / 80.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(0, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(1, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(0, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(2, 0), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(1, 2), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(polyhedronInertia(2, 1), +1.0 / 480.0, geometryUtilities.Tolerance1D()));
       }
     }
     catch (const exception& exception)
