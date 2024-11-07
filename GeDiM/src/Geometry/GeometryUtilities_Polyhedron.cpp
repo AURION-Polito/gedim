@@ -502,6 +502,91 @@ namespace Gedim
     return faceBarycenters;
   }
   // ***************************************************************************
+  Matrix3d GeometryUtilities::PolyhedronInertia(const Eigen::Vector3d& polyhedronCentroid,
+                                                const std::vector<Eigen::MatrixXd>& polyhedronTetrahedraPoints) const
+  {
+    // Create reference quadrature points
+    Eigen::MatrixXd referencePoints = Eigen::MatrixXd::Zero(3, 4);
+    referencePoints(0,0) = 3.6531451881463450e-01;
+    referencePoints(0,1) = 4.5746158708559548e-01;
+    referencePoints(0,2) = 3.7551502872933986e-04;
+    referencePoints(0,3) = 1.2366680032845828e-01;
+    referencePoints(1,0) = 1.8002969351036546e-01;
+    referencePoints(1,1) = 1.5593312049918590e-01;
+    referencePoints(1,2) = 2.1607642918484790e-01;
+    referencePoints(1,3) = 8.2157254096761967e-01;
+    referencePoints(2,0) = 6.9232355736274656e-03;
+    referencePoints(2,1) = 3.8176535606934675e-01;
+    referencePoints(2,2) = 4.3070170707783589e-01;
+    referencePoints(2,3) = 3.9933048641498409e-02;
+    Eigen::VectorXd referenceWeights(4);
+    referenceWeights[0] = 5.0086823222829355e-02;
+    referenceWeights[1] = 4.6462929447761252e-02;
+    referenceWeights[2] = 5.3182322583579078e-02;
+    referenceWeights[3] = 1.6934591412496775e-02;
+
+    // Create polygon quadrature points
+    const unsigned int numPolyhedronTetra = polyhedronTetrahedraPoints.size();
+
+    const unsigned int numTetraQuadraturePoints = referencePoints.cols();
+    const unsigned int numPolyhedronQuadraturePoints = numPolyhedronTetra *
+                                                       numTetraQuadraturePoints;
+
+    Eigen::MatrixXd polyhedronQuadraturePoints = Eigen::MatrixXd::Zero(3, numPolyhedronQuadraturePoints);
+    Eigen::VectorXd polyhedronQuadratureWeights = Eigen::VectorXd::Zero(numPolyhedronQuadraturePoints);
+
+    Gedim::MapTetrahedron mapTetra(*this);
+
+    for (unsigned int t = 0; t < numPolyhedronTetra; t++)
+    {
+      const Eigen::MatrixXd& tetraVertices = polyhedronTetrahedraPoints[t];
+
+      Gedim::MapTetrahedron::MapTetrahedronData mapData = mapTetra.Compute(tetraVertices);
+      polyhedronQuadraturePoints.block(0,
+                                       numTetraQuadraturePoints * t,
+                                       3,
+                                       numTetraQuadraturePoints) = mapTetra.F(mapData,
+                                                                              referencePoints);
+      polyhedronQuadratureWeights.segment(numTetraQuadraturePoints * t,
+                                          numTetraQuadraturePoints) = referenceWeights *
+                                                                      abs(mapData.DetQ);
+
+    }
+
+    // Compute Inertia Matrix
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+
+    inertia(0, 0) = ((
+                       (polyhedronQuadraturePoints.row(1).array() - polyhedronCentroid.y()).square() +
+                       (polyhedronQuadraturePoints.row(2).array() - polyhedronCentroid.z()).square()
+                       ) *
+                     polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(1, 1) = ((
+                       (polyhedronQuadraturePoints.row(0).array() - polyhedronCentroid.x()).square() +
+                       (polyhedronQuadraturePoints.row(2).array() - polyhedronCentroid.z()).square()
+                       ) *
+                     polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(2, 2) = ((
+                       (polyhedronQuadraturePoints.row(1).array() - polyhedronCentroid.y()).square() +
+                       (polyhedronQuadraturePoints.row(0).array() - polyhedronCentroid.x()).square()
+                       ) *
+                     polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(0, 1) = - ((polyhedronQuadraturePoints.row(0).array() - polyhedronCentroid.x()) *
+                       (polyhedronQuadraturePoints.row(1).array() - polyhedronCentroid.y()) *
+                       polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(0, 2) = - ((polyhedronQuadraturePoints.row(0).array() - polyhedronCentroid.x()) *
+                       (polyhedronQuadraturePoints.row(2).array() - polyhedronCentroid.z()) *
+                       polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(1, 2) = - ((polyhedronQuadraturePoints.row(1).array() - polyhedronCentroid.y()) *
+                       (polyhedronQuadraturePoints.row(2).array() - polyhedronCentroid.z()) *
+                       polyhedronQuadratureWeights.transpose().array()).sum();
+    inertia(1, 0) = inertia(0, 1);
+    inertia(2, 0) = inertia(0, 2);
+    inertia(2, 1) = inertia(1, 2);
+
+    return inertia;
+  }
+  // ***************************************************************************
   bool GeometryUtilities::PolyhedronIsConvex(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices,
                                              const std::vector<MatrixXd>& polyhedronFaceRotatedVertices,
                                              const std::vector<Eigen::Vector3d>& polyhedronFaceInternalPoints,
