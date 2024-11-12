@@ -79,7 +79,7 @@ namespace Gedim
     Eigen::MatrixXd tangents = Eigen::MatrixXd::Zero(3, 2);
 
     tangents.col(0)<< (polygonVertices.col(1) - polygonVertices.col(0)).normalized();
-    tangents.col(1)<< tangents.col(0).cross(polygonNormal).normalized();
+    tangents.col(1)<< polygonNormal.cross(Eigen::Vector3d(tangents.col(0))).normalized();
 
     return tangents;
   }
