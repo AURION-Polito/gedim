@@ -1237,6 +1237,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
 
@@ -1452,6 +1453,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(mesh.Cell3DTotalNumber());
 
@@ -1799,6 +1801,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(mesh.Cell3DTotalNumber());
 

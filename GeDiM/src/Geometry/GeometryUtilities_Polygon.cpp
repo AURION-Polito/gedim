@@ -73,6 +73,17 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
+  Eigen::MatrixXd GeometryUtilities::PolygonTangents(const Eigen::MatrixXd& polygonVertices,
+                                                     const Eigen::Vector3d& polygonNormal) const
+  {
+    Eigen::MatrixXd tangents = Eigen::MatrixXd::Zero(3, 2);
+
+    tangents.col(0)<< (polygonVertices.col(1) - polygonVertices.col(0)).normalized();
+    tangents.col(1)<< tangents.col(0).cross(polygonNormal).normalized();
+
+    return tangents;
+  }
+  // ***************************************************************************
   MatrixXd GeometryUtilities::PolygonEdgesCentroid(const Eigen::MatrixXd& polygonVertices) const
   {
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
