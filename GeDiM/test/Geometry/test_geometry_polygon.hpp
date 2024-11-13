@@ -33,6 +33,16 @@ namespace GedimUnitTesting
         ASSERT_DOUBLE_EQ(normal[1], 0.0);
         ASSERT_DOUBLE_EQ(normal[2], 1.0);
 
+        const auto tangents = geometryUtilities.PolygonTangents(polygonVertices,
+                                                                normal);
+        ASSERT_DOUBLE_EQ(tangents(0, 0), 1.0);
+        ASSERT_DOUBLE_EQ(tangents(1, 0), 0.0);
+        ASSERT_DOUBLE_EQ(tangents(2, 0), 0.0);
+
+        ASSERT_DOUBLE_EQ(tangents(0, 1), 0.0);
+        ASSERT_DOUBLE_EQ(tangents(1, 1), 1.0);
+        ASSERT_DOUBLE_EQ(tangents(2, 1), 0.0);
+
         Eigen::VectorXd edgeLengths = geometryUtilities.PolygonEdgeLengths(polygonVertices);
         ASSERT_EQ(edgeLengths, (Eigen::VectorXd(3) << 1.0,sqrt(2.0),1.0).finished());
 
@@ -51,9 +61,19 @@ namespace GedimUnitTesting
         polygonVertices.col(2)<< 0.0, 0.0, 1.0;
 
         Eigen::Vector3d normal = geometryUtilities.PolygonNormal(polygonVertices);
-        ASSERT_DOUBLE_EQ(normal[0], 1.0 / sqrt(3));
-        ASSERT_DOUBLE_EQ(normal[1], 1.0 / sqrt(3));
-        ASSERT_DOUBLE_EQ(normal[2], 1.0 / sqrt(3));
+        ASSERT_DOUBLE_EQ(normal[0], 1.0 / sqrt(3.0));
+        ASSERT_DOUBLE_EQ(normal[1], 1.0 / sqrt(3.0));
+        ASSERT_DOUBLE_EQ(normal[2], 1.0 / sqrt(3.0));
+
+        const auto tangents = geometryUtilities.PolygonTangents(polygonVertices,
+                                                                normal);
+        ASSERT_DOUBLE_EQ(tangents(0, 0), -1.0 / sqrt(2.0));
+        ASSERT_DOUBLE_EQ(tangents(1, 0), +1.0 / sqrt(2.0));
+        ASSERT_DOUBLE_EQ(tangents(2, 0), 0.0);
+
+        ASSERT_DOUBLE_EQ(tangents(0, 1), -1.0 / sqrt(6.0));
+        ASSERT_DOUBLE_EQ(tangents(1, 1), -1.0 / sqrt(6.0));
+        ASSERT_DOUBLE_EQ(tangents(2, 1), +2.0 / sqrt(6.0));
       }
     }
     catch (const exception& exception)
