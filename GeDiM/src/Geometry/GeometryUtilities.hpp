@@ -2169,6 +2169,11 @@ namespace Gedim
       /// \return for each polyhedron face the normal
       std::vector<Eigen::Vector3d> PolyhedronFaceNormals(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
+      std::vector<Eigen::MatrixXd> PolyhedronFaceTangents(const std::vector<Eigen::MatrixXd>& polyhedronFacesVertices,
+                                                          const std::vector<Eigen::Vector3d>& polyhedronFacesNormal,
+                                                          const std::vector<bool>& polyhedronFacesNormalDirection) const;
+
+
       /// \brief Compute Polyhedron Faces barycenters
       /// \param polyhedronFaceVertices the polyhedron faces vertices
       /// \return for each polyhedron face the barycenter

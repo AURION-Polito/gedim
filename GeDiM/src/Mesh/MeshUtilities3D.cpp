@@ -1291,6 +1291,7 @@ namespace Gedim
                                                                                   result.Cell3DsFaces[c]);
       result.Cell3DsFacesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(result.Cell3DsFaces3DVertices[c]);
       result.Cell3DsFacesNormals[c] = geometryUtilities.PolyhedronFaceNormals(result.Cell3DsFaces3DVertices[c]);
+
       result.Cell3DsFacesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(result.Cell3DsFaces3DVertices[c],
                                                                                                 result.Cell3DsFacesNormals[c],
                                                                                                 result.Cell3DsFacesTranslations[c]);
@@ -1403,6 +1404,10 @@ namespace Gedim
                                                                                                 geometryUtilities.PolyhedronBarycenter(result.Cell3DsVertices[c]),
                                                                                                 result.Cell3DsFacesNormals[c]);
 
+
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
 
       result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(result.Cell3DsFaces2DTriangulations[c],
                                                                                       result.Cell3DsFacesNormals[c],
@@ -1773,6 +1778,10 @@ namespace Gedim
         result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValuePositive(faceNormal.dot(outgoingFaceNormal),
                                                                                       geometryUtilities.Tolerance1DSquared());
       }
+
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
     }
 
     return result;
@@ -2114,6 +2123,10 @@ namespace Gedim
         result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValuePositive(faceNormal.dot(outgoingFaceNormal),
                                                                                       geometryUtilities.Tolerance1DSquared());
       }
+
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
     }
 
     return result;
