@@ -144,8 +144,10 @@ namespace Gedim
           std::vector<std::vector<Eigen::Vector3d>> Cell3DsFacesTranslations;
           std::vector<std::vector<Eigen::Matrix3d>> Cell3DsFacesRotationMatrices;
           std::vector<std::vector<Eigen::Vector3d>> Cell3DsFacesNormals;
-          std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesTangents;
+          std::vector<std::vector<std::array<Eigen::Vector3d, 2>>> Cell3DsFacesTangents;
           std::vector<std::vector<bool>> Cell3DsFacesNormalDirections;
+          std::vector<std::vector<bool>> Cell3DsFacesNormalGlobalDirection;
+          std::vector<std::vector<std::array<bool, 2>>> Cell3DsFacesTangentsGlobalDirection;
           std::vector<std::vector<std::vector<bool>>> Cell3DsFacesEdgeDirections;
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces3DVertices; ///< faces vertices 3D coordinates
           std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces2DVertices; ///< faces vertices 2D coordinates

@@ -73,13 +73,13 @@ namespace Gedim
     return normal.normalized();
   }
   // ***************************************************************************
-  Eigen::MatrixXd GeometryUtilities::PolygonTangents(const Eigen::MatrixXd& polygonVertices,
-                                                     const Eigen::Vector3d& polygonNormal) const
+  std::array<Eigen::Vector3d, 2> GeometryUtilities::PolygonTangents(const Eigen::MatrixXd& polygonVertices,
+                                                                    const Eigen::Vector3d& polygonNormal) const
   {
-    Eigen::MatrixXd tangents = Eigen::MatrixXd::Zero(3, 2);
+    std::array<Eigen::Vector3d, 2> tangents;
 
-    tangents.col(0)<< (polygonVertices.col(1) - polygonVertices.col(0)).normalized();
-    tangents.col(1)<< polygonNormal.cross(Eigen::Vector3d(tangents.col(0))).normalized();
+    tangents[0] = (polygonVertices.col(1) - polygonVertices.col(0)).normalized();
+    tangents[1] = polygonNormal.cross(Eigen::Vector3d(tangents.at(0))).normalized();
 
     return tangents;
   }
