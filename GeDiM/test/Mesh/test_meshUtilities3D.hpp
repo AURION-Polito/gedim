@@ -2250,6 +2250,7 @@ namespace GedimUnitTesting
     const auto cell1Ds_geometric_data = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
                                                                               mesh_3D);
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh_3D);
     const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                               mesh_3D);
 
