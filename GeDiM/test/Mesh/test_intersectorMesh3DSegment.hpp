@@ -34,6 +34,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentFullInsideOneCell)
     GedimUnitTesting::MeshMatrices_3D_1Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh3D(mockMesh.Mesh);
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh3D);
     const Gedim::MeshUtilities::MeshGeometricData3D mesh3D_geometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                                  mesh3D);
 
