@@ -386,6 +386,9 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
   {
+    std::string exportFolder = "./Export/TestFillMesh3DGeometricData_Convex";
+    Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -399,6 +402,11 @@ namespace GedimUnitTesting
     Gedim::MeshUtilities meshUtilities;
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "mesh");
+
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao);
 
