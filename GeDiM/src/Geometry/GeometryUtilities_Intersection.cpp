@@ -286,7 +286,7 @@ namespace Gedim
 
     // check if t is not zero and plane normal is normalized
     Gedim::Output::Assert(CompareValues(planeNormal.norm(), 1.0, Tolerance1D()) == CompareTypes::Coincident);
-    Gedim::Output::Assert(IsValuePositive(t.squaredNorm(), Tolerance1DSquared()));
+    Gedim::Output::Assert(IsValuePositive(t.norm(), Tolerance1D()));
 
     // check if the plane normal n is perpendicular to segment tangent t
     if (IsValueZero(planeNormal.dot(t.normalized()), Tolerance1DSquared()))
