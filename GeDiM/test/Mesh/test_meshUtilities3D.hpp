@@ -275,6 +275,7 @@ namespace GedimUnitTesting
                                               exportFolder + "/MeshData.txt");
     }
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
     Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                            meshDao);
 
@@ -385,6 +386,9 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
   {
+    std::string exportFolder = "./Export/TestFillMesh3DGeometricData_Convex";
+    Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -396,6 +400,12 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao,
+                                  exportFolder,
+                                  "mesh");
 
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao);
@@ -443,6 +453,8 @@ namespace GedimUnitTesting
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ConcaveMesh");
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao,
@@ -575,6 +587,8 @@ namespace GedimUnitTesting
     meshUtilities.ExportMeshToVTU(meshDao,
                                   exportFolder,
                                   "ConcaveMesh");
+
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
     const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                            meshDao);
@@ -1359,6 +1373,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
     const Gedim::MeshUtilities::MeshGeometricData3D meshGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                               mesh);
 
@@ -1841,6 +1857,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     const Gedim::MeshUtilities::MeshGeometricData3D mesh_geometry_data =
         meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                               meshDao);
@@ -2066,6 +2084,7 @@ namespace GedimUnitTesting
       return marks;
     };
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
     const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                            meshDao);
 
@@ -2231,6 +2250,7 @@ namespace GedimUnitTesting
     const auto cell1Ds_geometric_data = meshUtilities.FillMesh1DGeometricData(geometryUtilities,
                                                                               mesh_3D);
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh_3D);
     const auto cell3Ds_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                               mesh_3D);
 

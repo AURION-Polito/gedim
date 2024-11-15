@@ -1559,8 +1559,8 @@ namespace Gedim
       /// \return the resulting normalized normal
       Eigen::Vector3d PolygonNormal(const Eigen::MatrixXd& polygonVertices) const;
 
-      Eigen::MatrixXd PolygonTangents(const Eigen::MatrixXd& polygonVertices,
-                                      const Eigen::Vector3d& polygonNormal) const;
+      std::array<Eigen::Vector3d, 2> PolygonTangents(const Eigen::MatrixXd& polygonVertices,
+                                                     const Eigen::Vector3d& polygonNormal) const;
 
       /// \brief Compute the Polygon edges centroid
       /// \param polygonVertices the matrix of vertices of the polygon (size 3 x numVertices)
@@ -2169,9 +2169,9 @@ namespace Gedim
       /// \return for each polyhedron face the normal
       std::vector<Eigen::Vector3d> PolyhedronFaceNormals(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
-      std::vector<Eigen::MatrixXd> PolyhedronFaceTangents(const std::vector<Eigen::MatrixXd>& polyhedronFacesVertices,
-                                                          const std::vector<Eigen::Vector3d>& polyhedronFacesNormal,
-                                                          const std::vector<bool>& polyhedronFacesNormalDirection) const;
+      std::vector<std::array<Eigen::Vector3d, 2>> PolyhedronFaceTangents(const std::vector<Eigen::MatrixXd>& polyhedronFacesVertices,
+                                                                         const std::vector<Eigen::Vector3d>& polyhedronFacesNormal,
+                                                                         const std::vector<bool>& polyhedronFacesNormalDirection) const;
 
 
       /// \brief Compute Polyhedron Faces barycenters
