@@ -588,6 +588,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ConcaveMesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                            meshDao);
     std::vector<std::vector<Eigen::MatrixXd>> cell3Ds_tetra_vertices(meshDao.Cell3DTotalNumber());
@@ -1371,6 +1373,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
     const Gedim::MeshUtilities::MeshGeometricData3D meshGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                               mesh);
 
@@ -1853,6 +1857,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "Mesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     const Gedim::MeshUtilities::MeshGeometricData3D mesh_geometry_data =
         meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                               meshDao);
@@ -2078,6 +2084,7 @@ namespace GedimUnitTesting
       return marks;
     };
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
     const auto mesh_geometric_data = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                            meshDao);
 
