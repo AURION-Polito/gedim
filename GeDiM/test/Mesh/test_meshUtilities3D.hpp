@@ -454,6 +454,8 @@ namespace GedimUnitTesting
                                   exportFolder,
                                   "ConcaveMesh");
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
+
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao,
                                                                                                    meshDao,

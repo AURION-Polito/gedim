@@ -1413,6 +1413,7 @@ namespace Gedim
 
       result.Cell3DsFacesNormalGlobalDirection[c].resize(numFaces);
       result.Cell3DsFacesTangentsGlobalDirection[c].resize(numFaces);
+
       for (unsigned int f = 0; f < numFaces; ++f)
       {
         const unsigned int cell2D_index = convexMesh.Cell3DFace(c, f);
@@ -1434,10 +1435,10 @@ namespace Gedim
 
         result.Cell3DsFacesTangentsGlobalDirection[c][f][0] =
             result.Cell3DsFacesEdgeDirections[c][f][0];
+        result.Cell3DsFacesTangentsGlobalDirection[c][f][1] =
+            result.Cell3DsFacesTangentsGlobalDirection[c][f][0] ==
+            result.Cell3DsFacesNormalGlobalDirection[c][f];
       }
-      std::cout<< "C "<< c<< "\n";
-      std::cout<< "\tn:"<< result.Cell3DsFacesNormalGlobalDirection[c]<< "\n";
-      std::cout<< "\tt:"<< result.Cell3DsFacesTangentsGlobalDirection[c]<< std::endl;
 
       result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(result.Cell3DsFaces2DTriangulations[c],
                                                                                       result.Cell3DsFacesNormals[c],
@@ -1814,6 +1815,34 @@ namespace Gedim
       result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
                                                                                 result.Cell3DsFacesNormals[c],
                                                                                 result.Cell3DsFacesNormalDirections[c]);
+      result.Cell3DsFacesNormalGlobalDirection[c].resize(numFaces);
+      result.Cell3DsFacesTangentsGlobalDirection[c].resize(numFaces);
+
+      for (unsigned int f = 0; f < numFaces; ++f)
+      {
+        const unsigned int cell2D_index = mesh.Cell3DFace(c, f);
+
+        Gedim::Output::Assert(mesh.Cell2DNumberNeighbourCell3D(cell2D_index) > 0);
+        unsigned int first_cell3D_neigh_position = 0;
+        for (unsigned int f_n = 0; f_n < mesh.Cell2DNumberNeighbourCell3D(cell2D_index); ++f_n)
+        {
+          if (!mesh.Cell2DHasNeighbourCell3D(cell2D_index, f_n))
+            continue;
+
+          first_cell3D_neigh_position = f_n;
+          break;
+        }
+
+        result.Cell3DsFacesNormalGlobalDirection[c][f] =
+            mesh.Cell2DNeighbourCell3D(cell2D_index,
+                                             first_cell3D_neigh_position) == c;
+
+        result.Cell3DsFacesTangentsGlobalDirection[c][f][0] =
+            result.Cell3DsFacesEdgeDirections[c][f][0];
+        result.Cell3DsFacesTangentsGlobalDirection[c][f][1] =
+            result.Cell3DsFacesTangentsGlobalDirection[c][f][0] ==
+            result.Cell3DsFacesNormalGlobalDirection[c][f];
+      }
     }
 
     return result;
@@ -2161,6 +2190,35 @@ namespace Gedim
       result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
                                                                                 result.Cell3DsFacesNormals[c],
                                                                                 result.Cell3DsFacesNormalDirections[c]);
+
+      result.Cell3DsFacesNormalGlobalDirection[c].resize(numFaces);
+      result.Cell3DsFacesTangentsGlobalDirection[c].resize(numFaces);
+
+      for (unsigned int f = 0; f < numFaces; ++f)
+      {
+        const unsigned int cell2D_index = mesh.Cell3DFace(c, f);
+
+        Gedim::Output::Assert(mesh.Cell2DNumberNeighbourCell3D(cell2D_index) > 0);
+        unsigned int first_cell3D_neigh_position = 0;
+        for (unsigned int f_n = 0; f_n < mesh.Cell2DNumberNeighbourCell3D(cell2D_index); ++f_n)
+        {
+          if (!mesh.Cell2DHasNeighbourCell3D(cell2D_index, f_n))
+            continue;
+
+          first_cell3D_neigh_position = f_n;
+          break;
+        }
+
+        result.Cell3DsFacesNormalGlobalDirection[c][f] =
+            mesh.Cell2DNeighbourCell3D(cell2D_index,
+                                             first_cell3D_neigh_position) == c;
+
+        result.Cell3DsFacesTangentsGlobalDirection[c][f][0] =
+            result.Cell3DsFacesEdgeDirections[c][f][0];
+        result.Cell3DsFacesTangentsGlobalDirection[c][f][1] =
+            result.Cell3DsFacesTangentsGlobalDirection[c][f][0] ==
+            result.Cell3DsFacesNormalGlobalDirection[c][f];
+      }
     }
 
     return result;
