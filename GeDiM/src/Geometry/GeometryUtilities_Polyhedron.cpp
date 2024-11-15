@@ -491,6 +491,25 @@ namespace Gedim
     return faceNormals;
   }
   // ***************************************************************************
+  std::vector<MatrixXd> GeometryUtilities::PolyhedronFaceTangents(const std::vector<Eigen::MatrixXd>& polyhedronFacesVertices,
+                                                                  const std::vector<Eigen::Vector3d>& polyhedronFacesNormal,
+                                                                  const std::vector<bool>& polyhedronFacesNormalDirection) const
+  {
+    vector<MatrixXd> facesTangents;
+    facesTangents.reserve(polyhedronFacesVertices.size());
+
+    for (unsigned int f = 0; f < polyhedronFacesVertices.size(); f++)
+    {
+      const double normal_direction = polyhedronFacesNormalDirection.at(f) ?
+                                        +1.0 : -1.0;
+      facesTangents.push_back(PolygonTangents(polyhedronFacesVertices.at(f),
+                                              normal_direction *
+                                              polyhedronFacesNormal.at(f)));
+    }
+
+    return facesTangents;
+  }
+  // ***************************************************************************
   vector<Vector3d> GeometryUtilities::PolyhedronFaceBarycenter(const vector<Eigen::MatrixXd>& polyhedronFaceVertices) const
   {
     vector<Vector3d> faceBarycenters;

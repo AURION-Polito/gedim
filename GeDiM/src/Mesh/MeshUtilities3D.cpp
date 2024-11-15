@@ -1237,6 +1237,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(convexMesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(convexMesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(convexMesh.Cell3DTotalNumber());
 
@@ -1290,6 +1291,7 @@ namespace Gedim
                                                                                   result.Cell3DsFaces[c]);
       result.Cell3DsFacesTranslations[c] = geometryUtilities.PolyhedronFaceTranslations(result.Cell3DsFaces3DVertices[c]);
       result.Cell3DsFacesNormals[c] = geometryUtilities.PolyhedronFaceNormals(result.Cell3DsFaces3DVertices[c]);
+
       result.Cell3DsFacesRotationMatrices[c] = geometryUtilities.PolyhedronFaceRotationMatrices(result.Cell3DsFaces3DVertices[c],
                                                                                                 result.Cell3DsFacesNormals[c],
                                                                                                 result.Cell3DsFacesTranslations[c]);
@@ -1403,6 +1405,10 @@ namespace Gedim
                                                                                                 result.Cell3DsFacesNormals[c]);
 
 
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
+
       result.Cell3DsVolumes[c] = geometryUtilities.PolyhedronVolumeByBoundaryIntegral(result.Cell3DsFaces2DTriangulations[c],
                                                                                       result.Cell3DsFacesNormals[c],
                                                                                       result.Cell3DsFacesNormalDirections[c],
@@ -1452,6 +1458,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(mesh.Cell3DTotalNumber());
 
@@ -1771,6 +1778,10 @@ namespace Gedim
         result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValuePositive(faceNormal.dot(outgoingFaceNormal),
                                                                                       geometryUtilities.Tolerance1DSquared());
       }
+
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
     }
 
     return result;
@@ -1799,6 +1810,7 @@ namespace Gedim
     result.Cell3DsFacesTranslations.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesRotationMatrices.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormals.resize(mesh.Cell3DTotalNumber());
+    result.Cell3DsFacesTangents.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesNormalDirections.resize(mesh.Cell3DTotalNumber());
     result.Cell3DsFacesEdgeDirections.resize(mesh.Cell3DTotalNumber());
 
@@ -2111,6 +2123,10 @@ namespace Gedim
         result.Cell3DsFacesNormalDirections[c][f] = geometryUtilities.IsValuePositive(faceNormal.dot(outgoingFaceNormal),
                                                                                       geometryUtilities.Tolerance1DSquared());
       }
+
+      result.Cell3DsFacesTangents[c] = geometryUtilities.PolyhedronFaceTangents(result.Cell3DsFaces3DVertices[c],
+                                                                                result.Cell3DsFacesNormals[c],
+                                                                                result.Cell3DsFacesNormalDirections[c]);
     }
 
     return result;
