@@ -275,6 +275,7 @@ namespace GedimUnitTesting
                                               exportFolder + "/MeshData.txt");
     }
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
     Gedim::MeshUtilities::MeshGeometricData3D cell3DsGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                            meshDao);
 
@@ -397,6 +398,7 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities meshUtilities;
 
+    meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities,
                                                                                                    meshDao);
 
