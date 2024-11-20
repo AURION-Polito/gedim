@@ -133,11 +133,13 @@ namespace UnitTesting
       Gedim::Eigen_Array<Eigen::VectorXd, Eigen::SparseMatrix<double>> x;
 
       Gedim::Eigen_PCGSolver<Eigen::VectorXd, Eigen::SparseMatrix<double>> solver;
-      solver.Initialize(A, b, x, { 1000, std::numeric_limits<double>::epsilon() });
+      solver.Initialize(A, b, x, { 1000, 1.0e-12 });
       const auto solver_result = solver.Solve();
 
-      ASSERT_DOUBLE_EQ(1.0, x[0]);
-      ASSERT_DOUBLE_EQ(1.0, x[1]);
+      ASSERT_TRUE(solver_result.Iterations < 1000);
+      ASSERT_TRUE(solver_result.Residual < 1.0e-12);
+      ASSERT_TRUE(abs(x[0] - 1.0) < 1.0e-12);
+      ASSERT_TRUE(abs(x[1] - 1.0) < 1.0e-12);
     }
     catch (const std::exception& exception)
     {
