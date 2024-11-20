@@ -104,6 +104,7 @@ namespace Gedim
     switch (matrix.Type())
     {
       case ISparseArray::SparseArrayTypes::Symmetric:
+        throw std::runtime_error("Matrix symmetric type not supported");
       case ISparseArray::SparseArrayTypes::None:
       case ISparseArray::SparseArrayTypes::Lower:
       case ISparseArray::SparseArrayTypes::Upper:

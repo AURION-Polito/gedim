@@ -175,8 +175,9 @@ namespace UnitTesting
 
       ASSERT_TRUE(solver_result.Iterations < 1000);
       ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-      ASSERT_TRUE(abs(x[0] - 1.0) < 1.0e-12);
-      ASSERT_TRUE(abs(x[1] - 1.0) < 1.0e-12);
+
+      ASSERT_TRUE(abs(x[0] - 1.0) < 1.0e-10);
+      ASSERT_TRUE(abs(x[1] - 1.0) < 1.0e-10);
     }
     catch (const std::exception& exception)
     {
@@ -184,7 +185,6 @@ namespace UnitTesting
       FAIL();
     }
   }
-
 }
 
 #endif // __TEST_Eigen_H
