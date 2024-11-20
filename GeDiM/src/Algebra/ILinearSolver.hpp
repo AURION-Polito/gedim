@@ -32,7 +32,7 @@ namespace Gedim
       virtual void Initialize(const ISparseArray& matrix,
                               const IArray& rightHandSide,
                               IArray& solution,
-                              const Configuration& config = Configuration()) = 0;
+                              const Configuration& config = { 100, 1e-6 }) = 0;
 
       /// \brief Compute the solution
       virtual SolutionInfo Solve() const = 0;
@@ -40,7 +40,7 @@ namespace Gedim
       /// \brief Initialize the linear solver for system Ax = b
       /// \param matrix The matrix A
       virtual void Initialize(const ISparseArray& matrix,
-                              const Configuration& config = Configuration()) = 0;
+                              const Configuration& config = { 100, 1e-6 }) = 0;
 
       /// \brief Compute the solution for system Ax = b
       /// \param rightHandSide The right-hand side b

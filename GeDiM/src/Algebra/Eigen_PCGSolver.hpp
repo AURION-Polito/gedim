@@ -16,7 +16,7 @@ namespace Gedim
       Eigen_SolverType linearSolver; ///< The solver
       const IArray* _rightHandSide; ///< The rightHandSide of the linear syste
       IArray* _solution; ///< The solution of the linear syste
-      const Configuration* _config;
+      Configuration _config;
 
     public:
       Eigen_PCGSolver();
@@ -25,16 +25,16 @@ namespace Gedim
       void Initialize(const ISparseArray& matrix,
                       const IArray& rightHandSide,
                       IArray& solution,
-                      const Configuration& config = Configuration());
+                      const Configuration& config = { 100, 1e-6 });
 
       void Initialize(const IArray& rightHandSide,
                       IArray& solution,
-                      const Configuration& config = Configuration());
+                      const Configuration& config = { 100, 1e-6 });
 
       ILinearSolver::SolutionInfo Solve() const;
 
       void Initialize(const ISparseArray& matrix,
-                      const Configuration& config = Configuration());
+                      const Configuration& config = { 100, 1e-6 });
       ILinearSolver::SolutionInfo Solve(const IArray& rightHandSide,
                                         IArray& solution) const;
   };

@@ -49,9 +49,9 @@ namespace Gedim
   {
     _rightHandSide = &rightHandSide;
     _solution = &solution;
-    _config = &configuration;
 
-    Initialize(matrix);
+    Initialize(matrix,
+               configuration);
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType,
@@ -66,7 +66,7 @@ namespace Gedim
   {
     _rightHandSide = &rightHandSide;
     _solution = &solution;
-    _config = &configuration;
+    _config = configuration;
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType,
@@ -94,12 +94,12 @@ namespace Gedim
   Eigen_SolverType>::Initialize(const ISparseArray& matrix,
                                 const Configuration& configuration)
   {
-    _config = &configuration;
+    _config = configuration;
 
     const SparseMatrix<double>& _matrix = static_cast<const Eigen_SparseArray<SparseMatrix<double>>&>(matrix);
 
-    linearSolver.setTolerance(_config->Tolerance);
-    linearSolver.setMaxIterations(_config->MaxIterations);
+    linearSolver.setTolerance(_config.Tolerance);
+    linearSolver.setMaxIterations(_config.MaxIterations);
 
     switch (matrix.Type())
     {
