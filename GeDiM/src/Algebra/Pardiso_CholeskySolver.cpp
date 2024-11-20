@@ -29,7 +29,8 @@ namespace Gedim
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
   void Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray& matrix,
                                                                                   const IArray& rightHandSide,
-                                                                                  IArray& solution)
+                                                                                  IArray& solution,
+                                                                                  const ILinearSolver::Configuration&)
   {
     _rightHandSide = &rightHandSide;
     _solution = &solution;
@@ -38,18 +39,19 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve() const
+  ILinearSolver::SolutionInfo Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve() const
   {
     if (_rightHandSide == nullptr ||
         _solution == nullptr)
       throw runtime_error("No initialization found");
 
-    Solve(*_rightHandSide,
+    return Solve(*_rightHandSide,
           *_solution);
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray& matrix)
+  void Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray& matrix,
+                                                                                  const ILinearSolver::Configuration&)
   {
 #if ENABLE_MKL
     const SparseMatrix<double>& _matrix = static_cast<const Eigen_SparseArray<SparseMatrix<double>>&>(matrix);
@@ -71,8 +73,8 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-  void Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve(const IArray& rightHandSide,
-                                                                             IArray& solution) const
+  ILinearSolver::SolutionInfo Pardiso_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType>::Solve(const IArray& rightHandSide,
+                                                                                                    IArray& solution) const
   {
 #if ENABLE_MKL
     const VectorXd& _rightHandSide = static_cast<const Eigen_Array<VectorXd>&>(rightHandSide);
@@ -87,6 +89,8 @@ namespace Gedim
     Utilities::Unused(rightHandSide);
     Utilities::Unused(solution);
 #endif
+
+    return {};
   }
   // ***************************************************************************
 }

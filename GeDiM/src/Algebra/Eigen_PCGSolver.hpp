@@ -1,25 +1,26 @@
-#ifndef __EIGENCHOLESKYSOLVER_H
-#define __EIGENCHOLESKYSOLVER_H
+#ifndef __EIGENPCGSOLVER_H
+#define __EIGENPCGSOLVER_H
 
 #include "ILinearSolver.hpp"
 #include "Eigen/Eigen"
 
 namespace Gedim
 {
-  /// \brief Eigen Cholesky Linear solver
+  /// \brief Eigen PCG Linear solver
   template<typename Eigen_ArrayType = Eigen::VectorXd,
            typename Eigen_SparseArrayType = Eigen::SparseMatrix<double>,
-           typename Eigen_SolverType = Eigen::SimplicialLDLT<Eigen_SparseArrayType, Eigen::Lower, Eigen::AMDOrdering<int>>>
-  class Eigen_CholeskySolver final : public ILinearSolver
+           typename Eigen_SolverType = Eigen::ConjugateGradient<Eigen_SparseArrayType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>>>
+  class Eigen_PCGSolver final : public ILinearSolver
   {
     private:
       Eigen_SolverType linearSolver; ///< The solver
       const IArray* _rightHandSide; ///< The rightHandSide of the linear syste
       IArray* _solution; ///< The solution of the linear syste
+      const Configuration* _config;
 
     public:
-      Eigen_CholeskySolver();
-      ~Eigen_CholeskySolver();
+      Eigen_PCGSolver();
+      ~Eigen_PCGSolver();
 
       void Initialize(const ISparseArray& matrix,
                       const IArray& rightHandSide,
@@ -39,4 +40,4 @@ namespace Gedim
   };
 }
 
-#endif // __EIGENCHOLESKYSOLVER_H
+#endif // __EIGENPCGSOLVER_H
