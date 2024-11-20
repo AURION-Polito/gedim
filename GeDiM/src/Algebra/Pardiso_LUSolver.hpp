@@ -29,14 +29,16 @@ namespace Gedim
 
       void Initialize(const ISparseArray& matrix,
                       const IArray& rightHandSide,
-                      IArray& solution);
+                      IArray& solution,
+                      const ILinearSolver::Configuration& config = Configuration());
 
-      void Solve() const;
+      ILinearSolver::SolutionInfo Solve() const;
 
-      void Initialize(const ISparseArray& matrix);
+      void Initialize(const ISparseArray& matrix,
+                      const ILinearSolver::Configuration& config = Configuration());
 
-      void Solve(const IArray& rightHandSide,
-                 IArray& solution) const;
+      ILinearSolver::SolutionInfo Solve(const IArray& rightHandSide,
+                                        IArray& solution) const;
   };
 }
 

@@ -10,6 +10,19 @@ namespace Gedim
   class ILinearSolver
   {
     public:
+      struct Configuration final
+      {
+          unsigned int MaxIterations;
+          double Tolerance;
+      };
+
+      struct SolutionInfo final
+      {
+          unsigned int Iterations;
+          double Residual;
+      };
+
+    public:
       virtual ~ILinearSolver() { }
 
       /// \brief Initialize the linear solver Ax = b
@@ -18,20 +31,22 @@ namespace Gedim
       /// \param solution The solution x
       virtual void Initialize(const ISparseArray& matrix,
                               const IArray& rightHandSide,
-                              IArray& solution) = 0;
+                              IArray& solution,
+                              const Configuration& config = { 100, 1e-6 }) = 0;
 
       /// \brief Compute the solution
-      virtual void Solve() const = 0;
+      virtual SolutionInfo Solve() const = 0;
 
       /// \brief Initialize the linear solver for system Ax = b
       /// \param matrix The matrix A
-      virtual void Initialize(const ISparseArray& matrix) = 0;
+      virtual void Initialize(const ISparseArray& matrix,
+                              const Configuration& config = { 100, 1e-6 }) = 0;
 
       /// \brief Compute the solution for system Ax = b
       /// \param rightHandSide The right-hand side b
       /// \param solution The solution x
-      virtual void Solve(const IArray& rightHandSide,
-                         IArray& solution) const = 0;
+      virtual SolutionInfo Solve(const IArray& rightHandSide,
+                                 IArray& solution) const = 0;
   };
 }
 
