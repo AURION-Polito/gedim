@@ -13,41 +13,34 @@ namespace UnitTesting
 {
   TEST(TestPETSc, TestLU_GenericMatrix)
   {
-    try
-    {
-      // generic matrix
-      // Gedim::Eigen_SparseArray<Eigen::VectorXd, Eigen::SparseMatrix<double>> A;
-      // A.SetSize(2, 2);
-      // A.Triplet(0, 0, 17);
-      // A.Triplet(0, 1, 38);
-      // A.Triplet(1, 0, 38);
-      // A.Triplet(1, 1, 85);
-      // A.Create();
+    PetscInitialize(nullptr, nullptr, nullptr, nullptr);
 
-      Gedim::PETSc_Array b;
-      b.SetSize(2);
-      b[0] = 55;
-      b[1] = 123;
+    // generic matrix
+    // Gedim::Eigen_SparseArray<Eigen::VectorXd, Eigen::SparseMatrix<double>> A;
+    // A.SetSize(2, 2);
+    // A.Triplet(0, 0, 17);
+    // A.Triplet(0, 1, 38);
+    // A.Triplet(1, 0, 38);
+    // A.Triplet(1, 1, 85);
+    // A.Create();
 
-      Gedim::PETSc_Array x;
+    Gedim::PETSc_Array b;
+    b.SetSize(2);
+    b.SetValues({0, 1}, { 55, 123 });
 
-      std::cout<< b<< std::endl;
+    Gedim::PETSc_Array x;
 
-      //Gedim::Eigen_LUSolver<Eigen::VectorXd, Eigen::SparseMatrix<double>> solver;
-      //solver.Initialize(A, b, x);
-      //solver.Solve();
+    //Gedim::Eigen_LUSolver<Eigen::VectorXd, Eigen::SparseMatrix<double>> solver;
+    //solver.Initialize(A, b, x);
+    //solver.Solve();
 
-      //ASSERT_DOUBLE_EQ(1.0, x[0]);
-      //ASSERT_DOUBLE_EQ(1.0, x[1]);
-    }
-    catch (const std::exception& exception)
-    {
-      std::cerr<< exception.what()<< std::endl;
-      FAIL();
-    }
+    //ASSERT_DOUBLE_EQ(1.0, x[0]);
+    //ASSERT_DOUBLE_EQ(1.0, x[1]);
+
+    b.Destroy();
+
+    PetscFinalize();
   }
-
-
 }
 
 #endif // ENABLE_PETSC

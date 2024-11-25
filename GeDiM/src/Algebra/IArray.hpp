@@ -15,6 +15,7 @@ namespace Gedim
 
       /// \brief Matrix create call. Last call to complete the matrix structure.
       virtual void Create() = 0;
+      virtual void Destroy() = 0;
       /// \brief Set the size the Array. Resize a Array for Eigen application.
       /// \param numCols the number of cols
       virtual void SetSize(const unsigned int& numCols) = 0;

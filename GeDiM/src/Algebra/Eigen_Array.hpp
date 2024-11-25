@@ -33,7 +33,8 @@ namespace Gedim
       inline const Eigen_ArrayType& Cast(const IArray& v) const
       { return (const Eigen_ArrayType&)static_cast<const Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
 
-      inline void Create() {  }
+      inline void Create() { }
+      inline void Destroy() { }
       inline void SetSize(const unsigned int& numCols) { _vector.setZero(numCols); }
       inline void SetSizes(const unsigned int& numCols,
                            const unsigned int& = 0) { return SetSize(numCols); }

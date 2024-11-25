@@ -33,7 +33,6 @@ namespace Gedim
       }
       ~PETSc_Array()
       {
-        VecDestroy(&_vector);
       }
 
       operator PETSc_ArrayType&() { return _vector;  }
@@ -44,6 +43,7 @@ namespace Gedim
       { return (const PETSc_ArrayType&)static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(v); }
 
       void Create();
+      inline void Destroy() { VecDestroy(&_vector); }
       inline void SetSize(const unsigned int& numCols) { SetSizes(numCols, 0); }
       void SetSizes(const unsigned int& numCols,
                     const unsigned int& numLocalCols = 0);
