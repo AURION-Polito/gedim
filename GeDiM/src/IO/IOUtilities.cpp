@@ -893,6 +893,15 @@ namespace Gedim
     return time;
   }
   // ***************************************************************************
+  double Profiler::GetTime()
+  {
+#if USE_MPI == 1
+    return MPI::Wtime();
+#elif USE_MPI == 0
+    return clock();
+#endif // USE_MPI
+  }
+  // ***************************************************************************
   void Profiler::Sleep(const unsigned int& milliseconds)
   {
 #ifdef _WIN32
@@ -930,7 +939,7 @@ namespace Gedim
     else
       localTimes.insert(pair<string, double>(nameTime, time));
   }
-// *************************************************************************
+  // *************************************************************************
   void Profiler::InsertTime(const std::string& nameTime,
                             const double& globalTime,
                             const double& localTime)

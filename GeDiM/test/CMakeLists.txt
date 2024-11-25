@@ -83,6 +83,11 @@ if(${ENABLE_METIS})
     find_package(metis CONFIG REQUIRED)
 endif()
 
+## MPI
+if(${USE_MPI})
+    find_package(MPI REQUIRED)
+endif()
+
 # Insert Sources
 ###############################################################################################
 add_subdirectory(Geometry)

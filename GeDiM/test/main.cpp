@@ -34,6 +34,9 @@
 #include "test_intersectorMesh3DSegment.hpp"
 #include "test_platonic_solid.hpp"
 #include "test_sphere_mesh_utilities.hpp"
+#include "test_PETSc.hpp"
+
+#include "petsc.h"
 
 #include <gtest/gtest.h>
 
