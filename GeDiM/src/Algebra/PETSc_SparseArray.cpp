@@ -57,6 +57,10 @@ namespace Gedim
   {
     switch (_matrixType)
     {
+      case SparseArrayTypes::Symmetric:
+      case SparseArrayTypes::Lower:
+      case SparseArrayTypes::Upper:
+      case SparseArrayTypes::Diagonal:
       case SparseArrayTypes::None:
       {
         MatSetValues(_matrix,
@@ -67,54 +71,6 @@ namespace Gedim
                      (PetscScalar*)&value,
                      ADD_VALUES);
       }
-        break;
-      case SparseArrayTypes::Symmetric: // store only lower part
-        if (j <= i)
-        {
-          MatSetValues(_matrix,
-                       1,
-                       (PetscInt*)&i,
-                       1,
-                       (PetscInt*)&j,
-                       (PetscScalar*)&value,
-                       ADD_VALUES);
-        }
-        break;
-      case SparseArrayTypes::Lower:
-        if (j <= i)
-        {
-          MatSetValues(_matrix,
-                       1,
-                       (PetscInt*)&i,
-                       1,
-                       (PetscInt*)&j,
-                       (PetscScalar*)&value,
-                       ADD_VALUES);
-        }
-        break;
-      case SparseArrayTypes::Upper:
-        if (j >= i)
-        {
-          MatSetValues(_matrix,
-                       1,
-                       (PetscInt*)&i,
-                       1,
-                       (PetscInt*)&j,
-                       (PetscScalar*)&value,
-                       ADD_VALUES);
-        }
-        break;
-      case SparseArrayTypes::Diagonal:
-        if (j == i)
-        {
-          MatSetValues(_matrix,
-                       1,
-                       (PetscInt*)&i,
-                       1,
-                       (PetscInt*)&j,
-                       (PetscScalar*)&value,
-                       ADD_VALUES);
-        }
         break;
       default:
         throw std::runtime_error("Matrix type not supported");

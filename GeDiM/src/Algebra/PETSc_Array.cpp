@@ -104,49 +104,62 @@ namespace Gedim
   void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(const ISparseArray& A,
                                                                               const IArray& w)
   {
-    throw std::runtime_error("unimplemented method");
-    const PETSc_SparseArrayType& p = A;
-    const PETSc_SparseArrayType& M = (const PETSc_SparseArrayType&)static_cast<const Mat&>(A);
+    const auto& w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(w);
+    const PETSc_ArrayType& w_PETSc = static_cast<const PETSc_ArrayType&>(w_PETSc_Array);
 
-    //    switch (A.Type())
-    //    {
-    //      case ISparseArray::SparseArrayTypes::Symmetric:
-    //        _vector += (PETSc::SparseMatrix<double>(M)).selfadjointView<Lower>() *
-    //                   Cast(w);
-    //        break;
-    //      case ISparseArray::SparseArrayTypes::None:
-    //      case ISparseArray::SparseArrayTypes::Diagonal:
-    //      case ISparseArray::SparseArrayTypes::Lower:
-    //      case ISparseArray::SparseArrayTypes::Upper:
-    //        _vector += M * Cast(w);
-    //        break;
-    //      default:
-    //        throw std::runtime_error("Matrix type not managed");
-    //    }
+    const auto& A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType>&>(A);
+    const PETSc_SparseArrayType& A_PETSc = static_cast<const PETSc_SparseArrayType&>(A_PETSc_Array);
+
+    unsigned int size = Size();
+    Vec temp;
+    VecCreate(PETSC_COMM_WORLD, &temp);
+    VecSetSizes(temp, PETSC_DECIDE, size);
+    VecSetFromOptions(temp);
+
+    switch (A.Type())
+    {
+      case ISparseArray::SparseArrayTypes::Symmetric:
+      case ISparseArray::SparseArrayTypes::None:
+      case ISparseArray::SparseArrayTypes::Diagonal:
+      case ISparseArray::SparseArrayTypes::Lower:
+      case ISparseArray::SparseArrayTypes::Upper:
+        MatMult(A_PETSc, w_PETSc, temp);
+        VecAXPY(_vector, 1.0, temp);
+        break;
+      default:
+        throw std::runtime_error("Matrix type not managed");
+    }
   }
   // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
   void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SubtractionMultiplication(const ISparseArray& A,
                                                                                       const IArray& w)
   {
-    throw std::runtime_error("unimplemented method");
-    //    const PETSc_SparseArrayType& M = (const PETSc_SparseArrayType&)static_cast<const PETSc_SparseArray<PETSc_SparseArrayType>&>(A);
+    const auto& w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(w);
+    const PETSc_ArrayType& w_PETSc = static_cast<const PETSc_ArrayType&>(w_PETSc_Array);
 
-    //    switch (A.Type())
-    //    {
-    //      case ISparseArray::SparseArrayTypes::Symmetric:
-    //        _vector -= (PETSc::SparseMatrix<double>(M)).selfadjointView<Lower>() *
-    //                   Cast(w);
-    //        break;
-    //      case ISparseArray::SparseArrayTypes::None:
-    //      case ISparseArray::SparseArrayTypes::Diagonal:
-    //      case ISparseArray::SparseArrayTypes::Lower:
-    //      case ISparseArray::SparseArrayTypes::Upper:
-    //        _vector -= M * Cast(w);
-    //        break;
-    //      default:
-    //        throw std::runtime_error("Matrix type not managed");
-    //    }
+    const auto& A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType>&>(A);
+    const PETSc_SparseArrayType& A_PETSc = static_cast<const PETSc_SparseArrayType&>(A_PETSc_Array);
+
+    unsigned int size = Size();
+    Vec temp;
+    VecCreate(PETSC_COMM_WORLD, &temp);
+    VecSetSizes(temp, PETSC_DECIDE, size);
+    VecSetFromOptions(temp);
+
+    switch (A.Type())
+    {
+      case ISparseArray::SparseArrayTypes::Symmetric:
+      case ISparseArray::SparseArrayTypes::None:
+      case ISparseArray::SparseArrayTypes::Diagonal:
+      case ISparseArray::SparseArrayTypes::Lower:
+      case ISparseArray::SparseArrayTypes::Upper:
+        MatMult(A_PETSc, w_PETSc, temp);
+        VecAXPY(_vector, -1.0, temp);
+        break;
+      default:
+        throw std::runtime_error("Matrix type not managed");
+    }
   }
   // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
