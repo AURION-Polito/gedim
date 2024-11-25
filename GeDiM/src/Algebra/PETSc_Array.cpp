@@ -1,10 +1,8 @@
 #include "PETSc_Array.hpp"
 
-#if ENABLE_PETSC
-
+#if ENABLE_PETSC == 1
+#include "PETSc_SparseArray.hpp"
 #include "IOUtilities.hpp"
-
-using namespace std;
 
 namespace Gedim
 {
@@ -65,8 +63,8 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-  void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValues(const vector<int>& indices,
-                                                                      const vector<double>& values)
+  void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValues(const std::vector<int>& indices,
+                                                                      const std::vector<double>& values)
   {
     Output::Assert(indices.size() == values.size());
 
@@ -101,12 +99,14 @@ namespace Gedim
                  ADD_VALUES);
   }
   // ***************************************************************************
-  template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+  template<typename PETSc_ArrayType,
+           typename PETSc_SparseArrayType>
   void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(const ISparseArray& A,
                                                                               const IArray& w)
   {
     throw std::runtime_error("unimplemented method");
-    //    const PETSc_SparseArrayType& M = (const PETSc_SparseArrayType&)static_cast<const Mat&>(A);
+    const PETSc_SparseArrayType& p = A;
+    const PETSc_SparseArrayType& M = (const PETSc_SparseArrayType&)static_cast<const Mat&>(A);
 
     //    switch (A.Type())
     //    {
@@ -150,7 +150,7 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-  ostream& PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Print(std::ostream& output) const
+  std::ostream& PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Print(std::ostream& output) const
   {
     const unsigned int size = Size();
 

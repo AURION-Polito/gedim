@@ -3,7 +3,7 @@
 
 #include "Macro.hpp"
 
-#if ENABLE_PETSC
+#if ENABLE_PETSC == 1
 
 #include "petscmat.h"
 #include "petscvec.h"

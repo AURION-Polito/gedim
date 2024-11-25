@@ -13,6 +13,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_CholeskySolver
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_PCGSolver.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_BiCGSTABSolver.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_Array.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_SparseArray.hpp)
 
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/LAPACK_utilities.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_Array.cpp)
@@ -26,6 +27,7 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Pardiso_CholeskySolver
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_PCGSolver.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_BiCGSTABSolver.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_Array.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_SparseArray.cpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 
