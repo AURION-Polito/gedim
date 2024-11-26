@@ -16,7 +16,8 @@ namespace Gedim
   enum struct PETSc_SolverTypes
   {
     PETSc_KSPCG = 0,
-    PETSc_KSPGMRES = 1
+    PETSc_KSPBICG = 1,
+    PETSc_KSPGMRES = 2
   };
 
   enum struct PETSc_Preconditioners

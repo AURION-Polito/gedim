@@ -11,6 +11,8 @@ namespace Gedim
   // ***************************************************************************
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_DEFAULT>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_PCJACOBI>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_DEFAULT>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_PCJACOBI>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_DEFAULT>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCJACOBI>;
   // ***************************************************************************
@@ -102,6 +104,9 @@ namespace Gedim
     {
       case PETSc_SolverTypes::PETSc_KSPCG:
         KSPSetType(linearSolver, KSPCG);
+        break;
+      case PETSc_SolverTypes::PETSc_KSPBICG:
+        KSPSetType(linearSolver, KSPBICG);
         break;
       case PETSc_SolverTypes::PETSc_KSPGMRES:
         KSPSetType(linearSolver, KSPGMRES);
