@@ -26,6 +26,11 @@
 /// - 1 true
 #cmakedefine01 ENABLE_SUITESPARSE
 
+/// Enable PETSc
+/// - 0 false
+/// - 1 true
+#cmakedefine01 ENABLE_PETSC
+
 /// Use MPI
 /// - 0 false
 /// - 1 true

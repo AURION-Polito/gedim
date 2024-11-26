@@ -180,14 +180,7 @@ namespace Gedim
 
       static double GetTime(const std::string& nameTime, const bool& localTime = false);
       /// Get time in ms
-      static double GetTime()
-      {
-#if USE_MPI == 1
-        return MPI::Wtime();
-#elif USE_MPI == 0
-        return clock();
-#endif // USE_MPI
-      }
+      static double GetTime();
       static double ComputeTime(const double& startTime,
                                 const double& stopTime)
       {

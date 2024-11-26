@@ -33,7 +33,8 @@ namespace Gedim
       inline const Eigen_ArrayType& Cast(const IArray& v) const
       { return (const Eigen_ArrayType&)static_cast<const Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>&>(v); }
 
-      inline void Create() {  }
+      inline void Create() { }
+      inline void Destroy() { }
       inline void SetSize(const unsigned int& numCols) { _vector.setZero(numCols); }
       inline void SetSizes(const unsigned int& numCols,
                            const unsigned int& = 0) { return SetSize(numCols); }
@@ -52,9 +53,11 @@ namespace Gedim
       { _vector[i] += val; }
       void AddValues(const std::vector<int>& indices,
                      const std::vector<double>& values);
+      std::vector<double> GetValues(const std::vector<int>& indices = {}) const;
 
       inline void Zeros() { _vector.setZero(); }
       inline void Ones() { _vector.setOnes(); }
+      inline void Constant(const double& c) { _vector.setConstant(c); }
 
       void SumMultiplication(const ISparseArray& A,
                              const IArray& w);

@@ -46,6 +46,7 @@ public:
     /// \brief Matrix Allocation is implemented in child classes
     /// \brief Matrix create call. Last call to complete the Array structure.
     virtual void Create() = 0;
+    virtual void Destroy() = 0;
     /// \brief Intermediate flush of the Matrix during creation.
     virtual void Flush() = 0;
 

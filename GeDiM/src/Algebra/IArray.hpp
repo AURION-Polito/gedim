@@ -15,6 +15,7 @@ namespace Gedim
 
       /// \brief Matrix create call. Last call to complete the matrix structure.
       virtual void Create() = 0;
+      virtual void Destroy() = 0;
       /// \brief Set the size the Array. Resize a Array for Eigen application.
       /// \param numCols the number of cols
       virtual void SetSize(const unsigned int& numCols) = 0;
@@ -33,6 +34,7 @@ namespace Gedim
       virtual void Zeros() = 0;
       /// \brief Put one-values in the Array
       virtual void Ones() = 0;
+      virtual void Constant(const double& c) = 0;
       /// \brief operator []
       /// \param i the i_th position starting from 0
       /// \return the reference to i_th element
@@ -51,6 +53,9 @@ namespace Gedim
       /// \param values the values
       virtual void SetValues(const std::vector<int>& indices,
                              const std::vector<double>& values) = 0;
+
+      virtual std::vector<double> GetValues(const std::vector<int>& indices = {}) const = 0;
+
       /// \brief Add value to the Array
       /// \param i the i_th global position starting from 0
       /// \param val element to add

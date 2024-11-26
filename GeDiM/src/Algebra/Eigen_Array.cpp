@@ -31,6 +31,28 @@ namespace Gedim
   }
   // ***************************************************************************
   template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
+  std::vector<double> Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::GetValues(const std::vector<int>& indices) const
+  {
+    std::vector<double> values;
+
+    if (indices.size() == 0)
+    {
+      const unsigned int size = Size();
+      values.resize(size);
+      for (unsigned int i = 0; i < size; i++)
+        values[i] = _vector[i];
+    }
+    else
+    {
+      values.resize(indices.size());
+      for (unsigned int i = 0; i < indices.size(); i++)
+        values[i] = _vector[indices.at(i)];
+    }
+
+    return values;
+  }
+  // ***************************************************************************
+  template<typename Eigen_ArrayType, typename Eigen_SparseArrayType>
   void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SumMultiplication(const ISparseArray& A,
                                                                               const IArray& w)
   {
