@@ -36,8 +36,6 @@
 #include "test_sphere_mesh_utilities.hpp"
 #include "test_PETSc.hpp"
 
-#include "petsc.h"
-
 #include <gtest/gtest.h>
 
 int main(int argc, char *argv[])
