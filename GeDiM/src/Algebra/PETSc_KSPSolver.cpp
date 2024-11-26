@@ -1,10 +1,9 @@
 #include "PETSc_KSPSolver.hpp"
 
+#if ENABLE_PETSC == 1
 #include "PETSc_Array.hpp"
 #include "PETSc_SparseArray.hpp"
 
-using namespace Eigen;
-using namespace std;
 
 namespace Gedim
 {
@@ -201,3 +200,4 @@ namespace Gedim
   }
   // ***************************************************************************
 }
+#endif
