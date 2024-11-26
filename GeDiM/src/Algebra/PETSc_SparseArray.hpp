@@ -71,12 +71,12 @@ namespace Gedim
 
       inline ISparseArray& operator+=(const ISparseArray& A)
       {
-        MatAXPY(_matrix, 1.0, Cast(A), MAT_REUSE_MATRIX);
+        MatAXPY(_matrix, 1.0, Cast(A), DIFFERENT_NONZERO_PATTERN);
         return *this;
       }
       inline ISparseArray& operator-=(const ISparseArray& A)
       {
-        MatAXPY(_matrix, -1.0, Cast(A), MAT_REUSE_MATRIX);
+        MatAXPY(_matrix, -1.0, Cast(A), DIFFERENT_NONZERO_PATTERN);
         return *this;
       }
       inline ISparseArray& operator*=(const double& c)

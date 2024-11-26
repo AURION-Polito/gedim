@@ -60,6 +60,7 @@ public:
     { return _matrixType; }
 
     void Create();
+    inline void Destroy() { Reset(); }
     inline void Flush() { }
     inline void Reset()
     {

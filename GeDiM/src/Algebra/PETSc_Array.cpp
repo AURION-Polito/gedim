@@ -40,6 +40,9 @@ namespace Gedim
                   PETSC_DETERMINE);
     }
 
+    VecSetFromOptions(_vector);
+    VecSetUp(_vector);
+
     Zeros();
   }
   // ***************************************************************************

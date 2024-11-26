@@ -17,9 +17,12 @@ namespace Gedim
     MatSetType(_matrix,
                MATMPIAIJ);
     MatSetSizes(_matrix,
-                PETSC_DECIDE,PETSC_DECIDE,
+                PETSC_DECIDE,
+                PETSC_DECIDE,
                 numRows,
                 numCols);
+    MatSetFromOptions(_matrix);
+    MatSetUp(_matrix);
 
     _matrixType = type;
   }
@@ -63,13 +66,10 @@ namespace Gedim
       case SparseArrayTypes::Diagonal:
       case SparseArrayTypes::None:
       {
-        MatSetValues(_matrix,
-                     1,
-                     (PetscInt*)&i,
-                     1,
-                     (PetscInt*)&j,
-                     (PetscScalar*)&value,
-                     ADD_VALUES);
+        MatSetValue(_matrix,
+                    i, j,
+                    value,
+                    ADD_VALUES);
       }
         break;
       default:
@@ -138,7 +138,7 @@ namespace Gedim
     MatGetSize(_matrix, &rows, &cols);
     return static_cast<unsigned int>(cols);
   }
-// ***************************************************************************
+  // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
   unsigned int PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType>::NonZeros() const
   {
