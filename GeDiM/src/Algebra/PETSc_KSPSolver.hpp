@@ -22,14 +22,17 @@ namespace Gedim
 
   enum struct PETSc_Preconditioners
   {
-    PETSc_DEFAULT = 0,
-    PETSc_PCJACOBI = 1
+    PETSc_DEFAULT = -1,
+    PETSc_PCNONE = 0,
+    PETSc_PCILU = 1,
+    PETSc_PCJACOBI = 2,
+    PETSc_PCFIELDSPLIT = 3
   };
 
   /// \brief PETSc PCG Linear solver
   template<typename PETSc_ArrayType = Vec,
            typename PETSc_SparseArrayType = Mat,
-           PETSc_SolverTypes PETSc_SolverType = PETSc_SolverTypes::PETSc_KSPCG,
+           PETSc_SolverTypes PETSc_SolverType = PETSc_SolverTypes::PETSc_KSPGMRES,
            PETSc_Preconditioners PETSc_Preconditioner = PETSc_Preconditioners::PETSc_DEFAULT>
   class PETSc_KSPSolver final : public ILinearSolver
   {

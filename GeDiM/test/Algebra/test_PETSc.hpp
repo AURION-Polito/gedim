@@ -15,7 +15,7 @@
 
 namespace UnitTesting
 {
-  TEST(TestPETSc, TestPETSc_PCG)
+  TEST(TestPETSc, TestPETSc_Solvers)
   {
     PetscInitialize(nullptr, nullptr, nullptr, nullptr);
 
@@ -39,96 +39,65 @@ namespace UnitTesting
     x.SetSize(2);
     x.Create();
 
-    Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPCG> solver;
-    solver.Initialize(A, b, x, { 1000, 1.0e-12 });
-    const auto solver_result = solver.Solve();
+    // PCG
+    {
+      Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPCG> solver;
+      solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+      const auto solver_result = solver.Solve();
 
-    const auto solution = x.GetValues();
+      const auto solution = x.GetValues();
 
-    ASSERT_TRUE(solver_result.Iterations < 1000);
-    ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-    ASSERT_TRUE(abs(solution[0] - 1.0) < 1.0e-12);
-    ASSERT_TRUE(abs(solution[1] - 1.0) < 1.0e-12);
+      ASSERT_TRUE(solver_result.Iterations < 1000);
+      ASSERT_TRUE(solver_result.Residual < 1.0e-12);
 
-    PetscFinalize();
-  }
+      Gedim::PETSc_Array exact_x;
+      exact_x.SetSize(2);
+      exact_x.Create();
+      exact_x.Ones();
 
-  TEST(TestPETSc, TestPETSc_BICG)
-  {
-    PetscInitialize(nullptr, nullptr, nullptr, nullptr);
+      exact_x -= x;
+      ASSERT_TRUE(exact_x.Norm() <= 1.0e-11 * x.Norm());
+    }
 
-    // generic matrix
-    Gedim::PETSc_SparseArray A;
-    A.SetSize(2, 2);
-    A.Triplet(0, 0, 17);
-    A.Triplet(1, 1, 85);
-    A.Triplets({ 0, 1 }, { 1, 0 }, { 38.0, 38.0 });
-    A.Create();
+    // BICG
+    {
+      Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPBICG> solver;
+      solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+      const auto solver_result = solver.Solve();
 
-    Gedim::PETSc_Array b;
-    b.SetSize(2);
-    b.SetValues({ 0 }, { 50.0 });
-    b.AddValues({ 0 }, { 5.0 });
-    b.SetValue(1, 120.0);
-    b.AddValue(1, 3.0);
-    b.Create();
+      const auto solution = x.GetValues();
 
-    Gedim::PETSc_Array x;
-    x.SetSize(2);
-    x.Create();
+      ASSERT_TRUE(solver_result.Iterations < 1000);
+      ASSERT_TRUE(solver_result.Residual < 1.0e-12);
 
-    Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPBICG> solver;
-    solver.Initialize(A, b, x, { 1000, 1.0e-12 });
-    const auto solver_result = solver.Solve();
+      Gedim::PETSc_Array exact_x;
+      exact_x.SetSize(2);
+      exact_x.Create();
+      exact_x.Ones();
 
-    const auto solution = x.GetValues();
+      exact_x -= x;
+      ASSERT_TRUE(exact_x.Norm() <= 1.0e-11 * x.Norm());
+    }
 
-    ASSERT_TRUE(solver_result.Iterations < 1000);
-    ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-    ASSERT_TRUE(abs(solution[0] - 1.0) < 1.0e-12);
-    ASSERT_TRUE(abs(solution[1] - 1.0) < 1.0e-12);
+    // GMRES
+    {
+      Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPGMRES> solver;
+      solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+      const auto solver_result = solver.Solve();
 
-    PetscFinalize();
-  }
+      const auto solution = x.GetValues();
 
-  TEST(TestPETSc, TestPETSc_GMRES)
-  {
-    PetscInitialize(nullptr, nullptr, nullptr, nullptr);
+      ASSERT_TRUE(solver_result.Iterations < 1000);
+      ASSERT_TRUE(solver_result.Residual < 1.0e-12);
 
-    // generic matrix
-    Gedim::PETSc_SparseArray A;
-    A.SetSize(2, 2);
-    A.Triplet(0, 0, 17);
-    A.Triplet(1, 1, 85);
-    A.Triplets({ 0, 1 }, { 1, 0 }, { 38.0, 38.0 });
-    A.Create();
+      Gedim::PETSc_Array exact_x;
+      exact_x.SetSize(2);
+      exact_x.Create();
+      exact_x.Ones();
 
-    Gedim::PETSc_Array b;
-    b.SetSize(2);
-    b.SetValues({ 0 }, { 50.0 });
-    b.AddValues({ 0 }, { 5.0 });
-    b.SetValue(1, 120.0);
-    b.AddValue(1, 3.0);
-    b.Create();
-
-    Gedim::PETSc_Array x;
-    x.SetSize(2);
-    x.Create();
-
-    Gedim::PETSc_KSPSolver<
-        Vec,
-        Mat,
-        Gedim::PETSc_SolverTypes::PETSc_KSPGMRES,
-        Gedim::PETSc_Preconditioners::PETSc_PCJACOBI> solver;
-    solver.Initialize(A, b, x, { 1000, 1.0e-12 });
-    const auto solver_result = solver.Solve();
-
-    const auto solution = x.GetValues();
-
-    ASSERT_TRUE(solver_result.Iterations < 1000);
-    ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-    ASSERT_TRUE(abs(solution[0] - 1.0) < 1.0e-12);
-    ASSERT_TRUE(abs(solution[1] - 1.0) < 1.0e-12);
+      exact_x -= x;
+      ASSERT_TRUE(exact_x.Norm() <= 1.0e-11 * x.Norm());
+    }
 
     PetscFinalize();
   }

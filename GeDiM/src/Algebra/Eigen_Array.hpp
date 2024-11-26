@@ -57,6 +57,7 @@ namespace Gedim
 
       inline void Zeros() { _vector.setZero(); }
       inline void Ones() { _vector.setOnes(); }
+      inline void Constant(const double& c) { _vector.setConstant(c); }
 
       void SumMultiplication(const ISparseArray& A,
                              const IArray& w);

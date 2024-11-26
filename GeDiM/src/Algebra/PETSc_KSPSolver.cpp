@@ -10,11 +10,20 @@ namespace Gedim
 {
   // ***************************************************************************
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_DEFAULT>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_PCNONE>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_PCJACOBI>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_PCILU>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPCG, PETSc_Preconditioners::PETSc_PCFIELDSPLIT>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_DEFAULT>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_PCNONE>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_PCJACOBI>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_PCILU>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICG, PETSc_Preconditioners::PETSc_PCFIELDSPLIT>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_DEFAULT>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCNONE>;
   template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCJACOBI>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCILU>;
+  template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCFIELDSPLIT>;
   // ***************************************************************************
   template<typename PETSc_ArrayType,
            typename PETSc_SparseArrayType,
@@ -120,8 +129,20 @@ namespace Gedim
     {
       case PETSc_Preconditioners::PETSc_DEFAULT:
         break;
+      case PETSc_Preconditioners::PETSc_PCNONE:
+        PCSetType(preconditioner, PCNONE);
+        PCSetFromOptions(preconditioner);
+        break;
+      case PETSc_Preconditioners::PETSc_PCILU:
+        PCSetType(preconditioner, PCILU);
+        PCSetFromOptions(preconditioner);
+        break;
       case PETSc_Preconditioners::PETSc_PCJACOBI:
         PCSetType(preconditioner, PCJACOBI);
+        PCSetFromOptions(preconditioner);
+        break;
+      case PETSc_Preconditioners::PETSc_PCFIELDSPLIT:
+        PCSetType(preconditioner, PCFIELDSPLIT);
         PCSetFromOptions(preconditioner);
         break;
       default:
@@ -175,7 +196,7 @@ namespace Gedim
     return
     {
       static_cast<unsigned int>(iterations),
-      static_cast<double>(residual)
+          static_cast<double>(residual)
     };
   }
   // ***************************************************************************

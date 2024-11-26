@@ -66,6 +66,7 @@ namespace Gedim
 
       inline void Zeros() { VecSet(_vector, 0.0); }
       inline void Ones() { VecSet(_vector, 1.0); }
+      inline void Constant(const double& c) { VecSet(_vector, c); }
 
       void SumMultiplication(const ISparseArray& A,
                              const IArray& w);

@@ -34,6 +34,7 @@ namespace Gedim
       virtual void Zeros() = 0;
       /// \brief Put one-values in the Array
       virtual void Ones() = 0;
+      virtual void Constant(const double& c) = 0;
       /// \brief operator []
       /// \param i the i_th position starting from 0
       /// \return the reference to i_th element
