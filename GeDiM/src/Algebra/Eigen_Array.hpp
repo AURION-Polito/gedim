@@ -53,6 +53,7 @@ namespace Gedim
       { _vector[i] += val; }
       void AddValues(const std::vector<int>& indices,
                      const std::vector<double>& values);
+      std::vector<double> GetValues(const std::vector<int>& indices = {}) const;
 
       inline void Zeros() { _vector.setZero(); }
       inline void Ones() { _vector.setOnes(); }

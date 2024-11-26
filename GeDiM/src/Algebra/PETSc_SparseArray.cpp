@@ -85,13 +85,26 @@ namespace Gedim
     if (i.size() != j.size() || i.size() != values.size())
       throw std::runtime_error("Invalid triplets size");
 
-    MatSetValues(_matrix,
-                 i.size(),
-                 (PetscInt*)(i.data()),
-                 j.size(),
-                 (PetscInt*)(j.data()),
-                 (PetscScalar*)(values.data()),
-                 ADD_VALUES);
+    switch (_matrixType)
+    {
+      case SparseArrayTypes::Symmetric:
+      case SparseArrayTypes::Lower:
+      case SparseArrayTypes::Upper:
+      case SparseArrayTypes::Diagonal:
+      case SparseArrayTypes::None:
+      {
+        for (unsigned int s = 0; s < i.size(); ++s)
+        {
+          MatSetValue(_matrix,
+                      i[s], j[s],
+                      values[s],
+                      ADD_VALUES);
+        }
+      }
+        break;
+      default:
+        throw std::runtime_error("Matrix type not supported");
+    }
   }
   // ***************************************************************************
   template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>

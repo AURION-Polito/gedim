@@ -52,6 +52,9 @@ namespace Gedim
       /// \param values the values
       virtual void SetValues(const std::vector<int>& indices,
                              const std::vector<double>& values) = 0;
+
+      virtual std::vector<double> GetValues(const std::vector<int>& indices = {}) const = 0;
+
       /// \brief Add value to the Array
       /// \param i the i_th global position starting from 0
       /// \param val element to add

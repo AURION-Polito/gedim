@@ -25,25 +25,28 @@ namespace UnitTesting
     A.Triplets({ 0, 1 }, { 1, 0 }, { 38.0, 38.0 });
     A.Create();
 
-    std::cout.precision(2);
-    std::cout<< std::scientific<< "A "<< A<< std::endl;
-
     Gedim::PETSc_Array b;
     b.SetSize(2);
-    b.SetValues({ 0 }, { 55 });
-    b.SetValue(1, 123);
-
-    std::cout<< std::scientific<< "b "<< b<< std::endl;
+    b.SetValues({ 0 }, { 50.0 });
+    b.AddValues({ 0 }, { 5.0 });
+    b.SetValue(1, 120.0);
+    b.AddValue(1, 3.0);
+    b.Create();
 
     Gedim::PETSc_Array x;
+    x.SetSize(2);
+    x.Create();
 
     Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPCG> solver;
     solver.Initialize(A, b, x, { 1000, 1.0e-12 });
     const auto solver_result = solver.Solve();
 
+    const auto solution = x.GetValues();
+
     ASSERT_TRUE(solver_result.Iterations < 1000);
     ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-    std::cout<< std::scientific<< "x "<< x<< std::endl;
+    ASSERT_TRUE(abs(solution[0] - 1.0) < 1.0e-12);
+    ASSERT_TRUE(abs(solution[1] - 1.0) < 1.0e-12);
 
     PetscFinalize();
   }
@@ -60,25 +63,28 @@ namespace UnitTesting
     A.Triplets({ 0, 1 }, { 1, 0 }, { 38.0, 38.0 });
     A.Create();
 
-    std::cout.precision(2);
-    std::cout<< std::scientific<< "A "<< A<< std::endl;
-
     Gedim::PETSc_Array b;
     b.SetSize(2);
-    b.SetValues({ 0 }, { 55 });
-    b.SetValue(1, 123);
-
-    std::cout<< std::scientific<< "b "<< b<< std::endl;
+    b.SetValues({ 0 }, { 50.0 });
+    b.AddValues({ 0 }, { 5.0 });
+    b.SetValue(1, 120.0);
+    b.AddValue(1, 3.0);
+    b.Create();
 
     Gedim::PETSc_Array x;
+    x.SetSize(2);
+    x.Create();
 
     Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPGMRES> solver;
     solver.Initialize(A, b, x, { 1000, 1.0e-12 });
     const auto solver_result = solver.Solve();
 
+    const auto solution = x.GetValues();
+
     ASSERT_TRUE(solver_result.Iterations < 1000);
     ASSERT_TRUE(solver_result.Residual < 1.0e-12);
-    std::cout<< std::scientific<< "x "<< x<< std::endl;
+    ASSERT_TRUE(abs(solution[0] - 1.0) < 1.0e-12);
+    ASSERT_TRUE(abs(solution[1] - 1.0) < 1.0e-12);
 
     PetscFinalize();
   }

@@ -102,6 +102,35 @@ namespace Gedim
                  ADD_VALUES);
   }
   // ***************************************************************************
+  template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+  std::vector<double> PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::GetValues(const std::vector<int>& indices) const
+  {
+    std::vector<double> values;
+
+    const PetscScalar *array; // Pointer to the vector data
+    VecGetArrayRead(_vector,
+                    &array);
+
+    if (indices.size() == 0)
+    {
+      const unsigned int size = Size();
+      values.resize(size);
+      for (unsigned int i = 0; i < size; i++)
+        values[i] = array[i];
+    }
+    else
+    {
+      values.resize(indices.size());
+      for (unsigned int i = 0; i < indices.size(); i++)
+        values[i] = array[indices.at(i)];
+    }
+
+    VecRestoreArrayRead(_vector,
+                        &array);
+
+    return values;
+  }
+  // ***************************************************************************
   template<typename PETSc_ArrayType,
            typename PETSc_SparseArrayType>
   void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(const ISparseArray& A,
