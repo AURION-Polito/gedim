@@ -4,9 +4,7 @@
 #include "Eigen/Eigen"
 #include <unistd.h>
 
-#if ENABLE_VORO == 0
 #include "CommonUtilities.hpp"
-#endif
 
 namespace Gedim
 {

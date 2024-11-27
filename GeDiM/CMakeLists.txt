@@ -39,6 +39,8 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_INSTALL_DIR} CACHE 
 Message(STATUS "Gedim Library will be installed in: " ${CMAKE_INSTALL_PREFIX})
 
 set(USE_MPI OFF CACHE BOOL "Enable MPI support")
+set(ENABLE_TRIANGLE OFF CACHE BOOL "Enable Triangle extension")
+set(ENABLE_TETGEN OFF CACHE BOOL "Enable Tetgen extension")
 set(ENABLE_METIS OFF CACHE BOOL "Enable Metis extension")
 set(ENABLE_VTK OFF CACHE BOOL "Enable VTK extension")
 set(ENABLE_MKL OFF CACHE BOOL "Enable MKL extension")
@@ -60,12 +62,6 @@ endif()
 ###########################################################################################
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-## MPI
-if(${USE_MPI})
-    find_package(MPI REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC MPI::MPI_CXX)
-endif()
-
 ## Eigen3
 find_package(Eigen3 CONFIG REQUIRED)
 list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC Eigen3::Eigen)
@@ -78,6 +74,12 @@ list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC BLAS::BLAS)
 find_package(LAPACK REQUIRED)
 list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC LAPACK::LAPACK)
 
+## MPI
+if(${USE_MPI})
+    find_package(MPI REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC MPI::MPI_CXX)
+endif()
+
 ## MKL
 if(${ENABLE_MKL})
     set(MKL_INTERFACE lp64) # Eigen requires lp64 interface
@@ -86,12 +88,16 @@ if(${ENABLE_MKL})
 endif()
 
 ## triangle
-find_package(triangle CONFIG REQUIRED)
-list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC triangle::triangle)
+if(${ENABLE_TRIANGLE})
+    find_package(triangle CONFIG REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC triangle::triangle)
+endif()
 
 ## tetgen
-find_package(tetgen CONFIG REQUIRED)
-list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
+if(${ENABLE_TETGEN})
+    find_package(tetgen CONFIG REQUIRED)
+    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
+endif()
 
 ## VORO
 if(${ENABLE_VORO})

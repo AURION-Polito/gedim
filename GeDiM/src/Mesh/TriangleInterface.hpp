@@ -1,8 +1,13 @@
 #ifndef __TriangleInterface_H
 #define __TriangleInterface_H
 
+#include "Macro.hpp"
 #include "Eigen/Eigen"
+
+#if ENABLE_TRIANGLE == 1
 #include "mytriangle.hpp"
+#endif
+
 #include "IMeshDAO.hpp"
 
 namespace Gedim
@@ -10,6 +15,7 @@ namespace Gedim
   class TriangleInterface final
   {
     private:
+#if ENABLE_TRIANGLE == 1
       void CreateTriangleInput(const Eigen::MatrixXd& polygonVertices,
                                struct triangulateio& triangleInput,
                                const Eigen::MatrixXd& constrainedPoints = Eigen::MatrixXd(),
@@ -26,6 +32,7 @@ namespace Gedim
                               const struct triangulateio& triangleOutput,
                               const std::string& nameFolder,
                               const std::string& nameFile) const;
+#endif
     public:
       TriangleInterface();
       ~TriangleInterface();

@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include "TriangleInterface.hpp"
+#include "CommonUtilities.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -17,6 +18,134 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  void TriangleInterface::CreateMesh(const Eigen::MatrixXd& polygonVertices,
+                                     const double& maxTriangleArea,
+                                     IMeshDAO& mesh,
+                                     const string& triangleOptions) const
+  {
+    Gedim::Utilities::Unused(polygonVertices);
+    Gedim::Utilities::Unused(maxTriangleArea);
+    Gedim::Utilities::Unused(mesh);
+    Gedim::Utilities::Unused(triangleOptions);
+
+#if ENABLE_TRIANGLE == 1
+    struct triangulateio* triangleInput = new triangulateio();
+    struct triangulateio* triangleOutput = new triangulateio();
+
+    CreateTriangleInput(polygonVertices,
+                        *triangleInput);
+    CreateTriangleOutput(maxTriangleArea,
+                         *triangleInput,
+                         *triangleOutput,
+                         triangleOptions);
+
+    /// <li>	Fill mesh structures
+    unsigned int numberOfCell2Ds = triangleOutput->numberoftriangles;
+    unsigned int numberOfCell1Ds = triangleOutput->numberofedges;
+    unsigned int numberOfCell0Ds = triangleOutput->numberofpoints;
+
+    mesh.InitializeDimension(2);
+    mesh.Cell2DsInitialize(numberOfCell2Ds);
+    mesh.Cell1DsInitialize(numberOfCell1Ds);
+    mesh.Cell0DsInitialize(numberOfCell0Ds);
+
+    /// <li> Set Cell0Ds
+    for (unsigned int p = 0; p < numberOfCell0Ds; p++)
+    {
+      mesh.Cell0DInsertCoordinates(p,
+                                   Vector3d(triangleOutput->pointlist[2 * p],
+                                   triangleOutput->pointlist[2 * p + 1],
+          0.0));
+      mesh.Cell0DSetState(p, true);
+      mesh.Cell0DSetMarker(p,
+                           triangleOutput->pointmarkerlist[p]);
+    }
+
+    /// <li> Set Cell1Ds
+    struct Edge
+    {
+        unsigned int Cell1DIndex;
+        int Cell0DEnd;
+    };
+
+    std::vector<std::list<Edge>> cell0DsCell1Ds(mesh.Cell0DTotalNumber());
+
+    for (unsigned int ed = 0; ed < numberOfCell1Ds; ed++)
+    {
+      mesh.Cell1DInsertExtremes(ed,
+                                triangleOutput->edgelist[2 * ed],
+          triangleOutput->edgelist[2 * ed + 1]);
+      mesh.Cell1DSetState(ed, true);
+      mesh.Cell1DSetMarker(ed,
+                           triangleOutput->edgemarkerlist[ed]);
+
+      cell0DsCell1Ds[triangleOutput->edgelist[2 * ed]].push_back({ ed, triangleOutput->edgelist[2 * ed + 1] });
+    }
+
+    /// <li> Set Cell2Ds
+    mesh.Cell2DsInitializeVertices(3);
+    mesh.Cell2DsInitializeEdges(3);
+    for (unsigned int c = 0; c < numberOfCell2Ds; c++)
+    {
+      vector<unsigned int> cell2DVertices(3);
+      vector<unsigned int> cell2DEdges(3);
+
+      cell2DVertices[0] = triangleOutput->trianglelist[3 * c];
+      cell2DVertices[1] = triangleOutput->trianglelist[3 * c + 1];
+      cell2DVertices[2] = triangleOutput->trianglelist[3 * c + 2];
+
+      for (unsigned int e = 0; e < 3; e++)
+      {
+        const int vertexId = cell2DVertices[e];
+        const int nextVertexId = cell2DVertices[(e + 1) % 3];
+        unsigned int edgeId = numberOfCell1Ds;
+
+        if (edgeId == numberOfCell1Ds)
+        {
+          const std::list<Edge>& originCell1Ds = cell0DsCell1Ds.at(vertexId);
+          std::list<Edge>::const_iterator findOriginEdge = std::find_if(originCell1Ds.begin(),
+                                                                        originCell1Ds.end(),
+                                                                        [&] (const Edge& edge)
+          { return edge.Cell0DEnd == nextVertexId; });
+
+          if (findOriginEdge != originCell1Ds.end())
+            edgeId = findOriginEdge->Cell1DIndex;
+        }
+
+        if (edgeId == numberOfCell1Ds)
+        {
+          const std::list<Edge>& endCell1Ds = cell0DsCell1Ds.at(nextVertexId);
+          std::list<Edge>::const_iterator findEndEdge = std::find_if(endCell1Ds.begin(),
+                                                                     endCell1Ds.end(),
+                                                                     [&] (const Edge& edge)
+          { return edge.Cell0DEnd == vertexId; });
+
+          if (findEndEdge != endCell1Ds.end())
+            edgeId = findEndEdge->Cell1DIndex;
+        }
+
+        Gedim::Output::Assert(edgeId != numberOfCell1Ds);
+        cell2DEdges[e] = edgeId;
+      }
+
+      mesh.Cell2DInsertVertices(c,
+                                cell2DVertices);
+      mesh.Cell2DInsertEdges(c,
+                             cell2DEdges);
+      mesh.Cell2DSetState(c, true);
+      mesh.Cell2DSetMarker(c,
+                           0);
+    }
+
+    DeleteTriangleStructure(*triangleInput,
+                            *triangleOutput);
+    delete triangleInput;
+    delete triangleOutput;
+
+#endif
+  }
+  // ***************************************************************************
+#if ENABLE_TRIANGLE == 1
   void TriangleInterface::CreateTriangleInput(const MatrixXd& polygonVertices,
                                               struct triangulateio& triangleInput,
                                               const MatrixXd& constrainedPoints,
@@ -140,125 +269,6 @@ namespace Gedim
     free(triangleOutput.edgemarkerlist);
   }
   // ***************************************************************************
-  void TriangleInterface::CreateMesh(const Eigen::MatrixXd& polygonVertices,
-                                     const double& maxTriangleArea,
-                                     IMeshDAO& mesh,
-                                     const string& triangleOptions) const
-  {
-    struct triangulateio* triangleInput = new triangulateio();
-    struct triangulateio* triangleOutput = new triangulateio();
-
-    CreateTriangleInput(polygonVertices,
-                        *triangleInput);
-    CreateTriangleOutput(maxTriangleArea,
-                         *triangleInput,
-                         *triangleOutput,
-                         triangleOptions);
-
-    /// <li>	Fill mesh structures
-    unsigned int numberOfCell2Ds = triangleOutput->numberoftriangles;
-    unsigned int numberOfCell1Ds = triangleOutput->numberofedges;
-    unsigned int numberOfCell0Ds = triangleOutput->numberofpoints;
-
-    mesh.InitializeDimension(2);
-    mesh.Cell2DsInitialize(numberOfCell2Ds);
-    mesh.Cell1DsInitialize(numberOfCell1Ds);
-    mesh.Cell0DsInitialize(numberOfCell0Ds);
-
-    /// <li> Set Cell0Ds
-    for (unsigned int p = 0; p < numberOfCell0Ds; p++)
-    {
-      mesh.Cell0DInsertCoordinates(p,
-                                   Vector3d(triangleOutput->pointlist[2 * p],
-                                   triangleOutput->pointlist[2 * p + 1],
-          0.0));
-      mesh.Cell0DSetState(p, true);
-      mesh.Cell0DSetMarker(p,
-                           triangleOutput->pointmarkerlist[p]);
-    }
-
-    /// <li> Set Cell1Ds
-    struct Edge
-    {
-        unsigned int Cell1DIndex;
-        int Cell0DEnd;
-    };
-
-    std::vector<std::list<Edge>> cell0DsCell1Ds(mesh.Cell0DTotalNumber());
-
-    for (unsigned int ed = 0; ed < numberOfCell1Ds; ed++)
-    {
-      mesh.Cell1DInsertExtremes(ed,
-                                triangleOutput->edgelist[2 * ed],
-          triangleOutput->edgelist[2 * ed + 1]);
-      mesh.Cell1DSetState(ed, true);
-      mesh.Cell1DSetMarker(ed,
-                           triangleOutput->edgemarkerlist[ed]);
-
-      cell0DsCell1Ds[triangleOutput->edgelist[2 * ed]].push_back({ ed, triangleOutput->edgelist[2 * ed + 1] });
-    }
-
-    /// <li> Set Cell2Ds
-    mesh.Cell2DsInitializeVertices(3);
-    mesh.Cell2DsInitializeEdges(3);
-    for (unsigned int c = 0; c < numberOfCell2Ds; c++)
-    {
-      vector<unsigned int> cell2DVertices(3);
-      vector<unsigned int> cell2DEdges(3);
-
-      cell2DVertices[0] = triangleOutput->trianglelist[3 * c];
-      cell2DVertices[1] = triangleOutput->trianglelist[3 * c + 1];
-      cell2DVertices[2] = triangleOutput->trianglelist[3 * c + 2];
-
-      for (unsigned int e = 0; e < 3; e++)
-      {
-        const int vertexId = cell2DVertices[e];
-        const int nextVertexId = cell2DVertices[(e + 1) % 3];
-        unsigned int edgeId = numberOfCell1Ds;
-
-        if (edgeId == numberOfCell1Ds)
-        {
-          const std::list<Edge>& originCell1Ds = cell0DsCell1Ds.at(vertexId);
-          std::list<Edge>::const_iterator findOriginEdge = std::find_if(originCell1Ds.begin(),
-                                                                        originCell1Ds.end(),
-                                                                        [&] (const Edge& edge)
-          { return edge.Cell0DEnd == nextVertexId; });
-
-          if (findOriginEdge != originCell1Ds.end())
-            edgeId = findOriginEdge->Cell1DIndex;
-        }
-
-        if (edgeId == numberOfCell1Ds)
-        {
-          const std::list<Edge>& endCell1Ds = cell0DsCell1Ds.at(nextVertexId);
-          std::list<Edge>::const_iterator findEndEdge = std::find_if(endCell1Ds.begin(),
-                                                                     endCell1Ds.end(),
-                                                                     [&] (const Edge& edge)
-          { return edge.Cell0DEnd == vertexId; });
-
-          if (findEndEdge != endCell1Ds.end())
-            edgeId = findEndEdge->Cell1DIndex;
-        }
-
-        Gedim::Output::Assert(edgeId != numberOfCell1Ds);
-        cell2DEdges[e] = edgeId;
-      }
-
-      mesh.Cell2DInsertVertices(c,
-                                cell2DVertices);
-      mesh.Cell2DInsertEdges(c,
-                             cell2DEdges);
-      mesh.Cell2DSetState(c, true);
-      mesh.Cell2DSetMarker(c,
-                           0);
-    }
-
-    DeleteTriangleStructure(*triangleInput,
-                            *triangleOutput);
-    delete triangleInput;
-    delete triangleOutput;
-  }
-  // ***************************************************************************
   void TriangleInterface::ExportTriangleMesh(const struct triangulateio& triangleInput,
                                              const struct triangulateio& triangleOutput,
                                              const string& nameFolder,
@@ -359,5 +369,6 @@ namespace Gedim
     file<< "0";
     file.close();
   }
+#endif
   // ***************************************************************************
 }

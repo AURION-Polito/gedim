@@ -1,5 +1,6 @@
 #include "TetgenInterface.hpp"
 #include <unordered_set>
+#include "CommonUtilities.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -14,6 +15,74 @@ namespace Gedim
   {
   }
   // ***************************************************************************
+  void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& points,
+                                       const std::vector<unsigned int>& points_marker,
+                                       IMeshDAO& mesh) const
+  {
+    Gedim::Utilities::Unused(points);
+    Gedim::Utilities::Unused(points_marker);
+    Gedim::Utilities::Unused(mesh);
+
+
+#if ENABLE_TRIANGLE == 1
+    tetgenio* tetgenInput = new tetgenio();
+    tetgenio* tetgenOutput = new tetgenio();
+
+    CreateDelaunayInput(points,
+                        points_marker,
+                        *tetgenInput);
+    CreateTetgenOutput(*tetgenInput,
+                       *tetgenOutput,
+                       "Qfezn");
+
+    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
+                                 mesh);
+
+    DeleteTetgenStructure(*tetgenInput,
+                          *tetgenOutput);
+    delete tetgenInput;
+    delete tetgenOutput;
+#endif
+  }
+  // ***************************************************************************
+  void TetgenInterface::CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
+                                   const Eigen::MatrixXi& polyhedronEdges,
+                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
+                                   const double& maxTetrahedronVolume,
+                                   IMeshDAO& mesh,
+                                   const std::string& tetgenOptions) const
+  {
+    Gedim::Utilities::Unused(polyhedronVertices);
+    Gedim::Utilities::Unused(polyhedronEdges);
+    Gedim::Utilities::Unused(polyhedronFaces);
+    Gedim::Utilities::Unused(maxTetrahedronVolume);
+    Gedim::Utilities::Unused(mesh);
+    Gedim::Utilities::Unused(tetgenOptions);
+
+#if ENABLE_TRIANGLE == 1
+    tetgenio* tetgenInput = new tetgenio();
+    tetgenio* tetgenOutput = new tetgenio();
+
+    CreateTetgenInput(polyhedronVertices,
+                      polyhedronEdges,
+                      polyhedronFaces,
+                      *tetgenInput);
+    CreateTetgenOutput(maxTetrahedronVolume,
+                       *tetgenInput,
+                       *tetgenOutput,
+                       tetgenOptions);
+
+    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
+                                 mesh);
+
+    DeleteTetgenStructure(*tetgenInput,
+                          *tetgenOutput);
+    delete tetgenInput;
+    delete tetgenOutput;
+#endif
+  }
+  // ***************************************************************************
+#if ENABLE_TRIANGLE == 1
   void TetgenInterface::DeleteTetgenStructure(tetgenio& tetgenInput,
                                               tetgenio& ) const
   {
@@ -34,57 +103,6 @@ namespace Gedim
     }
 
     delete[] tetgenInput.facetlist; tetgenInput.facetlist = NULL;
-  }
-  // ***************************************************************************
-  void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd& points,
-                                       const std::vector<unsigned int>& points_marker,
-                                       IMeshDAO& mesh) const
-  {
-    tetgenio* tetgenInput = new tetgenio();
-    tetgenio* tetgenOutput = new tetgenio();
-
-    CreateDelaunayInput(points,
-                        points_marker,
-                        *tetgenInput);
-    CreateTetgenOutput(*tetgenInput,
-                       *tetgenOutput,
-                       "Qfezn");
-
-    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
-                                 mesh);
-
-    DeleteTetgenStructure(*tetgenInput,
-                          *tetgenOutput);
-    delete tetgenInput;
-    delete tetgenOutput;
-  }
-  // ***************************************************************************
-  void TetgenInterface::CreateMesh(const Eigen::MatrixXd& polyhedronVertices,
-                                   const Eigen::MatrixXi& polyhedronEdges,
-                                   const std::vector<Eigen::MatrixXi>& polyhedronFaces,
-                                   const double& maxTetrahedronVolume,
-                                   IMeshDAO& mesh,
-                                   const std::string& tetgenOptions) const
-  {
-    tetgenio* tetgenInput = new tetgenio();
-    tetgenio* tetgenOutput = new tetgenio();
-
-    CreateTetgenInput(polyhedronVertices,
-                      polyhedronEdges,
-                      polyhedronFaces,
-                      *tetgenInput);
-    CreateTetgenOutput(maxTetrahedronVolume,
-                       *tetgenInput,
-                       *tetgenOutput,
-                       tetgenOptions);
-
-    ConvertTetgenOutputToMeshDAO(*tetgenOutput,
-                                 mesh);
-
-    DeleteTetgenStructure(*tetgenInput,
-                          *tetgenOutput);
-    delete tetgenInput;
-    delete tetgenOutput;
   }
   // ***************************************************************************
   void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd& polyhedronVertices,
@@ -475,5 +493,6 @@ namespace Gedim
     tetgenOutput.save_faces((char*)nameFileStream.str().c_str());
     tetgenOutput.save_edges((char*)nameFileStream.str().c_str());
   }
+#endif
   // ***************************************************************************
 }

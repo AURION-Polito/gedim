@@ -1,8 +1,13 @@
 #ifndef __TetgenInterface_H
 #define __TetgenInterface_H
 
+#include "Macro.hpp"
 #include "IMeshDAO.hpp"
+
+#if ENABLE_TRIANGLE == 1
 #include "tetgen.h"
+#endif
+
 #include "Eigen/Eigen"
 
 namespace Gedim
@@ -11,7 +16,8 @@ namespace Gedim
   /// \see http://wias-berlin.de/software/tetgen/files/tetcall.cxx
   class TetgenInterface final
   {
-    protected:
+    private:
+#if ENABLE_TRIANGLE == 1
       void CreateTetgenInput(const Eigen::MatrixXd& polyhedronVertices,
                              const Eigen::MatrixXi& polyhedronEdges,
                              const std::vector<Eigen::MatrixXi>& polyhedronFaces,
@@ -33,6 +39,10 @@ namespace Gedim
 
       void DeleteTetgenStructure(tetgenio& tetgenInput,
                                  tetgenio& tetgenOutput) const;
+      void ExportTetgenOutput(const std::string& nameFolder,
+                              const std::string& nameFile,
+                              tetgenio& tetgenOutput) const;
+#endif
 
     public:
       TetgenInterface();
@@ -48,10 +58,6 @@ namespace Gedim
                       const double& maxTetrahedronVolume,
                       IMeshDAO& mesh,
                       const std::string& tetgenOptions = "Qpqfezna") const;
-
-      void ExportTetgenOutput(const std::string& nameFolder,
-                              const std::string& nameFile,
-                              tetgenio& tetgenOutput) const;
   };
 
 }
