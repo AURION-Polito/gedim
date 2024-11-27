@@ -17,7 +17,7 @@
 #ifndef __GEDIM_IOUtilities_H
 #define __GEDIM_IOUtilities_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include <unordered_set>
 
 #if USE_MPI == 1

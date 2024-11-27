@@ -1,6 +1,6 @@
 #include "VtkMeshInterface.hpp"
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #include "CommonUtilities.hpp"
 

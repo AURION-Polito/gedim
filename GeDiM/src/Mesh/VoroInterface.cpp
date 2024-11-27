@@ -1,6 +1,6 @@
 #include "VoroInterface.hpp"
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "Eigen/Eigen"
 #include <unistd.h>
 
@@ -31,7 +31,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd& polyhe
     Gedim::Utilities::Unused(numIterations);
     Gedim::Utilities::Unused(mesh);
     Gedim::Utilities::Unused(random_seed);
-    throw runtime_error("Not active module VORO");
+    throw std::runtime_error("Not active module VORO");
 }
 
 void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygonVertices,
@@ -45,7 +45,7 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd& polygo
     Gedim::Utilities::Unused(numIterations);
     Gedim::Utilities::Unused(mesh);
     Gedim::Utilities::Unused(random_seed);
-    throw runtime_error("Not active module VORO");
+    throw std::runtime_error("Not active module VORO");
 }
 #else
 // ************************************************************************* //

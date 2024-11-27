@@ -1,7 +1,7 @@
 #ifndef __VTPExtension_H
 #define __VTPExtension_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #include <vector>
 #include <map>

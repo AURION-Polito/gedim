@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.12)
 
 project(GeDiM LANGUAGES CXX C VERSION 1.0.0)
 
@@ -161,7 +161,7 @@ foreach(header ${${GEDIM_LIBRARY_HEADERS}})
     get_filename_component(headerFileName ${header} NAME_WE)
     get_filename_component(headerExtension ${header} EXT)
 
-    if(${headerExtension} MATCHES ".hpp.in")
+    if(${headerExtension} MATCHES ".in")
         set(headerExtension ".hpp")
         set(headerDirectory ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
 
@@ -202,7 +202,8 @@ target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
 ###############################################################################################
 set_target_properties(${PROJECT_NAME} PROPERTIES 
     PUBLIC_HEADER "${${GEDIM_LIBRARY_PUBLIC_HEADERS}}"
-    EXPORT_NAME GeDiM)
+    EXPORT_NAME GeDiM
+    LINKER_LANGUAGE CXX)
 
 install(
     TARGETS ${PROJECT_NAME}

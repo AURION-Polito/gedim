@@ -1,7 +1,7 @@
 #ifndef __VoroInterface_H
 #define __VoroInterface_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "GeometryUtilities.hpp"
 
 #include "IMeshDAO.hpp"

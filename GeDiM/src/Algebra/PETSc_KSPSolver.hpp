@@ -1,7 +1,7 @@
 #ifndef __PETSCKSPSOLVER_H
 #define __PETSCKSPSOLVER_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #if ENABLE_PETSC == 1
 

@@ -1,7 +1,7 @@
 #ifndef __TetgenInterface_H
 #define __TetgenInterface_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "IMeshDAO.hpp"
 
 #if ENABLE_TRIANGLE == 1

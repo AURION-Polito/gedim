@@ -1,7 +1,7 @@
 #include "MetisUtilities.hpp"
 
 #include "GraphUtilities.hpp"
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #include "IOUtilities.hpp"
 

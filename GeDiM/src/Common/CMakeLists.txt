@@ -1,6 +1,6 @@
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/CommonUtilities.cpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/CommonUtilities.hpp)
-list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Macro.hpp.in)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Gedim_Macro.in)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 

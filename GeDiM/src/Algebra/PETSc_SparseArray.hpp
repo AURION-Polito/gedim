@@ -1,7 +1,7 @@
 #ifndef __PETSc_SparseArray_HPP
 #define __PETSc_SparseArray_HPP
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #if ENABLE_PETSC == 1
 

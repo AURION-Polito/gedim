@@ -4,7 +4,7 @@
 #include "ILinearSolver.hpp"
 #include "Eigen/Eigen"
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #if ENABLE_MKL
 #include <Eigen/PardisoSupport>

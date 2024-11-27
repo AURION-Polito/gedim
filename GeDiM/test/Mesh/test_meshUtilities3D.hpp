@@ -5,7 +5,7 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #include "GraphUtilities.hpp"
 #include "MeshMatrices.hpp"
@@ -69,6 +69,10 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestCreateDelaunayMesh)
   {
+#if ENABLE_TETGEN == 0
+    GTEST_SKIP();
+#endif
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -151,6 +155,10 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
   {
+#if ENABLE_TETGEN == 0
+    GTEST_SKIP();
+#endif
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 

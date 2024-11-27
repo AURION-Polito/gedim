@@ -1,7 +1,7 @@
 #ifndef __TriangleInterface_H
 #define __TriangleInterface_H
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "Eigen/Eigen"
 
 #if ENABLE_TRIANGLE == 1

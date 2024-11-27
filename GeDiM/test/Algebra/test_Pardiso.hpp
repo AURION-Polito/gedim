@@ -5,7 +5,7 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 
 #if ENABLE_MKL
 

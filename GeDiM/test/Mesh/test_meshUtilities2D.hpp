@@ -5,6 +5,8 @@
 #include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
 
+#include "Gedim_Macro.hpp"
+
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "CommonUtilities.hpp"
 #include "VTKUtilities.hpp"
@@ -191,6 +193,10 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
   {
+#if ENABLE_TRIANGLE == 0
+    GTEST_SKIP();
+#endif
+
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMeshComplex";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -264,6 +270,10 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestCreateTriangleMesh)
   {
+#if ENABLE_TRIANGLE == 0
+    GTEST_SKIP();
+#endif
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 

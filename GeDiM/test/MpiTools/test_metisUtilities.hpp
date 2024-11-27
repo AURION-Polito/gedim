@@ -10,7 +10,7 @@
 #include "GraphUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
 #include "MeshUtilities.hpp"
-#include "Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MetisUtilities.hpp"
 #include "OpenVolumeMeshInterface.hpp"
