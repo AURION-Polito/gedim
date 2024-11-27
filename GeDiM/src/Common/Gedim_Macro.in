@@ -62,8 +62,8 @@
 #cmakedefine LOGGING @LOGGING@
 
 // the configured options and settings for Tutorial
-#define gedim_VERSION_MAJOR @gedim_VERSION_MAJOR@
-#define gedim_VERSION_MINOR @gedim_VERSION_MINOR@
+#define GEDIM_VERSION_MAJOR @GeDiM_VERSION_MAJOR@
+#define GEDIM_VERSION_MINOR @GeDiM_VERSION_MINOR@
 
 /// @name Code Simplifications
 ///@{
