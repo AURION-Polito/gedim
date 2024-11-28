@@ -27,14 +27,14 @@ namespace UnitTesting
 
       for (unsigned int numOrd = 0; numOrd < orderMax.size(); numOrd++)
       {
-        Eigen::MatrixXd points;
-        Eigen::VectorXd weights;
+        const auto quadrature_points = Gedim::Quadrature::Quadrature_GaussLobatto1D::FillPointsAndWeights(quadratureOrders[numOrd]);
 
-        Gedim::Quadrature_GaussLobatto1D::FillPointsAndWeights(quadratureOrders[numOrd],
-                                                               points,
-                                                               weights);
+        const Eigen::MatrixXd& points = quadrature_points.Points;
+        const Eigen::VectorXd& weights = quadrature_points.Weights;
 
-        ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, weights.sum(), geometryUtilities.Tolerance1D()));
+        ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0,
+                                                     weights.sum(),
+                                                     geometryUtilities.Tolerance1D()));
 
         for(unsigned int ord = 0; ord <= orderMax[numOrd]; ord++)
         {
@@ -69,12 +69,10 @@ namespace UnitTesting
 
       for (unsigned int numOrd = 0; numOrd < orderMax.size(); numOrd++)
       {
-        Eigen::MatrixXd points;
-        Eigen::VectorXd weights;
+        const auto quadrature_points = Gedim::Quadrature::Quadrature_Gauss1D::FillPointsAndWeights(quadratureOrders[numOrd]);
 
-        Gedim::Quadrature_Gauss1D::FillPointsAndWeights(quadratureOrders[numOrd],
-                                                        points,
-                                                        weights);
+        const Eigen::MatrixXd& points = quadrature_points.Points;
+        const Eigen::VectorXd& weights = quadrature_points.Weights;
 
         ASSERT_TRUE(geometryUtilities.AreValuesEqual(1.0, weights.sum(), geometryUtilities.Tolerance1D()));
 
