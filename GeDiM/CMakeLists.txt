@@ -9,18 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Create library variables
 ###############################################################################################
-set(GEDIM_LIBRARY_SOURCES ${PROJECT_NAME}_sources)
-set(GEDIM_LIBRARY_HEADERS ${PROJECT_NAME}_headers)
-set(GEDIM_LIBRARY_PUBLIC_HEADERS ${PROJECT_NAME}_public_headers)
-set(GEDIM_LIBRARY_LINKED_LIBRARIES ${PROJECT_NAME}_linked_libraries)
-set(GEDIM_LIBRARY_INCLUDE ${PROJECT_NAME}_include)
-set(GEDIM_LIBRARY_ADDITIONAL_INCLUDE ${PROJECT_NAME}_additional_include)
-set(GEDIM_LIBRARY_COMPILE_DEFINITIONS ${PROJECT_NAME}_compile_definitions)
+set(GEDIM_LIBRARY_COMPILE_DEFINITIONS GeDiM_compile_definitions)
 set(GEDIM_INSTALL_DIR ${PROJECT_NAME})
 set(GEDIM_INSTALL_BINARY_DIR bin/)
 set(GEDIM_INSTALL_INCLUDE_DIR include/)
 set(GEDIM_INSTALL_LIB_DIR lib/)
 set(GEDIM_INSTALL_ARCHIVE_DIR lib/)
+set(GEDIM_INSTALL_DESTINATION lib/cmake/${PROJECT_NAME})
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
@@ -64,65 +59,65 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ## Eigen3
 find_package(Eigen3 CONFIG REQUIRED)
-list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC Eigen3::Eigen)
+list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC Eigen3::Eigen)
 
 ## Blas
 find_package(BLAS REQUIRED)
-list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC BLAS::BLAS)
+list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC BLAS::BLAS)
 
 ## Lapack
 find_package(LAPACK REQUIRED)
-list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC LAPACK::LAPACK)
+list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC LAPACK::LAPACK)
 
 ## MPI
 if(${USE_MPI})
     find_package(MPI REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC MPI::MPI_CXX)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC MPI::MPI_CXX)
 endif()
 
 ## MKL
 if(${ENABLE_MKL})
     set(MKL_INTERFACE lp64) # Eigen requires lp64 interface
     find_package(MKL CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} MKL::MKL)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES MKL::MKL)
 endif()
 
 ## triangle
 if(${ENABLE_TRIANGLE})
     find_package(triangle CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC triangle::triangle)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC triangle::triangle)
 endif()
 
 ## tetgen
 if(${ENABLE_TETGEN})
     find_package(tetgen CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC tetgen::tetgen)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC tetgen::tetgen)
 endif()
 
 ## VORO
 if(${ENABLE_VORO})
     find_package(VORO CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC VORO::voro++)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC VORO::voro++)
 endif()
 
 ## VTK
 if(${ENABLE_VTK})
     find_package(VTK CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} PUBLIC ${VTK_LIBRARIES})
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES PUBLIC ${VTK_LIBRARIES})
 endif()
 
 ## METIS
 if(${ENABLE_METIS})
     find_package(metis CONFIG REQUIRED)
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES} METIS::metis)
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES METIS::metis)
 endif()
 
 ## SuiteSparse
 if(${ENABLE_SUITESPARSE})
     find_package(SuiteSparse CONFIG REQUIRED)
     message("Found SuiteSparse: ${SUITESPARSE_LIBRARIES}")
-    list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES}  ${SUITESPARSE_LIBRARIES})
-    list(APPEND ${GEDIM_LIBRARY_INCLUDE}  ${SUITESPARSE_INCLUDE_DIRS})
+    list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES ${SUITESPARSE_LIBRARIES})
+    list(APPEND GEDIM_LIBRARY_INCLUDE ${SUITESPARSE_INCLUDE_DIRS})
 endif()
 
 if(${ENABLE_PETSC})
@@ -137,8 +132,8 @@ if(${ENABLE_PETSC})
     if (PETSC_FOUND)
         message("Found PETSc: ${PETSC_LINK_LIBRARIES}")
         list(APPEND COMPILE_OPTIONS ${PETSC_CFLAGS})
-        list(APPEND ${GEDIM_LIBRARY_INCLUDE}  ${PETSC_INCLUDE_DIRS})
-        list(APPEND ${GEDIM_LIBRARY_LINKED_LIBRARIES}  ${PETSC_LINK_LIBRARIES})
+        list(APPEND GEDIM_LIBRARY_INCLUDE ${PETSC_INCLUDE_DIRS})
+        list(APPEND GEDIM_LIBRARY_LINKED_LIBRARIES ${PETSC_LINK_LIBRARIES})
         set(LINK_FLAGS "${LINK_FLAGS} ${PETSC_LDFLAGS}")
         set(CMAKE_REQUIRED_FLAGS ${PETSC_CFLAGS})
         set(CMAKE_REQUIRED_INCLUDES "${PETSC_INCLUDE_DIRS}")
@@ -148,15 +143,15 @@ endif()
 # Insert Sources
 ###############################################################################################
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
-list(APPEND ${GEDIM_LIBRARY_SOURCES} ${gedim_src_sources})
-list(APPEND ${GEDIM_LIBRARY_HEADERS} ${gedim_src_headers})
-list(APPEND ${GEDIM_LIBRARY_INCLUDE} ${gedim_src_includes})
+list(APPEND GEDIM_LIBRARY_SOURCES ${gedim_src_sources})
+list(APPEND GEDIM_LIBRARY_HEADERS ${gedim_src_headers})
+list(APPEND GEDIM_LIBRARY_INCLUDE ${gedim_src_includes})
 
 # Create public headers
 ###############################################################################################
-set(GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_LIBRARY_ADDITIONAL_INCLUDE})
+set(GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR}/GeDiM_additional_include)
 
-foreach(header ${${GEDIM_LIBRARY_HEADERS}})
+foreach(header ${GEDIM_LIBRARY_HEADERS})
     get_filename_component(headerDirectory ${header} DIRECTORY)
     get_filename_component(headerFileName ${header} NAME_WE)
     get_filename_component(headerExtension ${header} EXT)
@@ -170,29 +165,29 @@ foreach(header ${${GEDIM_LIBRARY_HEADERS}})
         message(SEND_ERROR "Header extension not recognized for file ${headerFileName}${headerExtension}")
     endif()
 
-    list(APPEND ${GEDIM_LIBRARY_PUBLIC_HEADERS} ${headerDirectory}/${headerFileName}${headerExtension})
+    list(APPEND GEDIM_LIBRARY_PUBLIC_HEADERS ${headerDirectory}/${headerFileName}${headerExtension})
 endforeach()
 
-list(APPEND ${GEDIM_LIBRARY_INCLUDE} ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
+list(APPEND GEDIM_LIBRARY_INCLUDE ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
 
 # Add variables for clang anc cppcheck
 ###############################################################################################
-list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_SOURCES}})
-list(APPEND CLANGFORMAT_FILES ${${GEDIM_LIBRARY_HEADERS}})
+list(APPEND CLANGFORMAT_FILES ${GEDIM_LIBRARY_SOURCES})
+list(APPEND CLANGFORMAT_FILES ${GEDIM_LIBRARY_HEADERS})
 set(CLANGFORMAT_FILES ${CLANGFORMAT_FILES} PARENT_SCOPE)
 
-list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_SOURCES}})
-list(APPEND CPPCHECK_FILES ${${GEDIM_LIBRARY_HEADERS}})
+list(APPEND CPPCHECK_FILES ${GEDIM_LIBRARY_SOURCES})
+list(APPEND CPPCHECK_FILES ${GEDIM_LIBRARY_HEADERS})
 set(CPPCHECK_FILES ${CPPCHECK_FILES} PARENT_SCOPE)
 
 # Create library
 ###############################################################################################
-add_library(${PROJECT_NAME} STATIC ${${GEDIM_LIBRARY_SOURCES}} ${${GEDIM_LIBRARY_HEADERS}})
+add_library(${PROJECT_NAME} STATIC ${GEDIM_LIBRARY_SOURCES} ${GEDIM_LIBRARY_HEADERS})
 add_library(GeDiM::GeDiM ALIAS ${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} ${${GEDIM_LIBRARY_LINKED_LIBRARIES}})
+target_link_libraries(${PROJECT_NAME} ${GEDIM_LIBRARY_LINKED_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${${GEDIM_LIBRARY_INCLUDE}})
+target_include_directories(${PROJECT_NAME} PRIVATE ${GEDIM_LIBRARY_INCLUDE})
 target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${GEDIM_INSTALL_INCLUDE_DIR}>)
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${${GEDIM_LIBRARY_COMPILE_DEFINITIONS}})
 
@@ -201,7 +196,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
 # Create install target
 ###############################################################################################
 set_target_properties(${PROJECT_NAME} PROPERTIES 
-    PUBLIC_HEADER "${${GEDIM_LIBRARY_PUBLIC_HEADERS}}"
+    PUBLIC_HEADER "${GEDIM_LIBRARY_PUBLIC_HEADERS}"
     EXPORT_NAME GeDiM
     LINKER_LANGUAGE CXX)
 
@@ -220,7 +215,7 @@ include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GeDiMConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_DESTINATION}
     PATH_VARS GEDIM_INSTALL_INCLUDE_DIR
 )
 
@@ -239,7 +234,7 @@ export(
 install(
     EXPORT GeDiMTargets
     NAMESPACE GeDiM::
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_DESTINATION}
 )
 
 install(
@@ -247,5 +242,5 @@ install(
     ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/GeDiMConfigVersion.cmake
     DESTINATION
-    ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_LIB_DIR}/cmake/${GEDIM_INSTALL_DIR}
+    ${CMAKE_INSTALL_PREFIX}/${GEDIM_INSTALL_DESTINATION}
 )
