@@ -12,7 +12,7 @@ namespace Gedim
            typename Eigen_SolverType = Eigen::BiCGSTAB<Eigen_SparseArrayType, Eigen::DiagonalPreconditioner<double>>>
   class Eigen_BiCGSTABSolver final : public ILinearSolver
   {
-    private:
+    public:
       Eigen_SolverType linearSolver; ///< The solver
       const IArray* _rightHandSide; ///< The rightHandSide of the linear syste
       IArray* _solution; ///< The solution of the linear syste

@@ -4,6 +4,10 @@
 #include "PETSc_Array.hpp"
 #include "PETSc_SparseArray.hpp"
 
+PetscErrorCode MyKSPMonitor(KSP ksp, PetscInt n, PetscReal rnorm, void *dummy) {
+    PetscPrintf(PETSC_COMM_WORLD, "Iteration %d: Residual norm %g\n", n, (double)rnorm);
+    return 0;
+}
 
 namespace Gedim
 {
@@ -23,6 +27,11 @@ template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETS
 template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCJACOBI>;
 template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCILU>;
 template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPGMRES, PETSc_Preconditioners::PETSc_PCFIELDSPLIT>;
+template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICGS, PETSc_Preconditioners::PETSc_DEFAULT>;
+template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICGS, PETSc_Preconditioners::PETSc_PCNONE>;
+template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICGS, PETSc_Preconditioners::PETSc_PCJACOBI>;
+template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICGS, PETSc_Preconditioners::PETSc_PCILU>;
+template class PETSc_KSPSolver<Vec, Mat, PETSc_SolverTypes::PETSc_KSPBICGS, PETSc_Preconditioners::PETSc_PCFIELDSPLIT>;
 // ***************************************************************************
 template<typename PETSc_ArrayType,
          typename PETSc_SparseArrayType,
@@ -119,9 +128,15 @@ void PETSc_KSPSolver<
     case PETSc_SolverTypes::PETSc_KSPGMRES:
         KSPSetType(linearSolver, KSPGMRES);
         break;
+    case PETSc_SolverTypes::PETSc_KSPBICGS:
+        KSPSetType(linearSolver, KSPBCGS);
+        break;
     default:
         throw std::runtime_error("Unsopported PETSc solver type");
     }
+
+    // Set monitors
+    KSPMonitorSet(linearSolver, MyKSPMonitor, NULL, NULL);
 
     KSPGetPC(linearSolver, &preconditioner);
     switch (PETSc_Preconditioner)
@@ -148,10 +163,13 @@ void PETSc_KSPSolver<
         throw std::runtime_error("Unsopported PETSc preconditioner type");
     }
 
+    // Tell KSP to use the initial guess in x
+    KSPSetInitialGuessNonzero(linearSolver, PETSC_TRUE);
+
     KSPSetTolerances(linearSolver,
                      _config.Tolerance,
                      PETSC_DEFAULT,
-                     PETSC_DEFAULT,
+                     1.0e15,
                      _config.MaxIterations);
 
     CHKERRABORT(PETSC_COMM_WORLD,
@@ -175,6 +193,7 @@ ILinearSolver::SolutionInfo PETSc_KSPSolver<
     const auto& sol_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(solution);
     const PETSc_ArrayType& sol_PETSc = static_cast<const PETSc_ArrayType&>(sol_PETSc_Array);
 
+
     CHKERRABORT(PETSC_COMM_WORLD,
                 KSPSolve(linearSolver, rhs_PETSc, sol_PETSc));
 
@@ -182,8 +201,8 @@ ILinearSolver::SolutionInfo PETSc_KSPSolver<
     KSPGetConvergedReason(linearSolver, &reason);
     if (reason < 0)
     {
+        PetscPrintf(PETSC_COMM_WORLD, "Solver converged. Reason: %s\n", KSPConvergedReasons[reason]);
         throw std::runtime_error("KSP did not converge.\n");
-        PetscPrintf(PETSC_COMM_WORLD, "KSP did not converge.\n");
     }
 
     PetscInt iterations;

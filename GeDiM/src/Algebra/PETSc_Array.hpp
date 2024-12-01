@@ -75,12 +75,20 @@ public:
 
     double& operator[] (const int&)
     { throw std::runtime_error("unimplemented method"); }
-    const double& operator[] (const int&) const
+
+    const PetscScalar& operator[] (const int&) const
     { throw std::runtime_error("unimplemented method"); }
 
     inline void Concatenate(const IArray&,
                             const IArray&)
     { throw std::runtime_error("unimplemented method"); }
+
+    inline double GetValue(const int& i) const
+    {
+        PetscScalar value;
+        VecGetValues(_vector, 1, &i, &value);
+        return static_cast<double>(value);
+    }
 
     std::ostream& Print(std::ostream& output) const;
 

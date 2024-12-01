@@ -55,6 +55,7 @@ namespace Gedim
                              const std::vector<double>& values) = 0;
 
       virtual std::vector<double> GetValues(const std::vector<int>& indices = {}) const = 0;
+      virtual double GetValue(const int& i) const = 0;
 
       /// \brief Add value to the Array
       /// \param i the i_th global position starting from 0

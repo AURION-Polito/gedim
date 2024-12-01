@@ -15,7 +15,7 @@ namespace Gedim
     MatCreate(PETSC_COMM_WORLD,
               &_matrix);
     MatSetType(_matrix,
-               MATMPIAIJ);
+               MATAIJ);
     MatSetSizes(_matrix,
                 PETSC_DECIDE,
                 PETSC_DECIDE,
