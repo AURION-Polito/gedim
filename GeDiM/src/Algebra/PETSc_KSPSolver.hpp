@@ -17,7 +17,8 @@ namespace Gedim
   {
     PETSc_KSPCG = 0,
     PETSc_KSPBICG = 1,
-    PETSc_KSPGMRES = 2
+    PETSc_KSPGMRES = 2,
+    PETSc_KSPBICGS = 3
   };
 
   enum struct PETSc_Preconditioners

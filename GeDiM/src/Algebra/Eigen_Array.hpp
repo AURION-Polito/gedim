@@ -55,6 +55,9 @@ namespace Gedim
                      const std::vector<double>& values);
       std::vector<double> GetValues(const std::vector<int>& indices = {}) const;
 
+      inline double GetValue(const int& i) const
+      { return _vector[i]; }
+
       inline void Zeros() { _vector.setZero(); }
       inline void Ones() { _vector.setOnes(); }
       inline void Constant(const double& c) { _vector.setConstant(c); }
