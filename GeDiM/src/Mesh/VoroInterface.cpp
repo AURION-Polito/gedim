@@ -6,6 +6,8 @@
 
 #include "CommonUtilities.hpp"
 
+using namespace std;
+
 namespace Gedim
 {
 // ************************************************************************* //

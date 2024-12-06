@@ -66,7 +66,7 @@ namespace Gedim
     private:
 
 #if ENABLE_VORO == 1
-      bool InsertNewPoints(Cell0D& cell0D, list<Cell0D>& cell0Ds);
+      bool InsertNewPoints(Cell0D& cell0D, std::list<Cell0D>& cell0Ds);
       inline double rnd() { return double(rand())/RAND_MAX; }
 
       void GenerateRandomPoints(const Eigen::MatrixXd& domainVertices,
