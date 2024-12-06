@@ -40,28 +40,6 @@ namespace Gedim_ImportExport_Utilities
     return out;
   }
 
-  template <class T>
-  std::istream& operator>>(std::istream& in,
-                           std::vector<T>& elements)
-  {
-    char separator;
-    unsigned int size = 0;
-    in >> size;
-    elements.resize(size);
-    in >> separator;
-
-    in >> separator;
-    for (unsigned int v = 0; v < size; v++)
-    {
-      T element;
-      in >> element;
-      in >> separator;
-      elements[v] = element;
-    }
-
-    return in;
-  }
-
   template <class T, int Rows, int Cols>
   std::istream& operator>>(std::istream& in,
                            Eigen::Matrix<T, Rows, Cols>& matrix)
@@ -84,6 +62,28 @@ namespace Gedim_ImportExport_Utilities
         in >> separator;
       }
       in >> separator;
+    }
+
+    return in;
+  }
+
+  template <class T>
+  std::istream& operator>>(std::istream& in,
+                           std::vector<T>& elements)
+  {
+    char separator;
+    unsigned int size = 0;
+    in >> size;
+    elements.resize(size);
+    in >> separator;
+
+    in >> separator;
+    for (unsigned int v = 0; v < size; v++)
+    {
+      T element;
+      in >> element;
+      in >> separator;
+      elements[v] = element;
     }
 
     return in;
