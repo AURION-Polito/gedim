@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(GeDiM LANGUAGES CXX C VERSION 1.0.0)
 
-# Set C++ Standard
-###########################################################################################
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Create library variables
 ###############################################################################################
 set(GEDIM_LIBRARY_COMPILE_DEFINITIONS GeDiM_compile_definitions)
@@ -198,7 +193,10 @@ target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
 set_target_properties(${PROJECT_NAME} PROPERTIES 
     PUBLIC_HEADER "${GEDIM_LIBRARY_PUBLIC_HEADERS}"
     EXPORT_NAME GeDiM
-    LINKER_LANGUAGE CXX)
+    LINKER_LANGUAGE CXX
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
 
 install(
     TARGETS ${PROJECT_NAME}
