@@ -449,8 +449,6 @@ namespace Gedim
 
     Output::Assert(polygonVertices.rows() == 3 && polygonVertices.cols() > 2);
     const unsigned int numPolygonVertices = polygonVertices.cols();
-    Output::Assert(vertexMarkers.size() == numPolygonVertices);
-    Output::Assert(edgeMarkers.size() == numPolygonVertices);
 
     // Create Cell0Ds
     const unsigned int& numCell0Ds = numPolygonVertices;
@@ -459,7 +457,11 @@ namespace Gedim
     {
       mesh.Cell0DSetState(v, true);
       mesh.Cell0DInsertCoordinates(v, polygonVertices.col(v));
-      mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+
+      if (vertexMarkers.size() == numPolygonVertices)
+        mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+      else
+        mesh.Cell0DSetMarker(v, v + 1);
     }
 
     // Create Cell1Ds
@@ -471,7 +473,13 @@ namespace Gedim
                                 e,
                                 (e + 1) % numPolygonVertices);
       mesh.Cell1DSetState(e, true);
-      mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+
+      if (edgeMarkers.size() == numPolygonVertices)
+        mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+      else
+        mesh.Cell1DSetMarker(e, numPolygonVertices + e + 1);
+
+
     }
 
     // Create Cell2Ds
