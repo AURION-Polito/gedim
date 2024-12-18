@@ -1,5 +1,3 @@
-file(GLOB_RECURSE ALL_SOURCE_FILES src/*.c src/*.h)
-
 set(ENABLE_CPPCHECK OFF CACHE BOOL "Enable cppcheck")
 
 if(${ENABLE_CPPCHECK})
@@ -12,11 +10,12 @@ if(${ENABLE_CPPCHECK})
 		    --enable=warning,performance,portability,information
 		    --suppress=missingInclude
 		    --suppress=missingIncludeSystem
-		    --std=c11
+		    --std=c20
 		    --library=std.cfg
 		    --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
 		    --verbose
 		    --quiet
+		    --xml
 		    ${CPPCHECK_FILES}
 	)
 endif()
