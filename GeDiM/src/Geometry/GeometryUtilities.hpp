@@ -2185,6 +2185,10 @@ public:
     /// \return for each polyhedron face the barycenter
     std::vector<Eigen::Vector3d> PolyhedronFaceBarycenter(const std::vector<Eigen::MatrixXd>& polyhedronFaceVertices) const;
 
+    Eigen::Matrix3d PolyhedronMass(const Eigen::Vector3d &polyhedronCentroid,
+                                   const std::vector<Eigen::MatrixXd> &polyhedronTetrahedronPoints) const;
+
+
     Eigen::Matrix3d PolyhedronInertia(const Eigen::Vector3d& polyhedronCentroid,
                                       const std::vector<Eigen::MatrixXd>& polyhedronTetrahedraPoints) const;
 
