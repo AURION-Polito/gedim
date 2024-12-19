@@ -880,10 +880,6 @@ namespace Gedim
     const unsigned int numEdges = polyhedronEdges.cols();
     const unsigned int numFaces = polyhedronFaces.size();
 
-    Output::Assert(vertexMarkers.size() == numVertices);
-    Output::Assert(edgeMarkers.size() == numEdges);
-    Output::Assert(faceMarkers.size() == numFaces);
-
     // Create Cell0Ds
     const unsigned int& numCell0Ds = numVertices;
     mesh.Cell0DsInitialize(numCell0Ds);
@@ -891,7 +887,11 @@ namespace Gedim
     {
       mesh.Cell0DSetState(v, true);
       mesh.Cell0DInsertCoordinates(v, polyhedronVertices.col(v));
-      mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+
+      if (vertexMarkers.size() == numVertices)
+        mesh.Cell0DSetMarker(v, vertexMarkers[v]);
+      else
+        mesh.Cell0DSetMarker(v, v + 1);
     }
 
     // Create Cell1Ds
@@ -903,7 +903,11 @@ namespace Gedim
                                 polyhedronEdges(0, e),
                                 polyhedronEdges(1, e));
       mesh.Cell1DSetState(e, true);
-      mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+
+      if (edgeMarkers.size() == numEdges)
+        mesh.Cell1DSetMarker(e, edgeMarkers[e]);
+      else
+        mesh.Cell1DSetMarker(e, numVertices + e + 1);
     }
 
 
@@ -922,7 +926,11 @@ namespace Gedim
         mesh.Cell2DInsertEdge(f, e, polyhedronFaces.at(f)(1, e));
 
       mesh.Cell2DSetState(f, true);
-      mesh.Cell2DSetMarker(f, faceMarkers[f]);
+
+      if (faceMarkers.size() == numFaces)
+        mesh.Cell2DSetMarker(f, faceMarkers[f]);
+      else
+        mesh.Cell2DSetMarker(f, numVertices + numEdges + f + 1);
     }
 
     // Create Cell3Ds
