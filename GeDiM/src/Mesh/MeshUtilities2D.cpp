@@ -1957,6 +1957,87 @@ namespace Gedim
     }
   }
   // ***************************************************************************
+  void MeshUtilities::SetPolygonMeshMarkers(const GeometryUtilities &geometryUtilities,
+                                            const Eigen::MatrixXd& polygonVertices,
+                                            const std::vector<unsigned int> &cell0DMarkers,
+                                            const std::vector<unsigned int> &cell1DMarkers,
+                                            IMeshDAO& mesh) const
+  {
+    Output::Assert(mesh.Dimension() == 2);
+
+    const unsigned int numVertices = polygonVertices.cols();
+
+    for (unsigned int e = 0; e < numVertices; e++)
+    {
+
+      const Eigen::Vector3d segment_origin = polygonVertices.col(e);
+      const Eigen::Vector3d segment_end = polygonVertices.col((e + 1) % numVertices);
+      const Eigen::Vector3d segment_tangent = segment_end - segment_origin;
+      const double segment_tangent_squared_length = segment_tangent.squaredNorm();
+
+      // set cell0Ds markers
+      std::vector<bool> vertices_on_segment(mesh.Cell0DTotalNumber(),
+                                            false);
+      for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+      {
+        const Eigen::Vector3d vertex_coordinate = mesh.Cell0DCoordinates(v);
+
+        if (!geometryUtilities.IsPointOnLine(vertex_coordinate,
+                                             segment_origin,
+                                             segment_tangent,
+                                             segment_tangent_squared_length))
+          continue;
+
+        const auto point_position = geometryUtilities.PointSegmentPosition(vertex_coordinate,
+                                                                           segment_origin,
+                                                                           segment_origin + segment_tangent);
+
+        switch (point_position)
+        {
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::RightTheSegment:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::LeftTheSegment:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineAfterEnd:
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentLineBeforeOrigin:
+          continue;
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+        {
+          vertices_on_segment[v] = true;
+          mesh.Cell0DSetMarker(v,
+                               cell0DMarkers[e]);
+        }
+        break;
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+        {
+          vertices_on_segment[v] = true;
+        }
+        break;
+        case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+        {
+          vertices_on_segment[v] = true;
+          mesh.Cell0DSetMarker(v,
+                               cell1DMarkers[e]);
+        }
+        break;
+        default:
+          throw std::runtime_error("unexpected point position");
+        }
+      }
+
+      // set cell1Ds markers
+      for (unsigned int s = 0; s < mesh.Cell1DTotalNumber(); s++)
+      {
+        const Eigen::VectorXi extremes = mesh.Cell1DExtremes(s);
+
+        if (vertices_on_segment[extremes[0]] &&
+            vertices_on_segment[extremes[1]])
+        {
+          mesh.Cell1DSetMarker(s,
+                               cell1DMarkers[e]);
+        }
+      }
+    }
+  }
+  // ***************************************************************************
   MeshUtilities::AgglomerateCell2DInformation MeshUtilities::AgglomerateCell2Ds(const GeometryUtilities& geometryUtilities,
                                                                                 const std::unordered_set<unsigned int>& cell2DsIndex,
                                                                                 const IMeshDAO& mesh) const

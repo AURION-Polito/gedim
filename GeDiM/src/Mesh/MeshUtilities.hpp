@@ -1050,6 +1050,12 @@ namespace Gedim
                                                                  const std::vector<std::vector<bool>>& mesh_cell3Ds_faces_normal_directions,
                                                                  const std::vector<std::vector<Eigen::Vector3d>>& mesh_cell3Ds_faces_translation,
                                                                  const std::vector<std::vector<Eigen::Matrix3d>>& mesh_cell3Ds_faces_rotation_matrix) const;
+
+      void SetPolygonMeshMarkers(const GeometryUtilities &geometryUtilities,
+                                 const Eigen::MatrixXd &polygonVertices,
+                                 const std::vector<unsigned int> &cell0DMarkers,
+                                 const std::vector<unsigned int> &cell1DMarkers,
+                                 IMeshDAO &mesh) const;
   };
 
 }
