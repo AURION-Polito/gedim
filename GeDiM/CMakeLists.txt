@@ -142,6 +142,16 @@ list(APPEND GEDIM_LIBRARY_SOURCES ${gedim_src_sources})
 list(APPEND GEDIM_LIBRARY_HEADERS ${gedim_src_headers})
 list(APPEND GEDIM_LIBRARY_INCLUDE ${gedim_src_includes})
 
+# Add variables for clang anc cppcheck
+###############################################################################################
+list(APPEND CLANGFORMAT_FILES ${gedim_src_sources})
+list(APPEND CLANGFORMAT_FILES ${gedim_src_headers})
+set(CLANGFORMAT_FILES ${CLANGFORMAT_FILES} PARENT_SCOPE)
+
+list(APPEND CPPCHECK_FILES ${gedim_src_sources})
+list(APPEND CPPCHECK_FILES ${gedim_src_headers})
+set(CPPCHECK_FILES ${CPPCHECK_FILES} PARENT_SCOPE)
+
 # Create public headers
 ###############################################################################################
 set(GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR}/GeDiM_additional_include)
@@ -164,16 +174,6 @@ foreach(header ${GEDIM_LIBRARY_HEADERS})
 endforeach()
 
 list(APPEND GEDIM_LIBRARY_INCLUDE ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
-
-# Add variables for clang anc cppcheck
-###############################################################################################
-list(APPEND CLANGFORMAT_FILES ${GEDIM_LIBRARY_SOURCES})
-list(APPEND CLANGFORMAT_FILES ${GEDIM_LIBRARY_HEADERS})
-set(CLANGFORMAT_FILES ${CLANGFORMAT_FILES} PARENT_SCOPE)
-
-list(APPEND CPPCHECK_FILES ${GEDIM_LIBRARY_SOURCES})
-list(APPEND CPPCHECK_FILES ${GEDIM_LIBRARY_HEADERS})
-set(CPPCHECK_FILES ${CPPCHECK_FILES} PARENT_SCOPE)
 
 # Create library
 ###############################################################################################
