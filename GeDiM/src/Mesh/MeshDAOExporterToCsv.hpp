@@ -9,24 +9,23 @@ using namespace Eigen;
 
 namespace Gedim
 {
-  /// \brief MeshDAOExporterToCsv
-  /// \copyright See top level LICENSE file for details.
-  class MeshDAOExporterToCsv final
-  {
-    private:
-      const MeshFromCsvUtilities& utilities;
+/// \brief MeshDAOExporterToCsv
+/// \copyright See top level LICENSE file for details.
+class MeshDAOExporterToCsv final
+{
+  private:
+    const MeshFromCsvUtilities &utilities;
 
-    public:
-      MeshDAOExporterToCsv(const MeshFromCsvUtilities& utilities);
-      ~MeshDAOExporterToCsv();
+  public:
+    MeshDAOExporterToCsv(const MeshFromCsvUtilities &utilities);
+    ~MeshDAOExporterToCsv();
 
-      /// \brief Export the mesh in all parts
-      /// \param configuration the configuration for export
-      /// \param mesh the mesh to be exported
-      void Export(const MeshFromCsvUtilities::Configuration& configuration,
-                  const IMeshDAO& mesh) const;
-  };
+    /// \brief Export the mesh in all parts
+    /// \param configuration the configuration for export
+    /// \param mesh the mesh to be exported
+    void Export(const MeshFromCsvUtilities::Configuration &configuration, const IMeshDAO &mesh) const;
+};
 
-}
+} // namespace Gedim
 
 #endif // __MeshDAOExporterToCsv_H

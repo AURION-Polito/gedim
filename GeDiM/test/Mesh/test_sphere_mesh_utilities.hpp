@@ -1,16 +1,15 @@
 #ifndef __TEST_SPHERE_MESH_UTILITIES_H
 #define __TEST_SPHERE_MESH_UTILITIES_H
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <numeric>
 
+#include "MeshMatricesDAO.hpp"
+#include "MeshUtilities.hpp"
 #include "SphereMeshUtilities.hpp"
 #include "VTKUtilities.hpp"
-#include "MeshUtilities.hpp"
-#include "MeshMatricesDAO.hpp"
-
 
 using namespace testing;
 using namespace std;
@@ -23,8 +22,7 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
     const Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::MeshUtilities meshUtilities;
-    const Gedim::SphereMeshUtilities sphereMeshUtilities(geometryUtilities,
-                                                         meshUtilities);
+    const Gedim::SphereMeshUtilities sphereMeshUtilities(geometryUtilities, meshUtilities);
 
     {
         const Gedim::GeometryUtilities::Polyhedron polyhedron = sphereMeshUtilities.uv_sphere(4, 2);
@@ -39,18 +37,10 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
 
         Gedim::MeshMatrices mesh_data;
         Gedim::MeshMatricesDAO mesh(mesh_data);
-        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices,
-                                           polyhedron.Edges,
-                                           polyhedron.Faces,
-                                           vertexMarkers,
-                                           edgeMarkers,
-                                           faceMarkers,
-                                           mesh);
+        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, vertexMarkers, edgeMarkers, faceMarkers, mesh);
 
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        meshUtilities.CheckMesh3D(config,
-                                  geometryUtilities,
-                                  mesh);
+        meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSphereMeshUtilities/TestUVSphere";
@@ -60,13 +50,9 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
             Gedim::VTKUtilities vtpUtilities;
 
             //  original polyhedron
-            vtpUtilities.AddPolyhedron(polyhedron.Vertices,
-                                       polyhedron.Edges,
-                                       polyhedron.Faces);
+            vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
 
-
-            vtpUtilities.Export(exportFolder + "/ref_0.vtu",
-                                Gedim::VTKUtilities::Ascii);
+            vtpUtilities.Export(exportFolder + "/ref_0.vtu", Gedim::VTKUtilities::Ascii);
         }
     }
 
@@ -83,18 +69,10 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
 
         Gedim::MeshMatrices mesh_data;
         Gedim::MeshMatricesDAO mesh(mesh_data);
-        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices,
-                                           polyhedron.Edges,
-                                           polyhedron.Faces,
-                                           vertexMarkers,
-                                           edgeMarkers,
-                                           faceMarkers,
-                                           mesh);
+        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, vertexMarkers, edgeMarkers, faceMarkers, mesh);
 
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        meshUtilities.CheckMesh3D(config,
-                                  geometryUtilities,
-                                  mesh);
+        meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSphereMeshUtilities/TestUVSphere";
@@ -104,13 +82,9 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
             Gedim::VTKUtilities vtpUtilities;
 
             //  original polyhedron
-            vtpUtilities.AddPolyhedron(polyhedron.Vertices,
-                                       polyhedron.Edges,
-                                       polyhedron.Faces);
+            vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
 
-
-            vtpUtilities.Export(exportFolder + "/ref_1.vtu",
-                                Gedim::VTKUtilities::Ascii);
+            vtpUtilities.Export(exportFolder + "/ref_1.vtu", Gedim::VTKUtilities::Ascii);
         }
     }
 
@@ -127,18 +101,10 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
 
         Gedim::MeshMatrices mesh_data;
         Gedim::MeshMatricesDAO mesh(mesh_data);
-        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices,
-                                           polyhedron.Edges,
-                                           polyhedron.Faces,
-                                           vertexMarkers,
-                                           edgeMarkers,
-                                           faceMarkers,
-                                           mesh);
+        meshUtilities.Mesh3DFromPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, vertexMarkers, edgeMarkers, faceMarkers, mesh);
 
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        meshUtilities.CheckMesh3D(config,
-                                  geometryUtilities,
-                                  mesh);
+        meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
 
         // Export to VTK
         std::string exportFolder = "./Export/TestSphereMeshUtilities/TestUVSphere";
@@ -148,19 +114,13 @@ TEST(TestSphereMeshUtilities, TestUVSphere)
             Gedim::VTKUtilities vtpUtilities;
 
             //  original polyhedron
-            vtpUtilities.AddPolyhedron(polyhedron.Vertices,
-                                       polyhedron.Edges,
-                                       polyhedron.Faces);
+            vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
 
-
-            vtpUtilities.Export(exportFolder + "/ref_2.vtu",
-                                Gedim::VTKUtilities::Ascii);
+            vtpUtilities.Export(exportFolder + "/ref_2.vtu", Gedim::VTKUtilities::Ascii);
         }
     }
-
-
 }
 
-}
+} // namespace GedimUnitTesting
 
 #endif // __TEST_SPHERE_MESH_UTILITIES_H

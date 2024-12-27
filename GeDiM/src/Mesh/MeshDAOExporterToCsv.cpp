@@ -1,39 +1,29 @@
 #include "MeshDAOExporterToCsv.hpp"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 namespace Gedim
 {
-  // ***************************************************************************
-  MeshDAOExporterToCsv::MeshDAOExporterToCsv(const MeshFromCsvUtilities& utilities) :
-    utilities(utilities)
-  {
-  }
-  MeshDAOExporterToCsv::~MeshDAOExporterToCsv()
-  {
-  }
-  // ***************************************************************************
-  void MeshDAOExporterToCsv::Export(const MeshFromCsvUtilities::Configuration& configuration,
-                                    const IMeshDAO& mesh) const
-  {
-    utilities.ExportCell0Ds(configuration.Folder + "/" +
-                            configuration.FileCell0DsName + "." +
-                            configuration.FileExtension,
+// ***************************************************************************
+MeshDAOExporterToCsv::MeshDAOExporterToCsv(const MeshFromCsvUtilities &utilities) : utilities(utilities)
+{
+}
+MeshDAOExporterToCsv::~MeshDAOExporterToCsv()
+{
+}
+// ***************************************************************************
+void MeshDAOExporterToCsv::Export(const MeshFromCsvUtilities::Configuration &configuration, const IMeshDAO &mesh) const
+{
+    utilities.ExportCell0Ds(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension,
                             configuration.Separator,
                             mesh);
-    utilities.ExportCell1Ds(configuration.Folder + "/" +
-                            configuration.FileCell1DsName + "." +
-                            configuration.FileExtension,
+    utilities.ExportCell1Ds(configuration.Folder + "/" + configuration.FileCell1DsName + "." + configuration.FileExtension,
                             configuration.Separator,
                             mesh);
-    utilities.ExportCell2Ds(configuration.Folder + "/" +
-                            configuration.FileCell2DsName + "." +
-                            configuration.FileExtension,
+    utilities.ExportCell2Ds(configuration.Folder + "/" + configuration.FileCell2DsName + "." + configuration.FileExtension,
                             configuration.Separator,
                             mesh);
-    utilities.ExportCell3Ds(configuration.Folder + "/" +
-                            configuration.FileCell3DsName + "." +
-                            configuration.FileExtension,
+    utilities.ExportCell3Ds(configuration.Folder + "/" + configuration.FileCell3DsName + "." + configuration.FileExtension,
                             configuration.Separator,
                             mesh);
 
@@ -61,47 +51,39 @@ namespace Gedim
                                      configuration.Separator,
                                      mesh);
 
-    utilities.ExportCell0DNeighbours(configuration.Folder + "/" +
-                                     configuration.FileCell0DNeighboursName + "." +
-                                     configuration.FileExtension,
+    utilities.ExportCell0DNeighbours(configuration.Folder + "/" + configuration.FileCell0DNeighboursName + "." +
+                                         configuration.FileExtension,
                                      configuration.Separator,
                                      mesh);
-    utilities.ExportCell1DNeighbours(configuration.Folder + "/" +
-                                     configuration.FileCell1DNeighboursName + "." +
-                                     configuration.FileExtension,
+    utilities.ExportCell1DNeighbours(configuration.Folder + "/" + configuration.FileCell1DNeighboursName + "." +
+                                         configuration.FileExtension,
                                      configuration.Separator,
                                      mesh);
-    utilities.ExportCell2DNeighbours(configuration.Folder + "/" +
-                                     configuration.FileCell2DNeighboursName + "." +
-                                     configuration.FileExtension,
+    utilities.ExportCell2DNeighbours(configuration.Folder + "/" + configuration.FileCell2DNeighboursName + "." +
+                                         configuration.FileExtension,
                                      configuration.Separator,
                                      mesh);
-    utilities.ExportCell2DSubDivisions(configuration.Folder + "/" +
-                                       configuration.FileCell2DSubDivisionsName + "." +
-                                       configuration.FileExtension,
+    utilities.ExportCell2DSubDivisions(configuration.Folder + "/" + configuration.FileCell2DSubDivisionsName + "." +
+                                           configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
 
-    utilities.ExportCell0DUpdatedCells(configuration.Folder + "/" +
-                                       configuration.FileCell0DUpdatedCellsName + "." +
-                                       configuration.FileExtension,
+    utilities.ExportCell0DUpdatedCells(configuration.Folder + "/" + configuration.FileCell0DUpdatedCellsName + "." +
+                                           configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
-    utilities.ExportCell1DUpdatedCells(configuration.Folder + "/" +
-                                       configuration.FileCell1DUpdatedCellsName + "." +
-                                       configuration.FileExtension,
+    utilities.ExportCell1DUpdatedCells(configuration.Folder + "/" + configuration.FileCell1DUpdatedCellsName + "." +
+                                           configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
-    utilities.ExportCell2DUpdatedCells(configuration.Folder + "/" +
-                                       configuration.FileCell2DUpdatedCellsName + "." +
-                                       configuration.FileExtension,
+    utilities.ExportCell2DUpdatedCells(configuration.Folder + "/" + configuration.FileCell2DUpdatedCellsName + "." +
+                                           configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
-    utilities.ExportCell3DUpdatedCells(configuration.Folder + "/" +
-                                       configuration.FileCell3DUpdatedCellsName + "." +
-                                       configuration.FileExtension,
+    utilities.ExportCell3DUpdatedCells(configuration.Folder + "/" + configuration.FileCell3DUpdatedCellsName + "." +
+                                           configuration.FileExtension,
                                        configuration.Separator,
                                        mesh);
-  }
-  // ***************************************************************************
 }
+// ***************************************************************************
+} // namespace Gedim

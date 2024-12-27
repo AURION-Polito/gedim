@@ -3,7 +3,7 @@
 
 namespace Gedim
 {
-  // ***************************************************************************
-  std::shared_ptr<IMpiProcess> MpiParallelEnvironment::_process(new MpiProcess(0, 1, true));
-  // ***************************************************************************
-}
+// ***************************************************************************
+std::shared_ptr<IMpiProcess> MpiParallelEnvironment::_process(new MpiProcess(0, 1, true));
+// ***************************************************************************
+} // namespace Gedim

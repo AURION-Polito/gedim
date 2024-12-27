@@ -1,16 +1,16 @@
 #ifndef __TEST_PETSc_H
 #define __TEST_PETSc_H
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include "Gedim_Macro.hpp"
 
 #if ENABLE_PETSC == 1
 
-#include "PETSc_KSPSolver.hpp"
 #include "PETSc_Array.hpp"
+#include "PETSc_KSPSolver.hpp"
 #include "PETSc_SparseArray.hpp"
 
 namespace UnitTesting
@@ -24,13 +24,13 @@ TEST(TestPETSc, TestPETSc_Solvers)
     A.SetSize(2, 2);
     A.Triplet(0, 0, 17);
     A.Triplet(1, 1, 85);
-    A.Triplets({ 0, 1 }, { 1, 0 }, { 38.0, 38.0 });
+    A.Triplets({0, 1}, {1, 0}, {38.0, 38.0});
     A.Create();
 
     Gedim::PETSc_Array<> b;
     b.SetSize(2);
-    b.SetValues({ 0 }, { 50.0 });
-    b.AddValues({ 0 }, { 5.0 });
+    b.SetValues({0}, {50.0});
+    b.AddValues({0}, {5.0});
     b.SetValue(1, 120.0);
     b.AddValue(1, 3.0);
     b.Create();
@@ -42,7 +42,7 @@ TEST(TestPETSc, TestPETSc_Solvers)
     // PCG
     {
         Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPCG> solver;
-        solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+        solver.Initialize(A, b, x, {1000, 1.0e-12});
         const auto solver_result = solver.Solve();
 
         const auto solution = x.GetValues();
@@ -62,7 +62,7 @@ TEST(TestPETSc, TestPETSc_Solvers)
     // BICG
     {
         Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPBICG> solver;
-        solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+        solver.Initialize(A, b, x, {1000, 1.0e-12});
         const auto solver_result = solver.Solve();
 
         const auto solution = x.GetValues();
@@ -82,7 +82,7 @@ TEST(TestPETSc, TestPETSc_Solvers)
     // GMRES
     {
         Gedim::PETSc_KSPSolver<Vec, Mat, Gedim::PETSc_SolverTypes::PETSc_KSPGMRES> solver;
-        solver.Initialize(A, b, x, { 1000, 1.0e-12 });
+        solver.Initialize(A, b, x, {1000, 1.0e-12});
         const auto solver_result = solver.Solve();
 
         const auto solution = x.GetValues();
@@ -101,7 +101,7 @@ TEST(TestPETSc, TestPETSc_Solvers)
 
     PetscFinalize();
 }
-}
+} // namespace UnitTesting
 
 #endif // ENABLE_PETSC
 

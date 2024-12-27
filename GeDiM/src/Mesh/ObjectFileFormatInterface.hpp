@@ -6,38 +6,31 @@
 
 namespace Gedim
 {
-  class ObjectFileFormatInterface final
-  {
-    public:
-      struct OFFMesh final
-      {
-          unsigned int NumCell0Ds;
-          unsigned int NumCell1Ds;
-          unsigned int NumCell2Ds;
+class ObjectFileFormatInterface final
+{
+  public:
+    struct OFFMesh final
+    {
+        unsigned int NumCell0Ds;
+        unsigned int NumCell1Ds;
+        unsigned int NumCell2Ds;
 
-          Eigen::MatrixXd Cell0Ds;
-          std::vector<Eigen::VectorXi> Cell2Ds;
-      };
+        Eigen::MatrixXd Cell0Ds;
+        std::vector<Eigen::VectorXi> Cell2Ds;
+    };
 
-      ObjectFileFormatInterface();
-      ~ObjectFileFormatInterface();
+    ObjectFileFormatInterface();
+    ~ObjectFileFormatInterface();
 
-      OFFMesh StringsToOFFMesh(const std::vector<std::string>& fileLines) const;
-      std::vector<std::string> OFFMeshToStrings(const OFFMesh& mesh) const;
-      OFFMesh MeshDAOToOFFMesh(const IMeshDAO& originalMesh) const;
-      void OFFMeshToMeshDAO(const OFFMesh& originalMesh,
-                            const MeshUtilities& meshUtilities,
-                            IMeshDAO& convertedMesh) const;
+    OFFMesh StringsToOFFMesh(const std::vector<std::string> &fileLines) const;
+    std::vector<std::string> OFFMeshToStrings(const OFFMesh &mesh) const;
+    OFFMesh MeshDAOToOFFMesh(const IMeshDAO &originalMesh) const;
+    void OFFMeshToMeshDAO(const OFFMesh &originalMesh, const MeshUtilities &meshUtilities, IMeshDAO &convertedMesh) const;
 
-      void ImportMeshFromFile(const std::string& offFilePath,
-                              const MeshUtilities& meshUtilities,
-                              IMeshDAO& mesh) const;
+    void ImportMeshFromFile(const std::string &offFilePath, const MeshUtilities &meshUtilities, IMeshDAO &mesh) const;
 
-      void ExportMeshToFile(const IMeshDAO& mesh,
-                            const std::string& offFilePath) const;
-
-  };
-}
+    void ExportMeshToFile(const IMeshDAO &mesh, const std::string &offFilePath) const;
+};
+} // namespace Gedim
 
 #endif // __ObjectFileFormatInterface_H
-

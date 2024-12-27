@@ -1,43 +1,35 @@
 #include "PETSc_Array.hpp"
 
 #if ENABLE_PETSC == 1
-#include "PETSc_SparseArray.hpp"
 #include "IOUtilities.hpp"
+#include "PETSc_SparseArray.hpp"
 
 namespace Gedim
 {
 // ***************************************************************************
 template class PETSc_Array<Vec, Mat>;
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
 void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Create()
 {
     VecAssemblyBegin(_vector);
     VecAssemblyEnd(_vector);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetSizes(const unsigned int& numCols,
-                                                                   const unsigned int& numLocalCols)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetSizes(const unsigned int &numCols, const unsigned int &numLocalCols)
 {
     if (numLocalCols == 0)
     {
-        VecCreate(PETSC_COMM_WORLD,
-                  &_vector);
-        VecSetType(_vector,
-                   VECMPI);
-        VecSetSizes(_vector,
-                    PETSC_DECIDE,numCols);
+        VecCreate(PETSC_COMM_WORLD, &_vector);
+        VecSetType(_vector, VECMPI);
+        VecSetSizes(_vector, PETSC_DECIDE, numCols);
     }
     else
     {
-        VecCreate(PETSC_COMM_WORLD,
-                  &_vector);
-        VecSetType(_vector,
-                   VECMPI);
-        VecSetSizes(_vector,
-                    numLocalCols,
-                    PETSC_DETERMINE);
+        VecCreate(PETSC_COMM_WORLD, &_vector);
+        VecSetType(_vector, VECMPI);
+        VecSetSizes(_vector, numLocalCols, PETSC_DETERMINE);
     }
 
     VecSetFromOptions(_vector);
@@ -46,7 +38,7 @@ void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetSizes(const unsigne
     Zeros();
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
 unsigned int PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Size() const
 {
     PetscInt N;
@@ -54,62 +46,41 @@ unsigned int PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Size() const
     return static_cast<unsigned int>(N);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValue(const int& i,
-                                                                   const double& val)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValue(const int &i, const double &val)
 {
-    VecSetValues(_vector,
-                 1,
-                 (PetscInt*)(&i),
-                 (const PetscScalar*)(&val),
-                 INSERT_VALUES);
+    VecSetValues(_vector, 1, (PetscInt *)(&i), (const PetscScalar *)(&val), INSERT_VALUES);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValues(const std::vector<int>& indices,
-                                                                    const std::vector<double>& values)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SetValues(const std::vector<int> &indices, const std::vector<double> &values)
 {
     Output::Assert(indices.size() == values.size());
 
-    VecSetValues(_vector,
-                 indices.size(),
-                 (PetscInt*)(indices.data()),
-                 (const PetscScalar*)(values.data()),
-                 INSERT_VALUES);
+    VecSetValues(_vector, indices.size(), (PetscInt *)(indices.data()), (const PetscScalar *)(values.data()), INSERT_VALUES);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::AddValue(const int& i,
-                                                                   const double& val)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::AddValue(const int &i, const double &val)
 {
-    VecSetValues(_vector,
-                 1,
-                 (PetscInt*)(&i),
-                 (PetscScalar*)&val,
-                 ADD_VALUES);
+    VecSetValues(_vector, 1, (PetscInt *)(&i), (PetscScalar *)&val, ADD_VALUES);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::AddValues(const std::vector<int>& indices,
-                                                                    const std::vector<double>& values)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::AddValues(const std::vector<int> &indices, const std::vector<double> &values)
 {
     Output::Assert(indices.size() == values.size());
 
-    VecSetValues(_vector,
-                 indices.size(),
-                 (PetscInt*)(indices.data()),
-                 (const PetscScalar*)(values.data()),
-                 ADD_VALUES);
+    VecSetValues(_vector, indices.size(), (PetscInt *)(indices.data()), (const PetscScalar *)(values.data()), ADD_VALUES);
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-std::vector<double> PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::GetValues(const std::vector<int>& indices) const
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+std::vector<double> PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::GetValues(const std::vector<int> &indices) const
 {
     std::vector<double> values;
 
     const PetscScalar *array; // Pointer to the vector data
-    VecGetArrayRead(_vector,
-                    &array);
+    VecGetArrayRead(_vector, &array);
 
     if (indices.size() == 0)
     {
@@ -125,22 +96,19 @@ std::vector<double> PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::GetValu
             values[i] = array[indices.at(i)];
     }
 
-    VecRestoreArrayRead(_vector,
-                        &array);
+    VecRestoreArrayRead(_vector, &array);
 
     return values;
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType,
-         typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(const ISparseArray& A,
-                                                                            const IArray& w)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(const ISparseArray &A, const IArray &w)
 {
-    const auto& w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(w);
-    const PETSc_ArrayType& w_PETSc = static_cast<const PETSc_ArrayType&>(w_PETSc_Array);
+    const auto &w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType> &>(w);
+    const PETSc_ArrayType &w_PETSc = static_cast<const PETSc_ArrayType &>(w_PETSc_Array);
 
-    const auto& A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType>&>(A);
-    const PETSc_SparseArrayType& A_PETSc = static_cast<const PETSc_SparseArrayType&>(A_PETSc_Array);
+    const auto &A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType> &>(A);
+    const PETSc_SparseArrayType &A_PETSc = static_cast<const PETSc_SparseArrayType &>(A_PETSc_Array);
 
     unsigned int size = Size();
     Vec temp;
@@ -163,15 +131,14 @@ void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SumMultiplication(cons
     }
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SubtractionMultiplication(const ISparseArray& A,
-                                                                                    const IArray& w)
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SubtractionMultiplication(const ISparseArray &A, const IArray &w)
 {
-    const auto& w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>&>(w);
-    const PETSc_ArrayType& w_PETSc = static_cast<const PETSc_ArrayType&>(w_PETSc_Array);
+    const auto &w_PETSc_Array = static_cast<const PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType> &>(w);
+    const PETSc_ArrayType &w_PETSc = static_cast<const PETSc_ArrayType &>(w_PETSc_Array);
 
-    const auto& A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType>&>(A);
-    const PETSc_SparseArrayType& A_PETSc = static_cast<const PETSc_SparseArrayType&>(A_PETSc_Array);
+    const auto &A_PETSc_Array = static_cast<const PETSc_SparseArray<PETSc_ArrayType, PETSc_SparseArrayType> &>(A);
+    const PETSc_SparseArrayType &A_PETSc = static_cast<const PETSc_SparseArrayType &>(A_PETSc_Array);
 
     unsigned int size = Size();
     Vec temp;
@@ -194,28 +161,26 @@ void PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::SubtractionMultiplicat
     }
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-std::ostream& PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Print(std::ostream& output) const
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+std::ostream &PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Print(std::ostream &output) const
 {
     const unsigned int size = Size();
 
     const PetscScalar *array; // Pointer to the vector data
-    VecGetArrayRead(_vector,
-                    &array);
+    VecGetArrayRead(_vector, &array);
 
     output << "[";
     for (unsigned int i = 0; i < size; ++i)
-        output<< (i == 0 ? "" : ",") << array[i];
-    output<< "]" << std::endl;
+        output << (i == 0 ? "" : ",") << array[i];
+    output << "]" << std::endl;
 
     // Restore the array
-    VecRestoreArrayRead(_vector,
-                        &array);
+    VecRestoreArrayRead(_vector, &array);
 
     return output;
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
 double PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Norm() const
 {
     double norm2;
@@ -223,14 +188,14 @@ double PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Norm() const
     return norm2;
 }
 // ***************************************************************************
-template<typename PETSc_ArrayType, typename PETSc_SparseArrayType>
-double PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Dot(const IArray& v) const
+template <typename PETSc_ArrayType, typename PETSc_SparseArrayType>
+double PETSc_Array<PETSc_ArrayType, PETSc_SparseArrayType>::Dot(const IArray &v) const
 {
     double dot;
     VecDot(_vector, Cast(v), &dot);
     return dot;
 }
 // ***************************************************************************
-}
+} // namespace Gedim
 
 #endif

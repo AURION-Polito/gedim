@@ -1,9 +1,9 @@
 #ifndef __TEST_CONFIGURATIONS_H
 #define __TEST_CONFIGURATIONS_H
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include "Configurations.hpp"
 #include "IOUtilities.hpp"
@@ -13,9 +13,9 @@ using namespace std;
 
 namespace GedimUnitTesting
 {
-  // ***************************************************************************
-  TEST(TestConfigurations, AddGenericProperty_Test)
-  {
+// ***************************************************************************
+TEST(TestConfigurations, AddGenericProperty_Test)
+{
     string propertyId = "Test";
     string propertyIdTwo = "Test1";
 
@@ -37,10 +37,10 @@ namespace GedimUnitTesting
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
     ASSERT_EQ(0, Gedim::Configurations::NumberProperties());
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddIntProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddIntProperty_Test)
+{
     string propertyId = "Test";
     int value = 2;
 
@@ -48,10 +48,10 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<int>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<int>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddUnsignedIntProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddUnsignedIntProperty_Test)
+{
     string propertyId = "Test";
     unsigned int value = 2;
 
@@ -59,10 +59,10 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<unsigned int>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<unsigned int>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddCharProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddCharProperty_Test)
+{
     string propertyId = "Test";
     char value = 'b';
 
@@ -70,10 +70,10 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<char>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<char>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddStringProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddStringProperty_Test)
+{
     string propertyId = "Test";
     string value = "b";
 
@@ -81,21 +81,21 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<string>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<string>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddConstCharProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddConstCharProperty_Test)
+{
     string propertyId = "Test";
-    const char* value = "b";
+    const char *value = "b";
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty(propertyId, value));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<string>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddDoubleProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddDoubleProperty_Test)
+{
     string propertyId = "Test";
     double value = 3.4;
 
@@ -103,43 +103,43 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<double>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<double>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddVectorIntProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddVectorIntProperty_Test)
+{
     string propertyId = "Test";
-    vector<int> value{ 11, 22, 31 };
+    vector<int> value{11, 22, 31};
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<vector<int>>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<vector<int>>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddVectorUnsignedIntProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddVectorUnsignedIntProperty_Test)
+{
     string propertyId = "Test";
-    vector<unsigned int> value{ 11, 22, 31 };
+    vector<unsigned int> value{11, 22, 31};
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<vector<unsigned int>>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<vector<unsigned int>>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddVectorDoubleProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddVectorDoubleProperty_Test)
+{
     string propertyId = "Test";
-    vector<double> value{ 11.4, 22.7, 31.9 };
+    vector<double> value{11.4, 22.7, 31.9};
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<vector<double>>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<vector<double>>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, AddBoolProperty_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, AddBoolProperty_Test)
+{
     string propertyId = "Test";
     bool value = false;
 
@@ -147,22 +147,22 @@ namespace GedimUnitTesting
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty<bool>(propertyId));
     ASSERT_NO_THROW(Gedim::Configurations::SetPropertyValue(propertyId, value));
     ASSERT_EQ(value, Gedim::Configurations::GetPropertyValue<bool>(propertyId));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, InitializeArgcArgv_Test)
-  {
-    vector<char*> argv = {
-      (char*)"FakeTest",
-      (char*)"TestString=202",
-      (char*)"FakeTest",
-      (char*)"TestInt:int=202",
-      (char*)"TestUnsignedInt:uint=103",
-      (char*)"TestChar:char=b",
-      (char*)"TestDouble:double=202.79",
-      (char*)"TestBool:bool=true",
-      (char*)"TestVectorInt:vector_int=[1,2,3]",
-      (char*)"TestVectorUInt:vector_uint=[7,4,5]",
-      (char*)"TestVectorDouble:vector_double=[1.5,1.6]",
+}
+// ***************************************************************************
+TEST(TestConfigurations, InitializeArgcArgv_Test)
+{
+    vector<char *> argv = {
+        (char *)"FakeTest",
+        (char *)"TestString=202",
+        (char *)"FakeTest",
+        (char *)"TestInt:int=202",
+        (char *)"TestUnsignedInt:uint=103",
+        (char *)"TestChar:char=b",
+        (char *)"TestDouble:double=202.79",
+        (char *)"TestBool:bool=true",
+        (char *)"TestVectorInt:vector_int=[1,2,3]",
+        (char *)"TestVectorUInt:vector_uint=[7,4,5]",
+        (char *)"TestVectorDouble:vector_double=[1.5,1.6]",
     };
 
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
@@ -187,10 +187,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(vector<int>({1, 2, 3}), Gedim::Configurations::GetPropertyValue<vector<int>>("TestVectorInt"));
     ASSERT_EQ(vector<unsigned int>({7, 4, 5}), Gedim::Configurations::GetPropertyValue<vector<unsigned int>>("TestVectorUInt"));
     ASSERT_EQ(vector<double>({1.5, 1.6}), Gedim::Configurations::GetPropertyValue<vector<double>>("TestVectorDouble"));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, ExportToCsv_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, ExportToCsv_Test)
+{
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
 
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty("TestInt", 10, "int test"));
@@ -216,10 +216,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(true, Gedim::Configurations::GetPropertyValue<bool>("TestBool"));
     ASSERT_EQ(vector<int>({1, 7, 8}), Gedim::Configurations::GetPropertyValue<vector<int>>("TestVectorInt"));
     ASSERT_EQ(vector<double>({1.6, 8.7, 10.8}), Gedim::Configurations::GetPropertyValue<vector<double>>("TestVectorDouble"));
-  }
-  // ***************************************************************************
-  TEST(TestConfigurations, ExportToIni_Test)
-  {
+}
+// ***************************************************************************
+TEST(TestConfigurations, ExportToIni_Test)
+{
     ASSERT_NO_THROW(Gedim::Configurations::Reset());
 
     ASSERT_NO_THROW(Gedim::Configurations::AddProperty("TestInt", 10, "int test"));
@@ -245,8 +245,8 @@ namespace GedimUnitTesting
     ASSERT_EQ(true, Gedim::Configurations::GetPropertyValue<bool>("TestBool"));
     ASSERT_EQ(vector<int>({1, 7, 8}), Gedim::Configurations::GetPropertyValue<vector<int>>("TestVectorInt"));
     ASSERT_EQ(vector<double>({1.6, 8.7, 10.8}), Gedim::Configurations::GetPropertyValue<vector<double>>("TestVectorDouble"));
-  }
-  // ***************************************************************************
 }
+// ***************************************************************************
+} // namespace GedimUnitTesting
 
 #endif // __TEST_CONFIGURATIONS_H

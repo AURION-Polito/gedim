@@ -1,28 +1,28 @@
 #ifndef __TEST_MESH_H
 #define __TEST_MESH_H
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <gmock/gmock-matchers.h>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include "MeshMatrices.hpp"
+#include "MeshMatricesDAO.hpp"
+#include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
-#include "MeshMatrices_2D_26Cells_Mock.hpp"
-#include "MeshMatricesDAO.hpp"
 
-#include "MeshDAOExporterToCsv.hpp"
-#include "MeshFromCsvUtilities.hpp"
-#include "MeshDAOImporterFromCsv.hpp"
 #include "FileTextReader.hpp"
+#include "MeshDAOExporterToCsv.hpp"
+#include "MeshDAOImporterFromCsv.hpp"
+#include "MeshFromCsvUtilities.hpp"
 
 using namespace testing;
 using namespace std;
 
 namespace GedimUnitTesting
 {
-  TEST(TestMesh, TestMeshMatricesDAO)
-  {
+TEST(TestMesh, TestMeshMatricesDAO)
+{
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
@@ -72,8 +72,7 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell1DEnd(1), 0);
     EXPECT_EQ(meshDao.Cell1DFindExtreme(1, 0), 1);
     EXPECT_EQ(meshDao.Cell1DFindExtreme(1, 1), 0);
-    EXPECT_EQ(meshDao.Cell1DFindExtreme(1, 2),
-              2);
+    EXPECT_EQ(meshDao.Cell1DFindExtreme(1, 2), 2);
     EXPECT_NO_THROW(meshDao.Cell1DSetState(1, true));
     EXPECT_EQ(meshDao.Cell1DIsActive(0), false);
     EXPECT_EQ(meshDao.Cell1DIsActive(1), true);
@@ -115,15 +114,13 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell2DNumberVertices(1), 2);
     EXPECT_EQ(meshDao.Cell2DFindVertex(1, 0), 1);
     EXPECT_EQ(meshDao.Cell2DFindVertex(1, 1), 0);
-    EXPECT_EQ(meshDao.Cell2DFindVertex(1, 3),
-              2);
+    EXPECT_EQ(meshDao.Cell2DFindVertex(1, 3), 2);
     EXPECT_EQ(meshDao.Cell2DVertex(1, 0), 1);
     EXPECT_EQ(meshDao.Cell2DVertex(1, 1), 0);
     EXPECT_NO_THROW(meshDao.Cell2DAddEdges(1, {1, 0}));
     EXPECT_EQ(meshDao.Cell2DFindEdge(1, 0), 1);
     EXPECT_EQ(meshDao.Cell2DFindEdge(1, 1), 0);
-    EXPECT_EQ(meshDao.Cell2DFindEdge(1, 3),
-             2);
+    EXPECT_EQ(meshDao.Cell2DFindEdge(1, 3), 2);
     EXPECT_EQ(meshDao.Cell2DNumberEdges(0), 0);
     EXPECT_EQ(meshDao.Cell2DNumberEdges(1), 2);
     EXPECT_EQ(meshDao.Cell2DEdge(1, 0), 1);
@@ -243,98 +240,98 @@ namespace GedimUnitTesting
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 0);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 0);
     EXPECT_EQ(meshDao.Cell3DTotalNumber(), 0);
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell0DsInitialize)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell0DsInitialize)
+{
     unsigned int numCell0Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     meshDao.Cell0DsInitialize(numCell0Ds);
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell0DsAppend)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell0DsAppend)
+{
     unsigned int numCell0Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     for (unsigned int c = 0; c < numCell0Ds; c++)
-      meshDao.Cell0DAppend(1);
+        meshDao.Cell0DAppend(1);
     meshDao.Compress();
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsInitialize)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsInitialize)
+{
     unsigned int numCell1Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     meshDao.Cell1DsInitialize(numCell1Ds);
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsAppend)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell1DsAppend)
+{
     unsigned int numCell1Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     for (unsigned int c = 0; c < numCell1Ds; c++)
-      meshDao.Cell1DAppend(1);
+        meshDao.Cell1DAppend(1);
     meshDao.Compress();
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsInitialize)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsInitialize)
+{
     unsigned int numCell2Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     meshDao.Cell2DsInitialize(numCell2Ds);
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsAppend)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell2DsAppend)
+{
     unsigned int numCell2Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     for (unsigned int c = 0; c < numCell2Ds; c++)
-      meshDao.Cell2DAppend(1);
+        meshDao.Cell2DAppend(1);
     meshDao.Compress();
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsInitialize)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsInitialize)
+{
     unsigned int numCell3Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     meshDao.Cell3DsInitialize(numCell3Ds);
-  }
+}
 
-  TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsAppend)
-  {
+TEST(TestMesh, TestMeshMatricesDAO_Profile_Cell3DsAppend)
+{
     unsigned int numCell3Ds = 1e6;
 
     Gedim::MeshMatrices mesh;
     Gedim::MeshMatricesDAO meshDao(mesh);
 
     for (unsigned int c = 0; c < numCell3Ds; c++)
-      meshDao.Cell3DAppend(1);
+        meshDao.Cell3DAppend(1);
     meshDao.Compress();
-  }
+}
 
-  TEST(TestMesh, TestImportExportMesh2D)
-  {
+TEST(TestMesh, TestImportExportMesh2D)
+{
     MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
@@ -352,8 +349,7 @@ namespace GedimUnitTesting
     Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
     exportConfiguration.Folder = exportFolder;
     Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
-    EXPECT_NO_THROW(exporter.Export(exportConfiguration,
-                                    meshDao));
+    EXPECT_NO_THROW(exporter.Export(exportConfiguration, meshDao));
 
     Gedim::MeshMatrices importedMesh;
     Gedim::MeshMatricesDAO importedMeshDao(importedMesh);
@@ -362,8 +358,7 @@ namespace GedimUnitTesting
     meshImporterConfiguration.Folder = exportFolder;
     Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
 
-    EXPECT_NO_THROW(importer.Import(meshImporterConfiguration,
-                                    importedMeshDao));
+    EXPECT_NO_THROW(importer.Import(meshImporterConfiguration, importedMeshDao));
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
     ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
     ASSERT_EQ(mesh.Mesh.Cell0DCoordinates, importedMesh.Cell0DCoordinates);
@@ -395,10 +390,10 @@ namespace GedimUnitTesting
     ASSERT_EQ(mesh.Mesh.Cell3DDoublePropertyIds, importedMesh.Cell3DDoublePropertyIds);
     ASSERT_EQ(mesh.Mesh.UpdatedCell3Ds, importedMesh.UpdatedCell3Ds);
     ASSERT_EQ(mesh.Mesh.Cell3DOriginalCell3Ds, importedMesh.Cell3DOriginalCell3Ds);
-  }
+}
 
-  TEST(TestMesh, MeshDAOImporter2DFromCsv)
-  {
+TEST(TestMesh, MeshDAOImporter2DFromCsv)
+{
     MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
@@ -412,8 +407,7 @@ namespace GedimUnitTesting
     Gedim::MeshFromCsvUtilities::Configuration exportConfiguration;
     exportConfiguration.Folder = exportFolder;
     Gedim::MeshDAOExporterToCsv exporter(meshFromCsvUtilities);
-    EXPECT_NO_THROW(exporter.Export(exportConfiguration,
-                                    meshDao));
+    EXPECT_NO_THROW(exporter.Export(exportConfiguration, meshDao));
 
     Gedim::MeshMatrices importedMesh;
     Gedim::MeshMatricesDAO importedMeshDao(importedMesh);
@@ -422,8 +416,7 @@ namespace GedimUnitTesting
     meshImporterConfiguration.Folder = exportFolder;
     Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
 
-    EXPECT_NO_THROW(importer.ImportMesh2D(meshImporterConfiguration,
-                                          importedMeshDao));
+    EXPECT_NO_THROW(importer.ImportMesh2D(meshImporterConfiguration, importedMeshDao));
 
     ASSERT_EQ(mesh.Mesh.Dimension, importedMesh.Dimension);
     ASSERT_EQ(mesh.Mesh.NumberCell0D, importedMesh.NumberCell0D);
@@ -443,7 +436,7 @@ namespace GedimUnitTesting
     ASSERT_EQ(mesh.Mesh.Cell3DMarkers, importedMesh.Cell3DMarkers);
     ASSERT_EQ(mesh.Mesh.ActiveCell3D, importedMesh.ActiveCell3D);
     ASSERT_EQ(mesh.Mesh.Cell3DDoublePropertyIds, importedMesh.Cell3DDoublePropertyIds);
-  }
 }
+} // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_H

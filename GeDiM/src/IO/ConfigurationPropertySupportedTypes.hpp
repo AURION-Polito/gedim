@@ -1,21 +1,21 @@
 #ifndef __CONFIGURATIONPROPERTYSUPPORTEDTYPES_H
 #define __CONFIGURATIONPROPERTYSUPPORTEDTYPES_H
 
-#include <string>
-#include "StringsUtilities.hpp"
-#include <typeinfo>
-#include <set>
 #include "Eigen/Eigen"
+#include "StringsUtilities.hpp"
+#include <set>
+#include <string>
+#include <typeinfo>
 
 using namespace std;
 
 namespace Gedim
 {
-  class ConfigurationPropertySupportedTypes
-  {
-    public:
-      enum SupportedTypes
-      {
+class ConfigurationPropertySupportedTypes
+{
+  public:
+    enum SupportedTypes
+    {
         Unknown = 0,
         Int = 1,
         Char = 2,
@@ -28,119 +28,122 @@ namespace Gedim
         UInt = 9,
         VectorUInt = 10,
         Matrix = 11
-      };
+    };
 
-      /// Get Supported Type from the type
-      template<class K>
-      static SupportedTypes GetSupportedType()
-      {
-        const char* propertyType = typeid(K).name();
+    /// Get Supported Type from the type
+    template <class K> static SupportedTypes GetSupportedType()
+    {
+        const char *propertyType = typeid(K).name();
 
         if (propertyType == typeid(int).name())
-          return Int;
+            return Int;
 
         if (propertyType == typeid(char).name())
-          return Char;
+            return Char;
 
         if (propertyType == typeid(double).name())
-          return Double;
+            return Double;
 
         if (propertyType == typeid(string).name())
-          return String;
+            return String;
 
         if (propertyType == typeid(vector<int>).name())
-          return VectorInt;
+            return VectorInt;
 
         if (propertyType == typeid(vector<double>).name())
-          return VectorDouble;
+            return VectorDouble;
 
         if (propertyType == typeid(bool).name())
-          return Bool;
+            return Bool;
 
         if (propertyType == typeid(unsigned int).name())
-          return UInt;
+            return UInt;
 
         if (propertyType == typeid(vector<unsigned int>).name())
-          return VectorUInt;
+            return VectorUInt;
 
         if (propertyType == typeid(set<unsigned int>).name())
-          return SetUInt;
+            return SetUInt;
 
         if (propertyType == typeid(Eigen::MatrixXd).name())
-          return Matrix;
+            return Matrix;
 
-        return  Unknown;
-      }
+        return Unknown;
+    }
 
-      template<class K>
-      static string TypeToString() { return TypeToString(GetSupportedType<K>()); }
+    template <class K> static string TypeToString()
+    {
+        return TypeToString(GetSupportedType<K>());
+    }
 
-      /// Convert the SupportedType to string
-      static string TypeToString(const SupportedTypes& type)
-      {
+    /// Convert the SupportedType to string
+    static string TypeToString(const SupportedTypes &type)
+    {
         switch (type)
         {
-          case Int:
+        case Int:
             return "int";
-          case Char:
+        case Char:
             return "char";
-          case String:
+        case String:
             return "string";
-          case Double:
+        case Double:
             return "double";
-          case VectorInt:
+        case VectorInt:
             return "vector_int";
-          case VectorDouble:
+        case VectorDouble:
             return "vector_double";
-          case Bool:
+        case Bool:
             return "bool";
-          case UInt:
+        case UInt:
             return "uint";
-          case SetUInt:
+        case SetUInt:
             return "set_uint";
-          case VectorUInt:
+        case VectorUInt:
             return "vector_uint";
-          case Matrix:
+        case Matrix:
             return "Matrix";
-          default:
+        default:
             return "unknown";
         }
-      }
+    }
 
-      /// Convert a string to SupportedType
-      static SupportedTypes StringToType(const string& stringType)
-      {
+    /// Convert a string to SupportedType
+    static SupportedTypes StringToType(const string &stringType)
+    {
         string stringTypeToLow = StringsUtilities::ToLower(stringType);
 
         if (stringTypeToLow == "int")
-          return Int;
+            return Int;
         if (stringTypeToLow == "char")
-          return Char;
+            return Char;
         if (stringTypeToLow == "string")
-          return String;
+            return String;
         if (stringTypeToLow == "double")
-          return Double;
+            return Double;
         if (stringTypeToLow == "vector_int")
-          return VectorInt;
+            return VectorInt;
         if (stringTypeToLow == "vector_double")
-          return VectorDouble;
+            return VectorDouble;
         if (stringTypeToLow == "bool")
-          return Bool;
+            return Bool;
         if (stringTypeToLow == "set_uint")
-          return SetUInt;
+            return SetUInt;
         if (stringTypeToLow == "uint")
-          return UInt;
+            return UInt;
         if (stringTypeToLow == "vector_uint")
-          return VectorUInt;
+            return VectorUInt;
         if (stringTypeToLow == "Matrix")
-          return Matrix;
+            return Matrix;
 
         return Unknown;
-      }
+    }
 
-      template<class K>
-      static bool IsSupported() { return GetSupportedType<K>() != ConfigurationPropertySupportedTypes::Unknown; }
-  };
-}
+    template <class K> static bool IsSupported()
+    {
+        return GetSupportedType<K>() != ConfigurationPropertySupportedTypes::Unknown;
+    }
+};
+} // namespace Gedim
 
 #endif // __CONFIGURATIONPROPERTYSUPPORTEDTYPES_H

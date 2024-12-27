@@ -1,44 +1,59 @@
 #ifndef __GEDIM_MPIPROCESS_H
 #define __GEDIM_MPIPROCESS_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "IMpiProcess.hpp"
 
 namespace Gedim
 {
-  class MpiProcess : public IMpiProcess
-  {
-    protected:
-      unsigned int _rank; ///< Rank of the process
-      unsigned int _numberProcesses; ///< Number of all the processes of the MPI simulation
-      bool _isActive; ///< Tells if the process is active
+class MpiProcess : public IMpiProcess
+{
+  protected:
+    unsigned int _rank;            ///< Rank of the process
+    unsigned int _numberProcesses; ///< Number of all the processes of the MPI simulation
+    bool _isActive;                ///< Tells if the process is active
 
-    public:
-      MpiProcess(unsigned int rank,
-                 unsigned int numberProcesses,
-                 bool isActive);
-      virtual ~MpiProcess();
+  public:
+    MpiProcess(unsigned int rank, unsigned int numberProcesses, bool isActive);
+    virtual ~MpiProcess();
 
-      unsigned int Rank() const { return _rank; }
-      unsigned int NumberProcesses() const { return _numberProcesses; }
-      bool IsActive() const { return _isActive; }
+    unsigned int Rank() const
+    {
+        return _rank;
+    }
+    unsigned int NumberProcesses() const
+    {
+        return _numberProcesses;
+    }
+    bool IsActive() const
+    {
+        return _isActive;
+    }
 
-      virtual void Summary();
-  };
+    virtual void Summary();
+};
 
-  class MpiExtensions
-  {
-    private:
-      static int mpiSendTag; ///< Tag used for MPI send communications
-      static int mpiRecvTag; ///< Tag used for MPI receive communications
-    public:
-      static int MpiSendTag(const int& numSends = 1) { int tag = mpiSendTag; mpiSendTag += numSends; return tag; }
-      static int MpiRecvTag(const int& numRecvs = 1) { int tag = mpiRecvTag; mpiRecvTag += numRecvs; return tag; }
-  };
-}
-
+class MpiExtensions
+{
+  private:
+    static int mpiSendTag; ///< Tag used for MPI send communications
+    static int mpiRecvTag; ///< Tag used for MPI receive communications
+  public:
+    static int MpiSendTag(const int &numSends = 1)
+    {
+        int tag = mpiSendTag;
+        mpiSendTag += numSends;
+        return tag;
+    }
+    static int MpiRecvTag(const int &numRecvs = 1)
+    {
+        int tag = mpiRecvTag;
+        mpiRecvTag += numRecvs;
+        return tag;
+    }
+};
+} // namespace Gedim
 
 #endif // __GEDIM_MPIPROCESS_H
-
