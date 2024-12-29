@@ -119,6 +119,7 @@ struct VTPProperty final
         Cells = 1,
         PointsArray = 2,
         CellsArray = 3,
+        PointsArray2 = 4,
     };
 
     std::string Label;

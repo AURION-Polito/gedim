@@ -374,6 +374,22 @@ template <typename T> void GeometryToPolyData<T>::AppendSolution(vtkDataSet *pol
                 vtkSolution->SetValue(p, property.Data[p]);
         }
         break;
+        case VTPProperty::Formats::PointsArray2: {
+            polyData->GetPointData()->AddArray(vtkSolution);
+
+            vtkSolution->SetNumberOfComponents(2);
+
+            if (s == 0)
+                polyData->GetPointData()->SetActiveVectors(property.Label.c_str());
+
+            const unsigned int numTuples = property.Size / 2;
+            vtkSolution->SetNumberOfTuples(numTuples);
+            for (unsigned int p = 0; p < numTuples; p++)
+            {
+                vtkSolution->SetTuple2(p, property.Data[2 * p], property.Data[2 * p + 1]);
+            }
+        }
+        break;
         case VTPProperty::Formats::PointsArray: {
             polyData->GetPointData()->AddArray(vtkSolution);
 
