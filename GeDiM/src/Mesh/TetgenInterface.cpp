@@ -116,7 +116,7 @@ void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd &polyhedronVertice
     tetgenInput.pointmarkerlist = new int[numberOfVertices + numberOfConstrainedPoints];
 
     tetgenInput.numberofedges = numberOfEdges;
-    tetgenInput.edgelist = new int[(numberOfEdges)*2];
+    tetgenInput.edgelist = new int[(numberOfEdges) * 2];
     tetgenInput.edgemarkerlist = new int[(numberOfEdges)];
 
     tetgenInput.numberoffacets = numberOfFaces + numberOfConstrainedFaces;
@@ -234,7 +234,7 @@ void TetgenInterface::CreateDelaunayInput(const Eigen::MatrixXd &points, const s
 
     tetgenInput.firstnumber = 0;
     tetgenInput.numberofpoints = number_of_points;
-    tetgenInput.pointlist = new REAL[(number_of_points)*3];
+    tetgenInput.pointlist = new REAL[(number_of_points) * 3];
     tetgenInput.pointmarkerlist = new int[number_of_points];
 
     double *point_list = tetgenInput.pointlist;
