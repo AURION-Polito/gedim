@@ -19,7 +19,7 @@ MapTriangle::MapTriangleData MapTriangle::Compute(const Eigen::Matrix3d &vertice
     return result;
 }
 // ***************************************************************************
-MatrixXd MapTriangle::J(const MapTriangleData &mapData, const MatrixXd &x) const
+MatrixXd MapTriangle::J(const MapTriangleData &mapData, const MatrixXd &x)
 {
     const unsigned int numPoints = x.cols();
     MatrixXd jacb(3, 3 * numPoints);

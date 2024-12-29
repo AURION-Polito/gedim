@@ -21,7 +21,7 @@ class MapTriangle
     /// Matrix B for linear map x = B * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
     /// vertices the triangle to map vertices, size 3 x 3
     /// return the resulting value, size 3 x 3
-    inline Eigen::Matrix3d B(const Eigen::Matrix3d &vertices) const
+    static inline Eigen::Matrix3d B(const Eigen::Matrix3d &vertices)
     {
         Eigen::Matrix3d B;
         B.row(0) << vertices(0, 1) - vertices(0, 0), vertices(0, 2) - vertices(0, 0), 0.0;
@@ -33,7 +33,7 @@ class MapTriangle
     /// translation b for linear map x = B * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
     /// vertices the triangle to map vertices, size 3 x 3
     /// return the resulting value, size 3 x 3
-    inline Eigen::Vector3d b(const Eigen::Matrix3d &vertices) const
+    static inline Eigen::Vector3d b(const Eigen::Matrix3d &vertices)
     {
         return vertices.col(0);
     }
@@ -55,7 +55,7 @@ class MapTriangle
     /// \param mapData the map data
     /// \param x points in reference triangle, size 3 x numPoints
     /// \return the mapped polygon points, size 3 x numPoints
-    inline Eigen::MatrixXd F(const MapTriangleData &mapData, const Eigen::MatrixXd &x) const
+    static inline Eigen::MatrixXd F(const MapTriangleData &mapData, const Eigen::MatrixXd &x)
     {
         return (mapData.B * x).colwise() + mapData.b;
     }
@@ -63,7 +63,7 @@ class MapTriangle
     /// \param mapData the map data
     /// \param x points in polygon, size 3 x numPoints
     /// \return the mapped reference points, size 3 x numPoints
-    inline Eigen::MatrixXd FInv(const MapTriangleData &mapData, const Eigen::MatrixXd &x) const
+    static inline Eigen::MatrixXd FInv(const MapTriangleData &mapData, const Eigen::MatrixXd &x)
     {
         return mapData.BInv * (x.colwise() - mapData.b);
     }
@@ -71,12 +71,12 @@ class MapTriangle
     /// \param mapData the map data
     /// \param x points in reference triangle, size 3 x numPoints
     /// \return the B matrix for each points, size 3 x (3 * numPoints)
-    Eigen::MatrixXd J(const MapTriangleData &mapData, const Eigen::MatrixXd &x) const;
+    static Eigen::MatrixXd J(const MapTriangleData &mapData, const Eigen::MatrixXd &x);
     /// Compute the determinant of the jacobian matrix of the trasformation
     /// \param mapData the map data
     /// \param x points in reference triangle, size 3 x numPoints
     /// \return the determinant of Jacobian matrix for each points, size 1 x numPoints
-    inline Eigen::VectorXd DetJ(const MapTriangleData &mapData, const Eigen::MatrixXd &x) const
+    static inline Eigen::VectorXd DetJ(const MapTriangleData &mapData, const Eigen::MatrixXd &x)
     {
         return Eigen::VectorXd::Constant(x.cols(), mapData.DetB);
     }
@@ -85,7 +85,7 @@ class MapTriangle
     /// \param mapData the map data
     /// \param x points in reference triangle, size 3 x numPoints
     /// \return the determinant of Jacobian matrix
-    inline double DetJ(const MapTriangleData &mapData) const
+    static inline double DetJ(const MapTriangleData &mapData)
     {
         return mapData.DetB;
     };

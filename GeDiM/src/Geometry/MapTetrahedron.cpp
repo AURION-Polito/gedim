@@ -59,10 +59,10 @@ MapTetrahedron::MapTetrahedronData MapTetrahedron::Compute(const Eigen::MatrixXd
     throw runtime_error("Tetrahedron cannot be mapped");
 }
 // ***************************************************************************
-MatrixXd MapTetrahedron::J(const MapTetrahedronData &mapData, const MatrixXd &x) const
+MatrixXd MapTetrahedron::J(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x)
 {
     const unsigned int numPoints = x.cols();
-    MatrixXd jacb(3, 3 * numPoints);
+    Eigen::MatrixXd jacb(3, 3 * numPoints);
 
     for (unsigned int p = 0; p < numPoints; p++)
         jacb.block(0, 3 * p, 3, 3) = mapData.Q;
@@ -70,12 +70,12 @@ MatrixXd MapTetrahedron::J(const MapTetrahedronData &mapData, const MatrixXd &x)
     return jacb;
 }
 // ***************************************************************************
-VectorXd MapTetrahedron::DetJ(const MapTetrahedronData &mapData, const MatrixXd &x) const
+VectorXd MapTetrahedron::DetJ(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x)
 {
-    MatrixXd jacb = J(mapData, x);
+    Eigen::MatrixXd jacb = J(mapData, x);
 
     const unsigned int numPoints = x.cols();
-    VectorXd detJacb(numPoints);
+    Eigen::VectorXd detJacb(numPoints);
     for (unsigned int p = 0; p < numPoints; p++)
         detJacb[p] = jacb.block(0, 3 * p, 3, 3).determinant();
 

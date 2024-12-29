@@ -497,7 +497,8 @@ void Output::PrintStatusProgram(const string &message, ...)
 #if LOGGING == 2 || LOGGING == 3
     newMessage.str("");
     newMessage.clear();
-    newMessage << message << " " << "SUCCESS";
+    newMessage << message << " "
+               << "SUCCESS";
     LogFile::PrintInfoMessage(newMessage.str(), dupArgs);
 #endif
 
@@ -714,7 +715,8 @@ void Output::Assert(const bool &logicResult, const string &message, ...)
     newMessage.str("");
     newMessage.clear();
     newMessage << message;
-    newMessage << " " << "FAILED";
+    newMessage << " "
+               << "FAILED";
 
     LogFile::PrintInfoMessage(newMessage.str(), dupArgs);
 #endif
@@ -1068,8 +1070,10 @@ void Profiler::WriteTime(const std::string &nameTime, const double &globalTime, 
 
         if (!fileExists)
         {
-            outFile << "TotProc" << " ";
-            outFile << "Type" << " ";
+            outFile << "TotProc"
+                    << " ";
+            outFile << "Type"
+                    << " ";
             outFile << "Time" << endl;
         }
 
@@ -1092,8 +1096,10 @@ void Profiler::WriteTime(const std::string &nameTime, const double &globalTime, 
 
     if (!fileExists)
     {
-        outFile << "TotProc" << " ";
-        outFile << "Type" << " ";
+        outFile << "TotProc"
+                << " ";
+        outFile << "Type"
+                << " ";
         outFile << "Time" << endl;
     }
 
@@ -1233,19 +1239,21 @@ void Profiler::CheckMemory(const string &nameMemory, const bool &checkProcessesM
 #if LOGGING == 1 || LOGGING == 3
         if (checkProcessesMemory)
         {
-            cout << " -- " << Output::BlueColor << "Profiling" << Output::EndColor << ": RAM Memory '" << nameMemory
-                 << "': Total" << "      " << " Used / Free: " << setfill(' ') << setw(5) << totalProcessesMemoryGigabytes
-                 << " / " << setfill(' ') << setw(5) << availableMemoryGygabytes << " GB " << setfill(' ') << setw(5)
-                 << totalProcessesMemoryMegabytes << " / " << setfill(' ') << setw(5) << availableMemoryMegabytes
-                 << " MB " << setfill(' ') << setw(5) << totalProcessesMemoryKilobytes << " / " << setfill(' ')
-                 << setw(5) << availableMemoryKilobytes << " KB " << " --" << endl;
+            cout << " -- " << Output::BlueColor << "Profiling" << Output::EndColor << ": RAM Memory '" << nameMemory << "': Total"
+                 << "      "
+                 << " Used / Free: " << setfill(' ') << setw(5) << totalProcessesMemoryGigabytes << " / " << setfill(' ')
+                 << setw(5) << availableMemoryGygabytes << " GB " << setfill(' ') << setw(5) << totalProcessesMemoryMegabytes
+                 << " / " << setfill(' ') << setw(5) << availableMemoryMegabytes << " MB " << setfill(' ') << setw(5)
+                 << totalProcessesMemoryKilobytes << " / " << setfill(' ') << setw(5) << availableMemoryKilobytes << " KB "
+                 << " --" << endl;
         }
         else
         {
             cout << " -- " << Output::BlueColor << "Profiling" << Output::EndColor << ": RAM Memory '" << nameMemory
                  << "': Used / Free: " << totalProcessesMemoryGigabytes << " / " << availableMemoryGygabytes << " GB "
                  << totalProcessesMemoryMegabytes << " / " << availableMemoryMegabytes << " MB "
-                 << totalProcessesMemoryKilobytes << " / " << availableMemoryKilobytes << " KB " << " --" << endl;
+                 << totalProcessesMemoryKilobytes << " / " << availableMemoryKilobytes << " KB "
+                 << " --" << endl;
         }
 #endif
 
@@ -1264,10 +1272,14 @@ void Profiler::CheckMemory(const string &nameMemory, const bool &checkProcessesM
 
         if (!fileExists)
         {
-            outFile << "TotProc" << " ";
-            outFile << "Type" << " ";
-            outFile << "MemoryUsed(KB)" << " ";
-            outFile << "MemoryAvail(KB)" << " ";
+            outFile << "TotProc"
+                    << " ";
+            outFile << "Type"
+                    << " ";
+            outFile << "MemoryUsed(KB)"
+                    << " ";
+            outFile << "MemoryAvail(KB)"
+                    << " ";
             outFile << "PercUsed(%)" << endl;
         }
         outFile << MpiParallelEnvironment::Process().NumberProcesses() << " " << nameMemory << " " << totalProcessMemory
@@ -1283,12 +1295,12 @@ void Profiler::CheckMemory(const string &nameMemory, const bool &checkProcessesM
         return;
 
 #if LOGGING == 1 || LOGGING == 3
-    cout << " -- " << Output::BlueColor << "Profiling" << Output::EndColor << ": RAM Memory '" << nameMemory
-         << "': Process " << setfill(' ') << setw(3) << MpiParallelEnvironment::Process().Rank()
-         << " Used / Free: " << setfill(' ') << setw(5) << gigabytes[1] << " / " << setfill(' ') << setw(5)
-         << availableMemoryGygabytes << " GB " << setfill(' ') << setw(5) << megabytes[1] << " / " << setfill(' ')
-         << setw(5) << availableMemoryMegabytes << " MB " << setfill(' ') << setw(5) << kilobytes[1] << " / "
-         << setfill(' ') << setw(5) << availableMemoryKilobytes << " KB " << " --" << endl;
+    cout << " -- " << Output::BlueColor << "Profiling" << Output::EndColor << ": RAM Memory '" << nameMemory << "': Process "
+         << setfill(' ') << setw(3) << MpiParallelEnvironment::Process().Rank() << " Used / Free: " << setfill(' ')
+         << setw(5) << gigabytes[1] << " / " << setfill(' ') << setw(5) << availableMemoryGygabytes << " GB "
+         << setfill(' ') << setw(5) << megabytes[1] << " / " << setfill(' ') << setw(5) << availableMemoryMegabytes << " MB "
+         << setfill(' ') << setw(5) << kilobytes[1] << " / " << setfill(' ') << setw(5) << availableMemoryKilobytes << " KB "
+         << " --" << endl;
 #endif
 
 #if USE_MPI == 1

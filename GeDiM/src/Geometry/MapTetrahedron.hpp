@@ -38,10 +38,10 @@ class MapTetrahedron
 
     /// Matrix Q for linear map x = Q * x_r + b from reference tetrahedron [0,1]x[0,1]x[0,1]/2 to tetrahedron with x
     /// points vertices the tetrahedron to map vertices, size 3 x 4 return the resulting value, size 3 x 3
-    inline Eigen::Matrix3d Q(const Eigen::Vector3d &firstVertex,
-                             const Eigen::Vector3d &secondVertex,
-                             const Eigen::Vector3d &thirdVertex,
-                             const Eigen::Vector3d &fourthVertex) const
+    static inline Eigen::Matrix3d Q(const Eigen::Vector3d &firstVertex,
+                                    const Eigen::Vector3d &secondVertex,
+                                    const Eigen::Vector3d &thirdVertex,
+                                    const Eigen::Vector3d &fourthVertex)
     {
         Eigen::Matrix3d Q;
         Q.row(0) << secondVertex.x() - firstVertex.x(), thirdVertex.x() - firstVertex.x(),
@@ -56,7 +56,7 @@ class MapTetrahedron
 
     /// Matrix Q for linear map x = Q * x_r + b from reference tetrahedron [0,1]x[0,1]x[0,1]/2 to tetrahedron with x
     /// points vertices the tetrahedron to map vertices, size 3 x 4 return the resulting value, size 3 x 3
-    inline Eigen::Vector3d b(const Eigen::Vector3d &firstVertex) const
+    static inline Eigen::Vector3d b(const Eigen::Vector3d &firstVertex)
     {
         return firstVertex;
     }
@@ -70,12 +70,12 @@ class MapTetrahedron
     /// \param mapData the map data computed
     /// \param x points in reference tetrahedron, size 3 x numPoints
     /// \return the mapped points, size 3 x numPoints
-    inline Eigen::MatrixXd F(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x) const
+    static inline Eigen::MatrixXd F(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x)
     {
         return (mapData.Q * x).colwise() + mapData.b;
     }
 
-    inline Eigen::MatrixXd FInv(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x) const
+    static inline Eigen::MatrixXd FInv(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x)
     {
         return mapData.QInv * (x.colwise() - mapData.b);
     }
@@ -84,17 +84,17 @@ class MapTetrahedron
     /// \param mapData the map data computed
     /// \param x points in reference tetrahedron, size 3 x numPoints
     /// \return the Q matrix for each points, size 2 x (2 * numPoints)
-    Eigen::MatrixXd J(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x) const;
+    static Eigen::MatrixXd J(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x);
     /// Compute the determinant of the jacobian matrix of the trasformation
     /// \param mapData the map data computed
     /// \param x points in reference tetrahedron, size 3 x numPoints
     /// \return the determinant of Jacobian matrix for each points, size 1 x numPoints
-    Eigen::VectorXd DetJ(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x) const;
+    static Eigen::VectorXd DetJ(const MapTetrahedronData &mapData, const Eigen::MatrixXd &x);
 
     /// Compute the determinant of the jacobian matrix of the trasformation
     /// \param mapData the map data computed
     /// \return the determinant of Jacobian matrix
-    inline double DetJ(const MapTetrahedronData &mapData) const
+    static inline double DetJ(const MapTetrahedronData &mapData)
     {
         return mapData.DetQ;
     };
