@@ -149,24 +149,11 @@ GeometryUtilities::PointSegmentPositionTypes GeometryUtilities::PointSegmentPosi
 // ***************************************************************************
 double GeometryUtilities::PointPlaneDistance(const Eigen::Vector3d &point, const std::array<Eigen::Vector3d, 3> &planePoints) const
 {
-    const Eigen::Vector3d pad = planePoints[0] - point;
-    const double padNorm = pad.norm();
-    if (IsValueZero(padNorm, Tolerance1D()))
-        return 0.0;
-
-    const Eigen::Vector3d pbd = planePoints[1] - point;
-    const double pbdNorm = pbd.norm();
-    if (IsValueZero(pbdNorm, Tolerance1D()))
-        return 0.0;
-
-    const Eigen::Vector3d pcd = planePoints[2] - point;
-    const double pcdNorm = pcd.norm();
-    if (IsValueZero(pcdNorm, Tolerance1D()))
-        return 0.0;
-
-    return (pad[0] * (pbd[1] * pcd[2] - pbd[2] * pcd[1]) + pbd[0] * (pcd[1] * pad[2] - pcd[2] * pad[1]) +
-            pcd[0] * (pad[1] * pbd[2] - pad[2] * pbd[1])) /
-           (padNorm * pbdNorm * pcdNorm);
+    Eigen::MatrixXd points(3, 3);
+    points.col(0) << planePoints[0];
+    points.col(1) << planePoints[1];
+    points.col(2) << planePoints[2];
+    return PointPlaneDistance(point, -PolygonNormal(points), planePoints.at(0));
 }
 // ***************************************************************************
 double GeometryUtilities::PointPlaneDistance(const Eigen::Vector3d &point,
@@ -174,11 +161,10 @@ double GeometryUtilities::PointPlaneDistance(const Eigen::Vector3d &point,
                                              const Eigen::Vector3d &planeOrigin) const
 {
     const Eigen::Vector3d pod = point - planeOrigin;
-    const double podNorm = pod.norm();
-    if (IsValueZero(podNorm, Tolerance1D()))
+    if (IsValueZero(pod.norm(), Tolerance1D()))
         return 0.0;
 
-    return planeNormal.dot(pod) / podNorm;
+    return planeNormal.dot(pod) / planeNormal.norm();
 }
 // ***************************************************************************
 GeometryUtilities::PointPlanePositionTypes GeometryUtilities::PointPlanePosition(const double &pointPlaneDistance) const

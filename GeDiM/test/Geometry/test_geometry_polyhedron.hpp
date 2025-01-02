@@ -2265,6 +2265,30 @@ TEST(TestGeometryUtilities, TestPolyhedronInertia_ReferenceTetra)
         FAIL();
     }
 }
+
+TEST(TestGeometryUtilities, TestPolyhedronInRadius)
+{
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    // check in radius of reference tetrahedron
+    {
+        const auto polyhedron = geometryUtilities.CreateTetrahedronWithVertices(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                Eigen::Vector3d(0.0, 1.0, 0.0),
+                                                                                Eigen::Vector3d(0.0, 0.0, 1.0));
+        const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+        const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
+            geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
+        const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+
+        const auto polyhedronCentroidFacesDistance =
+            geometryUtilities.PolyhedronCentroidFacesDistance(polyhedronBarycenter, polyhedronFaceNormals, polyhedronFace3DVertices);
+
+        ASSERT_DOUBLE_EQ(sqrt(3.0) / 12.0, geometryUtilities.PolyhedronInRadius(polyhedronCentroidFacesDistance));
+    }
+}
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_GEOMETRY_POLYHEDRON_H
