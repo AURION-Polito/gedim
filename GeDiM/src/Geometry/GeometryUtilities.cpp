@@ -16,6 +16,51 @@ GeometryUtilities::~GeometryUtilities()
 {
 }
 // ***************************************************************************
+Eigen::MatrixXd GeometryUtilities::generate_uniform_random_points_in_sphere(const unsigned int num_points, const double radius) const
+{
+    // Generate uniformly distributed points inside a sphere.
+
+    // Generate random samples
+    const Eigen::VectorXd u = Eigen::VectorXd::Random(num_points);                    // For radial distribution
+    const Eigen::VectorXd theta = acos(1 - 2.0 * Eigen::ArrayXd::Random(num_points)); // Polar angle
+    const Eigen::VectorXd phi = 2.0 * M_PI * Eigen::VectorXd::Random(num_points);     // Azimuthal angle
+
+    // Convert to Cartesian coordinates
+    const auto r = radius * pow(u.array(), (1.0 / 3.0)); // Uniform radius in volume
+    Eigen::MatrixXd points(3, num_points);
+    points.row(0) = r * sin(theta.array()) * cos(phi.array());
+    points.row(1) = r.array() * sin(theta.array()) * sin(phi.array());
+    points.row(2) = r * cos(theta.array());
+
+    return points;
+}
+// ***************************************************************************
+Eigen::MatrixXd GeometryUtilities::fibonacci_sphere(const unsigned int num_points) const
+{
+
+    if (num_points == 0)
+        return Eigen::MatrixXd();
+    else if (num_points == 1)
+        return Eigen::Vector3d::Zero();
+
+    Eigen::MatrixXd points(3, num_points);
+    const double phi = M_PI * (sqrt(5.0) - 1.0); // golden angle in radians
+
+    for (unsigned int i = 0; i < num_points; i++)
+    {
+        const double y = 1.0 - (i / double(num_points - 1.0)) * 2.0; // y goes from 1 to -1
+        const double radius = sqrt(1.0 - y * y);                     // radius at y
+
+        const double theta = phi * i; // golden angle increment
+
+        const double x = cos(theta) * radius;
+        const double z = sin(theta) * radius;
+        points.col(i) << x, y, z;
+    }
+
+    return points;
+}
+// ***************************************************************************
 vector<double> GeometryUtilities::EquispaceCoordinates(const double &step, const bool &insertExtremes) const
 {
     Output::Assert(IsValuePositive(step, Tolerance1D()) && CompareValues(step, 1.0, Tolerance1D()) != CompareTypes::SecondBeforeFirst);

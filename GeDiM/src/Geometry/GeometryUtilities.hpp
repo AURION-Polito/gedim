@@ -806,6 +806,9 @@ class GeometryUtilities final
         return CompareValues(0.0, value, tolerance) == CompareTypes::Coincident;
     }
 
+    Eigen::MatrixXd fibonacci_sphere(const unsigned int num_points) const;
+    Eigen::MatrixXd generate_uniform_random_points_in_sphere(const unsigned int num_points, const double radius = 1.0) const;
+
     /// \param step the distance between each coordinate
     /// \param insertExtremes if true keeps the extremes
     /// \return the equispace coordinates between [0.0, 1.0], size 1 x numCoordinates
