@@ -2118,6 +2118,15 @@ class GeometryUtilities final
     Eigen::Matrix3d PolyhedronInertia(const Eigen::Vector3d &polyhedronCentroid,
                                       const std::vector<Eigen::MatrixXd> &polyhedronTetrahedraPoints) const;
 
+    Eigen::VectorXd PolyhedronCentroidFacesDistance(const Eigen::Vector3d &polyhedronCentroid,
+                                                    const std::vector<Eigen::Vector3d> &polyhedronFacesNormal,
+                                                    const std::vector<Eigen::MatrixXd> &polyhedronFaceVertices) const;
+
+    inline double PolyhedronInRadius(const Eigen::VectorXd &polyhedronCentroidFacesDistance) const
+    {
+        return polyhedronCentroidFacesDistance.minCoeff();
+    }
+
     /// \brief Check if Polyhedron is Convex
     /// \param polyhedronFaceVertices the polyhedron faces vertices
     /// \param polyhedronFaceInternalPoints the polyhedron face internal points

@@ -636,6 +636,8 @@ TEST(TestGeometryUtilities, TestPointPointPlanePosition)
         // check point on plane
         {
             const Eigen::Vector3d point = Eigen::Vector3d(5.0, -5.0, 1.0);
+            ASSERT_DOUBLE_EQ(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin),
+                             geometryUtilities.PointPlaneDistance(point, planePoints));
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin)),
                       Gedim::GeometryUtilities::PointPlanePositionTypes::OnPlane);
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planePoints)),
@@ -645,6 +647,8 @@ TEST(TestGeometryUtilities, TestPointPointPlanePosition)
         // check curvilinear coordinate coincident
         {
             const Eigen::Vector3d point = Eigen::Vector3d(-1.0, -1.0, -2.0);
+            ASSERT_DOUBLE_EQ(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin),
+                             geometryUtilities.PointPlaneDistance(point, planePoints));
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin)),
                       Gedim::GeometryUtilities::PointPlanePositionTypes::Negative);
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planePoints)),
@@ -654,6 +658,8 @@ TEST(TestGeometryUtilities, TestPointPointPlanePosition)
         // check curvilinear coordinate before
         {
             const Eigen::Vector3d point = Eigen::Vector3d(0.0, 1.0, 2.0);
+            ASSERT_DOUBLE_EQ(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin),
+                             geometryUtilities.PointPlaneDistance(point, planePoints));
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planeNormal, planeOrigin)),
                       Gedim::GeometryUtilities::PointPlanePositionTypes::Positive);
             ASSERT_EQ(geometryUtilities.PointPlanePosition(geometryUtilities.PointPlaneDistance(point, planePoints)),

@@ -666,6 +666,23 @@ Matrix3d GeometryUtilities::PolyhedronInertia(const Eigen::Vector3d &polyhedronC
     return inertia;
 }
 // ***************************************************************************
+VectorXd GeometryUtilities::PolyhedronCentroidFacesDistance(const Eigen::Vector3d &polyhedronCentroid,
+                                                            const std::vector<Eigen::Vector3d> &polyhedronFacesNormal,
+                                                            const std::vector<Eigen::MatrixXd> &polyhedronFaceVertices) const
+{
+    const unsigned int &numFaces = polyhedronFacesNormal.size();
+
+    Eigen::VectorXd centroidFacesDistance(numFaces);
+
+    for (unsigned int f = 0; f < numFaces; f++)
+    {
+        centroidFacesDistance[f] =
+            std::abs(PointPlaneDistance(polyhedronCentroid, polyhedronFacesNormal.at(f), polyhedronFaceVertices.at(f).col(0)));
+    }
+
+    return centroidFacesDistance;
+}
+// ***************************************************************************
 bool GeometryUtilities::PolyhedronIsConvex(const std::vector<Eigen::MatrixXd> &polyhedronFaceVertices,
                                            const std::vector<MatrixXd> &polyhedronFaceRotatedVertices,
                                            const std::vector<Eigen::Vector3d> &polyhedronFaceInternalPoints,
