@@ -3,7 +3,7 @@
 namespace Gedim
 {
 // ***************************************************************************
-FileReader::FileReader(const string &filePath)
+FileReader::FileReader(const std::string &filePath)
 {
     _filePath = filePath;
 }
@@ -16,19 +16,19 @@ bool FileReader::Open()
 // ***************************************************************************
 void FileReader::NextLine()
 {
-    string line;
+    std::string line;
     getline(_file, line);
 }
 // ***************************************************************************
-void FileReader::GetAllLines(vector<string> &lines)
+void FileReader::GetAllLines(std::vector<std::string> &lines)
 {
-    list<string> listLines;
-    string line;
+    std::list<std::string> listLines;
+    std::string line;
     while (getline(_file, line))
         listLines.push_back(line);
 
     lines.reserve(listLines.size());
-    for (const string &line : listLines)
+    for (const std::string &line : listLines)
         lines.push_back(line);
 }
 // ***************************************************************************

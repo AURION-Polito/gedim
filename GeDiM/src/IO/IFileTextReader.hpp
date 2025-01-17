@@ -3,8 +3,6 @@
 
 #include "IOUtilities.hpp"
 
-using namespace std;
-
 namespace Gedim
 {
 /// \brief Interface for File Reader
@@ -17,16 +15,16 @@ class IFileReader
     }
 
     /// \return the file path
-    virtual string Path() = 0;
+    virtual std::string Path() = 0;
     /// \brief Open the file
     /// \return if the open is successfull
     virtual bool Open() = 0;
     /// \brief Jump line
     virtual void NextLine() = 0;
     /// \brief Get a single line in file
-    virtual void GetLine(string &line) = 0;
+    virtual void GetLine(std::string &line) = 0;
     /// \brief Get all lines
-    virtual void GetAllLines(vector<string> &lines) = 0;
+    virtual void GetAllLines(std::vector<std::string> &lines) = 0;
     /// \brief Close the file
     virtual void Close() = 0;
 };

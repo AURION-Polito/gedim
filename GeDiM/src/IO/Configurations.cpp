@@ -9,12 +9,12 @@ using namespace Eigen;
 namespace Gedim
 {
 // ***************************************************************************
-unordered_map<string, ConfigurationPropertySupportedTypes::SupportedTypes> Configurations::propertyTypes;
-unordered_map<string, void *> Configurations::properties;
+std::unordered_map<std::string, ConfigurationPropertySupportedTypes::SupportedTypes> Configurations::propertyTypes;
+std::unordered_map<std::string, void *> Configurations::properties;
 unsigned int Configurations::numberProperties = 0;
 typedef unsigned int uint;
 // ***************************************************************************
-void Configurations::RemoveProperty(const string &id, const ConfigurationPropertySupportedTypes::SupportedTypes &type)
+void Configurations::RemoveProperty(const std::string &id, const ConfigurationPropertySupportedTypes::SupportedTypes &type)
 {
     switch (type)
     {
@@ -25,16 +25,16 @@ void Configurations::RemoveProperty(const string &id, const ConfigurationPropert
         delete static_cast<const ConfigurationProperty<char> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::String:
-        delete static_cast<const ConfigurationProperty<string> *>(properties[id]);
+        delete static_cast<const ConfigurationProperty<std::string> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::Double:
         delete static_cast<const ConfigurationProperty<double> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::VectorInt:
-        delete static_cast<const ConfigurationProperty<vector<int>> *>(properties[id]);
+        delete static_cast<const ConfigurationProperty<std::vector<int>> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::VectorDouble:
-        delete static_cast<const ConfigurationProperty<vector<double>> *>(properties[id]);
+        delete static_cast<const ConfigurationProperty<std::vector<double>> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::Bool:
         delete static_cast<const ConfigurationProperty<bool> *>(properties[id]);
@@ -43,29 +43,29 @@ void Configurations::RemoveProperty(const string &id, const ConfigurationPropert
         delete static_cast<const ConfigurationProperty<unsigned int> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::VectorUInt:
-        delete static_cast<const ConfigurationProperty<vector<unsigned int>> *>(properties[id]);
+        delete static_cast<const ConfigurationProperty<std::vector<unsigned int>> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::SetUInt:
-        delete static_cast<const ConfigurationProperty<set<unsigned int>> *>(properties[id]);
+        delete static_cast<const ConfigurationProperty<std::set<unsigned int>> *>(properties[id]);
         break;
     case ConfigurationPropertySupportedTypes::Matrix:
         delete static_cast<const ConfigurationProperty<MatrixXd> *>(properties[id]);
         break;
     default:
-        throw invalid_argument("Property '%s' cannot be deleted. Type not recognized");
+        throw std::invalid_argument("Property '%s' cannot be deleted. Type not recognized");
     }
 
     properties.erase(id);
     numberProperties--;
 }
 // ***************************************************************************
-Configurations::ExportProperty Configurations::GetPropertyForExport(const string &id,
+Configurations::ExportProperty Configurations::GetPropertyForExport(const std::string &id,
                                                                     const ConfigurationPropertySupportedTypes::SupportedTypes &type)
 {
     Configurations::ExportProperty exportProperty;
 
-    ostringstream propertyStringConverter;
-    string propertyDescription = "";
+    std::ostringstream propertyStringConverter;
+    std::string propertyDescription = "";
 
     switch (type)
     {
@@ -80,8 +80,8 @@ Configurations::ExportProperty Configurations::GetPropertyForExport(const string
         break;
     }
     case ConfigurationPropertySupportedTypes::String: {
-        propertyStringConverter << GetProperty<string>(id).Value;
-        propertyDescription = GetProperty<string>(id).Description;
+        propertyStringConverter << GetProperty<std::string>(id).Value;
+        propertyDescription = GetProperty<std::string>(id).Description;
         break;
     }
     case ConfigurationPropertySupportedTypes::Double: {
@@ -90,13 +90,13 @@ Configurations::ExportProperty Configurations::GetPropertyForExport(const string
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorInt: {
-        propertyStringConverter << GetProperty<vector<int>>(id).Value;
-        propertyDescription = GetProperty<vector<int>>(id).Description;
+        propertyStringConverter << GetProperty<std::vector<int>>(id).Value;
+        propertyDescription = GetProperty<std::vector<int>>(id).Description;
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorDouble: {
-        propertyStringConverter << GetProperty<vector<double>>(id).Value;
-        propertyDescription = GetProperty<vector<double>>(id).Description;
+        propertyStringConverter << GetProperty<std::vector<double>>(id).Value;
+        propertyDescription = GetProperty<std::vector<double>>(id).Description;
         break;
     }
     case ConfigurationPropertySupportedTypes::Bool: {
@@ -110,13 +110,13 @@ Configurations::ExportProperty Configurations::GetPropertyForExport(const string
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorUInt: {
-        propertyStringConverter << GetProperty<vector<unsigned int>>(id).Value;
-        propertyDescription = GetProperty<vector<unsigned int>>(id).Description;
+        propertyStringConverter << GetProperty<std::vector<unsigned int>>(id).Value;
+        propertyDescription = GetProperty<std::vector<unsigned int>>(id).Description;
         break;
     }
     case ConfigurationPropertySupportedTypes::SetUInt: {
-        propertyStringConverter << GetProperty<set<unsigned int>>(id).Value;
-        propertyDescription = GetProperty<set<unsigned int>>(id).Description;
+        propertyStringConverter << GetProperty<std::set<unsigned int>>(id).Value;
+        propertyDescription = GetProperty<std::set<unsigned int>>(id).Description;
         break;
     }
     case ConfigurationPropertySupportedTypes::Matrix: {
@@ -125,7 +125,7 @@ Configurations::ExportProperty Configurations::GetPropertyForExport(const string
         break;
     }
     default:
-        throw invalid_argument("Property '" + id + "' cannot be converted. Type not recognized");
+        throw std::invalid_argument("Property '" + id + "' cannot be converted. Type not recognized");
     }
 
     exportProperty.Value = propertyStringConverter.str();
@@ -134,7 +134,7 @@ Configurations::ExportProperty Configurations::GetPropertyForExport(const string
     return exportProperty;
 }
 // ***************************************************************************
-void Configurations::ConvertPropertyFromString(const string &id, const string &type, const string &value, const string &description)
+void Configurations::ConvertPropertyFromString(const std::string &id, const std::string &type, const std::string &value, const std::string &description)
 {
     auto convertedType = ConfigurationPropertySupportedTypes::StringToType(type);
 
@@ -165,9 +165,9 @@ void Configurations::ConvertPropertyFromString(const string &id, const string &t
         break;
     }
     case ConfigurationPropertySupportedTypes::String: {
-        AddProperty(id, string(), description);
+        AddProperty(id, std::string(), description);
 
-        string parsedValue = StringsUtilities::Parse<string>(value);
+        std::string parsedValue = StringsUtilities::Parse<std::string>(value);
         SetPropertyValue(id, parsedValue);
 
         break;
@@ -181,33 +181,33 @@ void Configurations::ConvertPropertyFromString(const string &id, const string &t
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorUInt: {
-        AddProperty(id, vector<unsigned int>(), description);
+        AddProperty(id, std::vector<unsigned int>(), description);
 
-        vector<unsigned int> parsedValue = StringsUtilities::Parse<vector<unsigned int>>(value);
+        std::vector<unsigned int> parsedValue = StringsUtilities::Parse<std::vector<unsigned int>>(value);
         SetPropertyValue(id, parsedValue);
 
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorInt: {
-        AddProperty(id, vector<int>(), description);
+        AddProperty(id, std::vector<int>(), description);
 
-        vector<int> parsedValue = StringsUtilities::Parse<vector<int>>(value);
+        std::vector<int> parsedValue = StringsUtilities::Parse<std::vector<int>>(value);
         SetPropertyValue(id, parsedValue);
 
         break;
     }
     case ConfigurationPropertySupportedTypes::VectorDouble: {
-        AddProperty(id, vector<double>(), description);
+        AddProperty(id, std::vector<double>(), description);
 
-        vector<double> parsedValue = StringsUtilities::Parse<vector<double>>(value);
+        std::vector<double> parsedValue = StringsUtilities::Parse<std::vector<double>>(value);
         SetPropertyValue(id, parsedValue);
 
         break;
     }
     case ConfigurationPropertySupportedTypes::SetUInt: {
-        AddProperty(id, set<unsigned int>(), description);
+        AddProperty(id, std::set<unsigned int>(), description);
 
-        set<unsigned int> parsedValue = StringsUtilities::Parse<set<unsigned int>>(value);
+        std::set<unsigned int> parsedValue = StringsUtilities::Parse<std::set<unsigned int>>(value);
         SetPropertyValue(id, parsedValue);
 
         break;
@@ -221,49 +221,49 @@ void Configurations::ConvertPropertyFromString(const string &id, const string &t
         break;
     }
     default:
-        throw invalid_argument("Property '" + id + "': type not supported");
+        throw std::invalid_argument("Property '" + id + "': type not supported");
     }
 }
 // ***************************************************************************
-void Configurations::AddProperty(const string &id, const char *value, const string &description)
+void Configurations::AddProperty(const std::string &id, const char *value, const std::string &description)
 {
     RemoveProperty(id);
 
-    properties.insert(make_pair(id, new ConfigurationProperty<string>()));
+    properties.insert(make_pair(id, new ConfigurationProperty<std::string>()));
     propertyTypes.insert(make_pair(id, ConfigurationPropertySupportedTypes::String));
     numberProperties++;
 
-    ConfigurationProperty<string> &property = GetProperty<string>(id);
+    ConfigurationProperty<std::string> &property = GetProperty<std::string>(id);
 
     property.Id = id;
-    property.Value = string(value);
+    property.Value = std::string(value);
     property.Description = description;
 }
 // ***************************************************************************
-void Configurations::SetPropertyValue(const string &id, const char *value)
+void Configurations::SetPropertyValue(const std::string &id, const char *value)
 {
     if (!ExistsProperty(id))
-        throw invalid_argument("");
+        throw std::invalid_argument("");
 
-    ConfigurationProperty<string> &property = GetProperty<string>(id);
-    property.Value = string(value);
+    ConfigurationProperty<std::string> &property = GetProperty<std::string>(id);
+    property.Value = std::string(value);
 }
 // ***************************************************************************
-void Configurations::InitializeFromCsv(const string &inputFile, const bool &hasHeader, const char &separator)
+void Configurations::InitializeFromCsv(const std::string &inputFile, const bool &hasHeader, const char &separator)
 {
     if (!Output::FileExists(inputFile))
-        throw runtime_error("File '" + inputFile + "' not found");
+        throw std::runtime_error("File '" + inputFile + "' not found");
 
-    ifstream inFile;
+    std::ifstream inFile;
     inFile.open(inputFile.c_str());
 
     if (!inFile.is_open())
-        throw runtime_error("Cannot open file '" + inputFile + "'");
+        throw std::runtime_error("Cannot open file '" + inputFile + "'");
 
     int num_line = 0;
     while (!inFile.eof())
     {
-        string line;
+        std::string line;
         getline(inFile, line);
         num_line++;
 
@@ -271,7 +271,7 @@ void Configurations::InitializeFromCsv(const string &inputFile, const bool &hasH
         if (num_line == 1 && hasHeader)
             continue;
 
-        vector<string> columns = StringsUtilities::Split(line, separator);
+        std::vector<std::string> columns = StringsUtilities::Split(line, separator);
 
         if (columns.size() == 0)
             continue;
@@ -279,32 +279,32 @@ void Configurations::InitializeFromCsv(const string &inputFile, const bool &hasH
         switch (columns.size())
         {
         case 2: {
-            const string &id = columns[0];
-            const string &type = "string";
-            const string &value = columns[1];
+            const std::string &id = columns[0];
+            const std::string &type = "string";
+            const std::string &value = columns[1];
 
             ConvertPropertyFromString(id, type, value);
             break;
         }
         case 3: {
-            const string &id = columns[0];
-            const string &type = columns[1];
-            const string &value = columns[2];
+            const std::string &id = columns[0];
+            const std::string &type = columns[1];
+            const std::string &value = columns[2];
 
             ConvertPropertyFromString(id, type, value);
             break;
         }
         case 4: {
-            const string &id = columns[0];
-            const string &type = columns[1];
-            const string &value = columns[2];
-            const string &description = columns[3];
+            const std::string &id = columns[0];
+            const std::string &type = columns[1];
+            const std::string &value = columns[2];
+            const std::string &description = columns[3];
 
             ConvertPropertyFromString(id, type, value, description);
             break;
         }
         default: {
-            Gedim::Output::PrintWarningMessage("Skip property at line " + to_string(num_line), true);
+            Gedim::Output::PrintWarningMessage("Skip property at line " + std::to_string(num_line), true);
             break;
         }
         }
@@ -313,22 +313,22 @@ void Configurations::InitializeFromCsv(const string &inputFile, const bool &hasH
     inFile.close();
 }
 // ***************************************************************************
-void Configurations::InitializeFromIni(const string &inputFile)
+void Configurations::InitializeFromIni(const std::string &inputFile)
 {
     if (!Output::FileExists(inputFile))
-        throw runtime_error("File '" + inputFile + "' not found");
+        throw std::runtime_error("File '" + inputFile + "' not found");
 
-    ifstream inFile;
+    std::ifstream inFile;
     inFile.open(inputFile.c_str());
 
     if (!inFile.is_open())
-        throw runtime_error("Cannot open file '" + inputFile + "'");
+        throw std::runtime_error("Cannot open file '" + inputFile + "'");
 
     // Find Property in File
     unsigned int num_line = 0;
     while (!inFile.eof())
     {
-        string line;
+        std::string line;
 
         getline(inFile, line);
         num_line++;
@@ -337,7 +337,7 @@ void Configurations::InitializeFromIni(const string &inputFile)
         if (line[0] == '#')
             continue;
 
-        vector<string> columns = StringsUtilities::Split(line, ' ');
+        std::vector<std::string> columns = StringsUtilities::Split(line, ' ');
 
         if (columns.size() == 0)
             continue;
@@ -345,23 +345,23 @@ void Configurations::InitializeFromIni(const string &inputFile)
         switch (columns.size())
         {
         case 2: {
-            const string &id = columns[0];
-            const string &type = "string";
-            const string &value = columns[1];
+            const std::string &id = columns[0];
+            const std::string &type = "string";
+            const std::string &value = columns[1];
 
             ConvertPropertyFromString(id, type, value);
             break;
         }
         case 3: {
-            const string &id = columns[0];
-            const string &type = columns[1];
-            const string &value = columns[2];
+            const std::string &id = columns[0];
+            const std::string &type = columns[1];
+            const std::string &value = columns[2];
 
             ConvertPropertyFromString(id, type, value);
             break;
         }
         default:
-            Gedim::Output::PrintWarningMessage("Skip property at line " + to_string(num_line), true);
+            Gedim::Output::PrintWarningMessage("Skip property at line " + std::to_string(num_line), true);
             break;
         }
     }
@@ -369,29 +369,29 @@ void Configurations::InitializeFromIni(const string &inputFile)
     inFile.close();
 }
 // ***************************************************************************
-void Configurations::Initialize(const int &argc, char **argv, const string &format)
+void Configurations::Initialize(const int &argc, char **argv, const std::string &format)
 {
     char typeSeparator = StringsUtilities::FindSeparator(format, "id", "type");
     char valueSeparator = StringsUtilities::FindSeparator(format, "type", "value");
 
     for (int i = 0; i < argc; i++)
     {
-        vector<string> strings = StringsUtilities::Split(argv[i], {typeSeparator, valueSeparator});
+        std::vector<std::string> strings = StringsUtilities::Split(argv[i], {typeSeparator, valueSeparator});
 
         switch (strings.size())
         {
         case 2: {
-            const string &id = strings[0];
-            const string &type = "string";
-            const string &value = strings[1];
+            const std::string &id = strings[0];
+            const std::string &type = "string";
+            const std::string &value = strings[1];
 
             ConvertPropertyFromString(id, type, value);
             break;
         }
         case 3: {
-            const string &id = strings[0];
-            const string &type = strings[1];
-            const string &value = strings[2];
+            const std::string &id = strings[0];
+            const std::string &type = strings[1];
+            const std::string &value = strings[2];
 
             ConvertPropertyFromString(id, type, value);
             break;
@@ -402,83 +402,83 @@ void Configurations::Initialize(const int &argc, char **argv, const string &form
     }
 }
 // ***************************************************************************
-void Configurations::ExportToCsv(const string &filePath, const bool &append, const char &separator)
+void Configurations::ExportToCsv(const std::string &filePath, const bool &append, const char &separator)
 {
-    ofstream file;
+    std::ofstream file;
 
     if (append)
-        file.open(filePath.c_str(), ofstream::app);
+        file.open(filePath.c_str(), std::ofstream::app);
     else
         file.open(filePath.c_str());
 
     if (file.fail())
-        throw runtime_error("File '" + filePath + "' cannot be opened");
+        throw std::runtime_error("File '" + filePath + "' cannot be opened");
 
     if (!append)
     {
         file << "Id" << separator;
         file << "Type" << separator;
         file << "Value" << separator;
-        file << "Description" << endl;
+        file << "Description" << std::endl;
     }
 
     for (auto it = propertyTypes.begin(); it != propertyTypes.end(); it++)
     {
-        const string &id = it->first;
+        const std::string &id = it->first;
         const ConfigurationPropertySupportedTypes::SupportedTypes &type = it->second;
-        const string propertyType = ConfigurationPropertySupportedTypes::TypeToString(type);
+        const std::string propertyType = ConfigurationPropertySupportedTypes::TypeToString(type);
         const ExportProperty property = GetPropertyForExport(id, type);
 
-        const string &csvDescription = property.Description;
-        const string &csvKey = id;
-        const string &csvType = propertyType;
-        const string &csvValue = property.Value;
+        const std::string &csvDescription = property.Description;
+        const std::string &csvKey = id;
+        const std::string &csvType = propertyType;
+        const std::string &csvValue = property.Value;
 
         file << csvKey << separator;
         file << csvType << separator;
         file << csvValue << separator;
-        file << csvDescription << endl;
+        file << csvDescription << std::endl;
     }
 
     file.close();
 }
 // ***************************************************************************
-void Configurations::ExportToIni(const string &filePath, const bool &append, const string &section)
+void Configurations::ExportToIni(const std::string &filePath, const bool &append, const std::string &section)
 {
-    ofstream file;
+    std::ofstream file;
 
     if (append)
-        file.open(filePath.c_str(), ofstream::app);
+        file.open(filePath.c_str(), std::ofstream::app);
     else
         file.open(filePath.c_str());
 
     if (file.fail())
-        throw runtime_error("File '" + filePath + "' cannot be opened");
+        throw std::runtime_error("File '" + filePath + "' cannot be opened");
 
     if (!append && !section.empty())
-        file << "# " << section << endl;
+        file << "# " << section << std::endl;
 
     for (auto it = propertyTypes.begin(); it != propertyTypes.end(); it++)
     {
-        const string &id = it->first;
+        const std::string &id = it->first;
         const ConfigurationPropertySupportedTypes::SupportedTypes &type = it->second;
-        const string propertyType = ConfigurationPropertySupportedTypes::TypeToString(type);
+        const std::string propertyType = ConfigurationPropertySupportedTypes::TypeToString(type);
         const ExportProperty property = GetPropertyForExport(id, type);
 
-        const string &iniDescription = property.Description;
-        const string &iniKey = id;
-        const string &iniType = propertyType;
-        const string &iniValue = property.Value;
+        const std::string &iniDescription = property.Description;
+        const std::string &iniKey = id;
+        const std::string &iniType = propertyType;
+        const std::string &iniValue = property.Value;
 
         if (iniKey.empty() || iniValue.empty() || iniType.empty())
             continue;
 
-        file << "#####################################################" << endl;
+        file << "#####################################################" << std::endl;
 
         if (!iniDescription.empty())
-            file << "# " << iniDescription << endl;
+            file << "# " << iniDescription << std::endl;
 
-        file << iniKey << " " << iniType << " " << iniValue << endl;
+        file << iniKey << " " << iniType << " " << iniValue << std::endl;
     }
 
     file.close();
@@ -488,7 +488,7 @@ void Configurations::Reset()
 {
     for (auto it = propertyTypes.begin(); it != propertyTypes.end(); it++)
     {
-        const string &id = it->first;
+        const std::string &id = it->first;
         const ConfigurationPropertySupportedTypes::SupportedTypes &type = it->second;
 
         RemoveProperty(id, type);
@@ -498,7 +498,7 @@ void Configurations::Reset()
     numberProperties = 0;
 }
 // ***************************************************************************
-void Configurations::RemoveProperty(const string &id)
+void Configurations::RemoveProperty(const std::string &id)
 {
     if (!ExistsProperty(id))
         return;

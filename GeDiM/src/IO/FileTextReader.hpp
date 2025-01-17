@@ -3,8 +3,6 @@
 
 #include "IFileTextReader.hpp"
 
-using namespace std;
-
 namespace Gedim
 {
 /// \brief C++ File Reader
@@ -12,26 +10,26 @@ namespace Gedim
 class FileReader : public IFileReader
 {
   private:
-    ifstream _file;
-    string _filePath;
+    std::ifstream _file;
+    std::string _filePath;
 
   public:
-    FileReader(const string &filePath);
+    FileReader(const std::string &filePath);
     virtual ~FileReader()
     {
     }
 
-    string Path()
+    std::string Path()
     {
         return _filePath;
     }
     bool Open();
     void NextLine();
-    void GetLine(string &line)
+    void GetLine(std::string &line)
     {
         getline(_file, line);
     }
-    void GetAllLines(vector<string> &lines);
+    void GetAllLines(std::vector<std::string> &lines);
     void Close()
     {
         _file.close();

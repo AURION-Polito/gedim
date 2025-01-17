@@ -2,16 +2,13 @@
 
 #include "ImportExportUtilities.hpp"
 
-using namespace std;
-using namespace Eigen;
-
 namespace Gedim
 {
 // ***************************************************************************
 void MeshUtilities::FillMesh1D(const GeometryUtilities &,
-                               const Vector3d &segmentOrigin,
-                               const Vector3d &segmentTangent,
-                               const vector<double> &coordinates,
+                               const Eigen::Vector3d &segmentOrigin,
+                               const Eigen::Vector3d &segmentTangent,
+                               const std::vector<double> &coordinates,
                                IMeshDAO &mesh) const
 {
     if (coordinates.size() == 0)
@@ -41,7 +38,7 @@ void MeshUtilities::FillMesh1D(const GeometryUtilities &,
 // ***************************************************************************
 MeshUtilities::FilterMeshData MeshUtilities::FilterMesh1D(const std::vector<unsigned int> &cell1DsFilter, const IMeshDAO &mesh) const
 {
-    list<unsigned int> cell1Ds;
+    std::list<unsigned int> cell1Ds;
     std::set<unsigned int> cell0Ds;
 
     for (const unsigned int cell1DIndex : cell1DsFilter)
@@ -121,7 +118,7 @@ MeshUtilities::ExtractMeshData MeshUtilities::ExtractMesh1D(const std::vector<un
 // ***************************************************************************
 void MeshUtilities::Mesh1DFromSegment(const GeometryUtilities &geometryUtilities,
                                       const Eigen::MatrixXd &segmentVertices,
-                                      const vector<unsigned int> vertexMarkers,
+                                      const std::vector<unsigned int> vertexMarkers,
                                       IMeshDAO &mesh) const
 {
     FillMesh1D(geometryUtilities, segmentVertices.col(0), segmentVertices.col(1), {0.0, 1.0}, mesh);
@@ -213,7 +210,7 @@ std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DI
 
     mesh.Cell1DSetState(cell1DIndex, false);
 
-    vector<unsigned int> newCell1DsIndex(numSubCells);
+    std::vector<unsigned int> newCell1DsIndex(numSubCells);
 
     for (unsigned int c = 0; c < numSubCells; c++)
     {

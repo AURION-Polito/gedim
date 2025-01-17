@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace Gedim
 {
 class StringsUtilities
@@ -15,24 +13,24 @@ class StringsUtilities
   public:
     /// Divide a string by a character in a vector of strings
     /// @example stringToSplit="pippo_pe" character='_' -> result=["pippo", "pe"]
-    static vector<string> Split(const string &stringToSplit, const char &character = ' ');
+    static std::vector<std::string> Split(const std::string &stringToSplit, const char &character = ' ');
 
     /// Divide a string by a set of characters in a vector of strings
     /// @example stringToSplit="pippo_pe:pu" characters={'_',':'} -> result=["pippo", "pe", "pu"]
-    static vector<string> Split(const string &stringToSplit, const vector<char> &characters = vector<char>(' '));
+    static std::vector<std::string> Split(const std::string &stringToSplit, const std::vector<char> &characters = std::vector<char>(' '));
 
     /// Find inside a string a separator between two keys
     /// @example stringToSearch="id:value" keyOne="id" keyTwo="value" -> separator=':'
-    static char FindSeparator(const string &stringToSearch, const string &keyOne, const string &keyTwo);
+    static char FindSeparator(const std::string &stringToSearch, const std::string &keyOne, const std::string &keyTwo);
 
     /// Convert string to lower
-    static string ToLower(const string &input);
+    static std::string ToLower(const std::string &input);
 
     /// Convert string to upper
-    static string ToUpper(const string &input);
+    static std::string ToUpper(const std::string &input);
 
     /// Parse a string to object
-    template <class T> static T Parse(const string &objectString);
+    template <class T> static T Parse(const std::string &objectString);
 };
 } // namespace Gedim
 

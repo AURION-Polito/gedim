@@ -7,8 +7,6 @@
 #include <string>
 #include <typeinfo>
 
-using namespace std;
-
 namespace Gedim
 {
 class ConfigurationPropertySupportedTypes
@@ -44,13 +42,13 @@ class ConfigurationPropertySupportedTypes
         if (propertyType == typeid(double).name())
             return Double;
 
-        if (propertyType == typeid(string).name())
+        if (propertyType == typeid(std::string).name())
             return String;
 
-        if (propertyType == typeid(vector<int>).name())
+        if (propertyType == typeid(std::vector<int>).name())
             return VectorInt;
 
-        if (propertyType == typeid(vector<double>).name())
+        if (propertyType == typeid(std::vector<double>).name())
             return VectorDouble;
 
         if (propertyType == typeid(bool).name())
@@ -59,10 +57,10 @@ class ConfigurationPropertySupportedTypes
         if (propertyType == typeid(unsigned int).name())
             return UInt;
 
-        if (propertyType == typeid(vector<unsigned int>).name())
+        if (propertyType == typeid(std::vector<unsigned int>).name())
             return VectorUInt;
 
-        if (propertyType == typeid(set<unsigned int>).name())
+        if (propertyType == typeid(std::set<unsigned int>).name())
             return SetUInt;
 
         if (propertyType == typeid(Eigen::MatrixXd).name())
@@ -71,13 +69,13 @@ class ConfigurationPropertySupportedTypes
         return Unknown;
     }
 
-    template <class K> static string TypeToString()
+    template <class K> static std::string TypeToString()
     {
         return TypeToString(GetSupportedType<K>());
     }
 
     /// Convert the SupportedType to string
-    static string TypeToString(const SupportedTypes &type)
+    static std::string TypeToString(const SupportedTypes &type)
     {
         switch (type)
         {
@@ -109,9 +107,9 @@ class ConfigurationPropertySupportedTypes
     }
 
     /// Convert a string to SupportedType
-    static SupportedTypes StringToType(const string &stringType)
+    static SupportedTypes StringToType(const std::string &stringType)
     {
-        string stringTypeToLow = StringsUtilities::ToLower(stringType);
+        std::string stringTypeToLow = StringsUtilities::ToLower(stringType);
 
         if (stringTypeToLow == "int")
             return Int;

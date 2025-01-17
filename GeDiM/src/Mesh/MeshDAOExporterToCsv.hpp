@@ -4,9 +4,6 @@
 #include "IMeshDAO.hpp"
 #include "MeshFromCsvUtilities.hpp"
 
-using namespace std;
-using namespace Eigen;
-
 namespace Gedim
 {
 /// \brief MeshDAOExporterToCsv

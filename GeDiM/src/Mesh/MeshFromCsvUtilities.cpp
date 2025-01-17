@@ -16,9 +16,9 @@ MeshFromCsvUtilities::~MeshFromCsvUtilities()
 {
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertMesh2D(const vector<MeshFromCsvUtilities::Cell0D> &cell0Ds,
-                                         const vector<MeshFromCsvUtilities::Cell1D> &cell1Ds,
-                                         const vector<MeshFromCsvUtilities::Cell2D> &cell2Ds,
+void MeshFromCsvUtilities::ConvertMesh2D(const std::vector<MeshFromCsvUtilities::Cell0D> &cell0Ds,
+                                         const std::vector<MeshFromCsvUtilities::Cell1D> &cell1Ds,
+                                         const std::vector<MeshFromCsvUtilities::Cell2D> &cell2Ds,
                                          IMeshDAO &mesh) const
 {
     unsigned int numCell0Ds = cell0Ds.size();
@@ -27,7 +27,7 @@ void MeshFromCsvUtilities::ConvertMesh2D(const vector<MeshFromCsvUtilities::Cell
 
     Eigen::MatrixXd meshCell0Ds(3, numCell0Ds);
     Eigen::MatrixXi meshCell1Ds(2, numCell1Ds);
-    vector<Eigen::MatrixXi> meshCell2Ds(numCell2Ds);
+    std::vector<Eigen::MatrixXi> meshCell2Ds(numCell2Ds);
 
     for (unsigned int v = 0; v < numCell0Ds; v++)
     {
@@ -84,7 +84,7 @@ void MeshFromCsvUtilities::ConvertMesh2D(const vector<MeshFromCsvUtilities::Cell
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0Ds(const vector<MeshFromCsvUtilities::Cell0D> cell0Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell0Ds(const std::vector<MeshFromCsvUtilities::Cell0D> cell0Ds, IMeshDAO &mesh) const
 {
     const unsigned int numCell0Ds = cell0Ds.size();
 
@@ -102,7 +102,7 @@ void MeshFromCsvUtilities::ConvertCell0Ds(const vector<MeshFromCsvUtilities::Cel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1Ds(const vector<MeshFromCsvUtilities::Cell1D> cell1Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell1Ds(const std::vector<MeshFromCsvUtilities::Cell1D> cell1Ds, IMeshDAO &mesh) const
 {
     const unsigned int numCell1Ds = cell1Ds.size();
 
@@ -120,7 +120,7 @@ void MeshFromCsvUtilities::ConvertCell1Ds(const vector<MeshFromCsvUtilities::Cel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2Ds(const vector<MeshFromCsvUtilities::Cell2D> cell2Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2Ds(const std::vector<MeshFromCsvUtilities::Cell2D> cell2Ds, IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2Ds.size();
 
@@ -158,7 +158,7 @@ void MeshFromCsvUtilities::ConvertCell2Ds(const vector<MeshFromCsvUtilities::Cel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell3Ds(const vector<MeshFromCsvUtilities::Cell3D> cell3Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell3Ds(const std::vector<MeshFromCsvUtilities::Cell3D> cell3Ds, IMeshDAO &mesh) const
 {
     const unsigned int numCell3Ds = cell3Ds.size();
 
@@ -204,7 +204,7 @@ void MeshFromCsvUtilities::ConvertCell3Ds(const vector<MeshFromCsvUtilities::Cel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0DNeighbours(const vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours,
+void MeshFromCsvUtilities::ConvertCell0DNeighbours(const std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours,
                                                    IMeshDAO &mesh) const
 {
     const unsigned int numCell0Ds = cell0DNeighbours.size();
@@ -259,7 +259,7 @@ void MeshFromCsvUtilities::ConvertCell0DNeighbours(const vector<MeshFromCsvUtili
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1DNeighbours(const vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours,
+void MeshFromCsvUtilities::ConvertCell1DNeighbours(const std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours,
                                                    IMeshDAO &mesh) const
 {
     const unsigned int numCell1Ds = cell1DNeighbours.size();
@@ -305,7 +305,7 @@ void MeshFromCsvUtilities::ConvertCell1DNeighbours(const vector<MeshFromCsvUtili
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DNeighbours(const vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
+void MeshFromCsvUtilities::ConvertCell2DNeighbours(const std::vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
                                                    IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2DNeighbours.size();
@@ -338,7 +338,7 @@ void MeshFromCsvUtilities::ConvertCell2DNeighbours(const vector<MeshFromCsvUtili
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const vector<Cell2DSubDivision> cell2DSubDivisions, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const std::vector<Cell2DSubDivision> cell2DSubDivisions, IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2DSubDivisions.size();
 
@@ -361,7 +361,7 @@ void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const vector<Cell2DSubDivis
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties,
+void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties,
                                                          IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell0DDoubleProperties.size();
@@ -402,7 +402,7 @@ void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const vector<MeshFromCs
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties,
+void MeshFromCsvUtilities::ConvertCell1DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties,
                                                          IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell1DDoubleProperties.size();
@@ -443,7 +443,7 @@ void MeshFromCsvUtilities::ConvertCell1DDoubleProperties(const vector<MeshFromCs
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties,
+void MeshFromCsvUtilities::ConvertCell2DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties,
                                                          IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell2DDoubleProperties.size();
@@ -484,7 +484,7 @@ void MeshFromCsvUtilities::ConvertCell2DDoubleProperties(const vector<MeshFromCs
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell3DDoubleProperties(const vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties,
+void MeshFromCsvUtilities::ConvertCell3DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties,
                                                          IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell3DDoubleProperties.size();
@@ -525,7 +525,7 @@ void MeshFromCsvUtilities::ConvertCell3DDoubleProperties(const vector<MeshFromCs
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const vector<CellUpdatedCells> cell0DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const std::vector<CellUpdatedCells> cell0DUpdatedCells, IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell0DUpdatedCells.size();
 
@@ -548,7 +548,7 @@ void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const vector<CellUpdatedCel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const vector<CellUpdatedCells> cell1DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const std::vector<CellUpdatedCells> cell1DUpdatedCells, IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell1DUpdatedCells.size();
 
@@ -571,7 +571,7 @@ void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const vector<CellUpdatedCel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const vector<CellUpdatedCells> cell2DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const std::vector<CellUpdatedCells> cell2DUpdatedCells, IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell2DUpdatedCells.size();
 
@@ -594,7 +594,7 @@ void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const vector<CellUpdatedCel
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const vector<CellUpdatedCells> cell3DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const std::vector<CellUpdatedCells> cell3DUpdatedCells, IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell3DUpdatedCells.size();
 
@@ -617,13 +617,13 @@ void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const vector<CellUpdatedCel
     }
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell0D> MeshFromCsvUtilities::ImportCell0Ds(IFileReader &csvFileReader, const char &separator) const
+std::vector<MeshFromCsvUtilities::Cell0D> MeshFromCsvUtilities::ImportCell0Ds(IFileReader &csvFileReader, const char &separator) const
 {
-    vector<Cell0D> cell0Ds;
+    std::vector<Cell0D> cell0Ds;
 
     /// Import Cell0Ds
     {
-        vector<string> cell0DsLines;
+        std::vector<std::string> cell0DsLines;
 
         if (!csvFileReader.Open())
             return cell0Ds;
@@ -638,7 +638,7 @@ vector<MeshFromCsvUtilities::Cell0D> MeshFromCsvUtilities::ImportCell0Ds(IFileRe
             cell0Ds.resize(numCell0Ds);
             for (unsigned int v = 0; v < numCell0Ds; v++)
             {
-                istringstream converter(cell0DsLines[v + 1]);
+                std::istringstream converter(cell0DsLines[v + 1]);
 
                 Cell0D &cell0D = cell0Ds[v];
 
@@ -666,13 +666,13 @@ vector<MeshFromCsvUtilities::Cell0D> MeshFromCsvUtilities::ImportCell0Ds(IFileRe
     return cell0Ds;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell1D> MeshFromCsvUtilities::ImportCell1Ds(IFileReader &csvFileReader, const char &separator) const
+std::vector<MeshFromCsvUtilities::Cell1D> MeshFromCsvUtilities::ImportCell1Ds(IFileReader &csvFileReader, const char &separator) const
 {
-    vector<Cell1D> cell1Ds;
+    std::vector<Cell1D> cell1Ds;
 
     /// Import Cell1Ds
     {
-        vector<string> cell1DsLines;
+        std::vector<std::string> cell1DsLines;
 
         if (!csvFileReader.Open())
             return cell1Ds;
@@ -687,7 +687,7 @@ vector<MeshFromCsvUtilities::Cell1D> MeshFromCsvUtilities::ImportCell1Ds(IFileRe
             cell1Ds.resize(numCell1Ds);
             for (unsigned int e = 0; e < numCell1Ds; e++)
             {
-                istringstream converter(cell1DsLines[e + 1]);
+                std::istringstream converter(cell1DsLines[e + 1]);
 
                 Cell1D &cell1D = cell1Ds[e];
 
@@ -712,13 +712,13 @@ vector<MeshFromCsvUtilities::Cell1D> MeshFromCsvUtilities::ImportCell1Ds(IFileRe
     return cell1Ds;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell2D> MeshFromCsvUtilities::ImportCell2Ds(IFileReader &csvFileReader, const char &separator) const
+std::vector<MeshFromCsvUtilities::Cell2D> MeshFromCsvUtilities::ImportCell2Ds(IFileReader &csvFileReader, const char &separator) const
 {
-    vector<Cell2D> cell2Ds;
+    std::vector<Cell2D> cell2Ds;
 
     /// Import Cell2Ds
     {
-        vector<string> cell2DsLines;
+        std::vector<std::string> cell2DsLines;
 
         if (!csvFileReader.Open())
             return cell2Ds;
@@ -733,7 +733,7 @@ vector<MeshFromCsvUtilities::Cell2D> MeshFromCsvUtilities::ImportCell2Ds(IFileRe
             cell2Ds.resize(numCell2Ds);
             for (unsigned int f = 0; f < numCell2Ds; f++)
             {
-                istringstream converter(cell2DsLines[f + 1]);
+                std::istringstream converter(cell2DsLines[f + 1]);
 
                 Cell2D &cell2D = cell2Ds[f];
 
@@ -782,13 +782,13 @@ vector<MeshFromCsvUtilities::Cell2D> MeshFromCsvUtilities::ImportCell2Ds(IFileRe
     return cell2Ds;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell3D> MeshFromCsvUtilities::ImportCell3Ds(IFileReader &csvFileReader, const char &separator) const
+std::vector<MeshFromCsvUtilities::Cell3D> MeshFromCsvUtilities::ImportCell3Ds(IFileReader &csvFileReader, const char &separator) const
 {
-    vector<MeshFromCsvUtilities::Cell3D> cell3Ds;
+    std::vector<MeshFromCsvUtilities::Cell3D> cell3Ds;
 
     /// Import Cell3Ds
     {
-        vector<string> cell3DsLines;
+        std::vector<std::string> cell3DsLines;
 
         if (!csvFileReader.Open())
             return cell3Ds;
@@ -805,7 +805,7 @@ vector<MeshFromCsvUtilities::Cell3D> MeshFromCsvUtilities::ImportCell3Ds(IFileRe
             {
                 Cell3D &cell3D = cell3Ds[c];
 
-                istringstream converter(cell3DsLines[c + 1]);
+                std::istringstream converter(cell3DsLines[c + 1]);
 
                 char temp;
                 converter >> cell3D.Id;
@@ -865,14 +865,14 @@ vector<MeshFromCsvUtilities::Cell3D> MeshFromCsvUtilities::ImportCell3Ds(IFileRe
     return cell3Ds;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCellDoubleProperties(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCellDoubleProperties(IFileReader &csvFileReader,
                                                                                                   const char &separator) const
 {
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cellProperties;
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cellProperties;
 
     /// Import CellProperties
     {
-        vector<string> cellsLines;
+        std::vector<std::string> cellsLines;
 
         if (!csvFileReader.Open())
             return cellProperties;
@@ -889,7 +889,7 @@ vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCel
             {
                 CellDoubleProperty &cellProperty = cellProperties[p];
 
-                istringstream converter(cellsLines[p + 1]);
+                std::istringstream converter(cellsLines[p + 1]);
 
                 if (separator == ' ')
                 {
@@ -901,16 +901,16 @@ vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCel
                 }
                 else
                 {
-                    string tempStr;
+                    std::string tempStr;
                     converter >> tempStr;
-                    vector<string> result = Output::StringSplit(tempStr, separator);
+                    std::vector<std::string> result = Output::StringSplit(tempStr, separator);
                     Output::Assert(result.size() == 2);
 
                     cellProperty.Id = result[0];
                     cellProperty.FilePath = result[1];
                 }
 
-                string fileFolder, fileName, fileExtension;
+                std::string fileFolder, fileName, fileExtension;
                 Gedim::Output::GetFilePath(csvFileReader.Path(), fileFolder, fileName, fileExtension);
                 FileReader propertyFileReader(fileFolder + cellProperty.FilePath);
 
@@ -922,14 +922,14 @@ vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCel
     return cellProperties;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellUpdatedCells(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellUpdatedCells(IFileReader &csvFileReader,
                                                                                             const char &separator) const
 {
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cellsUpdatedCells;
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cellsUpdatedCells;
 
     /// Import cellsUpdatedCells
     {
-        vector<string> cellsLines;
+        std::vector<std::string> cellsLines;
 
         if (!csvFileReader.Open())
             return cellsUpdatedCells;
@@ -946,7 +946,7 @@ vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellU
             {
                 CellUpdatedCells &cellUpdatedCells = cellsUpdatedCells[p];
 
-                istringstream converter(cellsLines[p + 1]);
+                std::istringstream converter(cellsLines[p + 1]);
 
                 char temp;
                 converter >> cellUpdatedCells.Id;
@@ -972,17 +972,17 @@ vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellU
     return cellsUpdatedCells;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::ImportCellProperty(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::ImportCellProperty(IFileReader &csvFileReader,
                                                                                                  const char &separator) const
 {
-    vector<MeshFromCsvUtilities::CellDoubleProperty::Value> cellPropertyValues;
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty::Value> cellPropertyValues;
 
     /// Import CellProperty
     {
-        vector<string> cellsLines;
+        std::vector<std::string> cellsLines;
 
         if (!csvFileReader.Open())
-            throw runtime_error("Error on mesh cellProperty file");
+            throw std::runtime_error("Error on mesh cellProperty file");
 
         csvFileReader.GetAllLines(cellsLines);
         csvFileReader.Close();
@@ -997,7 +997,7 @@ vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::Im
             {
                 CellDoubleProperty::Value &cellProperty = cellPropertyValues[p];
 
-                istringstream converter(cellsLines[p + 1]);
+                std::istringstream converter(cellsLines[p + 1]);
 
                 char temp;
                 converter >> cellProperty.CellId;
@@ -1019,14 +1019,14 @@ vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::Im
     return cellPropertyValues;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::ImportCell0DNeighbours(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::ImportCell0DNeighbours(IFileReader &csvFileReader,
                                                                                             const char &separator) const
 {
-    vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours;
+    std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours;
 
     /// Import Cell0DNeighbours
     {
-        vector<string> cell0DNeighboursLines;
+        std::vector<std::string> cell0DNeighboursLines;
 
         if (!csvFileReader.Open())
             return cell0DNeighbours;
@@ -1044,7 +1044,7 @@ vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::ImportCell0
             {
                 MeshFromCsvUtilities::Cell0DNeighbours &cell0D = cell0DNeighbours[v];
 
-                istringstream converter(cell0DNeighboursLines[v + 1]);
+                std::istringstream converter(cell0DNeighboursLines[v + 1]);
 
                 unsigned int cell0Did;
                 char temp;
@@ -1097,14 +1097,14 @@ vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::ImportCell0
     return cell0DNeighbours;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::ImportCell1DNeighbours(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::ImportCell1DNeighbours(IFileReader &csvFileReader,
                                                                                             const char &separator) const
 {
-    vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours;
+    std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours;
 
     /// Import Cell1DNeighbours
     {
-        vector<string> cell1DNeighboursLines;
+        std::vector<std::string> cell1DNeighboursLines;
 
         if (!csvFileReader.Open())
             return cell1DNeighbours;
@@ -1122,7 +1122,7 @@ vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::ImportCell1
             {
                 MeshFromCsvUtilities::Cell1DNeighbours &cell1D = cell1DNeighbours[e];
 
-                istringstream converter(cell1DNeighboursLines[e + 1]);
+                std::istringstream converter(cell1DNeighboursLines[e + 1]);
 
                 unsigned int cell1Did;
                 char temp;
@@ -1162,14 +1162,14 @@ vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::ImportCell1
     return cell1DNeighbours;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::ImportCell2DNeighbours(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::ImportCell2DNeighbours(IFileReader &csvFileReader,
                                                                                             const char &separator) const
 {
-    vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours;
+    std::vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours;
 
     /// Import Cell2DNeighbours
     {
-        vector<string> cell2DNeighboursLines;
+        std::vector<std::string> cell2DNeighboursLines;
 
         if (!csvFileReader.Open())
             return cell2DNeighbours;
@@ -1187,7 +1187,7 @@ vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::ImportCell2
             {
                 MeshFromCsvUtilities::Cell2DNeighbours &cell2D = cell2DNeighbours[f];
 
-                istringstream converter(cell2DNeighboursLines[f + 1]);
+                std::istringstream converter(cell2DNeighboursLines[f + 1]);
 
                 unsigned int cell2Did;
                 char temp;
@@ -1214,14 +1214,14 @@ vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::ImportCell2
     return cell2DNeighbours;
 }
 // ***************************************************************************
-vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell2DSubDivision(IFileReader &csvFileReader,
+std::vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell2DSubDivision(IFileReader &csvFileReader,
                                                                                               const char &separator) const
 {
-    vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivision;
+    std::vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivision;
 
     /// Import Cell2DSubDivision
     {
-        vector<string> cell2DSubDivisionLines;
+        std::vector<std::string> cell2DSubDivisionLines;
 
         if (!csvFileReader.Open())
             return cell2DSubDivision;
@@ -1239,7 +1239,7 @@ vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell
             {
                 MeshFromCsvUtilities::Cell2DSubDivision &cell2D = cell2DSubDivision[f];
 
-                istringstream converter(cell2DSubDivisionLines[f + 1]);
+                std::istringstream converter(cell2DSubDivisionLines[f + 1]);
 
                 unsigned int cell2Did;
                 char temp;
@@ -1266,76 +1266,76 @@ vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell
     return cell2DSubDivision;
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0Ds(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell0Ds
-    ofstream fileCell0Ds;
+    std::ofstream fileCell0Ds;
 
     fileCell0Ds.open(filePath);
     fileCell0Ds.precision(16);
 
     if (fileCell0Ds.fail())
-        throw runtime_error("Error on mesh cell0Ds file");
+        throw std::runtime_error("Error on mesh cell0Ds file");
 
     fileCell0Ds << "Id" << separator;
     fileCell0Ds << "Marker" << separator;
     fileCell0Ds << "Active" << separator;
     fileCell0Ds << "X" << separator;
     fileCell0Ds << "Y" << separator;
-    fileCell0Ds << "Z" << endl;
+    fileCell0Ds << "Z" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-        fileCell0Ds << scientific << v << separator;
-        fileCell0Ds << scientific << mesh.Cell0DMarker(v) << separator;
-        fileCell0Ds << scientific << mesh.Cell0DIsActive(v) << separator;
-        fileCell0Ds << scientific << mesh.Cell0DCoordinateX(v) << separator;
-        fileCell0Ds << scientific << mesh.Cell0DCoordinateY(v) << separator;
-        fileCell0Ds << scientific << mesh.Cell0DCoordinateZ(v) << endl;
+        fileCell0Ds << std::scientific << v << separator;
+        fileCell0Ds << std::scientific << mesh.Cell0DMarker(v) << separator;
+        fileCell0Ds << std::scientific << mesh.Cell0DIsActive(v) << separator;
+        fileCell0Ds << std::scientific << mesh.Cell0DCoordinateX(v) << separator;
+        fileCell0Ds << std::scientific << mesh.Cell0DCoordinateY(v) << separator;
+        fileCell0Ds << std::scientific << mesh.Cell0DCoordinateZ(v) << std::endl;
     }
 
     fileCell0Ds.close();
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1Ds(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell1Ds
-    ofstream fileCell1Ds;
+    std::ofstream fileCell1Ds;
 
     fileCell1Ds.open(filePath);
     fileCell1Ds.precision(16);
 
     if (fileCell1Ds.fail())
-        throw runtime_error("Error on mesh cell1Ds file");
+        throw std::runtime_error("Error on mesh cell1Ds file");
 
     fileCell1Ds << "Id" << separator;
     fileCell1Ds << "Marker" << separator;
     fileCell1Ds << "Active" << separator;
     fileCell1Ds << "Origin" << separator;
-    fileCell1Ds << "End" << endl;
+    fileCell1Ds << "End" << std::endl;
     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
     {
-        fileCell1Ds << scientific << e << separator;
-        fileCell1Ds << scientific << mesh.Cell1DMarker(e) << separator;
-        fileCell1Ds << scientific << mesh.Cell1DIsActive(e) << separator;
-        fileCell1Ds << scientific << mesh.Cell1DOrigin(e) << separator;
-        fileCell1Ds << scientific << mesh.Cell1DEnd(e) << endl;
+        fileCell1Ds << std::scientific << e << separator;
+        fileCell1Ds << std::scientific << mesh.Cell1DMarker(e) << separator;
+        fileCell1Ds << std::scientific << mesh.Cell1DIsActive(e) << separator;
+        fileCell1Ds << std::scientific << mesh.Cell1DOrigin(e) << separator;
+        fileCell1Ds << std::scientific << mesh.Cell1DEnd(e) << std::endl;
     }
 
     fileCell1Ds.close();
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2Ds(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell2Ds
-    ofstream fileCell2Ds;
+    std::ofstream fileCell2Ds;
 
     fileCell2Ds.open(filePath);
     fileCell2Ds.precision(16);
 
     if (fileCell2Ds.fail())
-        throw runtime_error("Error on mesh cell2Ds file");
+        throw std::runtime_error("Error on mesh cell2Ds file");
 
     fileCell2Ds << "Id" << separator;
     fileCell2Ds << "Marker" << separator;
@@ -1343,38 +1343,38 @@ void MeshFromCsvUtilities::ExportCell2Ds(const string &filePath, const char &sep
     fileCell2Ds << "NumVertices" << separator;
     fileCell2Ds << "Vertices" << separator;
     fileCell2Ds << "NumEdges" << separator;
-    fileCell2Ds << "Edges" << endl;
+    fileCell2Ds << "Edges" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-        fileCell2Ds << scientific << f << separator;
-        fileCell2Ds << scientific << mesh.Cell2DMarker(f) << separator;
-        fileCell2Ds << scientific << mesh.Cell2DIsActive(f) << separator;
+        fileCell2Ds << std::scientific << f << separator;
+        fileCell2Ds << std::scientific << mesh.Cell2DMarker(f) << separator;
+        fileCell2Ds << std::scientific << mesh.Cell2DIsActive(f) << separator;
 
-        fileCell2Ds << scientific << mesh.Cell2DNumberVertices(f);
+        fileCell2Ds << std::scientific << mesh.Cell2DNumberVertices(f);
         for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(f); v++)
-            fileCell2Ds << scientific << separator << mesh.Cell2DVertex(f, v);
+            fileCell2Ds << std::scientific << separator << mesh.Cell2DVertex(f, v);
         fileCell2Ds << separator;
 
-        fileCell2Ds << scientific << mesh.Cell2DNumberEdges(f);
+        fileCell2Ds << std::scientific << mesh.Cell2DNumberEdges(f);
         for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(f); e++)
-            fileCell2Ds << scientific << separator << mesh.Cell2DEdge(f, e);
-        fileCell2Ds << endl;
+            fileCell2Ds << std::scientific << separator << mesh.Cell2DEdge(f, e);
+        fileCell2Ds << std::endl;
     }
 
     fileCell2Ds.close();
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell3Ds(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell3Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell3Ds
-    ofstream fileCell3Ds;
+    std::ofstream fileCell3Ds;
 
     fileCell3Ds.open(filePath);
     fileCell3Ds.precision(16);
 
     if (fileCell3Ds.fail())
-        throw runtime_error("Error on mesh cell3Ds file");
+        throw std::runtime_error("Error on mesh cell3Ds file");
 
     fileCell3Ds << "Id" << separator;
     fileCell3Ds << "Marker" << separator;
@@ -1384,56 +1384,56 @@ void MeshFromCsvUtilities::ExportCell3Ds(const string &filePath, const char &sep
     fileCell3Ds << "NumEdges" << separator;
     fileCell3Ds << "Edges" << separator;
     fileCell3Ds << "NumFaces" << separator;
-    fileCell3Ds << "Faces" << endl;
+    fileCell3Ds << "Faces" << std::endl;
     for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
     {
-        fileCell3Ds << scientific << c << separator;
-        fileCell3Ds << scientific << mesh.Cell3DMarker(c) << separator;
-        fileCell3Ds << scientific << mesh.Cell3DIsActive(c) << separator;
+        fileCell3Ds << std::scientific << c << separator;
+        fileCell3Ds << std::scientific << mesh.Cell3DMarker(c) << separator;
+        fileCell3Ds << std::scientific << mesh.Cell3DIsActive(c) << separator;
 
-        fileCell3Ds << scientific << mesh.Cell3DNumberVertices(c);
+        fileCell3Ds << std::scientific << mesh.Cell3DNumberVertices(c);
         for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(c); v++)
-            fileCell3Ds << scientific << separator << mesh.Cell3DVertex(c, v);
+            fileCell3Ds << std::scientific << separator << mesh.Cell3DVertex(c, v);
         fileCell3Ds << separator;
 
-        fileCell3Ds << scientific << mesh.Cell3DNumberEdges(c);
+        fileCell3Ds << std::scientific << mesh.Cell3DNumberEdges(c);
         for (unsigned int e = 0; e < mesh.Cell3DNumberEdges(c); e++)
-            fileCell3Ds << scientific << separator << mesh.Cell3DEdge(c, e);
+            fileCell3Ds << std::scientific << separator << mesh.Cell3DEdge(c, e);
         fileCell3Ds << separator;
 
-        fileCell3Ds << scientific << mesh.Cell3DNumberFaces(c);
+        fileCell3Ds << std::scientific << mesh.Cell3DNumberFaces(c);
         for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(c); f++)
-            fileCell3Ds << scientific << separator << mesh.Cell3DFace(c, f);
-        fileCell3Ds << endl;
+            fileCell3Ds << std::scientific << separator << mesh.Cell3DFace(c, f);
+        fileCell3Ds << std::endl;
     }
 
     fileCell3Ds.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0DProperties(const string &Folder,
-                                                  const string &propertyFileName,
-                                                  const string &propertyFileExtension,
+void MeshFromCsvUtilities::ExportCell0DProperties(const std::string &Folder,
+                                                  const std::string &propertyFileName,
+                                                  const std::string &propertyFileExtension,
                                                   const char &separator,
                                                   const IMeshDAO &mesh) const
 {
     /// Export Cell0D Properties
-    ofstream fileCell0DProperties;
+    std::ofstream fileCell0DProperties;
 
     fileCell0DProperties.open(Folder + "/" + propertyFileName + "." + propertyFileExtension);
     fileCell0DProperties.precision(16);
 
     if (fileCell0DProperties.fail())
-        throw runtime_error("Error on mesh cell0DProperties file");
+        throw std::runtime_error("Error on mesh cell0DProperties file");
 
     fileCell0DProperties << "Id" << separator;
-    fileCell0DProperties << "FilePath" << endl;
+    fileCell0DProperties << "FilePath" << std::endl;
     for (unsigned int p = 0; p < mesh.Cell0DNumberDoubleProperties(); p++)
     {
-        const string propertyId = mesh.Cell0DDoublePropertyId(p);
-        string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
+        const std::string propertyId = mesh.Cell0DDoublePropertyId(p);
+        std::string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
 
-        fileCell0DProperties << scientific << propertyId << separator;
-        fileCell0DProperties << scientific << propertyFilePath << endl;
+        fileCell0DProperties << std::scientific << propertyId << separator;
+        fileCell0DProperties << std::scientific << propertyFilePath << std::endl;
 
         ExportCell0DProperty(p, Folder + "/" + propertyFilePath, separator, mesh);
     }
@@ -1442,59 +1442,59 @@ void MeshFromCsvUtilities::ExportCell0DProperties(const string &Folder,
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ExportCell0DProperty(const unsigned int &propertyIndex,
-                                                const string &filePath,
+                                                const std::string &filePath,
                                                 const char &separator,
                                                 const IMeshDAO &mesh) const
 {
     /// Export Cell0D Properties
-    ofstream fileCell0DProperties;
+    std::ofstream fileCell0DProperties;
 
     fileCell0DProperties.open(filePath);
     fileCell0DProperties.precision(16);
 
     if (fileCell0DProperties.fail())
-        throw runtime_error("Error on mesh cell0DProperties file");
+        throw std::runtime_error("Error on mesh cell0DProperties file");
 
     fileCell0DProperties << "Id" << separator;
     fileCell0DProperties << "PropertySize" << separator;
-    fileCell0DProperties << "PropertyValues" << endl;
+    fileCell0DProperties << "PropertyValues" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-        fileCell0DProperties << scientific << v << separator;
+        fileCell0DProperties << std::scientific << v << separator;
 
-        fileCell0DProperties << scientific << mesh.Cell0DDoublePropertySize(v, propertyIndex);
+        fileCell0DProperties << std::scientific << mesh.Cell0DDoublePropertySize(v, propertyIndex);
         for (unsigned int n = 0; n < mesh.Cell0DDoublePropertySize(v, propertyIndex); n++)
-            fileCell0DProperties << scientific << separator << mesh.Cell0DDoublePropertyValue(v, propertyIndex, n);
-        fileCell0DProperties << endl;
+            fileCell0DProperties << std::scientific << separator << mesh.Cell0DDoublePropertyValue(v, propertyIndex, n);
+        fileCell0DProperties << std::endl;
     }
 
     fileCell0DProperties.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1DProperties(const string &Folder,
-                                                  const string &propertyFileName,
-                                                  const string &propertyFileExtension,
+void MeshFromCsvUtilities::ExportCell1DProperties(const std::string &Folder,
+                                                  const std::string &propertyFileName,
+                                                  const std::string &propertyFileExtension,
                                                   const char &separator,
                                                   const IMeshDAO &mesh) const
 {
     /// Export Cell1D Properties
-    ofstream fileCell1DProperties;
+    std::ofstream fileCell1DProperties;
 
     fileCell1DProperties.open(Folder + "/" + propertyFileName + "." + propertyFileExtension);
     fileCell1DProperties.precision(16);
 
     if (fileCell1DProperties.fail())
-        throw runtime_error("Error on mesh cell1DProperties file");
+        throw std::runtime_error("Error on mesh cell1DProperties file");
 
     fileCell1DProperties << "Id" << separator;
-    fileCell1DProperties << "FilePath" << endl;
+    fileCell1DProperties << "FilePath" << std::endl;
     for (unsigned int p = 0; p < mesh.Cell1DNumberDoubleProperties(); p++)
     {
-        const string propertyId = mesh.Cell1DDoublePropertyId(p);
-        string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
+        const std::string propertyId = mesh.Cell1DDoublePropertyId(p);
+        std::string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
 
-        fileCell1DProperties << scientific << propertyId << separator;
-        fileCell1DProperties << scientific << propertyFilePath << endl;
+        fileCell1DProperties << std::scientific << propertyId << separator;
+        fileCell1DProperties << std::scientific << propertyFilePath << std::endl;
 
         ExportCell1DProperty(p, Folder + "/" + propertyFilePath, separator, mesh);
     }
@@ -1503,59 +1503,59 @@ void MeshFromCsvUtilities::ExportCell1DProperties(const string &Folder,
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ExportCell1DProperty(const unsigned int &propertyIndex,
-                                                const string &filePath,
+                                                const std::string &filePath,
                                                 const char &separator,
                                                 const IMeshDAO &mesh) const
 {
     /// Export Cell1D Properties
-    ofstream fileCell1DProperties;
+    std::ofstream fileCell1DProperties;
 
     fileCell1DProperties.open(filePath);
     fileCell1DProperties.precision(16);
 
     if (fileCell1DProperties.fail())
-        throw runtime_error("Error on mesh cell1DProperties file");
+        throw std::runtime_error("Error on mesh cell1DProperties file");
 
     fileCell1DProperties << "Id" << separator;
     fileCell1DProperties << "PropertySize" << separator;
-    fileCell1DProperties << "PropertyValues" << endl;
+    fileCell1DProperties << "PropertyValues" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell1DTotalNumber(); v++)
     {
-        fileCell1DProperties << scientific << v << separator;
+        fileCell1DProperties << std::scientific << v << separator;
 
-        fileCell1DProperties << scientific << mesh.Cell1DDoublePropertySize(v, propertyIndex);
+        fileCell1DProperties << std::scientific << mesh.Cell1DDoublePropertySize(v, propertyIndex);
         for (unsigned int n = 0; n < mesh.Cell1DDoublePropertySize(v, propertyIndex); n++)
-            fileCell1DProperties << scientific << separator << mesh.Cell1DDoublePropertyValue(v, propertyIndex, n);
-        fileCell1DProperties << endl;
+            fileCell1DProperties << std::scientific << separator << mesh.Cell1DDoublePropertyValue(v, propertyIndex, n);
+        fileCell1DProperties << std::endl;
     }
 
     fileCell1DProperties.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DProperties(const string &Folder,
-                                                  const string &propertyFileName,
-                                                  const string &propertyFileExtension,
+void MeshFromCsvUtilities::ExportCell2DProperties(const std::string &Folder,
+                                                  const std::string &propertyFileName,
+                                                  const std::string &propertyFileExtension,
                                                   const char &separator,
                                                   const IMeshDAO &mesh) const
 {
     /// Export Cell2D Properties
-    ofstream fileCell2DProperties;
+    std::ofstream fileCell2DProperties;
 
     fileCell2DProperties.open(Folder + "/" + propertyFileName + "." + propertyFileExtension);
     fileCell2DProperties.precision(16);
 
     if (fileCell2DProperties.fail())
-        throw runtime_error("Error on mesh cell2DProperties file");
+        throw std::runtime_error("Error on mesh cell2DProperties file");
 
     fileCell2DProperties << "Id" << separator;
-    fileCell2DProperties << "FilePath" << endl;
+    fileCell2DProperties << "FilePath" << std::endl;
     for (unsigned int p = 0; p < mesh.Cell2DNumberDoubleProperties(); p++)
     {
-        const string propertyId = mesh.Cell2DDoublePropertyId(p);
-        string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
+        const std::string propertyId = mesh.Cell2DDoublePropertyId(p);
+        std::string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
 
-        fileCell2DProperties << scientific << propertyId << separator;
-        fileCell2DProperties << scientific << propertyFilePath << endl;
+        fileCell2DProperties << std::scientific << propertyId << separator;
+        fileCell2DProperties << std::scientific << propertyFilePath << std::endl;
 
         ExportCell2DProperty(p, Folder + "/" + propertyFilePath, separator, mesh);
     }
@@ -1564,59 +1564,59 @@ void MeshFromCsvUtilities::ExportCell2DProperties(const string &Folder,
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ExportCell2DProperty(const unsigned int &propertyIndex,
-                                                const string &filePath,
+                                                const std::string &filePath,
                                                 const char &separator,
                                                 const IMeshDAO &mesh) const
 {
     /// Export Cell2D Properties
-    ofstream fileCell2DProperties;
+    std::ofstream fileCell2DProperties;
 
     fileCell2DProperties.open(filePath);
     fileCell2DProperties.precision(16);
 
     if (fileCell2DProperties.fail())
-        throw runtime_error("Error on mesh cell2DProperties file");
+        throw std::runtime_error("Error on mesh cell2DProperties file");
 
     fileCell2DProperties << "Id" << separator;
     fileCell2DProperties << "PropertySize" << separator;
-    fileCell2DProperties << "PropertyValues" << endl;
+    fileCell2DProperties << "PropertyValues" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell2DTotalNumber(); v++)
     {
-        fileCell2DProperties << scientific << v << separator;
+        fileCell2DProperties << std::scientific << v << separator;
 
-        fileCell2DProperties << scientific << mesh.Cell2DDoublePropertySize(v, propertyIndex);
+        fileCell2DProperties << std::scientific << mesh.Cell2DDoublePropertySize(v, propertyIndex);
         for (unsigned int n = 0; n < mesh.Cell2DDoublePropertySize(v, propertyIndex); n++)
-            fileCell2DProperties << scientific << separator << mesh.Cell2DDoublePropertyValue(v, propertyIndex, n);
-        fileCell2DProperties << endl;
+            fileCell2DProperties << std::scientific << separator << mesh.Cell2DDoublePropertyValue(v, propertyIndex, n);
+        fileCell2DProperties << std::endl;
     }
 
     fileCell2DProperties.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell3DProperties(const string &Folder,
-                                                  const string &propertyFileName,
-                                                  const string &propertyFileExtension,
+void MeshFromCsvUtilities::ExportCell3DProperties(const std::string &Folder,
+                                                  const std::string &propertyFileName,
+                                                  const std::string &propertyFileExtension,
                                                   const char &separator,
                                                   const IMeshDAO &mesh) const
 {
     /// Export Cell3D Properties
-    ofstream fileCell3DProperties;
+    std::ofstream fileCell3DProperties;
 
     fileCell3DProperties.open(Folder + "/" + propertyFileName + "." + propertyFileExtension);
     fileCell3DProperties.precision(16);
 
     if (fileCell3DProperties.fail())
-        throw runtime_error("Error on mesh cell3DProperties file");
+        throw std::runtime_error("Error on mesh cell3DProperties file");
 
     fileCell3DProperties << "Id" << separator;
-    fileCell3DProperties << "FilePath" << endl;
+    fileCell3DProperties << "FilePath" << std::endl;
     for (unsigned int p = 0; p < mesh.Cell3DNumberDoubleProperties(); p++)
     {
-        const string propertyId = mesh.Cell3DDoublePropertyId(p);
-        string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
+        const std::string propertyId = mesh.Cell3DDoublePropertyId(p);
+        std::string propertyFilePath = propertyFileName + "_" + propertyId + "." + propertyFileExtension;
 
-        fileCell3DProperties << scientific << propertyId << separator;
-        fileCell3DProperties << scientific << propertyFilePath << endl;
+        fileCell3DProperties << std::scientific << propertyId << separator;
+        fileCell3DProperties << std::scientific << propertyFilePath << std::endl;
 
         ExportCell3DProperty(p, Folder + "/" + propertyFilePath, separator, mesh);
     }
@@ -1625,45 +1625,45 @@ void MeshFromCsvUtilities::ExportCell3DProperties(const string &Folder,
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ExportCell3DProperty(const unsigned int &propertyIndex,
-                                                const string &filePath,
+                                                const std::string &filePath,
                                                 const char &separator,
                                                 const IMeshDAO &mesh) const
 {
     /// Export Cell3D Properties
-    ofstream fileCell3DProperties;
+    std::ofstream fileCell3DProperties;
 
     fileCell3DProperties.open(filePath);
     fileCell3DProperties.precision(16);
 
     if (fileCell3DProperties.fail())
-        throw runtime_error("Error on mesh cell3DProperties file");
+        throw std::runtime_error("Error on mesh cell3DProperties file");
 
     fileCell3DProperties << "Id" << separator;
     fileCell3DProperties << "PropertySize" << separator;
-    fileCell3DProperties << "PropertyValues" << endl;
+    fileCell3DProperties << "PropertyValues" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell3DTotalNumber(); v++)
     {
-        fileCell3DProperties << scientific << v << separator;
+        fileCell3DProperties << std::scientific << v << separator;
 
-        fileCell3DProperties << scientific << mesh.Cell3DDoublePropertySize(v, propertyIndex);
+        fileCell3DProperties << std::scientific << mesh.Cell3DDoublePropertySize(v, propertyIndex);
         for (unsigned int n = 0; n < mesh.Cell3DDoublePropertySize(v, propertyIndex); n++)
-            fileCell3DProperties << scientific << separator << mesh.Cell3DDoublePropertyValue(v, propertyIndex, n);
-        fileCell3DProperties << endl;
+            fileCell3DProperties << std::scientific << separator << mesh.Cell3DDoublePropertyValue(v, propertyIndex, n);
+        fileCell3DProperties << std::endl;
     }
 
     fileCell3DProperties.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0DNeighbours(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell0D Neigbours
-    ofstream fileCell0DNeighbours;
+    std::ofstream fileCell0DNeighbours;
 
     fileCell0DNeighbours.open(filePath);
     fileCell0DNeighbours.precision(16);
 
     if (fileCell0DNeighbours.fail())
-        throw runtime_error("Error on mesh cell0DNeighbours file");
+        throw std::runtime_error("Error on mesh cell0DNeighbours file");
 
     fileCell0DNeighbours << "Id" << separator;
     fileCell0DNeighbours << "Num1DNeighbours" << separator;
@@ -1671,257 +1671,257 @@ void MeshFromCsvUtilities::ExportCell0DNeighbours(const string &filePath, const 
     fileCell0DNeighbours << "Num2DNeighbours" << separator;
     fileCell0DNeighbours << "2DNeighbours" << separator;
     fileCell0DNeighbours << "Num3DNeighbours" << separator;
-    fileCell0DNeighbours << "3DNeighbours" << endl;
+    fileCell0DNeighbours << "3DNeighbours" << std::endl;
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
-        fileCell0DNeighbours << scientific << v << separator;
+        fileCell0DNeighbours << std::scientific << v << separator;
 
-        fileCell0DNeighbours << scientific << mesh.Cell0DNumberNeighbourCell1D(v);
+        fileCell0DNeighbours << std::scientific << mesh.Cell0DNumberNeighbourCell1D(v);
         for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell1D(v); n++)
-            fileCell0DNeighbours << scientific << separator << mesh.Cell0DNeighbourCell1D(v, n);
+            fileCell0DNeighbours << std::scientific << separator << mesh.Cell0DNeighbourCell1D(v, n);
         fileCell0DNeighbours << separator;
 
-        fileCell0DNeighbours << scientific << mesh.Cell0DNumberNeighbourCell2D(v);
+        fileCell0DNeighbours << std::scientific << mesh.Cell0DNumberNeighbourCell2D(v);
         for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell2D(v); n++)
-            fileCell0DNeighbours << scientific << separator << mesh.Cell0DNeighbourCell2D(v, n);
+            fileCell0DNeighbours << std::scientific << separator << mesh.Cell0DNeighbourCell2D(v, n);
         fileCell0DNeighbours << separator;
 
-        fileCell0DNeighbours << scientific << mesh.Cell0DNumberNeighbourCell3D(v);
+        fileCell0DNeighbours << std::scientific << mesh.Cell0DNumberNeighbourCell3D(v);
         for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell3D(v); n++)
-            fileCell0DNeighbours << scientific << separator << mesh.Cell0DNeighbourCell3D(v, n);
-        fileCell0DNeighbours << endl;
+            fileCell0DNeighbours << std::scientific << separator << mesh.Cell0DNeighbourCell3D(v, n);
+        fileCell0DNeighbours << std::endl;
     }
 
     fileCell0DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1DNeighbours(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell1D Neigbours
-    ofstream fileCell1DNeighbours;
+    std::ofstream fileCell1DNeighbours;
 
     fileCell1DNeighbours.open(filePath);
     fileCell1DNeighbours.precision(16);
 
     if (fileCell1DNeighbours.fail())
-        throw runtime_error("Error on mesh cell1DNeighbours file");
+        throw std::runtime_error("Error on mesh cell1DNeighbours file");
 
     fileCell1DNeighbours << "Id" << separator;
     fileCell1DNeighbours << "Num2DNeighbours" << separator;
     fileCell1DNeighbours << "2DNeighbours" << separator;
     fileCell1DNeighbours << "Num3DNeighbours" << separator;
-    fileCell1DNeighbours << "3DNeighbours" << endl;
+    fileCell1DNeighbours << "3DNeighbours" << std::endl;
     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
     {
-        fileCell1DNeighbours << scientific << e << separator;
+        fileCell1DNeighbours << std::scientific << e << separator;
 
-        fileCell1DNeighbours << scientific << mesh.Cell1DNumberNeighbourCell2D(e);
+        fileCell1DNeighbours << std::scientific << mesh.Cell1DNumberNeighbourCell2D(e);
         for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
-            fileCell1DNeighbours << scientific << separator << mesh.Cell1DNeighbourCell2D(e, n);
+            fileCell1DNeighbours << std::scientific << separator << mesh.Cell1DNeighbourCell2D(e, n);
         fileCell1DNeighbours << separator;
 
-        fileCell1DNeighbours << scientific << mesh.Cell1DNumberNeighbourCell3D(e);
+        fileCell1DNeighbours << std::scientific << mesh.Cell1DNumberNeighbourCell3D(e);
         for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell3D(e); n++)
-            fileCell1DNeighbours << scientific << separator << mesh.Cell1DNeighbourCell3D(e, n);
-        fileCell1DNeighbours << endl;
+            fileCell1DNeighbours << std::scientific << separator << mesh.Cell1DNeighbourCell3D(e, n);
+        fileCell1DNeighbours << std::endl;
     }
 
     fileCell1DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DNeighbours(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell2D Neigbours
-    ofstream fileCell2DNeighbours;
+    std::ofstream fileCell2DNeighbours;
 
     fileCell2DNeighbours.open(filePath);
     fileCell2DNeighbours.precision(16);
 
     if (fileCell2DNeighbours.fail())
-        throw runtime_error("Error on mesh cell1DNeighbours file");
+        throw std::runtime_error("Error on mesh cell1DNeighbours file");
 
     fileCell2DNeighbours << "Id" << separator;
     fileCell2DNeighbours << "Num3DNeighbours" << separator;
-    fileCell2DNeighbours << "3DNeighbours" << endl;
+    fileCell2DNeighbours << "3DNeighbours" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-        fileCell2DNeighbours << scientific << f << separator;
+        fileCell2DNeighbours << std::scientific << f << separator;
 
-        fileCell2DNeighbours << scientific << mesh.Cell2DNumberNeighbourCell3D(f);
+        fileCell2DNeighbours << std::scientific << mesh.Cell2DNumberNeighbourCell3D(f);
         for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(f); n++)
-            fileCell2DNeighbours << scientific << separator << mesh.Cell2DNeighbourCell3D(f, n);
-        fileCell2DNeighbours << endl;
+            fileCell2DNeighbours << std::scientific << separator << mesh.Cell2DNeighbourCell3D(f, n);
+        fileCell2DNeighbours << std::endl;
     }
 
     fileCell2DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DSubDivisions(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DSubDivisions(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell2D SubDivisions
-    ofstream fileCell2DSubDivisions;
+    std::ofstream fileCell2DSubDivisions;
 
     fileCell2DSubDivisions.open(filePath);
     fileCell2DSubDivisions.precision(16);
 
     if (fileCell2DSubDivisions.fail())
-        throw runtime_error("Error on mesh cell2DSubDivisions file");
+        throw std::runtime_error("Error on mesh cell2DSubDivisions file");
 
     fileCell2DSubDivisions << "Id" << separator;
     fileCell2DSubDivisions << "NumSubDivision" << separator;
-    fileCell2DSubDivisions << "SubDivisions" << endl;
+    fileCell2DSubDivisions << "SubDivisions" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-        fileCell2DSubDivisions << scientific << f << separator;
+        fileCell2DSubDivisions << std::scientific << f << separator;
 
-        fileCell2DSubDivisions << scientific << mesh.Cell2DNumberSubDivision(f);
+        fileCell2DSubDivisions << std::scientific << mesh.Cell2DNumberSubDivision(f);
         for (unsigned int n = 0; n < mesh.Cell2DNumberSubDivision(f); n++)
-            fileCell2DSubDivisions << scientific << separator << mesh.Cell2DSubDivisionCell0D(f, n);
-        fileCell2DSubDivisions << endl;
+            fileCell2DSubDivisions << std::scientific << separator << mesh.Cell2DSubDivisionCell0D(f, n);
+        fileCell2DSubDivisions << std::endl;
     }
 
     fileCell2DSubDivisions.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell0D Updated Cells
-    ofstream fileCell0DUpdatedCells;
+    std::ofstream fileCell0DUpdatedCells;
 
     fileCell0DUpdatedCells.open(filePath);
     fileCell0DUpdatedCells.precision(16);
 
     if (fileCell0DUpdatedCells.fail())
-        throw runtime_error("Error on mesh cell0DUpdatedCells file");
+        throw std::runtime_error("Error on mesh cell0DUpdatedCells file");
 
     fileCell0DUpdatedCells << "Id" << separator;
     fileCell0DUpdatedCells << "NumUpdatedCells" << separator;
-    fileCell0DUpdatedCells << "UpdatedCells" << endl;
+    fileCell0DUpdatedCells << "UpdatedCells" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell0DTotalNumber(); f++)
     {
-        fileCell0DUpdatedCells << scientific << f << separator;
+        fileCell0DUpdatedCells << std::scientific << f << separator;
 
         if (!mesh.Cell0DHasUpdatedCell0Ds(f))
         {
-            fileCell0DUpdatedCells << scientific << 0 << endl;
+            fileCell0DUpdatedCells << std::scientific << 0 << std::endl;
             continue;
         }
 
         std::list<unsigned int> updatedCells;
         mesh.Cell0DUpdatedCell0Ds(f, updatedCells);
 
-        fileCell0DUpdatedCells << scientific << updatedCells.size();
+        fileCell0DUpdatedCells << std::scientific << updatedCells.size();
         for (const unsigned int &updatedCell : updatedCells)
-            fileCell0DUpdatedCells << scientific << separator << updatedCell;
-        fileCell0DUpdatedCells << endl;
+            fileCell0DUpdatedCells << std::scientific << separator << updatedCell;
+        fileCell0DUpdatedCells << std::endl;
     }
 
     fileCell0DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell1D Updated Cells
-    ofstream fileCell1DUpdatedCells;
+    std::ofstream fileCell1DUpdatedCells;
 
     fileCell1DUpdatedCells.open(filePath);
     fileCell1DUpdatedCells.precision(16);
 
     if (fileCell1DUpdatedCells.fail())
-        throw runtime_error("Error on mesh cell1DUpdatedCells file");
+        throw std::runtime_error("Error on mesh cell1DUpdatedCells file");
 
     fileCell1DUpdatedCells << "Id" << separator;
     fileCell1DUpdatedCells << "NumUpdatedCells" << separator;
-    fileCell1DUpdatedCells << "UpdatedCells" << endl;
+    fileCell1DUpdatedCells << "UpdatedCells" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell1DTotalNumber(); f++)
     {
-        fileCell1DUpdatedCells << scientific << f << separator;
+        fileCell1DUpdatedCells << std::scientific << f << separator;
 
         if (!mesh.Cell1DHasUpdatedCell1Ds(f))
         {
-            fileCell1DUpdatedCells << scientific << 0 << endl;
+            fileCell1DUpdatedCells << std::scientific << 0 << std::endl;
             continue;
         }
 
         std::list<unsigned int> updatedCells;
         mesh.Cell1DUpdatedCell1Ds(f, updatedCells);
 
-        fileCell1DUpdatedCells << scientific << updatedCells.size();
+        fileCell1DUpdatedCells << std::scientific << updatedCells.size();
         for (const unsigned int &updatedCell : updatedCells)
-            fileCell1DUpdatedCells << scientific << separator << updatedCell;
-        fileCell1DUpdatedCells << endl;
+            fileCell1DUpdatedCells << std::scientific << separator << updatedCell;
+        fileCell1DUpdatedCells << std::endl;
     }
 
     fileCell1DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell2D Updated Cells
-    ofstream fileCell2DUpdatedCells;
+    std::ofstream fileCell2DUpdatedCells;
 
     fileCell2DUpdatedCells.open(filePath);
     fileCell2DUpdatedCells.precision(16);
 
     if (fileCell2DUpdatedCells.fail())
-        throw runtime_error("Error on mesh cell2DUpdatedCells file");
+        throw std::runtime_error("Error on mesh cell2DUpdatedCells file");
 
     fileCell2DUpdatedCells << "Id" << separator;
     fileCell2DUpdatedCells << "NumUpdatedCells" << separator;
-    fileCell2DUpdatedCells << "UpdatedCells" << endl;
+    fileCell2DUpdatedCells << "UpdatedCells" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
     {
-        fileCell2DUpdatedCells << scientific << f << separator;
+        fileCell2DUpdatedCells << std::scientific << f << separator;
 
         if (!mesh.Cell2DHasUpdatedCell2Ds(f))
         {
-            fileCell2DUpdatedCells << scientific << 0 << endl;
+            fileCell2DUpdatedCells << std::scientific << 0 << std::endl;
             continue;
         }
 
         std::list<unsigned int> updatedCells;
         mesh.Cell2DUpdatedCell2Ds(f, updatedCells);
 
-        fileCell2DUpdatedCells << scientific << updatedCells.size();
+        fileCell2DUpdatedCells << std::scientific << updatedCells.size();
         for (const unsigned int &updatedCell : updatedCells)
-            fileCell2DUpdatedCells << scientific << separator << updatedCell;
-        fileCell2DUpdatedCells << endl;
+            fileCell2DUpdatedCells << std::scientific << separator << updatedCell;
+        fileCell2DUpdatedCells << std::endl;
     }
 
     fileCell2DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell3DUpdatedCells(const string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell3DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
 {
     /// Export Cell3D Updated Cells
-    ofstream fileCell3DUpdatedCells;
+    std::ofstream fileCell3DUpdatedCells;
 
     fileCell3DUpdatedCells.open(filePath);
     fileCell3DUpdatedCells.precision(16);
 
     if (fileCell3DUpdatedCells.fail())
-        throw runtime_error("Error on mesh cell3DUpdatedCells file");
+        throw std::runtime_error("Error on mesh cell3DUpdatedCells file");
 
     fileCell3DUpdatedCells << "Id" << separator;
     fileCell3DUpdatedCells << "NumUpdatedCells" << separator;
-    fileCell3DUpdatedCells << "UpdatedCells" << endl;
+    fileCell3DUpdatedCells << "UpdatedCells" << std::endl;
     for (unsigned int f = 0; f < mesh.Cell3DTotalNumber(); f++)
     {
-        fileCell3DUpdatedCells << scientific << f << separator;
+        fileCell3DUpdatedCells << std::scientific << f << separator;
 
         if (!mesh.Cell3DHasUpdatedCell3Ds(f))
         {
-            fileCell3DUpdatedCells << scientific << 0 << endl;
+            fileCell3DUpdatedCells << std::scientific << 0 << std::endl;
             continue;
         }
 
         std::list<unsigned int> updatedCells;
         mesh.Cell3DUpdatedCell3Ds(f, updatedCells);
 
-        fileCell3DUpdatedCells << scientific << updatedCells.size();
+        fileCell3DUpdatedCells << std::scientific << updatedCells.size();
         for (const unsigned int &updatedCell : updatedCells)
-            fileCell3DUpdatedCells << scientific << separator << updatedCell;
-        fileCell3DUpdatedCells << endl;
+            fileCell3DUpdatedCells << std::scientific << separator << updatedCell;
+        fileCell3DUpdatedCells << std::endl;
     }
 
     fileCell3DUpdatedCells.close();

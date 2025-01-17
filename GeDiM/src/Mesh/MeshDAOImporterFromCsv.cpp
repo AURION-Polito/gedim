@@ -45,10 +45,10 @@ void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration &c
                                                 "." + configuration.FileExtension);
 
     Gedim::Profiler::StartTime("ReadFiles");
-    vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell3D> cell3Ds = utilities.ImportCell3Ds(csvCell3DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell3D> cell3Ds = utilities.ImportCell3Ds(csvCell3DsFile, configuration.Separator);
     Gedim::Profiler::StopTime("ReadFiles");
 
     Gedim::Profiler::StartTime("ConvertFiles");
@@ -77,21 +77,21 @@ void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration &c
              mesh.Cell3DTotalNumber() > 0)
         meshDimension = 3;
     else
-        throw runtime_error("Dimension of imported mesh not recognized");
+        throw std::runtime_error("Dimension of imported mesh not recognized");
 
     mesh.InitializeDimension(meshDimension);
 
     Gedim::Profiler::StartTime("ReadProperties");
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell0DPropertiesFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell1DPropertiesFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell2DPropertiesFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell3DPropertiesFile, configuration.Separator);
     Gedim::Profiler::StopTime("ReadProperties");
 
@@ -103,11 +103,11 @@ void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration &c
     Gedim::Profiler::StopTime("ConvertProperties");
 
     Gedim::Profiler::StartTime("ReadNeighbours");
-    vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours =
+    std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours =
         utilities.ImportCell0DNeighbours(csvCell0DNeighboursFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours =
+    std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours =
         utilities.ImportCell1DNeighbours(csvCell1DNeighboursFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours =
+    std::vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours =
         utilities.ImportCell2DNeighbours(csvCell2DNeighboursFile, configuration.Separator);
 
     Gedim::Profiler::StopTime("ReadNeighbours");
@@ -118,7 +118,7 @@ void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration &c
     Gedim::Profiler::StopTime("ConvertNeighbours");
 
     Gedim::Profiler::StartTime("ReadSubdivision");
-    vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions =
+    std::vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions =
         utilities.ImportCell2DSubDivision(csvCell2DSubDivisionsFile, configuration.Separator);
     Gedim::Profiler::StopTime("ReadSubdivision");
     Gedim::Profiler::StartTime("ConvertSubdivision");
@@ -126,16 +126,16 @@ void MeshDAOImporterFromCsv::Import(const MeshFromCsvUtilities::Configuration &c
     Gedim::Profiler::StopTime("ConvertSubdivision");
 
     Gedim::Profiler::StartTime("ReadUpdated");
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell0DUpdatedCellsFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell1DUpdatedCellsFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell2DUpdatedCellsFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell3DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell3DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell3DUpdatedCellsFile, configuration.Separator);
     Gedim::Profiler::StopTime("ReadUpdated");
 
@@ -173,47 +173,47 @@ void MeshDAOImporterFromCsv::ImportMesh2D(const MeshFromCsvUtilities::Configurat
     Gedim::FileReader csvCell2DUpdatedCellsFile(configuration.Folder + "/" + configuration.FileCell2DUpdatedCellsName +
                                                 "." + configuration.FileExtension);
 
-    vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell0D> cell0Ds = utilities.ImportCell0Ds(csvCell0DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell1D> cell1Ds = utilities.ImportCell1Ds(csvCell1DsFile, configuration.Separator);
+    std::vector<MeshFromCsvUtilities::Cell2D> cell2Ds = utilities.ImportCell2Ds(csvCell2DsFile, configuration.Separator);
 
     utilities.ConvertMesh2D(cell0Ds, cell1Ds, cell2Ds, mesh);
 
     Output::Assert(mesh.Cell0DTotalNumber() > 0 && mesh.Cell1DTotalNumber() > 0 && mesh.Cell2DTotalNumber() > 0 &&
                    mesh.Cell3DTotalNumber() == 0);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell0DPropertiesFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell1DPropertiesFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties =
+    std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties =
         utilities.ImportCellDoubleProperties(csvCell2DPropertiesFile, configuration.Separator);
 
     utilities.ConvertCell0DDoubleProperties(cell0DDoubleProperties, mesh);
     utilities.ConvertCell1DDoubleProperties(cell1DDoubleProperties, mesh);
     utilities.ConvertCell2DDoubleProperties(cell2DDoubleProperties, mesh);
 
-    vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours =
+    std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours =
         utilities.ImportCell0DNeighbours(csvCell0DNeighboursFile, configuration.Separator);
-    vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours =
+    std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours =
         utilities.ImportCell1DNeighbours(csvCell1DNeighboursFile, configuration.Separator);
 
     utilities.ConvertCell0DNeighbours(cell0DNeighbours, mesh);
     utilities.ConvertCell1DNeighbours(cell1DNeighbours, mesh);
 
-    vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions =
+    std::vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivisions =
         utilities.ImportCell2DSubDivision(csvCell2DSubDivisionsFile, configuration.Separator);
     utilities.ConvertCell2DSubDivisions(cell2DSubDivisions, mesh);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell0DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell0DUpdatedCellsFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell1DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell1DUpdatedCellsFile, configuration.Separator);
 
-    vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells =
+    std::vector<MeshFromCsvUtilities::CellUpdatedCells> cell2DUpdatedCells =
         utilities.ImportCellUpdatedCells(csvCell2DUpdatedCellsFile, configuration.Separator);
 
     utilities.ConvertCell0DUpdatedCells(cell0DUpdatedCells, mesh);
