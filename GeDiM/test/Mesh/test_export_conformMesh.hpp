@@ -34,8 +34,8 @@ TEST(TestExportConformedMesh, TestExportConformedMesh2D)
             GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockOriginalMesh;
             Gedim::MeshMatricesDAO domainMesh(mockOriginalMesh.Mesh);
 
-            const Vector3d segmentOrigin(0.25, 0.25, 0.0);
-            const Vector3d segmentEnd(0.35, 0.35, 0.0);
+            const Eigen::Vector3d segmentOrigin(0.25, 0.25, 0.0);
+            const Eigen::Vector3d segmentEnd(0.35, 0.35, 0.0);
             const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
             const Eigen::Vector3d segmentBarycenter = geometryUtilities.SegmentBarycenter(segmentOrigin, segmentEnd);
             const double segmentLength = geometryUtilities.SegmentLength(segmentOrigin, segmentEnd);
