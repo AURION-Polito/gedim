@@ -2176,7 +2176,7 @@ void MeshUtilities::ExportMeshGeometricData3DToTxt(const MeshGeometricData3D& me
   file << std::scientific << mesh_geometric_data.Cell3DsFacesTangents<< std::endl;
   file << std::scientific << mesh_geometric_data.Cell3DsFacesNormalDirections<< std::endl;
   file << std::scientific << mesh_geometric_data.Cell3DsFacesNormalGlobalDirection<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell3DsFacesTangentsGlobalDirectio<< std::endln
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesTangentsGlobalDirection<< std::endl;
   file << std::scientific << mesh_geometric_data.Cell3DsFacesEdgeDirections<< std::endl;
   file << std::scientific << mesh_geometric_data.Cell3DsFaces3DVertices<< std::endl;
   file << std::scientific << mesh_geometric_data.Cell3DsFaces2DVertices<< std::endl;
