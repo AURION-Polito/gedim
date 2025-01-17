@@ -526,6 +526,10 @@ class MeshUtilities final
     /// \return the MeshGeometricData computed
     MeshGeometricData1D FillMesh1DGeometricData(const GeometryUtilities &geometryUtilities, const IMeshDAO &convexMesh) const;
 
+    MeshGeometricData1D ImportMeshGeometricData1DFromTxt(const std::string &file_path);
+    void ExportMeshGeometricData1DToTxt(const MeshGeometricData1D &mesh_geometric_data, const std::string &file_path);
+
+
     /// \brief Fill Mesh2D Geometric Data given a mesh with convex mesh cells
     /// \param convexMesh the convex mesh
     /// \return the MeshGeometricData computed
@@ -549,6 +553,10 @@ class MeshUtilities final
                                                 const IMeshDAO &convexMesh,
                                                 const std::vector<std::vector<unsigned int>> &meshCell2DToConvexCell2DIndices) const;
 
+    MeshGeometricData2D ImportMeshGeometricData2DFromTxt(const std::string &file_path);
+    void ExportMeshGeometricData2DToTxt(const MeshGeometricData2D &mesh_geometric_data, const std::string &file_path);
+
+
     /// \brief Fill Mesh3D Geometric Data given a mesh with convex mesh cells
     /// \param convexMesh the convex mesh
     /// \return the MeshGeometricData computed
@@ -569,6 +577,10 @@ class MeshUtilities final
                                                 const IMeshDAO &mesh,
                                                 const std::vector<std::vector<Eigen::MatrixXd>> &cell3Ds_tetra_vertices,
                                                 const std::vector<std::vector<Eigen::Matrix3d>> &cell2Ds_triangles_3D_vertices) const;
+
+    MeshGeometricData3D ImportMeshGeometricData3DFromTxt(const std::string &file_path);
+    void ExportMeshGeometricData3DToTxt(const MeshGeometricData3D &mesh_geometric_data, const std::string &file_path);
+
 
     void ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const;
     void ComputeCell0DCell2DNeighbours(IMeshDAO &mesh) const;
@@ -1026,6 +1038,7 @@ class MeshUtilities final
                                const std::vector<unsigned int> &cell0DMarkers,
                                const std::vector<unsigned int> &cell1DMarkers,
                                IMeshDAO &mesh) const;
+
 };
 
 } // namespace Gedim

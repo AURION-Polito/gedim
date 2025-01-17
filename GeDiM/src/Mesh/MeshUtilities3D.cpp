@@ -5,6 +5,8 @@
 #include "VTKUtilities.hpp"
 #include <numeric>
 
+#include "ImportExportUtilities.hpp"
+
 using namespace std;
 using namespace Eigen;
 
@@ -2094,6 +2096,103 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
     }
 
     return result;
+}
+// ***************************************************************************
+MeshUtilities::MeshGeometricData3D MeshUtilities::ImportMeshGeometricData3DFromTxt(const std::string& file_path)
+{
+  using namespace Gedim_ImportExport_Utilities;
+
+  MeshGeometricData3D mesh_geometric_data;
+
+  std::ifstream inFile;
+  inFile.open(file_path.c_str());
+
+  if (!inFile.is_open())
+      throw std::runtime_error("Import file '" + file_path + "' not opened");
+
+  inFile >> mesh_geometric_data.Cell3DsVertices;
+  inFile >> mesh_geometric_data.Cell3DsEdges;
+  inFile >> mesh_geometric_data.Cell3DsFaces;
+  inFile >> mesh_geometric_data.Cell3DsBoundingBox;
+  inFile >> mesh_geometric_data.Cell3DsVolumes;
+  inFile >> mesh_geometric_data.Cell3DsDiameters;
+  inFile >> mesh_geometric_data.Cell3DsCentroids;
+  inFile >> mesh_geometric_data.Cell3DsEdgesCentroid;
+  inFile >> mesh_geometric_data.Cell3DsEdgeLengths;
+  inFile >> mesh_geometric_data.Cell3DsEdgeTangents;
+  inFile >> mesh_geometric_data.Cell3DsEdgeDirections;
+  inFile >> mesh_geometric_data.Cell3DsTetrahedronPoints;
+  inFile >> mesh_geometric_data.Cell3DsFacesTranslations;
+  inFile >> mesh_geometric_data.Cell3DsFacesRotationMatrices;
+  inFile >> mesh_geometric_data.Cell3DsFacesNormals;
+  inFile >> mesh_geometric_data.Cell3DsFacesTangents;
+  inFile >> mesh_geometric_data.Cell3DsFacesNormalDirections;
+  inFile >> mesh_geometric_data.Cell3DsFacesNormalGlobalDirection;
+  inFile >> mesh_geometric_data.Cell3DsFacesTangentsGlobalDirection;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdgeDirections;
+  inFile >> mesh_geometric_data.Cell3DsFaces3DVertices;
+  inFile >> mesh_geometric_data.Cell3DsFaces2DVertices;
+  inFile >> mesh_geometric_data.Cell3DsFaces3DTriangulations;
+  inFile >> mesh_geometric_data.Cell3DsFaces2DTriangulations;
+  inFile >> mesh_geometric_data.Cell3DsFacesAreas;
+  inFile >> mesh_geometric_data.Cell3DsFaces2DCentroids;
+  inFile >> mesh_geometric_data.Cell3DsFacesDiameters;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdgeLengths;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdge3DTangents;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdges3DCentroid;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdge2DTangents;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdges2DCentroid;
+  inFile >> mesh_geometric_data.Cell3DsFacesEdge2DNormals;
+
+  return mesh_geometric_data;
+}
+// ***************************************************************************
+void MeshUtilities::ExportMeshGeometricData3DToTxt(const MeshGeometricData3D& mesh_geometric_data, const std::string& file_path)
+{
+  using namespace Gedim_ImportExport_Utilities;
+
+  std::ofstream file(file_path);
+
+  if (!file.is_open())
+      throw std::runtime_error("Export file '" + file_path + "' not opened");
+
+  file.precision(16);
+
+  file << std::scientific << mesh_geometric_data.Cell3DsVertices<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsEdges<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsBoundingBox<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsVolumes<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsDiameters<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsCentroids<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsEdgesCentroid<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsEdgeLengths<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsEdgeTangents<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsEdgeDirections<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsTetrahedronPoints<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesTranslations<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesRotationMatrices<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesNormals<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesTangents<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesNormalDirections<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesNormalGlobalDirection<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesTangentsGlobalDirectio<< std::endln
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdgeDirections<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces3DVertices<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces2DVertices<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces3DTriangulations<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces2DTriangulations<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesAreas<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFaces2DCentroids<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesDiameters<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdgeLengths<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdge3DTangents<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdges3DCentroid<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdge2DTangents<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdges2DCentroid<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell3DsFacesEdge2DNormals<< std::endl;
+
+  file.close();
 }
 // ***************************************************************************
 MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConcaveCell3DFacesConvexCell2D(

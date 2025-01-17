@@ -2,6 +2,8 @@
 #include "MeshDAOExporterToCsv.hpp"
 #include "MeshUtilities.hpp"
 
+#include "ImportExportUtilities.hpp"
+
 #include "TriangleInterface.hpp"
 #include "VTKUtilities.hpp"
 #include <numeric>
@@ -865,6 +867,59 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
     }
 
     return result;
+}
+// ***************************************************************************
+MeshUtilities::MeshGeometricData2D MeshUtilities::ImportMeshGeometricData2DFromTxt(const std::string& file_path)
+{
+  using namespace Gedim_ImportExport_Utilities;
+
+  MeshGeometricData2D mesh_geometric_data;
+
+  std::ifstream inFile;
+  inFile.open(file_path.c_str());
+
+  if (!inFile.is_open())
+      throw std::runtime_error("Import file '" + file_path + "' not opened");
+
+  inFile >> mesh_geometric_data.Cell2DsBoundingBox;
+  inFile >> mesh_geometric_data.Cell2DsVertices;
+  inFile >> mesh_geometric_data.Cell2DsTriangulations;
+  inFile >> mesh_geometric_data.Cell2DsAreas;
+  inFile >> mesh_geometric_data.Cell2DsCentroids;
+  inFile >> mesh_geometric_data.Cell2DsDiameters;
+  inFile >> mesh_geometric_data.Cell2DsEdgeDirections;
+  inFile >> mesh_geometric_data.Cell2DsEdgesCentroid;
+  inFile >> mesh_geometric_data.Cell2DsEdgeLengths;
+  inFile >> mesh_geometric_data.Cell2DsEdgeTangents;
+  inFile >> mesh_geometric_data.Cell2DsEdgeNormals;
+
+  return mesh_geometric_data;
+}
+// ***************************************************************************
+void MeshUtilities::ExportMeshGeometricData2DToTxt(const MeshGeometricData2D& mesh_geometric_data, const std::string& file_path)
+{
+  using namespace Gedim_ImportExport_Utilities;
+
+  std::ofstream file(file_path);
+
+  if (!file.is_open())
+      throw std::runtime_error("Export file '" + file_path + "' not opened");
+
+  file.precision(16);
+
+  file << std::scientific << mesh_geometric_data.Cell2DsBoundingBox<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsVertices<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsTriangulations<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsAreas<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsCentroids<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsDiameters<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsEdgeDirections<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsEdgesCentroid<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsEdgeLengths<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsEdgeTangents<< std::endl;
+  file << std::scientific << mesh_geometric_data.Cell2DsEdgeNormals<< std::endl;
+
+  file.close();
 }
 // ***************************************************************************
 void MeshUtilities::ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const
