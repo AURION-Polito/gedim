@@ -22,7 +22,7 @@ class PlatonicSolid final
     {
     }
 
-    virtual ~PlatonicSolid() {};
+    virtual ~PlatonicSolid(){};
 
     void project_to_unit_sphere(GeometryUtilities::Polyhedron &polyhedron) const
     {

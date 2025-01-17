@@ -31,8 +31,8 @@ class GraphUtilities final
                    std::stack<int> &stack) const;
 
   public:
-    GraphUtilities() {};
-    ~GraphUtilities() {};
+    GraphUtilities(){};
+    ~GraphUtilities(){};
 
     /// \param graphAdjacency the original graph adiajency
     /// \param verticesFilter the vertices of the sub-graph, (original_vertex_position, filtered_vertex_position)
