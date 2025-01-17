@@ -24,7 +24,6 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/IntersectorMesh3DSegme
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/VtkMeshInterface.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PlatonicSolid.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshUtilities_Intersect_mesh_polyhedron.cpp)
-list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MeshGeometryToTxt.cpp)
 
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/SphereMeshUtilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PlatonicSolid.hpp)
@@ -48,7 +47,6 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMeshInterfac
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ObjectFileFormatInterface.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IntersectorMesh3DSegment.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/VtkMeshInterface.hpp)
-list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/MeshGeometryToTxt.hpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 
