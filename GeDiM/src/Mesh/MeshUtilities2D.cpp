@@ -12,7 +12,7 @@
 namespace Gedim
 {
 // ***************************************************************************
-void MeshUtilities::FillMesh2D(const MatrixXd &cell0Ds, const MatrixXi &cell1Ds, const vector<MatrixXi> &cell2Ds, IMeshDAO &mesh) const
+void MeshUtilities::FillMesh2D(const Eigen::MatrixXd &cell0Ds, const Eigen::MatrixXi &cell1Ds, const std::vector<Eigen::MatrixXi> &cell2Ds, IMeshDAO &mesh) const
 {
     mesh.InitializeDimension(2);
 
@@ -49,7 +49,7 @@ void MeshUtilities::FillMesh2D(const MatrixXd &cell0Ds, const MatrixXi &cell1Ds,
 
     for (unsigned int f = 0; f < numCell2Ds; f++)
     {
-        const MatrixXi &polygon = cell2Ds[f];
+        const Eigen::MatrixXi &polygon = cell2Ds[f];
         Output::Assert(polygon.rows() == 2);
         const unsigned int &numVertices = polygon.cols();
 
@@ -64,7 +64,7 @@ void MeshUtilities::FillMesh2D(const MatrixXd &cell0Ds, const MatrixXi &cell1Ds,
 // ***************************************************************************
 MeshUtilities::FilterMeshData MeshUtilities::FilterMesh2D(const std::vector<unsigned int> &cell2DsFilter, const IMeshDAO &mesh) const
 {
-    list<unsigned int> cell2Ds;
+    std::list<unsigned int> cell2Ds;
     std::set<unsigned int> cell0Ds, cell1Ds;
 
     for (const unsigned int cell2DIndex : cell2DsFilter)
@@ -212,7 +212,7 @@ MeshUtilities::ComputeMesh2DCell1DsResult MeshUtilities::ComputeMesh2DCell1Ds(co
     unsigned int numEdges = 0;
     for (int k = 0; k < edges.outerSize(); k++)
     {
-        for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+        for (Eigen::SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
         {
             if (it.row() < it.col())
                 it.valueRef() = 1 + numEdges++;
@@ -224,7 +224,7 @@ MeshUtilities::ComputeMesh2DCell1DsResult MeshUtilities::ComputeMesh2DCell1Ds(co
     numEdges = 0;
     for (int k = 0; k < edges.outerSize(); k++)
     {
-        for (SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
+        for (Eigen::SparseMatrix<unsigned int>::InnerIterator it(edges, k); it; ++it)
         {
             if (it.row() < it.col())
                 result.Cell1Ds.col(numEdges++) << it.row(), it.col();
@@ -355,16 +355,16 @@ void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration &configuration,
     {
         for (unsigned int p1 = 0; p1 < convexMesh.Cell2DTotalNumber(); p1++)
         {
-            vector<unsigned int> cell2D1Vertices = convexMesh.Cell2DVertices(p1);
+            std::vector<unsigned int> cell2D1Vertices = convexMesh.Cell2DVertices(p1);
             sort(cell2D1Vertices.begin(), cell2D1Vertices.end());
-            vector<unsigned int> cell2D1Edges = convexMesh.Cell2DEdges(p1);
+            std::vector<unsigned int> cell2D1Edges = convexMesh.Cell2DEdges(p1);
             sort(cell2D1Edges.begin(), cell2D1Edges.end());
 
             for (unsigned int p2 = p1 + 1; p2 < convexMesh.Cell2DTotalNumber(); p2++)
             {
-                vector<unsigned int> cell2D2Vertices = convexMesh.Cell2DVertices(p2);
+                std::vector<unsigned int> cell2D2Vertices = convexMesh.Cell2DVertices(p2);
                 sort(cell2D2Vertices.begin(), cell2D2Vertices.end());
-                vector<unsigned int> cell2D2Edges = convexMesh.Cell2DEdges(p2);
+                std::vector<unsigned int> cell2D2Edges = convexMesh.Cell2DEdges(p2);
                 sort(cell2D2Edges.begin(), cell2D2Edges.end());
 
                 Output::Assert(cell2D1Vertices.size() != cell2D2Vertices.size() ||
@@ -380,10 +380,10 @@ void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration &configuration,
         for (unsigned int p = 0; p < convexMesh.Cell2DTotalNumber(); p++)
         {
             const Eigen::MatrixXd cell2DVertices = convexMesh.Cell2DVerticesCoordinates(p);
-            const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
+            const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
             const Eigen::MatrixXd convexCell2DUnalignedVertices =
                 geometryUtilities.ExtractPoints(cell2DVertices, convexCell2DUnalignedVerticesFilter);
-            const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+            const std::vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
             const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices, convexHull);
 
             Output::Assert(geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices, convexHullVertices));
@@ -401,8 +401,8 @@ void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration &configuration,
 }
 // ***************************************************************************
 void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd &polygonVertices,
-                                      const vector<unsigned int> vertexMarkers,
-                                      const vector<unsigned int> edgeMarkers,
+                                      const std::vector<unsigned int> vertexMarkers,
+                                      const std::vector<unsigned int> edgeMarkers,
                                       IMeshDAO &mesh) const
 {
     mesh.InitializeDimension(2);
@@ -539,9 +539,9 @@ void MeshUtilities::SetMeshMarkersOnSegment(const GeometryUtilities &geometryUti
     }
 }
 // ***************************************************************************
-vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO &mesh) const
+std::vector<unsigned int> MeshUtilities::MeshCell2DRoots(const IMeshDAO &mesh) const
 {
-    vector<unsigned int> rootCell2Ds(mesh.Cell2DTotalNumber());
+    std::vector<unsigned int> rootCell2Ds(mesh.Cell2DTotalNumber());
 
     for (unsigned int cc = 0; cc < mesh.Cell2DTotalNumber(); cc++)
     {
@@ -583,17 +583,17 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
         const Eigen::MatrixXd convexCell2DVertices = convexMesh.Cell2DVerticesCoordinates(domainCell2DIndex);
 
         // compute original cell2D triangulation
-        const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+        const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
         const Eigen::MatrixXd convexCell2DUnalignedVertices =
             geometryUtilities.ExtractPoints(convexCell2DVertices, convexCell2DUnalignedVerticesFilter);
 
-        const vector<unsigned int> convexCell2DTriangulationFiltered =
+        const std::vector<unsigned int> convexCell2DTriangulationFiltered =
             geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
-        vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+        std::vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
         for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
             convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
 
-        const vector<Eigen::Matrix3d> convexCell2DTriangulationPoints =
+        const std::vector<Eigen::Matrix3d> convexCell2DTriangulationPoints =
             geometryUtilities.ExtractTriangulationPoints(convexCell2DVertices, convexCell2DTriangulation);
 
         const unsigned int &numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
@@ -674,20 +674,20 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
         const Eigen::MatrixXd cell2DVertices = mesh.Cell2DVerticesCoordinates(domainCell2DIndex);
 
         // compute cell2D triangulation
-        vector<Eigen::Matrix3d> cell2DTriangulationPoints;
+        std::vector<Eigen::Matrix3d> cell2DTriangulationPoints;
 
         switch (meshCell2DsPolygonType[domainCell2DIndex])
         {
         case GeometryUtilities::PolygonTypes::Triangle:
         case GeometryUtilities::PolygonTypes::Quadrilateral_Convex:
         case GeometryUtilities::PolygonTypes::Generic_Convex: {
-            const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
+            const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices);
             const Eigen::MatrixXd convexCell2DUnalignedVertices =
                 geometryUtilities.ExtractPoints(cell2DVertices, convexCell2DUnalignedVerticesFilter);
 
-            const vector<unsigned int> convexCell2DTriangulationFiltered =
+            const std::vector<unsigned int> convexCell2DTriangulationFiltered =
                 geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
-            vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+            std::vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
             for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
                 convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
 
@@ -696,13 +696,13 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
         break;
         case GeometryUtilities::PolygonTypes::Quadrilateral_Concave:
         case GeometryUtilities::PolygonTypes::Generic_Concave: {
-            const vector<unsigned int> concaveCell2DTriangulation =
+            const std::vector<unsigned int> concaveCell2DTriangulation =
                 geometryUtilities.PolygonTriangulationByEarClipping(cell2DVertices);
             cell2DTriangulationPoints = geometryUtilities.ExtractTriangulationPoints(cell2DVertices, concaveCell2DTriangulation);
         }
         break;
         default:
-            throw runtime_error("Unsupported polygon type");
+            throw std::runtime_error("Unsupported polygon type");
         }
 
         const unsigned int &numCell2DTriangulation = cell2DTriangulationPoints.size();
@@ -755,7 +755,7 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
 MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const GeometryUtilities &geometryUtilities,
                                                                           const IMeshDAO &mesh,
                                                                           const IMeshDAO &convexMesh,
-                                                                          const vector<vector<unsigned int>> &meshCell2DToConvexCell2DIndices) const
+                                                                          const std::vector<std::vector<unsigned int>> &meshCell2DToConvexCell2DIndices) const
 {
     MeshGeometricData2D result;
 
@@ -777,17 +777,17 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
             continue;
 
         const unsigned int &domainCell2DIndex = c;
-        const vector<unsigned int> &domainConvexCell2DIndices = meshCell2DToConvexCell2DIndices[domainCell2DIndex];
+        const std::vector<unsigned int> &domainConvexCell2DIndices = meshCell2DToConvexCell2DIndices[domainCell2DIndex];
         const unsigned int &numConvexCells = domainConvexCell2DIndices.size();
 
         // Get domain cell2D geometry information
-        map<unsigned int, unsigned int> cell2DVerticesToPosition;
+        std::map<unsigned int, unsigned int> cell2DVerticesToPosition;
         for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(domainCell2DIndex); v++)
-            cell2DVerticesToPosition.insert(pair<unsigned int, unsigned int>(mesh.Cell2DVertex(domainCell2DIndex, v), v));
+            cell2DVerticesToPosition.insert(std::pair<unsigned int, unsigned int>(mesh.Cell2DVertex(domainCell2DIndex, v), v));
 
         // Extract original cell2D geometric information
         unsigned int cell2DTriangulationSize = 0;
-        vector<vector<Eigen::Matrix3d>> convexCell2DTriangulationPoints(numConvexCells);
+        std::vector<std::vector<Eigen::Matrix3d>> convexCell2DTriangulationPoints(numConvexCells);
         Eigen::VectorXd convexCell2DAreas(numConvexCells);
         Eigen::MatrixXd convexCell2DCentroids(3, numConvexCells);
 
@@ -797,13 +797,13 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
             const Eigen::MatrixXd convexCell2DVertices = convexMesh.Cell2DVerticesCoordinates(domainConvexCell2DIndex);
 
             // compute original cell2D triangulation
-            const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
+            const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(convexCell2DVertices);
             const Eigen::MatrixXd convexCell2DUnalignedVertices =
                 geometryUtilities.ExtractPoints(convexCell2DVertices, convexCell2DUnalignedVerticesFilter);
 
-            const vector<unsigned int> convexCell2DTriangulationFiltered =
+            const std::vector<unsigned int> convexCell2DTriangulationFiltered =
                 geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
-            vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
+            std::vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
             for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
                 convexCell2DTriangulation[ocf] = convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
 
@@ -928,7 +928,7 @@ void MeshUtilities::ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const
         if (!mesh.Cell1DIsActive(c1D))
             continue;
 
-        const VectorXi extrema = mesh.Cell1DExtremes(c1D);
+        const Eigen::VectorXi extrema = mesh.Cell1DExtremes(c1D);
         for (unsigned int v = 0; v < 2; v++)
         {
             const unsigned int cell0D = extrema(v);
@@ -1071,17 +1071,17 @@ void MeshUtilities::ComputeCell1DCell2DNeighbours(IMeshDAO &mesh) const
         }
     }
     else
-        throw runtime_error("Not valid dimension in ComputeCell1DCell2DNeighbours");
+        throw std::runtime_error("Not valid dimension in ComputeCell1DCell2DNeighbours");
 }
 // ***************************************************************************
 std::vector<unsigned int> MeshUtilities::SplitCell2D(const unsigned int &cell2DIndex,
-                                                     const std::vector<MatrixXi> &subCell2Ds,
+                                                     const std::vector<Eigen::MatrixXi> &subCell2Ds,
                                                      IMeshDAO &mesh) const
 {
     const unsigned int numSubCells = subCell2Ds.size();
     unsigned int newCell2DsStartingIndex = mesh.Cell2DAppend(numSubCells);
 
-    vector<unsigned int> newCell2DsIndex(numSubCells);
+    std::vector<unsigned int> newCell2DsIndex(numSubCells);
 
     mesh.Cell2DSetState(cell2DIndex, false);
 
@@ -1284,8 +1284,8 @@ MeshUtilities::AgglomerateMeshFromTriangularMeshResult MeshUtilities::Agglomerat
 {
     AgglomerateMeshFromTriangularMeshResult result;
 
-    list<unsigned int> removedCell1Ds;
-    list<unsigned int> removedCell2Ds;
+    std::list<unsigned int> removedCell1Ds;
+    std::list<unsigned int> removedCell2Ds;
 
     result.ConcaveCell2Ds.resize(trianglesIndicesToAgglomerate.size());
 
@@ -1354,7 +1354,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
 
     // read agglomeration information file
     Gedim::FileReader file(fileName);
-    vector<string> lines;
+    std::vector<std::string> lines;
     file.Open();
     file.GetAllLines(lines);
     file.Close();
@@ -1364,7 +1364,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     unsigned int lineCounter = 0;
 
     // read cell2D agglomeration
-    istringstream converterCell2Ds(lines[lineCounter++]);
+    std::istringstream converterCell2Ds(lines[lineCounter++]);
     unsigned int numAgglomeratedCell2Ds;
     converterCell2Ds >> numAgglomeratedCell2Ds;
     Gedim::Output::Assert(numAgglomeratedCell2Ds == agglomeratedMesh.Cell2DTotalNumber());
@@ -1373,7 +1373,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     for (unsigned int ac = 0; ac < numAgglomeratedCell2Ds; ac++)
     {
         char temp;
-        istringstream converterAgglomeratedCell(lines[lineCounter++]);
+        std::istringstream converterAgglomeratedCell(lines[lineCounter++]);
         unsigned int agglomeratedCell2D, numOriginalCell2Ds;
         converterAgglomeratedCell >> agglomeratedCell2D;
         if (separator != ' ')
@@ -1402,7 +1402,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     lineCounter++; // ingnore empty line
 
     // read cell0D agglomeration
-    istringstream converterCell0Ds(lines[lineCounter++]);
+    std::istringstream converterCell0Ds(lines[lineCounter++]);
     unsigned int numAgglomeratedCell0Ds;
     converterCell0Ds >> numAgglomeratedCell0Ds;
     Gedim::Output::Assert(numAgglomeratedCell0Ds == agglomeratedMesh.Cell0DTotalNumber());
@@ -1411,7 +1411,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     for (unsigned int ac = 0; ac < numAgglomeratedCell0Ds; ac++)
     {
         char temp;
-        istringstream converterAgglomeratedCell(lines[lineCounter++]);
+        std::istringstream converterAgglomeratedCell(lines[lineCounter++]);
         unsigned int agglomeratedCell0D, originalCell0D;
         converterAgglomeratedCell >> agglomeratedCell0D;
         if (separator != ' ')
@@ -1435,7 +1435,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
         unsigned int Cell0DEnd;
     };
     std::vector<std::list<Edge>> cell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
-    vector<list<unsigned int>> originalCell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
+    std::vector<std::list<unsigned int>> originalCell0DsCell1Ds(originalMesh.Cell0DTotalNumber());
 
     for (unsigned int c1D = 0; c1D < originalMesh.Cell1DTotalNumber(); c1D++)
     {
@@ -1487,8 +1487,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
             // search original cell1Ds aligned and inside the agglomerated cell1D
             const Eigen::Vector3d &endCoordinates = originalMesh.Cell0DCoordinates(cell1DOriginalEnd);
 
-            list<unsigned int> originalCell1Ds;
-            queue<unsigned int> origins;
+            std::list<unsigned int> originalCell1Ds;
+            std::queue<unsigned int> origins;
             origins.push(cell1DOriginalOrigin);
 
             while (!origins.empty())
@@ -1499,8 +1499,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
                 if (originalCell0DsCell1Ds[cell0D].size() == 0)
                     continue;
 
-                const Vector3d cell0DCoordinates = originalMesh.Cell0DCoordinates(cell0D);
-                const list<unsigned int> &cell1Ds = originalCell0DsCell1Ds[cell0D];
+                const Eigen::Vector3d cell0DCoordinates = originalMesh.Cell0DCoordinates(cell0D);
+                const std::list<unsigned int> &cell1Ds = originalCell0DsCell1Ds[cell0D];
 
                 unsigned int cell1DAligned = originalMesh.Cell1DTotalNumber();
                 for (unsigned int cell1D : cell1Ds)
@@ -1518,7 +1518,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
                         break;
                     }
 
-                    const Vector3d cell1DOtherCell0DCoordinates = originalMesh.Cell0DCoordinates(cell1DOtherCell0DIndex);
+                    const Eigen::Vector3d cell1DOtherCell0DCoordinates = originalMesh.Cell0DCoordinates(cell1DOtherCell0DIndex);
 
                     if (!geometryUtilities.PointIsAligned(cell0DCoordinates, endCoordinates, cell1DOtherCell0DCoordinates))
                         continue;
@@ -1541,7 +1541,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
             }
 
             result.AgglomeratedCell1DToOriginalCell1Ds[ac1D] =
-                vector<unsigned int>(originalCell1Ds.begin(), originalCell1Ds.end());
+                std::vector<unsigned int>(originalCell1Ds.begin(), originalCell1Ds.end());
         }
     }
 
@@ -1566,7 +1566,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
 
     // read agglomeration information file
     Gedim::FileReader file(fileName);
-    vector<string> lines;
+    std::vector<std::string> lines;
     file.Open();
     file.GetAllLines(lines);
     file.Close();
@@ -1576,8 +1576,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     unsigned int lineCounter = 0;
 
     // read cell2D agglomeration
-    istringstream converterCell2Ds(lines[lineCounter++]);
-    string labelCell2Ds;
+    std::istringstream converterCell2Ds(lines[lineCounter++]);
+    std::string labelCell2Ds;
     unsigned int numAgglomeratedCell2Ds;
     converterCell2Ds >> labelCell2Ds >> numAgglomeratedCell2Ds;
     Gedim::Output::Assert(numAgglomeratedCell2Ds <= agglomeratedMesh.Cell2DTotalNumber());
@@ -1586,7 +1586,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     for (unsigned int ac = 0; ac < numAgglomeratedCell2Ds; ac++)
     {
         char temp;
-        istringstream converterAgglomeratedCell(lines[lineCounter++]);
+        std::istringstream converterAgglomeratedCell(lines[lineCounter++]);
         unsigned int agglomeratedCell2D, numOriginalCell2Ds;
         converterAgglomeratedCell >> agglomeratedCell2D;
         if (separator != ' ')
@@ -1623,8 +1623,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     lineCounter++; // ingnore empty line
 
     // read cell0D agglomeration
-    istringstream converterCell0Ds(lines[lineCounter++]);
-    string labelCell0Ds;
+    std::istringstream converterCell0Ds(lines[lineCounter++]);
+    std::string labelCell0Ds;
     unsigned int numAgglomeratedCell0Ds;
     converterCell0Ds >> labelCell0Ds >> numAgglomeratedCell0Ds;
     Gedim::Output::Assert(numAgglomeratedCell0Ds <= agglomeratedMesh.Cell0DTotalNumber());
@@ -1633,7 +1633,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     for (unsigned int ac = 0; ac < numAgglomeratedCell0Ds; ac++)
     {
         char temp;
-        istringstream converterAgglomeratedCell(lines[lineCounter++]);
+        std::istringstream converterAgglomeratedCell(lines[lineCounter++]);
         unsigned int agglomeratedCell0D, originalCell0D;
         converterAgglomeratedCell >> agglomeratedCell0D;
         if (separator != ' ')
@@ -1718,8 +1718,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
             // search original cell1Ds aligned and inside the agglomerated cell1D
             const Eigen::Vector3d &endCoordinates = originalMesh.Cell0DCoordinates(cell1DOriginalEnd);
 
-            list<unsigned int> originalCell1Ds;
-            queue<unsigned int> origins;
+            std::list<unsigned int> originalCell1Ds;
+            std::queue<unsigned int> origins;
             origins.push(cell1DOriginalOrigin);
 
             while (!origins.empty())
@@ -1730,8 +1730,8 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
                 if (originalCell0DsCell1Ds[cell0D].size() == 0)
                     continue;
 
-                const Vector3d cell0DCoordinates = originalMesh.Cell0DCoordinates(cell0D);
-                const list<unsigned int> &cell1Ds = originalCell0DsCell1Ds[cell0D];
+                const Eigen::Vector3d cell0DCoordinates = originalMesh.Cell0DCoordinates(cell0D);
+                const std::list<unsigned int> &cell1Ds = originalCell0DsCell1Ds[cell0D];
 
                 unsigned int cell1DAligned = originalMesh.Cell1DTotalNumber();
                 for (unsigned int cell1D : cell1Ds)
@@ -1749,7 +1749,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
                         break;
                     }
 
-                    const Vector3d cell1DOtherCell0DCoordinates = originalMesh.Cell0DCoordinates(cell1DOtherCell0DIndex);
+                    const Eigen::Vector3d cell1DOtherCell0DCoordinates = originalMesh.Cell0DCoordinates(cell1DOtherCell0DIndex);
 
                     if (!geometryUtilities.PointIsAligned(cell0DCoordinates, endCoordinates, cell1DOtherCell0DCoordinates))
                         continue;
@@ -1772,7 +1772,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
             }
 
             result.AgglomeratedCell1DToOriginalCell1Ds[ac1D] =
-                vector<unsigned int>(originalCell1Ds.begin(), originalCell1Ds.end());
+                std::vector<unsigned int>(originalCell1Ds.begin(), originalCell1Ds.end());
         }
     }
 
@@ -1794,22 +1794,22 @@ void MeshUtilities::ExportConcaveMesh2DToCsv(const IMeshDAO &mesh,
 
     // export concave to convex mesh file
     {
-        ofstream mapFile;
+        std::ofstream mapFile;
 
         mapFile.open(exportFolderPath + "/hierarchy_map.txt");
         mapFile.precision(16);
 
         if (mapFile.fail())
-            throw runtime_error("Error on hierarchy_map file");
+            throw std::runtime_error("Error on hierarchy_map file");
 
         mapFile << mesh.Cell2DTotalNumber() << endl;
         mapFile << "# newCellId, sizeOldCellIdsContainer, oldCellIds" << endl;
         for (unsigned int v = 0; v < mesh.Cell2DTotalNumber(); v++)
         {
-            mapFile << scientific << v << separator;
-            mapFile << scientific << convexCell2DsIndex[v].size();
+            mapFile << std::scientific << v << separator;
+            mapFile << std::scientific << convexCell2DsIndex[v].size();
             for (unsigned int cc = 0; cc < convexCell2DsIndex[v].size(); cc++)
-                mapFile << scientific << separator << convexCell2DsIndex[v][cc];
+                mapFile << std::scientific << separator << convexCell2DsIndex[v][cc];
             mapFile << endl;
         }
 
@@ -1818,8 +1818,8 @@ void MeshUtilities::ExportConcaveMesh2DToCsv(const IMeshDAO &mesh,
         mapFile << "# newVertId, oldVertId" << endl;
         for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
         {
-            mapFile << scientific << v << separator;
-            mapFile << scientific << v << endl;
+            mapFile << std::scientific << v << separator;
+            mapFile << std::scientific << v << endl;
         }
 
         mapFile.close();
@@ -1827,8 +1827,8 @@ void MeshUtilities::ExportConcaveMesh2DToCsv(const IMeshDAO &mesh,
 }
 // ***************************************************************************
 void MeshUtilities::ChangePolygonMeshMarkers(const Eigen::MatrixXd &polygonVertices,
-                                             const vector<unsigned int> &cell0DMarkers,
-                                             const vector<unsigned int> &cell1DMarkers,
+                                             const std::vector<unsigned int> &cell0DMarkers,
+                                             const std::vector<unsigned int> &cell1DMarkers,
                                              IMeshDAO &mesh) const
 {
     Output::Assert(mesh.Dimension() == 2);

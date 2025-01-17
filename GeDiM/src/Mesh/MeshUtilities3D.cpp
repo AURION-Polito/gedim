@@ -7,7 +7,6 @@
 
 #include "ImportExportUtilities.hpp"
 
-using namespace Eigen;
 
 namespace Gedim
 {
@@ -61,7 +60,7 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
 
         for (unsigned int f = 0; f < numCell2Ds; f++)
         {
-            const MatrixXi &polygon = cell2Ds[f];
+            const Eigen::MatrixXi &polygon = cell2Ds[f];
             Output::Assert(polygon.rows() == 2);
             const unsigned int &numVertices = polygon.cols();
 
@@ -220,9 +219,9 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             if (!mesh.Cell2DIsActive(p1))
                 continue;
 
-            vector<unsigned int> cell2D1Vertices = mesh.Cell2DVertices(p1);
+            std::vector<unsigned int> cell2D1Vertices = mesh.Cell2DVertices(p1);
             sort(cell2D1Vertices.begin(), cell2D1Vertices.end());
-            vector<unsigned int> cell2D1Edges = mesh.Cell2DEdges(p1);
+            std::vector<unsigned int> cell2D1Edges = mesh.Cell2DEdges(p1);
             sort(cell2D1Edges.begin(), cell2D1Edges.end());
 
             for (unsigned int p2 = p1 + 1; p2 < mesh.Cell2DTotalNumber(); p2++)
@@ -230,9 +229,9 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                 if (!mesh.Cell2DIsActive(p2))
                     continue;
 
-                vector<unsigned int> cell2D2Vertices = mesh.Cell2DVertices(p2);
+                std::vector<unsigned int> cell2D2Vertices = mesh.Cell2DVertices(p2);
                 sort(cell2D2Vertices.begin(), cell2D2Vertices.end());
-                vector<unsigned int> cell2D2Edges = mesh.Cell2DEdges(p2);
+                std::vector<unsigned int> cell2D2Edges = mesh.Cell2DEdges(p2);
                 sort(cell2D2Edges.begin(), cell2D2Edges.end());
 
                 if (!(cell2D1Vertices.size() != cell2D2Vertices.size() ||
@@ -264,10 +263,10 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                 geometryUtilities.PolygonRotationMatrix(cell2DVertices3D, cell2DNormal, cell2DTranslation);
             const Eigen::MatrixXd cell2DVertices2D =
                 geometryUtilities.RotatePointsFrom3DTo2D(cell2DVertices3D, cell2DRotationMatrix.transpose(), cell2DTranslation);
-            const vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices2D);
+            const std::vector<unsigned int> convexCell2DUnalignedVerticesFilter = geometryUtilities.UnalignedPoints(cell2DVertices2D);
             const Eigen::MatrixXd convexCell2DUnalignedVertices =
                 geometryUtilities.ExtractPoints(cell2DVertices2D, convexCell2DUnalignedVerticesFilter);
-            const vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
+            const std::vector<unsigned int> convexHull = geometryUtilities.ConvexHull(convexCell2DUnalignedVertices);
             const Eigen::MatrixXd convexHullVertices = geometryUtilities.ExtractPoints(convexCell2DUnalignedVertices, convexHull);
 
             if (!geometryUtilities.PolygonIsConvex(convexCell2DUnalignedVertices, convexHullVertices))
@@ -311,11 +310,11 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             if (!mesh.Cell3DIsActive(p1))
                 continue;
 
-            vector<unsigned int> cell3D1Vertices = mesh.Cell3DVertices(p1);
+            std::vector<unsigned int> cell3D1Vertices = mesh.Cell3DVertices(p1);
             sort(cell3D1Vertices.begin(), cell3D1Vertices.end());
-            vector<unsigned int> cell3D1Edges = mesh.Cell3DEdges(p1);
+            std::vector<unsigned int> cell3D1Edges = mesh.Cell3DEdges(p1);
             sort(cell3D1Edges.begin(), cell3D1Edges.end());
-            vector<unsigned int> cell3D1Faces = mesh.Cell3DFaces(p1);
+            std::vector<unsigned int> cell3D1Faces = mesh.Cell3DFaces(p1);
             sort(cell3D1Faces.begin(), cell3D1Faces.end());
 
             for (unsigned int p2 = p1 + 1; p2 < mesh.Cell3DTotalNumber(); p2++)
@@ -323,11 +322,11 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                 if (!mesh.Cell3DIsActive(p2))
                     continue;
 
-                vector<unsigned int> cell3D2Vertices = mesh.Cell3DVertices(p2);
+                std::vector<unsigned int> cell3D2Vertices = mesh.Cell3DVertices(p2);
                 sort(cell3D2Vertices.begin(), cell3D2Vertices.end());
-                vector<unsigned int> cell3D2Edges = mesh.Cell3DEdges(p2);
+                std::vector<unsigned int> cell3D2Edges = mesh.Cell3DEdges(p2);
                 sort(cell3D2Edges.begin(), cell3D2Edges.end());
-                vector<unsigned int> cell3D2Faces = mesh.Cell3DFaces(p2);
+                std::vector<unsigned int> cell3D2Faces = mesh.Cell3DFaces(p2);
                 sort(cell3D2Faces.begin(), cell3D2Faces.end());
 
                 if (!(cell3D1Vertices.size() != cell3D2Vertices.size() ||
@@ -361,20 +360,20 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(mesh, p);
 
             const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
-            const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
+            const std::vector<Eigen::MatrixXd> polyhedronFace3DVertices =
                 geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
-            const vector<Eigen::Vector3d> polyhedronFaceBarycenters =
+            const std::vector<Eigen::Vector3d> polyhedronFaceBarycenters =
                 geometryUtilities.PolyhedronFaceBarycenter(polyhedronFace3DVertices);
 
-            const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
-            const vector<bool> polyhedronFaceNormalDirections =
+            const std::vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+            const std::vector<bool> polyhedronFaceNormalDirections =
                 geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices, polyhedronBarycenter, polyhedronFaceNormals);
-            const vector<Eigen::Vector3d> polyhedronFaceTranslations =
+            const std::vector<Eigen::Vector3d> polyhedronFaceTranslations =
                 geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
-            const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices =
+            const std::vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices =
                 geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices, polyhedronFaceNormals, polyhedronFaceTranslations);
 
-            const vector<Eigen::MatrixXd> polyhedronFace2DVertices =
+            const std::vector<Eigen::MatrixXd> polyhedronFace2DVertices =
                 geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices, polyhedronFaceTranslations, polyhedronFaceRotationMatrices);
 
             const GeometryUtilities::PointPolyhedronPositionResult polyhedronBarycenterPosition =
@@ -411,20 +410,20 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(mesh, p);
 
             const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
-            const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
+            const std::vector<Eigen::MatrixXd> polyhedronFace3DVertices =
                 geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
-            const vector<vector<unsigned int>> polyhedronFaceTriangulations =
+            const std::vector<std::vector<unsigned int>> polyhedronFaceTriangulations =
                 geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(polyhedron.Faces, polyhedronFace3DVertices);
 
-            const vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
-            const vector<bool> polyhedronFaceNormalDirections =
+            const std::vector<Eigen::Vector3d> polyhedronFaceNormals = geometryUtilities.PolyhedronFaceNormals(polyhedronFace3DVertices);
+            const std::vector<bool> polyhedronFaceNormalDirections =
                 geometryUtilities.PolyhedronFaceNormalDirections(polyhedronFace3DVertices, polyhedronBarycenter, polyhedronFaceNormals);
-            const vector<Eigen::Vector3d> polyhedronFaceTranslations =
+            const std::vector<Eigen::Vector3d> polyhedronFaceTranslations =
                 geometryUtilities.PolyhedronFaceTranslations(polyhedronFace3DVertices);
-            const vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices =
+            const std::vector<Eigen::Matrix3d> polyhedronFaceRotationMatrices =
                 geometryUtilities.PolyhedronFaceRotationMatrices(polyhedronFace3DVertices, polyhedronFaceNormals, polyhedronFaceTranslations);
 
-            const vector<Eigen::MatrixXd> polyhedronFace2DVertices =
+            const std::vector<Eigen::MatrixXd> polyhedronFace2DVertices =
                 geometryUtilities.PolyhedronFaceRotatedVertices(polyhedronFace3DVertices, polyhedronFaceTranslations, polyhedronFaceRotationMatrices);
 
             const std::vector<std::vector<Eigen::Matrix3d>> polyhedronFace2DTriangulationPoints =
@@ -617,12 +616,12 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
                     std::cout.precision(16);
                     std::cout << "Cell1D_CheckNormals cell3DIndex " << cell3DIndex << " cell2DIndex "
                               << mesh.Cell3DFace(cell3DIndex, f) << std::endl;
-                    std::cout << scientific << "Areas: " << area << " "
+                    std::cout << std::scientific << "Areas: " << area << " "
                               << geometricData.Cell3DsFacesAreas[cell3DIndex][f] << std::endl;
-                    std::cout << scientific
+                    std::cout << std::scientific
                               << "Difference: " << (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f]) << std::endl;
                     std::cout
-                        << scientific << "Tolerance: "
+                        << std::scientific << "Tolerance: "
                         << geometryUtilities.Tolerance2D() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])
                         << std::endl;
                 }
@@ -668,12 +667,12 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
                     std::cout.precision(16);
                     std::cout << "Cell2D_CheckTriangles cell3DIndex " << cell3DIndex << " cell2DIndex "
                               << mesh.Cell3DFace(cell3DIndex, f) << std::endl;
-                    std::cout << scientific << "Areas: " << area << " "
+                    std::cout << std::scientific << "Areas: " << area << " "
                               << geometricData.Cell3DsFacesAreas[cell3DIndex][f] << std::endl;
-                    std::cout << scientific
+                    std::cout << std::scientific
                               << "Difference: " << (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f]) << std::endl;
                     std::cout
-                        << scientific << "Tolerance: "
+                        << std::scientific << "Tolerance: "
                         << geometryUtilities.Tolerance2D() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])
                         << std::endl;
                 }
@@ -707,12 +706,12 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
                     std::cout.precision(16);
                     std::cout << "Cell2D_CheckNormals cell3DIndex " << cell3DIndex << " cell2DIndex "
                               << mesh.Cell3DFace(cell3DIndex, f) << std::endl;
-                    std::cout << scientific << "Areas: " << area << " "
+                    std::cout << std::scientific << "Areas: " << area << " "
                               << geometricData.Cell3DsFacesAreas[cell3DIndex][f] << std::endl;
-                    std::cout << scientific
+                    std::cout << std::scientific
                               << "Difference: " << (area - geometricData.Cell3DsFacesAreas[cell3DIndex][f]) << std::endl;
                     std::cout
-                        << scientific << "Tolerance: "
+                        << std::scientific << "Tolerance: "
                         << geometryUtilities.Tolerance2D() * std::max(area, geometricData.Cell3DsFacesAreas[cell3DIndex][f])
                         << std::endl;
                 }
@@ -733,9 +732,9 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
             {
                 std::cout.precision(16);
                 std::cout << "Cell2D_CheckNormals cell3DIndex " << cell3DIndex << std::endl;
-                std::cout << scientific << "Volumes: " << volume << " " << geometricData.Cell3DsVolumes[cell3DIndex] << std::endl;
-                std::cout << scientific << "Difference: " << (volume - geometricData.Cell3DsVolumes[cell3DIndex]) << std::endl;
-                std::cout << scientific << "Tolerance: "
+                std::cout << std::scientific << "Volumes: " << volume << " " << geometricData.Cell3DsVolumes[cell3DIndex] << std::endl;
+                std::cout << std::scientific << "Difference: " << (volume - geometricData.Cell3DsVolumes[cell3DIndex]) << std::endl;
+                std::cout << std::scientific << "Tolerance: "
                           << geometryUtilities.Tolerance3D() * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])
                           << std::endl;
             }
@@ -772,9 +771,9 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
             {
                 std::cout.precision(16);
                 std::cout << "Cell3D_CheckTetrahedra cell3DIndex " << cell3DIndex << std::endl;
-                std::cout << scientific << "Volume: " << volume << " " << geometricData.Cell3DsVolumes[cell3DIndex] << std::endl;
-                std::cout << scientific << "Difference: " << (volume - geometricData.Cell3DsVolumes[cell3DIndex]) << std::endl;
-                std::cout << scientific << "Tolerance: "
+                std::cout << std::scientific << "Volume: " << volume << " " << geometricData.Cell3DsVolumes[cell3DIndex] << std::endl;
+                std::cout << std::scientific << "Difference: " << (volume - geometricData.Cell3DsVolumes[cell3DIndex]) << std::endl;
+                std::cout << std::scientific << "Tolerance: "
                           << geometryUtilities.Tolerance3D() * std::max(volume, geometricData.Cell3DsVolumes[cell3DIndex])
                           << std::endl;
             }
@@ -789,9 +788,9 @@ void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfi
 void MeshUtilities::Mesh3DFromPolyhedron(const Eigen::MatrixXd &polyhedronVertices,
                                          const Eigen::MatrixXi &polyhedronEdges,
                                          const std::vector<Eigen::MatrixXi> &polyhedronFaces,
-                                         const vector<unsigned int> vertexMarkers,
-                                         const vector<unsigned int> edgeMarkers,
-                                         const vector<unsigned int> faceMarkers,
+                                         const std::vector<unsigned int> vertexMarkers,
+                                         const std::vector<unsigned int> edgeMarkers,
+                                         const std::vector<unsigned int> faceMarkers,
                                          IMeshDAO &mesh) const
 {
     mesh.InitializeDimension(3);
@@ -901,7 +900,7 @@ void MeshUtilities::SetMeshMarkersOnPlane(const GeometryUtilities &geometryUtili
     // set cell2Ds markers
     for (unsigned int p = 0; p < mesh.Cell2DTotalNumber(); p++)
     {
-        const vector<unsigned int> extremes = mesh.Cell2DVertices(p);
+        const std::vector<unsigned int> extremes = mesh.Cell2DVertices(p);
 
         bool isOnPlane = true;
         for (unsigned int v = 0; v < extremes.size(); v++)
@@ -967,9 +966,9 @@ void MeshUtilities::SetMeshMarkersByFaceNormal(const GeometryUtilities &geometry
 void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUtilities,
                                             const Eigen::Vector3d &polygon_plane_normal,
                                             const Eigen::Vector3d &polygon_plane_origin,
-                                            const MatrixXd &polygon_vertices_2D,
-                                            const Vector3d &polygon_translation,
-                                            const Matrix3d &polygon_rotation_matrix,
+                                            const Eigen::MatrixXd &polygon_vertices_2D,
+                                            const Eigen::Vector3d &polygon_translation,
+                                            const Eigen::Matrix3d &polygon_rotation_matrix,
                                             const unsigned int &marker,
                                             IMeshDAO &mesh) const
 {
@@ -1007,7 +1006,7 @@ void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUti
     // set cell2Ds markers
     for (unsigned int p = 0; p < mesh.Cell2DTotalNumber(); p++)
     {
-        const vector<unsigned int> extremes = mesh.Cell2DVertices(p);
+        const std::vector<unsigned int> extremes = mesh.Cell2DVertices(p);
 
         bool is_on_polygon = true;
         for (unsigned int v = 0; v < extremes.size(); v++)
@@ -1079,7 +1078,7 @@ void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUti
     // set cell2Ds markers
     for (unsigned int p = 0; p < mesh.Cell2DTotalNumber(); p++)
     {
-        const vector<unsigned int> extremes = mesh.Cell2DVertices(p);
+        const std::vector<unsigned int> extremes = mesh.Cell2DVertices(p);
 
         bool is_on_polygon = true;
         for (unsigned int v = 0; v < extremes.size(); v++)
@@ -1209,7 +1208,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 
         result.Cell3DsDiameters[c] = geometryUtilities.PolyhedronDiameter(result.Cell3DsVertices[c]);
 
-        const vector<vector<unsigned int>> polyhedronFaceTriangulations =
+        const std::vector<std::vector<unsigned int>> polyhedronFaceTriangulations =
             geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(polyhedron.Faces, result.Cell3DsFaces3DVertices[c]);
 
         result.Cell3DsFaces2DVertices[c] =
@@ -1219,7 +1218,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-            const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
+            const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
 
             if (geometryUtilities.PolygonOrientation(faceConvexHull) == Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
             {
@@ -1256,7 +1255,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
         for (unsigned int f = 0; f < numFaces; f++)
         {
             // Extract original cell2D geometric information
-            const vector<Eigen::Matrix3d> &convexCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
+            const std::vector<Eigen::Matrix3d> &convexCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
             const unsigned int &numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
 
             // compute original cell2D area and centroids
@@ -1335,7 +1334,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
                                                                           result.Cell3DsFacesRotationMatrices[c],
                                                                           result.Cell3DsVolumes[c]);
 
-        vector<unsigned int> polyhedronTetrahedrons =
+        std::vector<unsigned int> polyhedronTetrahedrons =
             geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(result.Cell3DsVertices[c],
                                                                          result.Cell3DsFaces[c],
                                                                          polyhedronFaceTriangulations,
@@ -1396,7 +1395,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
         if (!mesh.Cell3DIsActive(c))
             continue;
 
-        const vector<unsigned int> &convexCell3DIndices = meshCell3DToConvexCell3DIndices[c];
+        const std::vector<unsigned int> &convexCell3DIndices = meshCell3DToConvexCell3DIndices[c];
         const unsigned int &numConvexCell3Ds = convexCell3DIndices.size();
 
         const GeometryUtilities::Polyhedron polyhedron = MeshCell3DToPolyhedron(mesh, c);
@@ -1467,7 +1466,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-            const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
+            const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
 
             switch (geometryUtilities.PolygonOrientation(faceConvexHull))
             {
@@ -1492,17 +1491,17 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-            const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f], false);
+            const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f], false);
 
             Output::Assert(geometryUtilities.PolygonOrientation(faceConvexHull) ==
                            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
         }
 
         {
-            const vector<vector<unsigned int>> polyhedronFaceTriangulationsCCW =
+            const std::vector<std::vector<unsigned int>> polyhedronFaceTriangulationsCCW =
                 geometryUtilities.PolyhedronFaceTriangulationsByEarClipping(numFaces, face2DVerticesCCW);
 
-            vector<vector<unsigned int>> polyhedronFaceTriangulations = polyhedronFaceTriangulationsCCW;
+            std::vector<std::vector<unsigned int>> polyhedronFaceTriangulations = polyhedronFaceTriangulationsCCW;
             for (unsigned int f = 0; f < numFaces; f++)
             {
                 for (unsigned int nt = 0; nt < polyhedronFaceTriangulations[f].size(); nt++)
@@ -1528,7 +1527,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
         for (unsigned int f = 0; f < numFaces; f++)
         {
             // Extract original cell2D geometric information
-            const vector<Eigen::Matrix3d> &concaveCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
+            const std::vector<Eigen::Matrix3d> &concaveCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
             const unsigned int &numConcaveCell2DTriangulation = concaveCell2DTriangulationPoints.size();
 
             // compute original cell2D area and centroids
@@ -1593,7 +1592,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 
             for (unsigned int ccf = 0; ccf < convexCell3DFaces2DVertices.size(); ccf++)
             {
-                const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(convexCell3DFaces2DVertices[ccf], false);
+                const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(convexCell3DFaces2DVertices[ccf], false);
 
                 if (geometryUtilities.PolygonOrientation(faceConvexHull) == Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
                 {
@@ -1638,7 +1637,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
                                                                                  convexCell3DFacesRotationMatrices,
                                                                                  convexCell3DsVolume[cc]);
 
-            const vector<unsigned int> convexCell3DTetrahedrons =
+            const std::vector<unsigned int> convexCell3DTetrahedrons =
                 geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(convexCell3DPolyhedron.Vertices,
                                                                              convexCell3DPolyhedron.Faces,
                                                                              convexCell3DFacesTriangulations,
@@ -1839,7 +1838,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-            const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
+            const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(result.Cell3DsFaces2DVertices[c][f], false);
 
             switch (geometryUtilities.PolygonOrientation(faceConvexHull))
             {
@@ -1862,7 +1861,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
 
         for (unsigned int f = 0; f < numFaces; f++)
         {
-            const vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f], false);
+            const std::vector<unsigned int> faceConvexHull = geometryUtilities.ConvexHull(face2DVerticesCCW[f], false);
 
             Output::Assert(geometryUtilities.PolygonOrientation(faceConvexHull) ==
                            Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise);
@@ -1890,7 +1889,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
                                                                  face_rotation.transpose(),
                                                                  face_translation);
 
-                    const vector<unsigned int> face_triangle_convex_hull =
+                    const std::vector<unsigned int> face_triangle_convex_hull =
                         geometryUtilities.ConvexHull(result.Cell3DsFaces2DTriangulations[c][f][t], false);
 
                     switch (geometryUtilities.PolygonOrientation(face_triangle_convex_hull))
@@ -1924,7 +1923,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
         for (unsigned int f = 0; f < numFaces; f++)
         {
             // Extract original cell2D geometric information
-            const vector<Eigen::Matrix3d> &concaveCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
+            const std::vector<Eigen::Matrix3d> &concaveCell2DTriangulationPoints = result.Cell3DsFaces2DTriangulations[c][f];
             const unsigned int &numConcaveCell2DTriangulation = concaveCell2DTriangulationPoints.size();
 
             // compute original cell2D area and centroids
@@ -1992,7 +1991,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
 
             for (unsigned int ccf = 0; ccf < cell3D_tetra_faces_2D_vertices.size(); ++ccf)
             {
-                const vector<unsigned int> faceConvexHull =
+                const std::vector<unsigned int> faceConvexHull =
                     geometryUtilities.ConvexHull(cell3D_tetra_faces_2D_vertices[ccf], false);
 
                 if (geometryUtilities.PolygonOrientation(faceConvexHull) == Gedim::GeometryUtilities::PolygonOrientations::Clockwise)
@@ -2293,7 +2292,7 @@ MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConca
                               ? convexMesh.Cell3DFace(convexCell3DIndices[convexCellFound], convexCellFound)
                               : 0)
                       << std::endl;
-            throw runtime_error("Convex Cell 3D face not found");
+            throw std::runtime_error("Convex Cell 3D face not found");
         }
 
         convexCell2D.ConvexCell3DIndex = convexCellFound;
@@ -2402,7 +2401,7 @@ MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConca
             std::cerr << "Concave Cell3D " << concaveCell3DIndex << " face " << f << " Cell2D "
                       << mesh.Cell3DFace(concaveCell3DIndex, f) << " ";
             std::cerr << "convex Cell3D " << convexCellFound << " face " << convexFaceFound << " ";
-            throw runtime_error("Convex Cell 3D face not found");
+            throw std::runtime_error("Convex Cell 3D face not found");
         }
 
         convexCell2D.ConvexCell3DIndex = convexCellFound;
@@ -2632,8 +2631,8 @@ GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const IMeshD
 {
     GeometryUtilities::Polyhedron polyhedron;
 
-    unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
-    unordered_map<unsigned int, unsigned int> cell1DIndexToEdgeIndex;
+    std::unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
+    std::unordered_map<unsigned int, unsigned int> cell1DIndexToEdgeIndex;
 
     polyhedron.Vertices = mesh.Cell3DVerticesCoordinates(cell3DIndex);
     polyhedron.Edges.resize(2, mesh.Cell3DNumberEdges(cell3DIndex));
@@ -2641,13 +2640,13 @@ GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const IMeshD
 
     for (unsigned int v = 0; v < polyhedron.Vertices.cols(); v++)
     {
-        cell0DIndexToVertexIndex.insert(make_pair(mesh.Cell3DVertex(cell3DIndex, v), v));
+        cell0DIndexToVertexIndex.insert(std::make_pair(mesh.Cell3DVertex(cell3DIndex, v), v));
     }
 
     for (unsigned int e = 0; e < polyhedron.Edges.cols(); e++)
     {
         const unsigned int cell1DIndex = mesh.Cell3DEdge(cell3DIndex, e);
-        cell1DIndexToEdgeIndex.insert(make_pair(cell1DIndex, e));
+        cell1DIndexToEdgeIndex.insert(std::make_pair(cell1DIndex, e));
 
         polyhedron.Edges(0, e) = cell0DIndexToVertexIndex.at(mesh.Cell1DOrigin(cell1DIndex));
         polyhedron.Edges(1, e) = cell0DIndexToVertexIndex.at(mesh.Cell1DEnd(cell1DIndex));
@@ -2673,14 +2672,14 @@ MeshUtilities::VTPPolyhedron MeshUtilities::MeshCell3DToVTPPolyhedron(const IMes
 {
     VTPPolyhedron vtpPolyhedron;
 
-    unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
+    std::unordered_map<unsigned int, unsigned int> cell0DIndexToVertexIndex;
 
     vtpPolyhedron.Vertices = mesh.Cell3DVerticesCoordinates(cell3DIndex);
     vtpPolyhedron.PolyhedronFaces.resize(mesh.Cell3DNumberFaces(cell3DIndex));
 
     for (unsigned int v = 0; v < vtpPolyhedron.Vertices.cols(); v++)
     {
-        cell0DIndexToVertexIndex.insert(make_pair(mesh.Cell3DVertex(cell3DIndex, v), v));
+        cell0DIndexToVertexIndex.insert(std::make_pair(mesh.Cell3DVertex(cell3DIndex, v), v));
     }
 
     for (unsigned int f = 0; f < vtpPolyhedron.PolyhedronFaces.size(); f++)
@@ -2710,7 +2709,7 @@ std::vector<unsigned int> MeshUtilities::SplitCell3D(const unsigned int &cell3DI
     const unsigned int numSubCells = subCell3DsVertices.size();
     unsigned int newCell3DsStartingIndex = mesh.Cell3DAppend(numSubCells);
 
-    vector<unsigned int> newCell3DsIndex(numSubCells);
+    std::vector<unsigned int> newCell3DsIndex(numSubCells);
 
     mesh.Cell3DSetState(cell3DIndex, false);
 
@@ -3045,7 +3044,7 @@ unsigned int MeshUtilities::AgglomerateCell3Ds(const std::unordered_set<unsigned
 // ***************************************************************************
 MeshUtilities::FilterMeshData MeshUtilities::FilterMesh3D(const std::vector<unsigned int> &cell3DsFilter, const IMeshDAO &mesh) const
 {
-    list<unsigned int> cell3Ds;
+    std::list<unsigned int> cell3Ds;
     std::set<unsigned int> cell0Ds, cell1Ds, cell2Ds;
 
     for (const unsigned int cell3DIndex : cell3DsFilter)
