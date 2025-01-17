@@ -2098,7 +2098,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
 // ***************************************************************************
 MeshUtilities::MeshGeometricData3D MeshUtilities::ImportMeshGeometricData3DFromTxt(const std::string& file_path)
 {
-  using namespace Gedim_ImportExport_Utilities;
+  using Gedim_ImportExport_Utilities::operator>>;
 
   MeshGeometricData3D mesh_geometric_data;
 
@@ -2147,7 +2147,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::ImportMeshGeometricData3DFromT
 // ***************************************************************************
 void MeshUtilities::ExportMeshGeometricData3DToTxt(const MeshGeometricData3D& mesh_geometric_data, const std::string& file_path)
 {
-  using namespace Gedim_ImportExport_Utilities;
+  using Gedim_ImportExport_Utilities::operator<<;
 
   std::ofstream file(file_path);
 

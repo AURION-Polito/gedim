@@ -161,7 +161,7 @@ MeshUtilities::MeshGeometricData1D MeshUtilities::FillMesh1DGeometricData(const 
 // ***************************************************************************
 MeshUtilities::MeshGeometricData1D MeshUtilities::ImportMeshGeometricData1DFromTxt(const std::string& file_path)
 {
-  using namespace Gedim_ImportExport_Utilities;
+  using Gedim_ImportExport_Utilities::operator>>;
 
   MeshGeometricData1D mesh_geometric_data;
 
@@ -184,7 +184,7 @@ MeshUtilities::MeshGeometricData1D MeshUtilities::ImportMeshGeometricData1DFromT
 void MeshUtilities::ExportMeshGeometricData1DToTxt(const MeshGeometricData1D& mesh_geometric_data,
                                                    const std::string& file_path)
 {
-  using namespace Gedim_ImportExport_Utilities;
+  using Gedim_ImportExport_Utilities::operator<<;
 
   std::ofstream file(file_path);
 
