@@ -866,7 +866,7 @@ std::vector<MeshFromCsvUtilities::Cell3D> MeshFromCsvUtilities::ImportCell3Ds(IF
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::ImportCellDoubleProperties(IFileReader &csvFileReader,
-                                                                                                  const char &separator) const
+                                                                                                       const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::CellDoubleProperty> cellProperties;
 
@@ -923,7 +923,7 @@ std::vector<MeshFromCsvUtilities::CellDoubleProperty> MeshFromCsvUtilities::Impo
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::ImportCellUpdatedCells(IFileReader &csvFileReader,
-                                                                                            const char &separator) const
+                                                                                                 const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::CellUpdatedCells> cellsUpdatedCells;
 
@@ -973,7 +973,7 @@ std::vector<MeshFromCsvUtilities::CellUpdatedCells> MeshFromCsvUtilities::Import
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilities::ImportCellProperty(IFileReader &csvFileReader,
-                                                                                                 const char &separator) const
+                                                                                                      const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::CellDoubleProperty::Value> cellPropertyValues;
 
@@ -1020,7 +1020,7 @@ std::vector<MeshFromCsvUtilities::CellDoubleProperty::Value> MeshFromCsvUtilitie
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::ImportCell0DNeighbours(IFileReader &csvFileReader,
-                                                                                            const char &separator) const
+                                                                                                 const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours;
 
@@ -1098,7 +1098,7 @@ std::vector<MeshFromCsvUtilities::Cell0DNeighbours> MeshFromCsvUtilities::Import
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::ImportCell1DNeighbours(IFileReader &csvFileReader,
-                                                                                            const char &separator) const
+                                                                                                 const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours;
 
@@ -1163,7 +1163,7 @@ std::vector<MeshFromCsvUtilities::Cell1DNeighbours> MeshFromCsvUtilities::Import
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::ImportCell2DNeighbours(IFileReader &csvFileReader,
-                                                                                            const char &separator) const
+                                                                                                 const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours;
 
@@ -1215,7 +1215,7 @@ std::vector<MeshFromCsvUtilities::Cell2DNeighbours> MeshFromCsvUtilities::Import
 }
 // ***************************************************************************
 std::vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::ImportCell2DSubDivision(IFileReader &csvFileReader,
-                                                                                              const char &separator) const
+                                                                                                   const char &separator) const
 {
     std::vector<MeshFromCsvUtilities::Cell2DSubDivision> cell2DSubDivision;
 

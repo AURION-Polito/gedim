@@ -6,21 +6,20 @@
 namespace Gedim_ImportExport_Utilities
 {
 
-  template <class T, std::size_t s>
-  std::ostream &operator<<(std::ostream &out, const std::array<T, s> &elements)
-  {
-      out << elements.size() << ",";
-      out << "{";
-      unsigned int i = 0;
-      for (const auto &element : elements)
-      {
-          out << (i != 0 ? "," : "") << element;
-          i++;
-      }
-      out << "}";
+template <class T, std::size_t s> std::ostream &operator<<(std::ostream &out, const std::array<T, s> &elements)
+{
+    out << elements.size() << ",";
+    out << "{";
+    unsigned int i = 0;
+    for (const auto &element : elements)
+    {
+        out << (i != 0 ? "," : "") << element;
+        i++;
+    }
+    out << "}";
 
-      return out;
-  }
+    return out;
+}
 
 template <class T> std::ostream &operator<<(std::ostream &out, const std::vector<T> &elements)
 {
@@ -79,8 +78,7 @@ template <class T, int Rows, int Cols> std::istream &operator>>(std::istream &in
     return in;
 }
 
-template <class T, std::size_t s>
-std::istream &operator>>(std::istream &in, std::array<T, s> &elements)
+template <class T, std::size_t s> std::istream &operator>>(std::istream &in, std::array<T, s> &elements)
 {
     char separator;
     unsigned int size = 0;
@@ -99,8 +97,7 @@ std::istream &operator>>(std::istream &in, std::array<T, s> &elements)
     return in;
 }
 
-template <class T>
-std::istream &operator>>(std::istream &in, std::vector<T> &elements)
+template <class T> std::istream &operator>>(std::istream &in, std::vector<T> &elements)
 {
     char separator;
     unsigned int size = 0;

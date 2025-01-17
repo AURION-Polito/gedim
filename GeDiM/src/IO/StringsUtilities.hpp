@@ -17,7 +17,8 @@ class StringsUtilities
 
     /// Divide a string by a set of characters in a vector of strings
     /// @example stringToSplit="pippo_pe:pu" characters={'_',':'} -> result=["pippo", "pe", "pu"]
-    static std::vector<std::string> Split(const std::string &stringToSplit, const std::vector<char> &characters = std::vector<char>(' '));
+    static std::vector<std::string> Split(const std::string &stringToSplit,
+                                          const std::vector<char> &characters = std::vector<char>(' '));
 
     /// Find inside a string a separator between two keys
     /// @example stringToSearch="id:value" keyOne="id" keyTwo="value" -> separator=':'

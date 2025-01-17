@@ -159,48 +159,47 @@ MeshUtilities::MeshGeometricData1D MeshUtilities::FillMesh1DGeometricData(const 
     return result;
 }
 // ***************************************************************************
-MeshUtilities::MeshGeometricData1D MeshUtilities::ImportMeshGeometricData1DFromTxt(const std::string& file_path)
+MeshUtilities::MeshGeometricData1D MeshUtilities::ImportMeshGeometricData1DFromTxt(const std::string &file_path)
 {
-  using Gedim_ImportExport_Utilities::operator>>;
+    using Gedim_ImportExport_Utilities::operator>>;
 
-  MeshGeometricData1D mesh_geometric_data;
+    MeshGeometricData1D mesh_geometric_data;
 
-  std::ifstream inFile;
-  inFile.open(file_path.c_str());
+    std::ifstream inFile;
+    inFile.open(file_path.c_str());
 
-  if (!inFile.is_open())
-      throw std::runtime_error("Import file '" + file_path + "' not opened");
+    if (!inFile.is_open())
+        throw std::runtime_error("Import file '" + file_path + "' not opened");
 
-  inFile >> mesh_geometric_data.Cell1DsBoundingBox;
-  inFile >> mesh_geometric_data.Cell1DsVertices;
-  inFile >> mesh_geometric_data.Cell1DsTangents;
-  inFile >> mesh_geometric_data.Cell1DsLengths;
-  inFile >> mesh_geometric_data.Cell1DsSquaredLengths;
-  inFile >> mesh_geometric_data.Cell1DsCentroids;
+    inFile >> mesh_geometric_data.Cell1DsBoundingBox;
+    inFile >> mesh_geometric_data.Cell1DsVertices;
+    inFile >> mesh_geometric_data.Cell1DsTangents;
+    inFile >> mesh_geometric_data.Cell1DsLengths;
+    inFile >> mesh_geometric_data.Cell1DsSquaredLengths;
+    inFile >> mesh_geometric_data.Cell1DsCentroids;
 
-  return mesh_geometric_data;
+    return mesh_geometric_data;
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshGeometricData1DToTxt(const MeshGeometricData1D& mesh_geometric_data,
-                                                   const std::string& file_path)
+void MeshUtilities::ExportMeshGeometricData1DToTxt(const MeshGeometricData1D &mesh_geometric_data, const std::string &file_path)
 {
-  using Gedim_ImportExport_Utilities::operator<<;
+    using Gedim_ImportExport_Utilities::operator<<;
 
-  std::ofstream file(file_path);
+    std::ofstream file(file_path);
 
-  if (!file.is_open())
-      throw std::runtime_error("Export file '" + file_path + "' not opened");
+    if (!file.is_open())
+        throw std::runtime_error("Export file '" + file_path + "' not opened");
 
-  file.precision(16);
+    file.precision(16);
 
-  file << std::scientific << mesh_geometric_data.Cell1DsBoundingBox<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell1DsVertices<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell1DsTangents<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell1DsLengths<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell1DsSquaredLengths<< std::endl;
-  file << std::scientific << mesh_geometric_data.Cell1DsCentroids<< std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsBoundingBox << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsVertices << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsTangents << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsLengths << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsSquaredLengths << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell1DsCentroids << std::endl;
 
-  file.close();
+    file.close();
 }
 // ***************************************************************************
 std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DIndex, const Eigen::MatrixXi subCell1Ds, IMeshDAO &mesh) const

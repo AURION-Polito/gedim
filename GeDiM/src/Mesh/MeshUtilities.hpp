@@ -326,8 +326,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -529,7 +529,6 @@ class MeshUtilities final
     MeshGeometricData1D ImportMeshGeometricData1DFromTxt(const std::string &file_path);
     void ExportMeshGeometricData1DToTxt(const MeshGeometricData1D &mesh_geometric_data, const std::string &file_path);
 
-
     /// \brief Fill Mesh2D Geometric Data given a mesh with convex mesh cells
     /// \param convexMesh the convex mesh
     /// \return the MeshGeometricData computed
@@ -556,7 +555,6 @@ class MeshUtilities final
     MeshGeometricData2D ImportMeshGeometricData2DFromTxt(const std::string &file_path);
     void ExportMeshGeometricData2DToTxt(const MeshGeometricData2D &mesh_geometric_data, const std::string &file_path);
 
-
     /// \brief Fill Mesh3D Geometric Data given a mesh with convex mesh cells
     /// \param convexMesh the convex mesh
     /// \return the MeshGeometricData computed
@@ -580,7 +578,6 @@ class MeshUtilities final
 
     MeshGeometricData3D ImportMeshGeometricData3DFromTxt(const std::string &file_path);
     void ExportMeshGeometricData3DToTxt(const MeshGeometricData3D &mesh_geometric_data, const std::string &file_path);
-
 
     void ComputeCell0DCell1DNeighbours(IMeshDAO &mesh) const;
     void ComputeCell0DCell2DNeighbours(IMeshDAO &mesh) const;
@@ -1038,7 +1035,6 @@ class MeshUtilities final
                                const std::vector<unsigned int> &cell0DMarkers,
                                const std::vector<unsigned int> &cell1DMarkers,
                                IMeshDAO &mesh) const;
-
 };
 
 } // namespace Gedim

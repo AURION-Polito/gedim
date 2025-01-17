@@ -46,7 +46,8 @@ class Configurations final
     }
 
     /// Get Property Value To string
-    static ExportProperty GetPropertyForExport(const std::string &id, const ConfigurationPropertySupportedTypes::SupportedTypes &type);
+    static ExportProperty GetPropertyForExport(const std::string &id,
+                                               const ConfigurationPropertySupportedTypes::SupportedTypes &type);
 
   public:
     ~Configurations()
@@ -93,10 +94,14 @@ class Configurations final
     }
 
     /// Convert Property by string Type and string value
-    static void ConvertPropertyFromString(const std::string &id, const std::string &type, const std::string &value, const std::string &description = "");
+    static void ConvertPropertyFromString(const std::string &id,
+                                          const std::string &type,
+                                          const std::string &value,
+                                          const std::string &description = "");
 
     /// Add or Overwrite Property
-    template <class T> static void AddProperty(const std::string &id, const T &value = T(), const std::string &description = "")
+    template <class T>
+    static void AddProperty(const std::string &id, const T &value = T(), const std::string &description = "")
     {
         if (!ConfigurationPropertySupportedTypes::IsSupported<T>())
             throw std::invalid_argument("Property '" + id + "': type not supported");
