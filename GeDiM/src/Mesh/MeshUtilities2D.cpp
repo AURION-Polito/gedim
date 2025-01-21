@@ -1806,24 +1806,24 @@ void MeshUtilities::ExportConcaveMesh2DToCsv(const IMeshDAO &mesh,
         if (mapFile.fail())
             throw std::runtime_error("Error on hierarchy_map file");
 
-        mapFile << mesh.Cell2DTotalNumber() << endl;
-        mapFile << "# newCellId, sizeOldCellIdsContainer, oldCellIds" << endl;
+        mapFile << mesh.Cell2DTotalNumber() << std::endl;
+        mapFile << "# newCellId, sizeOldCellIdsContainer, oldCellIds" << std::endl;
         for (unsigned int v = 0; v < mesh.Cell2DTotalNumber(); v++)
         {
             mapFile << std::scientific << v << separator;
             mapFile << std::scientific << convexCell2DsIndex[v].size();
             for (unsigned int cc = 0; cc < convexCell2DsIndex[v].size(); cc++)
                 mapFile << std::scientific << separator << convexCell2DsIndex[v][cc];
-            mapFile << endl;
+            mapFile << std::endl;
         }
 
-        mapFile << endl;
-        mapFile << mesh.Cell0DTotalNumber() << endl;
-        mapFile << "# newVertId, oldVertId" << endl;
+        mapFile << std::endl;
+        mapFile << mesh.Cell0DTotalNumber() << std::endl;
+        mapFile << "# newVertId, oldVertId" << std::endl;
         for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
         {
             mapFile << std::scientific << v << separator;
-            mapFile << std::scientific << v << endl;
+            mapFile << std::scientific << v << std::endl;
         }
 
         mapFile.close();

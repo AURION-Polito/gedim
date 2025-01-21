@@ -21,7 +21,7 @@ void TetgenInterface::CreateDelaunay(const Eigen::MatrixXd &points, const std::v
     Gedim::Utilities::Unused(points_marker);
     Gedim::Utilities::Unused(mesh);
 
-#if ENABLE_TRIANGLE == 1
+#if ENABLE_TETGEN == 1
     tetgenio *tetgenInput = new tetgenio();
     tetgenio *tetgenOutput = new tetgenio();
 
@@ -50,7 +50,7 @@ void TetgenInterface::CreateMesh(const Eigen::MatrixXd &polyhedronVertices,
     Gedim::Utilities::Unused(mesh);
     Gedim::Utilities::Unused(tetgenOptions);
 
-#if ENABLE_TRIANGLE == 1
+#if ENABLE_TETGEN == 1
     tetgenio *tetgenInput = new tetgenio();
     tetgenio *tetgenOutput = new tetgenio();
 
@@ -65,7 +65,7 @@ void TetgenInterface::CreateMesh(const Eigen::MatrixXd &polyhedronVertices,
 #endif
 }
 // ***************************************************************************
-#if ENABLE_TRIANGLE == 1
+#if ENABLE_TETGEN == 1
 void TetgenInterface::DeleteTetgenStructure(tetgenio &tetgenInput, tetgenio &) const
 {
     delete[] tetgenInput.pointlist;

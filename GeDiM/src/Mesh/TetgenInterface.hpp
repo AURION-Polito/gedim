@@ -4,7 +4,7 @@
 #include "Gedim_Macro.hpp"
 #include "IMeshDAO.hpp"
 
-#if ENABLE_TRIANGLE == 1
+#if ENABLE_TETGEN == 1
 #include "tetgen.h"
 #endif
 
@@ -17,7 +17,7 @@ namespace Gedim
 class TetgenInterface final
 {
   private:
-#if ENABLE_TRIANGLE == 1
+#if ENABLE_TETGEN == 1
     void CreateTetgenInput(const Eigen::MatrixXd &polyhedronVertices,
                            const Eigen::MatrixXi &polyhedronEdges,
                            const std::vector<Eigen::MatrixXi> &polyhedronFaces,
