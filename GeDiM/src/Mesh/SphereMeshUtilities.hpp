@@ -6,6 +6,7 @@
 #include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "PlatonicSolid.hpp"
+#include <numbers>
 #include <numeric>
 
 namespace Gedim
@@ -40,10 +41,10 @@ class SphereMeshUtilities final
         // generate vertices per stack / slice
         for (int i = 0; i < parallels - 1; i++)
         {
-            const double phi = M_PI * double(i + 1) / double(parallels);
+            const double phi = std::numbers::pi * double(i + 1) / double(parallels);
             for (int j = 0; j < meridians; j++)
             {
-                const double theta = 2.0 * M_PI * double(j) / double(meridians);
+                const double theta = 2.0 * std::numbers::pi * double(j) / double(meridians);
                 polyhedron.Vertices.col(v++) << std::sin(phi) * std::cos(theta), std::cos(phi), std::sin(phi) * std::sin(theta);
             }
         }

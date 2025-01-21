@@ -1,6 +1,7 @@
 #include "GeometryUtilities.hpp"
 #include "CommonUtilities.hpp"
 #include "IOUtilities.hpp"
+#include <numbers>
 #include <unordered_set>
 
 using namespace std;
@@ -21,9 +22,9 @@ Eigen::MatrixXd GeometryUtilities::generate_uniform_random_points_in_sphere(cons
     // Generate uniformly distributed points inside a sphere.
 
     // Generate random samples
-    const Eigen::VectorXd u = Eigen::VectorXd::Random(num_points);                    // For radial distribution
-    const Eigen::VectorXd theta = acos(1 - 2.0 * Eigen::ArrayXd::Random(num_points)); // Polar angle
-    const Eigen::VectorXd phi = 2.0 * M_PI * Eigen::VectorXd::Random(num_points);     // Azimuthal angle
+    const Eigen::VectorXd u = Eigen::VectorXd::Random(num_points);                            // For radial distribution
+    const Eigen::VectorXd theta = acos(1 - 2.0 * Eigen::ArrayXd::Random(num_points));         // Polar angle
+    const Eigen::VectorXd phi = 2.0 * std::numbers::pi * Eigen::VectorXd::Random(num_points); // Azimuthal angle
 
     // Convert to Cartesian coordinates
     const auto r = radius * pow(u.array(), (1.0 / 3.0)); // Uniform radius in volume
@@ -44,7 +45,7 @@ Eigen::MatrixXd GeometryUtilities::fibonacci_sphere(const unsigned int num_point
         return Eigen::Vector3d::Zero();
 
     Eigen::MatrixXd points(3, num_points);
-    const double phi = M_PI * (sqrt(5.0) - 1.0); // golden angle in radians
+    const double phi = std::numbers::pi * (sqrt(5.0) - 1.0); // golden angle in radians
 
     for (unsigned int i = 0; i < num_points; i++)
     {
