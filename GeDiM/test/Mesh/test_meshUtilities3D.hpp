@@ -1432,6 +1432,11 @@ TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
     ASSERT_EQ(meshDao.Cell1DTotalNumber() + meshDao.Cell2DTotalNumber(), new_meshDao.Cell1DTotalNumber());
     ASSERT_EQ(2 * meshDao.Cell2DTotalNumber(), new_meshDao.Cell2DTotalNumber());
     ASSERT_EQ(meshDao.Cell3DTotalNumber(), new_meshDao.Cell3DTotalNumber());
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration check_mesh;
+    meshUtilities.CheckMesh3D(check_mesh,
+                              geometryUtilities,
+                              new_meshDao);
 }
 
 TEST(TestMeshUtilities, TestFindPointCell3D)

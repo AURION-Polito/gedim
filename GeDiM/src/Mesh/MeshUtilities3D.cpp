@@ -3228,7 +3228,7 @@ void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsign
 
         if (num_face_vertices == 3)
         {
-            cell2Ds_new_faces[f].push_back(f);
+          cell2Ds_new_faces[f] = { f };
             continue;
         }
 
@@ -3251,8 +3251,8 @@ void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsign
             mesh.Cell1DSetState(new_cell1D_index, true);
             mesh.Cell1DSetMarker(new_cell1D_index, mesh.Cell2DMarker(f));
             mesh.Cell1DInsertExtremes(new_cell1D_index,
-                                      face_cell0Ds_idex.at(face_triangles.at(3 * t + 1)),
-                                      face_cell0Ds_idex.at(face_triangles.at(3 * t + 2)));
+                                      face_cell0Ds_idex.at(face_triangles.at(3 * t + 2)),
+                                      face_cell0Ds_idex.at(face_triangles.at(3 * t + 0)));
         }
 
         // add new faces
