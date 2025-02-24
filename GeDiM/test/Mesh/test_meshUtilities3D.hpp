@@ -657,6 +657,28 @@ TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave_Tetra)
 
     Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration checkMeshGeometricDataConfig;
     ASSERT_NO_THROW(meshUtilities.CheckMeshGeometricData3D(checkMeshGeometricDataConfig, geometryUtilities, meshDao, result));
+
+    meshUtilities.ExportMeshGeometricData3DToTxt(result, exportFolder + "/geometric_properties.txt");
+    const auto imported_result = meshUtilities.ImportMeshGeometricData3DFromTxt(exportFolder + "/geometric_properties.txt");
+
+    ASSERT_EQ(imported_result.Cell3DsVertices, expectedResult.Cell3DsVertices);
+    ASSERT_EQ(imported_result.Cell3DsEdges, expectedResult.Cell3DsEdges);
+    ASSERT_EQ(imported_result.Cell3DsFaces, expectedResult.Cell3DsFaces);
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(imported_result.Cell3DsVolumes[0],
+                                                 expectedResult.Cell3DsVolumes[0],
+                                                 geometryUtilities.Tolerance3D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(imported_result.Cell3DsCentroids[0].x(),
+                                                 expectedResult.Cell3DsCentroids[0].z(),
+                                                 geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(imported_result.Cell3DsCentroids[0].y(),
+                                                 expectedResult.Cell3DsCentroids[0].y(),
+                                                 geometryUtilities.Tolerance1D()));
+    ASSERT_TRUE(geometryUtilities.AreValuesEqual(imported_result.Cell3DsCentroids[0].z(),
+                                                 expectedResult.Cell3DsCentroids[0].x(),
+                                                 geometryUtilities.Tolerance1D()));
+    ASSERT_EQ(imported_result.Cell3DsDiameters, expectedResult.Cell3DsDiameters);
+    ASSERT_EQ(imported_result.Cell3DsFacesNormalDirections, expectedResult.Cell3DsFacesNormalDirections);
+
 }
 
 TEST(TestMeshUtilities, TestSetMeshMarkersOnPlane)
