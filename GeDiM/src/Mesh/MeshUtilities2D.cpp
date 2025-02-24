@@ -762,7 +762,7 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
 {
     MeshGeometricData2D result;
 
-    result.Cell2DsBoundingBox.resize(convexMesh.Cell2DTotalNumber());
+    result.Cell2DsBoundingBox.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsVertices.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsTriangulations.resize(mesh.Cell2DTotalNumber());
     result.Cell2DsAreas.resize(mesh.Cell2DTotalNumber());

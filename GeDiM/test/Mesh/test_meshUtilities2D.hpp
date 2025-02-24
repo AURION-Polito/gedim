@@ -413,6 +413,9 @@ TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
 
 TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
 {
+  std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh2DGeometricData_NonConvex";
+  Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -474,6 +477,19 @@ TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
     EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, result.Cell2DsEdgeTangents);
     EXPECT_EQ(expectedResult.Cell2DsTriangulations, result.Cell2DsTriangulations);
     EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
+
+    meshUtilities.ExportMeshGeometricData2DToTxt(result, exportFolder + "/geometric_properties.txt");
+    const auto imported_result = meshUtilities.ImportMeshGeometricData2DFromTxt(exportFolder + "/geometric_properties.txt");
+
+    EXPECT_EQ(expectedResult.Cell2DsAreas, imported_result.Cell2DsAreas);
+    EXPECT_EQ(expectedResult.Cell2DsCentroids, imported_result.Cell2DsCentroids);
+    EXPECT_EQ(expectedResult.Cell2DsDiameters, imported_result.Cell2DsDiameters);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeDirections, imported_result.Cell2DsEdgeDirections);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeLengths, imported_result.Cell2DsEdgeLengths);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeNormals, imported_result.Cell2DsEdgeNormals);
+    EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, imported_result.Cell2DsEdgeTangents);
+    EXPECT_EQ(expectedResult.Cell2DsTriangulations, imported_result.Cell2DsTriangulations);
+    EXPECT_EQ(expectedResult.Cell2DsVertices, imported_result.Cell2DsVertices);
 }
 
 TEST(TestMeshUtilities, TestFillMesh2DGeometricData_CellTypes)
