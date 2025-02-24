@@ -3228,7 +3228,7 @@ void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsign
 
         if (num_face_vertices == 3)
         {
-          cell2Ds_new_faces[f] = { f };
+            cell2Ds_new_faces[f] = {f};
             continue;
         }
 

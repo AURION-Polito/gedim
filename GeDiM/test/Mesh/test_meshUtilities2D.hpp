@@ -413,8 +413,8 @@ TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
 
 TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
 {
-  std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh2DGeometricData_NonConvex";
-  Gedim::Output::CreateFolder(exportFolder);
+    std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh2DGeometricData_NonConvex";
+    Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -479,7 +479,8 @@ TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
     EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
 
     meshUtilities.ExportMeshGeometricData2DToTxt(result, exportFolder + "/geometric_properties.txt");
-    const auto imported_result = meshUtilities.ImportMeshGeometricData2DFromTxt(exportFolder + "/geometric_properties.txt");
+    const auto imported_result = meshUtilities.ImportMeshGeometricData2DFromTxt(exportFolder + "/geometric_properties."
+                                                                                               "txt");
 
     EXPECT_EQ(expectedResult.Cell2DsAreas, imported_result.Cell2DsAreas);
     EXPECT_EQ(expectedResult.Cell2DsCentroids, imported_result.Cell2DsCentroids);

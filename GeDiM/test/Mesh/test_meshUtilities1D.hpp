@@ -106,8 +106,8 @@ TEST(TestMeshUtilities, TestFillMesh1DGeometricData)
 
 TEST(TestMeshUtilities, TestFillMesh1DGeometricData_Convex)
 {
-  std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh1DGeometricData_Convex";
-  Gedim::Output::CreateFolder(exportFolder);
+    std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh1DGeometricData_Convex";
+    Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -139,7 +139,8 @@ TEST(TestMeshUtilities, TestFillMesh1DGeometricData_Convex)
     EXPECT_EQ(result.Cell1DsVertices, expectedResult.Cell1DsVertices);
 
     meshUtilities.ExportMeshGeometricData1DToTxt(result, exportFolder + "/geometric_properties.txt");
-    const auto imported_result = meshUtilities.ImportMeshGeometricData1DFromTxt(exportFolder + "/geometric_properties.txt");
+    const auto imported_result = meshUtilities.ImportMeshGeometricData1DFromTxt(exportFolder + "/geometric_properties."
+                                                                                               "txt");
 
     EXPECT_EQ(imported_result.Cell1DsLengths, expectedResult.Cell1DsLengths);
     EXPECT_EQ(imported_result.Cell1DsSquaredLengths, expectedResult.Cell1DsSquaredLengths);
