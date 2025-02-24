@@ -6,6 +6,23 @@
 namespace Gedim_ImportExport_Utilities
 {
 
+template <class T, int Rows, int Cols>
+std::ostream &operator<<(std::ostream &out, const Eigen::Matrix<T, Rows, Cols> &matrix)
+{
+    out << matrix.rows() << "," << matrix.cols() << ",";
+    out << "{";
+    for (unsigned int c = 0; c < matrix.cols(); c++)
+    {
+        out << (c != 0 ? ",{" : "{");
+        for (unsigned int r = 0; r < matrix.rows(); r++)
+            out << (r != 0 ? ", " : "") << matrix(r, c);
+        out << "}";
+    }
+    out << "}";
+
+    return out;
+}
+
 template <class T, std::size_t s> std::ostream &operator<<(std::ostream &out, const std::array<T, s> &elements)
 {
     out << elements.size() << ",";
@@ -30,23 +47,6 @@ template <class T> std::ostream &operator<<(std::ostream &out, const std::vector
     {
         out << (i != 0 ? "," : "") << element;
         i++;
-    }
-    out << "}";
-
-    return out;
-}
-
-template <class T, int Rows, int Cols>
-std::ostream &operator<<(std::ostream &out, const Eigen::Matrix<T, Rows, Cols> &matrix)
-{
-    out << matrix.rows() << "," << matrix.cols() << ",";
-    out << "{";
-    for (unsigned int c = 0; c < matrix.cols(); c++)
-    {
-        out << (c != 0 ? ",{" : "{");
-        for (unsigned int r = 0; r < matrix.rows(); r++)
-            out << (r != 0 ? ", " : "") << matrix(r, c);
-        out << "}";
     }
     out << "}";
 

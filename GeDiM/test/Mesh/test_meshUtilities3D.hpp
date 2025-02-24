@@ -231,6 +231,28 @@ TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
         exportData.Cell3DsMarker = meshDao.Cell3DsMarker();
 
         ExportMeshUtilities::ExportMesh3DToText(exportData, exportFolder + "/MeshData.txt");
+
+        const ExportMeshData test_import_data = ExportMeshUtilities::ImportMesh3DFromText(exportFolder + "/MeshData.txt");
+        ASSERT_EQ(exportData.Cell0Ds,
+                  test_import_data.Cell0Ds);
+        ASSERT_EQ(exportData.Cell1Ds,
+                  test_import_data.Cell1Ds);
+        ASSERT_EQ(exportData.Cell2Ds,
+                  test_import_data.Cell2Ds);
+        ASSERT_EQ(exportData.Cell3DsVertices,
+                  test_import_data.Cell3DsVertices);
+        ASSERT_EQ(exportData.Cell3DsEdges,
+                  test_import_data.Cell3DsEdges);
+        ASSERT_EQ(exportData.Cell3DsFaces,
+                  test_import_data.Cell3DsFaces);
+        ASSERT_EQ(exportData.Cell0DsMarker,
+                  test_import_data.Cell0DsMarker);
+        ASSERT_EQ(exportData.Cell1DsMarker,
+                  test_import_data.Cell1DsMarker);
+        ASSERT_EQ(exportData.Cell2DsMarker,
+                  test_import_data.Cell2DsMarker);
+        ASSERT_EQ(exportData.Cell3DsMarker,
+                  test_import_data.Cell3DsMarker);
     }
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
