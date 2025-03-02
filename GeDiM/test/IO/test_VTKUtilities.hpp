@@ -182,7 +182,7 @@ TEST(TestVTPUtilities, VTPUtilities_Test2D)
 {
     const unsigned int numGeometries = 4;
 
-    const double angle = M_PI / 4.0; // 45 degrees
+    const double angle = std::numbers::pi / 4.0; // 45 degrees
     Eigen::Matrix3d rotationMatrix;
     rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
     rotationMatrix.row(1) << 0.0, 1.0, 0.0;
@@ -228,7 +228,7 @@ TEST(TestVTPUtilities, VTPUtilities_Test2Ds)
 {
     const unsigned int numGeometries = 4;
 
-    const double angle = M_PI / 4.0; // 45 degrees
+    const double angle = std::numbers::pi / 4.0; // 45 degrees
     Eigen::Matrix3d rotationMatrix;
     rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
     rotationMatrix.row(1) << 0.0, 1.0, 0.0;
@@ -280,7 +280,7 @@ TEST(TestVTPUtilities, VTPUtilities_Test3D)
 {
     const unsigned int numGeometries = 1;
 
-    double angle = M_PI / 4.0; // 45 degrees
+    double angle = std::numbers::pi / 4.0; // 45 degrees
     Eigen::Matrix3d rotationMatrix;
     rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
     rotationMatrix.row(1) << 0.0, 1.0, 0.0;
@@ -325,7 +325,7 @@ TEST(TestVTPUtilities, VTPUtilities_Test3Ds)
 {
     const unsigned int numGeometries = 1;
 
-    double angle = M_PI / 4.0; // 45 degrees
+    double angle = std::numbers::pi / 4.0; // 45 degrees
     Eigen::Matrix3d rotationMatrix;
     rotationMatrix.row(0) << cos(angle), 0.0, sin(angle);
     rotationMatrix.row(1) << 0.0, 1.0, 0.0;

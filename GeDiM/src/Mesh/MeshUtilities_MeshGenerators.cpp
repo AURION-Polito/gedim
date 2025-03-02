@@ -1580,7 +1580,7 @@ void MeshUtilities::CreateDistortedQuadrilaterals(const GeometryUtilities &geome
             Eigen::Vector3d coordinate = rectangleOrigin + baseMeshCurvilinearCoordinates[b] * rectangleBaseTangent +
                                          heightMeshCurvilinearCoordinates[h] * rectangleHeightTangent;
 
-            coordinate(0) += 0.1 * sin(2.0 * M_PI * coordinate(0)) * sin(2.0 * std::numbers::pi * coordinate(1));
+            coordinate(0) += 0.1 * sin(2.0 * std::numbers::pi * coordinate(0)) * sin(2.0 * std::numbers::pi * coordinate(1));
             coordinate(1) += 0.1 * sin(2.0 * std::numbers::pi * coordinate(0)) * sin(2.0 * std::numbers::pi * coordinate(1));
 
             const unsigned int marker = 1 * (b == 0 && h == 0) + 2 * (b == (numBasePoints - 1) && h == 0) +
