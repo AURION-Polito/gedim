@@ -9,7 +9,7 @@ using namespace Eigen;
 
 namespace Gedim
 {
-template class Eigen_Array<VectorXd, SparseMatrix<double> >;
+template class Eigen_Array<VectorXd, SparseMatrix<double>>;
 // ***************************************************************************
 template <typename Eigen_ArrayType, typename Eigen_SparseArrayType>
 void Eigen_Array<Eigen_ArrayType, Eigen_SparseArrayType>::SetValues(const vector<int> &indices, const vector<double> &values)
