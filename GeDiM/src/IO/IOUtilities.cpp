@@ -173,13 +173,13 @@ void Output::GetFileList(const string &mainDirectory, vector<string> &out, const
 
     dir = opendir(mainDirectory.c_str());
 
-    if (dir == NULL)
+    if (dir == nullptr)
     {
         Output::PrintErrorMessage("Cannot reach folder '%s'", false, mainDirectory.c_str());
         return;
     }
 
-    while ((ent = readdir(dir)) != NULL)
+    while ((ent = readdir(dir)) != nullptr)
     {
         const string file_name = ent->d_name;
         const string full_file_name = mainDirectory + "/" + file_name;
@@ -222,7 +222,7 @@ void Output::FindPaths(const string &mainDirectory, const string &objectNameToFi
     class stat st;
 
     dir = opendir(mainDirectory.c_str());
-    while ((ent = readdir(dir)) != NULL)
+    while ((ent = readdir(dir)) != nullptr)
     {
         const string file_name = ent->d_name;
         const string full_file_name = mainDirectory + "/" + file_name;
@@ -370,7 +370,7 @@ void Output::WriteBinaryFile(const string &nameFile,
 {
     /// <ul>
 
-    if (dataToWrite == NULL)
+    if (dataToWrite == nullptr)
         throw runtime_error("empty data to write");
 
     unsigned int fileDataSize = dataSizeToWrite;
@@ -812,7 +812,7 @@ void LogFile::PrintMessage(const string &type, const string &message, va_list ar
     nameFile << nameFolder.str() << LogNameFile;
     CheckFileSize(nameFile.str());
 
-    if (args != NULL)
+    if (true)
     {
         FILE *pFile = fopen(nameFile.str().c_str(), "a");
 
@@ -847,7 +847,8 @@ void LogFile::PrintLine(const char &symbol)
     for (int i = 1; i < 61; i++)
         separatorBuilder << symbol;
 
-    LogFile::PrintMessage("", separatorBuilder.str(), NULL);
+    va_list empty;
+    LogFile::PrintMessage("", separatorBuilder.str(), empty);
 }
 // ***************************************************************************
 void LogFile::PrintWarningMessage(const string &message, va_list args)
