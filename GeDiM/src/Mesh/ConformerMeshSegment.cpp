@@ -63,7 +63,7 @@ ConformerMeshSegment::ConformMesh::ConformMeshPoint &ConformerMeshSegment::Inser
     double foundCoordinate = -1.0;
     for (std::map<double, ConformMesh::ConformMeshPoint>::const_iterator it = result.Points.begin(); it != result.Points.end(); it++)
     {
-        if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
+        if (!_geometryUtilities.IsValuePositive(std::abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
         {
             foundCoordinate = it->first;
             break;

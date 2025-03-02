@@ -30,7 +30,7 @@ ConformerMeshSegment::ConformMesh::ConformMeshPoint &ConformerMeshPolygon::Inser
          it != result.Points.end();
          it++)
     {
-        if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
+        if (!_geometryUtilities.IsValuePositive(std::abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
         {
             foundCoordinate = it->first;
             break;

@@ -867,7 +867,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhe
                         ;
                         cell2D.vertices = faceVertices;
 
-                        if (map_marker[abs(faceNeighs[i]) - 1] == 0)
+                        if (map_marker[std::abs(faceNeighs[i]) - 1] == 0)
                         {
                             const Eigen::Vector3d barycenter = faceVertCoordinates.rowwise().mean();
 
@@ -878,17 +878,17 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhe
                                                                      faceDomainNormal[f],
                                                                      polyhedronVertices.col(polyhedronFaces[f](0, 0))))
                                 {
-                                    map_marker[abs(faceNeighs[i]) - 1] = numVerticesDomain + numEdgesDomain + f + 1;
-                                    cell2D.marker = map_marker[abs(faceNeighs[i]) - 1];
+                                    map_marker[std::abs(faceNeighs[i]) - 1] = numVerticesDomain + numEdgesDomain + f + 1;
+                                    cell2D.marker = map_marker[std::abs(faceNeighs[i]) - 1];
                                     break;
                                 }
                             }
 
-                            if (map_marker[abs(faceNeighs[i]) - 1] == 0)
+                            if (map_marker[std::abs(faceNeighs[i]) - 1] == 0)
                                 throw runtime_error("Marker face wrong");
                         }
                         else
-                            cell2D.marker = map_marker[abs(faceNeighs[i]) - 1];
+                            cell2D.marker = map_marker[std::abs(faceNeighs[i]) - 1];
 
                         cell2D.edges.resize(numFaceVertices);
                         for (unsigned int v = 0; v < numFaceVertices; v++)
@@ -921,7 +921,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhe
                                         }
 
                                         if ((it->second[1]) == 0)
-                                            (it->second[1]) = map_marker[abs(faceNeighs[i]) - 1];
+                                            (it->second[1]) = map_marker[std::abs(faceNeighs[i]) - 1];
                                     }
                                 }
                             }
@@ -946,7 +946,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhe
                                     }
 
                                     if (marker == 0)
-                                        marker = map_marker[abs(faceNeighs[i]) - 1];
+                                        marker = map_marker[std::abs(faceNeighs[i]) - 1];
                                 }
                                 vector<unsigned int> cell1D(2);
                                 cell1D[0] = cell1Ds.size();

@@ -629,7 +629,7 @@ Matrix3d GeometryUtilities::PolyhedronInertia(const Eigen::Vector3d &polyhedronC
         polyhedronQuadraturePoints.block(0, numTetraQuadraturePoints * t, 3, numTetraQuadraturePoints) =
             mapTetra.F(mapData, referencePoints);
         polyhedronQuadratureWeights.segment(numTetraQuadraturePoints * t, numTetraQuadraturePoints) =
-            referenceWeights * abs(mapData.DetQ);
+            referenceWeights * std::abs(mapData.DetQ);
     }
 
     // Compute Inertia Matrix

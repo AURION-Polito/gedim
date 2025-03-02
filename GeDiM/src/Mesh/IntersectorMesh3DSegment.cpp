@@ -65,7 +65,7 @@ IntersectorMesh3DSegment::IntersectionPoint &IntersectorMesh3DSegment::CreateOrF
     double foundCoordinate = -1.0;
     for (auto &it : points)
     {
-        if (!geometryUtilities.IsValuePositive(abs(it.first - curvilinearCoordinate), geometryUtilities.Tolerance1D()))
+        if (!geometryUtilities.IsValuePositive(std::abs(it.first - curvilinearCoordinate), geometryUtilities.Tolerance1D()))
         {
             foundCoordinate = it.first;
             break;

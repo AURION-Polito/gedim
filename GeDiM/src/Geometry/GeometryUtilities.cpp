@@ -150,11 +150,11 @@ std::vector<double> GeometryUtilities::RandomCoordinates(const unsigned int size
 // ***************************************************************************
 GeometryUtilities::CompareTypes GeometryUtilities::CompareValues(const double &first, const double &second, const double &tolerance) const
 {
-    const double max_tolerance = std::max(abs(tolerance), _configuration.MinTolerance);
-    const double relativeValue = (abs(first) <= max_tolerance || abs(second) <= max_tolerance) ? 1.0 : abs(first);
+    const double max_tolerance = std::max(std::abs(tolerance), _configuration.MinTolerance);
+    const double relativeValue = (std::abs(first) <= max_tolerance || std::abs(second) <= max_tolerance) ? 1.0 : std::abs(first);
     const double difference = second - first;
 
-    if (abs(difference) <= max_tolerance * relativeValue)
+    if (std::abs(difference) <= max_tolerance * relativeValue)
         return CompareTypes::Coincident;
     else if (difference < -max_tolerance * relativeValue)
         return CompareTypes::SecondBeforeFirst;

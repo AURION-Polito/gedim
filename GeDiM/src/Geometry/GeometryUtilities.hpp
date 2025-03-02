@@ -737,8 +737,8 @@ class GeometryUtilities final
     /// \return the relative difference between the two values according the first
     inline double RelativeDifference(const double &first, const double &second, const double &tolerance) const
     {
-        const double max_tolerance = std::max(abs(tolerance), _configuration.MinTolerance);
-        return abs(second - first) / ((abs(first) <= max_tolerance) ? 1.0 : abs(first));
+        const double max_tolerance = std::max(std::abs(tolerance), _configuration.MinTolerance);
+        return std::abs(second - first) / ((std::abs(first) <= max_tolerance) ? 1.0 : std::abs(first));
     }
 
     /// \brief Compare two values according to tolerance
@@ -926,7 +926,7 @@ class GeometryUtilities final
     /// \note The distance is computed as d = n^T * (P - O) / ||n||
     inline double PointLineDistance(const Eigen::Vector3d &point, const Eigen::Vector3d &lineOrigin, const Eigen::Vector3d &normalToLine) const
     {
-        return abs(normalToLine.dot(point - lineOrigin)) / normalToLine.norm();
+        return std::abs(normalToLine.dot(point - lineOrigin)) / normalToLine.norm();
     }
 
     /// \param point the point

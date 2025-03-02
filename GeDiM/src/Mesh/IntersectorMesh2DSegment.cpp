@@ -57,7 +57,7 @@ IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint &IntersectorMe
          it != result.Points.end();
          it++)
     {
-        if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
+        if (!_geometryUtilities.IsValuePositive(std::abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
         {
             foundCoordinate = it->first;
             break;
@@ -529,9 +529,9 @@ void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d &, const Vecto
             intersectionPoint.Vertex2DIds == intersectionPointNext.Vertex2DIds)
         {
             const double avgCoordinate = (curvilinearCoordinatePoint + curvilinearCoordinatePointNext) / 2.0;
-            Output::Assert(!_geometryUtilities.IsValuePositive(abs(curvilinearCoordinatePoint - avgCoordinate),
+            Output::Assert(!_geometryUtilities.IsValuePositive(std::abs(curvilinearCoordinatePoint - avgCoordinate),
                                                                _geometryUtilities.Tolerance1D()));
-            Output::Assert(!_geometryUtilities.IsValuePositive(abs(curvilinearCoordinatePointNext - avgCoordinate),
+            Output::Assert(!_geometryUtilities.IsValuePositive(std::abs(curvilinearCoordinatePointNext - avgCoordinate),
                                                                _geometryUtilities.Tolerance1D()));
 
             IntersectionMesh::IntersectionMeshPoint avgPoint;

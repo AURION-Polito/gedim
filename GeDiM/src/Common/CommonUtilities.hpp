@@ -21,7 +21,7 @@ class Utilities
     /// \brief create Combination With Repetition with n elements in k subset
     /// \param n size of elements
     /// \param k size of subset
-    static std::list<std::vector<int>> CombinationWithRepetition(int n, int k);
+    static std::list<std::vector<int> > CombinationWithRepetition(int n, int k);
 
     /// \brief Shuffle an array
     template <class container> static void Shuffle(container &array, const unsigned int &seed = time(nullptr))

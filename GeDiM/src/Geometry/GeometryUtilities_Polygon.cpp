@@ -1361,7 +1361,7 @@ Matrix2d GeometryUtilities::PolygonMass(const Eigen::Vector3d &polygonCentroid,
         polygonQuadraturePoints.block(0, numTriangleQuadraturePoints * t, 3, numTriangleQuadraturePoints) =
             mapTriangle.F(mapData, referencePoints);
         polygonQuadratureWeights.segment(numTriangleQuadraturePoints * t, numTriangleQuadraturePoints) =
-            referenceWeights * abs(mapData.DetB);
+            referenceWeights * std::abs(mapData.DetB);
     }
 
     // Compute Inertia Matrix
@@ -1416,7 +1416,7 @@ Matrix3d GeometryUtilities::PolygonInertia(const Eigen::Vector3d &polygonCentroi
         polygonQuadraturePoints.block(0, numTriangleQuadraturePoints * t, 3, numTriangleQuadraturePoints) =
             mapTriangle.F(mapData, referencePoints);
         polygonQuadratureWeights.segment(numTriangleQuadraturePoints * t, numTriangleQuadraturePoints) =
-            referenceWeights * abs(mapData.DetB);
+            referenceWeights * std::abs(mapData.DetB);
     }
 
     // Compute Inertia Matrix

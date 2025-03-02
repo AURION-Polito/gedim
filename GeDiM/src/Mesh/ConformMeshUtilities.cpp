@@ -56,7 +56,7 @@ void ConformMeshUtilities::ComputeConformedMeshWithSegments(const std::vector<st
 
         for (const Gedim::IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshSegment &segment :
              segmentsIntersectionMesh[i].Segments)
-            Gedim::Output::Assert(geometryUtilities.IsValuePositive(abs(segment.Points[1] - segment.Points[0]),
+            Gedim::Output::Assert(geometryUtilities.IsValuePositive(std::abs(segment.Points[1] - segment.Points[0]),
                                                                     geometryUtilities.Tolerance1D()));
 
         if (options.PrintStatus)
@@ -91,7 +91,7 @@ void ConformMeshUtilities::ComputeConformedMeshWithSegments(const std::vector<st
         conformMeshInterface.CreateConformMesh(segmentsIntersectionMesh[i], segmentsUnionMesh[i], 0, segmentsConformMesh[i]);
 
         for (const Gedim::ConformerMeshSegment::ConformMesh::ConformMeshSegment &segment : segmentsConformMesh[i].Segments)
-            Gedim::Output::Assert(geometryUtilities.IsValuePositive(abs(segment.Points[1] - segment.Points[0]),
+            Gedim::Output::Assert(geometryUtilities.IsValuePositive(std::abs(segment.Points[1] - segment.Points[0]),
                                                                     geometryUtilities.Tolerance1D()));
 
         // Conform mesh 2D

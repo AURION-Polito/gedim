@@ -173,17 +173,17 @@ foreach(header ${GEDIM_LIBRARY_HEADERS})
     list(APPEND GEDIM_LIBRARY_PUBLIC_HEADERS ${headerDirectory}/${headerFileName}${headerExtension})
 endforeach()
 
-foreach(header ${GEDIM_LIBRARY_SOURCES})
-    get_filename_component(headerDirectory ${header} DIRECTORY)
-    get_filename_component(headerFileName ${header} NAME_WE)
-    get_filename_component(headerExtension ${header} EXT)
+#foreach(header ${GEDIM_LIBRARY_SOURCES})
+#    get_filename_component(headerDirectory ${header} DIRECTORY)
+#    get_filename_component(headerFileName ${header} NAME_WE)
+#    get_filename_component(headerExtension ${header} EXT)
 
-    if(${headerFileName} MATCHES "GeometryUtilities")
-        MESSAGE(WARNING "Add option to " ${header})
-        set_source_files_properties(${header} PROPERTIES COMPILE_OPTIONS -Weverything)
-    endif()
-
-endforeach()
+#    if(${headerFileName} MATCHES "GeometryUtilities")
+#        MESSAGE(WARNING "Add option to " ${header})
+#        set_source_files_properties(${header} PROPERTIES COMPILE_OPTIONS -Weverything)
+#    endif()
+#
+#endforeach()
 
 list(APPEND GEDIM_LIBRARY_INCLUDE ${GEDIM_LIBRARY_ADDITIONAL_INCLUDE_PATH})
 

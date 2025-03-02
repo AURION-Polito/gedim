@@ -47,7 +47,7 @@ UnionMeshSegment::UnionMesh::UnionMeshPoint &UnionMeshSegment::InsertNewIntersec
     double foundCoordinate = -1.0;
     for (std::map<double, UnionMesh::UnionMeshPoint>::const_iterator it = result.Points.begin(); it != result.Points.end(); it++)
     {
-        if (!_geometryUtilities.IsValuePositive(abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
+        if (!_geometryUtilities.IsValuePositive(std::abs(it->first - curvilinearCoordinate), _geometryUtilities.Tolerance1D()))
         {
             foundCoordinate = it->first;
             break;

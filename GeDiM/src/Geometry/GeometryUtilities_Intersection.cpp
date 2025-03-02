@@ -27,7 +27,7 @@ bool GeometryUtilities::AreLineCoplanar(const Eigen::Vector3d &firstLineOrigin,
         IsValuePositive((secondLineOrigin - firstLineOrigin - firstLineTangent).squaredNorm(), Tolerance1DSquared()) &&
         IsValuePositive((secondLineOrigin + secondLineTangent - firstLineOrigin - firstLineTangent).squaredNorm(),
                         Tolerance1DSquared()) &&
-        IsValuePositive(abs(coplanarMatrix.determinant()), Tolerance1D()))
+        IsValuePositive(std::abs(coplanarMatrix.determinant()), Tolerance1D()))
     {
         // segments are not on the same plane
         return false;
@@ -81,7 +81,7 @@ GeometryUtilities::IntersectionSegmentSegmentResult GeometryUtilities::Intersect
     // (t1.dot(t2) / (||t1|| * ||t2||))^2 > 0 which means to check 1.0 - (t1.dot(t2) / (||t1|| * ||t2||))^2 > tol^2 =>
     // (1.0 - t1.dot(t2) / (||t1|| * ||t2||)) * (1.0 + t1.dot(t2) / (||t1|| * ||t2||)) > tol^2 NB: check on
     // abs(t1.dot(t2) / (||t1|| * ||t2||)) != 1.0 is done to avoid numerical loss of significance
-    if (IsValuePositive(abs(abs(tangentsDot) - 1.0), Tolerance1DSquared()) &&
+    if (IsValuePositive(std::abs(std::abs(tangentsDot) - 1.0), Tolerance1DSquared()) &&
         IsValuePositive((1.0 - tangentsDot) * (1.0 + tangentsDot), Tolerance1DSquared() * Tolerance1DSquared()))
     {
         // no parallel segments

@@ -1036,7 +1036,7 @@ GeometryUtilities::SplitPolygonWithCircleResult GeometryUtilities::SplitPolygonW
                     }
                 }
 
-                string newEdgeKey = to_string(min(origin, end)) + "-" + to_string(max(origin, end)) + "-" +
+                string newEdgeKey = to_string(std::min(origin, end)) + "-" + to_string(std::max(origin, end)) + "-" +
                                     to_string((unsigned int)edgeType) + "-" + to_string((unsigned int)edgeArcType);
 
                 Output::Assert(newEdgesMap.find(newEdgeKey) == newEdgesMap.end());
