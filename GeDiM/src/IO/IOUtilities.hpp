@@ -250,7 +250,7 @@ std::string MatrixCollectionToString(const std::vector<matrixType> &matCollectio
 }
 
 template <typename matrixType>
-std::string MatrixCollectionToString(const std::vector<std::vector<matrixType>> &matCollection,
+std::string MatrixCollectionToString(const std::vector<std::vector<matrixType> > &matCollection,
                                      const std::string &matrixTypeStr,
                                      const std::string &matrixName)
 {
@@ -267,7 +267,7 @@ std::string MatrixCollectionToString(const std::vector<std::vector<matrixType>> 
 }
 
 template <typename matrixType>
-std::string MatrixCollectionToString(const std::vector<std::vector<std::vector<matrixType>>> &matCollection,
+std::string MatrixCollectionToString(const std::vector<std::vector<std::vector<matrixType> > > &matCollection,
                                      const std::string &matrixTypeStr,
                                      const std::string &matrixName)
 {
