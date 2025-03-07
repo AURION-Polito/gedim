@@ -14,19 +14,6 @@ template class Eigen_PCGSolver<VectorXd, SparseMatrix<double>, Eigen::ConjugateG
 template class Eigen_PCGSolver<VectorXd, SparseMatrix<double>, Eigen::ConjugateGradient<SparseMatrix<double>, Eigen::Lower, Eigen::IncompleteCholesky<double>>>;
 // ***************************************************************************
 template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
-Eigen_PCGSolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::Eigen_PCGSolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
-Eigen_PCGSolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::~Eigen_PCGSolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-// ***************************************************************************
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
 void Eigen_PCGSolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::Initialize(const ISparseArray &matrix,
                                                                                            const IArray &rightHandSide,
                                                                                            IArray &solution,

@@ -15,19 +15,6 @@ template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::Simpl
 template class Eigen_CholeskySolver<VectorXd, SparseMatrix<double>, Eigen::SimplicialLDLT<SparseMatrix<double>, Eigen::Lower, Eigen::AMDOrdering<int>>>;
 // ***************************************************************************
 template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
-Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::Eigen_CholeskySolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
-Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::~Eigen_CholeskySolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-// ***************************************************************************
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType, typename Eigen_SolverType>
 void Eigen_CholeskySolver<Eigen_ArrayType, Eigen_SparseArrayType, Eigen_SolverType>::Initialize(const ISparseArray &matrix,
                                                                                                 const IArray &rightHandSide,
                                                                                                 IArray &solution,

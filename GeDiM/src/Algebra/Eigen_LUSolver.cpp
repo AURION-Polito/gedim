@@ -11,19 +11,6 @@ namespace Gedim
 template class Eigen_LUSolver<VectorXd, SparseMatrix<double>>;
 // ***************************************************************************
 template <typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-Eigen_LUSolver<Eigen_ArrayType, Eigen_SparseArrayType>::Eigen_LUSolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType>
-Eigen_LUSolver<Eigen_ArrayType, Eigen_SparseArrayType>::~Eigen_LUSolver()
-{
-    _rightHandSide = nullptr;
-    _solution = nullptr;
-}
-// ***************************************************************************
-template <typename Eigen_ArrayType, typename Eigen_SparseArrayType>
 void Eigen_LUSolver<Eigen_ArrayType, Eigen_SparseArrayType>::Initialize(const ISparseArray &matrix,
                                                                         const IArray &rightHandSide,
                                                                         IArray &solution,

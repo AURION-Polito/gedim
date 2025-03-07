@@ -18,8 +18,16 @@ class Eigen_CholeskySolver final : public ILinearSolver
     IArray *_solution;             ///< The solution of the linear syste
 
   public:
-    Eigen_CholeskySolver();
-    ~Eigen_CholeskySolver();
+    Eigen_CholeskySolver()
+    {
+        _rightHandSide = nullptr;
+        _solution = nullptr;
+    }
+    ~Eigen_CholeskySolver()
+    {
+        _rightHandSide = nullptr;
+        _solution = nullptr;
+    }
 
     void Initialize(const ISparseArray &matrix, const IArray &rightHandSide, IArray &solution, const Configuration &config = Configuration());
 

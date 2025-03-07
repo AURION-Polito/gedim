@@ -19,8 +19,16 @@ class Eigen_BiCGSTABSolver final : public ILinearSolver
     Configuration _config;
 
   public:
-    Eigen_BiCGSTABSolver();
-    ~Eigen_BiCGSTABSolver();
+    Eigen_BiCGSTABSolver()
+    {
+        _rightHandSide = nullptr;
+        _solution = nullptr;
+    }
+    ~Eigen_BiCGSTABSolver()
+    {
+        _rightHandSide = nullptr;
+        _solution = nullptr;
+    }
 
     void Initialize(const ISparseArray &matrix, const IArray &rightHandSide, IArray &solution, const Configuration &config = {100, 1e-6});
 
