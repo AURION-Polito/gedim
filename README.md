@@ -1,15 +1,19 @@
 # <img src="./gedim_logo.png" alt="drawing" width="50%"/>
 
-**`GeDiM`** (GEometry for DIscretization MEthod library) is an open-source library based on collaborative development. 
+**`GeDiM`** (GEometry for DIscretization MEthod library) is an open-source C++ library based on collaborative development. 
 It provides a flexible framework for the common geometrical operations in 1D, 2D, and 3D used in discretization methods for solving linear and nonlinear partial differential equations. 
 
 **`GeDiM`** is inspired by and built upon the foundational research of the Numerical Analysis Group in the Department of Mathematical Sciences "Giuseppe Luigi Lagrange" (DISMA) at the Politecnico di Torino.
 
-See the official [documentation](https://polydim.it/).
-
 ## How To Install
 
 Installation is based on [CMake](https://cmake.org/).
+Minimum CMake 3.12 version is required.
+
+To build the library we require **C++-20** standard.
+
+We develop and test with `gcc` compiler.
+Minimum version required is `gcc-10`.
 
 After the build process the library is installed in `CMAKE_INSTALL_PREFIX` folder.
 
@@ -58,3 +62,12 @@ ENABLE_PETSC                 OFF
 ENABLE_METIS                 OFF
 ENABLE_VTK                   OFF
 ```
+
+## Unit Test
+
+Unit test for **`GeDiM`** are available to check the correct compilation of the library.
+
+Activate the CMake variable ` ENABLE_GEDIM_UNIT_TESTS`, by default `OFF` to build the tests.
+
+The unit tests are based on [GoogleTest](https://github.com/google/googletest) framework.
+The `GTest` and `GMock` library shall be already installed in your computer to properly build the unit tests.
