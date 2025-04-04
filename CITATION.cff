@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Berrone
+    given-names: Stefano
+  - family-names: Borio
+    given-names: Andrea
+  - family-names: Teora
+    given-names: Gioana
+  - family-names: Vicini
+    given-names: Fabio
+    orcid: https://orcid.org/0000-0001-7123-9199
+title: "GEDiM"
+version: 2.0.4
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.1234
+date-released: 2021-08-11
