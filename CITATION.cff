@@ -1,18 +1,21 @@
-cff-version: 1.2.0
+cff-version: 0.0.1
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: Berrone
     given-names: Stefano
+    orcid: https://orcid.org/0000-0001-8642-4258
   - family-names: Borio
     given-names: Andrea
+    orcid: https://orcid.org/0000-0001-8544-6199
   - family-names: Teora
     given-names: Gioana
+    orcid: https://orcid.org/0000-0002-8540-3639
   - family-names: Vicini
     given-names: Fabio
     orcid: https://orcid.org/0000-0001-7123-9199
-title: "GEDiM"
-version: 2.0.4
+title: "GEDiM: GEometry for DIscretization MEthod library"
+version: v0.0.48
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.1234
-date-released: 2021-08-11
+    value: 10.5281/zenodo.15146658
+date-released: 2025-04-04
