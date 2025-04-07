@@ -8,7 +8,9 @@
 
 #include "GeometryUtilities.hpp"
 #include "GraphUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
 #include "VTKUtilities.hpp"
+#include "PlatonicSolid.hpp"
 
 using namespace testing;
 using namespace std;
@@ -2286,6 +2288,71 @@ TEST(TestGeometryUtilities, TestPolyhedronInRadius)
             geometryUtilities.PolyhedronCentroidFacesDistance(polyhedronBarycenter, polyhedronFaceNormals, polyhedronFace3DVertices);
 
         ASSERT_DOUBLE_EQ(sqrt(3.0) / 12.0, geometryUtilities.PolyhedronInRadius(polyhedronCentroidFacesDistance));
+    }
+}
+
+TEST(TestGeometryUtilities, Test_Export_Polyhedron)
+{
+    const Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    const Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    const Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities, meshUtilities);
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.dodecahedron();
+
+    const Eigen::Vector3d polyhedron_centroid = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
+    const vector<Eigen::MatrixXd> polyhedron_faces_vertices = geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
+    const vector<Eigen::Vector3d> polyhedron_faces_centroid = geometryUtilities.PolyhedronFaceBarycenter(polyhedron_faces_vertices);
+    const vector<vector<unsigned int>> polyhedron_faces_triangulation =
+        geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(polyhedron.Faces, polyhedron_faces_vertices);
+    const vector<unsigned int> polyhedron_tetra =
+        geometryUtilities.PolyhedronTetrahedronsByFaceTriangulations(polyhedron.Vertices, polyhedron.Faces, polyhedron_faces_triangulation, polyhedron_centroid);
+
+    // Export to VTK
+    std::string exportFolder = "./Export/TestGeometryUtilities/Test_Export_Polyhedron";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    {
+        Gedim::VTKUtilities vtpUtilities;
+
+        //  original polyhedron
+        vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
+
+        vtpUtilities.Export(exportFolder + "/polyhedron.vtu", Gedim::VTKUtilities::Ascii);
+    }
+
+    {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoint(polyhedron_centroid);
+        exporter.Export(exportFolder + "/polyhedron_centroid.vtu");
+    }
+
+    {
+        vector<Eigen::MatrixXd> tetrahedrons =
+            geometryUtilities.ExtractTetrahedronPoints(polyhedron.Vertices,
+                                                       polyhedron_centroid,
+                                                       polyhedron_tetra);
+
+        Gedim::VTKUtilities vtkExperter;
+        for (unsigned int t = 0; t < tetrahedrons.size(); t++)
+        {
+            Gedim::GeometryUtilities::Polyhedron subTetra =
+                geometryUtilities.CreateTetrahedronWithVertices(tetrahedrons[t].col(0),
+                                                                tetrahedrons[t].col(1),
+                                                                tetrahedrons[t].col(2),
+                                                                tetrahedrons[t].col(3));
+            vector<double> id(1, t);
+
+            vtkExperter.AddPolyhedron(
+                subTetra.Vertices,
+                subTetra.Edges,
+                subTetra.Faces,
+                {{"Id", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(id.size()), id.data()}});
+        }
+
+        vtkExperter.Export(exportFolder + "/polyhedron_tetra.vtu", Gedim::VTKUtilities::Ascii);
     }
 }
 
