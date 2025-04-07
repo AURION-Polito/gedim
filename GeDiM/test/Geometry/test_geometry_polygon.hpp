@@ -2832,6 +2832,19 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
                             {{"Id", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), id.data() + 1}});
         exporter.Export(exportFolder + "/Polygon_intertia.vtu");
     }
+
+    const std::string export_polygon_folder = exportFolder + "/Polygon";
+    Gedim::Output::CreateFolder(export_polygon_folder);
+    geometryUtilities.ExportPolygonToVTU(0,
+                                         polygonVertices,
+                                         triangulation_points,
+                                         0.0,
+                                         polygon_centroid,
+                                         polygon_edges_centroid,
+                                         polygon_edges_normal,
+                                         std::vector<bool>(polygon_edges_normal.cols(), true),
+                                         export_polygon_folder);
+
 }
 
 } // namespace GedimUnitTesting

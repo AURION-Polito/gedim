@@ -2343,10 +2343,6 @@ namespace GedimUnitTesting
     const std::vector<std::vector<Eigen::Matrix3d>> polyhedron_faces_triangulation_vertices =
         geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedron_faces_vertices,
                                                                    polyhedron_faces_triangulation);
-    std::vector<Eigen::Vector3d> polyhedron_faces_internal_point(polyhedron.Faces.size());
-    for (unsigned int f = 0; f < polyhedron.Faces.size(); f++)
-      polyhedron_faces_internal_point[f] = geometryUtilities.PolygonBarycenter(polyhedron_faces_triangulation_vertices[f][0]);
-
 
     // Export to VTK
     std::string exportFolder = "./Export/TestGeometryUtilities/Test_Export_Polyhedron";
@@ -2403,7 +2399,7 @@ namespace GedimUnitTesting
                                             polyhedron_faces_translation,
                                             polyhedron_faces_rotation,
                                             polyhedron_faces_triangulation_vertices,
-                                            polyhedron_faces_internal_point,
+                                            polyhedron_faces_centroid,
                                             polyhedron_faces_normal,
                                             polyhedron_faces_normal_direction,
                                             export_polyhedron_folder);
