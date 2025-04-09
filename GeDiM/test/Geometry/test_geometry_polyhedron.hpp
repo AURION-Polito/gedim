@@ -2358,6 +2358,27 @@ namespace GedimUnitTesting
     }
 
     {
+      const unsigned int polyhedron_face_index = 0;
+
+      const std::string export_polygon_folder = exportFolder + "/Polyhedron_Face_" + std::to_string(polyhedron_face_index);
+      Gedim::Output::CreateFolder(export_polygon_folder);
+
+      const auto polygon_edges_centroid = geometryUtilities.PolygonEdgesCentroid(polyhedron_faces_rotated_vertices.at(polyhedron_face_index));
+      const auto polygon_edges_normal = geometryUtilities.PolygonEdgeNormals(polyhedron_faces_rotated_vertices.at(polyhedron_face_index));
+      const auto polygon_edges_length = geometryUtilities.PolygonEdgeLengths(polyhedron_faces_rotated_vertices.at(polyhedron_face_index));
+
+      geometryUtilities.ExportPolygonToVTU(polyhedron_face_index,
+                                           polyhedron_faces_rotated_vertices.at(polyhedron_face_index),
+                                           polyhedron_faces_rotated_triangulation.at(polyhedron_face_index),
+                                           0.0,
+                                           polyhedron_faces_rotated_centroid.at(polyhedron_face_index),
+                                           polygon_edges_centroid,
+                                           polygon_edges_normal,
+                                           std::vector<bool>(polygon_edges_normal.cols(), true),
+                                           export_polygon_folder);
+    }
+
+    {
       Gedim::VTKUtilities exporter;
       exporter.AddPoint(polyhedron_centroid);
       exporter.Export(exportFolder + "/polyhedron_centroid.vtu");

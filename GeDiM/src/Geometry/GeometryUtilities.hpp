@@ -2302,7 +2302,7 @@ namespace Gedim
                               const double &polygon_volume,
                               const Eigen::Vector3d &polygon_centroid,
                               const Eigen::MatrixXd &polygon_edges_centroid,
-                              const std::vector<Eigen::Vector3d> &polygon_edges_normal,
+                              const Eigen::MatrixXd& polygon_edges_normal,
                               const std::vector<bool> &polygon_edges_normal_direction,
                               const std::string &exportFolder) const;
   };

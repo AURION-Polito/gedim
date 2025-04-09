@@ -1638,7 +1638,7 @@ void GeometryUtilities::ExportPolygonToVTU(const unsigned int &index,
                         const double &polygon_volume,
                         const Eigen::Vector3d &polygon_centroid,
                         const Eigen::MatrixXd& polygon_edges_centroid,
-                        const std::vector<Eigen::Vector3d> &polygon_edges_normal,
+                        const Eigen::MatrixXd &polygon_edges_normal,
                         const std::vector<bool> &polygon_edges_normal_direction,
                         const std::string &exportFolder) const
 {
@@ -1683,8 +1683,11 @@ void GeometryUtilities::ExportPolygonToVTU(const unsigned int &index,
           vector<double> edge(1, e);
           vector<double> normalDirection(1, polygon_edges_normal_direction[e] ? 1.0 : -1.0);
 
-          exporter.AddSegment(polygon_edges_centroid[e],
-                              polygon_edges_centroid[e] + normalDirection[0] * polygon_edges_normal[e],
+          const Eigen::Vector3d normal_origin = polygon_edges_centroid.col(e);
+          const Eigen::Vector3d normal_end = polygon_edges_centroid.col(e) + normalDirection[0] * polygon_edges_normal.col(e);
+
+          exporter.AddSegment(normal_origin,
+                              normal_end,
                               {{"Face", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(edge.size()), edge.data()},
                                {"NormalDirection",
                                 Gedim::VTPProperty::Formats::Cells,
