@@ -2768,7 +2768,7 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
 
     Gedim::MapTriangle triangle_map;
     Gedim::Quadrature::Quadrature_Gauss2D_Triangle triangle_quadrature;
-    Gedim::Quadrature::QuadratureData reference_quadrature = triangle_quadrature.FillPointsAndWeights(3);
+    Gedim::Quadrature::QuadratureData reference_quadrature = triangle_quadrature.FillPointsAndWeights(4);
 
     const unsigned int num_triangle_quadrature_points = reference_quadrature.Points.cols();
     const unsigned int num_polygon_quadrature_points = triangulation_points.size() * num_triangle_quadrature_points;
