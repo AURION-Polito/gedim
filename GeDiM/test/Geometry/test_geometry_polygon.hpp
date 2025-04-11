@@ -8,6 +8,7 @@
 #include "GeometryUtilities.hpp"
 #include "Quadrature_Gauss2D_Triangle.hpp"
 #include "VTKUtilities.hpp"
+#include "MapTriangle.hpp"
 
 using namespace testing;
 using namespace std;
@@ -616,10 +617,6 @@ TEST(TestGeometryUtilities, TestPolygonInertia_Export)
     const auto AR_Rh = maxCentroidVerticesDistance / minCell2DsMinEdgesLength;
     const auto gamma_r = polygon_in_radius / polygon_diameter;
     const auto gamma_h = minCell2DsMinEdgesLength / polygon_diameter;
-
-    std::cout.precision(2);
-    std::cout << std::scientific << "AR_Rr " << AR_Rr << " gamma_r " << gamma_r << std::endl;
-    std::cout << std::scientific << "AR_Rh " << AR_Rh << " gamma_h " << gamma_h << std::endl;
 
     Eigen::Vector3d eig_min(0.0, 0.0, 0.0), eig_max(0.0, 0.0, 0.0);
     {
@@ -2769,9 +2766,21 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
     const auto gamma_r = polygon_in_radius / polygon_diameter;
     const auto gamma_h = minCell2DsMinEdgesLength / polygon_diameter;
 
-    std::cout.precision(2);
-    std::cout << std::scientific << "AR_Rr " << AR_Rr << " gamma_r " << gamma_r << std::endl;
-    std::cout << std::scientific << "AR_Rh " << AR_Rh << " gamma_h " << gamma_h << std::endl;
+    Gedim::MapTriangle triangle_map;
+    Gedim::Quadrature::Quadrature_Gauss2D_Triangle triangle_quadrature;
+    Gedim::Quadrature::QuadratureData reference_quadrature = triangle_quadrature.FillPointsAndWeights(3);
+
+    const unsigned int num_triangle_quadrature_points = reference_quadrature.Points.cols();
+    const unsigned int num_polygon_quadrature_points = triangulation_points.size() * num_triangle_quadrature_points;
+
+    Eigen::MatrixXd polygon_quadrature_points = Eigen::MatrixXd::Zero(3, num_polygon_quadrature_points);
+
+    for (unsigned int t = 0; t < triangulation_points.size(); t++)
+    {
+        Gedim::MapTriangle::MapTriangleData mapData = triangle_map.Compute(triangulation_points[t]);
+        polygon_quadrature_points.block(0, num_triangle_quadrature_points * t, 3, num_triangle_quadrature_points) =
+            triangle_map.F(mapData, reference_quadrature.Points);
+    }
 
     Eigen::Vector3d eig_min(0.0, 0.0, 0.0), eig_max(0.0, 0.0, 0.0);
     {
@@ -2818,6 +2827,12 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
         Gedim::VTKUtilities exporter;
         exporter.AddPoint(polygon_centroid);
         exporter.Export(exportFolder + "/Polygon_centroid.vtu");
+    }
+
+    {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoints(polygon_quadrature_points);
+        exporter.Export(exportFolder + "/Polygon_quadrature.vtu");
     }
 
     {
