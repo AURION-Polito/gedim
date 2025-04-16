@@ -9,8 +9,11 @@
 #include "GeometryUtilities.hpp"
 #include "GraphUtilities.hpp"
 #include "MeshMatricesDAO.hpp"
+#include "QuadratureData.hpp"
 #include "VTKUtilities.hpp"
 #include "PlatonicSolid.hpp"
+#include "Quadrature_Gauss3D_Tetrahedron_PositiveWeights.hpp"
+#include "MapTetrahedron.hpp"
 
 using namespace testing;
 using namespace std;
@@ -2344,6 +2347,31 @@ namespace GedimUnitTesting
         geometryUtilities.PolyhedronFaceExtractTriangulationPoints(polyhedron_faces_vertices,
                                                                    polyhedron_faces_triangulation);
 
+    const auto tetra_reference_points =
+        Gedim::Quadrature::Quadrature_Gauss3D_Tetrahedron_PositiveWeights::FillPointsAndWeights(2);
+    Eigen::MatrixXd polyhedron_quadrature_points;
+
+    const unsigned int polyhedron_num_tetra = tetrahedrons.size();
+
+    const unsigned int tetra_num_reference_points = tetra_reference_points.Points.cols();
+    const unsigned int polyhedron_num_quadrature_points = polyhedron_num_tetra * tetra_num_reference_points;
+
+    Eigen::VectorXd quadrature_points_tetra_id(polyhedron_num_quadrature_points);
+    polyhedron_quadrature_points.setZero(3, polyhedron_num_quadrature_points);
+
+    Gedim::MapTetrahedron mapTetrahedron(geometryUtilities);
+
+    for (unsigned int t = 0; t < polyhedron_num_tetra; t++)
+    {
+      const Eigen::MatrixXd &tetrahedronVertices = tetrahedrons[t];
+
+      Gedim::MapTetrahedron::MapTetrahedronData mapTetrahedronData = mapTetrahedron.Compute(tetrahedronVertices);
+      polyhedron_quadrature_points.block(0, tetra_num_reference_points * t, 3, tetra_num_reference_points) =
+          mapTetrahedron.F(mapTetrahedronData, tetra_reference_points.Points);
+
+      quadrature_points_tetra_id.segment(tetra_num_reference_points * t, tetra_num_reference_points).setConstant(t);
+    }
+
     // Export to VTK
     std::string exportFolder = "./Export/TestGeometryUtilities/Test_Export_Polyhedron";
     Gedim::Output::CreateFolder(exportFolder);
@@ -2403,6 +2431,13 @@ namespace GedimUnitTesting
       }
 
       vtkExperter.Export(exportFolder + "/polyhedron_tetra.vtu", Gedim::VTKUtilities::Ascii);
+    }
+
+    {
+      Gedim::VTKUtilities exporter;
+      exporter.AddPoints(polyhedron_quadrature_points,
+                         {{"Id", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(quadrature_points_tetra_id.size()), quadrature_points_tetra_id.data()}});
+      exporter.Export(exportFolder + "/Polyhedron_quadrature.vtu");
     }
 
     const std::string export_polyhedron_folder = exportFolder + "/Polyhedron";
