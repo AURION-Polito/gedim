@@ -2,7 +2,6 @@
 #include "CommonUtilities.hpp"
 #include "IOUtilities.hpp"
 #include <numbers>
-#include <unordered_set>
 
 using namespace std;
 using namespace Eigen;
