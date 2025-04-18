@@ -6,9 +6,9 @@
 #include <gtest/gtest.h>
 
 #include "GeometryUtilities.hpp"
+#include "MapTriangle.hpp"
 #include "Quadrature_Gauss2D_Triangle.hpp"
 #include "VTKUtilities.hpp"
-#include "MapTriangle.hpp"
 
 using namespace testing;
 using namespace std;
@@ -2859,7 +2859,6 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
                                          polygon_edges_normal,
                                          std::vector<bool>(polygon_edges_normal.cols(), true),
                                          export_polygon_folder);
-
 }
 
 } // namespace GedimUnitTesting
