@@ -24,7 +24,7 @@ class VoroInterface final
         unsigned int id;
         unsigned int marker;
 
-        Cell0D(const double x, const double y, const double z) : x(x), y(y), z(z){};
+        Cell0D(const double x, const double y, const double z) : x(x), y(y), z(z) {};
     };
 
     struct Cell2D
