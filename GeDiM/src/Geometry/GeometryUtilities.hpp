@@ -439,20 +439,20 @@ class GeometryUtilities final
             };
 
             Types PolyhedronType = Types::Unknown; ///< Type of intersection
-            unsigned int PolyhedronIndex = 0;   ///<  Index of the intersecting element of the Polyhedron (face, edge or
-                                                ///<  vertex index)
+            unsigned int PolyhedronIndex = 0; ///<  Index of the intersecting element of the Polyhedron (face, edge or
+            ///<  vertex index)
             double CurvilinearCoordinate = 0.0; ///< Curvilinear coordinate in the line
         };
 
         Types Type = Types::Unknown;                                                  /// The
         std::vector<LineIntersection> LineIntersections;                              ///< The line intersections
         std::vector<PolyhedronVertexIntersection> PolyhedronVertexIntersections = {}; ///< Polyhedron Vertex
-                                                                                      ///< intersections, size
-                                                                                      ///< polyhedron num vertices
+        ///< intersections, size
+        ///< polyhedron num vertices
         std::vector<PolyhedronEdgeIntersection> PolyhedronEdgeIntersections = {}; ///< Polyhedron Edge intersections,
-                                                                                  ///< size polyhedron num edges
+        ///< size polyhedron num edges
         std::vector<PolyhedronFaceIntersection> PolyhedronFaceIntersections = {}; ///< Polyhedron Face intersections,
-                                                                                  ///< size polyhedron num faces
+        ///< size polyhedron num faces
     };
 
     struct IntersectionPolyhedronsSegmentResult final
@@ -529,7 +529,7 @@ class GeometryUtilities final
 
         Types Type = Types::Unknown;     ///< The intersection type
         unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex,
-                                         ///< Types::OnEdge and Types::OnFace
+        ///< Types::OnEdge and Types::OnFace
         std::vector<VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
         std::vector<EdgeIntersection> EdgeIntersections = {};     ///< Edge intersections
         std::vector<FaceIntersection> FaceIntersections = {};     ///< Face intersections
@@ -660,23 +660,23 @@ class GeometryUtilities final
         {
             Eigen::MatrixXd Vertices;                          ///< all vertices contained in the new polyhedra
             std::vector<unsigned int> NewVerticesOriginalEdge; ///< For each new vertex the index of the original edge
-                                                               ///< to which is located
+            ///< to which is located
         };
 
         struct NewEdges
         {
             Eigen::MatrixXi Edges;                  ///< all edges contained in the new polyhedra
             std::vector<int> NewEdgesOriginalEdges; ///< indices of original edges for new edges, -1 means no original
-                                                    ///< edge
-            std::vector<int> NewEdgesOriginalFace;  ///< For each new vertex the index of the original edge to which is
-                                                    ///< located
+            ///< edge
+            std::vector<int> NewEdgesOriginalFace; ///< For each new vertex the index of the original edge to which is
+            ///< located
         };
 
         struct NewFaces
         {
             std::vector<Eigen::MatrixXi> Faces;
             std::vector<int> NewFacesOriginalFaces; ///< indices of original faces for new faces, -1 means no original
-                                                    ///< face
+            ///< face
         };
 
         struct NewPolyhedron
@@ -2295,6 +2295,16 @@ class GeometryUtilities final
                                const std::vector<Eigen::Vector3d> &polyhedronFaces3DNormal,
                                const std::vector<bool> &polyhedronFaces3DNormalDirection,
                                const std::string &exportFolder) const;
+
+    void ExportPolygonToVTU(const unsigned int &index,
+                            const Eigen::MatrixXd &polygon,
+                            const std::vector<Eigen::Matrix3d> &polygon_triangles,
+                            const double &polygon_volume,
+                            const Eigen::Vector3d &polygon_centroid,
+                            const Eigen::MatrixXd &polygon_edges_centroid,
+                            const Eigen::MatrixXd &polygon_edges_normal,
+                            const std::vector<bool> &polygon_edges_normal_direction,
+                            const std::string &exportFolder) const;
 };
 } // namespace Gedim
 
