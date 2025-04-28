@@ -43,7 +43,7 @@ GeometryUtilities::Polyhedron PlatonicSolid::dual_polyhedron(const GeometryUtili
     for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
     {
         std::vector<unsigned int> neighbourhood = mesh.Cell0DNeighbourCell2Ds(v);
-        Eigen::VectorXi face = Eigen::VectorXi::Zero(neighbourhood.size());
+        Eigen::VectorXi face = -1 * Eigen::VectorXi::Ones(neighbourhood.size());
 
         unsigned int p = 0;
         unsigned int neighbour = neighbourhood[neighbourhood.size() - 1];
@@ -444,10 +444,18 @@ GeometryUtilities::Polyhedron PlatonicSolid::first_class_geodesic_polyhedron(con
     const auto extract_mesh_data =
         meshUtilities.ExtractMesh2D(filter_active_mesh.Cell0Ds, filter_active_mesh.Cell1Ds, filter_active_mesh.Cell2Ds, mesh, filter_mesh);
 
+    // if (frequency >= 3)
+    // {
+    //     meshUtilities.ComputeCell0DCell2DNeighbours(filter_mesh);
+    //     meshUtilities.ComputeCell0DCell1DNeighbours(filter_mesh);
+    //     project_to_unit_sphere(filter_mesh_data, filter_mesh);
+    // }
+
     GeometryUtilities::Polyhedron polyhedron;
     polyhedron.Vertices = filter_mesh.Cell0DsCoordinates();
     polyhedron.Edges = filter_mesh.Cell1DsExtremes();
     polyhedron.Faces = filter_mesh.Cell2DsExtremes();
+    // if (frequency == 2)
     project_to_unit_sphere(polyhedron);
 
     return polyhedron;

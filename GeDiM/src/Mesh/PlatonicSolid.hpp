@@ -2,6 +2,7 @@
 #define __PlatonicSolid_H
 
 #include "GeometryUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include <numeric>
 
@@ -29,6 +30,51 @@ class PlatonicSolid final
         polyhedron.Vertices.colwise().normalize();
     }
 
+    void project_to_unit_sphere(Gedim::MeshMatrices &mesh_data, Gedim::MeshMatricesDAO &mesh) const
+    {
+        for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+        {
+            const auto num_neighboord = mesh.Cell0DNumberNeighbourCell2D(v);
+
+            // if (num_neighboord == 6)
+            // {
+            const auto coord = mesh.Cell0DCoordinates(v);
+            const auto normalized_coord = coord.normalized();
+            for (unsigned int d = 0; d < 3; d++)
+                mesh_data.Cell0DCoordinates[v * 3 + d] = normalized_coord(d);
+            // }
+        }
+
+        // for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+        // {
+        //     const auto num_neighboord = mesh.Cell0DNumberNeighbourCell2D(v);
+
+        //     if (num_neighboord != 6)
+        //     {
+        //         const auto neighboord_edges = mesh.Cell0DNeighbourCell1Ds(v);
+        //         Eigen::MatrixXd plane = Eigen::MatrixXd::Zero(3, 3);
+        //         for (unsigned int e = 0; e < 3; e++)
+        //         {
+        //             auto origin = mesh.Cell1DOrigin(neighboord_edges[e]);
+        //             if (origin == v)
+        //                 plane.col(e) = mesh.Cell1DEndCoordinates(neighboord_edges[e]);
+        //             else
+        //                 plane.col(e) = mesh.Cell1DOriginCoordinates(neighboord_edges[e]);
+        //         }
+
+        //         const Eigen::Vector3d normal_plane = geometryUtilities.PolygonNormal(plane);
+        //         const Eigen::Vector3d origin_plane = plane.col(0);
+
+        //         const Eigen::Vector3d point = mesh.Cell0DCoordinates(v);
+        //         const auto projected_point = point - ((point - origin_plane).transpose() * normal_plane) *
+        //         normal_plane;
+
+        //         for (unsigned int d = 0; d < 3; d++)
+        //             mesh_data.Cell0DCoordinates[v * 3 + d] = projected_point(d);
+        //     }
+        // }
+    }
+
     GeometryUtilities::Polyhedron dual_polyhedron(const GeometryUtilities::Polyhedron &polyhedron) const;
 
     GeometryUtilities::Polyhedron first_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
@@ -38,7 +84,7 @@ class PlatonicSolid final
     {
 
         GeometryUtilities::Polyhedron polyhedron = dual_polyhedron(geodesic_polyhedron);
-        project_to_unit_sphere(polyhedron);
+        // project_to_unit_sphere(polyhedron);
 
         return polyhedron;
     }
