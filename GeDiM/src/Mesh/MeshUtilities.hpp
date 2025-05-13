@@ -34,6 +34,8 @@ class MeshUtilities final
         bool Cell2D_CheckConvexity = true;
         bool Cell2D_CheckMeasure = true;
         bool Cell3D_CheckDuplications = true;
+        bool Cell3D_CheckEdges = true;
+        bool Cell3D_CheckEdgesAreActive = true;
         bool Cell3D_CheckConvexity = true;
         bool Cell3D_CheckMeasure = true;
     };

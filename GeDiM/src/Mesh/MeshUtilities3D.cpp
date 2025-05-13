@@ -349,6 +349,57 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
         }
     }
 
+    if (configuration.Cell3D_CheckEdgesAreActive)
+    {
+        for (unsigned int p = 0; p < mesh.Cell3DTotalNumber(); p++)
+        {
+            if (!mesh.Cell3DIsActive(p))
+                continue;
+
+            const unsigned int cell3DNumEdges = mesh.Cell3DNumberEdges(p);
+            for (unsigned int e = 0; e < cell3DNumEdges; e++)
+            {
+                if (!mesh.Cell1DIsActive(mesh.Cell3DEdge(p, e)))
+                {
+                    throw std::runtime_error("Cell3D " + std::to_string(p) + " has edge " + std::to_string(e) + " inactive");
+                }
+            }
+        }
+    }
+
+    if (configuration.Cell3D_CheckEdges)
+    {
+        for (unsigned int p = 0; p < mesh.Cell3DTotalNumber(); p++)
+        {
+            if (!mesh.Cell3DIsActive(p))
+                continue;
+
+            std::vector<unsigned int> cell3DEdges = mesh.Cell3DEdges(p);
+            sort(cell3DEdges.begin(), cell3DEdges.end());
+
+            const unsigned int cell3DNumFaces = mesh.Cell3DNumberFaces(p);
+            std::set<unsigned int> cell3DFaceEdges;
+            for (unsigned int f = 0; f < cell3DNumFaces; f++)
+            {
+                const unsigned int faceIndex = mesh.Cell3DFace(p, f);
+                for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(faceIndex); e++)
+                    cell3DFaceEdges.insert(mesh.Cell2DEdge(faceIndex, e));
+            }
+
+            std::vector<unsigned int> commonEdges;
+            std::set_intersection(cell3DEdges.begin(),
+                                  cell3DEdges.end(),
+                                  cell3DFaceEdges.begin(),
+                                  cell3DFaceEdges.end(),
+                                  std::back_inserter(commonEdges));
+
+            if (commonEdges.size() != cell3DEdges.size())
+            {
+                throw std::runtime_error("Cell3D " + std::to_string(p) + " has wrong edges");
+            }
+        }
+    }
+
     if (configuration.Cell3D_CheckConvexity)
     {
         for (unsigned int p = 0; p < mesh.Cell3DTotalNumber(); p++)
