@@ -393,7 +393,7 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                                   cell3DFaceEdges.end(),
                                   std::back_inserter(commonEdges));
 
-            if (commonEdges.size() != cell3DEdges.size())
+            if (commonEdges.size() != cell3DEdges.size() || commonEdges.size() != cell3DFaceEdges.size())
             {
                 throw std::runtime_error("Cell3D " + std::to_string(p) + " has wrong edges");
             }
