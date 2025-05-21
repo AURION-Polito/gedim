@@ -5,6 +5,8 @@ It provides a flexible framework for the common geometrical operations in 1D, 2D
 
 **`GeDiM`** is inspired by and built upon the foundational research of the Numerical Analysis Group in the Department of Mathematical Sciences "Giuseppe Luigi Lagrange" (DISMA) at the Politecnico di Torino.
 
+This file can be used by citing references in CITATION.cff file.
+
 ## How To Install
 
 Installation is based on [CMake](https://cmake.org/).
