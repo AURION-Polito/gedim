@@ -17,7 +17,7 @@ class PlatonicSolid final
     const GeometryUtilities &geometryUtilities;
     const MeshUtilities &meshUtilities;
 
-  public:
+public:
     PlatonicSolid(const GeometryUtilities &geometryUtilities, const MeshUtilities &meshUtilities)
         : geometryUtilities(geometryUtilities), meshUtilities(meshUtilities)
     {
@@ -30,61 +30,213 @@ class PlatonicSolid final
         polyhedron.Vertices.colwise().normalize();
     }
 
-    void project_to_unit_sphere(Gedim::MeshMatrices &mesh_data, Gedim::MeshMatricesDAO &mesh) const
+    void project_to_unit_sphere_geodesic(Gedim::MeshMatrices &mesh_data, Gedim::MeshMatricesDAO &mesh) const
     {
         for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
         {
             const auto num_neighboord = mesh.Cell0DNumberNeighbourCell2D(v);
 
-            // if (num_neighboord == 6)
-            // {
-            const auto coord = mesh.Cell0DCoordinates(v);
-            const auto normalized_coord = coord.normalized();
-            for (unsigned int d = 0; d < 3; d++)
-                mesh_data.Cell0DCoordinates[v * 3 + d] = normalized_coord(d);
-            // }
+            if (num_neighboord == 6)
+            {
+                const auto coord = mesh.Cell0DCoordinates(v);
+                const auto normalized_coord = coord.normalized();
+                for (unsigned int d = 0; d < 3; d++)
+                    mesh_data.Cell0DCoordinates[v * 3 + d] = normalized_coord(d);
+            }
         }
 
-        // for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
-        // {
-        //     const auto num_neighboord = mesh.Cell0DNumberNeighbourCell2D(v);
+        for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+        {
+            const auto num_neighboord = mesh.Cell0DNumberNeighbourCell2D(v);
 
-        //     if (num_neighboord != 6)
-        //     {
-        //         const auto neighboord_edges = mesh.Cell0DNeighbourCell1Ds(v);
-        //         Eigen::MatrixXd plane = Eigen::MatrixXd::Zero(3, 3);
-        //         for (unsigned int e = 0; e < 3; e++)
-        //         {
-        //             auto origin = mesh.Cell1DOrigin(neighboord_edges[e]);
-        //             if (origin == v)
-        //                 plane.col(e) = mesh.Cell1DEndCoordinates(neighboord_edges[e]);
-        //             else
-        //                 plane.col(e) = mesh.Cell1DOriginCoordinates(neighboord_edges[e]);
-        //         }
+            if (num_neighboord != 6)
+            {
+                const auto neighboord_edges = mesh.Cell0DNeighbourCell1Ds(v);
+                Eigen::MatrixXd plane = Eigen::MatrixXd::Zero(3, 3);
+                for (unsigned int e = 0; e < 3; e++)
+                {
+                    auto origin = mesh.Cell1DOrigin(neighboord_edges[e]);
+                    if (origin == v)
+                        plane.col(e) = mesh.Cell1DEndCoordinates(neighboord_edges[e]);
+                    else
+                        plane.col(e) = mesh.Cell1DOriginCoordinates(neighboord_edges[e]);
+                }
 
-        //         const Eigen::Vector3d normal_plane = geometryUtilities.PolygonNormal(plane);
-        //         const Eigen::Vector3d origin_plane = plane.col(0);
+                const Eigen::Vector3d normal_plane = geometryUtilities.PolygonNormal(plane);
+                const Eigen::Vector3d origin_plane = plane.col(0);
 
-        //         const Eigen::Vector3d point = mesh.Cell0DCoordinates(v);
-        //         const auto projected_point = point - ((point - origin_plane).transpose() * normal_plane) *
-        //         normal_plane;
+                const Eigen::Vector3d point = mesh.Cell0DCoordinates(v);
+                const auto projected_point = point - ((point - origin_plane).transpose() * normal_plane) * normal_plane;
 
-        //         for (unsigned int d = 0; d < 3; d++)
-        //             mesh_data.Cell0DCoordinates[v * 3 + d] = projected_point(d);
-        //     }
-        // }
+                for (unsigned int d = 0; d < 3; d++)
+                    mesh_data.Cell0DCoordinates[v * 3 + d] = projected_point(d);
+            }
+        }
+    }
+
+    void project_to_unit_sphere_goldberg(Gedim::MeshMatrices &mesh_data, Gedim::MeshMatricesDAO &mesh) const
+    {
+
+        std::list<unsigned int> special_vertices;
+
+        for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+        {
+            const auto neighboord = mesh.Cell0DNeighbourCell2Ds(v);
+            bool no_special = true;
+            for (unsigned int n = 0; n < neighboord.size(); n++)
+            {
+                if (mesh.Cell2DNumberVertices(neighboord[n]) != 6)
+                {
+                    special_vertices.push_back(v);
+                    no_special = false;
+                    break;
+                }
+            }
+
+            if (no_special)
+            {
+                const auto coord = mesh.Cell0DCoordinates(v);
+                const auto normalized_coord = coord.normalized();
+                for (unsigned int d = 0; d < 3; d++)
+                    mesh_data.Cell0DCoordinates[v * 3 + d] = normalized_coord(d);
+            }
+        }
+
+        for (unsigned int v : special_vertices)
+        {
+            const auto neighboord = mesh.Cell0DNeighbourCell2Ds(v);
+
+            for (unsigned int n : neighboord)
+            {
+                if (mesh.Cell2DNumberVertices(n) == 6)
+                {
+                    const auto face_vertices = mesh.Cell2DVertices(n);
+                    Eigen::MatrixXd plane = Eigen::MatrixXd::Zero(3, 3);
+                    unsigned int p = 0;
+                    for (unsigned int e = 0; e < face_vertices.size(); e++)
+                    {
+                        if (std::find(special_vertices.begin(), special_vertices.end(), face_vertices[e]) ==
+                            special_vertices.end())
+                        {
+                            plane.col(p++) = mesh.Cell0DCoordinates(face_vertices[e]);
+
+                            if (p == 3)
+                                break;
+                        }
+                    }
+
+                    const Eigen::Vector3d normal_plane = geometryUtilities.PolygonNormal(plane);
+                    const Eigen::Vector3d origin_plane = plane.col(0);
+
+                    const Eigen::Vector3d point = mesh.Cell0DCoordinates(v);
+                    const auto projected_point = point - ((point - origin_plane).transpose() * normal_plane) * normal_plane;
+
+                    for (unsigned int d = 0; d < 3; d++)
+                        mesh_data.Cell0DCoordinates[v * 3 + d] = projected_point(d);
+                }
+            }
+        }
     }
 
     GeometryUtilities::Polyhedron dual_polyhedron(const GeometryUtilities::Polyhedron &polyhedron) const;
 
-    GeometryUtilities::Polyhedron first_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
-                                                                  const unsigned int &frequency) const;
+    void first_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
+                                         const unsigned int &frequency,
+                                         MeshMatricesDAO &filter_mesh) const;
 
-    GeometryUtilities::Polyhedron goldberg_polyhedron(const GeometryUtilities::Polyhedron &geodesic_polyhedron) const
+    void second_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
+                                          const unsigned int &frequency,
+                                          Gedim::MeshMatricesDAO &filter_mesh) const;
+
+    GeometryUtilities::Polyhedron goldberg_polyhedron(const unsigned int &p,
+                                                      const unsigned int &q,
+                                                      const unsigned int &b,
+                                                      const unsigned int &c) const
     {
 
-        GeometryUtilities::Polyhedron polyhedron = dual_polyhedron(geodesic_polyhedron);
-        // project_to_unit_sphere(polyhedron);
+        Gedim::Output::Assert(p >= 3 && q == 3);
+
+        Gedim::GeometryUtilities::Polyhedron solid;
+
+        switch (p)
+        {
+        case 3:
+            solid = tetrahedron();
+            break;
+        case 4:
+            solid = octahedron();
+            break;
+        case 5:
+            solid = icosahedron();
+            break;
+        default:
+            throw std::runtime_error("not valid q");
+        }
+
+        GeometryUtilities::Polyhedron polyhedron = geodesic_polyhedron(q, p, b, c);
+
+        auto dual = dual_polyhedron(polyhedron);
+        project_to_unit_sphere(dual);
+
+        return dual;
+    }
+
+    GeometryUtilities::Polyhedron geodesic_polyhedron(const unsigned int &p,
+                                                      const unsigned int &q,
+                                                      const unsigned int &b,
+                                                      const unsigned int &c) const
+    {
+        Gedim::Output::Assert(p == 3 && q >= 3);
+
+        Gedim::GeometryUtilities::Polyhedron solid;
+
+        switch (q)
+        {
+        case 3:
+            solid = tetrahedron();
+            break;
+        case 4:
+            solid = octahedron();
+            break;
+        case 5:
+            solid = icosahedron();
+            break;
+        default:
+            throw std::runtime_error("not valid q");
+        }
+
+        GeometryUtilities::Polyhedron polyhedron;
+        if ((b == 0 && c > 0) || (b > 0 && c == 0))
+        {
+            unsigned int frequency = c == 0 ? b : c;
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            first_class_geodesic_polyhedron(solid, frequency, mesh);
+
+            polyhedron.Vertices = mesh.Cell0DsCoordinates();
+            polyhedron.Edges = mesh.Cell1DsExtremes();
+            polyhedron.Faces = mesh.Cell2DsExtremes();
+
+            project_to_unit_sphere(polyhedron);
+
+        }
+        else if(b == c)
+        {
+            unsigned int frequency = c == 0 ? b : c;
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            second_class_geodesic_polyhedron(solid, frequency, mesh);
+
+            polyhedron.Vertices = mesh.Cell0DsCoordinates();
+            polyhedron.Edges = mesh.Cell1DsExtremes();
+            polyhedron.Faces = mesh.Cell2DsExtremes();
+
+            project_to_unit_sphere(polyhedron);
+        }
+        else
+            throw std::runtime_error("not valid configuration");
 
         return polyhedron;
     }
@@ -327,6 +479,7 @@ class PlatonicSolid final
         project_to_unit_sphere(dual);
         return dual;
     }
+
 };
 
 } // namespace Gedim
