@@ -17,7 +17,7 @@ class PlatonicSolid final
     const GeometryUtilities &geometryUtilities;
     const MeshUtilities &meshUtilities;
 
-public:
+  public:
     PlatonicSolid(const GeometryUtilities &geometryUtilities, const MeshUtilities &meshUtilities)
         : geometryUtilities(geometryUtilities), meshUtilities(meshUtilities)
     {
@@ -219,9 +219,8 @@ public:
             polyhedron.Faces = mesh.Cell2DsExtremes();
 
             project_to_unit_sphere(polyhedron);
-
         }
-        else if(b == c)
+        else if (b == c)
         {
             unsigned int frequency = c == 0 ? b : c;
             Gedim::MeshMatrices mesh_data;
@@ -479,7 +478,6 @@ public:
         project_to_unit_sphere(dual);
         return dual;
     }
-
 };
 
 } // namespace Gedim

@@ -289,8 +289,6 @@ TEST(TestPlatonicSolid, TestDodecahedron)
     }
 }
 
-
-
 TEST(TestPlatonicSolid, TestTriangulateI)
 {
     std::string exportFolder = "./Export/TestPlatonicSolid/TestTriangulateI";
@@ -485,7 +483,7 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
     const Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::MeshUtilities meshUtilities;
-            const Gedim::PlatonicSolid platonicSolid(geometryUtilities, meshUtilities);
+    const Gedim::PlatonicSolid platonicSolid(geometryUtilities, meshUtilities);
     for (unsigned int i = 1; i < 4; i++)
     {
 
