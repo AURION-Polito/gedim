@@ -461,373 +461,177 @@ void PlatonicSolid::first_class_geodesic_polyhedron(const GeometryUtilities::Pol
     const auto filter_active_mesh = meshUtilities.FilterActiveMesh(mesh);
     const auto extract_mesh_data =
         meshUtilities.ExtractMesh2D(filter_active_mesh.Cell0Ds, filter_active_mesh.Cell1Ds, filter_active_mesh.Cell2Ds, mesh, filter_mesh);
+
+    filter_mesh.InitializeDimension(3);
 }
 
 void PlatonicSolid::second_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
                                                      const unsigned int &frequency,
-                                                     Gedim::MeshMatricesDAO &filter_mesh) const
+                                                     Gedim::MeshMatricesDAO &mesh) const
 {
 
     Output::Assert(frequency >= 1);
 
-    std::vector<unsigned int> vertexMarkers(starting_polyhedron.Vertices.cols());
-    std::vector<unsigned int> edgeMarkers(starting_polyhedron.Edges.cols());
-    std::vector<unsigned int> faceMarkers(starting_polyhedron.Faces.size());
+    Gedim::MeshMatrices mesh_first_class_data;
+    Gedim::MeshMatricesDAO mesh_first_class(mesh_first_class_data);
+    first_class_geodesic_polyhedron(starting_polyhedron, frequency, mesh_first_class);
 
-    std::iota(vertexMarkers.begin(), vertexMarkers.end(), 1);
-    std::iota(edgeMarkers.begin(), edgeMarkers.end(), starting_polyhedron.Vertices.cols() + 1);
-    std::iota(faceMarkers.begin(), faceMarkers.end(), starting_polyhedron.Vertices.cols() + starting_polyhedron.Edges.cols() + 1);
+    meshUtilities.ComputeCell1DCell2DNeighbours(mesh_first_class);
 
-    Gedim::MeshMatrices mesh_data;
-    Gedim::MeshMatricesDAO mesh(mesh_data);
-    meshUtilities.Mesh3DFromPolyhedron(starting_polyhedron.Vertices,
-                                       starting_polyhedron.Edges,
-                                       starting_polyhedron.Faces,
-                                       vertexMarkers,
-                                       edgeMarkers,
-                                       faceMarkers,
-                                       mesh);
+    const unsigned int num_faces = mesh_first_class.Cell2DTotalNumber();
+    const unsigned int num_edges = mesh_first_class.Cell1DTotalNumber();
+    const unsigned int num_vertices = mesh_first_class.Cell0DTotalNumber();
+    const unsigned int lower_bound = starting_polyhedron.Vertices.cols() + 1;
+    const unsigned int upper_bound = starting_polyhedron.Vertices.cols() + starting_polyhedron.Edges.cols();
 
-    meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
-
-    const Eigen::VectorXd abscissa = Eigen::VectorXd::LinSpaced(2 * frequency + 1, 0.0, 1.0);
-    const unsigned int numCell1Ds = mesh.Cell1DTotalNumber();
-    const unsigned int numCell2Ds = mesh.Cell2DTotalNumber();
-    const unsigned int vertex_per_edge = (2 * frequency - 1);
-    const unsigned int edge_id_vertices = mesh.Cell0DAppend(vertex_per_edge * numCell1Ds);
-    unsigned int id_vertices = edge_id_vertices;
-    // Divido lati esistenti
-    for (unsigned int e = 0; e < numCell1Ds; e++)
+    mesh.InitializeDimension(3);
+    mesh.Cell0DAppend(mesh_first_class.Cell0DTotalNumber());
+    mesh.Cell0DsInsertCoordinates(mesh_first_class.Cell0DsCoordinates());
+    for (unsigned int v = 0; v < num_vertices; v++)
     {
-        const Eigen::Vector3d origin = mesh.Cell1DOriginCoordinates(e);
-        const Eigen::Vector3d end = mesh.Cell1DEndCoordinates(e);
-        const Eigen::Vector3d tangent = end - origin;
+        mesh.Cell0DSetState(v, true);
+        mesh.Cell0DSetMarker(v, mesh_first_class.Cell0DMarker(v));
+    }
 
-        unsigned int origin_id = mesh.Cell1DOrigin(e);
-        Eigen::MatrixXi new_edges(2, 2 * frequency);
-        for (unsigned p = 1; p < 2 * frequency; p++)
+    unsigned int id_vertices = mesh.Cell0DAppend(starting_polyhedron.Edges.cols() * frequency + num_faces);
+    unsigned int id_edges = mesh.Cell1DAppend(starting_polyhedron.Edges.cols() * 2 * frequency +
+                                              starting_polyhedron.Faces.size() * 1.5 * (3 * frequency * frequency + frequency));
+    unsigned int id_faces = mesh.Cell2DAppend(starting_polyhedron.Faces.size() * 3.0 * (frequency * frequency + frequency));
+
+    const unsigned int offset_centroid = id_vertices;
+    for (unsigned int f = 0; f < num_faces; f++)
+    {
+        mesh.Cell0DInsertCoordinates(id_vertices,
+                                     geometryUtilities.PolygonBarycenter(mesh_first_class.Cell2DVerticesCoordinates(f)));
+        mesh.Cell0DSetMarker(id_vertices, mesh_first_class.Cell2DMarker(f));
+        mesh.Cell0DSetState(id_vertices, true);
+        id_vertices++;
+
+        for (unsigned int i = 0; i < 3; i++)
         {
-            mesh.Cell0DInsertCoordinates(id_vertices, origin + abscissa(p) * tangent);
-            mesh.Cell0DSetMarker(id_vertices, mesh.Cell1DMarker(e));
+            mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, mesh_first_class.Cell2DVertex(f, i));
+            mesh.Cell1DSetMarker(id_edges, mesh_first_class.Cell2DMarker(f));
+            mesh.Cell1DSetState(id_edges, true);
+            id_edges++;
+        }
+    }
+
+    for (unsigned int e = 0; e < num_edges; e++)
+    {
+        const unsigned int marker = mesh_first_class.Cell1DMarker(e);
+        if (marker >= lower_bound && marker <= upper_bound)
+        {
+            const Eigen::Vector3d origin = mesh_first_class.Cell1DOriginCoordinates(e);
+            const Eigen::Vector3d tangent = mesh_first_class.Cell1DEndCoordinates(e) - origin;
+
+            mesh.Cell0DInsertCoordinates(id_vertices, origin + 0.5 * tangent);
+            mesh.Cell0DSetMarker(id_vertices, mesh_first_class.Cell1DMarker(e));
             mesh.Cell0DSetState(id_vertices, true);
-
-            new_edges.col(p - 1) << origin_id, id_vertices;
-            origin_id = id_vertices;
-
             id_vertices++;
-        }
 
-        new_edges.col(2 * frequency - 1) << id_vertices - 1, mesh.Cell1DEnd(e);
+            mesh.Cell1DInsertExtremes(id_edges, mesh_first_class.Cell1DOrigin(e), id_vertices - 1);
+            mesh.Cell1DSetMarker(id_edges, mesh_first_class.Cell1DMarker(e));
+            mesh.Cell1DSetState(id_edges, true);
+            id_edges++;
 
-        meshUtilities.SplitCell1D(e, new_edges, mesh);
-    }
+            mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, mesh_first_class.Cell1DEnd(e));
+            mesh.Cell1DSetMarker(id_edges, mesh_first_class.Cell1DMarker(e));
+            mesh.Cell1DSetState(id_edges, true);
+            id_edges++;
 
-    for (unsigned int f = 0; f < numCell2Ds; f++)
-    {
-        assert(mesh.Cell2DNumberVertices(f) == 3);
+            const auto neighbourhood = mesh_first_class.Cell1DNeighbourCell2Ds(e);
 
-        std::vector<unsigned int> ordered_points;
+            if (neighbourhood.size() != 2)
+                throw std::runtime_error("not valid edge");
 
-        for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(f); e++)
-        {
-            const unsigned int first_edge = mesh.Cell2DEdge(f, e);
-            const unsigned int first_vertex = mesh.Cell2DVertex(f, e);
-
-            ordered_points.push_back(first_vertex);
-
-            if (mesh.Cell1DOrigin(first_edge) == first_vertex)
+            for (unsigned int n = 0; n < 2; n++)
             {
-                for (unsigned int i = 0; i < vertex_per_edge; i++)
-                {
-                    ordered_points.push_back(first_edge * vertex_per_edge + i + edge_id_vertices);
-                }
-            }
-            else
-            {
-                for (int i = vertex_per_edge - 1; i >= 0; i--)
-                {
-                    ordered_points.push_back(first_edge * vertex_per_edge + i + edge_id_vertices);
-                }
-            }
-        }
-
-        std::vector<Eigen::MatrixXi> subCells;
-
-        unsigned int ff = frequency;
-        unsigned int id_v = ceil(vertex_per_edge / 2.0) + vertex_per_edge + 1;
-        const unsigned int internal_id_vertices = id_vertices;
-        for (unsigned int i = 0; i < vertex_per_edge + 1; i += 2)
-        {
-            double s = 2.0;
-            double den = ff * 3;
-            unsigned int id_origin = ordered_points[i];
-            unsigned int num_points = floor(den / 3) + ceil(ff / 2.0) - 1;
-            id_vertices = mesh.Cell0DAppend(num_points);
-            unsigned int id_edges = mesh.Cell1DAppend(3 * num_points + 1 + (ff % 2 == 1) + (i == 0) * 3);
-
-            Eigen::VectorXd origin = mesh.Cell0DCoordinates(id_origin);
-            Eigen::VectorXd tangent = mesh.Cell0DCoordinates(ordered_points[id_v--]) - origin;
-            for (unsigned int v = 0; v < num_points; v++)
-            {
-                Eigen::VectorXd coord = origin + s / den * tangent;
-
-                mesh.Cell0DInsertCoordinates(id_vertices, coord);
-                mesh.Cell0DSetMarker(id_vertices, mesh.Cell2DMarker(f));
-                mesh.Cell0DSetState(id_vertices, true);
-                id_vertices++;
-
-                mesh.Cell1DInsertExtremes(id_edges, id_origin, id_vertices - 1);
-                mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
+                mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, offset_centroid + neighbourhood[n]);
+                mesh.Cell1DSetMarker(id_edges, mesh_first_class.Cell1DMarker(e));
                 mesh.Cell1DSetState(id_edges, true);
                 id_edges++;
 
-                if (i == 0 && v == 0)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[(vertex_per_edge + 1) * 3 - 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
+                const unsigned int id_local_edge_origin =
+                    mesh_first_class.Cell2DFindVertex(neighbourhood[n], mesh_first_class.Cell1DOrigin(e));
+                const unsigned int id_local_edge_end =
+                    mesh_first_class.Cell2DFindVertex(neighbourhood[n], mesh_first_class.Cell1DEnd(e));
 
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[(vertex_per_edge + 1) * 3 - 1]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else if (i == 0 && v == 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[(vertex_per_edge + 1) * 3 - 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
+                std::vector<unsigned int> face_vertices_1 = {mesh_first_class.Cell1DOrigin(e),
+                                                             id_vertices - 1,
+                                                             offset_centroid + neighbourhood[n]};
+                std::vector<unsigned int> face_edges_1 = {id_edges - 3 - n, id_edges - 1, 3 * neighbourhood[n] + id_local_edge_origin};
+                mesh.Cell2DInitializeVertices(id_faces, 3);
+                mesh.Cell2DInitializeEdges(id_faces, 3);
+                mesh.Cell2DInsertVertices(id_faces, face_vertices_1);
+                mesh.Cell2DInsertEdges(id_faces, face_edges_1);
+                mesh.Cell2DSetState(id_faces, true);
+                mesh.Cell2DSetMarker(id_faces, mesh_first_class.Cell2DMarker(neighbourhood[n]));
+                id_faces++;
 
-                if (v == 0)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + 1]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else if (v == 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else if (v < num_points - 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 3 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 3 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    if (ff % 2 == 0)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                    else
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[id_v]);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                }
-
-                id_origin = id_vertices - 1;
-
-                if (v == num_points - 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_origin, ordered_points[id_v + 1]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    if (ff % 2 == 1)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[id_v + 2]);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                }
-
-                s += 2.0;
+                std::vector<unsigned int> face_vertices_2 = {mesh_first_class.Cell1DEnd(e),
+                                                             id_vertices - 1,
+                                                             offset_centroid + neighbourhood[n]};
+                std::vector<unsigned int> face_edges_2 = {id_edges - 2 - n, id_edges - 1, 3 * neighbourhood[n] + id_local_edge_end};
+                mesh.Cell2DInitializeVertices(id_faces, 3);
+                mesh.Cell2DInitializeEdges(id_faces, 3);
+                mesh.Cell2DInsertVertices(id_faces, face_vertices_2);
+                mesh.Cell2DInsertEdges(id_faces, face_edges_2);
+                mesh.Cell2DSetState(id_faces, true);
+                mesh.Cell2DSetMarker(id_faces, mesh_first_class.Cell2DMarker(neighbourhood[n]));
+                id_faces++;
             }
-
-            ff -= 1.0;
         }
-
-        ff = (frequency - 1);
-        id_v = ceil(vertex_per_edge / 2.0) + vertex_per_edge + 2;
-        bool flag_first = true;
-        for (int i = vertex_per_edge - 1; i > 0; i -= 2)
+        else
         {
-            double s = 2.0;
-            double den = ff * 3;
-            unsigned int id_origin = ordered_points[i + (vertex_per_edge + 1) * 2];
-            unsigned int num_points = floor(den / 3) + ceil(ff / 2.0) - 1;
-            id_vertices = mesh.Cell0DAppend(num_points);
-            unsigned int id_edges = mesh.Cell1DAppend(3 * num_points + 1 + (ff % 2 == 1) + (ff % 2 == 0) + flag_first * num_points +
-                                                      flag_first * num_points + flag_first * (num_points - 1));
+            const auto neighbourhood = mesh_first_class.Cell1DNeighbourCell2Ds(e);
 
-            Eigen::VectorXd origin = mesh.Cell0DCoordinates(id_origin);
-            Eigen::VectorXd tangent = mesh.Cell0DCoordinates(ordered_points[id_v++]) - origin;
-            for (unsigned int v = 0; v < num_points; v++)
-            {
-                Eigen::VectorXd coord = origin + s / den * tangent;
+            if (neighbourhood.size() != 2)
+                throw std::runtime_error("not valid edge");
 
-                mesh.Cell0DInsertCoordinates(id_vertices, coord);
-                mesh.Cell0DSetMarker(id_vertices, mesh.Cell2DMarker(f));
-                mesh.Cell0DSetState(id_vertices, true);
-                id_vertices++;
+            mesh.Cell1DInsertExtremes(id_edges, offset_centroid + neighbourhood[0], offset_centroid + neighbourhood[1]);
+            mesh.Cell1DSetMarker(id_edges, mesh_first_class.Cell2DMarker(neighbourhood[0]));
+            mesh.Cell1DSetState(id_edges, true);
+            id_edges++;
 
-                mesh.Cell1DInsertExtremes(id_edges, id_origin, id_vertices - 1);
-                mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                mesh.Cell1DSetState(id_edges, true);
-                id_edges++;
+            const unsigned int id_local_origin_n0 =
+                mesh_first_class.Cell2DFindVertex(neighbourhood[0], mesh_first_class.Cell1DOrigin(e));
+            const unsigned int id_local_origin_n1 =
+                mesh_first_class.Cell2DFindVertex(neighbourhood[1], mesh_first_class.Cell1DOrigin(e));
 
-                if (flag_first)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, internal_id_vertices + v + 1);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
+            const unsigned int id_local_end_n0 =
+                mesh_first_class.Cell2DFindVertex(neighbourhood[0], mesh_first_class.Cell1DEnd(e));
+            const unsigned int id_local_end_n1 =
+                mesh_first_class.Cell2DFindVertex(neighbourhood[1], mesh_first_class.Cell1DEnd(e));
 
-                    if (v < num_points - 1)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, internal_id_vertices + v + 2);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
+            std::vector<unsigned int> face_vertices_1 = {offset_centroid + neighbourhood[0],
+                                                         offset_centroid + neighbourhood[1],
+                                                         mesh_first_class.Cell1DOrigin(e)};
+            std::vector<unsigned int> face_edges_1 = {id_edges - 1,
+                                                      3 * neighbourhood[1] + id_local_origin_n1,
+                                                      3 * neighbourhood[0] + id_local_origin_n0};
+            mesh.Cell2DInitializeVertices(id_faces, 3);
+            mesh.Cell2DInitializeEdges(id_faces, 3);
+            mesh.Cell2DInsertVertices(id_faces, face_vertices_1);
+            mesh.Cell2DInsertEdges(id_faces, face_edges_1);
+            mesh.Cell2DSetState(id_faces, true);
+            mesh.Cell2DSetMarker(id_faces, mesh_first_class.Cell2DMarker(neighbourhood[0]));
+            id_faces++;
 
-                    if (ff % 2 == 0 && v == num_points - 1)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, internal_id_vertices + v + 2);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                }
-
-                if (v == 0)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + (vertex_per_edge + 1) * 2 - 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + (vertex_per_edge + 1) * 2 - 1]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else if (v == 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[i + (vertex_per_edge + 1) * 2 - 2]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else if (v < num_points - 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 3 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-                }
-                else
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 3 + num_points);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    if (ff % 2 == 0)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, id_vertices - 2 + num_points);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                    else
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[id_v]);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                }
-
-                id_origin = id_vertices - 1;
-
-                if (v == num_points - 1)
-                {
-                    mesh.Cell1DInsertExtremes(id_edges, id_origin, ordered_points[id_v - 1]);
-                    mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                    mesh.Cell1DSetState(id_edges, true);
-                    id_edges++;
-
-                    if (ff % 2 == 1)
-                    {
-                        mesh.Cell1DInsertExtremes(id_edges, id_vertices - 1, ordered_points[id_v - 2]);
-                        mesh.Cell1DSetMarker(id_edges, mesh.Cell2DMarker(f));
-                        mesh.Cell1DSetState(id_edges, true);
-                        id_edges++;
-                    }
-                }
-
-                s += 2.0;
-            }
-
-            flag_first = false;
-
-            ff -= 1.0;
+            std::vector<unsigned int> face_vertices_2 = {offset_centroid + neighbourhood[0],
+                                                         offset_centroid + neighbourhood[1],
+                                                         mesh_first_class.Cell1DEnd(e)};
+            std::vector<unsigned int> face_edges_2 = {id_edges - 1,
+                                                      3 * neighbourhood[1] + id_local_end_n1,
+                                                      3 * neighbourhood[0] + id_local_end_n0};
+            mesh.Cell2DInitializeVertices(id_faces, 3);
+            mesh.Cell2DInitializeEdges(id_faces, 3);
+            mesh.Cell2DInsertVertices(id_faces, face_vertices_2);
+            mesh.Cell2DInsertEdges(id_faces, face_edges_2);
+            mesh.Cell2DSetState(id_faces, true);
+            mesh.Cell2DSetMarker(id_faces, mesh_first_class.Cell2DMarker(neighbourhood[0]));
+            id_faces++;
         }
-
-        meshUtilities.SplitCell2D(f, subCells, mesh);
     }
-
-    const auto filter_active_mesh = meshUtilities.FilterActiveMesh(mesh);
-    const auto extract_mesh_data =
-        meshUtilities.ExtractMesh2D(filter_active_mesh.Cell0Ds, filter_active_mesh.Cell1Ds, filter_active_mesh.Cell2Ds, mesh, filter_mesh);
 }
 
 } // namespace Gedim

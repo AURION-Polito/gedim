@@ -312,20 +312,85 @@ TEST(TestPlatonicSolid, TestTriangulateI)
     const Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
     const Gedim::MeshUtilities meshUtilities;
-
     const Gedim::PlatonicSolid platonicSolid(geometryUtilities, meshUtilities);
-    const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
-
-    for (unsigned int i = 1; i < 6; i++)
     {
-        Gedim::MeshMatrices mesh_data;
-        Gedim::MeshMatricesDAO mesh(mesh_data);
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.tetrahedron();
 
-        platonicSolid.first_class_geodesic_polyhedron(polyhedron, i, mesh);
-
-        // Export to VTK
+        for (unsigned int i = 1; i < 10; i++)
         {
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Triangle_" + to_string(i));
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.first_class_geodesic_polyhedron(polyhedron, i, mesh);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
+        }
+    }
+
+    {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
+
+        for (unsigned int i = 1; i < 10; i++)
+        {
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.first_class_geodesic_polyhedron(polyhedron, i, mesh);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
+        }
+    }
+
+    {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
+
+        for (unsigned int i = 1; i < 10; i++)
+        {
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.first_class_geodesic_polyhedron(polyhedron, i, mesh);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
         }
     }
 }
@@ -344,18 +409,124 @@ TEST(TestPlatonicSolid, TestTriangulateII)
     const Gedim::MeshUtilities meshUtilities;
 
     const Gedim::PlatonicSolid platonicSolid(geometryUtilities, meshUtilities);
-    Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
 
-    for (unsigned int i = 1; i < 4; i++)
     {
-        Gedim::MeshMatrices mesh_data;
-        Gedim::MeshMatricesDAO mesh(mesh_data);
+        Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.tetrahedron();
 
-        platonicSolid.second_class_geodesic_polyhedron(polyhedron, i, mesh);
-
-        // Export to VTK
+        for (unsigned int i = 1; i < 6; i++)
         {
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Triangle_" + to_string(i));
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.second_class_geodesic_polyhedron(polyhedron, i, mesh);
+            auto a = mesh.Cell1DsExtremes();
+
+            const unsigned int num_vertices = polyhedron.Vertices.cols() + polyhedron.Edges.cols() * (2 * i - 1) +
+                                              polyhedron.Faces.size() * ((i * i - i) * 1.5 + 1);
+            ASSERT_TRUE(num_vertices == mesh.Cell0DTotalNumber());
+
+            const unsigned int num_edges = polyhedron.Edges.cols() * 2 * i + 3 * polyhedron.Faces.size() * ((3 * i * i + i) * 0.5);
+            ASSERT_TRUE(num_edges == mesh.Cell1DTotalNumber());
+
+            const unsigned int num_faces = polyhedron.Faces.size() * 3 * (i * i + i);
+            ASSERT_TRUE(num_faces == mesh.Cell2DTotalNumber());
+
+            ASSERT_TRUE(num_faces + num_vertices == num_edges + 2);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
+        }
+    }
+
+    {
+        Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
+
+        for (unsigned int i = 1; i < 6; i++)
+        {
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.second_class_geodesic_polyhedron(polyhedron, i, mesh);
+            auto a = mesh.Cell1DsExtremes();
+
+            const unsigned int num_vertices = polyhedron.Vertices.cols() + polyhedron.Edges.cols() * (2 * i - 1) +
+                                              polyhedron.Faces.size() * ((i * i - i) * 1.5 + 1);
+            ASSERT_TRUE(num_vertices == mesh.Cell0DTotalNumber());
+
+            const unsigned int num_edges = polyhedron.Edges.cols() * 2 * i + 3 * polyhedron.Faces.size() * ((3 * i * i + i) * 0.5);
+            ASSERT_TRUE(num_edges == mesh.Cell1DTotalNumber());
+
+            const unsigned int num_faces = polyhedron.Faces.size() * 3 * (i * i + i);
+            ASSERT_TRUE(num_faces == mesh.Cell2DTotalNumber());
+
+            ASSERT_TRUE(num_faces + num_vertices == num_edges + 2);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
+        }
+    }
+
+    {
+        Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
+
+        for (unsigned int i = 1; i < 6; i++)
+        {
+            Gedim::MeshMatrices mesh_data;
+            Gedim::MeshMatricesDAO mesh(mesh_data);
+
+            platonicSolid.second_class_geodesic_polyhedron(polyhedron, i, mesh);
+            auto a = mesh.Cell1DsExtremes();
+
+            const unsigned int num_vertices = polyhedron.Vertices.cols() + polyhedron.Edges.cols() * (2 * i - 1) +
+                                              polyhedron.Faces.size() * ((i * i - i) * 1.5 + 1);
+            ASSERT_TRUE(num_vertices == mesh.Cell0DTotalNumber());
+
+            const unsigned int num_edges = polyhedron.Edges.cols() * 2 * i + 3 * polyhedron.Faces.size() * ((3 * i * i + i) * 0.5);
+            ASSERT_TRUE(num_edges == mesh.Cell1DTotalNumber());
+
+            const unsigned int num_faces = polyhedron.Faces.size() * 3 * (i * i + i);
+            ASSERT_TRUE(num_faces == mesh.Cell2DTotalNumber());
+
+            ASSERT_TRUE(num_faces + num_vertices == num_edges + 2);
+
+            // Export to VTK
+            {
+                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
+            }
+
+            meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
+            meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
+
+            Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+            meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
+            const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
+                meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
+            const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
+            meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
         }
     }
 }
@@ -398,15 +569,6 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             vtpUtilities.Export(exportFolder + "/Geodesic_Tetrahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
         }
-
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = true;
-        // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
     }
 
     for (unsigned int i = 1; i < 4; i++)
@@ -434,15 +596,6 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             vtpUtilities.Export(exportFolder + "/Geodesic_Octahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
         }
-
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = true;
-        // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
     }
 
     for (unsigned int i = 1; i < 4; i++)
@@ -470,15 +623,6 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             vtpUtilities.Export(exportFolder + "/Geodesic_Icosahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
         }
-
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = true;
-        // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
     }
 }
 
@@ -521,16 +665,6 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             vtpUtilities.Export(exportFolder + "/Goldberg_Tetrahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
         }
-
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = false;
-        // // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
-
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
     }
 
     for (unsigned int i = 1; i < 4; i++)
@@ -558,16 +692,6 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             vtpUtilities.Export(exportFolder + "/Goldberg_Octahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
         }
-
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = false;
-        // // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
-
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
     }
 
     for (unsigned int i = 1; i < 4; i++)
@@ -595,16 +719,6 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             vtpUtilities.Export(exportFolder + "/Goldberg_Icosahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
             meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
         }
-
-        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        // config.Cell3D_CheckConvexity = false;
-        // // meshUtilities.CheckMesh3D(config, geometryUtilities, mesh);
-
-        // meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
-        // const Gedim::MeshUtilities::MeshGeometricData3D geometricData =
-        //     meshUtilities.FillMesh3DGeometricData(geometryUtilities, mesh);
-        // const Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration configuration;
-        // // meshUtilities.CheckMeshGeometricData3D(configuration, geometryUtilities, mesh, geometricData);
     }
 }
 
