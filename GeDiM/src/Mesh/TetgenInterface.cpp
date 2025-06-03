@@ -76,6 +76,35 @@ void TetgenInterface::CreateMesh(const Eigen::MatrixXd &polyhedronVertices,
 #endif
 }
 // ***************************************************************************
+void TetgenInterface::CreateMesh(const Eigen::MatrixXd& points,
+                                 const std::vector<std::vector<unsigned int> >& facets,
+                                 const double& maxTetrahedronVolume,
+                                 IMeshDAO& mesh,
+                                 const std::string& tetgenOptions) const
+{
+  Gedim::Utilities::Unused(points);
+  Gedim::Utilities::Unused(facets);
+  Gedim::Utilities::Unused(maxTetrahedronVolume);
+  Gedim::Utilities::Unused(mesh);
+  Gedim::Utilities::Unused(tetgenOptions);
+
+#if ENABLE_TETGEN == 1
+  tetgenio *tetgenInput = new tetgenio();
+  tetgenio *tetgenOutput = new tetgenio();
+
+  CreateTetgenInput(points,
+                    facets,
+                    *tetgenInput);
+  CreateTetgenOutput(maxTetrahedronVolume, *tetgenInput, *tetgenOutput, tetgenOptions);
+
+  ConvertTetgenOutputToMeshDAO(*tetgenOutput, mesh);
+
+  DeleteTetgenStructure(*tetgenInput, *tetgenOutput);
+  delete tetgenInput;
+  delete tetgenOutput;
+#endif
+}
+// ***************************************************************************
 #if ENABLE_TETGEN == 1
 void TetgenInterface::DeleteTetgenStructure(tetgenio &tetgenInput, tetgenio &) const
 {
@@ -235,6 +264,69 @@ void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd &polyhedronVertice
                 numberOfVertices + numberOfConstrainedPoints + numberOfEdges + numberOfFaces + numFac + 1;
         }
     }
+}
+// ***************************************************************************
+void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd& points,
+                                        const std::vector<std::vector<unsigned int> >& facets,
+                                        tetgenio& tetgenInput) const
+{
+  const unsigned int num_points = points.cols();
+
+  Output::Assert(num_points > 0);
+
+  tetgenInput.firstnumber = 0;
+  tetgenInput.numberofpoints = num_points;
+  tetgenInput.pointlist = new REAL[num_points * 3];
+  tetgenInput.pointmarkerlist = new int[num_points];
+
+  const unsigned int num_facets = facets.size();
+
+  tetgenInput.numberoffacets = num_facets;
+  tetgenInput.facetlist = new tetgenio::facet[num_facets];
+  tetgenInput.facetmarkerlist = new int[num_facets];
+
+  double *point_list = tetgenInput.pointlist;
+  int *point_markerlist = tetgenInput.pointmarkerlist;
+
+  tetgenio::facet *face_list = tetgenInput.facetlist;
+  int *face_markerlist = tetgenInput.facetmarkerlist;
+
+  for (unsigned int v = 0; v < num_points; v++)
+  {
+      const Eigen::Vector3d &point = points.col(v);
+      point_list[3 * v] = point(0);
+      point_list[3 * v + 1] = point(1);
+      point_list[3 * v + 2] = point(2);
+
+      point_markerlist[v] = v + 1;
+  }
+
+  for (unsigned int f = 0; f < num_facets; f++)
+  {
+      tetgenio::facet *tetgenFace = &face_list[f];
+
+      tetgenFace->numberofpolygons = 1;
+      tetgenFace->polygonlist = new tetgenio::polygon[1];
+      tetgenFace->numberofholes = 0;
+      tetgenFace->holelist = NULL;
+
+      tetgenio::polygon *tetgenPolygon = &tetgenFace->polygonlist[0];
+
+      const auto &face = facets[f];
+      const size_t numberFacePoints = face.size();
+      tetgenPolygon->numberofvertices = numberFacePoints;
+      tetgenPolygon->vertexlist = new int[tetgenPolygon->numberofvertices];
+
+      for (unsigned int v = 0; v < numberFacePoints; v++)
+      {
+          const unsigned int &vId = face[v];
+          Output::Assert(vId < num_points);
+
+          tetgenPolygon->vertexlist[v] = vId;
+      }
+
+      face_markerlist[f] = num_points + f + 1;
+  }
 }
 // ***************************************************************************
 void TetgenInterface::CreateDelaunayInput(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, tetgenio &tetgenInput) const

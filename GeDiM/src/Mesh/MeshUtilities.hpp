@@ -682,6 +682,11 @@ class MeshUtilities final
                                const double &maxTetrahedronVolume,
                                IMeshDAO &mesh,
                                const std::string &options = "Qpqfezna") const;
+    void CreateTetrahedralMesh(const Eigen::MatrixXd &points,
+                               const std::vector<std::vector<unsigned int>> &facets,
+                               const double &maxTetrahedronVolume,
+                               IMeshDAO &mesh,
+                               const std::string &options = "Qpqfezna") const;
 
     void CreateDelaunayMesh3D(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, IMeshDAO &mesh) const;
 

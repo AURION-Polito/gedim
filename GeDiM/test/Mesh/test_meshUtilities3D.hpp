@@ -170,6 +170,55 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
     EXPECT_EQ(51, meshDao.Cell3DTotalNumber());
 }
 
+TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
+{
+#if ENABLE_TETGEN == 0
+    GTEST_SKIP();
+#endif
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::GeometryUtilities::Polyhedron polyhedron =
+        geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+
+    Eigen::MatrixXd points(3, 8);
+    for (unsigned int v = 0; v < 8; ++v)
+    {
+      points.col(v) = polyhedron.Vertices.col(v);
+    }
+
+    std::vector<std::vector<unsigned int>> facets(6, std::vector<unsigned int>(4));
+    for (unsigned int f = 0; f < 6; ++f)
+    {
+      for (unsigned int f_v = 0; f_v < 4; ++f_v)
+      {
+        facets[f][f_v] = polyhedron.Faces[f](0, v);
+      }
+    }
+
+    meshUtilities.CreateTetrahedralMesh(points,
+                                        facets,
+                                        0.03,
+                                        meshDao,
+                                        "Qpqfezna");
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+
+    EXPECT_EQ(3, meshDao.Dimension());
+    EXPECT_EQ(28, meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(103, meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(127, meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(51, meshDao.Cell3DTotalNumber());
+}
+
 TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
 {
 #if ENABLE_VORO == 0
