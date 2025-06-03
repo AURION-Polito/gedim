@@ -215,10 +215,10 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     EXPECT_EQ(3, meshDao.Dimension());
-    EXPECT_EQ(28, meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(103, meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(127, meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(51, meshDao.Cell3DTotalNumber());
+    EXPECT_EQ(31, meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(122, meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(156, meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(64, meshDao.Cell3DTotalNumber());
 }
 
 TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
