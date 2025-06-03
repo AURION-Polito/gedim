@@ -198,7 +198,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     {
       for (unsigned int f_v = 0; f_v < 4; ++f_v)
       {
-        facets[f][f_v] = polyhedron.Faces[f](0, v);
+        facets[f][f_v] = polyhedron.Faces[f](0, f_v);
       }
     }
 
