@@ -191,16 +191,18 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     for (unsigned int v = 0; v < 8; ++v)
     {
       points.col(v) = polyhedron.Vertices.col(v);
-    }
+    };
 
-    std::vector<std::vector<unsigned int>> facets(6, std::vector<unsigned int>(4));
-    for (unsigned int f = 0; f < 6; ++f)
-    {
-      for (unsigned int f_v = 0; f_v < 4; ++f_v)
-      {
-        facets[f][f_v] = polyhedron.Faces[f](0, f_v);
-      }
-    }
+    std::vector<std::vector<unsigned int>> facets(9);
+    facets[0] = { 0, 1, 2, 3 };
+    facets[1] = { 4, 5, 6, 7 };
+    facets[2] = { 0, 1, 5, 4 };
+    facets[3] = { 3, 2, 6, 7 };
+    facets[4] = { 1, 2, 5 };
+    facets[5] = { 2, 6, 5 };
+    facets[6] = { 0, 3, 4 };
+    facets[7] = { 3, 7, 4 };
+    facets[8] = { 2, 3, 4, 5 };
 
     meshUtilities.CreateTetrahedralMesh(points,
                                         facets,
