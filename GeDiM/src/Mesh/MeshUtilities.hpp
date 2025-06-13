@@ -287,6 +287,17 @@ class MeshUtilities final
         std::vector<PointMeshPosition> MeshPositions;
     };
 
+    struct FindPointCell2DResult final
+    {
+        struct PointCell2DFound final
+        {
+            unsigned int Cell2D_index;
+            GeometryUtilities::PointPolygonPositionResult Cell2D_Position;
+        };
+
+        std::vector<PointCell2DFound> Cell2Ds_found;
+    };
+
     struct FindPointCell3DResult final
     {
         struct PointCell3DFound final
@@ -921,8 +932,19 @@ class MeshUtilities final
         const std::vector<std::vector<Eigen::MatrixXd>> &convexCell3DsFaces3DVertices,
         const std::vector<std::vector<std::vector<unsigned int>>> &convexCell3DsFacesUnalignedVertices) const;
 
+    FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell2DResult &find_cell2D_result,
+                                                      const IMeshDAO &mesh) const;
+
     FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult &find_cell3D_result,
                                                       const IMeshDAO &mesh) const;
+
+    FindPointCell2DResult FindPointCell2D(const GeometryUtilities &geometryUtilities,
+                                          const Eigen::Vector3d &point,
+                                          const IMeshDAO &mesh,
+                                          const std::vector<Eigen::MatrixXd> &cell2DsVertices,
+                                          const std::vector<Eigen::MatrixXd> &cell2DsBoundingBox,
+                                          const bool find_only_first_cell2D = true,
+                                          const unsigned int starting_cell2D_index = 0) const;
 
     FindPointCell3DResult FindPointCell3D(const GeometryUtilities &geometryUtilities,
                                           const Eigen::Vector3d &point,

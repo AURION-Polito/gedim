@@ -39,8 +39,8 @@ using namespace testing;
 
 namespace GedimUnitTesting
 {
-TEST(TestMeshUtilities, TestMesh2DFromPolygon)
-{
+  TEST(TestMeshUtilities, TestMesh2DFromPolygon)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -67,10 +67,10 @@ TEST(TestMeshUtilities, TestMesh2DFromPolygon)
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell1DTotalNumber(), 4);
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 1);
-}
+  }
 
-TEST(TestMeshUtilities, TestCreateRectangleMesh)
-{
+  TEST(TestMeshUtilities, TestCreateRectangleMesh)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -134,10 +134,10 @@ TEST(TestMeshUtilities, TestCreateRectangleMesh)
     EXPECT_EQ(meshDao.Cell2DTotalNumber(), 8);
     EXPECT_EQ(meshDao.Cell0DsCoordinates(), cell0DCoordinates);
     EXPECT_EQ(meshDao.Cell1DsExtremes(), cell1DExtremes);
-}
+  }
 
-TEST(TestMeshUtilities, TestFillMesh2D_TriangularMesh)
-{
+  TEST(TestMeshUtilities, TestFillMesh2D_TriangularMesh)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -165,13 +165,13 @@ TEST(TestMeshUtilities, TestFillMesh2D_TriangularMesh)
     ASSERT_EQ(expectedMesh.Cell1DsExtremes(), meshDao.Cell1DsExtremes());
     for (unsigned int c = 0; c < 4; c++)
     {
-        ASSERT_EQ(expectedMesh.Cell2DVertices(c), meshDao.Cell2DVertices(c));
-        ASSERT_EQ(expectedMesh.Cell2DEdges(c), meshDao.Cell2DEdges(c));
+      ASSERT_EQ(expectedMesh.Cell2DVertices(c), meshDao.Cell2DVertices(c));
+      ASSERT_EQ(expectedMesh.Cell2DEdges(c), meshDao.Cell2DEdges(c));
     }
-}
+  }
 
-TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
-{
+  TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
+  {
 #if ENABLE_TRIANGLE == 0
     GTEST_SKIP();
 #endif
@@ -208,11 +208,11 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
     const double polygonArea = geometryUtilities.PolygonArea(vertices2D);
 
     {
-        Gedim::VTKUtilities exporter;
+      Gedim::VTKUtilities exporter;
 
-        exporter.AddPolygon(vertices2D,
-                            {{"Area", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1.0), &polygonArea}});
-        exporter.Export(exportFolder + "/Domain.vtu");
+      exporter.AddPolygon(vertices2D,
+                          {{"Area", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1.0), &polygonArea}});
+      exporter.Export(exportFolder + "/Domain.vtu");
     }
 
     Gedim::MeshMatrices mesh;
@@ -227,10 +227,10 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
-}
+  }
 
-TEST(TestMeshUtilities, TestCreateTriangleMesh)
-{
+  TEST(TestMeshUtilities, TestCreateTriangleMesh)
+  {
 #if ENABLE_TRIANGLE == 0
     GTEST_SKIP();
 #endif
@@ -283,10 +283,10 @@ TEST(TestMeshUtilities, TestCreateTriangleMesh)
     EXPECT_EQ(cell0DMarkers[3], meshDao.Cell0DMarker(3));
     EXPECT_EQ(cell1DMarkers[1], meshDao.Cell1DMarker(20));
     EXPECT_EQ(cell1DMarkers[0], meshDao.Cell1DMarker(23));
-}
+  }
 
-TEST(TestMeshUtilities, TestCreatePolygonalMesh)
-{
+  TEST(TestMeshUtilities, TestCreatePolygonalMesh)
+  {
 #if ENABLE_VORO == 0
     GTEST_SKIP_("Voro module not activated.");
 #endif
@@ -306,7 +306,7 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
     const unsigned int numCells1D = 9;
     switch (meshGenerator)
     {
-    case 0: {
+      case 0: {
         const Eigen::Vector3d rectangleBaseTangent = polygon.col(1) - polygon.col(0);
         const Eigen::Vector3d rectangleHeightTangent = polygon.rightCols(1) - polygon.col(0);
 
@@ -321,13 +321,13 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
                                           baseMeshCurvilinearCoordinates,
                                           heightMeshCurvilinearCoordinates,
                                           meshDao);
-    }
-    break;
-    case 1: {
+      }
+        break;
+      case 1: {
         meshUtilities.CreatePolygonalMesh(geometryUtilities, polygon, numCells1D, 10, meshDao);
-    }
-    break;
-    default:
+      }
+        break;
+      default:
         ASSERT_FALSE(true);
     }
 
@@ -336,41 +336,41 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "CreatedPolygonalMesh");
 
     {
-        ExportMeshData exportData;
-        exportData.Cell0Ds = meshDao.Cell0DsCoordinates();
-        exportData.Cell1Ds = meshDao.Cell1DsExtremes();
-        exportData.Cell2Ds = meshDao.Cell2DsExtremes();
-        exportData.Cell0DsMarker = meshDao.Cell0DsMarker();
-        exportData.Cell1DsMarker = meshDao.Cell1DsMarker();
-        exportData.Cell2DsMarker = meshDao.Cell2DsMarker();
+      ExportMeshData exportData;
+      exportData.Cell0Ds = meshDao.Cell0DsCoordinates();
+      exportData.Cell1Ds = meshDao.Cell1DsExtremes();
+      exportData.Cell2Ds = meshDao.Cell2DsExtremes();
+      exportData.Cell0DsMarker = meshDao.Cell0DsMarker();
+      exportData.Cell1DsMarker = meshDao.Cell1DsMarker();
+      exportData.Cell2DsMarker = meshDao.Cell2DsMarker();
 
-        ExportMeshUtilities::ExportMesh2DToText(exportData, exportFolder + "/MeshData.txt");
+      ExportMeshUtilities::ExportMesh2DToText(exportData, exportFolder + "/MeshData.txt");
     }
 
     Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData =
         meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDao);
 
     {
-        ExportMeshGeometricData2D exportData;
-        exportData.PolygonsVertices = cell2DsGeometricData.Cell2DsVertices;
-        exportData.PolygonsTriangulations = cell2DsGeometricData.Cell2DsTriangulations;
-        exportData.PolygonsArea = cell2DsGeometricData.Cell2DsAreas;
-        exportData.PolygonsCentroid = cell2DsGeometricData.Cell2DsCentroids;
-        exportData.PolygonsDiameter = cell2DsGeometricData.Cell2DsDiameters;
-        exportData.PolygonsEdgesDirection = cell2DsGeometricData.Cell2DsEdgeDirections;
-        exportData.PolygonsEdgesLength = cell2DsGeometricData.Cell2DsEdgeLengths;
-        exportData.PolygonsEdgesTangent = cell2DsGeometricData.Cell2DsEdgeTangents;
-        exportData.PolygonsEdgesTangentNormalized = cell2DsGeometricData.Cell2DsEdgeTangents;
-        exportData.PolygonsEdgesCentroid = cell2DsGeometricData.Cell2DsEdgesCentroid;
-        exportData.PolygonsEdgesNormal = cell2DsGeometricData.Cell2DsEdgeNormals;
+      ExportMeshGeometricData2D exportData;
+      exportData.PolygonsVertices = cell2DsGeometricData.Cell2DsVertices;
+      exportData.PolygonsTriangulations = cell2DsGeometricData.Cell2DsTriangulations;
+      exportData.PolygonsArea = cell2DsGeometricData.Cell2DsAreas;
+      exportData.PolygonsCentroid = cell2DsGeometricData.Cell2DsCentroids;
+      exportData.PolygonsDiameter = cell2DsGeometricData.Cell2DsDiameters;
+      exportData.PolygonsEdgesDirection = cell2DsGeometricData.Cell2DsEdgeDirections;
+      exportData.PolygonsEdgesLength = cell2DsGeometricData.Cell2DsEdgeLengths;
+      exportData.PolygonsEdgesTangent = cell2DsGeometricData.Cell2DsEdgeTangents;
+      exportData.PolygonsEdgesTangentNormalized = cell2DsGeometricData.Cell2DsEdgeTangents;
+      exportData.PolygonsEdgesCentroid = cell2DsGeometricData.Cell2DsEdgesCentroid;
+      exportData.PolygonsEdgesNormal = cell2DsGeometricData.Cell2DsEdgeNormals;
 
-        for (unsigned int c = 0; c < exportData.PolygonsEdgesTangentNormalized.size(); c++)
-        {
-            for (unsigned int e = 0; e < exportData.PolygonsEdgesTangentNormalized[c].cols(); e++)
-                exportData.PolygonsEdgesTangentNormalized[c].col(e).normalize();
-        }
+      for (unsigned int c = 0; c < exportData.PolygonsEdgesTangentNormalized.size(); c++)
+      {
+        for (unsigned int e = 0; e < exportData.PolygonsEdgesTangentNormalized[c].cols(); e++)
+          exportData.PolygonsEdgesTangentNormalized[c].col(e).normalize();
+      }
 
-        ExportMeshUtilities::ExportMeshGeometricData2DToText(exportData, exportFolder + "/MeshGeometricData.txt");
+      ExportMeshUtilities::ExportMeshGeometricData2DToText(exportData, exportFolder + "/MeshGeometricData.txt");
     }
 
     const unsigned int cell2DToExportIndex = 0;
@@ -381,10 +381,10 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
                                     cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
                                     cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
                                     exportFolder);
-}
+  }
 
-TEST(TestMeshUtilities, TestCheckMesh2D)
-{
+  TEST(TestMeshUtilities, TestCheckMesh2D)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -394,10 +394,10 @@ TEST(TestMeshUtilities, TestCheckMesh2D)
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
-}
+  }
 
-TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
-{
+  TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -420,10 +420,10 @@ TEST(TestMeshUtilities, TestComputeCell1DCell2DNeighbours)
                                     0,
                                     std::numeric_limits<unsigned int>::max(),
                                     0}));
-}
+  }
 
-TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
-{
+  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
+  {
     std::string exportFolder = "./Export/TestMeshUtilities/TestFillMesh2DGeometricData_NonConvex";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -502,10 +502,10 @@ TEST(TestMeshUtilities, TestFillMesh2DGeometricData_NonConvex)
     EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, imported_result.Cell2DsEdgeTangents);
     EXPECT_EQ(expectedResult.Cell2DsTriangulations, imported_result.Cell2DsTriangulations);
     EXPECT_EQ(expectedResult.Cell2DsVertices, imported_result.Cell2DsVertices);
-}
+  }
 
-TEST(TestMeshUtilities, TestFillMesh2DGeometricData_CellTypes)
-{
+  TEST(TestMeshUtilities, TestFillMesh2DGeometricData_CellTypes)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -564,10 +564,10 @@ TEST(TestMeshUtilities, TestFillMesh2DGeometricData_CellTypes)
     EXPECT_EQ(expectedResult.Cell2DsEdgeTangents, result.Cell2DsEdgeTangents);
     EXPECT_EQ(expectedResult.Cell2DsTriangulations, result.Cell2DsTriangulations);
     EXPECT_EQ(expectedResult.Cell2DsVertices, result.Cell2DsVertices);
-}
+  }
 
-TEST(TestMeshUtilities, TestRefineMesh2D)
-{
+  TEST(TestMeshUtilities, TestRefineMesh2D)
+  {
     std::string exportFolder = "./Export/TestMeshUtilities/TestRefineMesh2D/";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -585,120 +585,120 @@ TEST(TestMeshUtilities, TestRefineMesh2D)
 
     // first refine
     {
-        const unsigned int newCell0DIndex = meshDAO.Cell0DAppend(1);
-        meshDAO.Cell0DInsertCoordinates(newCell0DIndex, Eigen::Vector3d(0.5, 1.0, 0.0));
-        meshDAO.Cell0DSetMarker(newCell0DIndex, meshDAO.Cell1DMarker(3));
-        meshDAO.Cell0DSetState(newCell0DIndex, true);
+      const unsigned int newCell0DIndex = meshDAO.Cell0DAppend(1);
+      meshDAO.Cell0DInsertCoordinates(newCell0DIndex, Eigen::Vector3d(0.5, 1.0, 0.0));
+      meshDAO.Cell0DSetMarker(newCell0DIndex, meshDAO.Cell1DMarker(3));
+      meshDAO.Cell0DSetState(newCell0DIndex, true);
 
-        EXPECT_EQ(4, newCell0DIndex);
+      EXPECT_EQ(4, newCell0DIndex);
 
-        Eigen::MatrixXi newCell1DsExtreme(2, 2);
-        newCell1DsExtreme.col(0) << 2, 4;
-        newCell1DsExtreme.col(1) << 4, 3;
-        const std::vector<unsigned int> newCell1DsIndex = meshUtilities.SplitCell1D(3, newCell1DsExtreme, meshDAO);
+      Eigen::MatrixXi newCell1DsExtreme(2, 2);
+      newCell1DsExtreme.col(0) << 2, 4;
+      newCell1DsExtreme.col(1) << 4, 3;
+      const std::vector<unsigned int> newCell1DsIndex = meshUtilities.SplitCell1D(3, newCell1DsExtreme, meshDAO);
 
-        EXPECT_EQ(std::vector<unsigned int>({4, 5}), newCell1DsIndex);
-        EXPECT_FALSE(meshDAO.Cell1DIsActive(3));
-        EXPECT_TRUE(meshDAO.Cell1DIsActive(4));
-        EXPECT_TRUE(meshDAO.Cell1DIsActive(5));
-        EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(4));
-        EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(5));
-        EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(4));
-        EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(4, 0));
-        EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(4, 1));
-        EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(4, 1));
-        EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(5));
-        EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(5, 0));
-        EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(5, 1));
-        EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(5, 1));
-        EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(4));
-        EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(5));
-        std::list<unsigned int> updatedCell1Ds;
-        EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3, updatedCell1Ds));
-        updatedCell1Ds.sort();
-        EXPECT_EQ(std::list<unsigned int>({4, 5}), updatedCell1Ds);
+      EXPECT_EQ(std::vector<unsigned int>({4, 5}), newCell1DsIndex);
+      EXPECT_FALSE(meshDAO.Cell1DIsActive(3));
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(4));
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(5));
+      EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(4));
+      EXPECT_EQ(meshDAO.Cell1DMarker(3), meshDAO.Cell1DMarker(5));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(4));
+      EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(4, 0));
+      EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(4, 1));
+      EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(4, 1));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(5));
+      EXPECT_FALSE(meshDAO.Cell1DHasNeighbourCell2D(5, 0));
+      EXPECT_TRUE(meshDAO.Cell1DHasNeighbourCell2D(5, 1));
+      EXPECT_EQ(0, meshDAO.Cell1DNeighbourCell2D(5, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(4));
+      EXPECT_EQ(3, meshDAO.Cell1DOriginalCell1D(5));
+      std::list<unsigned int> updatedCell1Ds;
+      EXPECT_FALSE(meshDAO.Cell1DUpdatedCell1Ds(3, updatedCell1Ds));
+      updatedCell1Ds.sort();
+      EXPECT_EQ(std::list<unsigned int>({4, 5}), updatedCell1Ds);
 
-        Eigen::MatrixXi subCell(2, 5);
-        subCell.row(0) << 0, 1, 2, 4, 3;
-        subCell.row(1) << 1, 2, 4, 5, 0;
+      Eigen::MatrixXi subCell(2, 5);
+      subCell.row(0) << 0, 1, 2, 4, 3;
+      subCell.row(1) << 1, 2, 4, 5, 0;
 
-        const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(0, {subCell}, meshDAO);
-        EXPECT_EQ(std::vector<unsigned int>({1}), newCell2DsIndex);
-        EXPECT_FALSE(meshDAO.Cell2DIsActive(0));
-        EXPECT_TRUE(meshDAO.Cell2DIsActive(1));
-        EXPECT_EQ(meshDAO.Cell2DMarker(0), meshDAO.Cell2DMarker(1));
-        std::list<unsigned int> updatedCell2Ds;
-        EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(0, updatedCell2Ds));
-        EXPECT_EQ(0, meshDAO.Cell2DOriginalCell2D(1));
-        EXPECT_EQ(std::list<unsigned int>({1}), updatedCell2Ds);
-        EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(0, 1));
-        EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(1, 1));
-        EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(2, 1));
-        EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(4, 1));
-        EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(5, 1));
+      const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(0, {subCell}, meshDAO);
+      EXPECT_EQ(std::vector<unsigned int>({1}), newCell2DsIndex);
+      EXPECT_FALSE(meshDAO.Cell2DIsActive(0));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(1));
+      EXPECT_EQ(meshDAO.Cell2DMarker(0), meshDAO.Cell2DMarker(1));
+      std::list<unsigned int> updatedCell2Ds;
+      EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(0, updatedCell2Ds));
+      EXPECT_EQ(0, meshDAO.Cell2DOriginalCell2D(1));
+      EXPECT_EQ(std::list<unsigned int>({1}), updatedCell2Ds);
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(0, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(1, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(2, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(4, 1));
+      EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(5, 1));
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
+      meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
     }
 
     // second refine
     {
-        const unsigned int newCell1DIndex = meshDAO.Cell1DAppend(1);
-        meshDAO.Cell1DInsertExtremes(newCell1DIndex, 4, 0);
-        meshDAO.Cell1DSetMarker(newCell1DIndex, 0);
-        meshDAO.Cell1DSetState(newCell1DIndex, true);
-        meshDAO.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
-        EXPECT_EQ(6, newCell1DIndex);
-        EXPECT_TRUE(meshDAO.Cell1DIsActive(6));
-        EXPECT_EQ(0, meshDAO.Cell1DMarker(6));
-        EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(6));
+      const unsigned int newCell1DIndex = meshDAO.Cell1DAppend(1);
+      meshDAO.Cell1DInsertExtremes(newCell1DIndex, 4, 0);
+      meshDAO.Cell1DSetMarker(newCell1DIndex, 0);
+      meshDAO.Cell1DSetState(newCell1DIndex, true);
+      meshDAO.Cell1DInitializeNeighbourCell2Ds(newCell1DIndex, 2);
+      EXPECT_EQ(6, newCell1DIndex);
+      EXPECT_TRUE(meshDAO.Cell1DIsActive(6));
+      EXPECT_EQ(0, meshDAO.Cell1DMarker(6));
+      EXPECT_EQ(2, meshDAO.Cell1DNumberNeighbourCell2D(6));
 
-        vector<Eigen::MatrixXi> subCells(2);
+      vector<Eigen::MatrixXi> subCells(2);
 
-        subCells[0].resize(2, 3);
-        subCells[0].row(0) << 0, 4, 3;
-        subCells[0].row(1) << 6, 5, 0;
+      subCells[0].resize(2, 3);
+      subCells[0].row(0) << 0, 4, 3;
+      subCells[0].row(1) << 6, 5, 0;
 
-        subCells[1].resize(2, 4);
-        subCells[1].row(0) << 0, 1, 2, 4;
-        subCells[1].row(1) << 1, 2, 4, 6;
+      subCells[1].resize(2, 4);
+      subCells[1].row(0) << 0, 1, 2, 4;
+      subCells[1].row(1) << 1, 2, 4, 6;
 
-        const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(1, subCells, meshDAO);
-        EXPECT_EQ(std::vector<unsigned int>({2, 3}), newCell2DsIndex);
-        EXPECT_FALSE(meshDAO.Cell2DIsActive(1));
-        EXPECT_TRUE(meshDAO.Cell2DIsActive(2));
-        EXPECT_TRUE(meshDAO.Cell2DIsActive(3));
-        EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(2));
-        EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(3));
-        std::list<unsigned int> updatedCell2Ds;
-        EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(1, updatedCell2Ds));
-        updatedCell2Ds.sort();
-        EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(2));
-        EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(3));
-        EXPECT_EQ(std::list<unsigned int>({2, 3}), updatedCell2Ds);
-        EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(0, 1));
-        EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(1, 1));
-        EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(2, 1));
-        EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(4, 1));
-        EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(5, 1));
+      const std::vector<unsigned int> newCell2DsIndex = meshUtilities.SplitCell2D(1, subCells, meshDAO);
+      EXPECT_EQ(std::vector<unsigned int>({2, 3}), newCell2DsIndex);
+      EXPECT_FALSE(meshDAO.Cell2DIsActive(1));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(2));
+      EXPECT_TRUE(meshDAO.Cell2DIsActive(3));
+      EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(2));
+      EXPECT_EQ(meshDAO.Cell2DMarker(1), meshDAO.Cell2DMarker(3));
+      std::list<unsigned int> updatedCell2Ds;
+      EXPECT_FALSE(meshDAO.Cell2DUpdatedCell2Ds(1, updatedCell2Ds));
+      updatedCell2Ds.sort();
+      EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(2));
+      EXPECT_EQ(1, meshDAO.Cell2DOriginalCell2D(3));
+      EXPECT_EQ(std::list<unsigned int>({2, 3}), updatedCell2Ds);
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(0, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(1, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(2, 1));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(4, 1));
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(5, 1));
 
-        meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex, 0,
-                                            2); // right
-        meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex, 1,
-                                            3); // left
-        EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(6, 0));
-        EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(6, 1));
+      meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex, 0,
+                                          2); // right
+      meshDAO.Cell1DInsertNeighbourCell2D(newCell1DIndex, 1,
+                                          3); // left
+      EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(6, 0));
+      EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(6, 1));
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R2");
+      meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R2");
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
     meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Final");
-}
+  }
 
-TEST(TestMeshUtilities, TestImportOFFMesh)
-{
+  TEST(TestMeshUtilities, TestImportOFFMesh)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -738,13 +738,13 @@ TEST(TestMeshUtilities, TestImportOFFMesh)
 
     ASSERT_EQ(lines.size(), reconverted_lines.size());
     for (unsigned int l = 0; l < lines.size(); l++)
-        ASSERT_EQ(lines[l], reconverted_lines[l]);
+      ASSERT_EQ(lines[l], reconverted_lines[l]);
 
     meshUtilities.ExportMeshToObjectFileFormat(meshDao, exportFolder + "/mesh.off");
-}
+  }
 
-TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
-{
+  TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -760,10 +760,10 @@ TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
     ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23, 29, 13, 30}, meshDao), std::vector<unsigned int>({11}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23}, meshDao), std::vector<unsigned int>({11, 18}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({30, 6}, meshDao), std::vector<unsigned int>({}));
-}
+  }
 
-TEST(TestMeshUtilities, TestFindCell2DsCommonEdges)
-{
+  TEST(TestMeshUtilities, TestFindCell2DsCommonEdges)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -779,10 +779,10 @@ TEST(TestMeshUtilities, TestFindCell2DsCommonEdges)
     ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23, 29, 13, 30}, meshDao), std::vector<unsigned int>({}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23}, meshDao), std::vector<unsigned int>({0}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({30, 6}, meshDao), std::vector<unsigned int>({}));
-}
+  }
 
-TEST(TestMeshUtilities, TestAgglomerateTriangles)
-{
+  TEST(TestMeshUtilities, TestAgglomerateTriangles)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -801,10 +801,10 @@ TEST(TestMeshUtilities, TestAgglomerateTriangles)
     ASSERT_EQ(vector<unsigned int>({11, 4, 18, 7, 22, 2, 23}), result.VerticesIndex);
     ASSERT_EQ(vector<unsigned int>({1, 2, 51, 54, 34, 55, 33}), result.EdgesIndex);
     ASSERT_EQ(vector<unsigned int>({0, 50, 36, 35}), result.RemovedEdges);
-}
+  }
 
-TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
-{
+  TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -833,14 +833,14 @@ TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
     std::vector<std::vector<unsigned int>> convexCell2DsIndex(meshDao.Cell2DTotalNumber());
     for (unsigned int c = 0; c < mesh.Mesh.NumberCell2D; c++)
     {
-        if (meshDao.Cell2DIsActive(c))
-            convexCell2DsIndex[c].resize(1, c);
+      if (meshDao.Cell2DIsActive(c))
+        convexCell2DsIndex[c].resize(1, c);
     }
     for (unsigned int cc = 0; cc < result.ConcaveCell2Ds.size(); cc++)
     {
-        const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D &concaveCell =
-            result.ConcaveCell2Ds[cc];
-        convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
+      const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D &concaveCell =
+          result.ConcaveCell2Ds[cc];
+      convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -852,18 +852,18 @@ TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
 
     for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
     {
-        const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
-        extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
+      const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
+      extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
     }
 
     const string exportMeshFolder = exportFolder + "/Mesh";
     Gedim::Output::CreateFolder(exportMeshFolder);
 
     meshUtilities.ExportConcaveMesh2DToCsv(meshDao, extractedConvexCell2DsIndex, ',', exportMeshFolder);
-}
+  }
 
-TEST(TestMeshUtilities, TestAgglomerateWithRandom)
-{
+  TEST(TestMeshUtilities, TestAgglomerateWithRandom)
+  {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
     Gedim::MeshUtilities meshUtilities;
@@ -882,16 +882,16 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
 
     if (import)
     {
-        Gedim::MeshFromCsvUtilities importerUtilities;
-        Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
-        meshImporterConfiguration.Folder = importFolder;
-        meshImporterConfiguration.Separator = ';';
-        Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
-        importer.Import(meshImporterConfiguration, originalMeshDao);
+      Gedim::MeshFromCsvUtilities importerUtilities;
+      Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+      meshImporterConfiguration.Folder = importFolder;
+      meshImporterConfiguration.Separator = ';';
+      Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+      importer.Import(meshImporterConfiguration, originalMeshDao);
     }
     else
     {
-        originalMesh = GedimUnitTesting::MeshMatrices_2D_26Cells_Mock().Mesh;
+      originalMesh = GedimUnitTesting::MeshMatrices_2D_26Cells_Mock().Mesh;
     }
 
     mesh = originalMesh;
@@ -911,62 +911,62 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
     std::vector<bool> used_triangles(convexCell2DNumber, 0);
     for (unsigned int t = 0; t < randomCell2Ds.size(); t++)
     {
-        const unsigned int cell2DIndex = randomCell2Ds.at(t);
-        const unsigned int commonCell0DIndex = meshDao.Cell2DVertex(cell2DIndex, 0);
+      const unsigned int cell2DIndex = randomCell2Ds.at(t);
+      const unsigned int commonCell0DIndex = meshDao.Cell2DVertex(cell2DIndex, 0);
 
-        std::list<unsigned int> tianglesToAgglomerateList;
-        int cell2DNeigh = cell2DIndex;
-        do
+      std::list<unsigned int> tianglesToAgglomerateList;
+      int cell2DNeigh = cell2DIndex;
+      do
+      {
+        if (used_triangles[cell2DNeigh])
+          break;
+
+        tianglesToAgglomerateList.push_back(cell2DNeigh);
+
+        const unsigned int commonCell0DLocalPosition = meshDao.Cell2DFindVertex(cell2DNeigh, commonCell0DIndex);
+        const unsigned int commonEdgeLocalIndex = (commonCell0DLocalPosition + 2) % 3;
+        const unsigned int commonCell1DIndex = meshDao.Cell2DEdge(cell2DNeigh, commonEdgeLocalIndex);
+
+        unsigned int cell2DOtherNeigh = convexCell2DNumber;
+        for (unsigned int n = 0; n < meshDao.Cell1DNumberNeighbourCell2D(commonCell1DIndex); n++)
         {
-            if (used_triangles[cell2DNeigh])
-                break;
-
-            tianglesToAgglomerateList.push_back(cell2DNeigh);
-
-            const unsigned int commonCell0DLocalPosition = meshDao.Cell2DFindVertex(cell2DNeigh, commonCell0DIndex);
-            const unsigned int commonEdgeLocalIndex = (commonCell0DLocalPosition + 2) % 3;
-            const unsigned int commonCell1DIndex = meshDao.Cell2DEdge(cell2DNeigh, commonEdgeLocalIndex);
-
-            unsigned int cell2DOtherNeigh = convexCell2DNumber;
-            for (unsigned int n = 0; n < meshDao.Cell1DNumberNeighbourCell2D(commonCell1DIndex); n++)
-            {
-                if (!meshDao.Cell1DHasNeighbourCell2D(commonCell1DIndex, n))
-                    continue;
-
-                const unsigned int neigh = meshDao.Cell1DNeighbourCell2D(commonCell1DIndex, n);
-                if (neigh == cell2DNeigh || neigh == cell2DIndex)
-                    continue;
-
-                cell2DOtherNeigh = neigh;
-            }
-
-            if (cell2DOtherNeigh == convexCell2DNumber)
-                cell2DNeigh = convexCell2DNumber;
-            else
-                cell2DNeigh = cell2DOtherNeigh;
-        } while (cell2DNeigh < convexCell2DNumber);
-
-        if (tianglesToAgglomerateList.size() < 4)
+          if (!meshDao.Cell1DHasNeighbourCell2D(commonCell1DIndex, n))
             continue;
 
-        unsigned int sizeToTake = (percentagesToTake[t % 3] * tianglesToAgglomerateList.size() + 1);
+          const unsigned int neigh = meshDao.Cell1DNeighbourCell2D(commonCell1DIndex, n);
+          if (neigh == cell2DNeigh || neigh == cell2DIndex)
+            continue;
 
-        if (sizeToTake < 3)
-            sizeToTake = 3;
-        else if (sizeToTake >= tianglesToAgglomerateList.size())
-            sizeToTake = tianglesToAgglomerateList.size() - 1;
-
-        takenTrianglesToAgglomerate.push_back(std::vector<unsigned int>(sizeToTake));
-
-        unsigned int iterator = 0;
-        for (const unsigned int triangle : tianglesToAgglomerateList)
-        {
-            if (iterator >= sizeToTake)
-                break;
-
-            used_triangles[triangle] = true;
-            takenTrianglesToAgglomerate.back()[iterator++] = triangle;
+          cell2DOtherNeigh = neigh;
         }
+
+        if (cell2DOtherNeigh == convexCell2DNumber)
+          cell2DNeigh = convexCell2DNumber;
+        else
+          cell2DNeigh = cell2DOtherNeigh;
+      } while (cell2DNeigh < convexCell2DNumber);
+
+      if (tianglesToAgglomerateList.size() < 4)
+        continue;
+
+      unsigned int sizeToTake = (percentagesToTake[t % 3] * tianglesToAgglomerateList.size() + 1);
+
+      if (sizeToTake < 3)
+        sizeToTake = 3;
+      else if (sizeToTake >= tianglesToAgglomerateList.size())
+        sizeToTake = tianglesToAgglomerateList.size() - 1;
+
+      takenTrianglesToAgglomerate.push_back(std::vector<unsigned int>(sizeToTake));
+
+      unsigned int iterator = 0;
+      for (const unsigned int triangle : tianglesToAgglomerateList)
+      {
+        if (iterator >= sizeToTake)
+          break;
+
+        used_triangles[triangle] = true;
+        takenTrianglesToAgglomerate.back()[iterator++] = triangle;
+      }
     }
 
     const std::vector<std::vector<unsigned int>> trianglesToAgglomerate =
@@ -978,14 +978,14 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
     std::vector<std::vector<unsigned int>> convexCell2DsIndex(meshDao.Cell2DTotalNumber());
     for (unsigned int c = 0; c < convexCell2DNumber; c++)
     {
-        if (meshDao.Cell2DIsActive(c))
-            convexCell2DsIndex[c].resize(1, c);
+      if (meshDao.Cell2DIsActive(c))
+        convexCell2DsIndex[c].resize(1, c);
     }
     for (unsigned int cc = 0; cc < result.ConcaveCell2Ds.size(); cc++)
     {
-        const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D &concaveCell =
-            result.ConcaveCell2Ds[cc];
-        convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
+      const Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D &concaveCell =
+          result.ConcaveCell2Ds[cc];
+      convexCell2DsIndex[concaveCell.Cell2DIndex] = concaveCell.ConvexCell2DsIndex;
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -997,8 +997,8 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
 
     for (unsigned int c = 0; c < meshDao.Cell2DTotalNumber(); c++)
     {
-        const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
-        extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
+      const unsigned int oldCell2DIndex = extractionData.NewCell2DToOldCell2D.at(c);
+      extractedConvexCell2DsIndex[c] = convexCell2DsIndex[oldCell2DIndex];
     }
 
     const string exportConvexMeshFolder = exportFolder + "/Convex";
@@ -1008,10 +1008,10 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
 
     meshUtilities.ExportMeshToCsv(originalMeshDao, ',', exportConvexMeshFolder);
     meshUtilities.ExportConcaveMesh2DToCsv(meshDao, extractedConvexCell2DsIndex, ',', exportConcaveMeshFolder);
-}
+  }
 
-TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
-{
+  TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
+  {
     std::string exportFolder = "./Export/TestMeshUtilities/TestAgglomerateCell2Ds_ByFace";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -1030,59 +1030,59 @@ TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
     std::vector<std::vector<unsigned int>> meshCell2DToConvexCell2DIndices(meshDao.Cell2DTotalNumber());
     for (unsigned int c2D_index = 0; c2D_index < meshDao.Cell2DTotalNumber(); c2D_index++)
     {
-        meshCell2DToConvexCell2DIndices.at(c2D_index) = std::vector<unsigned int>({c2D_index});
+      meshCell2DToConvexCell2DIndices.at(c2D_index) = std::vector<unsigned int>({c2D_index});
     }
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
 
     {
-        const auto cell2Ds = meshDao.Cell1DNeighbourCell2Ds(4);
-        const auto agglomerationInfo =
-            meshUtilities.AgglomerateCell2Ds(geometryUtilities,
-                                             std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
-                                             meshDao);
+      const auto cell2Ds = meshDao.Cell1DNeighbourCell2Ds(4);
+      const auto agglomerationInfo =
+          meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                           std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
+                                           meshDao);
 
-        ASSERT_EQ(std::vector<unsigned int>({25, 6, 9, 12}), agglomerationInfo.AgglomerateCell2DVertices);
-        ASSERT_EQ(std::vector<unsigned int>({3, 14, 15, 5}), agglomerationInfo.AgglomerateCell2DEdges);
-        ASSERT_EQ(std::vector<unsigned int>({}), agglomerationInfo.SubCell2DsRemovedVertices);
-        ASSERT_EQ(std::vector<unsigned int>({4}), agglomerationInfo.SubCell2DsRemovedEdges);
+      ASSERT_EQ(std::vector<unsigned int>({25, 6, 9, 12}), agglomerationInfo.AgglomerateCell2DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({3, 14, 15, 5}), agglomerationInfo.AgglomerateCell2DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({}), agglomerationInfo.SubCell2DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({4}), agglomerationInfo.SubCell2DsRemovedEdges);
 
-        const unsigned int agglomeratedCell2DIndex =
-            meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
-                                             agglomerationInfo.AgglomerateCell2DVertices,
-                                             agglomerationInfo.AgglomerateCell2DEdges,
-                                             agglomerationInfo.SubCell2DsRemovedVertices,
-                                             agglomerationInfo.SubCell2DsRemovedEdges,
-                                             meshDao,
-                                             meshCell2DToConvexCell2DIndices);
+      const unsigned int agglomeratedCell2DIndex =
+          meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
+                                           agglomerationInfo.AgglomerateCell2DVertices,
+                                           agglomerationInfo.AgglomerateCell2DEdges,
+                                           agglomerationInfo.SubCell2DsRemovedVertices,
+                                           agglomerationInfo.SubCell2DsRemovedEdges,
+                                           meshDao,
+                                           meshCell2DToConvexCell2DIndices);
 
-        ASSERT_EQ(34, agglomeratedCell2DIndex);
-        ASSERT_EQ(std::vector<unsigned int>({5, 1}), meshCell2DToConvexCell2DIndices.at(34));
+      ASSERT_EQ(34, agglomeratedCell2DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({5, 1}), meshCell2DToConvexCell2DIndices.at(34));
     }
 
     {
-        const auto cell2Ds = std::vector<unsigned int>({34, 15});
-        const auto agglomerationInfo =
-            meshUtilities.AgglomerateCell2Ds(geometryUtilities,
-                                             std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
-                                             meshDao);
+      const auto cell2Ds = std::vector<unsigned int>({34, 15});
+      const auto agglomerationInfo =
+          meshUtilities.AgglomerateCell2Ds(geometryUtilities,
+                                           std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
+                                           meshDao);
 
-        ASSERT_EQ(std::vector<unsigned int>({4, 12, 25, 6, 9}), agglomerationInfo.AgglomerateCell2DVertices);
-        ASSERT_EQ(std::vector<unsigned int>({37, 5, 3, 14, 16}), agglomerationInfo.AgglomerateCell2DEdges);
-        ASSERT_EQ(std::vector<unsigned int>({}), agglomerationInfo.SubCell2DsRemovedVertices);
-        ASSERT_EQ(std::vector<unsigned int>({15}), agglomerationInfo.SubCell2DsRemovedEdges);
+      ASSERT_EQ(std::vector<unsigned int>({4, 12, 25, 6, 9}), agglomerationInfo.AgglomerateCell2DVertices);
+      ASSERT_EQ(std::vector<unsigned int>({37, 5, 3, 14, 16}), agglomerationInfo.AgglomerateCell2DEdges);
+      ASSERT_EQ(std::vector<unsigned int>({}), agglomerationInfo.SubCell2DsRemovedVertices);
+      ASSERT_EQ(std::vector<unsigned int>({15}), agglomerationInfo.SubCell2DsRemovedEdges);
 
-        const unsigned int agglomeratedCell2DIndex =
-            meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
-                                             agglomerationInfo.AgglomerateCell2DVertices,
-                                             agglomerationInfo.AgglomerateCell2DEdges,
-                                             agglomerationInfo.SubCell2DsRemovedVertices,
-                                             agglomerationInfo.SubCell2DsRemovedEdges,
-                                             meshDao,
-                                             meshCell2DToConvexCell2DIndices);
+      const unsigned int agglomeratedCell2DIndex =
+          meshUtilities.AgglomerateCell2Ds(std::unordered_set<unsigned int>(cell2Ds.rbegin(), cell2Ds.rend()),
+                                           agglomerationInfo.AgglomerateCell2DVertices,
+                                           agglomerationInfo.AgglomerateCell2DEdges,
+                                           agglomerationInfo.SubCell2DsRemovedVertices,
+                                           agglomerationInfo.SubCell2DsRemovedEdges,
+                                           meshDao,
+                                           meshCell2DToConvexCell2DIndices);
 
-        ASSERT_EQ(35, agglomeratedCell2DIndex);
-        ASSERT_EQ(std::vector<unsigned int>({5, 1, 15}), meshCell2DToConvexCell2DIndices.at(35));
+      ASSERT_EQ(35, agglomeratedCell2DIndex);
+      ASSERT_EQ(std::vector<unsigned int>({5, 1, 15}), meshCell2DToConvexCell2DIndices.at(35));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData activeMeshData;
@@ -1090,12 +1090,68 @@ TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
     std::vector<std::vector<unsigned int>> activeMeshCell2DToConvexCell2DIndices(meshDao.Cell2DTotalNumber());
     for (unsigned int c2D_index = 0; c2D_index < meshDao.Cell2DTotalNumber(); c2D_index++)
     {
-        activeMeshCell2DToConvexCell2DIndices.at(c2D_index) =
-            meshCell2DToConvexCell2DIndices.at(activeMeshData.NewCell2DToOldCell2D.at(c2D_index));
+      activeMeshCell2DToConvexCell2DIndices.at(c2D_index) =
+          meshCell2DToConvexCell2DIndices.at(activeMeshData.NewCell2DToOldCell2D.at(c2D_index));
     }
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
-}
+  }
+
+  TEST(TestMeshUtilities, TestFindPointCell2D)
+  {
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestFindPointCell2D";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    const Gedim::MeshUtilities::MeshGeometricData2D mesh_geometry_data =
+        meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDao);
+
+    {
+      const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                        Eigen::Vector3d(0.0, 1.1, 0.0),
+                                                        meshDao,
+                                                        mesh_geometry_data.Cell2DsVertices,
+                                                        mesh_geometry_data.Cell2DsBoundingBox);
+
+      ASSERT_TRUE(result.Cell2Ds_found.empty());
+
+      const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+      ASSERT_TRUE(result_position.MeshPositions.empty());
+    }
+
+    {
+        const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                          Eigen::Vector3d(0.1, 0.1, 0.0),
+                                                          meshDao,
+                                                          mesh_geometry_data.Cell2DsVertices,
+                                                          mesh_geometry_data.Cell2DsBoundingBox,
+                                                          true,
+                                                          32);
+
+        ASSERT_TRUE(result.Cell2Ds_found.size() == 1);
+        ASSERT_EQ(16, result.Cell2Ds_found[0].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside,
+                  result.Cell2Ds_found[0].Cell2D_Position.Type);
+
+        const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+        ASSERT_TRUE(result_position.MeshPositions.size() == 1);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell2D,
+                  result_position.MeshPositions[0].Type);
+        ASSERT_EQ(16, result_position.MeshPositions[0].Cell_index);
+    }
+  }
+
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_UTILITIES2D_H

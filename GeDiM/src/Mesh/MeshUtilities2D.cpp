@@ -2213,4 +2213,89 @@ unsigned int MeshUtilities::AgglomerateCell2Ds(const std::unordered_set<unsigned
     return agglomeratedCell2DIndex;
 }
 // ***************************************************************************
+MeshUtilities::FindPointCell2DResult MeshUtilities::FindPointCell2D(const GeometryUtilities &geometryUtilities,
+                                      const Eigen::Vector3d &point,
+                                      const IMeshDAO &mesh,
+                                      const std::vector<Eigen::MatrixXd> &cell2DsVertices,
+                                      const std::vector<Eigen::MatrixXd> &cell2DsBoundingBox,
+                                      const bool find_only_first_cell2D,
+                                      const unsigned int starting_cell2D_index) const
+{
+  std::list<FindPointCell2DResult::PointCell2DFound> cell2Ds_found;
+
+  for (unsigned int c = 0; c < mesh.Cell2DTotalNumber(); ++c)
+  {
+      unsigned int c2D_index = (starting_cell2D_index + c) % mesh.Cell2DTotalNumber();
+
+      if (!mesh.Cell2DIsActive(c2D_index))
+          continue;
+
+      if (!geometryUtilities.IsPointInBoundingBox(point,
+                                                  cell2DsBoundingBox.at(c2D_index)))
+          continue;
+
+      const auto pointPosition =
+          geometryUtilities.PointPolygonPosition(point,
+                                                 cell2DsVertices.at(c2D_index));
+
+      switch (pointPosition.Type)
+      {
+      case GeometryUtilities::PointPolygonPositionResult::Types::Outside:
+          break;
+      case GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
+      case GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
+      case GeometryUtilities::PointPolygonPositionResult::Types::Inside:
+          cell2Ds_found.push_back({c2D_index, pointPosition});
+          break;
+      default:
+          throw std::runtime_error("Unknown point polyhedron position");
+      }
+
+      if (find_only_first_cell2D && cell2Ds_found.size() > 0)
+          break;
+  }
+
+  return {std::vector<FindPointCell2DResult::PointCell2DFound>(cell2Ds_found.begin(), cell2Ds_found.end())};
+}
+// ***************************************************************************
+MeshUtilities::FindPointMeshPositionResult MeshUtilities::FindPointMeshPosition(const MeshUtilities::FindPointCell2DResult &find_point_cell2D_result,
+                                                                                const IMeshDAO &mesh) const
+{
+    if (find_point_cell2D_result.Cell2Ds_found.empty())
+        return {};
+
+    FindPointMeshPositionResult result;
+    result.MeshPositions.resize(find_point_cell2D_result.Cell2Ds_found.size());
+
+    for (unsigned int p = 0; p < find_point_cell2D_result.Cell2Ds_found.size(); p++)
+    {
+        const auto &cell2D_found = find_point_cell2D_result.Cell2Ds_found.at(p);
+
+        switch (cell2D_found.Cell2D_Position.Type)
+        {
+        case GeometryUtilities::PointPolygonPositionResult::Types::Inside:
+            result.MeshPositions[p] = {
+              FindPointMeshPositionResult::PointMeshPosition::Types::Cell2D,
+                                       cell2D_found.Cell2D_index};
+            break;
+        case GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge:
+            result.MeshPositions[p] = {
+              FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
+                                       mesh.Cell2DEdge(cell2D_found.Cell2D_index,
+                                       cell2D_found.Cell2D_Position.BorderIndex)};
+            break;
+        case GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex:
+            result.MeshPositions[p] = {
+              FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+                                       mesh.Cell2DVertex(cell2D_found.Cell2D_index,
+                                       cell2D_found.Cell2D_Position.BorderIndex)};
+            break;
+        default:
+            throw std::runtime_error("Unknown PointPolygonPositionResult");
+        }
+    }
+
+    return result;
+}
+// ***************************************************************************
 } // namespace Gedim
