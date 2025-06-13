@@ -35,6 +35,7 @@ class TetgenInterface final
                            tetgenio &tetgenInput,
                            const Eigen::MatrixXd &constrainedPoints = Eigen::MatrixXd(),
                            const std::vector<Eigen::VectorXi> &constrainedFaces = std::vector<Eigen::VectorXi>()) const;
+    void CreateTetgenInput(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets, tetgenio &tetgenInput) const;
     void CreateDelaunayInput(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, tetgenio &tetgenInput) const;
     void CreateTetgenOutput(const double &maxTetrahedronArea,
                             tetgenio &tetgenInput,
@@ -56,6 +57,12 @@ class TetgenInterface final
     void CreateMesh(const Eigen::MatrixXd &polyhedronVertices,
                     const Eigen::MatrixXi &polyhedronEdges,
                     const std::vector<Eigen::MatrixXi> &polyhedronFaces,
+                    const double &maxTetrahedronVolume,
+                    IMeshDAO &mesh,
+                    const std::string &tetgenOptions = "Qpqfezna") const;
+
+    void CreateMesh(const Eigen::MatrixXd &points,
+                    const std::vector<std::vector<unsigned int>> &facets,
                     const double &maxTetrahedronVolume,
                     IMeshDAO &mesh,
                     const std::string &tetgenOptions = "Qpqfezna") const;

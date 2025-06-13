@@ -287,6 +287,17 @@ class MeshUtilities final
         std::vector<PointMeshPosition> MeshPositions;
     };
 
+    struct FindPointCell2DResult final
+    {
+        struct PointCell2DFound final
+        {
+            unsigned int Cell2D_index;
+            GeometryUtilities::PointPolygonPositionResult Cell2D_Position;
+        };
+
+        std::vector<PointCell2DFound> Cell2Ds_found;
+    };
+
     struct FindPointCell3DResult final
     {
         struct PointCell3DFound final
@@ -339,8 +350,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -682,6 +693,11 @@ class MeshUtilities final
                                const double &maxTetrahedronVolume,
                                IMeshDAO &mesh,
                                const std::string &options = "Qpqfezna") const;
+    void CreateTetrahedralMesh(const Eigen::MatrixXd &points,
+                               const std::vector<std::vector<unsigned int>> &facets,
+                               const double &maxTetrahedronVolume,
+                               IMeshDAO &mesh,
+                               const std::string &options = "Qpqfezna") const;
 
     void CreateDelaunayMesh3D(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, IMeshDAO &mesh) const;
 
@@ -916,8 +932,19 @@ class MeshUtilities final
         const std::vector<std::vector<Eigen::MatrixXd>> &convexCell3DsFaces3DVertices,
         const std::vector<std::vector<std::vector<unsigned int>>> &convexCell3DsFacesUnalignedVertices) const;
 
+    FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell2DResult &find_cell2D_result,
+                                                      const IMeshDAO &mesh) const;
+
     FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult &find_cell3D_result,
                                                       const IMeshDAO &mesh) const;
+
+    FindPointCell2DResult FindPointCell2D(const GeometryUtilities &geometryUtilities,
+                                          const Eigen::Vector3d &point,
+                                          const IMeshDAO &mesh,
+                                          const std::vector<Eigen::MatrixXd> &cell2DsVertices,
+                                          const std::vector<Eigen::MatrixXd> &cell2DsBoundingBox,
+                                          const bool find_only_first_cell2D = true,
+                                          const unsigned int starting_cell2D_index = 0) const;
 
     FindPointCell3DResult FindPointCell3D(const GeometryUtilities &geometryUtilities,
                                           const Eigen::Vector3d &point,

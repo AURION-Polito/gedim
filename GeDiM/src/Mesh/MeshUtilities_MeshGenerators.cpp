@@ -2063,6 +2063,17 @@ void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd &polyhedronVerti
     tetgenInterface.CreateMesh(polyhedronVertices, polyhedronEdges, polyhedronFaces, maxTetrahedronVolume, mesh, options);
 }
 // ***************************************************************************
+void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd &points,
+                                          const std::vector<std::vector<unsigned int>> &facets,
+                                          const double &maxTetrahedronVolume,
+                                          IMeshDAO &mesh,
+                                          const std::string &options) const
+{
+    TetgenInterface tetgenInterface;
+
+    tetgenInterface.CreateMesh(points, facets, maxTetrahedronVolume, mesh, options);
+}
+// ***************************************************************************
 void MeshUtilities::CreateDelaunayMesh3D(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, IMeshDAO &mesh) const
 {
     TetgenInterface tetgenInterface;
