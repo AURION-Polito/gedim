@@ -190,25 +190,21 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     Eigen::MatrixXd points(3, 8);
     for (unsigned int v = 0; v < 8; ++v)
     {
-      points.col(v) = polyhedron.Vertices.col(v);
+        points.col(v) = polyhedron.Vertices.col(v);
     };
 
     std::vector<std::vector<unsigned int>> facets(9);
-    facets[0] = { 0, 1, 2, 3 };
-    facets[1] = { 4, 5, 6, 7 };
-    facets[2] = { 0, 1, 5, 4 };
-    facets[3] = { 3, 2, 6, 7 };
-    facets[4] = { 1, 2, 5 };
-    facets[5] = { 2, 6, 5 };
-    facets[6] = { 0, 3, 4 };
-    facets[7] = { 3, 7, 4 };
-    facets[8] = { 2, 3, 4, 5 };
+    facets[0] = {0, 1, 2, 3};
+    facets[1] = {4, 5, 6, 7};
+    facets[2] = {0, 1, 5, 4};
+    facets[3] = {3, 2, 6, 7};
+    facets[4] = {1, 2, 5};
+    facets[5] = {2, 6, 5};
+    facets[6] = {0, 3, 4};
+    facets[7] = {3, 7, 4};
+    facets[8] = {2, 3, 4, 5};
 
-    meshUtilities.CreateTetrahedralMesh(points,
-                                        facets,
-                                        0.03,
-                                        meshDao,
-                                        "Qpqfezna");
+    meshUtilities.CreateTetrahedralMesh(points, facets, 0.03, meshDao, "Qpqfezna");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets";
     Gedim::Output::CreateFolder(exportFolder);

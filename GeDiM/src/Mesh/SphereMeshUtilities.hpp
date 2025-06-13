@@ -37,7 +37,7 @@ class SphereMeshUtilities final
     {
     }
 
-    virtual ~SphereMeshUtilities(){};
+    virtual ~SphereMeshUtilities() {};
 
     GeometryUtilities::Polyhedron uv_sphere(const unsigned int &meridians, const unsigned int &parallels) const
     {
