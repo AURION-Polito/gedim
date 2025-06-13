@@ -1194,22 +1194,22 @@ namespace GedimUnitTesting
         ASSERT_EQ(32, result.Cell2Ds_found[0].Cell2D_index);
         ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
                   result.Cell2Ds_found[0].Cell2D_Position.Type);
-        EXPECT_EQ(1,
+        EXPECT_EQ(2,
                   result.Cell2Ds_found[0].Cell2D_Position.BorderIndex);
         ASSERT_EQ(16, result.Cell2Ds_found[1].Cell2D_index);
         ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
                   result.Cell2Ds_found[1].Cell2D_Position.Type);
-        EXPECT_EQ(1,
+        EXPECT_EQ(2,
                   result.Cell2Ds_found[1].Cell2D_Position.BorderIndex);
         ASSERT_EQ(21, result.Cell2Ds_found[2].Cell2D_index);
         ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
                   result.Cell2Ds_found[2].Cell2D_Position.Type);
-        EXPECT_EQ(1,
+        EXPECT_EQ(2,
                   result.Cell2Ds_found[2].Cell2D_Position.BorderIndex);
         ASSERT_EQ(31, result.Cell2Ds_found[3].Cell2D_index);
         ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
                   result.Cell2Ds_found[3].Cell2D_Position.Type);
-        EXPECT_EQ(1,
+        EXPECT_EQ(0,
                   result.Cell2Ds_found[3].Cell2D_Position.BorderIndex);
 
         const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
