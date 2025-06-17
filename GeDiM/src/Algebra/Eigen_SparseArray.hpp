@@ -125,6 +125,12 @@ class Eigen_SparseArray final : public ISparseArray
         _matrix /= c;
         return *this;
     }
+
+    inline void Copy(const ISparseArray &A)
+    {
+        _matrix = Cast(A);
+    }
+
     inline unsigned int rows() const
     {
         return _matrix.rows();
