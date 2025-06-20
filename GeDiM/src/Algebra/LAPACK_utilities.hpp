@@ -45,6 +45,10 @@ void MGS(const Eigen::MatrixXd &X, Eigen::MatrixXd &Q, Eigen::MatrixXd &R);
 /// Compute the modified Gram-Schmidt factorization of matrix X with no maximum rank
 QR_Factorization MGS(const Eigen::MatrixXd &X, const double &tolerance = std::numeric_limits<double>::epsilon());
 
+/// Compute the QR matrix based on Householder reflectors
+QR_Factorization QR(const Eigen::MatrixXd& X, const double &tolerance = std::numeric_limits<double>::epsilon());
+
+
 /// Extract upper triangular part of matrix X
 Eigen::MatrixXd triu(const Eigen::MatrixXd &X, const unsigned int &i);
 

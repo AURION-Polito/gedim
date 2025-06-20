@@ -24,8 +24,6 @@ namespace UnitTesting
 {
 TEST(TestLAPACK_utilities, TestSVD)
 {
-    try
-    {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
         geometryUtilitiesConfig.Tolerance1D = 1.0e-15;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -50,13 +48,55 @@ TEST(TestLAPACK_utilities, TestSVD)
         ASSERT_TRUE(geometryUtilities.AreValuesEqual(exptected_sv[2], sv[2], geometryUtilities.Tolerance1D()));
         ASSERT_TRUE(
             geometryUtilities.AreValuesEqual(1.000904076172981e+01, LAPACK_utilities::cond(sv), geometryUtilities.Tolerance1D()));
-    }
-    catch (const std::exception &exception)
-    {
-        std::cerr << exception.what() << std::endl;
-        FAIL();
-    }
 }
+
+TEST(TestLAPACK_utilities, TestQR_3x2)
+{
+        const double tolerance = 1.0e-15;
+
+        const Eigen::MatrixXd A = (Eigen::MatrixXd(3, 2) <<
+                                   1.0, 2.0, 4.0,
+                                   5.0, 7.0, 8.0)
+                                      .finished();
+
+        const auto qr_data = LAPACK_utilities::QR(A,
+                                                  tolerance);
+
+        ASSERT_TRUE((qr_data.Q * qr_data.Q.transpose() -
+                     Eigen::MatrixXd::Identity(qr_data.Q.cols(),
+                                                                                   qr_data.Q.rows())).norm() <=
+                    tolerance * Eigen::MatrixXd::Identity(qr_data.Q.cols(),
+                                                                                                                                                      qr_data.Q.rows()).norm());
+        ASSERT_TRUE((qr_data.Q * qr_data.R - A).norm() <= tolerance * A.norm());
+        ASSERT_EQ(2,
+                  qr_data.Space_Dimension);
+
+}
+
+TEST(TestLAPACK_utilities, TestQR_2x3)
+{
+        const double tolerance = 1.0e-15;
+
+        const Eigen::MatrixXd A = (Eigen::MatrixXd(3, 2) <<
+                                   1.0, 2.0, 4.0,
+                                   5.0, 7.0, 8.0)
+                                      .finished();
+
+        const auto qr_data = LAPACK_utilities::QR(A.transpose(),
+                                                  tolerance);
+
+        ASSERT_TRUE((qr_data.Q * qr_data.Q.transpose() -
+                     Eigen::MatrixXd::Identity(qr_data.Q.cols(),
+                                                                                   qr_data.Q.rows())).norm() <=
+                    tolerance * Eigen::MatrixXd::Identity(qr_data.Q.cols(),
+                                                                                                                                                      qr_data.Q.rows()).norm());
+        ASSERT_TRUE((qr_data.Q * qr_data.R - A.transpose()).norm() <=
+                    tolerance * A.transpose().norm());
+        ASSERT_EQ(2,
+                  qr_data.Space_Dimension);
+
+}
+
 } // namespace UnitTesting
 
 #endif // __TEST_LAPACK_UTILITIES_H
