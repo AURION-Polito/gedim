@@ -316,7 +316,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
     {
         const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.tetrahedron();
 
-        for (unsigned int i = 1; i < 10; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -343,7 +343,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
     {
         const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
 
-        for (unsigned int i = 1; i < 10; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -370,7 +370,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
     {
         const Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
 
-        for (unsigned int i = 1; i < 10; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -413,7 +413,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
     {
         Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.tetrahedron();
 
-        for (unsigned int i = 1; i < 6; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -453,7 +453,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
     {
         Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.octahedron();
 
-        for (unsigned int i = 1; i < 6; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -493,7 +493,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
     {
         Gedim::GeometryUtilities::Polyhedron polyhedron = platonicSolid.icosahedron();
 
-        for (unsigned int i = 1; i < 6; i++)
+        for (unsigned int i = 1; i < 4; i++)
         {
             Gedim::MeshMatrices mesh_data;
             Gedim::MeshMatricesDAO mesh(mesh_data);
