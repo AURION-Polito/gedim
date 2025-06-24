@@ -402,9 +402,9 @@ QR_Factorization QR(const Eigen::MatrixXd& X, const double& tolerance)
   for (unsigned int i = 0; i < min_size; i++)
   {
       if (std::abs(qr_data.R(i, i)) <= tolerance)
-          break;
-      else
-          qr_data.Space_Dimension++;
+          continue;
+
+      qr_data.Space_Dimension++;
   }
 
   return qr_data;
