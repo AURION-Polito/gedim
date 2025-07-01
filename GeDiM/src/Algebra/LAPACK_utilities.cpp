@@ -79,6 +79,13 @@ extern "C" int dgetrf_(const int *m, const int *n, double *a, const int *lda, in
 
 extern "C" double dlange_(const char *norm, const int *m, const int *n, const double *a, const int *lda, double *work, const int norm_len);
 
+///  DORGQR and DGEQRF computes the QR decomposition of a real M-by-N matrix A.
+extern "C" void dgeqrf_(const int *m, const int *n, double *A, const int *lda, double *tau, double *work, int *lwork, int *info);
+extern "C" void dorgqr_(const int *m, const int *n, const int *k, double *A, const int *lda, double *tau, double *work, int *lwork, int *info);
+
+///  DGEQP3 computes the QR decomposition  with pivoting of a real M-by-N matrix A.
+extern "C" void dgeqp3_(const int *m, const int *n, double *a, const int *lda, int *jpvt, double *tau, double *work, const int *lwork, int *info);
+
 namespace LAPACK_utilities
 {
 // ***************************************************************************
@@ -307,7 +314,7 @@ QR_Factorization MGS(const Eigen::MatrixXd &X, const double &tolerance)
     const unsigned int m = X.rows();
     const unsigned int n = X.cols();
 
-    QR_Factorization factorization = {Eigen::MatrixXd::Zero(m, n), Eigen::MatrixXd::Zero(n, n), 0};
+    QR_Factorization factorization = {Eigen::MatrixXd::Zero(m, n), Eigen::MatrixXd::Zero(n, n), Eigen::MatrixXd(), 0};
 
     Eigen::MatrixXd &Q = factorization.Q;
     Eigen::MatrixXd &R = factorization.R;
@@ -334,6 +341,151 @@ QR_Factorization MGS(const Eigen::MatrixXd &X, const double &tolerance)
     }
 
     return factorization;
+}
+// ***************************************************************************
+QR_Factorization QR(const Eigen::MatrixXd &X, const double &tolerance)
+{
+    QR_Factorization qr_data;
+
+    const unsigned int original_m = X.rows();
+    const unsigned int original_n = X.cols();
+
+    qr_data.R = X;
+
+    // extend the matrix when rows > cols
+    if (original_m > original_n)
+    {
+        qr_data.R.conservativeResize(original_m, original_m);
+        qr_data.R.block(0, original_n, original_m, original_m - original_n).setZero();
+    }
+
+    const int m = qr_data.R.rows();
+    const int n = qr_data.R.cols();
+
+    std::vector<double> tau(std::min(m, n));
+    std::vector<double> work(1);
+    int lwork = -1;
+    int info;
+
+    // Compute workspace for dgeqrf
+    dgeqrf_(&m, &n, qr_data.R.data(), &m, tau.data(), work.data(), &lwork, &info);
+    lwork = static_cast<int>(work[0]);
+    work.resize(lwork);
+
+    // Compute QR factorization (X overwritten with R and reflectors)
+    dgeqrf_(&m, &n, qr_data.R.data(), &m, tau.data(), work.data(), &lwork, &info);
+
+    if (info != 0)
+        throw std::runtime_error("Error occurs in dgeqrf");
+
+    // Copy R to Q to build the Q matrix
+    qr_data.Q = qr_data.R;
+    qr_data.Q.conservativeResize(m, m);
+
+    // Compute workspace for dorgqr
+    work.resize(1);
+    lwork = -1;
+    dorgqr_(&m, &m, &m, qr_data.Q.data(), &m, tau.data(), work.data(), &lwork, &info);
+    lwork = static_cast<int>(work[0]);
+    work.resize(lwork);
+
+    // Generate Q matrix
+    dorgqr_(&m, &m, &m, qr_data.Q.data(), &m, tau.data(), work.data(), &lwork, &info);
+    if (info != 0)
+        throw std::runtime_error("Error occurs in dorgqr");
+
+    qr_data.R.conservativeResize(original_m, original_n);
+    qr_data.R = qr_data.R.triangularView<Eigen::Upper>();
+
+    qr_data.Space_Dimension = rank(svd(qr_data.R), tolerance);
+
+    return qr_data;
+}
+// ***************************************************************************
+QR_Factorization QRP(const Eigen::MatrixXd &X, const double &tolerance)
+{
+    QR_Factorization qr_data;
+
+    const unsigned int original_m = X.rows();
+    const unsigned int original_n = X.cols();
+
+    qr_data.R = X;
+
+    // extend the matrix when rows > cols
+    if (original_m > original_n)
+    {
+        qr_data.R.conservativeResize(original_m, original_m);
+        qr_data.R.block(0, original_n, original_m, original_m - original_n).setZero();
+    }
+
+    const int m = qr_data.R.rows();
+    const int n = qr_data.R.cols();
+
+    std::vector<int> jpvt(n, 0);
+    std::vector<double> tau(std::min(m, n));
+    std::vector<double> work(1);
+    int lwork = -1;
+    int info;
+
+    // Compute workspace for dgeqp3_
+    dgeqp3_(&m, &n, qr_data.R.data(), &m, jpvt.data(), tau.data(), work.data(), &lwork, &info);
+    lwork = static_cast<int>(work[0]);
+    work.resize(lwork);
+
+    // Compute QR factorization with pivoting (X overwritten with R and reflectors)
+    dgeqp3_(&m, &n, qr_data.R.data(), &m, jpvt.data(), tau.data(), work.data(), &lwork, &info);
+
+    if (info != 0)
+        throw std::runtime_error("Error occurs in dgeqp3_");
+
+    // Copy R to Q to build the Q matrix
+    qr_data.Q = qr_data.R;
+    qr_data.Q.conservativeResize(m, m);
+
+    // Compute workspace for dorgqr
+    work.resize(1);
+    lwork = -1;
+    dorgqr_(&m, &m, &m, qr_data.Q.data(), &m, tau.data(), work.data(), &lwork, &info);
+    lwork = static_cast<int>(work[0]);
+    work.resize(lwork);
+
+    // Generate Q matrix
+    dorgqr_(&m, &m, &m, qr_data.Q.data(), &m, tau.data(), work.data(), &lwork, &info);
+    if (info != 0)
+        throw std::runtime_error("Error occurs in dorgqr");
+
+    qr_data.R.conservativeResize(original_m, original_n);
+    qr_data.R = qr_data.R.triangularView<Eigen::Upper>();
+
+    qr_data.Space_Dimension = 0;
+    unsigned int min_dim = std::min(original_m, original_n);
+    for (unsigned int i = 0; i < min_dim; ++i)
+    {
+        if (std::abs(qr_data.R(i, i)) <= tolerance)
+            break;
+
+        qr_data.Space_Dimension++;
+    }
+
+    qr_data.P.setZero(original_n, original_n);
+    for (unsigned int i = 0; i < original_n; ++i)
+        qr_data.P(jpvt[i] - 1, i) = 1.0;
+
+    return qr_data;
+}
+// ***************************************************************************
+unsigned int rank(const Eigen::VectorXd &s, const double &tolerance)
+{
+    unsigned int rank = 0;
+    for (unsigned int i = 0; i < s.size(); i++)
+    {
+        if (std::abs(s[i]) <= tolerance)
+            break;
+
+        rank++;
+    }
+
+    return rank;
 }
 // ***************************************************************************
 } // namespace LAPACK_utilities
