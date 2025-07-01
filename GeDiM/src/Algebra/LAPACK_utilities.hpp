@@ -20,6 +20,7 @@ struct QR_Factorization
 {
     Eigen::MatrixXd Q;
     Eigen::MatrixXd R;
+    Eigen::MatrixXd P;
     unsigned int Space_Dimension;
 };
 
@@ -39,6 +40,9 @@ inline double cond(const Eigen::VectorXd &s)
     return s[0] / s[s.size() - 1];
 }
 
+/// \param s the singular values of matrix
+unsigned int rank(const Eigen::VectorXd &s, const double &tolerance = std::numeric_limits<double>::epsilon());
+
 /// Compute the modified Gram-Schmidt factorization of matrix X
 void MGS(const Eigen::MatrixXd &X, Eigen::MatrixXd &Q, Eigen::MatrixXd &R);
 
@@ -46,8 +50,10 @@ void MGS(const Eigen::MatrixXd &X, Eigen::MatrixXd &Q, Eigen::MatrixXd &R);
 QR_Factorization MGS(const Eigen::MatrixXd &X, const double &tolerance = std::numeric_limits<double>::epsilon());
 
 /// Compute the QR matrix based on Householder reflectors
-QR_Factorization QR(const Eigen::MatrixXd& X, const double &tolerance = std::numeric_limits<double>::epsilon());
+QR_Factorization QR(const Eigen::MatrixXd &X, const double &tolerance = std::numeric_limits<double>::epsilon());
 
+/// Compute the QR with pivoting matrix based on Householder reflectors
+QR_Factorization QRP(const Eigen::MatrixXd &X, const double &tolerance = std::numeric_limits<double>::epsilon());
 
 /// Extract upper triangular part of matrix X
 Eigen::MatrixXd triu(const Eigen::MatrixXd &X, const unsigned int &i);
