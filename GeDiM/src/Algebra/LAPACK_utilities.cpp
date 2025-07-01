@@ -10,7 +10,6 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "LAPACK_utilities.hpp"
-#include <iostream>
 
 ///  DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A.
 /// ( Double precision, simple driver)
