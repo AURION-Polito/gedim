@@ -713,6 +713,17 @@ class GeometryUtilities final
         std::vector<std::vector<unsigned int>> AlignedEdgesEdges;
     };
 
+    struct MergePolyhedronsResult
+    {
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedVertices;
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedEdges;
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedFaces;
+        std::vector<unsigned int> MergedToOriginalVertices;
+        std::vector<unsigned int> MergedToOriginalEdges;
+        std::vector<unsigned int> MergedToOriginalFaces;
+        Polyhedron MergedPolyhedron;
+    };
+
   public:
     GeometryUtilities(const GeometryUtilitiesConfig &configuration);
     ~GeometryUtilities();
@@ -2284,6 +2295,15 @@ class GeometryUtilities final
                                const std::vector<Eigen::MatrixXi> &polyhedronFaces,
                                const std::string &exportFolder) const;
 
+    inline void ExportPolyhedronToVTU(const Polyhedron& polyhedron,
+                               const std::string &exportFolder) const
+    {
+      ExportPolyhedronToVTU(polyhedron.Vertices,
+                            polyhedron.Edges,
+                            polyhedron.Faces,
+                            exportFolder);
+    }
+
     /// \brief Export Polyhedron To VTU
     /// \param polyhedronVertices the polyhedron vertices
     /// \param polyhedronEdges the polyhedron edges
@@ -2316,6 +2336,18 @@ class GeometryUtilities final
                             const Eigen::MatrixXd &polygon_edges_normal,
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
+
+    /// \brief Merge two Polyhedrons not intersecting
+    /// \param polyhedrons the polyhedrons to merge
+    /// \return the merged polyhedron data
+    MergePolyhedronsResult MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const;
+
+    /// \brief Merge two Polyhedrons with one common face
+    /// \param polyhedrons the polyhedrons to merge
+    /// \param polyhedrons_face_index the faces index in common
+    /// \return the merged polyhedron data
+    MergePolyhedronsResult MergePolyhedronsByFace(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons,
+                                      const std::array<unsigned int, 2>& polyhedrons_face_index) const;
 };
 } // namespace Gedim
 

@@ -209,6 +209,20 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets";
     Gedim::Output::CreateFolder(exportFolder);
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    {
+      std::vector<double> facets_id(facets.size());
+      for (unsigned int f = 0; f < facets.size(); ++f)
+        facets_id[f] = f;
+
+      Gedim::VTKUtilities exporter_facets;
+      exporter_facets.AddPolygons(points,
+                                  facets,
+                                  {{"Facet",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(facets_id.size()),
+                                    facets_id.data()}});
+      exporter_facets.Export(exportFolder + "/facets.vtu");
+    }
 
     EXPECT_EQ(3, meshDao.Dimension());
     EXPECT_EQ(31, meshDao.Cell0DTotalNumber());

@@ -4,6 +4,7 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Poin
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Polygon.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Polyhedron.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_Split.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_merged_polyhedrons.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MapTriangle.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/MapQuadrilateral.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/GeometryUtilities_SplitPolyhedron.cpp)

@@ -6,6 +6,7 @@
 #include "test_geometry_segment.hpp"
 #include "test_geometry_polygon.hpp"
 #include "test_geometry_polyhedron.hpp"
+#include "test_geometry_merged_polyhedrons.hpp"
 #include "test_geometry_split.hpp"
 #include "test_geometry_splitPolyhedron.hpp"
 #include "test_LAPACK_utilities.hpp"
