@@ -1522,4 +1522,20 @@ GeometryUtilities::AlignedPolyhedronEdgesResult GeometryUtilities::AlignedPolyhe
     return result;
 }
 // ***************************************************************************
+std::vector<std::vector<unsigned int>> GeometryUtilities::PolyhedronToFacets(const GeometryUtilities::Polyhedron& polyhedron) const
+{
+  std::vector<std::vector<unsigned int>> facets(polyhedron.Faces.size());
+
+  for (unsigned int f = 0; f < polyhedron.Faces.size(); ++f)
+  {
+    const auto& face = polyhedron.Faces[f];
+    facets[f].resize(face.cols());
+
+    for (unsigned int f_v = 0; f_v < face.cols(); ++f_v)
+      facets[f][f_v] = face(0, f_v);
+  }
+
+  return facets;
+}
+// ***************************************************************************
 } // namespace Gedim

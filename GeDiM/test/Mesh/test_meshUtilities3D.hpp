@@ -231,6 +231,66 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     EXPECT_EQ(64, meshDao.Cell3DTotalNumber());
 }
 
+TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
+{
+#if ENABLE_TETGEN == 0
+    GTEST_SKIP();
+#endif
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const Gedim::PlatonicSolid platonicSolid = Gedim::PlatonicSolid(geometryUtilities,
+                                                                    meshUtilities);
+
+    const auto polyhedron_one = geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(-2.0, -2.0, -2.0),
+                                                                       4.0);
+    const auto polyhedron_two = platonicSolid.dodecahedron();
+    const auto merged_polyhedron = geometryUtilities.MergePolyhedrons({
+                                                                        polyhedron_one,
+                                                                        polyhedron_two
+                                                                      });
+
+    const auto facets = geometryUtilities.PolyhedronToFacets(merged_polyhedron.MergedPolyhedron);
+
+
+
+    meshUtilities.CreateTetrahedralMesh(merged_polyhedron.MergedPolyhedron.Vertices,
+                                        facets,
+                                        0.03,
+                                        meshDao,
+                                        "Qpqfezna");
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    {
+      std::vector<double> facets_id(facets.size());
+      for (unsigned int f = 0; f < facets.size(); ++f)
+        facets_id[f] = f;
+
+      Gedim::VTKUtilities exporter_facets;
+      exporter_facets.AddPolygons(merged_polyhedron.MergedPolyhedron.Vertices,
+                                  facets,
+                                  {{"Facet",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(facets_id.size()),
+                                    facets_id.data()}});
+      exporter_facets.Export(exportFolder + "/facets.vtu");
+    }
+
+    EXPECT_EQ(3, meshDao.Dimension());
+    EXPECT_EQ(31, meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(122, meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(156, meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(64, meshDao.Cell3DTotalNumber());
+}
+
 TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
 {
 #if ENABLE_VORO == 0

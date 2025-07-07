@@ -2348,6 +2348,8 @@ class GeometryUtilities final
     /// \return the merged polyhedron data
     MergePolyhedronsResult MergePolyhedronsByFace(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons,
                                       const std::array<unsigned int, 2>& polyhedrons_face_index) const;
+
+    std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron& polyhedron) const;
 };
 } // namespace Gedim
 
