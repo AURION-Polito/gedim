@@ -262,7 +262,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
 
     meshUtilities.CreateTetrahedralMesh(merged_polyhedron.MergedPolyhedron.Vertices,
                                         facets,
-                                        0.03,
+                                        0.3,
                                         meshDao,
                                         "Qpqfezna");
 
@@ -285,10 +285,10 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
     }
 
     EXPECT_EQ(3, meshDao.Dimension());
-    EXPECT_EQ(31, meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(122, meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(156, meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(64, meshDao.Cell3DTotalNumber());
+    EXPECT_EQ(137, meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(700, meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(1024, meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(460, meshDao.Cell3DTotalNumber());
 }
 
 TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
