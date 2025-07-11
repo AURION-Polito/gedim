@@ -280,8 +280,8 @@ namespace Gedim
       {
         case MergePolyhedronsInput::MergeTypes::None:
         {
-          merged_to_original_edges.push_back({ MergePolyhedronsResult::none, e });
           original_to_merged_edges_two[e] = merged_to_original_edges.size();
+          merged_to_original_edges.push_back({ MergePolyhedronsResult::none, e });
         }
           break;
         case MergePolyhedronsInput::MergeTypes::Common:
@@ -364,8 +364,8 @@ namespace Gedim
       {
         case MergePolyhedronsInput::MergeTypes::None:
         {
-          merged_to_original_faces.push_back({ MergePolyhedronsResult::none, f });
           original_to_merged_faces_two[f] = merged_to_original_faces.size();
+          merged_to_original_faces.push_back({ MergePolyhedronsResult::none, f });
         }
           break;
         case MergePolyhedronsInput::MergeTypes::Common:
