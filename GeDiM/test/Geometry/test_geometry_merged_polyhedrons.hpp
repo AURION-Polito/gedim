@@ -95,21 +95,21 @@ namespace GedimUnitTesting
         ASSERT_EQ(shift_vertices + v,
                   merged_polyhedron.OriginalToMergedVertices[p][v]);
         ASSERT_EQ(v,
-                  merged_polyhedron.MergedToOriginalVertices[shift_vertices + v]);
+                  merged_polyhedron.MergedToOriginalVertices[shift_vertices + v][p]);
       }
       for (unsigned int e = 0; e < polyhedron.Edges.cols(); ++e)
       {
         ASSERT_EQ(shift_edges + e,
                   merged_polyhedron.OriginalToMergedEdges[p][e]);
         ASSERT_EQ(e,
-                  merged_polyhedron.MergedToOriginalEdges[shift_edges + e]);
+                  merged_polyhedron.MergedToOriginalEdges[shift_edges + e][p]);
       }
       for (unsigned int f = 0; f < polyhedron.Faces.size(); ++f)
       {
         ASSERT_EQ(shift_faces + f,
                   merged_polyhedron.OriginalToMergedFaces[p][f]);
         ASSERT_EQ(f,
-                  merged_polyhedron.MergedToOriginalFaces[shift_faces + f]);
+                  merged_polyhedron.MergedToOriginalFaces[shift_faces + f][p]);
       }
     }
   }

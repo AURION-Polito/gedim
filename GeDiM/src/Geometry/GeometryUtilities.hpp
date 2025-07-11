@@ -713,14 +713,32 @@ class GeometryUtilities final
         std::vector<std::vector<unsigned int>> AlignedEdgesEdges;
     };
 
+    struct MergePolyhedronsInput
+    {
+        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
+        enum struct MergeTypes
+        {
+            None = 0,
+            Common = 1,
+            Remove = 2
+        };
+
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Vertices_Type;
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Edges_Type;
+        std::array<std::vector<MergeTypes>, 2> Faces_Type;
+        std::vector<std::array<unsigned int, 2>> Common_vertices;
+        std::vector<std::array<unsigned int, 2>> Common_edges;
+    };
+
     struct MergePolyhedronsResult
     {
+        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
         std::array<std::vector<unsigned int>, 2> OriginalToMergedVertices;
         std::array<std::vector<unsigned int>, 2> OriginalToMergedEdges;
         std::array<std::vector<unsigned int>, 2> OriginalToMergedFaces;
-        std::vector<unsigned int> MergedToOriginalVertices;
-        std::vector<unsigned int> MergedToOriginalEdges;
-        std::vector<unsigned int> MergedToOriginalFaces;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalVertices;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalEdges;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalFaces;
         Polyhedron MergedPolyhedron;
     };
 
@@ -2340,14 +2358,10 @@ class GeometryUtilities final
     /// \brief Merge two Polyhedrons not intersecting
     /// \param polyhedrons the polyhedrons to merge
     /// \return the merged polyhedron data
-    MergePolyhedronsResult MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const;
+    //MergePolyhedronsResult MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const;
 
-    /// \brief Merge two Polyhedrons with one common face
-    /// \param polyhedrons the polyhedrons to merge
-    /// \param polyhedrons_face_index the faces index in common
-    /// \return the merged polyhedron data
-    MergePolyhedronsResult MergePolyhedronsByFace(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons,
-                                      const std::array<unsigned int, 2>& polyhedrons_face_index) const;
+    MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
+                                            const MergePolyhedronsInput& merge_information = {}) const;
 
     std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron& polyhedron) const;
 };

@@ -14,10 +14,12 @@
 
 namespace Gedim
 {
-// ***************************************************************************
-GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const
+  // ***************************************************************************
+  /*GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const
 {
   MergePolyhedronsResult result;
+
+  const unsigned int max_value = std::numeric_limits<unsigned int>::max();
 
   // vertices
   result.OriginalToMergedVertices[0].resize(polyhedrons[0].Vertices.cols());
@@ -126,14 +128,64 @@ GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(co
   }
 
   return result;
-}
-// ***************************************************************************
-GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedronsByFace(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons,
-                                                                        const std::array<unsigned int, 2>& polyhedrons_face_index) const
-{
-  MergePolyhedronsResult result;
+}*/
+  // ***************************************************************************
+  GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
+                                                                                const MergePolyhedronsInput& merge_information) const
+  {
+    MergePolyhedronsResult result;
 
-  return result;
-}
-// ***************************************************************************
+    const auto& poly_one = polyhedrons.at(0);
+    const auto& poly_two = polyhedrons.at(1);
+
+    // vertices
+    auto& original_to_merged_vertices_one = result.OriginalToMergedVertices.at(0);
+    auto& original_to_merged_vertices_two = result.OriginalToMergedVertices.at(1);
+    original_to_merged_vertices_one.resize(poly_one.Vertices.cols(),
+                                           MergePolyhedronsResult::none);
+    original_to_merged_vertices_two.resize(poly_two.Vertices.cols(),
+                                           MergePolyhedronsResult::none);
+
+    std::list<std::array<unsigned int, 2>> merged_to_original_vertices;
+
+    // vertices
+    const bool has_vertices_type = (merge_information.Vertices_Type.at(0).size() ==  poly_one.Vertices.cols());
+
+    unsigned int common_vertices = 0;
+    for (unsigned int v = 0; v < poly_one.Vertices.cols(); ++v)
+    {
+      const MergePolyhedronsInput::MergeTypes vertex_type = !has_vertices_type ?
+                                                              MergePolyhedronsInput::MergeTypes::None :
+                                                              merge_information.Vertices_Type.at(0).at(v).first;
+
+      switch (vertex_type)
+      {
+        case MergePolyhedronsInput::MergeTypes::None:
+        {
+          merged_to_original_vertices.push_back({ v, MergePolyhedronsResult::none });
+          original_to_merged_vertices_one[v] = merged_to_original_vertices.size();
+        }
+          break;
+        case MergePolyhedronsInput::MergeTypes::Common:
+        {
+          const unsigned int common_vertex_index = merge_information.Vertices_Type.at(0).at(v).second;
+          const auto& common_vertices = merge_information.Common_vertices.at(common_vertex_index);
+          original_to_merged_vertices_one[common_vertices[0]] = merged_to_original_vertices.size();
+          original_to_merged_vertices_two[common_vertices[1]] = merged_to_original_vertices.size();
+          merged_to_original_vertices.push_back(common_vertices);
+        }
+          break;
+        case MergePolyhedronsInput::MergeTypes::Remove:
+        {
+        }
+          break;
+        default:
+          throw std::runtime_error("unknown vertex type");
+      }
+    }
+
+
+    return result;
+  }
+  // ***************************************************************************
 } // namespace Gedim
