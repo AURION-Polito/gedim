@@ -2355,11 +2355,12 @@ class GeometryUtilities final
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
 
+    MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2>& polyhedrons,
+                                                const std::array<unsigned int, 2> polyhedrons_common_face_index) const;
+
     /// \brief Merge two Polyhedrons not intersecting
     /// \param polyhedrons the polyhedrons to merge
     /// \return the merged polyhedron data
-    //MergePolyhedronsResult MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const;
-
     MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
                                             const MergePolyhedronsInput& merge_information = {}) const;
 

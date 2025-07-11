@@ -14,121 +14,78 @@
 
 namespace Gedim
 {
-  // ***************************************************************************
-  /*GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(const std::array<GeometryUtilities::Polyhedron, 2>& polyhedrons) const
-{
-  MergePolyhedronsResult result;
-
-  const unsigned int max_value = std::numeric_limits<unsigned int>::max();
-
-  // vertices
-  result.OriginalToMergedVertices[0].resize(polyhedrons[0].Vertices.cols());
-  result.OriginalToMergedVertices[1].resize(polyhedrons[1].Vertices.cols());
-  std::iota(std::begin(result.OriginalToMergedVertices[0]),
-            std::end(result.OriginalToMergedVertices[0]),
-            0);
-  std::iota(std::begin(result.OriginalToMergedVertices[1]),
-            std::end(result.OriginalToMergedVertices[1]),
-            result.OriginalToMergedVertices[0].size());
-
-  result.MergedToOriginalVertices.resize(polyhedrons[0].Vertices.cols() +
-      polyhedrons[1].Vertices.cols());
-  std::iota(std::begin(result.MergedToOriginalVertices),
-            std::begin(result.MergedToOriginalVertices) + polyhedrons[0].Vertices.cols(),
-            0);
-  std::iota(std::begin(result.MergedToOriginalVertices) + polyhedrons[0].Vertices.cols(),
-            std::end(result.MergedToOriginalVertices),
-            0);
-
-  Polyhedron& merged_polyhedron = result.MergedPolyhedron;
-
-  merged_polyhedron.Vertices.resize(3,
-                                    polyhedrons[0].Vertices.cols() +
-                                    polyhedrons[1].Vertices.cols());
-  merged_polyhedron.Vertices.block(0,
-                                   0,
-                                   3,
-                                   polyhedrons[0].Vertices.cols())<< polyhedrons[0].Vertices;
-  merged_polyhedron.Vertices.block(0,
-                                   polyhedrons[0].Vertices.cols(),
-                                   3,
-                                   polyhedrons[1].Vertices.cols())<< polyhedrons[1].Vertices;
-
-  // edges
-  result.OriginalToMergedEdges[0].resize(polyhedrons[0].Edges.cols());
-  result.OriginalToMergedEdges[1].resize(polyhedrons[1].Edges.cols());
-  std::iota(std::begin(result.OriginalToMergedEdges[0]),
-            std::end(result.OriginalToMergedEdges[0]),
-            0);
-  std::iota(std::begin(result.OriginalToMergedEdges[1]),
-            std::end(result.OriginalToMergedEdges[1]),
-            result.OriginalToMergedEdges[0].size());
-  result.MergedToOriginalEdges.resize(polyhedrons[0].Edges.cols() +
-      polyhedrons[1].Edges.cols());
-  std::iota(std::begin(result.MergedToOriginalEdges),
-            std::begin(result.MergedToOriginalEdges) + polyhedrons[0].Edges.cols(),
-            0);
-  std::iota(std::begin(result.MergedToOriginalEdges) + polyhedrons[0].Edges.cols(),
-            std::end(result.MergedToOriginalEdges),
-            0);
-
-  merged_polyhedron.Edges.resize(2,
-                                 polyhedrons[0].Edges.cols() +
-                                 polyhedrons[1].Edges.cols());
-  for (unsigned int e = 0; e < polyhedrons[0].Edges.cols(); ++e)
+  GeometryUtilities::MergePolyhedronsInput GeometryUtilities::MergePolyhedronByFace(const std::array<Polyhedron, 2>& polyhedrons,
+                                                                                    const std::array<unsigned int, 2> polyhedrons_common_face_index) const
   {
-    merged_polyhedron.Edges(0, e) = result.OriginalToMergedVertices[0][polyhedrons[0].Edges(0, e)];
-    merged_polyhedron.Edges(1, e) = result.OriginalToMergedVertices[0][polyhedrons[0].Edges(1, e)];
-  }
-  for (unsigned int e = 0; e < polyhedrons[1].Edges.cols(); ++e)
-  {
-    merged_polyhedron.Edges(0, polyhedrons[0].Edges.cols() + e) = result.OriginalToMergedVertices[1][polyhedrons[1].Edges(0, e)];
-    merged_polyhedron.Edges(1, polyhedrons[0].Edges.cols() + e) = result.OriginalToMergedVertices[1][polyhedrons[1].Edges(1, e)];
-  }
+    MergePolyhedronsInput result;
 
-  // faces
-  result.OriginalToMergedFaces[0].resize(polyhedrons[0].Faces.size());
-  result.OriginalToMergedFaces[1].resize(polyhedrons[1].Faces.size());
-  std::iota(std::begin(result.OriginalToMergedFaces[0]),
-            std::end(result.OriginalToMergedFaces[0]),
-            0);
-  std::iota(std::begin(result.OriginalToMergedFaces[1]),
-            std::end(result.OriginalToMergedFaces[1]),
-            result.OriginalToMergedFaces[0].size());
-  result.MergedToOriginalFaces.resize(polyhedrons[0].Faces.size() +
-      polyhedrons[1].Faces.size());
-  std::iota(std::begin(result.MergedToOriginalFaces),
-            std::begin(result.MergedToOriginalFaces) + polyhedrons[0].Faces.size(),
-            0);
-  std::iota(std::begin(result.MergedToOriginalFaces) + polyhedrons[0].Faces.size(),
-            std::end(result.MergedToOriginalFaces),
-            0);
+    const auto& poly_one = polyhedrons.at(0);
+    const auto& poly_two = polyhedrons.at(1);
 
-  merged_polyhedron.Faces.reserve(polyhedrons[0].Faces.size() +
-                                  polyhedrons[1].Faces.size());
-  for (unsigned int f = 0; f < polyhedrons[0].Faces.size(); ++f)
-  {
-    const auto& original_face = polyhedrons[0].Faces[f];
-    merged_polyhedron.Faces.push_back(original_face);
-    for (unsigned int f_v = 0; f_v < original_face.cols(); ++f_v)
+    // vertices
+    result.Vertices_Type[0].resize(poly_one.Vertices.cols(),
+                                   {
+                                     MergePolyhedronsInput::MergeTypes::None,
+                                     MergePolyhedronsInput::none
+                                   });
+    result.Vertices_Type[1].resize(poly_two.Vertices.cols(),
+                                   {
+                                     MergePolyhedronsInput::MergeTypes::None,
+                                     MergePolyhedronsInput::none
+                                   });
+
+    // edges
+    result.Edges_Type[0].resize(poly_one.Edges.cols(),
+                                {
+                                  MergePolyhedronsInput::MergeTypes::None,
+                                  MergePolyhedronsInput::none
+                                });
+    result.Edges_Type[1].resize(poly_two.Edges.cols(),
+                                {
+                                  MergePolyhedronsInput::MergeTypes::None,
+                                  MergePolyhedronsInput::none
+                                });
+
+    // faces
+    result.Faces_Type[0].resize(poly_one.Faces.size(),
+                                MergePolyhedronsInput::MergeTypes::None);
+    result.Faces_Type[1].resize(poly_two.Faces.size(),
+                                MergePolyhedronsInput::MergeTypes::None);
+
+    // common face
+    const auto& common_face_one = poly_one.Faces.at(polyhedrons_common_face_index.at(0));
+    const auto& common_face_two = poly_one.Faces.at(polyhedrons_common_face_index.at(1));
+
+    Gedim::Output::Assert(common_face_one.cols() == common_face_two.cols());
+    const unsigned int size_common_face = common_face_one.cols();
+
+    result.Common_vertices.resize(size_common_face);
+    result.Common_edges.resize(size_common_face);
+
+    for (unsigned int f_v = 0; f_v < size_common_face; ++f_v)
     {
-      merged_polyhedron.Faces[f](0, f_v) = result.OriginalToMergedVertices[0][original_face(0, f_v)];
-      merged_polyhedron.Faces[f](1, f_v) = result.OriginalToMergedEdges[0][original_face(1, f_v)];
-    }
-  }
-  for (unsigned int f = 0; f < polyhedrons[1].Faces.size(); ++f)
-  {
-    const auto& original_face = polyhedrons[1].Faces[f];
-    merged_polyhedron.Faces.push_back(original_face);
-    for (unsigned int f_v = 0; f_v < original_face.cols(); ++f_v)
-    {
-      merged_polyhedron.Faces[polyhedrons[0].Faces.size() + f](0, f_v) = result.OriginalToMergedVertices[1][original_face(0, f_v)];
-      merged_polyhedron.Faces[polyhedrons[0].Faces.size() + f](1, f_v) = result.OriginalToMergedEdges[1][original_face(1, f_v)];
-    }
-  }
+      const unsigned int vertex_index_one = common_face_one(0, f_v);
+      const unsigned int vertex_index_two = common_face_two(0, f_v);
 
-  return result;
-}*/
+      result.Vertices_Type[0][vertex_index_one] = { MergePolyhedronsInput::MergeTypes::Common, f_v };
+      result.Vertices_Type[1][vertex_index_two] = { MergePolyhedronsInput::MergeTypes::Common, f_v };
+
+      result.Common_vertices[f_v] = { vertex_index_one, vertex_index_two };
+
+      const unsigned int edge_index_one = common_face_one(1, f_v);
+      const unsigned int edge_index_two = common_face_two(1, f_v);
+
+      result.Edges_Type[0][edge_index_one] = { MergePolyhedronsInput::MergeTypes::Common, f_v };
+      result.Edges_Type[1][edge_index_two] = { MergePolyhedronsInput::MergeTypes::Common, f_v };
+
+      result.Common_edges[f_v] = { edge_index_one, edge_index_two };
+    }
+
+    result.Faces_Type[0][polyhedrons_common_face_index.at(0)] = MergePolyhedronsInput::MergeTypes::Remove;
+    result.Faces_Type[1][polyhedrons_common_face_index.at(1)] = MergePolyhedronsInput::MergeTypes::Remove;
+
+    return result;
+  }
   // ***************************************************************************
   GeometryUtilities::MergePolyhedronsResult GeometryUtilities::MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
                                                                                 const MergePolyhedronsInput& merge_information) const
@@ -227,9 +184,9 @@ namespace Gedim
     auto& original_to_merged_edges_one = result.OriginalToMergedEdges.at(0);
     auto& original_to_merged_edges_two = result.OriginalToMergedEdges.at(1);
     original_to_merged_edges_one.resize(poly_one.Edges.cols(),
-                                           MergePolyhedronsResult::none);
+                                        MergePolyhedronsResult::none);
     original_to_merged_edges_two.resize(poly_two.Edges.cols(),
-                                           MergePolyhedronsResult::none);
+                                        MergePolyhedronsResult::none);
 
     std::list<std::array<unsigned int, 2>> merged_to_original_edges;
 
@@ -239,8 +196,8 @@ namespace Gedim
     for (unsigned int e = 0; e < poly_one.Edges.cols(); ++e)
     {
       const MergePolyhedronsInput::MergeTypes edge_type = !poly_one_has_edges_type ?
-                                                              MergePolyhedronsInput::MergeTypes::None :
-                                                              merge_information.Edges_Type.at(0).at(e).first;
+                                                            MergePolyhedronsInput::MergeTypes::None :
+                                                            merge_information.Edges_Type.at(0).at(e).first;
 
       switch (edge_type)
       {
@@ -268,13 +225,13 @@ namespace Gedim
     }
 
     const bool poly_two_has_edges_type = (static_cast<unsigned int>(merge_information.Edges_Type.at(1).size()) ==
-                                             static_cast<unsigned int>(poly_two.Edges.cols()));
+                                          static_cast<unsigned int>(poly_two.Edges.cols()));
 
     for (unsigned int e = 0; e < poly_two.Edges.cols(); ++e)
     {
       const MergePolyhedronsInput::MergeTypes edge_type = !poly_two_has_edges_type ?
-                                                              MergePolyhedronsInput::MergeTypes::None :
-                                                              merge_information.Edges_Type.at(1).at(e).first;
+                                                            MergePolyhedronsInput::MergeTypes::None :
+                                                            merge_information.Edges_Type.at(1).at(e).first;
 
       switch (edge_type)
       {
@@ -320,9 +277,9 @@ namespace Gedim
     auto& original_to_merged_faces_one = result.OriginalToMergedFaces.at(0);
     auto& original_to_merged_faces_two = result.OriginalToMergedFaces.at(1);
     original_to_merged_faces_one.resize(poly_one.Faces.size(),
-                                           MergePolyhedronsResult::none);
+                                        MergePolyhedronsResult::none);
     original_to_merged_faces_two.resize(poly_two.Faces.size(),
-                                           MergePolyhedronsResult::none);
+                                        MergePolyhedronsResult::none);
 
     std::list<std::array<unsigned int, 2>> merged_to_original_faces;
 
@@ -332,8 +289,8 @@ namespace Gedim
     for (unsigned int f = 0; f < poly_one.Faces.size(); ++f)
     {
       const MergePolyhedronsInput::MergeTypes face_type = !poly_one_has_faces_type ?
-                                                              MergePolyhedronsInput::MergeTypes::None :
-                                                              merge_information.Faces_Type.at(0).at(f);
+                                                            MergePolyhedronsInput::MergeTypes::None :
+                                                            merge_information.Faces_Type.at(0).at(f);
 
       switch (face_type)
       {
@@ -352,13 +309,13 @@ namespace Gedim
     }
 
     const bool poly_two_has_faces_type = (static_cast<unsigned int>(merge_information.Faces_Type.at(1).size()) ==
-                                             static_cast<unsigned int>(poly_two.Faces.size()));
+                                          static_cast<unsigned int>(poly_two.Faces.size()));
 
     for (unsigned int f = 0; f < poly_two.Faces.size(); ++f)
     {
       const MergePolyhedronsInput::MergeTypes face_type = !poly_two_has_faces_type ?
-                                                              MergePolyhedronsInput::MergeTypes::None :
-                                                              merge_information.Faces_Type.at(1).at(f);
+                                                            MergePolyhedronsInput::MergeTypes::None :
+                                                            merge_information.Faces_Type.at(1).at(f);
 
       switch (face_type)
       {
