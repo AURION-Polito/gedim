@@ -414,6 +414,91 @@ void MeshUtilities::CheckMesh2D(const CheckMesh2DConfiguration &configuration,
     }
 }
 // ***************************************************************************
+void MeshUtilities::CheckMeshGeometricData2D(const CheckMeshGeometricData2DConfiguration &configuration,
+                                             const GeometryUtilities &geometryUtilities,
+                                             const IMeshDAO &mesh,
+                                             const MeshGeometricData2D &geometricData) const
+{
+    if (configuration.Cell1D_CheckMeasure)
+    {
+        for (unsigned int cell2DIndex = 0; cell2DIndex < mesh.Cell3DTotalNumber(); cell2DIndex++)
+        {
+            if (!mesh.Cell2DIsActive(cell2DIndex))
+                continue;
+
+            for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(cell2DIndex); e++)
+                Output::Assert(geometryUtilities.IsValuePositive(geometricData.Cell2DsEdgeLengths[cell2DIndex][e],
+                                                                 geometryUtilities.Tolerance1D()));
+        }
+    }
+
+    if (configuration.Cell1D_CheckNormals)
+    {
+        for (unsigned int cell2DIndex = 0; cell2DIndex < mesh.Cell3DTotalNumber(); cell2DIndex++)
+        {
+            if (!mesh.Cell2DIsActive(cell2DIndex))
+                continue;
+
+            const double area =
+                geometryUtilities.PolygonAreaByBoundaryIntegral(geometricData.Cell2DsVertices[cell2DIndex],
+                                                                geometricData.Cell2DsEdgeLengths[cell2DIndex],
+                                                                geometricData.Cell2DsEdgeTangents[cell2DIndex],
+                                                                geometricData.Cell2DsEdgeNormals[cell2DIndex]);
+
+            if (!geometryUtilities.AreValuesEqual(geometricData.Cell2DsAreas[cell2DIndex], area, geometryUtilities.Tolerance2D()))
+            {
+                std::cout.precision(16);
+                std::cout << "Cell1D_CheckNormals cell2DIndex " << cell2DIndex << std::endl;
+                std::cout << std::scientific << "Areas: " << area << " " << geometricData.Cell2DsAreas[cell2DIndex] << std::endl;
+                std::cout << std::scientific << "Difference: " << (area - geometricData.Cell2DsAreas[cell2DIndex]) << std::endl;
+                std::cout << std::scientific << "Tolerance: "
+                          << geometryUtilities.Tolerance2D() * std::max(area, geometricData.Cell2DsAreas[cell2DIndex])
+                          << std::endl;
+            }
+
+            Output::Assert(
+                geometryUtilities.AreValuesEqual(geometricData.Cell2DsAreas[cell2DIndex], area, geometryUtilities.Tolerance2D()));
+        }
+    }
+
+    if (configuration.Cell2D_CheckMeasure)
+    {
+        for (unsigned int cell2DIndex = 0; cell2DIndex < mesh.Cell3DTotalNumber(); cell2DIndex++)
+        {
+            if (!mesh.Cell2DIsActive(cell2DIndex))
+                continue;
+
+            Output::Assert(geometryUtilities.IsValuePositive(geometricData.Cell2DsAreas[cell2DIndex],
+                                                             geometryUtilities.Tolerance2D()));
+        }
+    }
+
+    if (configuration.Cell2D_CheckTriangles)
+    {
+        for (unsigned int cell2DIndex = 0; cell2DIndex < mesh.Cell3DTotalNumber(); cell2DIndex++)
+        {
+            if (!mesh.Cell2DIsActive(cell2DIndex))
+                continue;
+
+            const double area = geometryUtilities.PolygonAreaByInternalIntegral(geometricData.Cell2DsTriangulations[cell2DIndex]);
+
+            if (!geometryUtilities.AreValuesEqual(geometricData.Cell2DsAreas[cell2DIndex], area, geometryUtilities.Tolerance2D()))
+            {
+                std::cout.precision(16);
+                std::cout << "Cell2D_CheckTriangles cell2DIndex " << cell2DIndex << std::endl;
+                std::cout << std::scientific << "Areas: " << area << " " << geometricData.Cell2DsAreas[cell2DIndex] << std::endl;
+                std::cout << std::scientific << "Difference: " << (area - geometricData.Cell2DsAreas[cell2DIndex]) << std::endl;
+                std::cout << std::scientific << "Tolerance: "
+                          << geometryUtilities.Tolerance2D() * std::max(area, geometricData.Cell2DsAreas[cell2DIndex])
+                          << std::endl;
+            }
+
+            Output::Assert(
+                geometryUtilities.AreValuesEqual(geometricData.Cell2DsAreas[cell2DIndex], area, geometryUtilities.Tolerance2D()));
+        }
+    }
+}
+// ***************************************************************************
 void MeshUtilities::Mesh2DFromPolygon(const Eigen::MatrixXd &polygonVertices,
                                       const std::vector<unsigned int> vertexMarkers,
                                       const std::vector<unsigned int> edgeMarkers,
