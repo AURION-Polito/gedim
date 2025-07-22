@@ -268,7 +268,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions)
 
     std::vector<Gedim::TetgenInterface::Region> regions(2);
     regions[0] = { -10, Eigen::Vector3d(0.3, 0.3, 0.3), -1 };
-    regions[1] = { -20, Eigen::Vector3d(0.7, 0.7, 0.7), 0.001 };
+    regions[1] = { -20, Eigen::Vector3d(0.7, 0.7, 0.7), 0.1 };
 
     Gedim::TetgenInterface tetgenInterface;
 
@@ -293,10 +293,10 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions)
     }
 
     EXPECT_EQ(3, meshDao.Dimension());
-    EXPECT_EQ(31, meshDao.Cell0DTotalNumber());
-    EXPECT_EQ(122, meshDao.Cell1DTotalNumber());
-    EXPECT_EQ(156, meshDao.Cell2DTotalNumber());
-    EXPECT_EQ(64, meshDao.Cell3DTotalNumber());
+    EXPECT_EQ(10, meshDao.Cell0DTotalNumber());
+    EXPECT_EQ(29, meshDao.Cell1DTotalNumber());
+    EXPECT_EQ(32, meshDao.Cell2DTotalNumber());
+    EXPECT_EQ(12, meshDao.Cell3DTotalNumber());
 }
 
 TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)

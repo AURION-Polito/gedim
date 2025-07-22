@@ -361,13 +361,15 @@ void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd &points,
       tetgenInput.numberofregions = num_regions;
       tetgenInput.regionlist = new REAL[num_regions * 5];
 
-      for (const auto& region : regions)
+      for (unsigned int r = 0; r < num_regions; ++r)
       {
-        tetgenInput.regionlist[0] = region.centroid.x();
-        tetgenInput.regionlist[1] = region.centroid.y();
-        tetgenInput.regionlist[2] = region.centroid.z();
-        tetgenInput.regionlist[3] = region.id;
-        tetgenInput.regionlist[4] = region.max_volume;
+        const auto& region = regions[r];
+
+        tetgenInput.regionlist[0 + 5 * r] = region.centroid.x();
+        tetgenInput.regionlist[1 + 5 * r] = region.centroid.y();
+        tetgenInput.regionlist[2 + 5 * r] = region.centroid.z();
+        tetgenInput.regionlist[3 + 5 * r] = region.id;
+        tetgenInput.regionlist[4 + 5 * r] = region.max_volume;
       }
     }
 }
@@ -598,7 +600,6 @@ void TetgenInterface::ConvertTetgenOutputToMeshDAO(const tetgenio &tetgenOutput,
           {
             mesh.Cell3DInitializeDoublePropertyValues(c, c_p, 1);
             mesh.Cell3DInsertDoublePropertyValue(c, c_p, 0, tetgenOutput.tetrahedronattributelist[c + c_p * numberOfCellsMesh]);
-            std::cout<< "tetra "<< c<< " att "<< tetgenOutput.tetrahedronattributelist[c + c_p * numberOfCellsMesh]<< std::endl;
           }
         }
     }
