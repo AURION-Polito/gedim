@@ -316,18 +316,48 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions_MergedPoly
 
     Gedim::MeshUtilities meshUtilities;
 
-    const auto polyhedron_one = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                 Eigen::Vector3d(8.0, 0.0, 0.0),
-                                                                                 Eigen::Vector3d(0.0, 0.0, -15.0),
-                                                                                 Eigen::Vector3d(0.0, 8.0, 0.0));
+    Eigen::MatrixXd polyhedron_one_points(3, 12);
+    polyhedron_one_points.col(0)<< 0.0, 0.0, 0.0;
+    polyhedron_one_points.col(1)<< 8.0, 0.0, 0.0;
+    polyhedron_one_points.col(2)<< 8.0, 8.0, 0.0;
+    polyhedron_one_points.col(3)<< 0.0, 8.0, 0.0;
+    polyhedron_one_points.col(4)<< 0.0, 0.0, -15.0;
+    polyhedron_one_points.col(5)<< 8.0, 0.0, -15.0;
+    polyhedron_one_points.col(6)<< 8.0, 8.0, -15.0;
+    polyhedron_one_points.col(7)<< 0.0, 8.0, -15.0;
+    polyhedron_one_points.col(8)<< 3.5, 1.5, 0.0;
+    polyhedron_one_points.col(9)<< 5.5, 1.5, 0.0;
+    polyhedron_one_points.col(10)<< 5.5, 4.5, 0.0;
+    polyhedron_one_points.col(11)<< 3.5, 4.5, 0.0;
+
+    const auto polyhedron_one = geometryUtilities.FacetsToPolyhedron(polyhedron_one_points,
+                                                                     {
+                                                                       { 0, 1, 9, 8 },
+                                                                       { 1, 2, 10, 9 },
+                                                                       { 2, 3, 11, 10 },
+                                                                       { 3, 0, 8, 11 },
+                                                                       { 4, 5, 6, 7 },
+                                                                       { 4, 7, 3, 0 },
+                                                                       { 7, 6, 2, 3 },
+                                                                       { 5, 6, 2, 1 },
+                                                                       { 4, 5, 1, 0 },
+                                                                       { 8, 9, 10, 11 }
+                                                                     });
     const auto polyhedron_two = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(3.5, 1.5, 0.0),
                                                                                  Eigen::Vector3d(2.0, 0.0, 0.0),
                                                                                  Eigen::Vector3d(0.0, 0.0, -1.5),
                                                                                  Eigen::Vector3d(0.0, 3.0, 0.0));
-    const auto merged_polyhedron = geometryUtilities.MergePolyhedrons({
-                                                                        polyhedron_one,
-                                                                        polyhedron_two
-                                                                      });
+
+    const std::array<Gedim::GeometryUtilities::Polyhedron, 2> polyhedrons = {
+      polyhedron_one,
+      polyhedron_two
+    };
+
+    const auto merged_polyhedron_input = geometryUtilities.MergePolyhedronByFace(polyhedrons,
+                                                                                 { 9, 0 });
+
+    const auto merged_polyhedron = geometryUtilities.MergePolyhedrons(polyhedrons,
+                                                                      merged_polyhedron_input);
 
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
