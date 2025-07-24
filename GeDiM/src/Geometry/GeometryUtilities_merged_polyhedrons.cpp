@@ -15,7 +15,8 @@
 namespace Gedim
 {
   GeometryUtilities::MergePolyhedronsInput GeometryUtilities::MergePolyhedronByFace(const std::array<Polyhedron, 2>& polyhedrons,
-                                                                                    const std::array<unsigned int, 2> polyhedrons_common_face_index) const
+                                                                                    const std::array<unsigned int, 2> polyhedrons_common_face_index,
+                                                                                    const bool remove_common_face) const
   {
     MergePolyhedronsInput result;
 
@@ -48,9 +49,15 @@ namespace Gedim
 
     // faces
     result.Faces_Type[0].resize(poly_one.Faces.size(),
-                                MergePolyhedronsInput::MergeTypes::None);
+                                {
+                                  MergePolyhedronsInput::MergeTypes::None,
+                                  MergePolyhedronsInput::none
+                                });
     result.Faces_Type[1].resize(poly_two.Faces.size(),
-                                MergePolyhedronsInput::MergeTypes::None);
+                                {
+                                  MergePolyhedronsInput::MergeTypes::None,
+                                  MergePolyhedronsInput::none
+                                });
 
     // common face
     const auto& common_face_one = poly_one.Faces.at(polyhedrons_common_face_index.at(0));
@@ -81,8 +88,18 @@ namespace Gedim
       result.Common_edges[f_v] = { edge_index_one, edge_index_two };
     }
 
-    result.Faces_Type[0][polyhedrons_common_face_index.at(0)] = MergePolyhedronsInput::MergeTypes::Remove;
-    result.Faces_Type[1][polyhedrons_common_face_index.at(1)] = MergePolyhedronsInput::MergeTypes::Remove;
+    if (remove_common_face)
+    {
+      result.Faces_Type[0][polyhedrons_common_face_index.at(0)] = { MergePolyhedronsInput::MergeTypes::Remove, MergePolyhedronsInput::none };
+      result.Faces_Type[1][polyhedrons_common_face_index.at(1)] = { MergePolyhedronsInput::MergeTypes::Remove, MergePolyhedronsInput::none };
+    }
+    else
+    {
+      result.Faces_Type[0][polyhedrons_common_face_index.at(0)] = { MergePolyhedronsInput::MergeTypes::Common, 0 };
+      result.Faces_Type[1][polyhedrons_common_face_index.at(1)] = { MergePolyhedronsInput::MergeTypes::Common, 0 };
+      result.Common_faces.resize(1);
+      result.Common_faces[0] = polyhedrons_common_face_index;
+    }
 
     return result;
   }
@@ -290,7 +307,7 @@ namespace Gedim
     {
       const MergePolyhedronsInput::MergeTypes face_type = !poly_one_has_faces_type ?
                                                             MergePolyhedronsInput::MergeTypes::None :
-                                                            merge_information.Faces_Type.at(0).at(f);
+                                                            merge_information.Faces_Type.at(0).at(f).first;
 
       switch (face_type)
       {
@@ -301,6 +318,14 @@ namespace Gedim
         }
           break;
         case MergePolyhedronsInput::MergeTypes::Common:
+        {
+          const unsigned int common_face_index = merge_information.Faces_Type.at(0).at(f).second;
+          const auto& common_faces = merge_information.Common_faces.at(common_face_index);
+
+          original_to_merged_faces_one[common_faces[0]] = merged_to_original_faces.size();
+          original_to_merged_faces_two[common_faces[1]] = merged_to_original_faces.size();
+          merged_to_original_faces.push_back(common_faces);
+        }
         case MergePolyhedronsInput::MergeTypes::Remove:
           break;
         default:
@@ -315,7 +340,7 @@ namespace Gedim
     {
       const MergePolyhedronsInput::MergeTypes face_type = !poly_two_has_faces_type ?
                                                             MergePolyhedronsInput::MergeTypes::None :
-                                                            merge_information.Faces_Type.at(1).at(f);
+                                                            merge_information.Faces_Type.at(1).at(f).first;
 
       switch (face_type)
       {
@@ -326,6 +351,7 @@ namespace Gedim
         }
           break;
         case MergePolyhedronsInput::MergeTypes::Common:
+          break;
         case MergePolyhedronsInput::MergeTypes::Remove:
           break;
         default:

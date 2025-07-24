@@ -725,9 +725,10 @@ class GeometryUtilities final
 
         std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Vertices_Type;
         std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Edges_Type;
-        std::array<std::vector<MergeTypes>, 2> Faces_Type;
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Faces_Type;
         std::vector<std::array<unsigned int, 2>> Common_vertices;
         std::vector<std::array<unsigned int, 2>> Common_edges;
+        std::vector<std::array<unsigned int, 2>> Common_faces;
     };
 
     struct MergePolyhedronsResult
@@ -2356,7 +2357,8 @@ class GeometryUtilities final
                             const std::string &exportFolder) const;
 
     MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2>& polyhedrons,
-                                                const std::array<unsigned int, 2> polyhedrons_common_face_index) const;
+                                                const std::array<unsigned int, 2> polyhedrons_common_face_index,
+                                                const bool remove_common_face) const;
 
     /// \brief Merge two Polyhedrons not intersecting
     /// \param polyhedrons the polyhedrons to merge
