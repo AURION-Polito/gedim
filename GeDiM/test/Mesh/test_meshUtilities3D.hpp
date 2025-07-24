@@ -299,6 +299,79 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions)
     EXPECT_EQ(12, meshDao.Cell3DTotalNumber());
 }
 
+TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions_MergedPolyhedrons)
+{
+#if ENABLE_TETGEN == 0
+    GTEST_SKIP();
+#endif
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacetsAndRegions_MergedPolyhedrons";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    const auto polyhedron_one = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                 Eigen::Vector3d(8.0, 0.0, 0.0),
+                                                                                 Eigen::Vector3d(0.0, 0.0, -15.0),
+                                                                                 Eigen::Vector3d(0.0, 8.0, 0.0));
+    const auto polyhedron_two = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(3.5, 1.5, 0.0),
+                                                                                 Eigen::Vector3d(2.0, 0.0, 0.0),
+                                                                                 Eigen::Vector3d(0.0, 0.0, -1.5),
+                                                                                 Eigen::Vector3d(0.0, 3.0, 0.0));
+    const auto merged_polyhedron = geometryUtilities.MergePolyhedrons({
+                                                                        polyhedron_one,
+                                                                        polyhedron_two
+                                                                      });
+
+    Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
+    Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
+    Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron");
+    geometryUtilities.ExportPolyhedronToVTU(polyhedron_one,
+                                            exportFolder + "/polyhedron_one");
+    geometryUtilities.ExportPolyhedronToVTU(polyhedron_two,
+                                            exportFolder + "/polyhedron_two");
+    geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron,
+                                            exportFolder + "/merged_polyhedron");
+
+    const auto& points = merged_polyhedron.MergedPolyhedron.Vertices;
+    const auto facets = geometryUtilities.PolyhedronToFacets(merged_polyhedron.MergedPolyhedron);
+
+
+    std::vector<Gedim::TetgenInterface::Region> regions(2);
+    regions[0] = { -10, Eigen::Vector3d(0.3, 0.3, 0.3), -1 };
+    regions[1] = { -20, Eigen::Vector3d(0.7, 0.7, 0.7), 0.1 };
+
+    Gedim::TetgenInterface tetgenInterface;
+
+    tetgenInterface.CreateMesh(points,
+                               facets,
+                               {},
+                               meshDao,
+                               "pqfezna" + std::to_string(0.1));
+
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    {
+      std::vector<double> facets_id(facets.size());
+      for (unsigned int f = 0; f < facets.size(); ++f)
+        facets_id[f] = f;
+
+      Gedim::VTKUtilities exporter_facets;
+      exporter_facets.AddPolygons(points,
+                                  facets,
+                                  {{"Facet",
+                                    Gedim::VTPProperty::Formats::Cells,
+                                    static_cast<unsigned int>(facets_id.size()),
+                                    facets_id.data()}});
+      exporter_facets.Export(exportFolder + "/facets.vtu");
+    }
+}
+
 TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
 {
 #if ENABLE_TETGEN == 0

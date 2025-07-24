@@ -2364,6 +2364,8 @@ class GeometryUtilities final
     MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
                                             const MergePolyhedronsInput& merge_information = {}) const;
 
+    Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd& points,
+                                  const std::vector<std::vector<unsigned int>>& facets) const;
     std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron& polyhedron) const;
 };
 } // namespace Gedim
