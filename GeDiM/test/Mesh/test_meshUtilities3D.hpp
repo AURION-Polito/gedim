@@ -375,7 +375,7 @@ namespace GedimUnitTesting
 
 
     std::vector<Gedim::TetgenInterface::Region> regions(2);
-    regions[0] = { -10, Eigen::Vector3d(4.5, 3.0, -8.0), 1.5 };
+    regions[0] = { -10, Eigen::Vector3d(4.5, 3.0, -8.0), -1 };
     regions[1] = { -20, Eigen::Vector3d(4.5, 3.0, -0.5), 0.01 };
 
     {
