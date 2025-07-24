@@ -61,7 +61,7 @@ namespace Gedim
 
     // common face
     const auto& common_face_one = poly_one.Faces.at(polyhedrons_common_face_index.at(0));
-    const auto& common_face_two = poly_one.Faces.at(polyhedrons_common_face_index.at(1));
+    const auto& common_face_two = poly_two.Faces.at(polyhedrons_common_face_index.at(1));
 
     Gedim::Output::Assert(common_face_one.cols() == common_face_two.cols());
     const unsigned int size_common_face = common_face_one.cols();
