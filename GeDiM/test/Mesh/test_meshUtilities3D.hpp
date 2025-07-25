@@ -363,8 +363,8 @@ namespace GedimUnitTesting
       polyhedron_two_points.col(7)<< 3.5, 4.5, -1.5;
       polyhedron_two_points.col(8)<< 4.0, 2.3, -1.5;
       polyhedron_two_points.col(9)<< 5.0, 2.3, -1.5;
-      polyhedron_two_points.col(10)<< 5.0, 2.8, -1.5;
-      polyhedron_two_points.col(11)<< 4.0, 2.8, -1.5;
+      polyhedron_two_points.col(10)<< 5.0, 3.0, -1.5;
+      polyhedron_two_points.col(11)<< 4.0, 3.0, -1.5;
 
       const auto polyhedron_two = geometryUtilities.FacetsToPolyhedron(polyhedron_two_points,
                                                                        {
@@ -408,7 +408,7 @@ namespace GedimUnitTesting
       const auto polyhedron_three = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(4, 2.3, -1.5),
                                                                                      Eigen::Vector3d(1.0, 0.0, 0.0),
                                                                                      Eigen::Vector3d(0.0, 0.0, -1.0),
-                                                                                     Eigen::Vector3d(0.0, 0.5, 0.0));
+                                                                                     Eigen::Vector3d(0.0, 0.7, 0.0));
 
       Gedim::Output::CreateFolder(exportFolder + "/polyhedron_three");
       geometryUtilities.ExportPolyhedronToVTU(polyhedron_three,
