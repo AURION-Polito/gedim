@@ -316,63 +316,144 @@ namespace GedimUnitTesting
 
     Gedim::MeshUtilities meshUtilities;
 
-    Eigen::MatrixXd polyhedron_one_points(3, 12);
-    polyhedron_one_points.col(0)<< 0.0, 0.0, 0.0;
-    polyhedron_one_points.col(1)<< 8.0, 0.0, 0.0;
-    polyhedron_one_points.col(2)<< 8.0, 8.0, 0.0;
-    polyhedron_one_points.col(3)<< 0.0, 8.0, 0.0;
-    polyhedron_one_points.col(4)<< 0.0, 0.0, -15.0;
-    polyhedron_one_points.col(5)<< 8.0, 0.0, -15.0;
-    polyhedron_one_points.col(6)<< 8.0, 8.0, -15.0;
-    polyhedron_one_points.col(7)<< 0.0, 8.0, -15.0;
-    polyhedron_one_points.col(8)<< 3.5, 1.5, 0.0;
-    polyhedron_one_points.col(9)<< 5.5, 1.5, 0.0;
-    polyhedron_one_points.col(10)<< 5.5, 4.5, 0.0;
-    polyhedron_one_points.col(11)<< 3.5, 4.5, 0.0;
 
-    const auto polyhedron_one = geometryUtilities.FacetsToPolyhedron(polyhedron_one_points,
-                                                                     {
-                                                                       { 0, 1, 9, 8 },
-                                                                       { 1, 2, 10, 9 },
-                                                                       { 2, 3, 11, 10 },
-                                                                       { 3, 0, 8, 11 },
-                                                                       { 4, 5, 6, 7 },
-                                                                       { 4, 7, 3, 0 },
-                                                                       { 7, 6, 2, 3 },
-                                                                       { 5, 6, 2, 1 },
-                                                                       { 4, 5, 1, 0 },
-                                                                       { 8, 9, 10, 11 }
-                                                                     });
-    const auto polyhedron_two = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(3.5, 1.5, 0.0),
-                                                                                 Eigen::Vector3d(2.0, 0.0, 0.0),
-                                                                                 Eigen::Vector3d(0.0, 0.0, -1.5),
-                                                                                 Eigen::Vector3d(0.0, 3.0, 0.0));
+    Gedim::GeometryUtilities::Polyhedron final_polyhedron;
 
-    const std::array<Gedim::GeometryUtilities::Polyhedron, 2> polyhedrons = {
-      polyhedron_one,
-      polyhedron_two
-    };
+    {
+      Eigen::MatrixXd polyhedron_one_points(3, 12);
+      polyhedron_one_points.col(0)<< 0.0, 0.0, 0.0;
+      polyhedron_one_points.col(1)<< 8.0, 0.0, 0.0;
+      polyhedron_one_points.col(2)<< 8.0, 8.0, 0.0;
+      polyhedron_one_points.col(3)<< 0.0, 8.0, 0.0;
+      polyhedron_one_points.col(4)<< 0.0, 0.0, -15.0;
+      polyhedron_one_points.col(5)<< 8.0, 0.0, -15.0;
+      polyhedron_one_points.col(6)<< 8.0, 8.0, -15.0;
+      polyhedron_one_points.col(7)<< 0.0, 8.0, -15.0;
+      polyhedron_one_points.col(8)<< 3.5, 1.5, 0.0;
+      polyhedron_one_points.col(9)<< 5.5, 1.5, 0.0;
+      polyhedron_one_points.col(10)<< 5.5, 4.5, 0.0;
+      polyhedron_one_points.col(11)<< 3.5, 4.5, 0.0;
 
-    const auto merged_polyhedron_input = geometryUtilities.MergePolyhedronByFace(polyhedrons,
-                                                                                 { 9, 0 },
-                                                                                 false);
+      const auto polyhedron_one = geometryUtilities.FacetsToPolyhedron(polyhedron_one_points,
+                                                                       {
+                                                                         { 0, 1, 9, 8 },
+                                                                         { 1, 2, 10, 9 },
+                                                                         { 2, 3, 11, 10 },
+                                                                         { 3, 0, 8, 11 },
+                                                                         { 4, 5, 6, 7 },
+                                                                         { 4, 7, 3, 0 },
+                                                                         { 7, 6, 2, 3 },
+                                                                         { 5, 6, 2, 1 },
+                                                                         { 4, 5, 1, 0 },
+                                                                         { 8, 9, 10, 11 }
+                                                                       });
 
-    const auto merged_polyhedron = geometryUtilities.MergePolyhedrons(polyhedrons,
-                                                                      merged_polyhedron_input);
+      Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
+      geometryUtilities.ExportPolyhedronToVTU(polyhedron_one,
+                                              exportFolder + "/polyhedron_one");
 
-    Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
-    Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
-    Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_one,
-                                            exportFolder + "/polyhedron_one");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_two,
-                                            exportFolder + "/polyhedron_two");
-    geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron,
-                                            exportFolder + "/merged_polyhedron");
+      Eigen::MatrixXd polyhedron_two_points(3, 12);
+      polyhedron_two_points.col(0)<< 3.5, 1.5, 0.0;
+      polyhedron_two_points.col(1)<< 5.5, 1.5, 0.0;
+      polyhedron_two_points.col(2)<< 5.5, 4.5, 0.0;
+      polyhedron_two_points.col(3)<< 3.5, 4.5, 0.0;
+      polyhedron_two_points.col(4)<< 3.5, 1.5, -1.5;
+      polyhedron_two_points.col(5)<< 5.5, 1.5, -1.5;
+      polyhedron_two_points.col(6)<< 5.5, 4.5, -1.5;
+      polyhedron_two_points.col(7)<< 3.5, 4.5, -1.5;
+      polyhedron_two_points.col(8)<< 4.0, 2.5, -1.5;
+      polyhedron_two_points.col(9)<< 5.0, 2.5, -1.5;
+      polyhedron_two_points.col(10)<< 5.0, 3.5, -1.5;
+      polyhedron_two_points.col(11)<< 4.0, 3.5, -1.5;
 
-    const auto& points = merged_polyhedron.MergedPolyhedron.Vertices;
-    const auto facets = geometryUtilities.PolyhedronToFacets(merged_polyhedron.MergedPolyhedron);
+      const auto polyhedron_two = geometryUtilities.FacetsToPolyhedron(polyhedron_two_points,
+                                                                       {
+                                                                         { 0, 1, 2, 3 },
+                                                                         { 4, 7, 3, 0 },
+                                                                         { 4, 5, 1, 0 },
+                                                                         { 5, 6, 2, 1 },
+                                                                         { 6, 2, 3, 7 },
+                                                                         { 4, 5, 9, 8 },
+                                                                         { 5, 6, 10, 9 },
+                                                                         { 6, 7, 11, 10 },
+                                                                         { 7, 4, 8, 11 },
+                                                                         { 8, 9, 10, 11 }
+                                                                       });
 
+
+      Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
+      geometryUtilities.ExportPolyhedronToVTU(polyhedron_two,
+                                              exportFolder + "/polyhedron_two");
+
+      const std::array<Gedim::GeometryUtilities::Polyhedron, 2> polyhedrons = {
+        polyhedron_one,
+        polyhedron_two
+      };
+
+      const auto merged_polyhedron_input = geometryUtilities.MergePolyhedronByFace(polyhedrons,
+                                                                                   { 9, 0 },
+                                                                                   false);
+
+      const auto merged_polyhedron = geometryUtilities.MergePolyhedrons(polyhedrons,
+                                                                        merged_polyhedron_input);
+
+      Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron_one");
+      geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron,
+                                              exportFolder + "/merged_polyhedron_one");
+
+      final_polyhedron = merged_polyhedron.MergedPolyhedron;
+    }
+
+    {
+      const auto polyhedron_three = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(4, 2.5, -1.5),
+                                                                                     Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                                                     Eigen::Vector3d(0.0, 0.0, -1.0),
+                                                                                     Eigen::Vector3d(0.0, 1.0, 0.0));
+
+      Gedim::Output::CreateFolder(exportFolder + "/polyhedron_three");
+      geometryUtilities.ExportPolyhedronToVTU(polyhedron_three,
+                                              exportFolder + "/polyhedron_three");
+
+      const std::array<Gedim::GeometryUtilities::Polyhedron, 2> polyhedrons = {
+        final_polyhedron,
+        polyhedron_three
+      };
+
+      const auto merged_polyhedron_input = geometryUtilities.MergePolyhedronByFace(polyhedrons,
+                                                                                   { 18, 0 },
+                                                                                   true);
+
+      const auto merged_polyhedron = geometryUtilities.MergePolyhedrons(polyhedrons,
+                                                                        merged_polyhedron_input);
+
+      Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron_two");
+      geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron,
+                                              exportFolder + "/merged_polyhedron_two");
+
+      final_polyhedron = merged_polyhedron.MergedPolyhedron;
+    }
+
+    Gedim::Output::CreateFolder(exportFolder + "/final_polyhedron");
+    geometryUtilities.ExportPolyhedronToVTU(final_polyhedron,
+                                            exportFolder + "/final_polyhedron");
+
+    const auto& points = final_polyhedron.Vertices;
+    const auto facets = geometryUtilities.PolyhedronToFacets(final_polyhedron);
+
+    {
+      std::vector<double> facets_id(facets.size());
+      for (unsigned int f = 0; f < facets.size(); ++f)
+        facets_id[f] = f;
+
+      Gedim::VTKUtilities exporter;
+      exporter.AddPolygons(points,
+                           facets,
+                           {{"Facet",
+                             Gedim::VTPProperty::Formats::Cells,
+                             static_cast<unsigned int>(facets_id.size()),
+                             facets_id.data()}});
+      exporter.Export(exportFolder + "/facets.vtu");
+    }
 
     std::vector<Gedim::TetgenInterface::Region> regions(2);
     regions[0] = { -10, Eigen::Vector3d(4.5, 3.0, -8.0), -1 };
@@ -406,20 +487,6 @@ namespace GedimUnitTesting
                            }
                          });
       exporter.Export(exportFolder + "/regions.vtu");
-    }
-    {
-      std::vector<double> facets_id(facets.size());
-      for (unsigned int f = 0; f < facets.size(); ++f)
-        facets_id[f] = f;
-
-      Gedim::VTKUtilities exporter;
-      exporter.AddPolygons(points,
-                           facets,
-                           {{"Facet",
-                             Gedim::VTPProperty::Formats::Cells,
-                             static_cast<unsigned int>(facets_id.size()),
-                             facets_id.data()}});
-      exporter.Export(exportFolder + "/facets.vtu");
     }
 
     Gedim::TetgenInterface tetgenInterface;
