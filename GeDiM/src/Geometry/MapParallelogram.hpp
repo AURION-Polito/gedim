@@ -27,6 +27,7 @@ class MapParallelogram
         double DetB;
         double DetBInv;
     };
+    Eigen::MatrixXd ReferencePoints;
 
   private:
     /// Matrix B for linear map x = B * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
@@ -52,6 +53,11 @@ class MapParallelogram
   public:
     MapParallelogram()
     {
+        ReferencePoints.resize(3, 4);
+        ReferencePoints.col(0) << 0.0, 0.0, 0.0;
+        ReferencePoints.col(1) << 1.0, 0.0, 0.0;
+        ReferencePoints.col(2) << 1.0, 1.0, 0.0;
+        ReferencePoints.col(3) << 0.0, 1.0, 0.0;
     }
     ~MapParallelogram()
     {

@@ -46,33 +46,22 @@ MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd &v
 {
     MapHexahedronData result;
 
-    MatrixXd referencePoints;
-    referencePoints.resize(3, 8);
-    referencePoints.col(0) << 0.0, 0.0, 0.0;
-    referencePoints.col(1) << 1.0, 0.0, 0.0;
-    referencePoints.col(2) << 1.0, 1.0, 0.0;
-    referencePoints.col(3) << 0.0, 1.0, 0.0;
-    referencePoints.col(4) << 0.0, 0.0, 1.0;
-    referencePoints.col(5) << 1.0, 0.0, 1.0;
-    referencePoints.col(6) << 1.0, 1.0, 1.0;
-    referencePoints.col(7) << 0.0, 1.0, 1.0;
-
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 1, 2, 3, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 1, 2, 3, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 1, 3, 2, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 1, 3, 2, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 2, 1, 3, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 2, 1, 3, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 2, 3, 1, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 2, 3, 1, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 3, 1, 2, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 3, 1, 2, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, referencePoints, 3, 2, 1, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 3, 2, 1, result))
         return result;
 
     throw runtime_error("Hexahedron cannot be mapped");
