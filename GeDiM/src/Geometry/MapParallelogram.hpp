@@ -30,10 +30,7 @@ class MapParallelogram
     Eigen::MatrixXd ReferencePoints;
 
   private:
-    /// Matrix B for linear map x = B * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
-    /// vertices the triangle to map vertices, size 3 x 3
-    /// return the resulting value, size 3 x 3
-    static inline Eigen::Matrix3d B(const Eigen::Matrix3d &vertices)
+    static inline Eigen::Matrix3d B(const Eigen::MatrixXd &vertices)
     {
         Eigen::Matrix3d B;
         B.row(0) << vertices(0, 1) - vertices(0, 0), vertices(0, 3) - vertices(0, 0), 0.0;
@@ -45,7 +42,7 @@ class MapParallelogram
     /// translation b for linear map x = B * x_r + b from reference triangle [0,1]x[0,1]/2 to triangle with x points
     /// vertices the triangle to map vertices, size 3 x 3
     /// return the resulting value, size 3 x 3
-    static inline Eigen::Vector3d b(const Eigen::Matrix3d &vertices)
+    static inline Eigen::Vector3d b(const Eigen::MatrixXd &vertices)
     {
         return vertices.col(0);
     }
@@ -63,7 +60,7 @@ class MapParallelogram
     {
     }
 
-    MapParallelogramData Compute(const Eigen::Matrix3d &vertices);
+    MapParallelogramData Compute(const Eigen::MatrixXd &vertices);
 
     static Eigen::MatrixXd F(const MapParallelogramData &mapData, const Eigen::MatrixXd &x)
     {

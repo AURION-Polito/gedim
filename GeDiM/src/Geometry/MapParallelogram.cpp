@@ -25,7 +25,7 @@ Eigen::MatrixXd MapParallelogram::J(const MapParallelogramData &mapData, const E
     return jacb;
 }
 // ***************************************************************************
-MapParallelogram::MapParallelogramData MapParallelogram::Compute(const Eigen::Matrix3d &vertices)
+MapParallelogram::MapParallelogramData MapParallelogram::Compute(const Eigen::MatrixXd &vertices)
 {
     MapParallelogram::MapParallelogramData result;
 
