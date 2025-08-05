@@ -32,7 +32,14 @@ bool MapHexahedron::TestMapConfiguration(const Eigen::MatrixXd &vertices,
                  vertices.col(coordinateSystem[fourthVertexIndex]));
     result.b = b(vertices.col(coordinateSystem[0]));
 
-    return (geometryUtilities.IsValueZero((vertices - F(result, referencePoints)).norm(), geometryUtilities.Tolerance1D()));
+    if (!geometryUtilities.IsValueZero((vertices - F(result, referencePoints)).norm(), geometryUtilities.Tolerance1D()))
+        return false;
+
+    result.QInv = result.Q.inverse();
+    result.DetQ = result.Q.determinant();
+    result.DetQInv = result.QInv.determinant();
+
+    return true;
 }
 // ***************************************************************************
 MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd &vertices, const vector<unsigned int> &coordinateSystem) const
@@ -71,7 +78,7 @@ MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd &v
     throw runtime_error("Hexahedron cannot be mapped");
 }
 // ***************************************************************************
-MatrixXd MapHexahedron::J(const MapHexahedronData &mapData, const MatrixXd &x) const
+MatrixXd MapHexahedron::J(const MapHexahedronData &mapData, const MatrixXd &x)
 {
     const unsigned int numPoints = x.cols();
     MatrixXd jacb(3, 3 * numPoints);
@@ -83,7 +90,7 @@ MatrixXd MapHexahedron::J(const MapHexahedronData &mapData, const MatrixXd &x) c
     return jacb;
 }
 // ***************************************************************************
-VectorXd MapHexahedron::DetJ(const MapHexahedronData &mapData, const MatrixXd &x) const
+VectorXd MapHexahedron::DetJ(const MapHexahedronData &mapData, const MatrixXd &x)
 {
     MatrixXd jacb = J(mapData, x);
 

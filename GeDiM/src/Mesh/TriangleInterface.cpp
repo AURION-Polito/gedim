@@ -285,12 +285,18 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".poly");
     file.open(filename);
-    file << triangleInput.numberofpoints << " " << "2" << " " << "0" << " " << "1" << endl;
+    file << triangleInput.numberofpoints << " "
+         << "2"
+         << " "
+         << "0"
+         << " "
+         << "1" << endl;
     for (int i = 0; i < triangleInput.numberofpoints; i++)
         file << i + 1 << " " << triangleInput.pointlist[2 * i] << " " << triangleInput.pointlist[2 * i + 1] << " "
              << triangleInput.pointmarkerlist[i] << endl;
 
-    file << triangleInput.numberofsegments << " " << " 0 " << endl;
+    file << triangleInput.numberofsegments << " "
+         << " 0 " << endl;
 
     for (int i = 0; i < triangleInput.numberofsegments; i++)
         file << i + 1 << " " << triangleInput.segmentlist[2 * i] + 1 << " " << triangleInput.segmentlist[2 * i + 1] + 1
@@ -302,7 +308,12 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".1.node");
     file.open(filename);
-    file << triangleOutput.numberofpoints << " " << "2" << " " << "0" << " " << "1" << endl;
+    file << triangleOutput.numberofpoints << " "
+         << "2"
+         << " "
+         << "0"
+         << " "
+         << "1" << endl;
     for (int i = 0; i < triangleOutput.numberofpoints; i++)
         file << i + 1 << " " << triangleOutput.pointlist[2 * i] << " " << triangleOutput.pointlist[2 * i + 1] << " "
              << triangleOutput.pointmarkerlist[i] << endl;
@@ -311,7 +322,8 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".1.neigh");
     file.open(filename);
-    file << triangleOutput.numberoftriangles << " " << "3" << endl;
+    file << triangleOutput.numberoftriangles << " "
+         << "3" << endl;
     for (int i = 0; i < triangleOutput.numberoftriangles; i++)
         file << i + 1 << " "
              << ((triangleOutput.neighborlist[3 * i] != -1) ? (triangleOutput.neighborlist[3 * i] + 1) : -1) << " "
@@ -322,7 +334,8 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".1.edge");
     file.open(filename);
-    file << triangleOutput.numberofedges << " " << "1" << endl;
+    file << triangleOutput.numberofedges << " "
+         << "1" << endl;
     for (int i = 0; i < triangleOutput.numberofedges; i++)
         file << i + 1 << " " << triangleOutput.edgelist[2 * i] + 1 << " " << triangleOutput.edgelist[2 * i + 1] + 1
              << " " << triangleOutput.edgemarkerlist[i] << endl;
@@ -331,7 +344,10 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".1.ele");
     file.open(filename);
-    file << triangleOutput.numberoftriangles << " " << "3" << " " << "0" << endl;
+    file << triangleOutput.numberoftriangles << " "
+         << "3"
+         << " "
+         << "0" << endl;
     for (int i = 0; i < triangleOutput.numberoftriangles; i++)
         file << i + 1 << " " << triangleOutput.trianglelist[3 * i] + 1 << " "
              << triangleOutput.trianglelist[3 * i + 1] + 1 << " " << triangleOutput.trianglelist[3 * i + 2] + 1 << endl;
@@ -340,7 +356,10 @@ void TriangleInterface::ExportTriangleMesh(const struct triangulateio &triangleI
     strcpy(filename, basefilename);
     strcat(filename, ".1.poly");
     file.open(filename);
-    file << " 0 " << "2 " << "0 " << "1" << endl;
+    file << " 0 "
+         << "2 "
+         << "0 "
+         << "1" << endl;
     file << triangleOutput.numberofsegments << " 1" << endl;
     for (int i = 0; i < triangleOutput.numberofsegments; i++)
     {

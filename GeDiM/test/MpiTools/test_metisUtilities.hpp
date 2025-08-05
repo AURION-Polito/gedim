@@ -1105,8 +1105,10 @@ TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
         double max = *std::max_element(nodesW.begin(), nodesW.end());
 
         ofstream file(exportFolder + "/weights.csv");
-        file << "cell" << ",";
-        file << "nodesW" << ",";
+        file << "cell"
+             << ",";
+        file << "nodesW"
+             << ",";
         file << "nodesWeights" << endl;
 
         for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
@@ -1199,8 +1201,10 @@ TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
     }
 
     ofstream file(exportFolder + "/data.csv");
-    file << "percentage" << ",";
-    file << "askPartions" << ",";
+    file << "percentage"
+         << ",";
+    file << "askPartions"
+         << ",";
     file << "numPartions" << endl;
 
     for (unsigned int p = 1; p <= numTests; p++)
