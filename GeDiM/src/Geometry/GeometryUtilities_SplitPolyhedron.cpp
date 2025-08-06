@@ -96,7 +96,8 @@ GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWi
     result.NewVerticesEdgeIndex = vector<unsigned int>(newVerticesEdgeIndex.begin(), newVerticesEdgeIndex.end());
     result.Type = (positiveUsed)
                       ? (negativeUsed ? SplitPolygonWithPlaneResult::Types::Split : SplitPolygonWithPlaneResult::Types::Positive)
-                      : negativeUsed ? SplitPolygonWithPlaneResult::Types::Negative : SplitPolygonWithPlaneResult::Types::OnPlane;
+                  : negativeUsed ? SplitPolygonWithPlaneResult::Types::Negative
+                                 : SplitPolygonWithPlaneResult::Types::OnPlane;
 
     // sort points with correct order
     Eigen::MatrixXd globalVertices(3, polygonVertices.cols() + result.NewVertices.size());
