@@ -456,8 +456,8 @@ namespace GedimUnitTesting
     }
 
     std::vector<Gedim::TetgenInterface::Region> regions(2);
-    regions[0] = { -10, Eigen::Vector3d(4.5, 3.0, -8.0), -1 };
-    regions[1] = { -20, Eigen::Vector3d(4.5, 3.0, -0.5), 0.01 };
+    regions[0] = { -10, Eigen::Vector3d(4.5, 3.0, -8.0), 0.48 };
+    regions[1] = { -20, Eigen::Vector3d(4.5, 3.0, -0.5), 0.0048 };
 
     {
       std::vector<double> regions_id(regions.size());
@@ -496,7 +496,23 @@ namespace GedimUnitTesting
                                regions,
                                meshDao);
 
+    for (unsigned int v = 0; v < meshDao.Cell0DTotalNumber(); ++v)
+      meshDao.Cell0DSetMarker(v, 0);
+    for (unsigned int e = 0; e < meshDao.Cell1DTotalNumber(); ++e)
+      meshDao.Cell1DSetMarker(e, 0);
+    for (unsigned int f = 0; f < meshDao.Cell2DTotalNumber(); ++f)
+      meshDao.Cell2DSetMarker(f, 0);
+    for (unsigned int p = 0; p < meshDao.Cell3DTotalNumber(); ++p)
+      meshDao.Cell3DSetMarker(p, 0);
+
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+
+    std::string mesh_csv_export_folder = exportFolder +
+                                         "/Mesh3D_Data";
+    Gedim::Output::CreateFolder(mesh_csv_export_folder);
+    meshUtilities.ExportMeshToCsv(meshDao,
+                                  ';',
+                                  mesh_csv_export_folder);
   }
 
   TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
