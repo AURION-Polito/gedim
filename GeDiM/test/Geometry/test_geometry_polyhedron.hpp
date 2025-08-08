@@ -1789,14 +1789,14 @@ TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Cube)
     }
 }
 
-TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Parallellepiped)
+TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Parallelepiped)
 {
     try
     {
         Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
         Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-        std::string exportFolder = "./Export/TestPolyhedronIsConvex_Parallellepiped";
+        std::string exportFolder = "./Export/TestPolyhedronIsConvex_Parallelepiped";
         Gedim::Output::CreateFolder(exportFolder);
 
         // check convex polyhedron
