@@ -19,12 +19,12 @@ namespace Gedim
 {
 // ***************************************************************************
 bool MapParallelepiped::TestMapConfiguration(const Eigen::MatrixXd &vertices,
-                                         const vector<unsigned int> &coordinateSystem,
-                                         const Eigen::MatrixXd &referencePoints,
-                                         const unsigned int &secondVertexIndex,
-                                         const unsigned int &thirdVertexIndex,
-                                         const unsigned int &fourthVertexIndex,
-                                         MapParallelepiped::MapParallelepipedData &result) const
+                                             const vector<unsigned int> &coordinateSystem,
+                                             const Eigen::MatrixXd &referencePoints,
+                                             const unsigned int &secondVertexIndex,
+                                             const unsigned int &thirdVertexIndex,
+                                             const unsigned int &fourthVertexIndex,
+                                             MapParallelepiped::MapParallelepipedData &result) const
 {
     result.Q = Q(vertices.col(coordinateSystem[0]),
                  vertices.col(coordinateSystem[secondVertexIndex]),
@@ -42,7 +42,8 @@ bool MapParallelepiped::TestMapConfiguration(const Eigen::MatrixXd &vertices,
     return true;
 }
 // ***************************************************************************
-MapParallelepiped::MapParallelepipedData MapParallelepiped::Compute(const Eigen::MatrixXd &vertices, const vector<unsigned int> &coordinateSystem) const
+MapParallelepiped::MapParallelepipedData MapParallelepiped::Compute(const Eigen::MatrixXd &vertices,
+                                                                    const vector<unsigned int> &coordinateSystem) const
 {
     MapParallelepipedData result;
 
