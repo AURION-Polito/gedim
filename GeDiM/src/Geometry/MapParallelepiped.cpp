@@ -9,7 +9,7 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
-#include "MapHexahedron.hpp"
+#include "MapParallelepiped.hpp"
 #include <iostream>
 
 using namespace Eigen;
@@ -18,13 +18,13 @@ using namespace std;
 namespace Gedim
 {
 // ***************************************************************************
-bool MapHexahedron::TestMapConfiguration(const Eigen::MatrixXd &vertices,
+bool MapParallelepiped::TestMapConfiguration(const Eigen::MatrixXd &vertices,
                                          const vector<unsigned int> &coordinateSystem,
                                          const Eigen::MatrixXd &referencePoints,
                                          const unsigned int &secondVertexIndex,
                                          const unsigned int &thirdVertexIndex,
                                          const unsigned int &fourthVertexIndex,
-                                         MapHexahedron::MapHexahedronData &result) const
+                                         MapParallelepiped::MapParallelepipedData &result) const
 {
     result.Q = Q(vertices.col(coordinateSystem[0]),
                  vertices.col(coordinateSystem[secondVertexIndex]),
@@ -42,9 +42,9 @@ bool MapHexahedron::TestMapConfiguration(const Eigen::MatrixXd &vertices,
     return true;
 }
 // ***************************************************************************
-MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd &vertices, const vector<unsigned int> &coordinateSystem) const
+MapParallelepiped::MapParallelepipedData MapParallelepiped::Compute(const Eigen::MatrixXd &vertices, const vector<unsigned int> &coordinateSystem) const
 {
-    MapHexahedronData result;
+    MapParallelepipedData result;
 
     if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 1, 2, 3, result))
         return result;
@@ -67,7 +67,7 @@ MapHexahedron::MapHexahedronData MapHexahedron::Compute(const Eigen::MatrixXd &v
     throw runtime_error("Hexahedron cannot be mapped");
 }
 // ***************************************************************************
-MatrixXd MapHexahedron::J(const MapHexahedronData &mapData, const MatrixXd &x)
+MatrixXd MapParallelepiped::J(const MapParallelepipedData &mapData, const MatrixXd &x)
 {
     const unsigned int numPoints = x.cols();
     MatrixXd jacb(3, 3 * numPoints);
@@ -79,7 +79,7 @@ MatrixXd MapHexahedron::J(const MapHexahedronData &mapData, const MatrixXd &x)
     return jacb;
 }
 // ***************************************************************************
-VectorXd MapHexahedron::DetJ(const MapHexahedronData &mapData, const MatrixXd &x)
+VectorXd MapParallelepiped::DetJ(const MapParallelepipedData &mapData, const MatrixXd &x)
 {
     MatrixXd jacb = J(mapData, x);
 

@@ -9,18 +9,18 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
-#ifndef __MapHexahedron_H
-#define __MapHexahedron_H
+#ifndef __MapParallelepiped_H
+#define __MapParallelepiped_H
 
 #include "Eigen/Eigen"
 #include "GeometryUtilities.hpp"
 
 namespace Gedim
 {
-class MapHexahedron
+class MapParallelepiped
 {
   public:
-    struct MapHexahedronData final
+    struct MapParallelepipedData final
     {
         Eigen::Matrix3d Q;
         Eigen::Vector3d b;
@@ -40,10 +40,10 @@ class MapHexahedron
                               const unsigned int &secondVertexIndex,
                               const unsigned int &thirdVertexIndex,
                               const unsigned int &fourthVertexIndex,
-                              MapHexahedron::MapHexahedronData &result) const;
+                              MapParallelepiped::MapParallelepipedData &result) const;
 
   public:
-    MapHexahedron(const GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
+    MapParallelepiped(const GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
     {
         ReferencePoints.resize(3, 8);
         ReferencePoints.col(0) << 0.0, 0.0, 0.0;
@@ -55,7 +55,7 @@ class MapHexahedron
         ReferencePoints.col(6) << 1.0, 1.0, 1.0;
         ReferencePoints.col(7) << 0.0, 1.0, 1.0;
     }
-    ~MapHexahedron()
+    ~MapParallelepiped()
     {
     }
 
@@ -90,18 +90,18 @@ class MapHexahedron
     /// \param vertices the hexahedron to map vertices, size 3 x 4
     /// \param edges the hexahedron edges
     /// \return the map data
-    MapHexahedronData Compute(const Eigen::MatrixXd &vertices, const std::vector<unsigned int> &coordinateSystem) const;
+    MapParallelepipedData Compute(const Eigen::MatrixXd &vertices, const std::vector<unsigned int> &coordinateSystem) const;
 
     /// Map from the Hexahedron reference element [0,1]x[0,1]x[0,1] to the polygon x = F(x_r) = Q * x_r + b
     /// \param mapData the map data computed
     /// \param x points in reference Hexahedron, size 3 x numPoints
     /// \return the mapped points, size 3 x numPoints
-    static inline Eigen::MatrixXd F(const MapHexahedronData &mapData, const Eigen::MatrixXd &x)
+    static inline Eigen::MatrixXd F(const MapParallelepipedData &mapData, const Eigen::MatrixXd &x)
     {
         return (mapData.Q * x).colwise() + mapData.b;
     }
 
-    static inline Eigen::MatrixXd FInv(const MapHexahedronData &mapData, const Eigen::MatrixXd &x)
+    static inline Eigen::MatrixXd FInv(const MapParallelepipedData &mapData, const Eigen::MatrixXd &x)
     {
         return mapData.QInv * (x.colwise() - mapData.b);
     }
@@ -110,14 +110,14 @@ class MapHexahedron
     /// \param mapData the map data computed
     /// \param x points in reference Hexahedron, size 3 x numPoints
     /// \return the Q matrix for each points, size 2 x (2 * numPoints)
-    static Eigen::MatrixXd J(const MapHexahedronData &mapData, const Eigen::MatrixXd &x);
+    static Eigen::MatrixXd J(const MapParallelepipedData &mapData, const Eigen::MatrixXd &x);
 
     /// Compute the determinant of the jacobian matrix of the trasformation
     /// \param mapData the map data computed
     /// \param x points in reference Hexahedron, size 3 x numPoints
     /// \return the determinant of Jacobian matrix for each points, size 1 x numPoints
-    static Eigen::VectorXd DetJ(const MapHexahedronData &mapData, const Eigen::MatrixXd &x);
+    static Eigen::VectorXd DetJ(const MapParallelepipedData &mapData, const Eigen::MatrixXd &x);
 };
 } // namespace Gedim
 
-#endif // __MapHexahedron_H
+#endif // __MapParallelepiped_H

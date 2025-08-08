@@ -17,7 +17,7 @@
 #include <gtest/gtest.h>
 
 #include "Eigen/Eigen"
-#include "MapHexahedron.hpp"
+#include "MapParallelepiped.hpp"
 #include "MapQuadrilateral.hpp"
 #include "MapTetrahedron.hpp"
 #include "MapTriangle.hpp"
@@ -233,7 +233,7 @@ TEST(TestQuadratureMap, TestMapTetrahedron)
     ASSERT_TRUE(geometryUtilities.IsValueZero(1.0 / 6.0 * abs(mapping.DetJ(mapData)) - 308.0, geometryUtilities.Tolerance1D()));
 }
 
-TEST(TestQuadratureMap, TestMapHexahedron)
+TEST(TestQuadratureMap, TestMapParallelepiped)
 {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
@@ -250,7 +250,7 @@ TEST(TestQuadratureMap, TestMapHexahedron)
                                                          vertices.col(1) - vertices.col(0),
                                                          vertices.col(4) - vertices.col(0),
                                                          vertices.col(3) - vertices.col(0));
-    Gedim::MapHexahedron mapping(geometryUtilities);
+    Gedim::MapParallelepiped mapping(geometryUtilities);
 
     Eigen::MatrixXd points;
     points.resize(3, 8);
@@ -281,7 +281,7 @@ TEST(TestQuadratureMap, TestMapHexahedron)
 
     const vector<unsigned int> polyhedronCoordinateSystem =
         geometryUtilities.PolyhedronCoordinateSystem(hexa.Vertices, hexa.Edges);
-    const Gedim::MapHexahedron::MapHexahedronData mapData = mapping.Compute(hexa.Vertices, polyhedronCoordinateSystem);
+    const auto mapData = mapping.Compute(hexa.Vertices, polyhedronCoordinateSystem);
 
     Eigen::MatrixXd mappedPoints = mapping.F(mapData, points);
 
