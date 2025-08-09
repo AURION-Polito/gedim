@@ -461,43 +461,23 @@ namespace GedimUnitTesting
       { 0u, 0u },
       { 1u, 1u },
       { 3u, 2u },
-      { 8u, 3u }
+      { 4u, 3u }
     };
     const std::vector<std::array<unsigned int, 2>> expected_merged_to_original_edges =
     {
-      { 0u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 1u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 2u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 3u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 4u, 0u },
-      { 5u, 1u },
-      { 6u, 2u },
-      { 7u, 3u },
-      { 8u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 9u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 10u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 11u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
+      { 0u, 0u },
+      { 3u, 1u },
+      { 8u, 3u },
+      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 2u },
       { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 4u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 5u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 6u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 7u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 8u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 9u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 10u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 11u }
+      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 5u }
     };
     const std::vector<std::array<unsigned int, 2>> expected_merged_to_original_faces =
     {
-      { 0u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 2u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 3u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 4u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 5u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
+      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 0u },
       { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 1u },
       { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 2u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 3u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 4u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 5u }
+      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 3u }
     };
 
     ASSERT_EQ(merged_polyhedron.MergedToOriginalVertices,
