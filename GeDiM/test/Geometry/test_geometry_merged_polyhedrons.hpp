@@ -280,8 +280,6 @@ namespace GedimUnitTesting
 
   TEST(TestGeometryUtilities, Test_MergePolyhedrons_edge_removed)
   {
-  GTEST_SKIP_("TODO!!");
-
     const Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     const Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
@@ -327,12 +325,11 @@ namespace GedimUnitTesting
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Common, 1 },
-      { merge_input_type::MergeTypes::Common, 3 },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
-      { merge_input_type::MergeTypes::Common, 8 },
+      { merge_input_type::MergeTypes::Common, 2 },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none },
       { merge_input_type::MergeTypes::Remove, merge_input_type::none }
@@ -341,14 +338,31 @@ namespace GedimUnitTesting
     {
       { merge_input_type::MergeTypes::Common, 0 },
       { merge_input_type::MergeTypes::Common, 1 },
-      { merge_input_type::MergeTypes::Common, 3 },
+      { merge_input_type::MergeTypes::None, merge_input_type::none },
       { merge_input_type::MergeTypes::Common, 2 },
-      { merge_input_type::MergeTypes::Common, 4 },
-      { merge_input_type::MergeTypes::Common, 5 }
+      { merge_input_type::MergeTypes::None, merge_input_type::none },
+      { merge_input_type::MergeTypes::None, merge_input_type::none }
     };
     merged_polyhedrons_input.Common_edges =
-    { { 0, 0 }, { 3, 1 }, { 8, 3 }, { merge_input_type::none, 2 }, { merge_input_type::none, 4 }, { merge_input_type::none, 5 } };
+    { { 0, 0 }, { 3, 1 }, { 8, 3 } };
 
+    merged_polyhedrons_input.Faces_Type[0] =
+    {
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none },
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none },
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none },
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none },
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none },
+      { merge_input_type::MergeTypes::Remove, merge_input_type::none }
+    };
+    merged_polyhedrons_input.Faces_Type[1] =
+    {
+      { merge_input_type::MergeTypes::None, merge_input_type::none },
+      { merge_input_type::MergeTypes::None, merge_input_type::none },
+      { merge_input_type::MergeTypes::None, merge_input_type::none },
+      { merge_input_type::MergeTypes::None, merge_input_type::none }
+    };
+    merged_polyhedrons_input.Common_faces = { };
 
     const auto merged_polyhedron = geometryUtilities.MergePolyhedrons(polyhedrons,
                                                                       merged_polyhedrons_input);
@@ -365,24 +379,57 @@ namespace GedimUnitTesting
                                             exportFolder + "/merged_polyhedron");
 
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Vertices.cols(),
-              polyhedrons[0].Vertices.cols() +
-        polyhedrons[1].Vertices.cols() -
-        merged_polyhedrons_input.Common_vertices.size());
+              4);
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Edges.cols(),
-              polyhedrons[0].Edges.cols() +
-        polyhedrons[1].Edges.cols() -
-        merged_polyhedrons_input.Common_edges.size());
+              6);
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Faces.size(),
-              polyhedrons[0].Faces.size() +
-        polyhedrons[1].Faces.size() - 2);
+              4);
 
     std::array<std::vector<unsigned int>, 2> expected_original_to_merged_vertices;
-    expected_original_to_merged_vertices[0] = { 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u };
-    expected_original_to_merged_vertices[1] = { 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u };
+    expected_original_to_merged_vertices[0] =
+    {
+      0u,
+      1u,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      2u,
+      3u,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+    };
+    expected_original_to_merged_vertices[1] =
+    {
+      0u,
+      1u,
+      2u,
+      3u
+    };
 
     std::array<std::vector<unsigned int>, 2> expected_original_to_merged_edges;
-    expected_original_to_merged_edges[0] = { 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u };
-    expected_original_to_merged_edges[1] = { 4u, 5u, 6u, 7u, 12u, 13u, 14u, 15u, 16u, 17u, 18u, 19u };
+    expected_original_to_merged_edges[0] =
+    {
+      0u,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      1u,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      2u,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none
+    };
+    expected_original_to_merged_edges[1] =
+    {
+      0u,
+      1u,
+      3u,
+      2u,
+      4u,
+      5u
+    };
 
     std::array<std::vector<unsigned int>, 2> expected_original_to_merged_faces;
     expected_original_to_merged_faces[0] = { 0u, Gedim::GeometryUtilities::MergePolyhedronsResult::none, 1u, 2u, 3u, 4u };
@@ -397,18 +444,10 @@ namespace GedimUnitTesting
 
     const std::vector<std::array<unsigned int, 2>> expected_merged_to_original_vertices =
     {
-      { 0u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 1u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 2u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 3u, Gedim::GeometryUtilities::MergePolyhedronsResult::none },
-      { 4u, 0u },
-      { 5u, 1u },
-      { 6u, 2u },
-      { 7u, 3u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 4u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 5u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 6u },
-      { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 7u }
+      { 0u, 0u },
+      { 1u, 1u },
+      { 3u, 2u },
+      { 8u, 3u }
     };
     const std::vector<std::array<unsigned int, 2>> expected_merged_to_original_edges =
     {
