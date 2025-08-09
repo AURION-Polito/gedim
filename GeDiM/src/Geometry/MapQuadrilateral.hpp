@@ -9,8 +9,8 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
-#ifndef __MappingQuadrilateral_H
-#define __MappingQuadrilateral_H
+#ifndef __MapQuadrilateral_H
+#define __MapQuadrilateral_H
 
 #include "Eigen/Eigen"
 

@@ -83,6 +83,7 @@ class MapTriangle
     /// \param x points in reference triangle, size 3 x numPoints
     /// \return the B matrix for each points, size 3 x (3 * numPoints)
     static Eigen::MatrixXd J(const MapTriangleData &mapData, const Eigen::MatrixXd &x);
+
     /// Compute the determinant of the jacobian matrix of the trasformation
     /// \param mapData the map data
     /// \param x points in reference triangle, size 3 x numPoints
