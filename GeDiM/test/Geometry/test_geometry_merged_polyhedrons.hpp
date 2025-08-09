@@ -432,8 +432,22 @@ namespace GedimUnitTesting
     };
 
     std::array<std::vector<unsigned int>, 2> expected_original_to_merged_faces;
-    expected_original_to_merged_faces[0] = { 0u, Gedim::GeometryUtilities::MergePolyhedronsResult::none, 1u, 2u, 3u, 4u };
-    expected_original_to_merged_faces[1] = { Gedim::GeometryUtilities::MergePolyhedronsResult::none, 5u, 6u, 7u, 8u, 9u };
+    expected_original_to_merged_faces[0] =
+    {
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none,
+      Gedim::GeometryUtilities::MergePolyhedronsResult::none
+    };
+    expected_original_to_merged_faces[1] =
+    {
+      0u,
+      1u,
+      2u,
+      3u
+    };
 
     ASSERT_EQ(merged_polyhedron.OriginalToMergedVertices,
               expected_original_to_merged_vertices);
