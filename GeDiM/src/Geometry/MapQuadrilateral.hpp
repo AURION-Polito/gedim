@@ -18,119 +18,65 @@ namespace Gedim
 {
 class MapQuadrilateral
 {
+  public:
+    Eigen::MatrixXd ReferencePoints;
+
   private:
-    /// map square quadrature points in [-1,1]
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting shifted points, size 3 x numPoints
-    inline void ShiftSquareQuadraturePoints(const Eigen::MatrixXd &x, Eigen::MatrixXd &result) const
+    inline Eigen::MatrixXd Psi(const Eigen::MatrixXd &points) const
     {
-        result = 2.0 * x.array() - 1.0;
+        const Eigen::ArrayXd x = points.row(0);
+        const Eigen::ArrayXd y = points.row(1);
+
+        Eigen::MatrixXd evalPsi = Eigen::MatrixXd::Zero(4, points.cols());
+        evalPsi.row(0) = (1.0 - x) * (1.0 - y);
+        evalPsi.row(1) = x * (1.0 - y);
+        evalPsi.row(2) = x * y;
+        evalPsi.row(3) = y * (1.0 - x);
+
+        return evalPsi;
     }
-    /// Shape functions 1
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// return the resulting value, size numPoints
-    inline Eigen::VectorXd Psi1(const Eigen::MatrixXd &x) const
+
+    inline std::vector<Eigen::MatrixXd> dPsi(const Eigen::MatrixXd &points) const
     {
-        return (1.0 - x.row(0).array()) * (1.0 - x.row(1).array()) / 4.0;
-    }
-    /// Shape functions 2
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// return the resulting value, size numPoints
-    inline Eigen::VectorXd Psi2(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 + x.row(0).array()) * (1.0 - x.row(1).array()) / 4.0;
-    }
-    /// Shape functions 3
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// return the resulting value, size numPoints
-    inline Eigen::VectorXd Psi3(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 + x.row(0).array()) * (1.0 + x.row(1).array()) / 4.0;
-    }
-    /// Shape functions 4
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// return the resulting value, size numPoints
-    inline Eigen::VectorXd Psi4(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 - x.row(0).array()) * (1.0 + x.row(1).array()) / 4.0;
-    }
-    /// Shape functions derivatives 1
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi11(const Eigen::MatrixXd &x) const
-    {
-        return -(1.0 - x.row(1).array()) / 4.0;
-    }
-    /// Shape functions x derivatives 2
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi21(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 - x.row(1).array()) / 4.0;
-    }
-    /// Shape functions x derivatives 3
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi31(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 + x.row(1).array()) / 4.0;
-    }
-    /// Shape functions x derivatives 4
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi41(const Eigen::MatrixXd &x) const
-    {
-        return -(1.0 + x.row(1).array()) / 4.0;
-    }
-    /// Shape functions x.row(1).array() derivatives 1
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi12(const Eigen::MatrixXd &x) const
-    {
-        return -(1.0 - x.row(0).array()) / 4.0;
-    }
-    /// Shape functions x.row(1).array() derivatives 2
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi22(const Eigen::MatrixXd &x) const
-    {
-        return -(1.0 + x.row(0).array()) / 4.0;
-    }
-    /// Shape functions x.row(1).array() derivatives 3
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi32(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 + x.row(0).array()) / 4.0;
-    }
-    /// Shape functions x.row(1).array() derivatives 4
-    /// x matrix of quadrature points between 0.0 and 1.0, size 3 x numPoints
-    /// result the resulting value, size numPoints
-    inline Eigen::VectorXd dPsi42(const Eigen::MatrixXd &x) const
-    {
-        return (1.0 - x.row(0).array()) / 4.0;
+        const Eigen::ArrayXd x = points.row(0);
+        const Eigen::ArrayXd y = points.row(1);
+
+        std::vector<Eigen::MatrixXd> evaldPsi(2, Eigen::MatrixXd(4, points.cols()));
+
+        evaldPsi[0].row(0) = -(1.0 - y);
+        evaldPsi[0].row(1) = (1.0 - y);
+        evaldPsi[0].row(2) = y;
+        evaldPsi[0].row(3) = -y;
+        evaldPsi[1].row(0) = -(1.0 - x);
+        evaldPsi[1].row(1) = -x;
+        evaldPsi[1].row(2) = x;
+        evaldPsi[1].row(3) = (1.0 - x);
+
+        return evaldPsi;
     }
 
   public:
     MapQuadrilateral()
     {
+        ReferencePoints.resize(3, 4);
+        ReferencePoints.col(0) << 0.0, 0.0, 0.0;
+        ReferencePoints.col(1) << 1.0, 0.0, 0.0;
+        ReferencePoints.col(2) << 1.0, 1.0, 0.0;
+        ReferencePoints.col(3) << 0.0, 1.0, 0.0;
     }
     ~MapQuadrilateral()
     {
     }
 
-    /// Map from the square reference element [0,1]x[0,1] to the polygon
-    /// x matrix of points between 0.0 and 1.0, size 3 x numPoints
-    /// \return the mapped points, size 3 x numPoints
-    Eigen::MatrixXd F(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &x) const;
-    /// Compute the jacobian matrix of the transformation
-    /// x matrix of points between 0.0 and 1.0, size 3 x numPoints
-    /// \return the Jacobian matrix for each points, size 2 x (3 x numPoints)
-    Eigen::MatrixXd J(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &x) const;
-    /// Compute the determinant of the jacobian matrix of the trasformation
-    /// x matrix of points between 0.0 and 1.0, size 3 x numPoints
-    /// \return the Jacobian matrix for each points, size 2 x (3 x numPoints)
-    Eigen::VectorXd DetJ(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &x) const;
+    Eigen::MatrixXd F(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &referencePoints) const;
+
+    Eigen::MatrixXd FInv(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &points) const;
+
+    Eigen::MatrixXd J(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &referencePoints) const;
+
+    Eigen::MatrixXd JInv(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &referencePoints) const;
+
+    Eigen::VectorXd DetJ(const Eigen::MatrixXd &vertices, const Eigen::MatrixXd &referencePoints) const;
 };
 } // namespace Gedim
 
