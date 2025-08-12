@@ -50,8 +50,8 @@ MatrixXd MapQuadrilateral::J(const MatrixXd &vertices, const MatrixXd &reference
 // ***************************************************************************
 MatrixXd MapQuadrilateral::FInv(const MatrixXd &vertices, const MatrixXd &points) const
 {
-  Gedim::Utilities::Unused(vertices);
-  Gedim::Utilities::Unused(points);
+    Gedim::Utilities::Unused(vertices);
+    Gedim::Utilities::Unused(points);
 
     throw std::runtime_error("not implemented method");
 }

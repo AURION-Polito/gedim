@@ -94,8 +94,8 @@ MatrixXd MapHexahedron::J(const MapHexahedron::MapHexahedronData &mapData, const
 // ***************************************************************************
 MatrixXd MapHexahedron::FInv(const MapHexahedron::MapHexahedronData &mapData, const MatrixXd &points)
 {
-  Gedim::Utilities::Unused(mapData);
-  Gedim::Utilities::Unused(points);
+    Gedim::Utilities::Unused(mapData);
+    Gedim::Utilities::Unused(points);
 
     throw std::runtime_error("not implemented method");
 }
