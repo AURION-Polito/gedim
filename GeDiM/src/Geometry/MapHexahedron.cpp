@@ -10,6 +10,7 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "MapHexahedron.hpp"
+#include "CommonUtilities.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -93,6 +94,9 @@ MatrixXd MapHexahedron::J(const MapHexahedron::MapHexahedronData &mapData, const
 // ***************************************************************************
 MatrixXd MapHexahedron::FInv(const MapHexahedron::MapHexahedronData &mapData, const MatrixXd &points)
 {
+  Gedim::Utilities::Unused(mapData);
+  Gedim::Utilities::Unused(points);
+
     throw std::runtime_error("not implemented method");
 }
 // ***************************************************************************

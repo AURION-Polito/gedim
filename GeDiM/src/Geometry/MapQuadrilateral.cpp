@@ -10,6 +10,8 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "MapQuadrilateral.hpp"
+#include "CommonUtilities.hpp"
+
 #include <iostream>
 
 using namespace Eigen;
@@ -48,6 +50,9 @@ MatrixXd MapQuadrilateral::J(const MatrixXd &vertices, const MatrixXd &reference
 // ***************************************************************************
 MatrixXd MapQuadrilateral::FInv(const MatrixXd &vertices, const MatrixXd &points) const
 {
+  Gedim::Utilities::Unused(vertices);
+  Gedim::Utilities::Unused(points);
+
     throw std::runtime_error("not implemented method");
 }
 // ***************************************************************************
