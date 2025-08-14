@@ -36,8 +36,6 @@ MapParallelogram::MapParallelogramData MapParallelogram::Compute(const Eigen::Ma
     result.DetBInv = result.BInv.determinant();
 
     return result;
-
-    return result;
 }
 // ***************************************************************************
 } // namespace Gedim

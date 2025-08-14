@@ -27,7 +27,7 @@ class MapParallelogram
         double DetB;
         double DetBInv;
     };
-    Eigen::MatrixXd ReferencePoints;
+    Eigen::MatrixXd ReferenceVertices;
 
   private:
     static inline Eigen::Matrix3d B(const Eigen::MatrixXd &vertices)
@@ -50,11 +50,11 @@ class MapParallelogram
   public:
     MapParallelogram()
     {
-        ReferencePoints.resize(3, 4);
-        ReferencePoints.col(0) << 0.0, 0.0, 0.0;
-        ReferencePoints.col(1) << 1.0, 0.0, 0.0;
-        ReferencePoints.col(2) << 1.0, 1.0, 0.0;
-        ReferencePoints.col(3) << 0.0, 1.0, 0.0;
+        ReferenceVertices.resize(3, 4);
+        ReferenceVertices.col(0) << 0.0, 0.0, 0.0;
+        ReferenceVertices.col(1) << 1.0, 0.0, 0.0;
+        ReferenceVertices.col(2) << 1.0, 1.0, 0.0;
+        ReferenceVertices.col(3) << 0.0, 1.0, 0.0;
     }
     ~MapParallelogram()
     {

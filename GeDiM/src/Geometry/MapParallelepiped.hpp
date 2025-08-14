@@ -29,7 +29,7 @@ class MapParallelepiped
         double DetQInv;
     };
 
-    Eigen::MatrixXd ReferencePoints;
+    Eigen::MatrixXd ReferenceVertices;
 
   private:
     const GeometryUtilities &geometryUtilities;
@@ -45,15 +45,15 @@ class MapParallelepiped
   public:
     MapParallelepiped(const GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
     {
-        ReferencePoints.resize(3, 8);
-        ReferencePoints.col(0) << 0.0, 0.0, 0.0;
-        ReferencePoints.col(1) << 1.0, 0.0, 0.0;
-        ReferencePoints.col(2) << 1.0, 1.0, 0.0;
-        ReferencePoints.col(3) << 0.0, 1.0, 0.0;
-        ReferencePoints.col(4) << 0.0, 0.0, 1.0;
-        ReferencePoints.col(5) << 1.0, 0.0, 1.0;
-        ReferencePoints.col(6) << 1.0, 1.0, 1.0;
-        ReferencePoints.col(7) << 0.0, 1.0, 1.0;
+        ReferenceVertices.resize(3, 8);
+        ReferenceVertices.col(0) << 0.0, 0.0, 0.0;
+        ReferenceVertices.col(1) << 1.0, 0.0, 0.0;
+        ReferenceVertices.col(2) << 1.0, 1.0, 0.0;
+        ReferenceVertices.col(3) << 0.0, 1.0, 0.0;
+        ReferenceVertices.col(4) << 0.0, 0.0, 1.0;
+        ReferenceVertices.col(5) << 1.0, 0.0, 1.0;
+        ReferenceVertices.col(6) << 1.0, 1.0, 1.0;
+        ReferenceVertices.col(7) << 0.0, 1.0, 1.0;
     }
     ~MapParallelepiped()
     {
