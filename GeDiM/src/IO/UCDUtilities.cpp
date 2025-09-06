@@ -145,6 +145,8 @@ std::vector<UCDCell> UCDUtilities::CreatePolyhedraCells(const std::vector<std::v
 
         if (polyhedra_vertices[l].size() == 4)
             polyhedra_type = UCDCell::Types::Tetrahedron;
+        else if (polyhedra_vertices[l].size() == 8)
+            polyhedra_type = UCDCell::Types::Hexahedron;
         else
             throw std::runtime_error("Polygon type not supported");
 
