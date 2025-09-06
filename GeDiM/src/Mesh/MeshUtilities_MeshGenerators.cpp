@@ -1,3 +1,14 @@
+// _LICENSE_HEADER_
+//
+// Copyright (C) 2019 - 2025.
+// Terms register on the GPL-3.0 license.
+//
+// This file can be redistributed and/or modified under the license terms.
+//
+// See top level LICENSE file for more details.
+//
+// This file can be used citing references in CITATION.cff file.
+
 #include "MeshUtilities.hpp"
 
 #include "TetgenInterface.hpp"
@@ -2050,6 +2061,17 @@ void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd &polyhedronVerti
     TetgenInterface tetgenInterface;
 
     tetgenInterface.CreateMesh(polyhedronVertices, polyhedronEdges, polyhedronFaces, maxTetrahedronVolume, mesh, options);
+}
+// ***************************************************************************
+void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd &points,
+                                          const std::vector<std::vector<unsigned int>> &facets,
+                                          const double &maxTetrahedronVolume,
+                                          IMeshDAO &mesh,
+                                          const std::string &options) const
+{
+    TetgenInterface tetgenInterface;
+
+    tetgenInterface.CreateMesh(points, facets, maxTetrahedronVolume, mesh, options);
 }
 // ***************************************************************************
 void MeshUtilities::CreateDelaunayMesh3D(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, IMeshDAO &mesh) const

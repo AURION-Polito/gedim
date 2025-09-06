@@ -9,17 +9,25 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
-#include "MapTriangle.hpp"
-
-using namespace Eigen;
-using namespace std;
+#include "MapParallelogram.hpp"
 
 namespace Gedim
 {
 // ***************************************************************************
-MapTriangle::MapTriangleData MapTriangle::Compute(const Eigen::Matrix3d &vertices) const
+Eigen::MatrixXd MapParallelogram::J(const MapParallelogramData &mapData, const Eigen::MatrixXd &x)
 {
-    MapTriangleData result;
+    const unsigned int numPoints = x.cols();
+    Eigen::MatrixXd jacb(3, 3 * numPoints);
+
+    for (unsigned int p = 0; p < numPoints; p++)
+        jacb.block(0, 3 * p, 3, 3) = mapData.B;
+
+    return jacb;
+}
+// ***************************************************************************
+MapParallelogram::MapParallelogramData MapParallelogram::Compute(const Eigen::MatrixXd &vertices)
+{
+    MapParallelogram::MapParallelogramData result;
 
     result.B = B(vertices);
     result.BInv = result.B.inverse();
@@ -28,17 +36,8 @@ MapTriangle::MapTriangleData MapTriangle::Compute(const Eigen::Matrix3d &vertice
     result.DetBInv = result.BInv.determinant();
 
     return result;
-}
-// ***************************************************************************
-MatrixXd MapTriangle::J(const MapTriangleData &mapData, const MatrixXd &x)
-{
-    const unsigned int numPoints = x.cols();
-    MatrixXd jacb(3, 3 * numPoints);
 
-    for (unsigned int p = 0; p < numPoints; p++)
-        jacb.block(0, 3 * p, 3, 3) = mapData.B;
-
-    return jacb;
+    return result;
 }
 // ***************************************************************************
 } // namespace Gedim

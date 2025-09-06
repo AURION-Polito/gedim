@@ -1,3 +1,14 @@
+// _LICENSE_HEADER_
+//
+// Copyright (C) 2019 - 2025.
+// Terms register on the GPL-3.0 license.
+//
+// This file can be redistributed and/or modified under the license terms.
+//
+// See top level LICENSE file for more details.
+//
+// This file can be used citing references in CITATION.cff file.
+
 #ifndef __TEST_METISUTILITIES_H
 #define __TEST_METISUTILITIES_H
 
@@ -1094,10 +1105,8 @@ TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
         double max = *std::max_element(nodesW.begin(), nodesW.end());
 
         ofstream file(exportFolder + "/weights.csv");
-        file << "cell"
-             << ",";
-        file << "nodesW"
-             << ",";
+        file << "cell" << ",";
+        file << "nodesW" << ",";
         file << "nodesWeights" << endl;
 
         for (unsigned int c = 0; c < meshDAO.Cell3DTotalNumber(); c++)
@@ -1190,10 +1199,8 @@ TEST(TestMetisUtilities, TestNetworkPartition_Mesh3D_DualGraph_OVM)
     }
 
     ofstream file(exportFolder + "/data.csv");
-    file << "percentage"
-         << ",";
-    file << "askPartions"
-         << ",";
+    file << "percentage" << ",";
+    file << "askPartions" << ",";
     file << "numPartions" << endl;
 
     for (unsigned int p = 1; p <= numTests; p++)

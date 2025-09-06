@@ -1,3 +1,14 @@
+// _LICENSE_HEADER_
+//
+// Copyright (C) 2019 - 2025.
+// Terms register on the GPL-3.0 license.
+//
+// This file can be redistributed and/or modified under the license terms.
+//
+// See top level LICENSE file for more details.
+//
+// This file can be used citing references in CITATION.cff file.
+
 #ifndef __TEST_MESH_UTILITIES2D_H
 #define __TEST_MESH_UTILITIES2D_H
 
@@ -1085,6 +1096,133 @@ TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
+
+TEST(TestMeshUtilities, TestFindPointCell2D)
+{
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1e-12;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
+    Gedim::MeshUtilities meshUtilities;
+
+    std::string exportFolder = "./Export/TestFindPointCell2D";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    const Gedim::MeshUtilities::MeshGeometricData2D mesh_geometry_data =
+        meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDao);
+
+    {
+        const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                          Eigen::Vector3d(0.0, 1.1, 0.0),
+                                                          meshDao,
+                                                          mesh_geometry_data.Cell2DsVertices,
+                                                          mesh_geometry_data.Cell2DsBoundingBox);
+
+        ASSERT_TRUE(result.Cell2Ds_found.empty());
+
+        const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+        ASSERT_TRUE(result_position.MeshPositions.empty());
+    }
+
+    {
+        const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                          Eigen::Vector3d(0.1, 0.1, 0.0),
+                                                          meshDao,
+                                                          mesh_geometry_data.Cell2DsVertices,
+                                                          mesh_geometry_data.Cell2DsBoundingBox,
+                                                          true,
+                                                          32);
+
+        ASSERT_TRUE(result.Cell2Ds_found.size() == 1);
+        ASSERT_EQ(16, result.Cell2Ds_found[0].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside,
+                  result.Cell2Ds_found[0].Cell2D_Position.Type);
+
+        const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+        ASSERT_TRUE(result_position.MeshPositions.size() == 1);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell2D,
+                  result_position.MeshPositions[0].Type);
+        ASSERT_EQ(16, result_position.MeshPositions[0].Cell_index);
+    }
+
+    {
+        const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                          Eigen::Vector3d(0.2, 1.0 / 20.0, 0.0),
+                                                          meshDao,
+                                                          mesh_geometry_data.Cell2DsVertices,
+                                                          mesh_geometry_data.Cell2DsBoundingBox,
+                                                          false,
+                                                          32);
+
+        ASSERT_TRUE(result.Cell2Ds_found.size() == 2);
+        ASSERT_EQ(32, result.Cell2Ds_found[0].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge,
+                  result.Cell2Ds_found[0].Cell2D_Position.Type);
+        ASSERT_EQ(2, result.Cell2Ds_found[0].Cell2D_Position.BorderIndex);
+        ASSERT_EQ(16, result.Cell2Ds_found[1].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge,
+                  result.Cell2Ds_found[1].Cell2D_Position.Type);
+        ASSERT_EQ(1, result.Cell2Ds_found[1].Cell2D_Position.BorderIndex);
+
+        const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+        ASSERT_TRUE(result_position.MeshPositions.size() == 2);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
+                  result_position.MeshPositions[0].Type);
+        ASSERT_EQ(40, result_position.MeshPositions[0].Cell_index);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell1D,
+                  result_position.MeshPositions[1].Type);
+        ASSERT_EQ(40, result_position.MeshPositions[1].Cell_index);
+    }
+
+    {
+        const auto result = meshUtilities.FindPointCell2D(geometryUtilities,
+                                                          Eigen::Vector3d(0.0, 0.25, 0.0),
+                                                          meshDao,
+                                                          mesh_geometry_data.Cell2DsVertices,
+                                                          mesh_geometry_data.Cell2DsBoundingBox,
+                                                          false,
+                                                          32);
+
+        ASSERT_TRUE(result.Cell2Ds_found.size() == 4);
+        ASSERT_EQ(32, result.Cell2Ds_found[0].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
+                  result.Cell2Ds_found[0].Cell2D_Position.Type);
+        EXPECT_EQ(2, result.Cell2Ds_found[0].Cell2D_Position.BorderIndex);
+        ASSERT_EQ(16, result.Cell2Ds_found[1].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
+                  result.Cell2Ds_found[1].Cell2D_Position.Type);
+        EXPECT_EQ(2, result.Cell2Ds_found[1].Cell2D_Position.BorderIndex);
+        ASSERT_EQ(21, result.Cell2Ds_found[2].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
+                  result.Cell2Ds_found[2].Cell2D_Position.Type);
+        EXPECT_EQ(2, result.Cell2Ds_found[2].Cell2D_Position.BorderIndex);
+        ASSERT_EQ(31, result.Cell2Ds_found[3].Cell2D_index);
+        ASSERT_EQ(Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex,
+                  result.Cell2Ds_found[3].Cell2D_Position.Type);
+        EXPECT_EQ(0, result.Cell2Ds_found[3].Cell2D_Position.BorderIndex);
+
+        const auto result_position = meshUtilities.FindPointMeshPosition(result, meshDao);
+        ASSERT_TRUE(result_position.MeshPositions.size() == 4);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+                  result_position.MeshPositions[0].Type);
+        ASSERT_EQ(15, result_position.MeshPositions[0].Cell_index);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+                  result_position.MeshPositions[1].Type);
+        ASSERT_EQ(15, result_position.MeshPositions[1].Cell_index);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+                  result_position.MeshPositions[2].Type);
+        ASSERT_EQ(15, result_position.MeshPositions[2].Cell_index);
+        ASSERT_EQ(Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types::Cell0D,
+                  result_position.MeshPositions[3].Type);
+        ASSERT_EQ(15, result_position.MeshPositions[3].Cell_index);
+    }
+}
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_UTILITIES2D_H
