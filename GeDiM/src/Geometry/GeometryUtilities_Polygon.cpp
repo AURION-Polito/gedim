@@ -1716,7 +1716,7 @@ void GeometryUtilities::ExportPolygonToVTU(const unsigned int &index,
         exporter.AddPoint(polygon_centroid);
 
         exporter.Export(exportFolder + "/" + "Polygon_Centroid.vtu");
-  }
+    }
 }
 // ***************************************************************************
 } // namespace Gedim
