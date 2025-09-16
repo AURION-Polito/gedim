@@ -1797,8 +1797,7 @@ class GeometryUtilities final
     }
 
     Eigen::Matrix3d PlaneReflectionMatrix(const Eigen::Vector3d &plane_normal) const;
-    Eigen::Vector3d PlaneReflectionTranslation(const Eigen::Vector3d &plane_normal,
-                                               const Eigen::Vector3d &planeOrigin) const;
+    Eigen::Vector3d PlaneReflectionTranslation(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &planeOrigin) const;
 
     /// \brief Rotate Points P using rotation matrix Q and translation t: Q * P + t
     /// \param points the points (size 3 x numPoints)
@@ -2318,13 +2317,9 @@ class GeometryUtilities final
                                const std::vector<Eigen::MatrixXi> &polyhedronFaces,
                                const std::string &exportFolder) const;
 
-    inline void ExportPolyhedronToVTU(const Polyhedron& polyhedron,
-                               const std::string &exportFolder) const
+    inline void ExportPolyhedronToVTU(const Polyhedron &polyhedron, const std::string &exportFolder) const
     {
-      ExportPolyhedronToVTU(polyhedron.Vertices,
-                            polyhedron.Edges,
-                            polyhedron.Faces,
-                            exportFolder);
+        ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
     }
 
     /// \brief Export Polyhedron To VTU
@@ -2360,19 +2355,18 @@ class GeometryUtilities final
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
 
-    MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2>& polyhedrons,
+    MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2> &polyhedrons,
                                                 const std::array<unsigned int, 2> polyhedrons_common_face_index,
                                                 const bool remove_common_face) const;
 
     /// \brief Merge two Polyhedrons not intersecting
     /// \param polyhedrons the polyhedrons to merge
     /// \return the merged polyhedron data
-    MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2>& polyhedrons,
-                                            const MergePolyhedronsInput& merge_information = {}) const;
+    MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2> &polyhedrons,
+                                            const MergePolyhedronsInput &merge_information = {}) const;
 
-    Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd& points,
-                                  const std::vector<std::vector<unsigned int>>& facets) const;
-    std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron& polyhedron) const;
+    Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets) const;
+    std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron &polyhedron) const;
 };
 } // namespace Gedim
 

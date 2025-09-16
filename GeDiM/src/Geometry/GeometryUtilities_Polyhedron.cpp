@@ -1566,22 +1566,67 @@ namespace Gedim
     }
 
     return result;
-  }
-  // ***************************************************************************
-  std::vector<std::vector<unsigned int>> GeometryUtilities::PolyhedronToFacets(const GeometryUtilities::Polyhedron& polyhedron) const
-  {
+}
+// ***************************************************************************
+GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen::MatrixXd &points,
+                                                                    const std::vector<std::vector<unsigned int>> &facets) const
+{
+    Polyhedron result;
+
+    result.Vertices = points;
+    result.Faces.resize(facets.size());
+
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> edges;
+
+    for (unsigned int f = 0; f < facets.size(); ++f)
+    {
+        const auto &facet = facets[f];
+        auto &face = result.Faces[f];
+
+        const unsigned int num_face_vertices = facet.size();
+        face.resize(2, num_face_vertices);
+        for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+        {
+            face(0, f_v) = facet[f_v];
+
+            const unsigned int edge_origin = facet[f_v];
+            const unsigned int edge_end = facet[(f_v + 1) % num_face_vertices];
+
+            auto edge = std::make_pair(std::min(edge_origin, edge_end), std::max(edge_origin, edge_end));
+
+            if (!edges.contains(edge))
+                edges.insert({edge, edges.size()});
+
+            face(1, f_v) = edges.find(edge)->second;
+        }
+    }
+
+    result.Edges.resize(2, edges.size());
+
+    for (const auto &edge_pair : edges)
+    {
+        const auto &edge = edge_pair.first;
+        result.Edges(0, edge_pair.second) = edge.first;
+        result.Edges(1, edge_pair.second) = edge.second;
+    }
+
+    return result;
+}
+// ***************************************************************************
+std::vector<std::vector<unsigned int>> GeometryUtilities::PolyhedronToFacets(const GeometryUtilities::Polyhedron &polyhedron) const
+{
     std::vector<std::vector<unsigned int>> facets(polyhedron.Faces.size());
 
     for (unsigned int f = 0; f < polyhedron.Faces.size(); ++f)
     {
-      const auto& face = polyhedron.Faces[f];
-      facets[f].resize(face.cols());
+        const auto &face = polyhedron.Faces[f];
+        facets[f].resize(face.cols());
 
-      for (unsigned int f_v = 0; f_v < face.cols(); ++f_v)
-        facets[f][f_v] = face(0, f_v);
+        for (unsigned int f_v = 0; f_v < face.cols(); ++f_v)
+            facets[f][f_v] = face(0, f_v);
     }
 
     return facets;
-  }
-  // ***************************************************************************
+}
+// ***************************************************************************
 } // namespace Gedim

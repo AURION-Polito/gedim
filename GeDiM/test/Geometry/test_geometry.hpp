@@ -301,45 +301,94 @@ TEST(TestGeometryUtilities, TestPlaneRotationMatrix)
 
 TEST(TestGeometryUtilities, TestPlaneReflectionMatrix)
 {
-      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
-      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    std::string exportFolder = "./Export/TestGeometryUtilities/TestPlaneReflectionMatrix";
+    Gedim::Output::CreateFolder(exportFolder);
 
-      // check reflection matrix of x axis passing by origin
-      {
-        const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-        const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
-        const Eigen::Vector3d plane_origin(0.0, 0.0, 0.0);
-        const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        const Eigen::Vector3d reflected_point = reflection_matrix *
-                                                original_point +
-                                                reflection_translation;
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-        ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
-        ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
-        ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
-      }
+    {
+        Eigen::MatrixXd polyhedron_points(3, 12);
+        polyhedron_points.col(0) << 3.5, 1.5, 0.0;
+        polyhedron_points.col(1) << 5.5, 1.5, 0.0;
+        polyhedron_points.col(2) << 5.5, 4.5, 0.0;
+        polyhedron_points.col(3) << 3.5, 4.5, 0.0;
+        polyhedron_points.col(4) << 3.5, 1.5, -1.5;
+        polyhedron_points.col(5) << 5.5, 1.5, -1.5;
+        polyhedron_points.col(6) << 5.5, 4.5, -1.5;
+        polyhedron_points.col(7) << 3.5, 4.5, -1.5;
+        polyhedron_points.col(8) << 4.0, 2.3, -1.5;
+        polyhedron_points.col(9) << 5.0, 2.3, -1.5;
+        polyhedron_points.col(10) << 5.0, 3.0, -1.5;
+        polyhedron_points.col(11) << 4.0, 3.0, -1.5;
 
-      // check reflection matrix of x axis passing by (1.0, 0.0, 0.0)
-      {
-        const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-        const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
-        const Eigen::Vector3d plane_origin(1.0, 0.0, 0.0);
-        const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        const Eigen::Vector3d reflected_point = reflection_matrix *
-                                                original_point +
-                                                reflection_translation;
+        const auto polyhedron = geometryUtilities.FacetsToPolyhedron(polyhedron_points,
+                                                                     {{0, 1, 2, 3},
+                                                                      {4, 7, 3, 0},
+                                                                      {4, 5, 1, 0},
+                                                                      {5, 6, 2, 1},
+                                                                      {6, 2, 3, 7},
+                                                                      {4, 5, 9, 8},
+                                                                      {5, 6, 10, 9},
+                                                                      {6, 7, 11, 10},
+                                                                      {7, 4, 8, 11},
+                                                                      {8, 9, 10, 11}});
 
-        ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
-        ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
-        ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
-      }
+        {
+            const std::string export_poly_folder = exportFolder + "/polyhedron";
+            Gedim::Output::CreateFolder(export_poly_folder);
+            geometryUtilities.ExportPolyhedronToVTU(polyhedron, export_poly_folder);
+        }
+
+        {
+            auto reflected_polyhedron = polyhedron;
+
+            {
+                const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
+                const Eigen::Vector3d plane_normal(0.0, -1.0, 0.0);
+                const Eigen::Vector3d plane_origin(0.0, 1.5, 0.0);
+                const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
+                const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal, plane_origin);
+                reflected_polyhedron.Vertices =
+                    geometryUtilities.RotatePoints(polyhedron_points, reflection_matrix, reflection_translation);
+            }
+
+            {
+                const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
+                const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
+                const Eigen::Vector3d plane_origin(5.5, 0.0, 0.0);
+                const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
+                const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal, plane_origin);
+                reflected_polyhedron.Vertices =
+                    geometryUtilities.RotatePoints(reflected_polyhedron.Vertices, reflection_matrix, reflection_translation);
+            }
+
+            Eigen::MatrixXd expected_reflected_points(3, 12);
+            expected_reflected_points.row(0) << 7.5000000000000000e+00, 5.5000000000000000e+00, 5.5000000000000000e+00,
+                7.5000000000000000e+00, 7.5000000000000000e+00, 5.5000000000000000e+00, 5.5000000000000000e+00,
+                7.5000000000000000e+00, 7.0000000000000000e+00, 6.0000000000000000e+00, 6.0000000000000000e+00,
+                7.0000000000000000e+00;
+            expected_reflected_points.row(1) << 1.5000000000000000e+00, 1.5000000000000000e+00, -1.5000000000000000e+00,
+                -1.5000000000000000e+00, 1.5000000000000000e+00, 1.5000000000000000e+00, -1.5000000000000000e+00,
+                -1.5000000000000000e+00, 7.0000000000000018e-01, 7.0000000000000018e-01, 0.0000000000000000e+00,
+                0.0000000000000000e+00;
+            expected_reflected_points.row(2) << 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00,
+                0.0000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00,
+                -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00,
+                -1.5000000000000000e+00;
+
+            ASSERT_TRUE((reflected_polyhedron.Vertices - expected_reflected_points).norm() <=
+                        1.0e-15 * expected_reflected_points.norm());
+
+            {
+                const std::string export_poly_folder = exportFolder + "/reflected_polyhedron_xy";
+                Gedim::Output::CreateFolder(export_poly_folder);
+                geometryUtilities.ExportPolyhedronToVTU(reflected_polyhedron, export_poly_folder);
+            }
+        }
+    }
 }
-
 
 TEST(TestGeometryUtilities, TestConvexHullSimple)
 {
