@@ -344,28 +344,6 @@ namespace GedimUnitTesting
                                                 export_poly_folder);
       }
 
-      {
-        auto reflected_polyhedron = polyhedron;
-
-        {
-        const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-        const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
-        const Eigen::Vector3d plane_origin(5.5, 0.0, 0.0);
-        const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        reflected_polyhedron.Vertices = geometryUtilities.RotatePoints(polyhedron_points,
-                                                                       reflection_matrix,
-                                                                       reflection_translation);
-        }
-
-        {
-          const std::string export_poly_folder = exportFolder + "/reflected_polyhedron_x";
-          Gedim::Output::CreateFolder(export_poly_folder);
-          geometryUtilities.ExportPolyhedronToVTU(reflected_polyhedron,
-                                                  export_poly_folder);
-        }
-      }
 
       {
         auto reflected_polyhedron = polyhedron;
@@ -382,30 +360,25 @@ namespace GedimUnitTesting
                                                                          reflection_translation);
         }
 
-        {
-          const std::string export_poly_folder = exportFolder + "/reflected_polyhedron_y";
-          Gedim::Output::CreateFolder(export_poly_folder);
-          geometryUtilities.ExportPolyhedronToVTU(reflected_polyhedron,
-                                                  export_poly_folder);
-        }
-      }
-
-      {
-        auto reflected_polyhedron = polyhedron;
 
         {
-        const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-        const Eigen::Vector3d plane_normal(0.0, -1.0, 0.0);
-        const Eigen::Vector3d plane_origin(0.0, 1.5, 0.0);
-        const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        reflected_polyhedron.Vertices = geometryUtilities.RotatePoints(polyhedron_points,
-                                                                       reflection_matrix,
-                                                                       reflection_translation);
+          const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
+          const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
+          const Eigen::Vector3d plane_origin(5.5, 0.0, 0.0);
+          const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
+          const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
+                                                                                           plane_origin);
+          reflected_polyhedron.Vertices = geometryUtilities.RotatePoints(reflected_polyhedron.Vertices,
+                                                                         reflection_matrix,
+                                                                         reflection_translation);
         }
 
+        Eigen::MatrixXd expected_reflected_points(3, 12);
+        expected_reflected_points.row(0)<< 7.5000000000000000e+00,  5.5000000000000000e+00,  5.5000000000000000e+00,  7.5000000000000000e+00,  7.5000000000000000e+00,  5.5000000000000000e+00,  5.5000000000000000e+00,  7.5000000000000000e+00,  7.0000000000000000e+00,  6.0000000000000000e+00,  6.0000000000000000e+00,  7.0000000000000000e+00;
+        expected_reflected_points.row(1)<< 1.5000000000000000e+00,  1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00,  1.5000000000000000e+00,  1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00,  7.0000000000000018e-01,  7.0000000000000018e-01,  0.0000000000000000e+00,  0.0000000000000000e+00;
+        expected_reflected_points.row(2)<< 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00, -1.5000000000000000e+00;
 
+        ASSERT_TRUE((reflected_polyhedron.Vertices - expected_reflected_points).norm() <= 1.0e-15 * expected_reflected_points.norm());
 
 
         {
@@ -415,42 +388,6 @@ namespace GedimUnitTesting
                                                   export_poly_folder);
         }
       }
-
-    }
-
-
-    // check reflection matrix of x axis passing by origin
-    {
-      const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-      const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
-      const Eigen::Vector3d plane_origin(0.0, 0.0, 0.0);
-      const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-      const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                       plane_origin);
-      const Eigen::Vector3d reflected_point = reflection_matrix *
-                                              original_point +
-                                              reflection_translation;
-
-      ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
-      ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
-      ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
-    }
-
-    // check reflection matrix of x axis passing by (1.0, 0.0, 0.0)
-    {
-      const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
-      const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
-      const Eigen::Vector3d plane_origin(1.0, 0.0, 0.0);
-      const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-      const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                       plane_origin);
-      const Eigen::Vector3d reflected_point = reflection_matrix *
-                                              original_point +
-                                              reflection_translation;
-
-      ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
-      ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
-      ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
     }
   }
 
