@@ -713,6 +713,36 @@ class GeometryUtilities final
         std::vector<std::vector<unsigned int>> AlignedEdgesEdges;
     };
 
+    struct MergePolyhedronsInput
+    {
+        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
+        enum struct MergeTypes
+        {
+            None = 0,
+            Common = 1,
+            Remove = 2
+        };
+
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Vertices_Type;
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Edges_Type;
+        std::array<std::vector<std::pair<MergeTypes, unsigned int>>, 2> Faces_Type;
+        std::vector<std::array<unsigned int, 2>> Common_vertices;
+        std::vector<std::array<unsigned int, 2>> Common_edges;
+        std::vector<std::array<unsigned int, 2>> Common_faces;
+    };
+
+    struct MergePolyhedronsResult
+    {
+        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedVertices;
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedEdges;
+        std::array<std::vector<unsigned int>, 2> OriginalToMergedFaces;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalVertices;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalEdges;
+        std::vector<std::array<unsigned int, 2>> MergedToOriginalFaces;
+        Polyhedron MergedPolyhedron;
+    };
+
   public:
     GeometryUtilities(const GeometryUtilitiesConfig &configuration);
     ~GeometryUtilities();
@@ -1766,6 +1796,9 @@ class GeometryUtilities final
         return planeOrigin;
     }
 
+    Eigen::Matrix3d PlaneReflectionMatrix(const Eigen::Vector3d &plane_normal) const;
+    Eigen::Vector3d PlaneReflectionTranslation(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &planeOrigin) const;
+
     /// \brief Rotate Points P using rotation matrix Q and translation t: Q * P + t
     /// \param points the points (size 3 x numPoints)
     /// \param rotationMatrix the rotation matrix, size 3x3
@@ -2284,6 +2317,11 @@ class GeometryUtilities final
                                const std::vector<Eigen::MatrixXi> &polyhedronFaces,
                                const std::string &exportFolder) const;
 
+    inline void ExportPolyhedronToVTU(const Polyhedron &polyhedron, const std::string &exportFolder) const
+    {
+        ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+    }
+
     /// \brief Export Polyhedron To VTU
     /// \param polyhedronVertices the polyhedron vertices
     /// \param polyhedronEdges the polyhedron edges
@@ -2316,6 +2354,19 @@ class GeometryUtilities final
                             const Eigen::MatrixXd &polygon_edges_normal,
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
+
+    MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2> &polyhedrons,
+                                                const std::array<unsigned int, 2> polyhedrons_common_face_index,
+                                                const bool remove_common_face) const;
+
+    /// \brief Merge two Polyhedrons not intersecting
+    /// \param polyhedrons the polyhedrons to merge
+    /// \return the merged polyhedron data
+    MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2> &polyhedrons,
+                                            const MergePolyhedronsInput &merge_information = {}) const;
+
+    Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets) const;
+    std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron &polyhedron) const;
 };
 } // namespace Gedim
 

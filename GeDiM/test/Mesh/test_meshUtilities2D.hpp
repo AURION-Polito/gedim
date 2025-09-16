@@ -229,6 +229,67 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
 }
 
+TEST(TestMeshUtilities, TestCreateTriangleMeshConcave)
+{
+#if ENABLE_TRIANGLE == 0
+    GTEST_SKIP();
+#endif
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMeshConcave";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+
+    Eigen::MatrixXd vertices2D(3, 17);
+    vertices2D.col(16) << 0.3, 1.0, 0.0;
+    vertices2D.col(15) << 0.6, 1.0, 0.0;
+    vertices2D.col(14) << 0.7, 0.8, 0.0;
+    vertices2D.col(13) << 1.0, 0.9, 0.0;
+    vertices2D.col(12) << 1.0, 0.5, 0.0;
+    vertices2D.col(11) << 0.9, 0.6, 0.0;
+    vertices2D.col(10) << 0.9, 0.3, 0.0;
+    vertices2D.col(9) << 0.7, 0.4, 0.0;
+    vertices2D.col(8) << 0.8, 0.1, 0.0;
+    vertices2D.col(7) << 0.4, 0.0, 0.0;
+    vertices2D.col(6) << 0.5, 0.4, 0.0;
+    vertices2D.col(5) << 0.2, 0.1, 0.0;
+    vertices2D.col(4) << 0.0, 0.3, 0.0;
+    vertices2D.col(3) << 0.3, 0.5, 0.0;
+    vertices2D.col(2) << 0.1, 0.7, 0.0;
+    vertices2D.col(1) << 0.0, 0.9, 0.0;
+    vertices2D.col(0) << 0.4, 0.8, 0.0;
+
+    const auto polygon_triangles = geometryUtilities.PolygonTriangulationByEarClipping(vertices2D);
+    const auto polygon_triangles_points = geometryUtilities.ExtractTriangulationPoints(vertices2D, polygon_triangles);
+
+    double polygonArea = 0.0;
+    for (const auto &triangle : polygon_triangles_points)
+        polygonArea += geometryUtilities.PolygonArea(triangle);
+
+    {
+        Gedim::VTKUtilities exporter;
+
+        exporter.AddPolygon(vertices2D,
+                            {{"Area", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1.0), &polygonArea}});
+        exporter.Export(exportFolder + "/Domain.vtu");
+    }
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
+    meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
+
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+    ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
+}
+
 TEST(TestMeshUtilities, TestCreateTriangleMesh)
 {
 #if ENABLE_TRIANGLE == 0

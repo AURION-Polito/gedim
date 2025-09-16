@@ -10,7 +10,6 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "MapParallelepiped.hpp"
-#include <iostream>
 
 using namespace Eigen;
 using namespace std;
@@ -47,22 +46,22 @@ MapParallelepiped::MapParallelepipedData MapParallelepiped::Compute(const Eigen:
 {
     MapParallelepipedData result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 1, 2, 3, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 1, 2, 3, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 1, 3, 2, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 1, 3, 2, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 2, 1, 3, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 2, 1, 3, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 2, 3, 1, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 2, 3, 1, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 3, 1, 2, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 3, 1, 2, result))
         return result;
 
-    if (TestMapConfiguration(vertices, coordinateSystem, ReferencePoints, 3, 2, 1, result))
+    if (TestMapConfiguration(vertices, coordinateSystem, ReferenceVertices, 3, 2, 1, result))
         return result;
 
     throw runtime_error("Hexahedron cannot be mapped");

@@ -27,6 +27,14 @@ namespace Gedim
 /// \see http://wias-berlin.de/software/tetgen/files/tetcall.cxx
 class TetgenInterface final
 {
+  public:
+    struct Region
+    {
+        int id;                   // unique id of the region
+        Eigen::Vector3d centroid; // internal point of the region
+        double max_volume;        // default -1.0
+    };
+
   private:
 #if ENABLE_TETGEN == 1
     void CreateTetgenInput(const Eigen::MatrixXd &polyhedronVertices,
@@ -35,7 +43,10 @@ class TetgenInterface final
                            tetgenio &tetgenInput,
                            const Eigen::MatrixXd &constrainedPoints = Eigen::MatrixXd(),
                            const std::vector<Eigen::VectorXi> &constrainedFaces = std::vector<Eigen::VectorXi>()) const;
-    void CreateTetgenInput(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets, tetgenio &tetgenInput) const;
+    void CreateTetgenInput(const Eigen::MatrixXd &points,
+                           const std::vector<std::vector<unsigned int>> &facets,
+                           const std::vector<TetgenInterface::Region> &regions,
+                           tetgenio &tetgenInput) const;
     void CreateDelaunayInput(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, tetgenio &tetgenInput) const;
     void CreateTetgenOutput(const double &maxTetrahedronArea,
                             tetgenio &tetgenInput,
@@ -66,6 +77,12 @@ class TetgenInterface final
                     const double &maxTetrahedronVolume,
                     IMeshDAO &mesh,
                     const std::string &tetgenOptions = "Qpqfezna") const;
+
+    void CreateMesh(const Eigen::MatrixXd &points,
+                    const std::vector<std::vector<unsigned int>> &facets,
+                    const std::vector<Region> &regions,
+                    IMeshDAO &mesh,
+                    const std::string &tetgenOptions = "QpqfeznaA") const;
 };
 
 } // namespace Gedim
