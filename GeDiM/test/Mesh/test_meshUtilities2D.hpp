@@ -262,11 +262,10 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshConcave)
     vertices2D.col(0) << 0.4, 0.8, 0.0;
 
     const auto polygon_triangles = geometryUtilities.PolygonTriangulationByEarClipping(vertices2D);
-    const auto polygon_triangles_points = geometryUtilities.ExtractTriangulationPoints(vertices2D,
-                                                                                       polygon_triangles);
+    const auto polygon_triangles_points = geometryUtilities.ExtractTriangulationPoints(vertices2D, polygon_triangles);
 
     double polygonArea = 0.0;
-    for (const auto& triangle : polygon_triangles_points)
+    for (const auto &triangle : polygon_triangles_points)
         polygonArea += geometryUtilities.PolygonArea(triangle);
 
     {
@@ -282,10 +281,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshConcave)
 
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.CreateTriangularMesh(vertices2D,
-                                       0.01 * polygonArea,
-                                       meshDao,
-                                       "-QDzpqnea");
+    meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");

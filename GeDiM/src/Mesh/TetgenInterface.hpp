@@ -30,9 +30,9 @@ class TetgenInterface final
   public:
     struct Region
     {
-      int id; // unique id of the region
-      Eigen::Vector3d centroid; // internal point of the region
-      double max_volume; // default -1.0
+        int id;                   // unique id of the region
+        Eigen::Vector3d centroid; // internal point of the region
+        double max_volume;        // default -1.0
     };
 
   private:
@@ -47,9 +47,7 @@ class TetgenInterface final
                            const std::vector<std::vector<unsigned int>> &facets,
                            const std::vector<TetgenInterface::Region> &regions,
                            tetgenio &tetgenInput) const;
-    void CreateDelaunayInput(const Eigen::MatrixXd &points,
-                             const std::vector<unsigned int> &points_marker,
-                             tetgenio &tetgenInput) const;
+    void CreateDelaunayInput(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, tetgenio &tetgenInput) const;
     void CreateTetgenOutput(const double &maxTetrahedronArea,
                             tetgenio &tetgenInput,
                             tetgenio &tetgenOutput,

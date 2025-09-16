@@ -104,29 +104,29 @@ void TetgenInterface::CreateMesh(const Eigen::MatrixXd &points,
 }
 // ***************************************************************************
 void TetgenInterface::CreateMesh(const Eigen::MatrixXd &points,
-                const std::vector<std::vector<unsigned int>> &facets,
-                const std::vector<TetgenInterface::Region> &regions,
-                IMeshDAO &mesh,
-                const std::string &tetgenOptions) const
+                                 const std::vector<std::vector<unsigned int>> &facets,
+                                 const std::vector<TetgenInterface::Region> &regions,
+                                 IMeshDAO &mesh,
+                                 const std::string &tetgenOptions) const
 {
-  Gedim::Utilities::Unused(points);
-  Gedim::Utilities::Unused(facets);
-  Gedim::Utilities::Unused(regions);
-  Gedim::Utilities::Unused(mesh);
-  Gedim::Utilities::Unused(tetgenOptions);
+    Gedim::Utilities::Unused(points);
+    Gedim::Utilities::Unused(facets);
+    Gedim::Utilities::Unused(regions);
+    Gedim::Utilities::Unused(mesh);
+    Gedim::Utilities::Unused(tetgenOptions);
 
 #if ENABLE_TETGEN == 1
-  tetgenio *tetgenInput = new tetgenio();
-  tetgenio *tetgenOutput = new tetgenio();
+    tetgenio *tetgenInput = new tetgenio();
+    tetgenio *tetgenOutput = new tetgenio();
 
-  CreateTetgenInput(points, facets, regions, *tetgenInput);
-  CreateTetgenOutput(0.0, *tetgenInput, *tetgenOutput, tetgenOptions);
+    CreateTetgenInput(points, facets, regions, *tetgenInput);
+    CreateTetgenOutput(0.0, *tetgenInput, *tetgenOutput, tetgenOptions);
 
-  ConvertTetgenOutputToMeshDAO(*tetgenOutput, mesh);
+    ConvertTetgenOutputToMeshDAO(*tetgenOutput, mesh);
 
-  DeleteTetgenStructure(*tetgenInput, *tetgenOutput);
-  delete tetgenInput;
-  delete tetgenOutput;
+    DeleteTetgenStructure(*tetgenInput, *tetgenOutput);
+    delete tetgenInput;
+    delete tetgenOutput;
 #endif
 }
 // ***************************************************************************
@@ -356,21 +356,21 @@ void TetgenInterface::CreateTetgenInput(const Eigen::MatrixXd &points,
 
     if (regions.size() > 0)
     {
-      const unsigned int num_regions = regions.size();
+        const unsigned int num_regions = regions.size();
 
-      tetgenInput.numberofregions = num_regions;
-      tetgenInput.regionlist = new REAL[num_regions * 5];
+        tetgenInput.numberofregions = num_regions;
+        tetgenInput.regionlist = new REAL[num_regions * 5];
 
-      for (unsigned int r = 0; r < num_regions; ++r)
-      {
-        const auto& region = regions[r];
+        for (unsigned int r = 0; r < num_regions; ++r)
+        {
+            const auto &region = regions[r];
 
-        tetgenInput.regionlist[0 + 5 * r] = region.centroid.x();
-        tetgenInput.regionlist[1 + 5 * r] = region.centroid.y();
-        tetgenInput.regionlist[2 + 5 * r] = region.centroid.z();
-        tetgenInput.regionlist[3 + 5 * r] = region.id;
-        tetgenInput.regionlist[4 + 5 * r] = region.max_volume;
-      }
+            tetgenInput.regionlist[0 + 5 * r] = region.centroid.x();
+            tetgenInput.regionlist[1 + 5 * r] = region.centroid.y();
+            tetgenInput.regionlist[2 + 5 * r] = region.centroid.z();
+            tetgenInput.regionlist[3 + 5 * r] = region.id;
+            tetgenInput.regionlist[4 + 5 * r] = region.max_volume;
+        }
     }
 }
 // ***************************************************************************
@@ -409,7 +409,7 @@ void TetgenInterface::CreateTetgenOutput(const double &maxTetrahedronArea,
     options << tetgenOptions;
 
     if (maxTetrahedronArea > 0.0)
-      options << maxTetrahedronArea;
+        options << maxTetrahedronArea;
 
     CreateTetgenOutput(tetgenInput, tetgenOutput, options.str());
 }
@@ -438,7 +438,6 @@ void TetgenInterface::ConvertTetgenOutputToMeshDAO(const tetgenio &tetgenOutput,
     const unsigned int numberOfEgdesMesh = tetgenOutput.numberofedges;
     const unsigned int numberOfPointsMesh = tetgenOutput.numberofpoints;
     const unsigned int num_tetra_attribute = tetgenOutput.numberoftetrahedronattributes;
-
 
     mesh.InitializeDimension(3);
     mesh.Cell0DsInitialize(numberOfPointsMesh);
@@ -546,9 +545,9 @@ void TetgenInterface::ConvertTetgenOutputToMeshDAO(const tetgenio &tetgenOutput,
 
     if (num_tetra_attribute > 0)
     {
-      mesh.Cell3DInitializeDoubleProperties(num_tetra_attribute);
-      for (unsigned int c_p = 0; c_p < num_tetra_attribute; ++c_p)
-        mesh.Cell3DAddDoubleProperty("Attribute_" + std::to_string(c_p));
+        mesh.Cell3DInitializeDoubleProperties(num_tetra_attribute);
+        for (unsigned int c_p = 0; c_p < num_tetra_attribute; ++c_p)
+            mesh.Cell3DAddDoubleProperty("Attribute_" + std::to_string(c_p));
     }
 
     vector<unsigned int> faceVertices(3);
@@ -596,11 +595,11 @@ void TetgenInterface::ConvertTetgenOutputToMeshDAO(const tetgenio &tetgenOutput,
 
         if (num_tetra_attribute > 0)
         {
-          for (unsigned int c_p = 0; c_p < num_tetra_attribute; ++c_p)
-          {
-            mesh.Cell3DInitializeDoublePropertyValues(c, c_p, 1);
-            mesh.Cell3DInsertDoublePropertyValue(c, c_p, 0, tetgenOutput.tetrahedronattributelist[c + c_p * numberOfCellsMesh]);
-          }
+            for (unsigned int c_p = 0; c_p < num_tetra_attribute; ++c_p)
+            {
+                mesh.Cell3DInitializeDoublePropertyValues(c, c_p, 1);
+                mesh.Cell3DInsertDoublePropertyValue(c, c_p, 0, tetgenOutput.tetrahedronattributelist[c + c_p * numberOfCellsMesh]);
+            }
         }
     }
 }

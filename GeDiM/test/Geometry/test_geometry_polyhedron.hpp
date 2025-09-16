@@ -2475,40 +2475,30 @@ TEST(TestGeometryUtilities, Test_Export_Polyhedron)
 
 TEST(TestGeometryUtilities, TestPolyhedron_Facets)
 {
-   Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-   Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-   const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                Eigen::Vector3d(8.0, 0.0, 0.0),
-                                                                                Eigen::Vector3d(0.0, 0.0, -15.0),
-                                                                                Eigen::Vector3d(0.0, 4.0, 0.0));
+    const auto polyhedron = geometryUtilities.CreateParallelepipedWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                             Eigen::Vector3d(8.0, 0.0, 0.0),
+                                                                             Eigen::Vector3d(0.0, 0.0, -15.0),
+                                                                             Eigen::Vector3d(0.0, 4.0, 0.0));
 
-   const auto facets = geometryUtilities.PolyhedronToFacets(polyhedron);
+    const auto facets = geometryUtilities.PolyhedronToFacets(polyhedron);
 
-   std::vector<std::vector<unsigned int>> expected_facets = {
-     { 0, 1, 2, 3 },
-     { 4, 5, 6, 7 },
-     { 0, 3, 7, 4 },
-     { 1, 2, 6, 5 },
-     { 0, 1, 5, 4 },
-     { 3, 2, 6, 7 }
-   };
+    std::vector<std::vector<unsigned int>> expected_facets =
+        {{0, 1, 2, 3}, {4, 5, 6, 7}, {0, 3, 7, 4}, {1, 2, 6, 5}, {0, 1, 5, 4}, {3, 2, 6, 7}};
 
-   EXPECT_EQ(expected_facets,
-             facets);
+    EXPECT_EQ(expected_facets, facets);
 
-   const auto polyhedron_from_facets = geometryUtilities.FacetsToPolyhedron(polyhedron.Vertices,
-                                                                        facets);
+    const auto polyhedron_from_facets = geometryUtilities.FacetsToPolyhedron(polyhedron.Vertices, facets);
 
-   EXPECT_EQ(polyhedron.Vertices,
-             polyhedron_from_facets.Vertices);
+    EXPECT_EQ(polyhedron.Vertices, polyhedron_from_facets.Vertices);
 
-   Eigen::MatrixXi expected_edges(2, 12);
-   expected_edges.row(0)<< 0, 1, 2, 0, 4, 5, 6, 4, 3, 0, 2, 1;
-   expected_edges.row(1)<< 1, 2, 3, 3, 5, 6, 7, 7, 7, 4, 6, 5;
+    Eigen::MatrixXi expected_edges(2, 12);
+    expected_edges.row(0) << 0, 1, 2, 0, 4, 5, 6, 4, 3, 0, 2, 1;
+    expected_edges.row(1) << 1, 2, 3, 3, 5, 6, 7, 7, 7, 4, 6, 5;
 
-   EXPECT_EQ(expected_edges,
-             polyhedron_from_facets.Edges);
+    EXPECT_EQ(expected_edges, polyhedron_from_facets.Edges);
 }
 
 } // namespace GedimUnitTesting
