@@ -391,7 +391,7 @@ class MeshUtilities final
     /// \param segmentTangent the segment tangent vector
     /// \param coordinates relative coordinates between [0.0, 1.0]
     /// \param mesh the resulting mesh
-    void FillMesh1D(const GeometryUtilities &geometryUtilities,
+    void FillMesh1D(const Gedim::GeometryUtilities &geometryUtilities,
                     const Eigen::Vector3d &segmentOrigin,
                     const Eigen::Vector3d &segmentTangent,
                     const std::vector<double> &coordinates,
