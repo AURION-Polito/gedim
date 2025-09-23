@@ -14,10 +14,10 @@
 #include "MeshDAOExporterToCsv.hpp"
 #include "ObjectFileFormatInterface.hpp"
 #include "OpenVolumeMeshInterface.hpp"
-#include "StringsUtilities.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshInterface.hpp"
+#include <fstream>
 
 using namespace std;
 using namespace Eigen;
