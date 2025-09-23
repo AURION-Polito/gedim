@@ -157,7 +157,7 @@ void MeshMatricesDAO::AlignSparseMatrixHigherElements(Eigen::SparseMatrix<T> &ma
     triplets.clear();
 }
 // ***************************************************************************
-MeshMatricesDAO::MeshMatricesDAO(MeshMatrices &mesh) : _mesh(mesh)
+MeshMatricesDAO::MeshMatricesDAO(Gedim::MeshMatrices &mesh) : _mesh(mesh)
 {
 }
 MeshMatricesDAO::~MeshMatricesDAO()
