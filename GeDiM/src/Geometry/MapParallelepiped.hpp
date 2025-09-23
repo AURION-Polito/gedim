@@ -32,7 +32,7 @@ class MapParallelepiped
     Eigen::MatrixXd ReferenceVertices;
 
   private:
-    const GeometryUtilities &geometryUtilities;
+    const Gedim::GeometryUtilities &geometryUtilities;
 
     bool TestMapConfiguration(const Eigen::MatrixXd &vertices,
                               const std::vector<unsigned int> &coordinateSystem,
@@ -43,7 +43,7 @@ class MapParallelepiped
                               MapParallelepiped::MapParallelepipedData &result) const;
 
   public:
-    MapParallelepiped(const GeometryUtilities &geometryUtilities);
+    MapParallelepiped(const Gedim::GeometryUtilities &geometryUtilities);
 
     ~MapParallelepiped()
     {

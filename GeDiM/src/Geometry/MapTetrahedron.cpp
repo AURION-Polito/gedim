@@ -18,6 +18,10 @@ using namespace std;
 namespace Gedim
 {
 // ***************************************************************************
+MapTetrahedron::MapTetrahedron(const Gedim::GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
+{
+}
+// ***************************************************************************
 bool MapTetrahedron::TestMapConfiguration(const Eigen::MatrixXd &vertices,
                                           const Eigen::MatrixXd &referencePoints,
                                           const unsigned int &secondVertexIndex,
