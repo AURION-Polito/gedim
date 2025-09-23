@@ -708,7 +708,7 @@ class MeshUtilities final
                               const unsigned int numPoints,
                               const unsigned int numIterations,
                               IMeshDAO &mesh,
-                              const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
+                              const unsigned int random_seed = 0) const;
 
     void MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>> &faces_triangulation, IMeshDAO &mesh) const;
 
