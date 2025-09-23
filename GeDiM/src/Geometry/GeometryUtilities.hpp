@@ -26,9 +26,9 @@ struct GeometryUtilitiesConfig final
     }
 
     double MinTolerance = DefaultMinTolerance();
-    double Tolerance1D = MinTolerance;
-    double Tolerance2D = MinTolerance;
-    double Tolerance3D = MinTolerance;
+    double Tolerance1D = DefaultMinTolerance();
+    double Tolerance2D = DefaultMinTolerance();
+    double Tolerance3D = DefaultMinTolerance();
 };
 
 /// \brief The GeometryUtilities class intersects 3D segments
