@@ -1351,7 +1351,7 @@ MeshUtilities::AgglomerateMeshFromTriangularMeshResult MeshUtilities::Agglomerat
     return result;
 }
 // ***************************************************************************
-MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInformationFromCsv(const GeometryUtilities geometryUtilities,
+MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInformationFromCsv(const GeometryUtilities &geometryUtilities,
                                                                                              const IMeshDAO &originalMesh,
                                                                                              const IMeshDAO &agglomeratedMesh,
                                                                                              const std::string &fileName,
@@ -1563,7 +1563,7 @@ MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInform
     return result;
 }
 // ***************************************************************************
-MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInformationFromOFF(const GeometryUtilities geometryUtilities,
+MeshUtilities::AgglomerationInformation MeshUtilities::ImportAgglomerationInformationFromOFF(const GeometryUtilities &geometryUtilities,
                                                                                              const IMeshDAO &originalMesh,
                                                                                              const IMeshDAO &agglomeratedMesh,
                                                                                              const std::string &fileName,
