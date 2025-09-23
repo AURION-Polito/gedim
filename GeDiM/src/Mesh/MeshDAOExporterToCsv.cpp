@@ -16,14 +16,14 @@
 namespace Gedim
 {
 // ***************************************************************************
-MeshDAOExporterToCsv::MeshDAOExporterToCsv(const MeshFromCsvUtilities &utilities) : utilities(utilities)
+MeshDAOExporterToCsv::MeshDAOExporterToCsv(const Gedim::MeshFromCsvUtilities &utilities) : utilities(utilities)
 {
 }
 MeshDAOExporterToCsv::~MeshDAOExporterToCsv()
 {
 }
 // ***************************************************************************
-void MeshDAOExporterToCsv::Export(const MeshFromCsvUtilities::Configuration &configuration, const IMeshDAO &mesh) const
+void MeshDAOExporterToCsv::Export(const Gedim::MeshFromCsvUtilities::Configuration &configuration, const Gedim::IMeshDAO &mesh) const
 {
     utilities.ExportCell0Ds(configuration.Folder + "/" + configuration.FileCell0DsName + "." + configuration.FileExtension,
                             configuration.Separator,

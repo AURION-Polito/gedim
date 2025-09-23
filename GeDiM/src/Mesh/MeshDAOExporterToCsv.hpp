@@ -22,16 +22,16 @@ namespace Gedim
 class MeshDAOExporterToCsv final
 {
   private:
-    const MeshFromCsvUtilities &utilities;
+    const Gedim::MeshFromCsvUtilities &utilities;
 
   public:
-    MeshDAOExporterToCsv(const MeshFromCsvUtilities &utilities);
+    MeshDAOExporterToCsv(const Gedim::MeshFromCsvUtilities &utilities);
     ~MeshDAOExporterToCsv();
 
     /// \brief Export the mesh in all parts
     /// \param configuration the configuration for export
     /// \param mesh the mesh to be exported
-    void Export(const MeshFromCsvUtilities::Configuration &configuration, const IMeshDAO &mesh) const;
+    void Export(const Gedim::MeshFromCsvUtilities::Configuration &configuration, const Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim
