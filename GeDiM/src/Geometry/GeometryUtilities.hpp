@@ -136,7 +136,7 @@ class GeometryUtilities final
 
         Eigen::MatrixXd Points;                             ///< Coordinates of generated points
         std::vector<std::vector<unsigned int>> SubPolygons; ///< Subpolygon formed
-        std::vector<Types> SubPolygonTypes;                 ///< SubPolygon types
+        std::vector<Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types> SubPolygonTypes;                 ///< SubPolygon types
     };
 
     struct PolygonDivisionByCircleResult final
@@ -232,9 +232,9 @@ class GeometryUtilities final
         };
 
         Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types Type = Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::Unknown;
-        std::list<NewVertex> NewVertices = {};
-        std::list<NewEdge> NewEdges = {};
-        std::vector<NewPolygon> NewPolygons = {};
+        std::list<Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewVertex> NewVertices = {};
+        std::list<Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge> NewEdges = {};
+        std::vector<Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewPolygon> NewPolygons = {};
     };
 
     struct SplitPolygonWithCircleResult final
@@ -302,9 +302,9 @@ class GeometryUtilities final
         Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types Type = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::Unknown;
         std::vector<unsigned int> PolygonVerticesNewVerticesPosition = {};
         std::vector<unsigned int> CircleIntersectionsNewVerticesPosition = {};
-        std::vector<NewVertex> NewVertices = {};
-        std::vector<NewEdge> NewEdges = {};
-        std::vector<NewPolygon> NewPolygons = {};
+        std::vector<Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex> NewVertices = {};
+        std::vector<Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge> NewEdges = {};
+        std::vector<Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon> NewPolygons = {};
     };
 
     struct IntersectionSegmentSegmentResult final
@@ -331,8 +331,8 @@ class GeometryUtilities final
             double CurvilinearCoordinate = 0.0;
         };
 
-        IntersectionLineTypes IntersectionLinesType = IntersectionLineTypes::Unknown;
-        IntersectionSegmentTypes IntersectionSegmentsType = IntersectionSegmentTypes::Unknown;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes IntersectionLinesType = Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionLineTypes::Unknown;
+        Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes IntersectionSegmentsType = Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionSegmentTypes::Unknown;
         /// \brief relation between first and second intersection.
         /// Values are the indeces of the SecondSegmentIntersections vector respect the FirstSegmentIntersections vector
         /// \example in MultipleIntersection case, if SecondIntersectionRelation[0] = 1,
@@ -341,10 +341,10 @@ class GeometryUtilities final
         std::vector<unsigned int> SecondIntersectionRelation;
         /// \brief intersections of the first segment,
         /// \note if multiple intersections are found, than the origin and the end coordinate are stored
-        std::vector<IntersectionPosition> FirstSegmentIntersections;
+        std::vector<Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionPosition> FirstSegmentIntersections;
         /// \brief intersections of the second segment,
         /// \note if multiple intersections are found, than the origin and the end coordinate are stored
-        std::vector<IntersectionPosition> SecondSegmentIntersections; /// intersections of the second segment
+        std::vector<Gedim::GeometryUtilities::IntersectionSegmentSegmentResult::IntersectionPosition> SecondSegmentIntersections; /// intersections of the second segment
     };
 
     struct IntersectionSegmentCircleResult final
@@ -365,7 +365,7 @@ class GeometryUtilities final
 
         Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types Type = Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::Unknown;
         /// \brief intersections of the segment,
-        std::vector<IntersectionPosition> SegmentIntersections = {};
+        std::vector<Gedim::GeometryUtilities::IntersectionSegmentCircleResult::IntersectionPosition> SegmentIntersections = {};
     };
 
     struct IntersectionSegmentPlaneResult final
@@ -385,7 +385,7 @@ class GeometryUtilities final
         };
 
         Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types Type = Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::Unknown;     ///< The intersection type
-        Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
     };
 
     struct IntersectionPolyhedronLineResult final
@@ -456,13 +456,13 @@ class GeometryUtilities final
         };
 
         Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::Unknown;
-        std::vector<LineIntersection> LineIntersections;                              ///< The line intersections
-        std::vector<PolyhedronVertexIntersection> PolyhedronVertexIntersections = {}; ///< Polyhedron Vertex
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection> LineIntersections;                              ///< The line intersections
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection> PolyhedronVertexIntersections = {}; ///< Polyhedron Vertex
         ///< intersections, size
         ///< polyhedron num vertices
-        std::vector<PolyhedronEdgeIntersection> PolyhedronEdgeIntersections = {}; ///< Polyhedron Edge intersections,
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection> PolyhedronEdgeIntersections = {}; ///< Polyhedron Edge intersections,
         ///< size polyhedron num edges
-        std::vector<PolyhedronFaceIntersection> PolyhedronFaceIntersections = {}; ///< Polyhedron Face intersections,
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection> PolyhedronFaceIntersections = {}; ///< Polyhedron Face intersections,
         ///< size polyhedron num faces
     };
 
@@ -479,8 +479,8 @@ class GeometryUtilities final
             std::vector<unsigned int> Cell3DIndices = {};
         };
 
-        std::map<double, IntersectionPoint> Points;
-        std::vector<IntersectionSegment> Segments;
+        std::map<double, Gedim::GeometryUtilities::IntersectionPolyhedronsSegmentResult::IntersectionPoint> Points;
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronsSegmentResult::IntersectionSegment> Segments;
     };
 
     struct IntersectionPolyhedronPlaneResult final
@@ -509,7 +509,7 @@ class GeometryUtilities final
 
         struct EdgeIntersection final
         {
-            IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and plane
+            Gedim::GeometryUtilities::IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and plane
         };
 
         struct VertexIntersection final
@@ -541,10 +541,10 @@ class GeometryUtilities final
         Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::Unknown;     ///< The intersection type
         unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex,
         ///< Types::OnEdge and Types::OnFace
-        std::vector<VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
-        std::vector<EdgeIntersection> EdgeIntersections = {};     ///< Edge intersections
-        std::vector<FaceIntersection> FaceIntersections = {};     ///< Face intersections
-        std::vector<Intersection> Intersections = {};             ///< The resulting intersections
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::EdgeIntersection> EdgeIntersections = {};     ///< Edge intersections
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection> FaceIntersections = {};     ///< Face intersections
+        std::vector<Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection> Intersections = {};             ///< The resulting intersections
         Eigen::MatrixXd IntersectionCoordinates;                  ///< The resulting intersection coordinates
     };
 
@@ -596,7 +596,7 @@ class GeometryUtilities final
             double CurvilinearCoordinate = 0.0;
         };
 
-        std::vector<EdgeIntersection> EdgeIntersections = {};
+        std::vector<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection> EdgeIntersections = {};
         Gedim::GeometryUtilities::LinePolygonPositionResult::Types Type =
             Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Unknown;
     };
