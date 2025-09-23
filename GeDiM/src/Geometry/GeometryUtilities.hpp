@@ -25,10 +25,10 @@ struct GeometryUtilitiesConfig final
         return 10.0 * std::numeric_limits<double>::epsilon();
     }
 
-    double MinTolerance = DefaultMinTolerance();
-    double Tolerance1D = DefaultMinTolerance();
-    double Tolerance2D = DefaultMinTolerance();
-    double Tolerance3D = DefaultMinTolerance();
+    double MinTolerance = Gedim::GeometryUtilitiesConfig::DefaultMinTolerance();
+    double Tolerance1D = Gedim::GeometryUtilitiesConfig::DefaultMinTolerance();
+    double Tolerance2D = Gedim::GeometryUtilitiesConfig::DefaultMinTolerance();
+    double Tolerance3D = Gedim::GeometryUtilitiesConfig::DefaultMinTolerance();
 };
 
 /// \brief The GeometryUtilities class intersects 3D segments

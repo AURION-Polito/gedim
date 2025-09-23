@@ -677,7 +677,7 @@ class MeshUtilities final
                              const unsigned int numPoints,
                              const unsigned int numIterations,
                              IMeshDAO &mesh,
-                             const unsigned int random_seed = static_cast<unsigned int>(time(nullptr))) const;
+                             const unsigned int random_seed = 0) const;
 
     /// \brief Create tetrahedral mesh on 3D polyhedron
     /// \param polyhedronVertices the polyhedron vertices, size 3 x numVertices
