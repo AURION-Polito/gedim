@@ -17,11 +17,11 @@
 namespace Gedim
 {
 // ***************************************************************************
-void MeshUtilities::FillMesh1D(const GeometryUtilities &,
+void MeshUtilities::FillMesh1D(const Gedim::GeometryUtilities &,
                                const Eigen::Vector3d &segmentOrigin,
                                const Eigen::Vector3d &segmentTangent,
                                const std::vector<double> &coordinates,
-                               IMeshDAO &mesh) const
+                               Gedim::IMeshDAO &mesh) const
 {
     if (coordinates.size() == 0)
         return;
@@ -128,10 +128,10 @@ MeshUtilities::ExtractMeshData MeshUtilities::ExtractMesh1D(const std::vector<un
     return result;
 }
 // ***************************************************************************
-void MeshUtilities::Mesh1DFromSegment(const GeometryUtilities &geometryUtilities,
+void MeshUtilities::Mesh1DFromSegment(const Gedim::GeometryUtilities &geometryUtilities,
                                       const Eigen::MatrixXd &segmentVertices,
                                       const std::vector<unsigned int> vertexMarkers,
-                                      IMeshDAO &mesh) const
+                                      Gedim::IMeshDAO &mesh) const
 {
     FillMesh1D(geometryUtilities, segmentVertices.col(0), segmentVertices.col(1), {0.0, 1.0}, mesh);
 
@@ -139,8 +139,8 @@ void MeshUtilities::Mesh1DFromSegment(const GeometryUtilities &geometryUtilities
     mesh.Cell0DSetMarker(mesh.Cell0DTotalNumber() - 1, vertexMarkers[1]);
 }
 // ***************************************************************************
-MeshUtilities::MeshGeometricData1D MeshUtilities::FillMesh1DGeometricData(const GeometryUtilities &geometryUtilities,
-                                                                          const IMeshDAO &convexMesh) const
+MeshUtilities::MeshGeometricData1D MeshUtilities::FillMesh1DGeometricData(const Gedim::GeometryUtilities &geometryUtilities,
+                                                                          const Gedim::IMeshDAO &convexMesh) const
 {
     MeshGeometricData1D result;
 
