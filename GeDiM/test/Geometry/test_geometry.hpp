@@ -301,45 +301,38 @@ TEST(TestGeometryUtilities, TestPlaneRotationMatrix)
 
 TEST(TestGeometryUtilities, TestPlaneReflectionMatrix)
 {
-      Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
-      geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
-      Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
 
-      // check reflection matrix of x axis passing by origin
-      {
+    // check reflection matrix of x axis passing by origin
+    {
         const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
         const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
         const Eigen::Vector3d plane_origin(0.0, 0.0, 0.0);
         const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        const Eigen::Vector3d reflected_point = reflection_matrix *
-                                                original_point +
-                                                reflection_translation;
+        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal, plane_origin);
+        const Eigen::Vector3d reflected_point = reflection_matrix * original_point + reflection_translation;
 
         ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
         ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
         ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
-      }
+    }
 
-      // check reflection matrix of x axis passing by (1.0, 0.0, 0.0)
-      {
+    // check reflection matrix of x axis passing by (1.0, 0.0, 0.0)
+    {
         const Eigen::Vector3d original_point(0.25, 0.75, 0.1);
         const Eigen::Vector3d plane_normal(1.0, 0.0, 0.0);
         const Eigen::Vector3d plane_origin(1.0, 0.0, 0.0);
         const auto reflection_matrix = geometryUtilities.PlaneReflectionMatrix(plane_normal);
-        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal,
-                                                                                         plane_origin);
-        const Eigen::Vector3d reflected_point = reflection_matrix *
-                                                original_point +
-                                                reflection_translation;
+        const auto reflection_translation = geometryUtilities.PlaneReflectionTranslation(plane_normal, plane_origin);
+        const Eigen::Vector3d reflected_point = reflection_matrix * original_point + reflection_translation;
 
         ASSERT_DOUBLE_EQ(reflected_point[0], -0.25);
         ASSERT_DOUBLE_EQ(reflected_point[1], +0.75);
         ASSERT_DOUBLE_EQ(reflected_point[2], +0.1);
-      }
+    }
 }
-
 
 TEST(TestGeometryUtilities, TestConvexHullSimple)
 {

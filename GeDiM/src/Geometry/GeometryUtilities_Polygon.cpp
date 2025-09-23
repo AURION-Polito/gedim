@@ -1541,16 +1541,16 @@ GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePo
     throw runtime_error("PolygonCirclePosition failed");
 }
 // ***************************************************************************
-GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosition(const Eigen::Vector3d &lineTangent,
+Gedim::GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosition(const Eigen::Vector3d &lineTangent,
                                                                                     const Eigen::Vector3d &lineOrigin,
                                                                                     const Eigen::MatrixXd &polygonVertices) const
 {
-    LinePolygonPositionResult result;
+    Gedim::GeometryUtilities::LinePolygonPositionResult result;
 
-    result.Type = LinePolygonPositionResult::Types::Outside;
+    result.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Outside;
 
     const unsigned int numVertices = polygonVertices.cols();
-    list<LinePolygonPositionResult::EdgeIntersection> edgeIntersections;
+    list<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection> edgeIntersections;
 
     for (unsigned int e = 0; e < numVertices; e++)
     {
@@ -1570,10 +1570,10 @@ GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosit
         switch (intersectionResult.IntersectionSegmentsType)
         {
         case IntersectionSegmentSegmentResult::IntersectionSegmentTypes::MultipleIntersections: {
-            result.Type = LinePolygonPositionResult::Types::Intersecting;
+            result.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Intersecting;
             edgeIntersections.push_back(LinePolygonPositionResult::EdgeIntersection());
-            LinePolygonPositionResult::EdgeIntersection &edgeIntersection = edgeIntersections.back();
-            edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::Parallel;
+            Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection &edgeIntersection = edgeIntersections.back();
+            edgeIntersection.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Parallel;
             edgeIntersection.Index = e;
             continue;
         }
@@ -1595,18 +1595,18 @@ GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosit
             case PointSegmentPositionTypes::OnSegmentOrigin:
             case PointSegmentPositionTypes::InsideSegment:
             case PointSegmentPositionTypes::OnSegmentEnd: {
-                result.Type = LinePolygonPositionResult::Types::Intersecting;
-                edgeIntersections.push_back(LinePolygonPositionResult::EdgeIntersection());
-                LinePolygonPositionResult::EdgeIntersection &edgeIntersection = edgeIntersections.back();
+                result.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Intersecting;
+                edgeIntersections.push_back(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection());
+                Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection &edgeIntersection = edgeIntersections.back();
                 edgeIntersection.Index = e;
                 edgeIntersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
 
                 if (position.Type == PointSegmentPositionTypes::OnSegmentOrigin)
-                    edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin;
+                    edgeIntersection.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeOrigin;
                 else if (position.Type == PointSegmentPositionTypes::OnSegmentEnd)
-                    edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd;
+                    edgeIntersection.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::OnEdgeEnd;
                 else
-                    edgeIntersection.Type = LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge;
+                    edgeIntersection.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::InsideEdge;
                 continue;
             }
             break;
@@ -1621,7 +1621,7 @@ GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosit
     }
 
     result.EdgeIntersections =
-        vector<LinePolygonPositionResult::EdgeIntersection>(edgeIntersections.begin(), edgeIntersections.end());
+        vector<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection>(edgeIntersections.begin(), edgeIntersections.end());
 
     return result;
 }
@@ -1716,7 +1716,7 @@ void GeometryUtilities::ExportPolygonToVTU(const unsigned int &index,
         exporter.AddPoint(polygon_centroid);
 
         exporter.Export(exportFolder + "/" + "Polygon_Centroid.vtu");
-  }
+    }
 }
 // ***************************************************************************
 } // namespace Gedim

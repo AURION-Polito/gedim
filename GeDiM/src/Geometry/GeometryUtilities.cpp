@@ -191,28 +191,23 @@ Matrix3d GeometryUtilities::PlaneRotationMatrix(const Eigen::Vector3d &planeNorm
     return Q;
 }
 // ***************************************************************************
-Eigen::Matrix3d GeometryUtilities::PlaneReflectionMatrix(const Eigen::Vector3d& plane_normal) const
+Eigen::Matrix3d GeometryUtilities::PlaneReflectionMatrix(const Eigen::Vector3d &plane_normal) const
 {
-  Output::Assert(IsValuePositive(plane_normal.norm(), Tolerance1D()));
+    Output::Assert(IsValuePositive(plane_normal.norm(), Tolerance1D()));
 
-  Eigen::Matrix3d Q;
-  Q.setIdentity();
+    Eigen::Matrix3d Q;
+    Q.setIdentity();
 
-  Q -= (2.0 / plane_normal.squaredNorm()) *
-       plane_normal *
-       plane_normal.transpose();
+    Q -= (2.0 / plane_normal.squaredNorm()) * plane_normal * plane_normal.transpose();
 
-  return Q;
+    return Q;
 }
 // ***************************************************************************
-Eigen::Vector3d GeometryUtilities::PlaneReflectionTranslation(const Eigen::Vector3d& plane_normal,
-                                                       const Eigen::Vector3d& plane_origin) const
+Eigen::Vector3d GeometryUtilities::PlaneReflectionTranslation(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &plane_origin) const
 {
-  Output::Assert(IsValuePositive(plane_normal.norm(), Tolerance1D()));
+    Output::Assert(IsValuePositive(plane_normal.norm(), Tolerance1D()));
 
-  return (2.0 / plane_normal.squaredNorm()) *
-         plane_normal.dot(plane_origin) *
-          plane_normal;
+    return (2.0 / plane_normal.squaredNorm()) * plane_normal.dot(plane_origin) * plane_normal;
 }
 // ***************************************************************************
 vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd &points, const bool &includeCollinear) const
