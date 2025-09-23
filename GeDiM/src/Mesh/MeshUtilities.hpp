@@ -209,7 +209,7 @@ class MeshUtilities final
             std::vector<unsigned int> ConvexCell2DsIndex;
         };
 
-        std::vector<ConcaveCell2D> ConcaveCell2Ds;
+        std::vector<Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult::ConcaveCell2D> ConcaveCell2Ds;
         std::vector<unsigned int> RemovedCell1Ds;
         std::vector<unsigned int> RemovedCell2Ds;
     };
@@ -256,7 +256,7 @@ class MeshUtilities final
             unsigned int ConvexCell3DFaceIndex = 0;
         };
 
-        std::vector<ConvexCell2D> ConcaveCell3DFacesConvexCell2D = {};
+        std::vector<Gedim::MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult::ConvexCell2D> ConcaveCell3DFacesConvexCell2D = {};
     };
 
     struct Mesh3DPolyhedron final
@@ -280,11 +280,11 @@ class MeshUtilities final
                 Cell3D = 5
             };
 
-            Types Type;
+            Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition::Types Type;
             unsigned int Cell_index;
         };
 
-        std::vector<PointMeshPosition> MeshPositions;
+        std::vector<Gedim::MeshUtilities::FindPointMeshPositionResult::PointMeshPosition> MeshPositions;
     };
 
     struct FindPointCell2DResult final
@@ -292,10 +292,10 @@ class MeshUtilities final
         struct PointCell2DFound final
         {
             unsigned int Cell2D_index;
-            GeometryUtilities::PointPolygonPositionResult Cell2D_Position;
+            Gedim::GeometryUtilities::PointPolygonPositionResult Cell2D_Position;
         };
 
-        std::vector<PointCell2DFound> Cell2Ds_found;
+        std::vector<Gedim::MeshUtilities::FindPointCell2DResult::PointCell2DFound> Cell2Ds_found;
     };
 
     struct FindPointCell3DResult final
@@ -303,10 +303,10 @@ class MeshUtilities final
         struct PointCell3DFound final
         {
             unsigned int Cell3D_index;
-            GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
+            Gedim::GeometryUtilities::PointPolyhedronPositionResult Cell3D_Position;
         };
 
-        std::vector<PointCell3DFound> Cell3Ds_found;
+        std::vector<Gedim::MeshUtilities::FindPointCell3DResult::PointCell3DFound> Cell3Ds_found;
     };
 
     struct Intersect_mesh_polyhedron_result final
@@ -327,7 +327,7 @@ class MeshUtilities final
                 Polyhedron = 4
             };
 
-            Types Type;
+            Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Polyhedron_Intersection::Types Type;
             unsigned int Geometry_index;
             std::vector<unsigned int> Cell0Ds_index;
             std::vector<unsigned int> Cell1Ds_index;
@@ -343,10 +343,10 @@ class MeshUtilities final
             std::map<unsigned int, std::vector<unsigned int>> Cell3Ds_intersections;
         };
 
-        Types Type;
+        Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Types Type;
         Eigen::MatrixXd Intersections_Coordinates;
-        std::vector<Polyhedron_Intersection> Polyhedron_intersections;
-        Mesh_Intersections Mesh_intersections;
+        std::vector<Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Polyhedron_Intersection> Polyhedron_intersections;
+        Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Mesh_Intersections Mesh_intersections;
     };
 
   public:
