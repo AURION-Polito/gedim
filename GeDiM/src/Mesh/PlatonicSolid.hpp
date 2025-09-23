@@ -25,18 +25,18 @@ namespace Gedim
 /// https://danielsieger.com/blog/2021/01/03/generating-platonic-solids.html
 class PlatonicSolid final
 {
-    const GeometryUtilities &geometryUtilities;
-    const MeshUtilities &meshUtilities;
+    const Gedim::GeometryUtilities &geometryUtilities;
+    const Gedim::MeshUtilities &meshUtilities;
 
   public:
-    PlatonicSolid(const GeometryUtilities &geometryUtilities, const MeshUtilities &meshUtilities)
+    PlatonicSolid(const Gedim::GeometryUtilities &geometryUtilities, const Gedim::MeshUtilities &meshUtilities)
         : geometryUtilities(geometryUtilities), meshUtilities(meshUtilities)
     {
     }
 
     virtual ~PlatonicSolid(){};
 
-    void project_to_unit_sphere(GeometryUtilities::Polyhedron &polyhedron) const
+    void project_to_unit_sphere(Gedim::GeometryUtilities::Polyhedron &polyhedron) const
     {
         polyhedron.Vertices.colwise().normalize();
     }
@@ -149,20 +149,20 @@ class PlatonicSolid final
         }
     }
 
-    GeometryUtilities::Polyhedron dual_polyhedron(const GeometryUtilities::Polyhedron &polyhedron) const;
+    Gedim::GeometryUtilities::Polyhedron dual_polyhedron(const Gedim::GeometryUtilities::Polyhedron &polyhedron) const;
 
-    void first_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
+    void first_class_geodesic_polyhedron(const Gedim::GeometryUtilities::Polyhedron &starting_polyhedron,
                                          const unsigned int &frequency,
-                                         MeshMatricesDAO &filter_mesh) const;
+                                         Gedim::MeshMatricesDAO &filter_mesh) const;
 
-    void second_class_geodesic_polyhedron(const GeometryUtilities::Polyhedron &starting_polyhedron,
+    void second_class_geodesic_polyhedron(const Gedim::GeometryUtilities::Polyhedron &starting_polyhedron,
                                           const unsigned int &frequency,
                                           Gedim::MeshMatricesDAO &filter_mesh) const;
 
-    GeometryUtilities::Polyhedron goldberg_polyhedron(const unsigned int &p,
-                                                      const unsigned int &q,
-                                                      const unsigned int &b,
-                                                      const unsigned int &c) const
+    Gedim::GeometryUtilities::Polyhedron goldberg_polyhedron(const unsigned int &p,
+                                                             const unsigned int &q,
+                                                             const unsigned int &b,
+                                                             const unsigned int &c) const
     {
 
         Gedim::Output::Assert(p >= 3 && q == 3);
@@ -351,17 +351,17 @@ class PlatonicSolid final
         return polyhedron;
     }
 
-    GeometryUtilities::Polyhedron octahedron() const
+    Gedim::GeometryUtilities::Polyhedron octahedron() const
     {
-        const GeometryUtilities::Polyhedron polyhedron = hexahedron();
-        GeometryUtilities::Polyhedron dual = dual_polyhedron(polyhedron);
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = hexahedron();
+        Gedim::GeometryUtilities::Polyhedron dual = dual_polyhedron(polyhedron);
         project_to_unit_sphere(dual);
         return dual;
     }
 
-    GeometryUtilities::Polyhedron icosahedron() const
+    Gedim::GeometryUtilities::Polyhedron icosahedron() const
     {
-        GeometryUtilities::Polyhedron polyhedron;
+        Gedim::GeometryUtilities::Polyhedron polyhedron;
 
         const double phi = (1.0 + sqrt(5.0)) * 0.5; // golden ratio
         const double a = 1.0;
@@ -482,10 +482,10 @@ class PlatonicSolid final
         return polyhedron;
     }
 
-    GeometryUtilities::Polyhedron dodecahedron() const
+    Gedim::GeometryUtilities::Polyhedron dodecahedron() const
     {
-        const GeometryUtilities::Polyhedron polyhedron = icosahedron();
-        GeometryUtilities::Polyhedron dual = dual_polyhedron(polyhedron);
+        const Gedim::GeometryUtilities::Polyhedron polyhedron = icosahedron();
+        Gedim::GeometryUtilities::Polyhedron dual = dual_polyhedron(polyhedron);
         project_to_unit_sphere(dual);
         return dual;
     }

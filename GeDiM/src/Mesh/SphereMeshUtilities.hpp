@@ -13,12 +13,8 @@
 #define __SphereMeshUtilities_H
 
 #include "GeometryUtilities.hpp"
-#include "IMeshDAO.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
-#include "PlatonicSolid.hpp"
 #include <numbers>
-#include <numeric>
 
 namespace Gedim
 {
@@ -28,11 +24,11 @@ namespace Gedim
 /// https://danielsieger.com/blog/2021/03/27/generating-spheres.html
 class SphereMeshUtilities final
 {
-    const GeometryUtilities &geometryUtilities;
-    const MeshUtilities &meshUtilities;
+    const Gedim::GeometryUtilities &geometryUtilities;
+    const Gedim::MeshUtilities &meshUtilities;
 
   public:
-    SphereMeshUtilities(const GeometryUtilities &geometryUtilities, const MeshUtilities &meshUtilities)
+    SphereMeshUtilities(const Gedim::GeometryUtilities &geometryUtilities, const Gedim::MeshUtilities &meshUtilities)
         : geometryUtilities(geometryUtilities), meshUtilities(meshUtilities)
     {
     }

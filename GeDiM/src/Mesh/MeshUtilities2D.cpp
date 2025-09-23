@@ -661,7 +661,7 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const 
 // ***************************************************************************
 MeshUtilities::MeshGeometricData2D MeshUtilities::FillMesh2DGeometricData(const Gedim::GeometryUtilities &geometryUtilities,
                                                                           const Gedim::IMeshDAO &mesh,
-                                                                          const std::vector<GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType) const
+                                                                          const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType) const
 {
     MeshGeometricData2D result;
 
