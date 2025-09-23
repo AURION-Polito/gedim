@@ -115,13 +115,13 @@ class GeometryUtilities final
                 Edge = 2
             };
 
-            Types Type = Types::Unknown;
-            IndexTypes IndexType = IndexTypes::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types Type = Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes IndexType = Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection::IndexTypes::Unknown;
             unsigned int Index;
             double CurvilinearCoordinate; ///< Valid only in IndexType Edge
         };
 
-        std::vector<Intersection> Intersections = {}; ///< ordered by edge order
+        std::vector<Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection> Intersections = {}; ///< ordered by edge order
     };
 
     struct PolygonDivisionByAngleQuadrantResult final
@@ -174,17 +174,17 @@ class GeometryUtilities final
                     Edge = 2
                 };
 
-                Types Type;
+                Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex::Types Type;
                 unsigned int Index;
             };
 
-            Vertex Origin;
-            Vertex End;
+            Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex Origin;
+            Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment::Vertex End;
         };
 
         unsigned int NumberPolygonVertices;
-        std::vector<AlignedEdge> AlignedEdges;
-        SplitSegment Segment;
+        std::vector<Gedim::GeometryUtilities::SplitPolygonInput::AlignedEdge> AlignedEdges;
+        Gedim::GeometryUtilities::SplitPolygonInput::SplitSegment Segment;
     };
 
     struct SplitPolygonWithSegmentResult final
@@ -206,7 +206,7 @@ class GeometryUtilities final
                 SegmentEnd = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewVertex::Types Type = Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewVertex::Types::Unknown;
         };
 
         struct NewEdge final
@@ -218,7 +218,7 @@ class GeometryUtilities final
                 EdgeUpdate = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types Type = Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::NewEdge::Types::Unknown;
             unsigned int OldEdgeId = 0;
             unsigned int OriginId = 0;
             unsigned int EndId = 0;
@@ -231,7 +231,7 @@ class GeometryUtilities final
             std::list<unsigned int> Edges = {};
         };
 
-        Types Type = Types::Unknown;
+        Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types Type = Gedim::GeometryUtilities::SplitPolygonWithSegmentResult::Types::Unknown;
         std::list<NewVertex> NewVertices = {};
         std::list<NewEdge> NewEdges = {};
         std::vector<NewPolygon> NewPolygons = {};
@@ -257,7 +257,7 @@ class GeometryUtilities final
                 Both = 3
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types Type = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewVertex::Types::Unknown;
             unsigned int PolygonIndex;      ///< Index in polygon vertices
             unsigned int IntersectionIndex; ///< Index in circle intersections
         };
@@ -278,8 +278,8 @@ class GeometryUtilities final
                 OutsidePolygon = 2
             };
 
-            Types Type = Types::Unknown;
-            ArcTypes ArcType = ArcTypes::Unknown;    ///< Valid only if Type is Arc
+            Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::Types Type = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::Types::Unknown;
+            Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::ArcTypes ArcType = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::ArcTypes::Unknown;    ///< Valid only if Type is Arc
             std::vector<unsigned int> VertexIndices; ///< Index of vertices in NewVertices
             unsigned int PolygonIndex;               ///< Index of Edge in polygon intersections
         };
@@ -294,12 +294,12 @@ class GeometryUtilities final
                 InsideCircleAndPolygon = 3
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types Type = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewPolygon::Types::Unknown;
             std::vector<unsigned int> Vertices = {};
             std::vector<unsigned int> Edges = {};
         };
 
-        Types Type = Types::Unknown;
+        Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types Type = Gedim::GeometryUtilities::SplitPolygonWithCircleResult::Types::Unknown;
         std::vector<unsigned int> PolygonVerticesNewVerticesPosition = {};
         std::vector<unsigned int> CircleIntersectionsNewVerticesPosition = {};
         std::vector<NewVertex> NewVertices = {};
@@ -327,7 +327,7 @@ class GeometryUtilities final
 
         struct IntersectionPosition
         {
-            PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+            Gedim::GeometryUtilities::PointSegmentPositionTypes Type = Gedim::GeometryUtilities::PointSegmentPositionTypes::Unknown;
             double CurvilinearCoordinate = 0.0;
         };
 
@@ -359,11 +359,11 @@ class GeometryUtilities final
 
         struct IntersectionPosition
         {
-            PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+            Gedim::GeometryUtilities::PointSegmentPositionTypes Type = Gedim::GeometryUtilities::PointSegmentPositionTypes::Unknown;
             double CurvilinearCoordinate = 0.0;
         };
 
-        Types Type = Types::Unknown;
+        Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types Type = Gedim::GeometryUtilities::IntersectionSegmentCircleResult::Types::Unknown;
         /// \brief intersections of the segment,
         std::vector<IntersectionPosition> SegmentIntersections = {};
     };
@@ -380,11 +380,11 @@ class GeometryUtilities final
 
         struct Intersection
         {
-            PointSegmentPositionTypes Type = PointSegmentPositionTypes::Unknown;
+            Gedim::GeometryUtilities::PointSegmentPositionTypes Type = Gedim::GeometryUtilities::PointSegmentPositionTypes::Unknown;
             double CurvilinearCoordinate = 0.0;
         };
 
-        Types Type = Types::Unknown;     ///< The intersection type
+        Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types Type = Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::Unknown;     ///< The intersection type
         Intersection SingleIntersection; ///< The single intersection, available only is Type is SingleIntersection
     };
 
@@ -408,7 +408,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronFaceIntersection::Types::Unknown;
             unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
         };
 
@@ -421,7 +421,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronEdgeIntersection::Types::Unknown;
             unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
         };
 
@@ -434,7 +434,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::PolyhedronVertexIntersection::Types::Unknown;
             unsigned int LineIntersectionIndex = 0; ///< Index of line intersection collection
         };
 
@@ -449,13 +449,13 @@ class GeometryUtilities final
                 Inside = 4,   ///< Inside polyhedron
             };
 
-            Types PolyhedronType = Types::Unknown; ///< Type of intersection
+            Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types PolyhedronType = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::Unknown; ///< Type of intersection
             unsigned int PolyhedronIndex = 0; ///<  Index of the intersecting element of the Polyhedron (face, edge or
             ///<  vertex index)
             double CurvilinearCoordinate = 0.0; ///< Curvilinear coordinate in the line
         };
 
-        Types Type = Types::Unknown;                                                  /// The
+        Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::Types::Unknown;
         std::vector<LineIntersection> LineIntersections;                              ///< The line intersections
         std::vector<PolyhedronVertexIntersection> PolyhedronVertexIntersections = {}; ///< Polyhedron Vertex
         ///< intersections, size
@@ -504,7 +504,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::Unknown;
         };
 
         struct EdgeIntersection final
@@ -521,7 +521,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Unknown;
         };
 
         struct Intersection final
@@ -533,12 +533,12 @@ class GeometryUtilities final
                 Edge = 2
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Unknown;
             unsigned int EdgeId = 0;   ///<  Edge index of the Polyhedron
             unsigned int VertexId = 0; ///<  Vertex index of the Polyhedron, available only if Type is Types::Vertex
         };
 
-        Types Type = Types::Unknown;     ///< The intersection type
+        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::Types::Unknown;     ///< The intersection type
         unsigned int IntersectionId = 0; ///< The geometry id of the intersection, available only with Types::OnVertex,
         ///< Types::OnEdge and Types::OnFace
         std::vector<VertexIntersection> VertexIntersections = {}; ///< Vertex intersections
@@ -568,7 +568,7 @@ class GeometryUtilities final
         };
 
         unsigned int BorderIndex = 0; ///< index of vertex/edge of border
-        Types Type = Types::Unknown;
+        Gedim::GeometryUtilities::PointPolygonPositionResult::Types Type = Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown;
     };
 
     struct LinePolygonPositionResult final
@@ -591,7 +591,7 @@ class GeometryUtilities final
                 Parallel = 4
             };
 
-            Types Type = Types::Unknown;
+            Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types Type = Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection::Types::Unknown;
             unsigned int Index = 0;
             double CurvilinearCoordinate = 0.0;
         };
