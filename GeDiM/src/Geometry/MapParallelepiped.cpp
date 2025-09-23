@@ -17,7 +17,8 @@ using namespace std;
 namespace Gedim
 {
 // ***************************************************************************
-MapParallelepiped::MapParallelepiped(const Gedim::GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
+MapParallelepiped::MapParallelepiped(const Gedim::GeometryUtilities &geometryUtilities)
+    : geometryUtilities(geometryUtilities)
 {
     ReferenceVertices.resize(3, 8);
     ReferenceVertices.col(0) << 0.0, 0.0, 0.0;

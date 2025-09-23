@@ -14,6 +14,8 @@
 
 #include "IFileTextReader.hpp"
 
+#include <fstream>
+
 namespace Gedim
 {
 /// \brief C++ File Reader

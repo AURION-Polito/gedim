@@ -12,6 +12,7 @@
 #include "MeshUtilities.hpp"
 
 #include "ImportExportUtilities.hpp"
+#include <fstream>
 
 namespace Gedim
 {

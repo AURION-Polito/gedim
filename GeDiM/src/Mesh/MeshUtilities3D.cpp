@@ -11,6 +11,7 @@
 
 #include "MeshUtilities.hpp"
 
+#include "IOStream.hpp"
 #include "MapTetrahedron.hpp"
 #include "TetgenInterface.hpp"
 #include "VTKUtilities.hpp"

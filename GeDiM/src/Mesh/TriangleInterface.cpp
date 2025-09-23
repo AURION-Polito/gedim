@@ -9,6 +9,7 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
+#include <fstream>
 #include <iomanip>
 #include <math.h>
 #include <sys/stat.h>

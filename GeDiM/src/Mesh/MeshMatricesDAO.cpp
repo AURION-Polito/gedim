@@ -10,6 +10,7 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "MeshMatricesDAO.hpp"
+#include "IOStream.hpp"
 
 using namespace std;
 using namespace Eigen;

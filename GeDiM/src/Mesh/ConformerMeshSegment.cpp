@@ -11,6 +11,8 @@
 
 #include "ConformerMeshSegment.hpp"
 
+#include "IOStream.hpp"
+
 using namespace std;
 using namespace Eigen;
 

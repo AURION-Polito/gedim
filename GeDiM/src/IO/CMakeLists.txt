@@ -15,6 +15,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/VTKUtilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/UCDUtilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/TimeUtilities.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/ImportExportUtilities.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/IOStream.hpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 
