@@ -573,7 +573,7 @@ class MeshUtilities final
     /// \return the MeshGeometricData computed
     MeshGeometricData2D FillMesh2DGeometricData(const Gedim::GeometryUtilities &geometryUtilities,
                                                 const Gedim::IMeshDAO &mesh,
-                                                const std::vector<GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType) const;
+                                                const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType) const;
 
     /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
     /// \param mesh the mesh
