@@ -1542,8 +1542,8 @@ GeometryUtilities::PolygonCirclePositionTypes GeometryUtilities::PolygonCirclePo
 }
 // ***************************************************************************
 Gedim::GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolygonPosition(const Eigen::Vector3d &lineTangent,
-                                                                                    const Eigen::Vector3d &lineOrigin,
-                                                                                    const Eigen::MatrixXd &polygonVertices) const
+                                                                                           const Eigen::Vector3d &lineOrigin,
+                                                                                           const Eigen::MatrixXd &polygonVertices) const
 {
     Gedim::GeometryUtilities::LinePolygonPositionResult result;
 
@@ -1597,7 +1597,8 @@ Gedim::GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolyg
             case PointSegmentPositionTypes::OnSegmentEnd: {
                 result.Type = Gedim::GeometryUtilities::LinePolygonPositionResult::Types::Intersecting;
                 edgeIntersections.push_back(Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection());
-                Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection &edgeIntersection = edgeIntersections.back();
+                Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection &edgeIntersection =
+                    edgeIntersections.back();
                 edgeIntersection.Index = e;
                 edgeIntersection.CurvilinearCoordinate = position.CurvilinearCoordinate;
 
@@ -1621,7 +1622,8 @@ Gedim::GeometryUtilities::LinePolygonPositionResult GeometryUtilities::LinePolyg
     }
 
     result.EdgeIntersections =
-        vector<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection>(edgeIntersections.begin(), edgeIntersections.end());
+        vector<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection>(edgeIntersections.begin(),
+                                                                                      edgeIntersections.end());
 
     return result;
 }

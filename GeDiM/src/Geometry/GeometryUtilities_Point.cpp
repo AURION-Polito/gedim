@@ -433,7 +433,7 @@ GeometryUtilities::PointPolygonPositionResult GeometryUtilities::PointPolygonPos
     return result;
 }
 // ***************************************************************************
-GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhedronPosition(
+Gedim::GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhedronPosition(
     const Eigen::Vector3d &point,
     const vector<Eigen::MatrixXi> &polyhedronFaces,
     const std::vector<Eigen::MatrixXd> &polyhedronFaceVertices,
@@ -443,7 +443,7 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
     const vector<Eigen::Vector3d> &polyhedronFaceTranslations,
     const vector<Eigen::Matrix3d> &polyhedronFaceRotationMatrices) const
 {
-    PointPolyhedronPositionResult result;
+    Gedim::GeometryUtilities::PointPolyhedronPositionResult result;
 
     unsigned int negativeFacePositions = 0;
     for (unsigned int f = 0; f < polyhedronFaces.size(); f++)
@@ -472,26 +472,26 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
         const Eigen::Vector3d point2D =
             RotatePointsFrom3DTo2D(point, polyhedronFaceRotationMatrices[f].transpose(), polyhedronFaceTranslations[f]);
 
-        PointPolygonPositionResult pointFacePosition = PointPolygonPosition(point2D, faceVertices2D);
+        Gedim::GeometryUtilities::PointPolygonPositionResult pointFacePosition = PointPolygonPosition(point2D, faceVertices2D);
 
         switch (pointFacePosition.Type)
         {
-        case PointPolygonPositionResult::Types::BorderVertex: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderVertex;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex;
             result.BorderIndex = polyhedronFaces[f](0, pointFacePosition.BorderIndex);
             return result;
         }
-        case PointPolygonPositionResult::Types::BorderEdge: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderEdge;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge;
             result.BorderIndex = polyhedronFaces[f](1, pointFacePosition.BorderIndex);
             return result;
         }
-        case PointPolygonPositionResult::Types::Inside: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderFace;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace;
             result.BorderIndex = f;
             return result;
         }
-        case PointPolygonPositionResult::Types::Unknown:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown:
             throw runtime_error("Not managed pointFacePosition");
         default:
             continue;
@@ -499,16 +499,16 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
     }
 
     result.Type = (negativeFacePositions == polyhedronFaces.size())
-                      ? GeometryUtilities::PointPolyhedronPositionResult::Types::Inside
-                      : GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+                      ? Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside
+                      : Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
 
-    if (result.Type == GeometryUtilities::PointPolyhedronPositionResult::Types::Inside)
+    if (result.Type == Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside)
         result.Internal_indices = {0};
 
     return result;
 }
 // ***************************************************************************
-GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhedronPosition(
+Gedim::GeometryUtilities::PointPolyhedronPositionResult Gedim::GeometryUtilities::PointPolyhedronPosition(
     const Eigen::Vector3d &point,
     const std::vector<Eigen::MatrixXi> &polyhedron_faces,
     const std::vector<Eigen::MatrixXd> &polyhedron_faces_3D_vertices,
@@ -519,8 +519,8 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
     const std::vector<Eigen::Matrix3d> &polyhedron_faces_rotation_matrix,
     const std::vector<Eigen::MatrixXd> &polyhedron_tetrahedrons) const
 {
-    PointPolyhedronPositionResult result;
-    result.Type = PointPolyhedronPositionResult::Types::Unknown;
+    Gedim::GeometryUtilities::PointPolyhedronPositionResult result;
+    result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Unknown;
     for (unsigned int f = 0; f < polyhedron_faces.size(); f++)
     {
         const Eigen::MatrixXd &faceVertices3D = polyhedron_faces_3D_vertices[f];
@@ -545,32 +545,33 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
         const Eigen::Vector3d point2D =
             RotatePointsFrom3DTo2D(point, polyhedron_faces_rotation_matrix[f].transpose(), polyhedron_faces_translation[f]);
 
-        const PointPolygonPositionResult pointFacePosition = PointPolygonPosition_RayCasting(point2D, faceVertices2D);
+        const Gedim::GeometryUtilities::PointPolygonPositionResult pointFacePosition =
+            PointPolygonPosition_RayCasting(point2D, faceVertices2D);
 
         switch (pointFacePosition.Type)
         {
-        case PointPolygonPositionResult::Types::BorderVertex: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderVertex;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderVertex: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderVertex;
             result.BorderIndex = polyhedron_faces[f](0, pointFacePosition.BorderIndex);
         }
         break;
-        case PointPolygonPositionResult::Types::BorderEdge: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderEdge;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::BorderEdge: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderEdge;
             result.BorderIndex = polyhedron_faces[f](1, pointFacePosition.BorderIndex);
         }
         break;
-        case PointPolygonPositionResult::Types::Inside: {
-            result.Type = PointPolyhedronPositionResult::Types::BorderFace;
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Inside: {
+            result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::BorderFace;
             result.BorderIndex = f;
         }
         break;
-        case PointPolygonPositionResult::Types::Unknown:
+        case Gedim::GeometryUtilities::PointPolygonPositionResult::Types::Unknown:
             throw runtime_error("Not managed pointFacePosition");
         default:
             continue;
         }
 
-        if (result.Type != PointPolyhedronPositionResult::Types::Unknown)
+        if (result.Type != Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Unknown)
             break;
     }
 
@@ -587,12 +588,12 @@ GeometryUtilities::PointPolyhedronPositionResult GeometryUtilities::PointPolyhed
 
     if (find_tetra.empty())
     {
-        result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
+        result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Outside;
         return result;
     }
 
-    if (result.Type == PointPolyhedronPositionResult::Types::Unknown)
-        result.Type = GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
+    if (result.Type == Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Unknown)
+        result.Type = Gedim::GeometryUtilities::PointPolyhedronPositionResult::Types::Inside;
 
     result.Internal_indices = std::vector<unsigned int>(find_tetra.begin(), find_tetra.end());
 
