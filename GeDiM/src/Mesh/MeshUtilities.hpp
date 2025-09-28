@@ -51,6 +51,16 @@ class MeshUtilities final
         bool Cell3D_CheckMeasure = true;
     };
 
+    struct CheckMeshGeometricData2DConfiguration final
+    {
+        bool Cell1D_CheckMeasure = true;
+        bool Cell1D_CheckNormals = true;
+        bool Cell2D_CheckMeasure = true;
+        bool Cell2D_CheckTriangles = true;
+        unsigned int Cell1D_QuadratureOrder = 0;
+        unsigned int Cell2D_QuadratureOrder = 0;
+    };
+
     struct CheckMeshGeometricData3DConfiguration final
     {
         bool Cell1D_CheckMeasure = true;
@@ -1075,6 +1085,11 @@ class MeshUtilities final
                                const std::vector<unsigned int> &cell0DMarkers,
                                const std::vector<unsigned int> &cell1DMarkers,
                                IMeshDAO &mesh) const;
+
+    void CheckMeshGeometricData2D(const CheckMeshGeometricData2DConfiguration &configuration,
+                                  const GeometryUtilities &geometryUtilities,
+                                  const IMeshDAO &mesh,
+                                  const MeshGeometricData2D &geometricData) const;
 };
 
 } // namespace Gedim
