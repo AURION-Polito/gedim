@@ -14,10 +14,10 @@
 #include "MeshDAOExporterToCsv.hpp"
 #include "ObjectFileFormatInterface.hpp"
 #include "OpenVolumeMeshInterface.hpp"
-#include "StringsUtilities.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshInterface.hpp"
+#include <fstream>
 
 using namespace std;
 using namespace Eigen;
@@ -25,7 +25,7 @@ using namespace Eigen;
 namespace Gedim
 {
 // ***************************************************************************
-void MeshUtilities::ExtractActiveMesh(IMeshDAO &mesh, ExtractActiveMeshData &extractionData) const
+void MeshUtilities::ExtractActiveMesh(Gedim::IMeshDAO &mesh, ExtractActiveMeshData &extractionData) const
 {
     // remove inactive Cell0Ds
     unsigned int numNewCell0Ds = 0;
@@ -611,8 +611,8 @@ void MeshUtilities::ExportCell2DToVTU(const IMeshDAO &,
     }
 }
 // ***************************************************************************
-void MeshUtilities::ExportCell3DToVTU(const GeometryUtilities &geometryUtilities,
-                                      const IMeshDAO &mesh,
+void MeshUtilities::ExportCell3DToVTU(const Gedim::GeometryUtilities &geometryUtilities,
+                                      const Gedim::IMeshDAO &mesh,
                                       const unsigned int &cell3DIndex,
                                       const Eigen::MatrixXd &cell3DVertices,
                                       const std::vector<Eigen::MatrixXd> &cell3DTetrahedrons,
@@ -634,7 +634,7 @@ void MeshUtilities::ExportCell3DToVTU(const GeometryUtilities &geometryUtilities
                                       const std::string &exportFolder) const
 {
     {
-        const GeometryUtilities::Polyhedron cell3D = MeshCell3DToPolyhedron(mesh, cell3DIndex);
+        const Gedim::GeometryUtilities::Polyhedron cell3D = MeshCell3DToPolyhedron(mesh, cell3DIndex);
 
         {
             Gedim::VTKUtilities vtpUtilities;
@@ -681,7 +681,7 @@ void MeshUtilities::ExportCell3DToVTU(const GeometryUtilities &geometryUtilities
         // Export cell3D tetrahedrons
         for (unsigned int t = 0; t < cell3DTetrahedrons.size(); t++)
         {
-            const GeometryUtilities::Polyhedron tetra =
+            const Gedim::GeometryUtilities::Polyhedron tetra =
                 geometryUtilities.CreateTetrahedronWithVertices(cell3DTetrahedrons[t].col(0),
                                                                 cell3DTetrahedrons[t].col(1),
                                                                 cell3DTetrahedrons[t].col(2),

@@ -18,14 +18,15 @@ using namespace Eigen;
 namespace Gedim
 {
 // ***************************************************************************
-GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWithPlane(const Eigen::MatrixXd &polygonVertices,
-                                                                                        const Eigen::MatrixXd &polygonEdgeTangents,
-                                                                                        const Eigen::Vector3d &planeNormal,
-                                                                                        const Eigen::Vector3d &planeOrigin,
-                                                                                        const Eigen::Vector3d &polygonTranslation,
-                                                                                        const Eigen::Matrix3d &polygonRotationMatrix) const
+Gedim::GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWithPlane(
+    const Eigen::MatrixXd &polygonVertices,
+    const Eigen::MatrixXd &polygonEdgeTangents,
+    const Eigen::Vector3d &planeNormal,
+    const Eigen::Vector3d &planeOrigin,
+    const Eigen::Vector3d &polygonTranslation,
+    const Eigen::Matrix3d &polygonRotationMatrix) const
 {
-    SplitPolygonWithPlaneResult result;
+    Gedim::GeometryUtilities::SplitPolygonWithPlaneResult result;
 
     bool positiveUsed = false;
     bool negativeUsed = false;
@@ -94,10 +95,10 @@ GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWi
     result.PointsOnPlane = vector<unsigned int>(pointsOnPlaneIndex.begin(), pointsOnPlaneIndex.end());
     result.NewVertices = vector<Eigen::Vector3d>(newVertices.begin(), newVertices.end());
     result.NewVerticesEdgeIndex = vector<unsigned int>(newVerticesEdgeIndex.begin(), newVerticesEdgeIndex.end());
-    result.Type = (positiveUsed)
-                      ? (negativeUsed ? SplitPolygonWithPlaneResult::Types::Split : SplitPolygonWithPlaneResult::Types::Positive)
-                  : negativeUsed ? SplitPolygonWithPlaneResult::Types::Negative
-                                 : SplitPolygonWithPlaneResult::Types::OnPlane;
+    result.Type = (positiveUsed) ? (negativeUsed ? Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Split
+                                                 : Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Positive)
+                  : negativeUsed ? Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Negative
+                                 : Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::OnPlane;
 
     // sort points with correct order
     Eigen::MatrixXd globalVertices(3, polygonVertices.cols() + result.NewVertices.size());
@@ -105,7 +106,8 @@ GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWi
     for (unsigned int v = 0; v < result.NewVertices.size(); v++)
         globalVertices.col(polygonVertices.cols() + v) << result.NewVertices[v];
 
-    if (result.Type == SplitPolygonWithPlaneResult::Types::Split || result.Type == SplitPolygonWithPlaneResult::Types::Positive)
+    if (result.Type == Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Split ||
+        result.Type == Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Positive)
     {
         const Eigen::MatrixXd positive3DVertices = ExtractPoints(globalVertices, positiveVertices);
         const Eigen::MatrixXd positive2DVertices =
@@ -118,7 +120,8 @@ GeometryUtilities::SplitPolygonWithPlaneResult GeometryUtilities::SplitPolygonWi
             result.PositiveVertices[c] = positiveVertices[convexHull[c]];
     }
 
-    if (result.Type == SplitPolygonWithPlaneResult::Types::Split || result.Type == SplitPolygonWithPlaneResult::Types::Negative)
+    if (result.Type == Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Split ||
+        result.Type == Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Negative)
     {
         const Eigen::MatrixXd negative3DVertices = ExtractPoints(globalVertices, negativeVertices);
         const Eigen::MatrixXd negative2DVertices =
@@ -167,16 +170,12 @@ GeometryUtilities::SplitPolyhedronWithPlaneResult GeometryUtilities::SplitPolyhe
         const unsigned int numFaceVertices = polyhedronFaces[f].cols();
         const Eigen::MatrixXd &faceVertices = polyhedronFaceVertices[f];
         Eigen::MatrixXd faceEdgeTangents = polyhedronFaceEdgeTangents[f];
-        SplitPolygonWithPlaneResult splitFaceByPlane = SplitPolygonWithPlane(faceVertices,
-                                                                             faceEdgeTangents,
-                                                                             planeNormal,
-                                                                             planeOrigin,
-                                                                             polyhedronFaceTranslations[f],
-                                                                             polyhedronFaceRotationMatrices[f]);
+        Gedim::GeometryUtilities::SplitPolygonWithPlaneResult splitFaceByPlane =
+            SplitPolygonWithPlane(faceVertices, faceEdgeTangents, planeNormal, planeOrigin, polyhedronFaceTranslations[f], polyhedronFaceRotationMatrices[f]);
 
         switch (splitFaceByPlane.Type)
         {
-        case SplitPolygonWithPlaneResult::Types::Positive: {
+        case Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Positive: {
             const unsigned int &positiveFaceVertices = splitFaceByPlane.PositiveVertices.size();
 
             positivePolyhedronFaces.push_back(Eigen::MatrixXi::Zero(2, positiveFaceVertices));
@@ -206,8 +205,8 @@ GeometryUtilities::SplitPolyhedronWithPlaneResult GeometryUtilities::SplitPolyhe
         }
         break;
 
-        case SplitPolygonWithPlaneResult::Types::OnPlane:
-        case SplitPolygonWithPlaneResult::Types::Split: {
+        case Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::OnPlane:
+        case Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Split: {
             vector<unsigned int> newVerticesIndices(splitFaceByPlane.NewVertices.size());
             for (unsigned int nv = 0; nv < splitFaceByPlane.NewVertices.size(); nv++)
             {
@@ -275,7 +274,7 @@ GeometryUtilities::SplitPolyhedronWithPlaneResult GeometryUtilities::SplitPolyhe
                 negativeFace(0, v) = polyhedronVertexIndex;
             }
 
-            if (splitFaceByPlane.Type == SplitPolygonWithPlaneResult::Types::Split)
+            if (splitFaceByPlane.Type == Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Split)
             {
                 positiveUsed = true;
                 negativeUsed = true;
@@ -283,7 +282,7 @@ GeometryUtilities::SplitPolyhedronWithPlaneResult GeometryUtilities::SplitPolyhe
         }
         break;
 
-        case SplitPolygonWithPlaneResult::Types::Negative: {
+        case Gedim::GeometryUtilities::SplitPolygonWithPlaneResult::Types::Negative: {
             const unsigned int &negativeFaceVertices = splitFaceByPlane.NegativeVertices.size();
 
             negativePolyhedronFaces.push_back(Eigen::MatrixXi::Zero(2, negativeFaceVertices));
@@ -317,18 +316,18 @@ GeometryUtilities::SplitPolyhedronWithPlaneResult GeometryUtilities::SplitPolyhe
         }
     }
 
-    SplitPolyhedronWithPlaneResult result;
+    Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult result;
 
     // no split is necessary, return original polyhedron
     if (!positiveUsed || !negativeUsed)
     {
-        result.Type = SplitPolyhedronWithPlaneResult::Types::None;
+        result.Type = Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult::Types::None;
 
         return result;
     }
 
     // Split is done, create the last face to fill in the holes inside the new polyhedra
-    result.Type = SplitPolyhedronWithPlaneResult::Types::Split;
+    result.Type = Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult::Types::Split;
 
     // Create the last face to fill in the holes inside the new polyhedra
     vector<Eigen::Vector3d> newVerticesVector = vector<Eigen::Vector3d>(newVertices.begin(), newVertices.end());

@@ -13,7 +13,6 @@
 #define __MeshMatrices_H
 
 #include "Eigen/Eigen"
-#include "IOUtilities.hpp"
 #include <unordered_set>
 
 namespace Gedim

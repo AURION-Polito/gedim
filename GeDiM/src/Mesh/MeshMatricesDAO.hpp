@@ -22,7 +22,7 @@ namespace Gedim
 class MeshMatricesDAO final : public IMeshDAO
 {
   private:
-    MeshMatrices &_mesh;
+    Gedim::MeshMatrices &_mesh;
 
     /// \brief for each i,j element of sparse matrix A if A[i,j] > minElement then A[i, j]--
     /// if A[i, j] == minElement the A[i, j] = 0
@@ -77,7 +77,7 @@ class MeshMatricesDAO final : public IMeshDAO
                                                  const T &newElementInitialization = T());
 
   public:
-    MeshMatricesDAO(MeshMatrices &mesh);
+    MeshMatricesDAO(Gedim::MeshMatrices &mesh);
     ~MeshMatricesDAO();
 
     inline void InitializeDimension(const unsigned int &dimension)

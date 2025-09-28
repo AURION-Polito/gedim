@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <sstream>

@@ -13,6 +13,7 @@
 #include "IOUtilities.hpp"
 #include "StringsUtilities.hpp"
 // #include "CsvExporter.hpp"
+#include "IOStream.hpp"
 #include <set>
 
 using namespace Eigen;

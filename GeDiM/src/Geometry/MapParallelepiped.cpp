@@ -17,6 +17,20 @@ using namespace std;
 namespace Gedim
 {
 // ***************************************************************************
+MapParallelepiped::MapParallelepiped(const Gedim::GeometryUtilities &geometryUtilities)
+    : geometryUtilities(geometryUtilities)
+{
+    ReferenceVertices.resize(3, 8);
+    ReferenceVertices.col(0) << 0.0, 0.0, 0.0;
+    ReferenceVertices.col(1) << 1.0, 0.0, 0.0;
+    ReferenceVertices.col(2) << 1.0, 1.0, 0.0;
+    ReferenceVertices.col(3) << 0.0, 1.0, 0.0;
+    ReferenceVertices.col(4) << 0.0, 0.0, 1.0;
+    ReferenceVertices.col(5) << 1.0, 0.0, 1.0;
+    ReferenceVertices.col(6) << 1.0, 1.0, 1.0;
+    ReferenceVertices.col(7) << 0.0, 1.0, 1.0;
+}
+// ***************************************************************************
 bool MapParallelepiped::TestMapConfiguration(const Eigen::MatrixXd &vertices,
                                              const vector<unsigned int> &coordinateSystem,
                                              const Eigen::MatrixXd &referencePoints,

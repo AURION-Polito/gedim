@@ -31,7 +31,7 @@ class UnionMeshSegment final
                 Both = 3
             };
 
-            Types Type = Types::Unknown;
+            Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint::Types Type = Types::Unknown;
             std::vector<unsigned int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
         };
 
@@ -45,19 +45,19 @@ class UnionMeshSegment final
                 Both = 3
             };
 
-            Types Type = Types::Unknown;
+            Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment::Types Type = Types::Unknown;
             std::vector<double> Points = {};
             std::vector<unsigned int> MeshIndices = {}; ///< vector of size 2 containing in each i the indices in mesh_i
         };
 
-        std::map<double, UnionMeshPoint> Points = {};
-        std::vector<UnionMeshSegment> Segments = {};
+        std::map<double, Gedim::UnionMeshSegment::UnionMesh::UnionMeshPoint> Points = {};
+        std::vector<Gedim::UnionMeshSegment::UnionMesh::UnionMeshSegment> Segments = {};
     };
 
     /// \brief convert UnionMesh to Curvilinear Coordinates vector
-    static void ToCurvilinearCoordinates(const UnionMesh &unionMesh, std::vector<double> &curvilinearCoordinates);
+    static void ToCurvilinearCoordinates(const Gedim::UnionMeshSegment::UnionMesh &unionMesh, std::vector<double> &curvilinearCoordinates);
 
-    static void ToString(const UnionMesh &unionMesh);
+    static void ToString(const Gedim::UnionMeshSegment::UnionMesh &unionMesh);
 
   private:
     const Gedim::GeometryUtilities &_geometryUtilities;
@@ -66,10 +66,10 @@ class UnionMeshSegment final
 
     void CreateUnionPoints(const std::vector<double> &curvilinearCoordinatesMeshOne,
                            const std::vector<double> &curvilinearCoordinatesMeshTwo,
-                           UnionMesh &result);
+                           Gedim::UnionMeshSegment::UnionMesh &result);
     void CreateUnionSegments(const std::vector<double> &curvilinearCoordinatesMeshOne,
                              const std::vector<double> &curvilinearCoordinatesMeshTwo,
-                             UnionMesh &result);
+                             Gedim::UnionMeshSegment::UnionMesh &result);
 
   public:
     UnionMeshSegment(const Gedim::GeometryUtilities &geometryUtilities);
@@ -77,7 +77,7 @@ class UnionMeshSegment final
 
     void CreateUnionMesh(const std::vector<double> &curvilinearCoordinatesMeshOne,
                          const std::vector<double> &curvilinearCoordinatesMeshTwo,
-                         UnionMesh &result);
+                         Gedim::UnionMeshSegment::UnionMesh &result);
 };
 } // namespace Gedim
 

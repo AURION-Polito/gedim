@@ -23,15 +23,15 @@ namespace Gedim
 class MeshDAOImporterFromCsv final
 {
   private:
-    const MeshFromCsvUtilities &utilities;
+    const Gedim::MeshFromCsvUtilities &utilities;
 
   public:
-    MeshDAOImporterFromCsv(const MeshFromCsvUtilities &utilities);
+    MeshDAOImporterFromCsv(const Gedim::MeshFromCsvUtilities &utilities);
     ~MeshDAOImporterFromCsv();
 
-    void Import(const MeshFromCsvUtilities::Configuration &configuration, IMeshDAO &mesh);
+    void Import(const Gedim::MeshFromCsvUtilities::Configuration &configuration, Gedim::IMeshDAO &mesh);
 
-    void ImportMesh2D(const MeshFromCsvUtilities::Configuration &configuration, IMeshDAO &mesh);
+    void ImportMesh2D(const Gedim::MeshFromCsvUtilities::Configuration &configuration, Gedim::IMeshDAO &mesh);
 };
 
 } // namespace Gedim

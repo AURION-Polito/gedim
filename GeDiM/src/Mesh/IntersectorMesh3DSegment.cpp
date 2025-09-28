@@ -10,6 +10,7 @@
 // This file can be used citing references in CITATION.cff file.
 
 #include "IntersectorMesh3DSegment.hpp"
+#include "IOStream.hpp"
 #include "IOUtilities.hpp"
 
 namespace Gedim

@@ -30,7 +30,7 @@ class MapTetrahedron
     };
 
   private:
-    const GeometryUtilities &geometryUtilities;
+    const Gedim::GeometryUtilities &geometryUtilities;
 
     bool TestMapConfiguration(const Eigen::MatrixXd &vertices,
                               const Eigen::MatrixXd &referencePoints,
@@ -40,9 +40,8 @@ class MapTetrahedron
                               MapTetrahedron::MapTetrahedronData &result) const;
 
   public:
-    MapTetrahedron(const GeometryUtilities &geometryUtilities) : geometryUtilities(geometryUtilities)
-    {
-    }
+    MapTetrahedron(const Gedim::GeometryUtilities &geometryUtilities);
+
     ~MapTetrahedron()
     {
     }

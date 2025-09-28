@@ -890,7 +890,7 @@ GeometryUtilities::IntersectionPolyhedronLineResult GeometryUtilities::Intersect
 }
 // ***************************************************************************
 GeometryUtilities::IntersectionPolyhedronsSegmentResult GeometryUtilities::IntersectionPolyhedronsSegment(
-    const vector<GeometryUtilities::Polyhedron> &polyhedrons,
+    const vector<Gedim::GeometryUtilities::Polyhedron> &polyhedrons,
     const vector<vector<Eigen::Vector3d>> &polyhedronFaceNormals,
     const vector<vector<bool>> &polyhedronFaceNormalDirections,
     const Eigen::Vector3d &segmentOrigin,
@@ -898,7 +898,7 @@ GeometryUtilities::IntersectionPolyhedronsSegmentResult GeometryUtilities::Inter
     const Eigen::Vector3d &segmentTangent) const
 {
     IntersectionPolyhedronsSegmentResult result;
-    vector<IntersectionPolyhedronsSegmentResult::IntersectionPoint> intersPoints;
+    vector<Gedim::GeometryUtilities::IntersectionPolyhedronsSegmentResult::IntersectionPoint> intersPoints;
 
     int numCelle = polyhedrons.size();
     int n = 0; // numero di righe piene di Points

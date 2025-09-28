@@ -24,7 +24,7 @@ namespace Gedim
 ///
 /// https://danielsieger.com/blog/2021/01/03/generating-platonic-solids.html
 
-GeometryUtilities::Polyhedron PlatonicSolid::dual_polyhedron(const GeometryUtilities::Polyhedron &polyhedron) const
+Gedim::GeometryUtilities::Polyhedron PlatonicSolid::dual_polyhedron(const Gedim::GeometryUtilities::Polyhedron &polyhedron) const
 {
 
     std::vector<unsigned int> vertexMarkers(polyhedron.Vertices.cols());
@@ -43,7 +43,7 @@ GeometryUtilities::Polyhedron PlatonicSolid::dual_polyhedron(const GeometryUtili
     meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
 
     // the new dual mesh
-    GeometryUtilities::Polyhedron dual;
+    Gedim::GeometryUtilities::Polyhedron dual;
     dual.Vertices.resize(3, mesh.Cell2DTotalNumber());
 
     for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)

@@ -12,12 +12,11 @@
 #ifndef __CONFIGURATIONS_H
 #define __CONFIGURATIONS_H
 
+#include <fstream>
 #include <string>
 #include <unordered_map>
 
 #include "ConfigurationPropertySupportedTypes.hpp"
-
-#include "StringsUtilities.hpp"
 
 namespace Gedim
 {

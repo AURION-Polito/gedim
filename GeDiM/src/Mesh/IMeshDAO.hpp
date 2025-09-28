@@ -13,7 +13,6 @@
 #define __IMeshWrapper_H
 
 #include "Eigen/Eigen"
-#include "IOUtilities.hpp"
 
 namespace Gedim
 {
