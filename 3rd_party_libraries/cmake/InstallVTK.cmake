@@ -10,7 +10,7 @@ message(STATUS "Install VTK release 9.2.0.rc1")
 
 ExternalProject_Add(VTK
     GIT_REPOSITORY https://gitlab.kitware.com/vtk/vtk.git
-    GIT_TAG 541e93642fe8b7ceae6c49826569e1e1e535a68c # release 9.2.0.rc1 
+    GIT_TAG 357d9efeed29cba6383ce626575f1a5f1ac1eefb # release 9.3.0
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     SOURCE_DIR ${VTK_SOURCE_DIR}
