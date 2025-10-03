@@ -20,7 +20,7 @@ option(INSTALL_TRIANGLE "Install triangle" ON)
 option(INSTALL_TETGEN "Install tetgen" ON)
 option(INSTALL_LAPACK "Install Lapack" ON)
 option(INSTALL_METIS "Install Lapack" OFF)
-option(INSTALL_VORO "Install VORO package" OFF)
+option(INSTALL_VORO "Install VORO package" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)

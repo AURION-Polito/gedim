@@ -6,11 +6,11 @@ set(LAPACK_SOURCE_DIR ${MAIN_SOURCE_DIR}/lapack)
 set(LAPACK_BINARY_DIR ${MAIN_BINARY_DIR}/lapack)
 set(LAPACK_INSTALL_PREFIX ${MAIN_INSTALL_PREFIX}/lapack)
 
-message(STATUS "Install Lapack release 3.10.1")
+message(STATUS "Install Lapack release 3.12.1")
 
 ExternalProject_Add(Lapack
     GIT_REPOSITORY https://github.com/Reference-LAPACK/lapack.git
-    GIT_TAG 32b062a33352e05771dcc01b981ebe961bf2e42f # release 3.10.1
+    GIT_TAG 6ec7f2bc4ecf4c4a93496aa2fa519575bc0e39ca # release 3.12.1
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     SOURCE_DIR ${LAPACK_SOURCE_DIR}

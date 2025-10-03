@@ -6,11 +6,11 @@ set(GOOGLETEST_SOURCE_DIR ${MAIN_SOURCE_DIR}/googletest)
 set(GOOGLETEST_BINARY_DIR ${MAIN_BINARY_DIR}/googletest)
 set(GOOGLETEST_INSTALL_PREFIX ${MAIN_INSTALL_PREFIX}/googletest)
 
-message(STATUS "Install GoogleTest release 1.11.0")
+message(STATUS "Install GoogleTest release 1.17.0")
 
 ExternalProject_Add(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG e2239ee6043f73722e7aa812a459f54a28552929 # release 1.11.0
+    GIT_TAG 52eb8108c5bdec04579160ae17225d66034bd723 # release 1.17.0
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     SOURCE_DIR ${GOOGLETEST_SOURCE_DIR}
