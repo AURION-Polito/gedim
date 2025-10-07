@@ -41,6 +41,11 @@
 /// - 1 true
 #cmakedefine01 ENABLE_PETSC
 
+/// Adapt for PYBIND11
+/// - 0 false
+/// - 1 true
+#cmakedefine01 PYBIND
+
 /// Use MPI
 /// - 0 false
 /// - 1 true

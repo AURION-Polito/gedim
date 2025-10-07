@@ -28,6 +28,7 @@ endif (WIN32)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${GEDIM_INSTALL_DIR} CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
 Message(STATUS "Gedim Library will be installed in: " ${CMAKE_INSTALL_PREFIX})
 
+set(PYBIND OFF CACHE BOOL "Adapt code for PYBIND support")
 set(USE_MPI OFF CACHE BOOL "Enable MPI support")
 set(ENABLE_TRIANGLE OFF CACHE BOOL "Enable Triangle extension")
 set(ENABLE_TETGEN OFF CACHE BOOL "Enable Tetgen extension")
