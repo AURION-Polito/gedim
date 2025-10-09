@@ -146,6 +146,10 @@ class MeshMatricesDAO final : public IMeshDAO
         Gedim::Output::Assert(cell0DIndex < Cell0DTotalNumber());
         return _mesh.ActiveCell0D[cell0DIndex];
     }
+    inline std::vector<bool> Cell0DsState() const
+    {
+        return _mesh.ActiveCell0D;
+    }
 
     inline bool Cell0DHasUpdatedCell0Ds(const unsigned int &cell0DIndex) const
     {
@@ -503,6 +507,10 @@ class MeshMatricesDAO final : public IMeshDAO
         Gedim::Output::Assert(cell1DIndex < Cell1DTotalNumber());
         return _mesh.ActiveCell1D[cell1DIndex];
     }
+    inline std::vector<bool> Cell1DsState() const
+    {
+        return _mesh.ActiveCell1D;
+    }
     inline bool Cell1DHasOriginalCell1D(const unsigned int &updatedCell1DIndex) const
     {
         Gedim::Output::Assert(updatedCell1DIndex < Cell1DTotalNumber());
@@ -750,6 +758,10 @@ class MeshMatricesDAO final : public IMeshDAO
     {
         Gedim::Output::Assert(cell2DIndex < Cell2DTotalNumber());
         return _mesh.ActiveCell2D[cell2DIndex];
+    }
+    inline std::vector<bool> Cell2DsState() const
+    {
+        return _mesh.ActiveCell2D;
     }
 
     inline bool Cell2DHasUpdatedCell2Ds(const unsigned int &cell2DIndex) const
@@ -1026,6 +1038,10 @@ class MeshMatricesDAO final : public IMeshDAO
     {
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
         return _mesh.ActiveCell3D[cell3DIndex];
+    }
+    inline std::vector<bool> Cell3DsState() const
+    {
+        return _mesh.ActiveCell3D;
     }
 
     inline bool Cell3DHasUpdatedCell3Ds(const unsigned int &cell3DIndex) const

@@ -77,6 +77,8 @@ class IMeshDAO
     /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
     /// \return if the cell0D is active
     virtual bool Cell0DIsActive(const unsigned int &cell0DIndex) const = 0;
+    /// \return the activation state of all cell0Ds
+    virtual std::vector<bool> Cell0DsState() const = 0;
     /// \param cell0DIndex the index of cell0D from 0 to Cell0DTotalNumber()
     /// \return the cell0D marker
     virtual unsigned int Cell0DMarker(const unsigned int &cell0DIndex) const = 0;
@@ -340,6 +342,8 @@ class IMeshDAO
     /// \param cell1DIndex the index of cell1D from 0 to Cell1DTotalNumber()
     /// \return if the cell1D is active
     virtual bool Cell1DIsActive(const unsigned int &cell1DIndex) const = 0;
+    /// \return the activation state of all cell1Ds
+    virtual std::vector<bool> Cell1DsState() const = 0;
 
     /// \param updatedCell1DIndex the updated cell1D index, from 0 to Cell1DTotalNumber()
     /// \return true if has an original cell, false otherwise (the original cell is itself)
@@ -640,6 +644,8 @@ class IMeshDAO
     /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
     /// \return if the cell2D is active
     virtual bool Cell2DIsActive(const unsigned int &cell2DIndex) const = 0;
+    /// \return the activation state of all cell2Ds
+    virtual std::vector<bool> Cell2DsState() const = 0;
 
     /// \param cell2DIndex the index of cell2D from 0 to Cell2DTotalNumber()
     /// \return if the cell2D has new cell2Ds associated
@@ -949,6 +955,8 @@ class IMeshDAO
     /// \param cell3DIndex the index of cell3D from 0 to Cell3DTotalNumber()
     /// \return if the cell3D is active
     virtual bool Cell3DIsActive(const unsigned int &cell3DIndex) const = 0;
+    /// \return the activation state of all cell3Ds
+    virtual std::vector<bool> Cell3DsState() const = 0;
 
     /// \param updatedCell3DIndex the updated cell3D index, from 0 to Cell3DTotalNumber()
     /// \return true if has an original cell, false otherwise (the original cell is itself)
