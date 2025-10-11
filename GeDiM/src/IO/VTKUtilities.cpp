@@ -130,7 +130,7 @@ void VTKUtilities::AddPolygon(const Eigen::MatrixXd &vertices, const std::vector
     Utilities::Unused(properties);
 #endif
 }
-
+// ***************************************************************************
 void VTKUtilities::AddPolygon(const Eigen::MatrixXd &vertices,
                               const std::vector<unsigned int> &polygon,
                               const std::vector<VTPProperty> &properties)
