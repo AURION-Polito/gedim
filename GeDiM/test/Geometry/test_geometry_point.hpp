@@ -1261,36 +1261,48 @@ TEST(TestGeometryUtilities, PointTriangleBarycentricCoordinates)
   const auto barycenter = geometry_utilities.PolygonBarycenter(triangle);
 
   {
-    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+    const auto result = geometry_utilities.PointToBarycentricCoordinates2D(triangle,
                                                            triangle.col(0));
     const std::array<double, 3> expected_value = { 1.0, 0.0, 0.0 };
     ASSERT_TRUE(result ==
                 expected_value);
+    const auto reverse = geometry_utilities.BarycentricCoordinatesToPoint2D(triangle,
+                                                                            result);
+    ASSERT_EQ(triangle.col(0), reverse);
   }
 
   {
-    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+    const auto result = geometry_utilities.PointToBarycentricCoordinates2D(triangle,
                                                            triangle.col(1));
     const std::array<double, 3> expected_value = { 0.0, 1.0, 0.0 };
     ASSERT_TRUE(result ==
                 expected_value);
+    const auto reverse = geometry_utilities.BarycentricCoordinatesToPoint2D(triangle,
+                                                                            result);
+    ASSERT_EQ(triangle.col(1), reverse);
   }
 
   {
-    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+    const auto result = geometry_utilities.PointToBarycentricCoordinates2D(triangle,
                                                            triangle.col(2));
     const std::array<double, 3> expected_value = { 0.0, 0.0, 1.0 };
     ASSERT_TRUE(result ==
                 expected_value);
+    const auto reverse = geometry_utilities.BarycentricCoordinatesToPoint2D(triangle,
+                                                                            result);
+    ASSERT_EQ(triangle.col(2), reverse);
   }
 
   {
-    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+    const auto result = geometry_utilities.PointToBarycentricCoordinates2D(triangle,
                                                            barycenter);
     const std::array<double, 3> expected_value = { 1.0/3.0, 1.0/3.0, 1.0/3.0 };
     ASSERT_DOUBLE_EQ(result.at(0), expected_value.at(0));
     ASSERT_DOUBLE_EQ(result.at(1), expected_value.at(1));
     ASSERT_DOUBLE_EQ(result.at(2), expected_value.at(2));
+    const auto reverse = geometry_utilities.BarycentricCoordinatesToPoint2D(triangle,
+                                                                            result);
+    ASSERT_EQ(barycenter, reverse);
   }
 }
 } // namespace GedimUnitTesting

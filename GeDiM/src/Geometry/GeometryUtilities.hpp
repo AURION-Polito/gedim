@@ -1938,7 +1938,8 @@ class GeometryUtilities final
         return PointsAreOnLine(point, lineOrigin, lineTangent)[0];
     }
 
-    std::array<double, 3> PointTriangleBarycentricCoordinates(const Eigen::Matrix3d &triangle, const Eigen::Vector3d &point) const;
+    std::array<double, 3> PointToBarycentricCoordinates2D(const Eigen::Matrix3d &triangle, const Eigen::Vector3d &point) const;
+    Eigen::Vector3d BarycentricCoordinatesToPoint2D(const Eigen::Matrix3d &triangle, const std::array<double, 3> &barycentric_coordinates) const;
 
     /// \brief Extract the circumscribed unaligned points (minimum 2) in a set of points
     /// \param points the points, size 3 x numPoints

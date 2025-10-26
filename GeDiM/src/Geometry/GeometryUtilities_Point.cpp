@@ -670,7 +670,7 @@ vector<bool> GeometryUtilities::PointsAreOnLine(const Eigen::MatrixXd &points,
     return aligned;
 }
 // ***************************************************************************
-std::array<double, 3> GeometryUtilities::PointTriangleBarycentricCoordinates(const Eigen::Matrix3d& triangle, const Eigen::Vector3d& point) const
+std::array<double, 3> GeometryUtilities::PointToBarycentricCoordinates2D(const Eigen::Matrix3d& triangle, const Eigen::Vector3d& point) const
 {
   const double det_A = (triangle.col(0).x() - triangle.col(2).x()) *
                        (triangle.col(1).y() - triangle.col(2).y()) -
@@ -701,6 +701,20 @@ std::array<double, 3> GeometryUtilities::PointTriangleBarycentricCoordinates(con
   result[2] = 1.0 - result[0] - result[1];
 
   return result;
+}
+// ***************************************************************************
+Eigen::Vector3d GeometryUtilities::BarycentricCoordinatesToPoint2D(const Eigen::Matrix3d& triangle, const std::array<double, 3>& barycentric_coordinates) const
+{
+  const Eigen::Vector2d coords(barycentric_coordinates.at(0),
+                               barycentric_coordinates.at(1));
+  Eigen::Matrix2d A;
+  A.col(0)<< (triangle.col(0).x() - triangle.col(2).x()), (triangle.col(0).y() - triangle.col(2).y());
+  A.col(1)<< (triangle.col(1).x() - triangle.col(2).x()), (triangle.col(1).y() - triangle.col(2).y());
+
+  const auto result = A * coords;
+  return Eigen::Vector3d(result.x() + triangle.col(2).x(),
+                         result.y() + triangle.col(2).y(),
+                         0.0);
 }
 // ***************************************************************************
 vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd &points, const unsigned int numDesiredUnalignedPoints) const
