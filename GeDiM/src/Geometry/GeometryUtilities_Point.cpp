@@ -670,6 +670,39 @@ vector<bool> GeometryUtilities::PointsAreOnLine(const Eigen::MatrixXd &points,
     return aligned;
 }
 // ***************************************************************************
+std::array<double, 3> GeometryUtilities::PointTriangleBarycentricCoordinates(const Eigen::Matrix3d& triangle, const Eigen::Vector3d& point) const
+{
+  const double det_A = (triangle.col(0).x() - triangle.col(2).x()) *
+                       (triangle.col(1).y() - triangle.col(2).y()) -
+                       (triangle.col(1).x() - triangle.col(2).x()) *
+                       (triangle.col(0).y() - triangle.col(2).y());
+
+  if (IsValueZero(det_A, Tolerance2D()))
+    return { 0.0, 0.0, 0.0 };
+
+  std::array<double, 3> result =
+  {
+    1.0 / det_A *
+       (
+          (triangle.col(1).y() - triangle.col(2).y()) *
+          (point.x() - triangle.col(2).x()) -
+          (point.y() - triangle.col(2).y()) *
+          (triangle.col(1).x() - triangle.col(2).x())
+       ),
+    1.0 / det_A *
+       (
+          (point.y() - triangle.col(2).y()) *
+          (triangle.col(0).x() - triangle.col(2).x()) -
+          (triangle.col(0).y() - triangle.col(2).y()) *
+          (point.x() - triangle.col(2).x())
+       ),
+  };
+
+  result[2] = 1.0 - result[0] - result[1];
+
+  return result;
+}
+// ***************************************************************************
 vector<unsigned int> GeometryUtilities::UnalignedPoints(const Eigen::MatrixXd &points, const unsigned int numDesiredUnalignedPoints) const
 {
     Output::Assert(points.rows() == 3 && points.cols() > 1);

@@ -1246,6 +1246,42 @@ TEST(TestGeometryUtilities, TestBoundingBoxesIntersect)
         ASSERT_TRUE(geometryUtilities.BoundingBoxesIntersects(bounding_box_1, bounding_box_2));
     }
 }
+
+TEST(TestGeometryUtilities, PointTriangleBarycentricCoordinates)
+{
+  Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+  geometry_utilities_config.Tolerance1D = 1.0e-08;
+  Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+  Eigen::Matrix3d triangle;
+  triangle.col(0)<< 1.0, 1.0, 0.0;
+  triangle.col(1)<< 3.0, 4.0, 0.0;
+  triangle.col(2)<< -1.0, 2.0, 0.0;
+
+  {
+    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+                                                           triangle.col(0));
+    const std::array<double, 3> expected_value = { 1.0, 0.0, 0.0 };
+    ASSERT_TRUE(result ==
+                expected_value);
+  }
+
+  {
+    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+                                                           triangle.col(1));
+    const std::array<double, 3> expected_value = { 0.0, 1.0, 0.0 };
+    ASSERT_TRUE(result ==
+                expected_value);
+  }
+
+  {
+    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+                                                           triangle.col(2));
+    const std::array<double, 3> expected_value = { 0.0, 0.0, 1.0 };
+    ASSERT_TRUE(result ==
+                expected_value);
+  }
+}
 } // namespace GedimUnitTesting
 
 #endif // __TEST_GEOMETRY_POINT_H
