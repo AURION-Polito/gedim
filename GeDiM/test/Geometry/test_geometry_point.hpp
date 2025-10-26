@@ -1258,6 +1258,8 @@ TEST(TestGeometryUtilities, PointTriangleBarycentricCoordinates)
   triangle.col(1)<< 3.0, 4.0, 0.0;
   triangle.col(2)<< -1.0, 2.0, 0.0;
 
+  const auto barycenter = geometry_utilities.PolygonBarycenter(triangle);
+
   {
     const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
                                                            triangle.col(0));
@@ -1280,6 +1282,15 @@ TEST(TestGeometryUtilities, PointTriangleBarycentricCoordinates)
     const std::array<double, 3> expected_value = { 0.0, 0.0, 1.0 };
     ASSERT_TRUE(result ==
                 expected_value);
+  }
+
+  {
+    const auto result = geometry_utilities.PointTriangleBarycentricCoordinates(triangle,
+                                                           barycenter);
+    const std::array<double, 3> expected_value = { 1.0/3.0, 1.0/3.0, 1.0/3.0 };
+    ASSERT_DOUBLE_EQ(result.at(0), expected_value.at(0));
+    ASSERT_DOUBLE_EQ(result.at(1), expected_value.at(1));
+    ASSERT_DOUBLE_EQ(result.at(2), expected_value.at(2));
   }
 }
 } // namespace GedimUnitTesting
