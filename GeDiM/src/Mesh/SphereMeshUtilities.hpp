@@ -35,6 +35,20 @@ class SphereMeshUtilities final
 
     virtual ~SphereMeshUtilities(){};
 
+    Eigen::MatrixXd circle(const Eigen::Vector3d &center, const double &radius, const unsigned int &num_points) const
+    {
+        Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, num_points);
+
+        std::vector<double> th = geometryUtilities.EquispaceCoordinates(num_points + 1, 0.0, 2.0 * std::numbers::pi, true);
+        for (unsigned int i = 0; i < num_points; i++)
+        {
+            vertices(0, i) = radius * cos(th[i]) + center(0);
+            vertices(1, i) = radius * sin(th[i]) + center(1);
+        }
+
+        return vertices;
+    }
+
     GeometryUtilities::Polyhedron uv_sphere(const unsigned int &meridians, const unsigned int &parallels) const
     {
         Output::Assert(meridians >= 4 && parallels >= 2);

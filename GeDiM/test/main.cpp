@@ -36,6 +36,7 @@
 #include "test_platonic_solid.hpp"
 #include "test_sphere_mesh_utilities.hpp"
 #include "test_PETSc.hpp"
+#include "test_mesh_bulk_face.hpp"
 
 #include <gtest/gtest.h>
 
