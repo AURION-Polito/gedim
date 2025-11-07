@@ -26,15 +26,15 @@ class IntersectorMesh2DSegment final
         struct IntersectionMeshPoint final
         {
             std::set<unsigned int> Cell2DIds = {};
-            std::set<unsigned int> Edge2DIds = {};
-            std::set<unsigned int> Vertex2DIds = {};
+            std::set<unsigned int> Cell1DIds = {};
+            std::set<unsigned int> Cell0DIds = {};
         };
 
         struct IntersectionMeshSegment final
         {
             std::vector<double> Points = {};
             std::set<unsigned int> Cell2DIds = {};
-            std::set<unsigned int> Edge2DIds = {};
+            std::set<unsigned int> Cell1DIds = {};
         };
 
         std::map<double, IntersectionMeshPoint> Points;

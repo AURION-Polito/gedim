@@ -59,7 +59,7 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectMesh)
             EXPECT_EQ(result.Points[1.0].Cell2DIds.size(), 1);
             EXPECT_EQ(result.Points[1.0].Cell2DIds, result.Points[1.0].Cell2DIds);
             EXPECT_EQ(result.Segments.size(), 1);
-            EXPECT_EQ(result.Segments[0].Edge2DIds.size(), 0);
+            EXPECT_EQ(result.Segments[0].Cell1DIds.size(), 0);
             EXPECT_EQ(result.Segments[0].Cell2DIds.size(), 1);
         }
 
@@ -82,16 +82,16 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectMesh)
                 IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin, segmentEnd, segmentTangent, segmentBarycenter, segmentLength, result));
 
             EXPECT_EQ(result.Points.size(), 2);
-            EXPECT_EQ(result.Points[0.0].Vertex2DIds.size(), 0);
-            EXPECT_EQ(result.Points[0.0].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Points[0.0].Cell0DIds.size(), 0);
+            EXPECT_EQ(result.Points[0.0].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Points[0.0].Cell2DIds.size(), 2);
-            EXPECT_EQ(result.Points[1.0].Vertex2DIds.size(), 0);
-            EXPECT_EQ(result.Points[1.0].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Points[1.0].Cell0DIds.size(), 0);
+            EXPECT_EQ(result.Points[1.0].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Points[1.0].Cell2DIds.size(), 2);
-            EXPECT_EQ(result.Points[0.0].Edge2DIds, result.Points[1.0].Edge2DIds);
+            EXPECT_EQ(result.Points[0.0].Cell1DIds, result.Points[1.0].Cell1DIds);
             EXPECT_EQ(result.Points[0.0].Cell2DIds, result.Points[1.0].Cell2DIds);
             EXPECT_EQ(result.Segments.size(), 1);
-            EXPECT_EQ(result.Segments[0].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Segments[0].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Segments[0].Cell2DIds.size(), 2);
         }
 
@@ -114,19 +114,19 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectMesh)
                 IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin, segmentEnd, segmentTangent, segmentBarycenter, segmentLength, result));
 
             EXPECT_EQ(result.Points.size(), 3);
-            EXPECT_EQ(result.Points[0.0000000000000000e+00].Vertex2DIds.size(), 0);
-            EXPECT_EQ(result.Points[0.0000000000000000e+00].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell0DIds.size(), 0);
+            EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell2DIds.size(), 2);
-            EXPECT_EQ(result.Points[4.9999999999999994e-01].Vertex2DIds.size(), 1);
-            EXPECT_EQ(result.Points[4.9999999999999994e-01].Edge2DIds.size(), 4);
+            EXPECT_EQ(result.Points[4.9999999999999994e-01].Cell0DIds.size(), 1);
+            EXPECT_EQ(result.Points[4.9999999999999994e-01].Cell1DIds.size(), 4);
             EXPECT_EQ(result.Points[4.9999999999999994e-01].Cell2DIds.size(), 4);
-            EXPECT_EQ(result.Points[1.0000000000000000e+00].Vertex2DIds.size(), 0);
-            EXPECT_EQ(result.Points[1.0000000000000000e+00].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell0DIds.size(), 0);
+            EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell2DIds.size(), 2);
             EXPECT_EQ(result.Segments.size(), 2);
-            EXPECT_EQ(result.Segments[0].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Segments[0].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Segments[0].Cell2DIds.size(), 2);
-            EXPECT_EQ(result.Segments[1].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Segments[1].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Segments[1].Cell2DIds.size(), 2);
         }
 
@@ -149,24 +149,24 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectMesh)
                 IntersectorMesh2DSegment.CreateIntersectionMesh(segmentOrigin, segmentEnd, segmentTangent, segmentBarycenter, segmentLength, result));
 
             EXPECT_EQ(result.Points.size(), 4);
-            EXPECT_EQ(result.Points[0.0000000000000000e+00].Vertex2DIds.size(), 1);
-            EXPECT_EQ(result.Points[0.0000000000000000e+00].Edge2DIds.size(), 7);
+            EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell0DIds.size(), 1);
+            EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell1DIds.size(), 7);
             EXPECT_EQ(result.Points[0.0000000000000000e+00].Cell2DIds.size(), 7);
-            EXPECT_EQ(result.Points[2.5000000000000006e-01].Vertex2DIds.size(), 0);
-            EXPECT_EQ(result.Points[2.5000000000000006e-01].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Points[2.5000000000000006e-01].Cell0DIds.size(), 0);
+            EXPECT_EQ(result.Points[2.5000000000000006e-01].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Points[2.5000000000000006e-01].Cell2DIds.size(), 2);
-            EXPECT_EQ(result.Points[5.0000000000000000e-01].Vertex2DIds.size(), 1);
-            EXPECT_EQ(result.Points[5.0000000000000000e-01].Edge2DIds.size(), 7);
+            EXPECT_EQ(result.Points[5.0000000000000000e-01].Cell0DIds.size(), 1);
+            EXPECT_EQ(result.Points[5.0000000000000000e-01].Cell1DIds.size(), 7);
             EXPECT_EQ(result.Points[5.0000000000000000e-01].Cell2DIds.size(), 7);
-            EXPECT_EQ(result.Points[1.0000000000000000e+00].Vertex2DIds.size(), 1);
-            EXPECT_EQ(result.Points[1.0000000000000000e+00].Edge2DIds.size(), 8);
+            EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell0DIds.size(), 1);
+            EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell1DIds.size(), 8);
             EXPECT_EQ(result.Points[1.0000000000000000e+00].Cell2DIds.size(), 8);
             EXPECT_EQ(result.Segments.size(), 3);
-            EXPECT_EQ(result.Segments[0].Edge2DIds.size(), 0);
+            EXPECT_EQ(result.Segments[0].Cell1DIds.size(), 0);
             EXPECT_EQ(result.Segments[0].Cell2DIds.size(), 1);
-            EXPECT_EQ(result.Segments[1].Edge2DIds.size(), 0);
+            EXPECT_EQ(result.Segments[1].Cell1DIds.size(), 0);
             EXPECT_EQ(result.Segments[1].Cell2DIds.size(), 1);
-            EXPECT_EQ(result.Segments[2].Edge2DIds.size(), 1);
+            EXPECT_EQ(result.Segments[2].Cell1DIds.size(), 1);
             EXPECT_EQ(result.Segments[2].Cell2DIds.size(), 2);
         }
     }
@@ -251,7 +251,7 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectPolygonMesh)
             EXPECT_EQ(result.Points[1.0].Cell2DIds.size(), 1);
             EXPECT_EQ(result.Points[1.0].Cell2DIds, result.Points[1.0].Cell2DIds);
             EXPECT_EQ(result.Segments.size(), 1);
-            EXPECT_EQ(result.Segments[0].Edge2DIds.size(), 0);
+            EXPECT_EQ(result.Segments[0].Cell1DIds.size(), 0);
             EXPECT_EQ(result.Segments[0].Cell2DIds.size(), 1);
         }
     }

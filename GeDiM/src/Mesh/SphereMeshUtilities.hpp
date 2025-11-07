@@ -13,6 +13,7 @@
 #define __SphereMeshUtilities_H
 
 #include "GeometryUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include <numbers>
 
