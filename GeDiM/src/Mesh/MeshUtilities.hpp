@@ -1112,6 +1112,10 @@ class MeshUtilities final
                                   const GeometryUtilities &geometryUtilities,
                                   const IMeshDAO &mesh,
                                   const MeshGeometricData2D &geometricData) const;
+
+    void CreatePolygonIntersectionMesh(const Gedim::GeometryUtilities &geometry_utilities,
+                                       const Eigen::MatrixXd &interface_vertices,
+                                       Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim
