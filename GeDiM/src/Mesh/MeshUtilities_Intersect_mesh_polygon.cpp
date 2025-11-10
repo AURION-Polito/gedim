@@ -19,6 +19,7 @@ void Gedim::MeshUtilities::CreatePolygonIntersectionMesh(const Gedim::GeometryUt
                                                          const Eigen::MatrixXd &interface_vertices,
                                                          Gedim::IMeshDAO &mesh) const
 {
+
     const unsigned int num_domains_1D = interface_vertices.cols();
 
     struct cell2Ds_intersected
