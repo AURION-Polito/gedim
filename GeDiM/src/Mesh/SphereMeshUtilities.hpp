@@ -13,6 +13,7 @@
 #define __SphereMeshUtilities_H
 
 #include "GeometryUtilities.hpp"
+#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include <numbers>
 
@@ -34,6 +35,41 @@ class SphereMeshUtilities final
     }
 
     virtual ~SphereMeshUtilities(){};
+
+    Eigen::MatrixXd circle(const Eigen::Vector3d &center, const double &radius, const unsigned int &num_points) const
+    {
+        Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, num_points);
+
+        std::vector<double> th = geometryUtilities.EquispaceCoordinates(num_points + 1, 0.0, 2.0 * std::numbers::pi, true);
+        for (unsigned int i = 0; i < num_points; i++)
+        {
+            vertices(0, i) = radius * cos(th[i]) + center(0);
+            vertices(1, i) = radius * sin(th[i]) + center(1);
+        }
+
+        return vertices;
+    }
+
+    Eigen::MatrixXd ellipse(const Eigen::Vector3d &center,
+                            const double &radius_1,
+                            const double &radius_2,
+                            const double &rotation_angle,
+                            const unsigned int &num_points) const
+    {
+        Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, num_points);
+
+        std::vector<double> th = geometryUtilities.EquispaceCoordinates(num_points + 1, 0.0, 2.0 * std::numbers::pi, true);
+
+        const double cos_theta = cos(rotation_angle);
+        const double sin_theta = sin(rotation_angle);
+        for (unsigned int i = 0; i < num_points; i++)
+        {
+            vertices(0, i) = radius_1 * cos_theta * cos(th[i]) - radius_2 * sin_theta * sin(th[i]) + center(0);
+            vertices(1, i) = radius_1 * sin_theta * cos(th[i]) + radius_2 * cos_theta * sin(th[i]) + center(1);
+        }
+
+        return vertices;
+    }
 
     GeometryUtilities::Polyhedron uv_sphere(const unsigned int &meridians, const unsigned int &parallels) const
     {
