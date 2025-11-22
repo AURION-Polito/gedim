@@ -47,14 +47,14 @@ void IntersectorMesh2DSegment::ToString(const IntersectorMesh2DSegment::Intersec
     for_each(intersectingMesh.Points.begin(),
              intersectingMesh.Points.end(),
              [](const std::pair<double, IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint> &p) {
-                 cerr << scientific << "{ Key: " << p.first << "; Value: V: " << p.second.Vertex2DIds
-                      << " E: " << p.second.Edge2DIds << " C: " << p.second.Cell2DIds << " }\n";
+                 cerr << scientific << "{ Key: " << p.first << "; Value: V: " << p.second.Cell0DIds
+                      << " E: " << p.second.Cell1DIds << " C: " << p.second.Cell2DIds << " }\n";
              });
     cerr << "Segments:" << endl;
     for_each(intersectingMesh.Segments.begin(),
              intersectingMesh.Segments.end(),
              [](const IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshSegment &p) {
-                 cerr << scientific << "{ E: " << p.Edge2DIds << " C: " << p.Cell2DIds << " }\n";
+                 cerr << scientific << "{ E: " << p.Cell1DIds << " C: " << p.Cell2DIds << " }\n";
              });
 }
 // ***************************************************************************
@@ -117,7 +117,7 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
             IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(0.0, result, found);
 
             unsigned int edgeId = _mesh.Cell2DEdge(c, pointPolygonPositionResult.BorderIndex);
-            intersection.Edge2DIds.insert(edgeId);
+            intersection.Cell1DIds.insert(edgeId);
             intersection.Cell2DIds.insert(c);
             cellFound = true;
             break;
@@ -126,7 +126,7 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
             bool found;
             IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(0.0, result, found);
             unsigned int vertexId = _mesh.Cell2DVertex(c, pointPolygonPositionResult.BorderIndex);
-            intersection.Vertex2DIds.insert(vertexId);
+            intersection.Cell0DIds.insert(vertexId);
             intersection.Cell2DIds.insert(c);
             cellFound = true;
             break;
@@ -165,7 +165,7 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
             bool found;
             IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(1.0, result, found);
             unsigned int edgeId = _mesh.Cell2DEdge(c, pointPolygonPositionResult.BorderIndex);
-            intersection.Edge2DIds.insert(edgeId);
+            intersection.Cell1DIds.insert(edgeId);
             intersection.Cell2DIds.insert(c);
             cellFound = true;
             break;
@@ -174,7 +174,7 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
             bool found;
             IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(1.0, result, found);
             unsigned int vertexId = _mesh.Cell2DVertex(c, pointPolygonPositionResult.BorderIndex);
-            intersection.Vertex2DIds.insert(vertexId);
+            intersection.Cell0DIds.insert(vertexId);
             intersection.Cell2DIds.insert(c);
             cellFound = true;
             break;
@@ -246,8 +246,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
             {
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(curvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeOriginId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeOriginId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -260,8 +260,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
             {
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(curvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeEndId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeEndId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -274,7 +274,7 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
             {
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection = InsertNewIntersection(curvilinearCoordinate, result, found);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -305,8 +305,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentFirstCurvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeOriginId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeOriginId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -320,8 +320,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentFirstCurvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeEndId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeEndId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -335,7 +335,7 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentFirstCurvilinearCoordinate, result, found);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -350,8 +350,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentSecondCurvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeOriginId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeOriginId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -365,8 +365,8 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentSecondCurvilinearCoordinate, result, found);
-                intersection.Vertex2DIds.insert(edgeEndId);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell0DIds.insert(edgeEndId);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -380,7 +380,7 @@ void IntersectorMesh2DSegment::CreateIntersectionPoints(const Vector3d &segmentO
                 bool found;
                 IntersectionMesh::IntersectionMeshPoint &intersection =
                     InsertNewIntersection(segmentSecondCurvilinearCoordinate, result, found);
-                intersection.Edge2DIds.insert(e);
+                intersection.Cell1DIds.insert(e);
                 for (unsigned int n = 0; n < _mesh.Cell1DNumberNeighbourCell2D(e); n++)
                 {
                     if (!_mesh.Cell1DHasNeighbourCell2D(e, n))
@@ -415,11 +415,11 @@ void IntersectorMesh2DSegment::CreateIntersectionSegments(IntersectorMesh2DSegme
         meshSegment.Points[1] = curvilinearCoordinatePointNext;
 
         // fill the mesh 2D edges
-        set_intersection(intersectionPoint.Edge2DIds.begin(),
-                         intersectionPoint.Edge2DIds.end(),
-                         intersectionPointNext.Edge2DIds.begin(),
-                         intersectionPointNext.Edge2DIds.end(),
-                         std::inserter(meshSegment.Edge2DIds, meshSegment.Edge2DIds.begin()));
+        set_intersection(intersectionPoint.Cell1DIds.begin(),
+                         intersectionPoint.Cell1DIds.end(),
+                         intersectionPointNext.Cell1DIds.begin(),
+                         intersectionPointNext.Cell1DIds.end(),
+                         std::inserter(meshSegment.Cell1DIds, meshSegment.Cell1DIds.begin()));
         // fill the mesh 2D cells
         set_intersection(intersectionPoint.Cell2DIds.begin(),
                          intersectionPoint.Cell2DIds.end(),
@@ -470,7 +470,7 @@ void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d &, const Vecto
 
         // Extract active edges in the mesh
         list<unsigned int> activeEdges;
-        for (unsigned int edgeId : intersectionPoint.Edge2DIds)
+        for (unsigned int edgeId : intersectionPoint.Cell1DIds)
         {
             if (!_mesh.Cell1DIsActive(edgeId))
                 continue;
@@ -481,7 +481,7 @@ void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d &, const Vecto
         // if an intersection has more then one edge and no vertices then the intersection shall be
         // near the vertex in common of the edges
         // error: the program should be started with greater tolerance
-        if (intersectionPoint.Vertex2DIds.size() == 0 && activeEdges.size() > 1 && intersectionPoint.Cell2DIds.size() > 1)
+        if (intersectionPoint.Cell0DIds.size() == 0 && activeEdges.size() > 1 && intersectionPoint.Cell2DIds.size() > 1)
         {
             unsigned int vertexInCommon = _mesh.Cell0DTotalNumber();
             unsigned int numEdges = activeEdges.size();
@@ -537,8 +537,8 @@ void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d &, const Vecto
         const IntersectionMesh::IntersectionMeshPoint &intersectionPointNext = itPointNext->second;
 
         // If the two intersection points have the same set of vertices then the point is the same
-        if (intersectionPoint.Vertex2DIds.size() > 0 && intersectionPointNext.Vertex2DIds.size() > 0 &&
-            intersectionPoint.Vertex2DIds == intersectionPointNext.Vertex2DIds)
+        if (intersectionPoint.Cell0DIds.size() > 0 && intersectionPointNext.Cell0DIds.size() > 0 &&
+            intersectionPoint.Cell0DIds == intersectionPointNext.Cell0DIds)
         {
             const double avgCoordinate = (curvilinearCoordinatePoint + curvilinearCoordinatePointNext) / 2.0;
             Output::Assert(!_geometryUtilities.IsValuePositive(std::abs(curvilinearCoordinatePoint - avgCoordinate),
@@ -547,16 +547,16 @@ void IntersectorMesh2DSegment::SmoothIntersections(const Vector3d &, const Vecto
                                                                _geometryUtilities.Tolerance1D()));
 
             IntersectionMesh::IntersectionMeshPoint avgPoint;
-            avgPoint.Vertex2DIds = intersectionPoint.Vertex2DIds;
-            avgPoint.Edge2DIds = intersectionPoint.Edge2DIds;
+            avgPoint.Cell0DIds = intersectionPoint.Cell0DIds;
+            avgPoint.Cell1DIds = intersectionPoint.Cell1DIds;
             avgPoint.Cell2DIds = intersectionPoint.Cell2DIds;
 
             // unify the Cell1Ds and Cell2Ds
-            std::merge(intersectionPoint.Edge2DIds.begin(),
-                       intersectionPoint.Edge2DIds.end(),
-                       intersectionPointNext.Edge2DIds.begin(),
-                       intersectionPointNext.Edge2DIds.end(),
-                       std::inserter(avgPoint.Edge2DIds, avgPoint.Edge2DIds.begin()));
+            std::merge(intersectionPoint.Cell1DIds.begin(),
+                       intersectionPoint.Cell1DIds.end(),
+                       intersectionPointNext.Cell1DIds.begin(),
+                       intersectionPointNext.Cell1DIds.end(),
+                       std::inserter(avgPoint.Cell1DIds, avgPoint.Cell1DIds.begin()));
 
             std::merge(intersectionPoint.Cell2DIds.begin(),
                        intersectionPoint.Cell2DIds.end(),

@@ -14,6 +14,7 @@
 
 #include "GeometryUtilities.hpp"
 #include "IMeshDAO.hpp"
+#include "MeshMatricesDAO.hpp"
 
 namespace Gedim
 {
@@ -78,21 +79,21 @@ class MeshUtilities final
     struct ExtractActiveMeshData final
     {
         std::unordered_map<unsigned int, unsigned int> OldCell0DToNewCell0D; ///< each pair is {old Cell0D index, new
-                                                                             ///< Cell0D index}
+        ///< Cell0D index}
         std::unordered_map<unsigned int, unsigned int> OldCell1DToNewCell1D; ///< each pair is {old Cell1D index, new
-                                                                             ///< Cell1D index}
+        ///< Cell1D index}
         std::unordered_map<unsigned int, unsigned int> OldCell2DToNewCell2D; ///< each pair is {old Cell2D index, new
-                                                                             ///< Cell2D index}
+        ///< Cell2D index}
         std::unordered_map<unsigned int, unsigned int> OldCell3DToNewCell3D; ///< each pair is {old Cell3D index, new
-                                                                             ///< Cell3D index}
+        ///< Cell3D index}
         std::unordered_map<unsigned int, unsigned int> NewCell0DToOldCell0D; ///< each pair is {new Cell0D index, old
-                                                                             ///< Cell0D index}
+        ///< Cell0D index}
         std::unordered_map<unsigned int, unsigned int> NewCell1DToOldCell1D; ///< each pair is {new Cell1D index, old
-                                                                             ///< Cell1D index}
+        ///< Cell1D index}
         std::unordered_map<unsigned int, unsigned int> NewCell2DToOldCell2D; ///< each pair is {new Cell2D index, old
-                                                                             ///< Cell2D index}
+        ///< Cell2D index}
         std::unordered_map<unsigned int, unsigned int> NewCell3DToOldCell3D; ///< each pair is {new Cell3D index, old
-                                                                             ///< Cell3D index}
+        ///< Cell3D index}
     };
 
     struct FilterMeshData final
@@ -119,7 +120,7 @@ class MeshUtilities final
     {
         Eigen::MatrixXi Cell1Ds;              /// Cell1Ds vertices, size 2 x Cell1DTotalNumber()
         std::vector<Eigen::MatrixXi> Cell2Ds; ///< Cell2Ds vertices and edges, size
-                                              ///< Cell2DTotalNumber()x2xCell2DNumberVertices()
+        ///< Cell2DTotalNumber()x2xCell2DNumberVertices()
     };
 
     struct ComputeMesh3DAlignedCell1DsResult final
@@ -184,14 +185,14 @@ class MeshUtilities final
         std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces3DVertices; ///< faces vertices 3D coordinates
         std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFaces2DVertices; ///< faces vertices 2D coordinates
         std::vector<std::vector<std::vector<Eigen::Matrix3d>>> Cell3DsFaces3DTriangulations; ///< faces triangulations
-                                                                                             ///< 2D
+        ///< 2D
         std::vector<std::vector<std::vector<Eigen::Matrix3d>>> Cell3DsFaces2DTriangulations; ///< faces triangulations
-                                                                                             ///< 2D
-        std::vector<std::vector<double>> Cell3DsFacesAreas;                                  ///< faces areas
-        std::vector<std::vector<Eigen::Vector3d>> Cell3DsFaces2DCentroids;                   ///< faces centroids
-        std::vector<std::vector<double>> Cell3DsFacesDiameters;                              ///< faces diameters
-        std::vector<std::vector<Eigen::VectorXd>> Cell3DsFacesEdgeLengths;                   ///< faces edge lengths
-        std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge3DTangents;                ///< faces edge 3D tangents
+        ///< 2D
+        std::vector<std::vector<double>> Cell3DsFacesAreas;                   ///< faces areas
+        std::vector<std::vector<Eigen::Vector3d>> Cell3DsFaces2DCentroids;    ///< faces centroids
+        std::vector<std::vector<double>> Cell3DsFacesDiameters;               ///< faces diameters
+        std::vector<std::vector<Eigen::VectorXd>> Cell3DsFacesEdgeLengths;    ///< faces edge lengths
+        std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge3DTangents; ///< faces edge 3D tangents
         std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdges3DCentroid;
         std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdge2DTangents; ///< faces edge 2D tangents
         std::vector<std::vector<Eigen::MatrixXd>> Cell3DsFacesEdges2DCentroid;
@@ -360,8 +361,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -1111,6 +1112,10 @@ class MeshUtilities final
                                   const GeometryUtilities &geometryUtilities,
                                   const IMeshDAO &mesh,
                                   const MeshGeometricData2D &geometricData) const;
+
+    void CreatePolygonIntersectionMesh(const Gedim::GeometryUtilities &geometry_utilities,
+                                       const Eigen::MatrixXd &interface_vertices,
+                                       Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim

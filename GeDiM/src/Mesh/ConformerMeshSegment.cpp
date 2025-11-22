@@ -125,9 +125,9 @@ void ConformerMeshSegment::CreateConformPoints(const Gedim::IntersectorMesh2DSeg
                 itIntersectionPoint->second;
             conformPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::Original;
 
-            conformPoint.Vertex2DIds = intersectionPoint.Vertex2DIds; // copy assignment
-            conformPoint.Edge2DIds = intersectionPoint.Edge2DIds;     // copy assignment
-            conformPoint.Cell2DIds = intersectionPoint.Cell2DIds;     // copy assignment
+            conformPoint.Vertex2DIds = intersectionPoint.Cell0DIds; // copy assignment
+            conformPoint.Edge2DIds = intersectionPoint.Cell1DIds;   // copy assignment
+            conformPoint.Cell2DIds = intersectionPoint.Cell2DIds;   // copy assignment
 
             itIntersectionPoint++;
             intersectionSegmentIndex++;
@@ -142,7 +142,7 @@ void ConformerMeshSegment::CreateConformPoints(const Gedim::IntersectorMesh2DSeg
                 meshIntersection.Segments[intersectionSegmentIndex - 1];
             conformPoint.Type = ConformerMeshSegment::ConformMesh::ConformMeshPoint::Inherited;
 
-            conformPoint.Edge2DIds = intersectionSegment.Edge2DIds; // copy assignment
+            conformPoint.Edge2DIds = intersectionSegment.Cell1DIds; // copy assignment
             conformPoint.Cell2DIds = intersectionSegment.Cell2DIds; // copy assignment
         }
 
