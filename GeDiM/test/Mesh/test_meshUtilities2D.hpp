@@ -20,6 +20,7 @@
 
 #include "CommonUtilities.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
+#include "MetisUtilities.hpp"
 #include "VTKUtilities.hpp"
 
 #include "MeshMatrices.hpp"
@@ -1283,6 +1284,219 @@ TEST(TestMeshUtilities, TestFindPointCell2D)
         ASSERT_EQ(15, result_position.MeshPositions[3].Cell_index);
     }
 }
+
+TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
+{
+#if ENABLE_METIS == 0
+  GTEST_SKIP();
+#endif
+
+  Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+  geometry_utilities_config.Tolerance1D = 1.0e-8;
+  Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+  Gedim::MeshUtilities mesh_utilities;
+  Gedim::MetisUtilities metis_utilities;
+
+  std::string exportFolder = "./Export/TestAgglomerateMesh/TestAgglomerateWithMetis2D";
+  Gedim::Output::CreateFolder(exportFolder);
+
+
+  const auto domain_2D = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(),
+                                                         1.0);
+  const double relative_area = 0.005;
+  const double domain_2D_area = 1.0;
+  const double domain_2D_max_area = relative_area *
+                                    domain_2D_area;
+
+  const unsigned num_cells = static_cast<unsigned int>(std::max(1.0,
+                                                                1.0 / relative_area));
+  double max_base_length = std::sqrt(relative_area);
+  double max_height_length = std::sqrt(relative_area);
+
+  Gedim::MeshMatrices original_mesh_data;
+  Gedim::MeshMatricesDAO original_mesh(original_mesh_data);
+
+  unsigned int mesh_type = 2;
+  switch (mesh_type)
+  {
+    case 0:
+    {
+      mesh_utilities.CreateTriangularMesh(domain_2D,
+                                          domain_2D_max_area,
+                                          original_mesh);
+      mesh_utilities.ComputeCell0DCell1DNeighbours(original_mesh);
+      mesh_utilities.ComputeCell1DCell2DNeighbours(original_mesh);
+    }
+      break;
+    case 1:
+    {
+      const Eigen::Vector3d rectangleBaseTangent = domain_2D.col(1) -
+                                                   domain_2D.col(0);
+      const Eigen::Vector3d rectangleHeightTangent = domain_2D.rightCols(1) -
+                                                     domain_2D.col(0);
+
+      const std::vector<double> baseMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(max_base_length, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(max_height_length, 1);
+      const Eigen::Vector3d origin = domain_2D.col(0);
+      mesh_utilities.CreateRectangleMesh(origin,
+                                         rectangleBaseTangent,
+                                         rectangleHeightTangent,
+                                         baseMeshCurvilinearCoordinates,
+                                         heightMeshCurvilinearCoordinates,
+                                         original_mesh);
+      mesh_utilities.ComputeCell0DCell1DNeighbours(original_mesh);
+      mesh_utilities.ComputeCell1DCell2DNeighbours(original_mesh);
+    }
+      break;
+    case 2:
+    {
+      mesh_utilities.CreatePolygonalMesh(geometry_utilities,
+                                         domain_2D,
+                                         num_cells,
+                                         10,
+                                         original_mesh,
+                                         10);
+      mesh_utilities.ComputeCell0DCell1DNeighbours(original_mesh);
+      mesh_utilities.ComputeCell1DCell2DNeighbours(original_mesh);
+    }
+      break;
+    default:
+      throw std::runtime_error("Unsopported mesh type");
+  }
+
+  {
+    mesh_utilities.ExportMeshToVTU(original_mesh, exportFolder, "OriginalMesh");
+  }
+
+  Gedim::MeshMatrices agglomerated_mesh_data = original_mesh_data;
+  Gedim::MeshMatricesDAO agglomerated_mesh(agglomerated_mesh_data);
+
+
+  std::vector<std::vector<unsigned int>> agglomerated_mesh_cell2D_original_mesh_ids(agglomerated_mesh.Cell2DTotalNumber());
+  for (unsigned int c2D_index = 0; c2D_index < agglomerated_mesh.Cell2DTotalNumber(); c2D_index++)
+  {
+    agglomerated_mesh_cell2D_original_mesh_ids.at(c2D_index) = std::vector<unsigned int>({c2D_index});
+  }
+
+  const auto network = metis_utilities.Mesh2DToDualGraph(original_mesh);
+  Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
+  partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
+  partitionOptions.MasterWeight = 100;
+  partitionOptions.NumberOfParts = 15;
+
+  const auto partitions = metis_utilities.NetworkPartition(partitionOptions, network.Network);
+  const auto fix_constraints_partitions = metis_utilities.PartitionCheckConstraints(network.Network,
+                                                                                    partitions);
+  const auto fix_connectedComponents_partitions =
+      metis_utilities.PartitionCheckConnectedComponents(network.Network, fix_constraints_partitions);
+
+  {
+    Gedim::VTKUtilities exporter;
+    for (unsigned int c_2D = 0; c_2D < original_mesh.Cell2DTotalNumber(); ++c_2D)
+    {
+      std::vector<double> cell2D_id(1, c_2D);
+      std::vector<double> cell2D_partition(1, fix_connectedComponents_partitions.at(c_2D));
+      exporter.AddPolygon(original_mesh.Cell2DVerticesCoordinates(c_2D),
+                          {
+                            {
+                              "id",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(cell2D_id.size()),
+                              cell2D_id.data()
+                            },
+                            {
+                              "partition",
+                              Gedim::VTPProperty::Formats::Cells,
+                              static_cast<unsigned int>(cell2D_partition.size()),
+                              cell2D_partition.data()
+                            }
+                          });
+    }
+    exporter.Export(exportFolder + "/original_mesh_partition.vtu");
+  }
+
+  unsigned int num_concave_cells = 0;
+  for (const auto partition : fix_connectedComponents_partitions)
+  {
+    if (num_concave_cells < (partition + 1))
+      num_concave_cells++;
+  }
+
+  std::vector<std::list<unsigned int>> concave_cells_triangles_list(num_concave_cells);
+  for (unsigned int i = 0; i < fix_connectedComponents_partitions.size(); ++i)
+  {
+    const unsigned int p = fix_connectedComponents_partitions.at(i);
+    concave_cells_triangles_list[p].push_back(i);
+  }
+
+  for (const auto& agglomerate_cells : concave_cells_triangles_list)
+  {
+    const auto agglomerate_cell2Ds =  std::unordered_set<unsigned int>(agglomerate_cells.begin(),
+                                                                       agglomerate_cells.end());
+
+    const auto aggomerated_cell2Ds_data =
+        mesh_utilities.AgglomerateCell2Ds(geometry_utilities,
+                                          agglomerate_cell2Ds,
+                                          agglomerated_mesh);
+
+    const unsigned int new_cell2D =
+        mesh_utilities.AgglomerateCell2Ds(agglomerate_cell2Ds,
+                                          aggomerated_cell2Ds_data.AgglomerateCell2DVertices,
+                                          aggomerated_cell2Ds_data.AgglomerateCell2DEdges,
+                                          aggomerated_cell2Ds_data.SubCell2DsRemovedVertices,
+                                          aggomerated_cell2Ds_data.SubCell2DsRemovedEdges,
+                                          agglomerated_mesh,
+                                          agglomerated_mesh_cell2D_original_mesh_ids);
+  }
+
+  Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
+  mesh_utilities.ExtractActiveMesh(agglomerated_mesh, extraction_data);
+
+  mesh_utilities.ExportMeshToVTU(agglomerated_mesh, exportFolder, "ConcaveMesh");
+
+  std::vector<std::vector<unsigned int>> extractedAgglomeratedCell2DsIndex(agglomerated_mesh.Cell2DTotalNumber());
+
+  for (unsigned int c = 0; c < agglomerated_mesh.Cell2DTotalNumber(); c++)
+  {
+    const unsigned int oldCell2DIndex = extraction_data.NewCell2DToOldCell2D.at(c);
+    extractedAgglomeratedCell2DsIndex[c] = agglomerated_mesh_cell2D_original_mesh_ids[oldCell2DIndex];
+  }
+
+  const std::string exportOriginalMeshFolder = exportFolder + "/Convex";
+  const std::string exportAgglomeratedMeshFolder = exportFolder + "/Concave";
+  Gedim::Output::CreateFolder(exportOriginalMeshFolder);
+  Gedim::Output::CreateFolder(exportAgglomeratedMeshFolder);
+
+  mesh_utilities.ExportMeshToCsv(original_mesh, ',', exportOriginalMeshFolder);
+  mesh_utilities.ExportConcaveMesh2DToCsv(agglomerated_mesh, extractedAgglomeratedCell2DsIndex, ',', exportAgglomeratedMeshFolder);
+
+  {
+    Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+    config.Cell1D_CheckNeighbours = false;
+    config.Cell0D_CheckCoordinates2D = false;
+    config.Cell2D_CheckConvexity = false;
+    config.Cell2D_CheckMeasure = false;
+    mesh_utilities.CheckMesh2D(config,
+                               geometry_utilities,
+                               agglomerated_mesh);
+  }
+
+  {
+    std::vector<Gedim::GeometryUtilities::PolygonTypes> cell2Ds_types(agglomerated_mesh.Cell2DTotalNumber(),
+                                                                      Gedim::GeometryUtilities::PolygonTypes::Generic_Concave);
+    const auto mesh_geometric_data = mesh_utilities.FillMesh2DGeometricData(geometry_utilities,
+                                                                            agglomerated_mesh,
+                                                                            cell2Ds_types);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration config;
+    config.Cell2D_CheckTriangles = false;
+    mesh_utilities.CheckMeshGeometricData2D(config,
+                                            geometry_utilities,
+                                            agglomerated_mesh,
+                                            mesh_geometric_data);
+  }
+}
+
 
 } // namespace GedimUnitTesting
 
