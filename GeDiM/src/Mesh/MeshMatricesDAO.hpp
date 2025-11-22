@@ -80,8 +80,14 @@ class MeshMatricesDAO final : public IMeshDAO
     MeshMatricesDAO(Gedim::MeshMatrices &mesh);
     ~MeshMatricesDAO();
 
-    inline Gedim::MeshMatrices& MeshData() { return _mesh; }
-    inline const Gedim::MeshMatrices& MeshData() const { return _mesh; }
+    inline Gedim::MeshMatrices &MeshData()
+    {
+        return _mesh;
+    }
+    inline const Gedim::MeshMatrices &MeshData() const
+    {
+        return _mesh;
+    }
 
     inline void InitializeDimension(const unsigned int &dimension)
     {

@@ -36,8 +36,7 @@ class TriangleInterface final
                               struct triangulateio &triangleOutput,
                               const std::string &triangleOptions = "-QDzpqnea") const;
 
-    void ConvertTriangleMeshToGedimMesh(struct triangulateio &triangleOutput,
-                                        IMeshDAO &mesh) const;
+    void ConvertTriangleMeshToGedimMesh(struct triangulateio &triangleOutput, IMeshDAO &mesh) const;
 
     void DeleteTriangleStructure(struct triangulateio &triangleInput, struct triangulateio &triangleOutput) const;
 
@@ -52,8 +51,8 @@ class TriangleInterface final
 
     void ExportMesh(const Eigen::MatrixXd &polygonVertices,
                     const double &maxTriangleArea,
-                    const std::string& folder_name,
-                    const std::string& file_name,
+                    const std::string &folder_name,
+                    const std::string &file_name,
                     const std::string &triangleOptions = "-QDzpqnea") const;
 
     void CreateMesh(const Eigen::MatrixXd &polygonVertices,
