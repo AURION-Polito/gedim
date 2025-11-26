@@ -1301,7 +1301,7 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
     Gedim::Output::CreateFolder(exportFolder);
 
     const auto domain_2D = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(), 1.0);
-    const double relative_area = 0.005;
+    const double relative_area = 0.002;
     const double domain_2D_area = 1.0;
     const double domain_2D_max_area = relative_area * domain_2D_area;
 
@@ -1366,7 +1366,7 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
     Gedim::MetisUtilities::NetworkPartitionOptions partitionOptions;
     partitionOptions.PartitionType = Gedim::MetisUtilities::NetworkPartitionOptions::PartitionTypes::CutBalancing;
     partitionOptions.MasterWeight = 100;
-    partitionOptions.NumberOfParts = 15;
+    partitionOptions.NumberOfParts = 10;
 
     const auto partitions = metis_utilities.NetworkPartition(partitionOptions, network.Network);
     const auto fix_constraints_partitions = metis_utilities.PartitionCheckConstraints(network.Network, partitions);
