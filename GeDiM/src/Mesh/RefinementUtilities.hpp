@@ -63,7 +63,7 @@ class RefinementUtilities final
             NoSplit = 2
         };
 
-        Gedim::RefinementUtilities::SplitPolygon_Result::Types Type = Types::Unknown;
+        Gedim::RefinementUtilities::SplitPolygon_Result::Types Type = Gedim::RefinementUtilities::SplitPolygon_Result::Types::Unknown;
         unsigned int NewCell1DIndex = 0;
         std::vector<unsigned int> NewCell2DsIndex = {};
     };
@@ -210,7 +210,7 @@ class RefinementUtilities final
         };
 
         std::vector<unsigned int> NewCell0DsIndex = {};
-        std::vector<RefinedCell1D> NewCell1DsIndex = {};
+        std::vector<Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D> NewCell1DsIndex = {};
         std::vector<unsigned int> NewCell2DsIndex = {};
 
         Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes SplitType = Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes::Unknown;
