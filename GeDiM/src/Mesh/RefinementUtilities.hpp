@@ -105,13 +105,15 @@ class RefinementUtilities final
             std::vector<bool> IsNeighAlignedRespect = {};
             bool IsToSplit = false;
             unsigned int Cell2DEdgeIndex = 0;
-            Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types Type = Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::Unknown;
+            Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types Type =
+                Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit::Types::Unknown;
         };
 
         std::vector<unsigned int> Cell1DsIndex = {};
         std::vector<Gedim::GeometryUtilities::LinePolygonPositionResult::EdgeIntersection> Cell1DsIntersection = {};
         std::vector<Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit> Cell1DsToSplit = {};
-        Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes ResultType = Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Unknown;
+        Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes ResultType =
+            Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Unknown;
     };
 
     struct CheckSplitType_Result final
@@ -127,7 +129,8 @@ class RefinementUtilities final
         };
 
         std::array<unsigned int, 2> NoNewVerticesIndex = {}; ///< valid only for NoNewVertices type
-        Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes Type = Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes::Unknown;
+        Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes Type =
+            Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes::Unknown;
     };
 
     struct RefinePolyhedron_Result final
@@ -150,7 +153,8 @@ class RefinementUtilities final
                 New = 2
             };
 
-            Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell1D::Types Type = Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell1D::Types::Unknown;
+            Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell1D::Types Type =
+                Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell1D::Types::Unknown;
             std::vector<unsigned int> NewCell1DsIndex = {};
             unsigned int OriginalCell1DIndex = 0;
             unsigned int NewCell0DIndex = 0;
@@ -166,7 +170,8 @@ class RefinementUtilities final
                 New = 2
             };
 
-            Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell2D::Types Type = Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell2D::Types::Unknown;
+            Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell2D::Types Type =
+                Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell2D::Types::Unknown;
             std::vector<unsigned int> NewCell2DsIndex = {};
             unsigned int OriginalCell2DIndex = 0;
             unsigned int NewCell1DIndex = 0;
@@ -174,7 +179,8 @@ class RefinementUtilities final
             unsigned int OriginalCell3DFaceIndex = 0;
         };
 
-        Gedim::RefinementUtilities::RefinePolyhedron_Result::ResultTypes ResultType = Gedim::RefinementUtilities::RefinePolyhedron_Result::ResultTypes::Unknown;
+        Gedim::RefinementUtilities::RefinePolyhedron_Result::ResultTypes ResultType =
+            Gedim::RefinementUtilities::RefinePolyhedron_Result::ResultTypes::Unknown;
         std::vector<unsigned int> NewCell0DsIndex = {};
         std::vector<Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell1D> NewCell1DsIndex = {};
         std::vector<Gedim::RefinementUtilities::RefinePolyhedron_Result::RefinedCell2D> NewCell2DsIndex = {};
@@ -202,7 +208,8 @@ class RefinementUtilities final
                 New = 2
             };
 
-            Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types Type = Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Unknown;
+            Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types Type =
+                Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Unknown;
             std::vector<unsigned int> NewCell1DsIndex = {};
             unsigned int OriginalCell1DIndex = 0;
             unsigned int NewCell0DIndex = 0;
@@ -213,8 +220,10 @@ class RefinementUtilities final
         std::vector<Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D> NewCell1DsIndex = {};
         std::vector<unsigned int> NewCell2DsIndex = {};
 
-        Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes SplitType = Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes::Unknown;
-        Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes ResultType = Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Unknown;
+        Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes SplitType =
+            Gedim::RefinementUtilities::CheckSplitType_Result::SplitTypes::Unknown;
+        Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes ResultType =
+            Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Unknown;
     };
 
     struct RefinePolygon_UpdateNeighbour_Result final
@@ -278,7 +287,9 @@ class RefinementUtilities final
     RefinementUtilities(const Gedim::GeometryUtilities &geometryUtilities, const Gedim::MeshUtilities &meshUtilities);
     ~RefinementUtilities();
 
-    Gedim::RefinementUtilities::SplitCell1D_Result SplitCell1D(const unsigned int &cell1DIndex, const Eigen::Vector3d &newVertexCoordinate, IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::SplitCell1D_Result SplitCell1D(const unsigned int &cell1DIndex,
+                                                               const Eigen::Vector3d &newVertexCoordinate,
+                                                               IMeshDAO &mesh) const;
     /// \brief update cell2DIndex with a new splitted edge cell1DIndex by newCell0DIndex
     unsigned int UpdateCell2D_NewVertex(const unsigned int cell2DIndex,
                                         const bool cell2DEdgeDirection,
@@ -297,10 +308,11 @@ class RefinementUtilities final
 
     bool AreVerticesAligned(const Eigen::MatrixXd &cell2DVertices, const unsigned int fromVertex, const unsigned int toVertex) const;
 
-    Gedim::RefinementUtilities::CheckSplitType_Result SplitPolygon_CheckSplitType(const Gedim::GeometryUtilities::PolygonTypes &cell2DPolygonType,
-                                                      const Gedim::GeometryUtilities::PolygonTypes &cell2DUnalignedPolygonType,
-                                                      const Eigen::MatrixXd &cell2DVertices,
-                                                      const Gedim::RefinementUtilities::RefinePolygon_CheckResult &cell2DCheckToRefine) const;
+    Gedim::RefinementUtilities::CheckSplitType_Result SplitPolygon_CheckSplitType(
+        const Gedim::GeometryUtilities::PolygonTypes &cell2DPolygonType,
+        const Gedim::GeometryUtilities::PolygonTypes &cell2DUnalignedPolygonType,
+        const Eigen::MatrixXd &cell2DVertices,
+        const Gedim::RefinementUtilities::RefinePolygon_CheckResult &cell2DCheckToRefine) const;
 
     bool SplitPolygon_CheckIsNotToExtend(const Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit &cell1DSplitOne,
                                          const Gedim::RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit &cell1DSplitTwo) const;
@@ -313,56 +325,57 @@ class RefinementUtilities final
                                      Gedim::IMeshDAO &mesh) const;
 
     Gedim::RefinementUtilities::SplitPolygon_Result SplitPolygon_NoNewVertices(const unsigned int cell2DIndex,
-                                                   const unsigned int cell2DNumVertices,
-                                                   const unsigned int fromVertex,
-                                                   const unsigned int toVertex,
-                                                   const Eigen::Matrix3d &cell2DRotation,
-                                                   const Eigen::Vector3d &cell2DTranslation,
-                                                   Gedim::IMeshDAO &mesh) const;
+                                                                               const unsigned int cell2DNumVertices,
+                                                                               const unsigned int fromVertex,
+                                                                               const unsigned int toVertex,
+                                                                               const Eigen::Matrix3d &cell2DRotation,
+                                                                               const Eigen::Vector3d &cell2DTranslation,
+                                                                               Gedim::IMeshDAO &mesh) const;
     Gedim::RefinementUtilities::SplitPolygon_Result SplitPolygon_NewVertexFrom(const unsigned int cell2DIndex,
-                                                   const unsigned int cell2DNumVertices,
-                                                   const unsigned int fromEdge,
-                                                   const unsigned int toVertex,
-                                                   const Eigen::Matrix3d &cell2DRotation,
-                                                   const Eigen::Vector3d &cell2DTranslation,
-                                                   const unsigned int fromNewCell0DIndex,
-                                                   const std::vector<unsigned int> &fromSplitCell1DsIndex,
-                                                   const bool &fromEdgeDirection,
-                                                   Gedim::IMeshDAO &mesh) const;
+                                                                               const unsigned int cell2DNumVertices,
+                                                                               const unsigned int fromEdge,
+                                                                               const unsigned int toVertex,
+                                                                               const Eigen::Matrix3d &cell2DRotation,
+                                                                               const Eigen::Vector3d &cell2DTranslation,
+                                                                               const unsigned int fromNewCell0DIndex,
+                                                                               const std::vector<unsigned int> &fromSplitCell1DsIndex,
+                                                                               const bool &fromEdgeDirection,
+                                                                               Gedim::IMeshDAO &mesh) const;
     Gedim::RefinementUtilities::SplitPolygon_Result SplitPolygon_NewVertexTo(const unsigned int cell2DIndex,
-                                                 const unsigned int cell2DNumVertices,
-                                                 const unsigned int fromVertex,
-                                                 const unsigned int toEdge,
-                                                 const Eigen::Matrix3d &cell2DRotation,
-                                                 const Eigen::Vector3d &cell2DTranslation,
-                                                 const unsigned int toNewCell0DIndex,
-                                                 const std::vector<unsigned int> &toSplitCell1DsIndex,
-                                                 const bool &toEdgeDirection,
-                                                 Gedim::IMeshDAO &mesh) const;
+                                                                             const unsigned int cell2DNumVertices,
+                                                                             const unsigned int fromVertex,
+                                                                             const unsigned int toEdge,
+                                                                             const Eigen::Matrix3d &cell2DRotation,
+                                                                             const Eigen::Vector3d &cell2DTranslation,
+                                                                             const unsigned int toNewCell0DIndex,
+                                                                             const std::vector<unsigned int> &toSplitCell1DsIndex,
+                                                                             const bool &toEdgeDirection,
+                                                                             Gedim::IMeshDAO &mesh) const;
     Gedim::RefinementUtilities::SplitPolygon_Result SplitPolygon_NewVertices(const unsigned int cell2DIndex,
-                                                 const unsigned int cell2DNumVertices,
-                                                 const unsigned int fromEdge,
-                                                 const unsigned int toEdge,
-                                                 const Eigen::Matrix3d &cell2DRotation,
-                                                 const Eigen::Vector3d &cell2DTranslation,
-                                                 const unsigned int fromNewCell0DIndex,
-                                                 const unsigned int toNewCell0DIndex,
-                                                 const std::vector<unsigned int> &fromSplitCell1DsIndex,
-                                                 const std::vector<unsigned int> &toSplitCell1DsIndex,
-                                                 const bool &fromEdgeDirection,
-                                                 const bool &toEdgeDirection,
-                                                 Gedim::IMeshDAO &mesh) const;
+                                                                             const unsigned int cell2DNumVertices,
+                                                                             const unsigned int fromEdge,
+                                                                             const unsigned int toEdge,
+                                                                             const Eigen::Matrix3d &cell2DRotation,
+                                                                             const Eigen::Vector3d &cell2DTranslation,
+                                                                             const unsigned int fromNewCell0DIndex,
+                                                                             const unsigned int toNewCell0DIndex,
+                                                                             const std::vector<unsigned int> &fromSplitCell1DsIndex,
+                                                                             const std::vector<unsigned int> &toSplitCell1DsIndex,
+                                                                             const bool &fromEdgeDirection,
+                                                                             const bool &toEdgeDirection,
+                                                                             Gedim::IMeshDAO &mesh) const;
 
     Gedim::RefinementUtilities::TriangleMaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd &edgesLength) const;
 
-    Gedim::RefinementUtilities::PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd unalignedVertices, const Eigen::Vector3d &centroid) const;
-   Gedim::RefinementUtilities:: PolygonDirection ComputePolygonMaxInertiaDirection(const Eigen::MatrixXd &unalignedVertices,
-                                                       const Eigen::VectorXd &unalignedEdgesLength,
-                                                       const Eigen::Vector3d &centroid,
-                                                       const Eigen::Matrix3d &inertia) const;
+    Gedim::RefinementUtilities::PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd unalignedVertices,
+                                                                                    const Eigen::Vector3d &centroid) const;
+    Gedim::RefinementUtilities::PolygonDirection ComputePolygonMaxInertiaDirection(const Eigen::MatrixXd &unalignedVertices,
+                                                                                   const Eigen::VectorXd &unalignedEdgesLength,
+                                                                                   const Eigen::Vector3d &centroid,
+                                                                                   const Eigen::Matrix3d &inertia) const;
 
     Gedim::RefinementUtilities::TetrahedronMaxEdgeDirection ComputeTetrahedronMaxEdgeDirection(const Eigen::MatrixXi &polyhedronEdges,
-                                                                   const Eigen::VectorXd &edgesLength) const;
+                                                                                               const Eigen::VectorXd &edgesLength) const;
 
     /// \brief Refine Triangle Cell2D By Edge
     /// \param cell2DIndex the index of Cell2D from 0 to Cell2DTotalNumber()
@@ -371,31 +384,32 @@ class RefinementUtilities final
     /// \param oppositeVertexIndex the vertex opposite to edge local index
     /// \param mesh the mesh to be updated
     Gedim::RefinementUtilities::RefinePolygon_Result RefineTriangleCell_ByEdge(const unsigned int &cell2DIndex,
-                                                   const unsigned int &edgeIndex,
-                                                   const unsigned int &oppositeVertexIndex,
-                                                   const std::vector<bool> &cell2DEdgesDirection,
-                                                   const double &cell2DArea,
-                                                   const Eigen::Matrix3d &cell2DRotation,
-                                                   const Eigen::Vector3d &cell2DTranslation,
-                                                   const Eigen::VectorXd &cell2DEdgesLength,
-                                                   Gedim::IMeshDAO &mesh) const;
+                                                                               const unsigned int &edgeIndex,
+                                                                               const unsigned int &oppositeVertexIndex,
+                                                                               const std::vector<bool> &cell2DEdgesDirection,
+                                                                               const double &cell2DArea,
+                                                                               const Eigen::Matrix3d &cell2DRotation,
+                                                                               const Eigen::Vector3d &cell2DTranslation,
+                                                                               const Eigen::VectorXd &cell2DEdgesLength,
+                                                                               Gedim::IMeshDAO &mesh) const;
 
     /// \brief Refine Polyhedral Cell3D By Plane
-    Gedim::RefinementUtilities::RefinePolyhedron_Result RefinePolyhedronCell_ByPlane(const unsigned int &cell3DIndex,
-                                                         const Eigen::MatrixXd &cell3DVertices,
-                                                         const Eigen::MatrixXi &cell3DEdges,
-                                                         const Eigen::VectorXd &cell3DEdgesLength,
-                                                         const std::vector<Eigen::MatrixXi> &cell3DFaces,
-                                                         const std::vector<Eigen::MatrixXd> &cell3DFaces3DVertices,
-                                                         const std::vector<Eigen::MatrixXd> &cell3DFacesEdges3DTangent,
-                                                         const std::vector<Eigen::Vector3d> &cell3DFacesTranslation,
-                                                         const std::vector<Eigen::Matrix3d> &cell3DFacesRotationMatrix,
-                                                         const double &cell3DVolume,
-                                                         const Eigen::Vector3d &planeNormal,
-                                                         const Eigen::Vector3d &planeOrigin,
-                                                         const Eigen::Matrix3d &planeRotationMatrix,
-                                                         const Eigen::Vector3d &planeTranslation,
-                                                         Gedim::IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::RefinePolyhedron_Result RefinePolyhedronCell_ByPlane(
+        const unsigned int &cell3DIndex,
+        const Eigen::MatrixXd &cell3DVertices,
+        const Eigen::MatrixXi &cell3DEdges,
+        const Eigen::VectorXd &cell3DEdgesLength,
+        const std::vector<Eigen::MatrixXi> &cell3DFaces,
+        const std::vector<Eigen::MatrixXd> &cell3DFaces3DVertices,
+        const std::vector<Eigen::MatrixXd> &cell3DFacesEdges3DTangent,
+        const std::vector<Eigen::Vector3d> &cell3DFacesTranslation,
+        const std::vector<Eigen::Matrix3d> &cell3DFacesRotationMatrix,
+        const double &cell3DVolume,
+        const Eigen::Vector3d &planeNormal,
+        const Eigen::Vector3d &planeOrigin,
+        const Eigen::Matrix3d &planeRotationMatrix,
+        const Eigen::Vector3d &planeTranslation,
+        Gedim::IMeshDAO &mesh) const;
 
     Gedim::RefinementUtilities::RefinePolyhedron_UpdateNeighbour_Result RefinePolyhedronCell_UpdateFaceNeighbours(
         const unsigned int &cell3DIndex,
@@ -435,37 +449,40 @@ class RefinementUtilities final
                                              Gedim::IMeshDAO &mesh) const;
 
     /// \brief Refine Polygon Cell2D By Direction
-    Gedim::RefinementUtilities::RefinePolygon_CheckResult RefinePolygonCell_CheckRefinement(const unsigned int &cell2DIndex,
-                                                                const Eigen::MatrixXd &cell2DVertices,
-                                                                const Eigen::Vector3d &lineTangent,
-                                                                const Eigen::Vector3d &lineOrigin,
-                                                                const std::vector<double> &cell2DsQuality,
-                                                                const std::vector<unsigned int> &cell1DsAligned,
-                                                                const double &cell1DsQualityWeight,
-                                                                const double &cell1DsAlignedWeight,
-                                                                const double &cell2DArea,
-                                                                const std::vector<Eigen::VectorXd> &cell2DsEdgesLength,
-                                                                const std::vector<bool> &cell2DEdgesDirection,
-                                                                Gedim::IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::RefinePolygon_CheckResult RefinePolygonCell_CheckRefinement(
+        const unsigned int &cell2DIndex,
+        const Eigen::MatrixXd &cell2DVertices,
+        const Eigen::Vector3d &lineTangent,
+        const Eigen::Vector3d &lineOrigin,
+        const std::vector<double> &cell2DsQuality,
+        const std::vector<unsigned int> &cell1DsAligned,
+        const double &cell1DsQualityWeight,
+        const double &cell1DsAlignedWeight,
+        const double &cell2DArea,
+        const std::vector<Eigen::VectorXd> &cell2DsEdgesLength,
+        const std::vector<bool> &cell2DEdgesDirection,
+        Gedim::IMeshDAO &mesh) const;
 
     /// \brief Refine Polygon Cell2D By Direction
-    Gedim::RefinementUtilities::RefinePolygon_Result RefinePolygonCell_ByDirection(const unsigned int &cell2DIndex,
-                                                       const Gedim::GeometryUtilities::PolygonTypes &cell2DPolygonType,
-                                                       const Gedim::GeometryUtilities::PolygonTypes &cell2DUnalignedPolygonType,
-                                                       const Eigen::MatrixXd &cell2DVertices,
-                                                       const RefinePolygon_CheckResult &cell2DCheckToRefine,
-                                                       const Eigen::Matrix3d &cell2DRotation,
-                                                       const Eigen::Vector3d &cell2DTranslation,
-                                                       const std::vector<bool> &cell2DEdgesDirection,
-                                                       const bool &extendToNeighbours,
-                                                       Gedim::IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::RefinePolygon_Result RefinePolygonCell_ByDirection(
+        const unsigned int &cell2DIndex,
+        const Gedim::GeometryUtilities::PolygonTypes &cell2DPolygonType,
+        const Gedim::GeometryUtilities::PolygonTypes &cell2DUnalignedPolygonType,
+        const Eigen::MatrixXd &cell2DVertices,
+        const RefinePolygon_CheckResult &cell2DCheckToRefine,
+        const Eigen::Matrix3d &cell2DRotation,
+        const Eigen::Vector3d &cell2DTranslation,
+        const std::vector<bool> &cell2DEdgesDirection,
+        const bool &extendToNeighbours,
+        Gedim::IMeshDAO &mesh) const;
 
-    Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinePolygonCell_UpdateNeighbours(const unsigned int &cell2DIndex,
-                                                                            const unsigned int &cell1DIndex,
-                                                                            const unsigned int &newCell0DIndex,
-                                                                            const std::vector<unsigned int> &splitCell1DsIndex,
-                                                                            const std::vector<std::vector<bool>> &cell2DsEdgesDirection,
-                                                                            Gedim::IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinePolygonCell_UpdateNeighbours(
+        const unsigned int &cell2DIndex,
+        const unsigned int &cell1DIndex,
+        const unsigned int &newCell0DIndex,
+        const std::vector<unsigned int> &splitCell1DsIndex,
+        const std::vector<std::vector<bool>> &cell2DsEdgesDirection,
+        Gedim::IMeshDAO &mesh) const;
 
     /// Compute the geometric data for all the mesh
     Gedim::RefinementUtilities::Cell2Ds_GeometricData RefinePolygonCell_InitializeGeometricData(const IMeshDAO &mesh) const;

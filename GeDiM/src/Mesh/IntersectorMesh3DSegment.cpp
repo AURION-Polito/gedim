@@ -266,11 +266,11 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
         for (unsigned int c = 0; c < segment_cell3Ds.size(); c++)
         {
             const auto it_origin = std::find(origin_cell3Ds.begin(), origin_cell3Ds.end(), segment_cell3Ds[c]);
-            assert(it_origin != origin_cell3Ds.end());
+            Gedim::Output::Assert(it_origin != origin_cell3Ds.end());
             const unsigned int local_id_cell3D_origin = it_origin - origin_cell3Ds.begin();
 
             const auto it_end = std::find(end_cell3Ds.begin(), end_cell3Ds.end(), segment_cell3Ds[c]);
-            assert(it_end != end_cell3Ds.end());
+            Gedim::Output::Assert(it_end != end_cell3Ds.end());
             const unsigned int local_id_cell3D_end = it_end - end_cell3Ds.begin();
 
             if (mesh1D_points[s].Positions[local_id_cell3D_origin].Type ==
@@ -401,12 +401,12 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
                                               all_segment_cell2Ds.end(),
                                               std::back_inserter(segment_cell2Ds));
 
-                        assert(segment_cell2Ds.size() <= 1);
+                        Gedim::Output::Assert(segment_cell2Ds.size() <= 1);
 
                         if (segment_cell2Ds.size() == 1)
                         {
                             const unsigned int local_id_cell_2D = mesh3D.Cell3DFindFace(segment_cell3Ds[c], segment_cell2Ds[0]);
-                            assert(local_id_cell_2D != mesh3D.Cell3DNumberFaces(segment_cell3Ds[c]));
+                            Gedim::Output::Assert(local_id_cell_2D != mesh3D.Cell3DNumberFaces(segment_cell3Ds[c]));
                             Positions[c].Type = GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace;
                             Positions[c].BorderIndex = local_id_cell_2D;
                         }
@@ -445,12 +445,12 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
                                               std::back_inserter(segment_cell2Ds));
 
                         // Possibilmente falso nel caso di facce allineate: not considered case
-                        assert(segment_cell2Ds.size() <= 1);
+                        Gedim::Output::Assert(segment_cell2Ds.size() <= 1);
 
                         if (segment_cell2Ds.size() == 1)
                         {
                             const unsigned int local_id_cell_2D = mesh3D.Cell3DFindFace(segment_cell3Ds[c], segment_cell2Ds[0]);
-                            assert(local_id_cell_2D != mesh3D.Cell3DNumberFaces(segment_cell3Ds[c]));
+                            Gedim::Output::Assert(local_id_cell_2D != mesh3D.Cell3DNumberFaces(segment_cell3Ds[c]));
                             Positions[c].Type = GeometryUtilities::SegmentPolyhedronPositionResult::Types::BorderFace;
                             Positions[c].BorderIndex = local_id_cell_2D;
                         }
@@ -500,7 +500,7 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
                                       all_segment_cell1Ds.end(),
                                       std::back_inserter(segment_cell1Ds));
 
-                assert(segment_cell1Ds.size() <= 1);
+                Gedim::Output::Assert(segment_cell1Ds.size() <= 1);
 
                 if (segment_cell1Ds.size() == 0)
                 {
@@ -523,7 +523,7 @@ std::vector<IntersectorMesh3DSegment::IntersectionMesh::IntersectionMeshSegment>
                                           all_segment_cell2Ds.end(),
                                           std::back_inserter(segment_cell2Ds));
 
-                    assert(segment_cell2Ds.size() <= 1);
+                    Gedim::Output::Assert(segment_cell2Ds.size() <= 1);
 
                     if (segment_cell2Ds.size() == 1)
                     {

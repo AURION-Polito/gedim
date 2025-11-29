@@ -12,10 +12,7 @@
 #ifndef __TimeUtilities_H
 #define __TimeUtilities_H
 
-#include <iostream>
-#include <limits>
-#include <vector>
-
+#include "IOUtilities.hpp"
 #include "chrono"
 
 namespace Gedim
@@ -43,7 +40,7 @@ template <class DT = std::chrono::milliseconds, class ClockT = std::chrono::stea
     template <class duration_t = DT> duration_t duration() const
     {
         // Use gsl_Expects if your project supports it.
-        assert(_end != timep_t{} && "Timer must toc before reading the time");
+        Gedim::Output::Assert(_end != timep_t{} && "Timer must toc before reading the time");
         return std::chrono::duration_cast<duration_t>(_end - _start);
     }
 };

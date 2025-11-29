@@ -155,7 +155,7 @@ void MeshUtilities::CreateTrianglePlusHangingNodesMesh(const Eigen::Vector3d &re
     const unsigned int &numHangDiagonalUpper = numberOfAddedVerticesForEachRectangle.at(1);
     const unsigned int &numHangDiagonalLower = numberOfAddedVerticesForEachRectangle.at(2);
 
-    assert(numberOfAddedVerticesForEachRectangle.size() == 3);
+    Gedim::Output::Assert(numberOfAddedVerticesForEachRectangle.size() == 3);
 
     const unsigned int numCell0Ds =
         ceil(numHeightPoints * 0.5) * (ceil(numBasePoints * 0.5) + 1 + (floor(numBasePoints * 0.5) - 1) * (numHangBasis % 2 == 1)) +
