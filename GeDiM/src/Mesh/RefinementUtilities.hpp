@@ -289,7 +289,7 @@ class RefinementUtilities final
 
     Gedim::RefinementUtilities::SplitCell1D_Result SplitCell1D(const unsigned int &cell1DIndex,
                                                                const Eigen::Vector3d &newVertexCoordinate,
-                                                               IMeshDAO &mesh) const;
+                                                               Gedim::IMeshDAO &mesh) const;
     /// \brief update cell2DIndex with a new splitted edge cell1DIndex by newCell0DIndex
     unsigned int UpdateCell2D_NewVertex(const unsigned int cell2DIndex,
                                         const bool cell2DEdgeDirection,
@@ -298,7 +298,7 @@ class RefinementUtilities final
                                         const unsigned int newCell0DIndex,
                                         Gedim::IMeshDAO &mesh) const;
 
-    inline SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int &cell1DIndex, IMeshDAO &mesh) const
+    inline SplitCell1D_Result SplitCell1D_MiddlePoint(const unsigned int &cell1DIndex, Gedim::IMeshDAO &mesh) const
     {
         return SplitCell1D(cell1DIndex,
                            0.5 * (mesh.Cell0DCoordinates(mesh.Cell1DOrigin(cell1DIndex)) +
@@ -485,7 +485,7 @@ class RefinementUtilities final
         Gedim::IMeshDAO &mesh) const;
 
     /// Compute the geometric data for all the mesh
-    Gedim::RefinementUtilities::Cell2Ds_GeometricData RefinePolygonCell_InitializeGeometricData(const IMeshDAO &mesh) const;
+    Gedim::RefinementUtilities::Cell2Ds_GeometricData RefinePolygonCell_InitializeGeometricData(const Gedim::IMeshDAO &mesh) const;
 
     /// \brief Update the geometric data for only cell2Ds
     void RefinePolygonCell_UpdateGeometricData(const Gedim::IMeshDAO &mesh,
