@@ -25,7 +25,7 @@ RefinementUtilities::~RefinementUtilities()
 // ***************************************************************************
 RefinementUtilities::SplitCell1D_Result RefinementUtilities::SplitCell1D(const unsigned int &cell1DIndex,
                                                                          const Eigen::Vector3d &newVertexCoordinate,
-                                                                         IMeshDAO &mesh) const
+                                                                         Gedim::IMeshDAO &mesh) const
 {
     SplitCell1D_Result result;
 
@@ -52,7 +52,7 @@ unsigned int RefinementUtilities::UpdateCell2D_NewVertex(const unsigned int cell
                                                          const unsigned int cell2DEdgePosition,
                                                          const std::vector<unsigned int> &newCell1DsIndex,
                                                          const unsigned int newCell0DIndex,
-                                                         IMeshDAO &mesh) const
+                                                         Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numVertices = mesh.Cell2DNumberVertices(cell2DIndex);
     const std::vector<unsigned int> originalVertices = mesh.Cell2DVertices(cell2DIndex);

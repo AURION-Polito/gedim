@@ -62,7 +62,7 @@ RefinementUtilities::RefinePolyhedron_Result RefinementUtilities::RefinePolyhedr
     const Eigen::Vector3d &planeOrigin,
     const Eigen::Matrix3d &planeRotationMatrix,
     const Eigen::Vector3d &planeTranslation,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolyhedron_Result result;
 
@@ -431,7 +431,7 @@ RefinementUtilities::RefinePolyhedron_UpdateNeighbour_Result RefinementUtilities
     const std::vector<unsigned int> &splitCell2DsIndex,
     const std::vector<std::vector<std::vector<bool>>> &cell3DsFacesEdgesDirection,
     std::map<unsigned int, unsigned int> &updatedCell2Ds,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolyhedron_UpdateNeighbour_Result result;
 
@@ -543,7 +543,7 @@ RefinementUtilities::RefinePolyhedron_UpdateNeighbour_Result RefinementUtilities
     const unsigned int &newCell0DIndex,
     const std::vector<std::vector<std::vector<bool>>> &cell3DsFacesEdgesDirection,
     std::map<unsigned int, unsigned int> &updatedCell2Ds,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolyhedron_UpdateNeighbour_Result result;
 

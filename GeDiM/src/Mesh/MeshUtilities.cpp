@@ -122,7 +122,7 @@ void MeshUtilities::ExtractActiveMesh(Gedim::IMeshDAO &mesh, ExtractActiveMeshDa
     mesh.Compress();
 }
 // ***************************************************************************
-MeshUtilities::FilterMeshData MeshUtilities::FilterActiveMesh(const IMeshDAO &mesh) const
+MeshUtilities::FilterMeshData MeshUtilities::FilterActiveMesh(const Gedim::IMeshDAO &mesh) const
 {
     std::list<unsigned int> active_cell0Ds;
     std::list<unsigned int> active_cell1Ds;
@@ -159,13 +159,15 @@ MeshUtilities::FilterMeshData MeshUtilities::FilterActiveMesh(const IMeshDAO &me
             std::vector<unsigned int>(active_cell3Ds.begin(), active_cell3Ds.end())};
 }
 // ***************************************************************************
-void MeshUtilities::ImportOpenVolumeMesh(const std::string &ovmFilePath, IMeshDAO &mesh, std::vector<std::vector<bool>> &meshCell3DsFacesOrientation) const
+void MeshUtilities::ImportOpenVolumeMesh(const std::string &ovmFilePath,
+                                         Gedim::IMeshDAO &mesh,
+                                         std::vector<std::vector<bool>> &meshCell3DsFacesOrientation) const
 {
     OpenVolumeMeshInterface openVolumeMeshInterface;
     openVolumeMeshInterface.ImportMeshFromFile(ovmFilePath, mesh, meshCell3DsFacesOrientation);
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshToOpenVolume(const IMeshDAO &mesh,
+void MeshUtilities::ExportMeshToOpenVolume(const Gedim::IMeshDAO &mesh,
                                            const std::vector<std::vector<bool>> &meshCell3DsFacesOrientation,
                                            const std::string &ovmFilePath) const
 {
@@ -173,7 +175,7 @@ void MeshUtilities::ExportMeshToOpenVolume(const IMeshDAO &mesh,
     openVolumeMeshInterface.ExportMeshToFile(mesh, meshCell3DsFacesOrientation, ovmFilePath);
 }
 // ***************************************************************************
-void MeshUtilities::ImportVtkMesh3D(const std::string &vtkFilePath, IMeshDAO &mesh) const
+void MeshUtilities::ImportVtkMesh3D(const std::string &vtkFilePath, Gedim::IMeshDAO &mesh) const
 {
     VtkMeshInterface vtkMeshInterface;
     const auto vtk_mesh = vtkMeshInterface.ImportMesh3DFromFile(vtkFilePath);
@@ -190,19 +192,19 @@ void MeshUtilities::ImportVtkMesh3D(const std::string &vtkFilePath, IMeshDAO &me
         mesh.Cell3DSetMarker(v, vtk_mesh.Markers[3][v]);
 }
 // ***************************************************************************
-void MeshUtilities::ImportObjectFileFormat(const std::string &offFilePath, IMeshDAO &mesh) const
+void MeshUtilities::ImportObjectFileFormat(const std::string &offFilePath, Gedim::IMeshDAO &mesh) const
 {
     ObjectFileFormatInterface objectFileFormatInterface;
     objectFileFormatInterface.ImportMeshFromFile(offFilePath, *this, mesh);
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshToObjectFileFormat(const IMeshDAO &mesh, const std::string &offFilePath) const
+void MeshUtilities::ExportMeshToObjectFileFormat(const Gedim::IMeshDAO &mesh, const std::string &offFilePath) const
 {
     ObjectFileFormatInterface objectFileFormatInterface;
     objectFileFormatInterface.ExportMeshToFile(mesh, offFilePath);
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshToVTU(const IMeshDAO &mesh, const string &exportFolder, const string &fileName, const bool &separateFile) const
+void MeshUtilities::ExportMeshToVTU(const Gedim::IMeshDAO &mesh, const string &exportFolder, const string &fileName, const bool &separateFile) const
 {
     string cell0DsFolder = exportFolder;
     string cell1DsFolder = exportFolder;
@@ -383,7 +385,10 @@ void MeshUtilities::ExportMeshToVTU(const IMeshDAO &mesh, const string &exportFo
     }
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshToUCD(const IMeshDAO &mesh, const std::string &exportFolder, const std::string &fileName, const bool &separateFile) const
+void MeshUtilities::ExportMeshToUCD(const Gedim::IMeshDAO &mesh,
+                                    const std::string &exportFolder,
+                                    const std::string &fileName,
+                                    const bool &separateFile) const
 {
     string cell0DsFolder = exportFolder;
     string cell1DsFolder = exportFolder;
@@ -564,7 +569,7 @@ void MeshUtilities::ExportMeshToUCD(const IMeshDAO &mesh, const std::string &exp
     }
 }
 // ***************************************************************************
-void MeshUtilities::ExportCell2DToVTU(const IMeshDAO &,
+void MeshUtilities::ExportCell2DToVTU(const Gedim::IMeshDAO &,
                                       const unsigned int &cell2DIndex,
                                       const Eigen::MatrixXd &cell2DVertices,
                                       const vector<Eigen::Matrix3d> &cell2DTriangulations,
@@ -906,7 +911,7 @@ void MeshUtilities::ExportCell3DToVTU(const Gedim::GeometryUtilities &geometryUt
     }
 }
 // ***************************************************************************
-void MeshUtilities::ExportMeshToCsv(const IMeshDAO &mesh, const char &separator, const std::string &exportFolderPath) const
+void MeshUtilities::ExportMeshToCsv(const Gedim::IMeshDAO &mesh, const char &separator, const std::string &exportFolderPath) const
 {
     // export mesh
     Gedim::MeshFromCsvUtilities meshFromCsvUtilities;

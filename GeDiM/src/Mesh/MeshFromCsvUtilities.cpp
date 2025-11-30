@@ -30,7 +30,7 @@ MeshFromCsvUtilities::~MeshFromCsvUtilities()
 void MeshFromCsvUtilities::ConvertMesh2D(const std::vector<MeshFromCsvUtilities::Cell0D> &cell0Ds,
                                          const std::vector<MeshFromCsvUtilities::Cell1D> &cell1Ds,
                                          const std::vector<MeshFromCsvUtilities::Cell2D> &cell2Ds,
-                                         IMeshDAO &mesh) const
+                                         Gedim::IMeshDAO &mesh) const
 {
     unsigned int numCell0Ds = cell0Ds.size();
     unsigned int numCell1Ds = cell1Ds.size();
@@ -95,7 +95,7 @@ void MeshFromCsvUtilities::ConvertMesh2D(const std::vector<MeshFromCsvUtilities:
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0Ds(const std::vector<MeshFromCsvUtilities::Cell0D> cell0Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell0Ds(const std::vector<MeshFromCsvUtilities::Cell0D> cell0Ds, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell0Ds = cell0Ds.size();
 
@@ -113,7 +113,7 @@ void MeshFromCsvUtilities::ConvertCell0Ds(const std::vector<MeshFromCsvUtilities
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1Ds(const std::vector<MeshFromCsvUtilities::Cell1D> cell1Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell1Ds(const std::vector<MeshFromCsvUtilities::Cell1D> cell1Ds, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell1Ds = cell1Ds.size();
 
@@ -131,7 +131,7 @@ void MeshFromCsvUtilities::ConvertCell1Ds(const std::vector<MeshFromCsvUtilities
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2Ds(const std::vector<MeshFromCsvUtilities::Cell2D> cell2Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2Ds(const std::vector<MeshFromCsvUtilities::Cell2D> cell2Ds, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2Ds.size();
 
@@ -169,7 +169,7 @@ void MeshFromCsvUtilities::ConvertCell2Ds(const std::vector<MeshFromCsvUtilities
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell3Ds(const std::vector<MeshFromCsvUtilities::Cell3D> cell3Ds, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell3Ds(const std::vector<MeshFromCsvUtilities::Cell3D> cell3Ds, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell3Ds = cell3Ds.size();
 
@@ -216,7 +216,7 @@ void MeshFromCsvUtilities::ConvertCell3Ds(const std::vector<MeshFromCsvUtilities
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell0DNeighbours(const std::vector<MeshFromCsvUtilities::Cell0DNeighbours> cell0DNeighbours,
-                                                   IMeshDAO &mesh) const
+                                                   Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell0Ds = cell0DNeighbours.size();
 
@@ -271,7 +271,7 @@ void MeshFromCsvUtilities::ConvertCell0DNeighbours(const std::vector<MeshFromCsv
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell1DNeighbours(const std::vector<MeshFromCsvUtilities::Cell1DNeighbours> cell1DNeighbours,
-                                                   IMeshDAO &mesh) const
+                                                   Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell1Ds = cell1DNeighbours.size();
 
@@ -317,7 +317,7 @@ void MeshFromCsvUtilities::ConvertCell1DNeighbours(const std::vector<MeshFromCsv
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell2DNeighbours(const std::vector<MeshFromCsvUtilities::Cell2DNeighbours> cell2DNeighbours,
-                                                   IMeshDAO &mesh) const
+                                                   Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2DNeighbours.size();
 
@@ -349,7 +349,7 @@ void MeshFromCsvUtilities::ConvertCell2DNeighbours(const std::vector<MeshFromCsv
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const std::vector<Cell2DSubDivision> cell2DSubDivisions, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const std::vector<Cell2DSubDivision> cell2DSubDivisions, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCell2Ds = cell2DSubDivisions.size();
 
@@ -373,7 +373,7 @@ void MeshFromCsvUtilities::ConvertCell2DSubDivisions(const std::vector<Cell2DSub
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell0DDoubleProperties,
-                                                         IMeshDAO &mesh) const
+                                                         Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell0DDoubleProperties.size();
 
@@ -414,7 +414,7 @@ void MeshFromCsvUtilities::ConvertCell0DDoubleProperties(const std::vector<MeshF
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell1DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell1DDoubleProperties,
-                                                         IMeshDAO &mesh) const
+                                                         Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell1DDoubleProperties.size();
 
@@ -455,7 +455,7 @@ void MeshFromCsvUtilities::ConvertCell1DDoubleProperties(const std::vector<MeshF
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell2DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell2DDoubleProperties,
-                                                         IMeshDAO &mesh) const
+                                                         Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell2DDoubleProperties.size();
 
@@ -496,7 +496,7 @@ void MeshFromCsvUtilities::ConvertCell2DDoubleProperties(const std::vector<MeshF
 }
 // ***************************************************************************
 void MeshFromCsvUtilities::ConvertCell3DDoubleProperties(const std::vector<MeshFromCsvUtilities::CellDoubleProperty> cell3DDoubleProperties,
-                                                         IMeshDAO &mesh) const
+                                                         Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellProperties = cell3DDoubleProperties.size();
 
@@ -536,7 +536,7 @@ void MeshFromCsvUtilities::ConvertCell3DDoubleProperties(const std::vector<MeshF
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const std::vector<CellUpdatedCells> cell0DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const std::vector<CellUpdatedCells> cell0DUpdatedCells, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell0DUpdatedCells.size();
 
@@ -559,7 +559,7 @@ void MeshFromCsvUtilities::ConvertCell0DUpdatedCells(const std::vector<CellUpdat
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const std::vector<CellUpdatedCells> cell1DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const std::vector<CellUpdatedCells> cell1DUpdatedCells, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell1DUpdatedCells.size();
 
@@ -582,7 +582,7 @@ void MeshFromCsvUtilities::ConvertCell1DUpdatedCells(const std::vector<CellUpdat
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const std::vector<CellUpdatedCells> cell2DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const std::vector<CellUpdatedCells> cell2DUpdatedCells, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell2DUpdatedCells.size();
 
@@ -605,7 +605,7 @@ void MeshFromCsvUtilities::ConvertCell2DUpdatedCells(const std::vector<CellUpdat
     }
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const std::vector<CellUpdatedCells> cell3DUpdatedCells, IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ConvertCell3DUpdatedCells(const std::vector<CellUpdatedCells> cell3DUpdatedCells, Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numCellUpdatedCells = cell3DUpdatedCells.size();
 
@@ -1277,7 +1277,7 @@ std::vector<MeshFromCsvUtilities::Cell2DSubDivision> MeshFromCsvUtilities::Impor
     return cell2DSubDivision;
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0Ds(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell0Ds
     std::ofstream fileCell0Ds;
@@ -1308,7 +1308,7 @@ void MeshFromCsvUtilities::ExportCell0Ds(const std::string &filePath, const char
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1Ds(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell1Ds
     std::ofstream fileCell1Ds;
@@ -1337,7 +1337,7 @@ void MeshFromCsvUtilities::ExportCell1Ds(const std::string &filePath, const char
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2Ds(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2Ds
     std::ofstream fileCell2Ds;
@@ -1376,7 +1376,7 @@ void MeshFromCsvUtilities::ExportCell2Ds(const std::string &filePath, const char
 }
 
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell3Ds(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell3Ds(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell3Ds
     std::ofstream fileCell3Ds;
@@ -1425,7 +1425,7 @@ void MeshFromCsvUtilities::ExportCell0DProperties(const std::string &Folder,
                                                   const std::string &propertyFileName,
                                                   const std::string &propertyFileExtension,
                                                   const char &separator,
-                                                  const IMeshDAO &mesh) const
+                                                  const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell0D Properties
     std::ofstream fileCell0DProperties;
@@ -1455,7 +1455,7 @@ void MeshFromCsvUtilities::ExportCell0DProperties(const std::string &Folder,
 void MeshFromCsvUtilities::ExportCell0DProperty(const unsigned int &propertyIndex,
                                                 const std::string &filePath,
                                                 const char &separator,
-                                                const IMeshDAO &mesh) const
+                                                const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell0D Properties
     std::ofstream fileCell0DProperties;
@@ -1486,7 +1486,7 @@ void MeshFromCsvUtilities::ExportCell1DProperties(const std::string &Folder,
                                                   const std::string &propertyFileName,
                                                   const std::string &propertyFileExtension,
                                                   const char &separator,
-                                                  const IMeshDAO &mesh) const
+                                                  const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell1D Properties
     std::ofstream fileCell1DProperties;
@@ -1516,7 +1516,7 @@ void MeshFromCsvUtilities::ExportCell1DProperties(const std::string &Folder,
 void MeshFromCsvUtilities::ExportCell1DProperty(const unsigned int &propertyIndex,
                                                 const std::string &filePath,
                                                 const char &separator,
-                                                const IMeshDAO &mesh) const
+                                                const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell1D Properties
     std::ofstream fileCell1DProperties;
@@ -1547,7 +1547,7 @@ void MeshFromCsvUtilities::ExportCell2DProperties(const std::string &Folder,
                                                   const std::string &propertyFileName,
                                                   const std::string &propertyFileExtension,
                                                   const char &separator,
-                                                  const IMeshDAO &mesh) const
+                                                  const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2D Properties
     std::ofstream fileCell2DProperties;
@@ -1577,7 +1577,7 @@ void MeshFromCsvUtilities::ExportCell2DProperties(const std::string &Folder,
 void MeshFromCsvUtilities::ExportCell2DProperty(const unsigned int &propertyIndex,
                                                 const std::string &filePath,
                                                 const char &separator,
-                                                const IMeshDAO &mesh) const
+                                                const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2D Properties
     std::ofstream fileCell2DProperties;
@@ -1608,7 +1608,7 @@ void MeshFromCsvUtilities::ExportCell3DProperties(const std::string &Folder,
                                                   const std::string &propertyFileName,
                                                   const std::string &propertyFileExtension,
                                                   const char &separator,
-                                                  const IMeshDAO &mesh) const
+                                                  const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell3D Properties
     std::ofstream fileCell3DProperties;
@@ -1638,7 +1638,7 @@ void MeshFromCsvUtilities::ExportCell3DProperties(const std::string &Folder,
 void MeshFromCsvUtilities::ExportCell3DProperty(const unsigned int &propertyIndex,
                                                 const std::string &filePath,
                                                 const char &separator,
-                                                const IMeshDAO &mesh) const
+                                                const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell3D Properties
     std::ofstream fileCell3DProperties;
@@ -1665,7 +1665,7 @@ void MeshFromCsvUtilities::ExportCell3DProperty(const unsigned int &propertyInde
     fileCell3DProperties.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0DNeighbours(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell0D Neigbours
     std::ofstream fileCell0DNeighbours;
@@ -1706,7 +1706,7 @@ void MeshFromCsvUtilities::ExportCell0DNeighbours(const std::string &filePath, c
     fileCell0DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1DNeighbours(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell1D Neigbours
     std::ofstream fileCell1DNeighbours;
@@ -1740,7 +1740,7 @@ void MeshFromCsvUtilities::ExportCell1DNeighbours(const std::string &filePath, c
     fileCell1DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DNeighbours(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DNeighbours(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2D Neigbours
     std::ofstream fileCell2DNeighbours;
@@ -1767,7 +1767,7 @@ void MeshFromCsvUtilities::ExportCell2DNeighbours(const std::string &filePath, c
     fileCell2DNeighbours.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DSubDivisions(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DSubDivisions(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2D SubDivisions
     std::ofstream fileCell2DSubDivisions;
@@ -1794,7 +1794,7 @@ void MeshFromCsvUtilities::ExportCell2DSubDivisions(const std::string &filePath,
     fileCell2DSubDivisions.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell0D Updated Cells
     std::ofstream fileCell0DUpdatedCells;
@@ -1830,7 +1830,7 @@ void MeshFromCsvUtilities::ExportCell0DUpdatedCells(const std::string &filePath,
     fileCell0DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell1D Updated Cells
     std::ofstream fileCell1DUpdatedCells;
@@ -1866,7 +1866,7 @@ void MeshFromCsvUtilities::ExportCell1DUpdatedCells(const std::string &filePath,
     fileCell1DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell2D Updated Cells
     std::ofstream fileCell2DUpdatedCells;
@@ -1902,7 +1902,7 @@ void MeshFromCsvUtilities::ExportCell2DUpdatedCells(const std::string &filePath,
     fileCell2DUpdatedCells.close();
 }
 // ***************************************************************************
-void MeshFromCsvUtilities::ExportCell3DUpdatedCells(const std::string &filePath, const char &separator, const IMeshDAO &mesh) const
+void MeshFromCsvUtilities::ExportCell3DUpdatedCells(const std::string &filePath, const char &separator, const Gedim::IMeshDAO &mesh) const
 {
     /// Export Cell3D Updated Cells
     std::ofstream fileCell3DUpdatedCells;
