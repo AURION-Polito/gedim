@@ -18,8 +18,6 @@ namespace Gedim
   std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometryUtilities,
                                                      const Gedim::RefinementUtilities& refinementUtilities,
                                                      const std::vector<unsigned int>& cell2DsToRefineIndex,
-                                                     std::vector<Eigen::Matrix3d>& cell2DsRotationMatrix,
-                                                     std::vector<Eigen::Vector3d>& cell2DsTranslation,
                                                      Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
                                                      Gedim::IMeshDAO& networkMesh,
                                                      const unsigned int refinementStep) const
@@ -29,6 +27,11 @@ namespace Gedim
         unsigned int OriginalCell2DIndex = 0;
         unsigned int NewCell2DIndex = 0;
     };
+
+    std::vector<Eigen::Matrix3d> cell2DsRotationMatrix(networkMesh.Cell2DTotalNumber(),
+                                                       Eigen::Matrix3d::Identity());
+    std::vector<Eigen::Vector3d> cell2DsTranslation(networkMesh.Cell2DTotalNumber(),
+                                                    Eigen::Vector3d::Zero());
 
     std::list<unsigned int> toRefineCells(cell2DsToRefineIndex.begin(),
                                           cell2DsToRefineIndex.end());

@@ -522,8 +522,6 @@ class RefinementUtilities final
     std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometryUtilities,
                                                          const Gedim::RefinementUtilities& refinementUtilities,
                                                          const std::vector<unsigned int>& cell2DsToRefineIndex,
-                                                         std::vector<Eigen::Matrix3d>& cell2DsRotationMatrix,
-                                                         std::vector<Eigen::Vector3d>& cell2DsTranslation,
                                                          Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
                                                          Gedim::IMeshDAO& networkMesh,
                                                          const unsigned int refinementStep) const;
