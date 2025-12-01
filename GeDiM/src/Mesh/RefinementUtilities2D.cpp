@@ -700,6 +700,8 @@ void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const Gedim::IMe
                                                                 Cell2Ds_GeometricData &geometricData) const
 {
     geometricData.Cell1Ds.Aligned.resize(mesh.Cell1DTotalNumber(), 0);
+    geometricData.Cell1Ds.Status.resize(mesh.Cell1DTotalNumber(),
+                                        Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityChecked);
 
     geometricData.Cell2Ds.Vertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Area.resize(mesh.Cell2DTotalNumber());
@@ -716,6 +718,8 @@ void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const Gedim::IMe
     geometricData.Cell2Ds.CentroidEdgesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.CentroidVerticesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Status.resize(mesh.Cell2DTotalNumber(),
+                                        Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData::StatusTypes::Active);
 
     for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
     {
@@ -795,6 +799,7 @@ void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const Gedim::IMe
             {
                 const unsigned int originalCell1DIndex = mesh.Cell1DOriginalCell1D(cell1DIndex);
                 geometricData.Cell1Ds.Aligned[cell1DIndex] = geometricData.Cell1Ds.Aligned[originalCell1DIndex];
+                geometricData.Cell1Ds.Status[cell1DIndex] = geometricData.Cell1Ds.Status[originalCell1DIndex];
             }
             else if (geometricData.Cell1Ds.Aligned[cell1DIndex] == 0)
                 geometricData.Cell1Ds.Aligned[cell1DIndex] = ++(geometricData.Cell1Ds.MaxAligned);

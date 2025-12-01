@@ -252,6 +252,13 @@ class RefinementUtilities final
     {
         struct Cell2D_GeometricData final
         {
+            enum struct StatusTypes
+            {
+              Unknown = -1,
+              Active = 0,
+              Inactive = 1
+            };
+
             std::vector<std::vector<unsigned int>> UnalignedVerticesIndex = {};
             std::vector<Eigen::MatrixXd> Vertices = {};
             std::vector<double> Area = {};
@@ -267,12 +274,21 @@ class RefinementUtilities final
             std::vector<Eigen::VectorXd> CentroidVerticesDistance = {};
             std::vector<double> InRadius = {};
             std::vector<double> Quality = {};
+            std::vector<StatusTypes> Status;
         };
 
         struct Cell1D_GeometricData final
         {
+            enum struct StatusTypes
+            {
+              Unknown = -1,
+              QualityChecked = 0,
+              QualityToCheck = 1
+            };
+
             unsigned int MaxAligned = 0;
             std::vector<unsigned int> Aligned = {};
+            std::vector<StatusTypes> Status = {};
         };
 
         Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData Cell1Ds;
@@ -502,6 +518,15 @@ class RefinementUtilities final
         const std::vector<double> &cell2DsQuality,
         const std::vector<unsigned int> &cell1DsAligned,
         const Gedim::IMeshDAO &mesh) const;
+
+    std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometryUtilities,
+                                                         const Gedim::RefinementUtilities& refinementUtilities,
+                                                         const std::vector<unsigned int>& cell2DsToRefineIndex,
+                                                         std::vector<Eigen::Matrix3d>& cell2DsRotationMatrix,
+                                                         std::vector<Eigen::Vector3d>& cell2DsTranslation,
+                                                         Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
+                                                         Gedim::IMeshDAO& networkMesh,
+                                                         const unsigned int refinementStep) const;
 };
 
 } // namespace Gedim
