@@ -1071,10 +1071,12 @@ RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCel
 
     result.NewCell2DsIndex = {splitResult.NewCell2DsIndex};
 
+    result.ResultType = RefinePolygon_Result::ResultTypes::Successfull;
+
     return result;
 }
 // ***************************************************************************
-void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int &cell2DIndex,
+RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int &cell2DIndex,
                                                               const unsigned int &cell1DIndex,
                                                               const unsigned int &newCell0DIndex,
                                                               const std::vector<unsigned int> &splitCell1DsIndex,
@@ -1083,6 +1085,10 @@ void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int
                                                               const std::vector<Eigen::Vector3d> &cell2DsTranslation,
                                                               Gedim::IMeshDAO &mesh) const
 {
+  RefinePolygon_UpdateNeighbour_Result result;
+
+  std::list<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D> newCell2DsIndex;
+
     // update neighbour cells
     for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
     {
@@ -1102,7 +1108,7 @@ void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int
         const Eigen::Matrix3d &cell2DRotation = cell2DsRotation.at(n);
         const Eigen::Vector3d &cell2DTranslation = cell2DsTranslation.at(n);
 
-        SplitPolygon_NewVertexTo(neighCell2DIndex,
+        const auto split_result = SplitPolygon_NewVertexTo(neighCell2DIndex,
                                  3,
                                  neighOppositeVertexIndex,
                                  neighEdgeIndex,
@@ -1112,7 +1118,20 @@ void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int
                                  splitCell1DsIndex,
                                  !cell2DEdgeDirection,
                                  mesh);
+
+        for (const auto new_cell2D : split_result.NewCell2DsIndex)
+        {
+            RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D updatedCell2D;
+            updatedCell2D.OriginalCell2DIndex = neighCell2DIndex;
+            updatedCell2D.NewCell2DIndex = new_cell2D;
+            newCell2DsIndex.push_back(updatedCell2D);
+        }
     }
+
+    result.UpdatedCell2Ds =
+        std::vector<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D>(newCell2DsIndex.begin(), newCell2DsIndex.end());
+
+    return result;
 }
 // ***************************************************************************
 RefinementUtilities::RefinePolygon_CheckResult RefinementUtilities::RefinePolygonCell_CheckRefinement(
