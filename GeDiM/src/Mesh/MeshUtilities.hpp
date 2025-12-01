@@ -1106,11 +1106,11 @@ class MeshUtilities final
                                const Eigen::MatrixXd &polygonVertices,
                                const std::vector<unsigned int> &cell0DMarkers,
                                const std::vector<unsigned int> &cell1DMarkers,
-                               IMeshDAO &mesh) const;
+                               Gedim::IMeshDAO &mesh) const;
 
     void CheckMeshGeometricData2D(const CheckMeshGeometricData2DConfiguration &configuration,
                                   const GeometryUtilities &geometryUtilities,
-                                  const IMeshDAO &mesh,
+                                  const Gedim::IMeshDAO &mesh,
                                   const MeshGeometricData2D &geometricData) const;
 
     void CreatePolygonIntersectionMesh(const Gedim::GeometryUtilities &geometry_utilities,

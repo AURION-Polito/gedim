@@ -48,7 +48,8 @@ void MeshUtilities::FillMesh1D(const Gedim::GeometryUtilities &,
     }
 }
 // ***************************************************************************
-MeshUtilities::FilterMeshData MeshUtilities::FilterMesh1D(const std::vector<unsigned int> &cell1DsFilter, const IMeshDAO &mesh) const
+MeshUtilities::FilterMeshData MeshUtilities::FilterMesh1D(const std::vector<unsigned int> &cell1DsFilter,
+                                                          const Gedim::IMeshDAO &mesh) const
 {
     std::list<unsigned int> cell1Ds;
     std::set<unsigned int> cell0Ds;
@@ -79,8 +80,8 @@ MeshUtilities::FilterMeshData MeshUtilities::FilterMesh1D(const std::vector<unsi
 // ***************************************************************************
 MeshUtilities::ExtractMeshData MeshUtilities::ExtractMesh1D(const std::vector<unsigned int> &cell0DsFilter,
                                                             const std::vector<unsigned int> &cell1DsFilter,
-                                                            const IMeshDAO &originalMesh,
-                                                            IMeshDAO &mesh) const
+                                                            const Gedim::IMeshDAO &originalMesh,
+                                                            Gedim::IMeshDAO &mesh) const
 {
     ExtractMeshData result;
     result.NewCell0DToOldCell0D.resize(cell0DsFilter.size(), std::numeric_limits<unsigned int>::max());
@@ -214,7 +215,9 @@ void MeshUtilities::ExportMeshGeometricData1DToTxt(const MeshGeometricData1D &me
     file.close();
 }
 // ***************************************************************************
-std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DIndex, const Eigen::MatrixXi subCell1Ds, IMeshDAO &mesh) const
+std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DIndex,
+                                                     const Eigen::MatrixXi subCell1Ds,
+                                                     Gedim::IMeshDAO &mesh) const
 {
     const unsigned int numSubCells = subCell1Ds.cols();
     unsigned int newCell1DsStartingIndex = mesh.Cell1DAppend(numSubCells);
@@ -272,7 +275,7 @@ std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DI
 }
 // ***************************************************************************
 MeshUtilities::AgglomerateCell1DInformation MeshUtilities::AgglomerateCell1Ds(const std::unordered_set<unsigned int> &cell1DsIndex,
-                                                                              const IMeshDAO &mesh) const
+                                                                              const Gedim::IMeshDAO &mesh) const
 {
     AgglomerateCell1DInformation result;
 
@@ -341,7 +344,7 @@ MeshUtilities::AgglomerateCell1DInformation MeshUtilities::AgglomerateCell1Ds(co
 unsigned int MeshUtilities::AgglomerateCell1Ds(const std::unordered_set<unsigned int> &subCell1DsIndex,
                                                const std::vector<unsigned int> &agglomerateCell1DVertices,
                                                const std::vector<unsigned int> &subCell1DsRemovedCell0Ds,
-                                               IMeshDAO &mesh,
+                                               Gedim::IMeshDAO &mesh,
                                                std::vector<std::vector<unsigned int>> &meshCell1DsOriginalCell1Ds,
                                                const bool mantain_neigh2D_order) const
 
