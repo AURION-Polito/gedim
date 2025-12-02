@@ -261,10 +261,8 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
         std::reverse(cell2DsToRefineIndex.begin(), cell2DsToRefineIndex.end());
         cell2DsToRefineIndex.resize(0.5 * numActiveCell2Ds);
 
-        const auto cell2Ds_refined = refinementUtilities.refine_mesh_2D_triangles(geometryUtilities,
-                                                                                  cell2DsToRefineIndex,
-                                                                                  refine_mesh_geometric_data,
-                                                                                  meshDAO);
+        const auto cell2Ds_refined =
+            refinementUtilities.refine_mesh_2D_triangles(geometryUtilities, cell2DsToRefineIndex, refine_mesh_geometric_data, meshDAO);
 
         meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
     }
@@ -277,14 +275,10 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
 
-    const auto meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
-                                                                         meshDAO);
+    const auto meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
 
     Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration check_mesh_geometry;
-    meshUtilities.CheckMeshGeometricData2D(check_mesh_geometry,
-                                           geometryUtilities,
-                                           meshDAO,
-                                           meshGeometricData);
+    meshUtilities.CheckMeshGeometricData2D(check_mesh_geometry, geometryUtilities, meshDAO, meshGeometricData);
 }
 
 TEST(TestRefinementUtilities, TestRefinePolygons_NoNewVertices)

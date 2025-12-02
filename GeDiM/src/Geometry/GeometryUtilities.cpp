@@ -210,21 +210,20 @@ Eigen::Vector3d GeometryUtilities::PlaneReflectionTranslation(const Eigen::Vecto
     return (2.0 / plane_normal.squaredNorm()) * plane_normal.dot(plane_origin) * plane_normal;
 }
 // ***************************************************************************
-MatrixXd GeometryUtilities::PlaneToPolygon(const Eigen::Vector3d& plane_normal, const Eigen::Vector3d& plane_origin) const
+MatrixXd GeometryUtilities::PlaneToPolygon(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &plane_origin) const
 {
-  Eigen::Vector3d support_array = IsValueLower(plane_normal.z(), 0.9, Tolerance1D()) ?
-                            Eigen::Vector3d(0.0, 0.0, 1.0) :
-                            Eigen::Vector3d(0.0, 1.0, 0.0);
+    Eigen::Vector3d support_array = IsValueLower(plane_normal.z(), 0.9, Tolerance1D()) ? Eigen::Vector3d(0.0, 0.0, 1.0)
+                                                                                       : Eigen::Vector3d(0.0, 1.0, 0.0);
 
-  const Eigen::Vector3d t_1 = plane_normal.cross(support_array).normalized();
-  const Eigen::Vector3d t_2 = plane_normal.cross(t_1).normalized();
+    const Eigen::Vector3d t_1 = plane_normal.cross(support_array).normalized();
+    const Eigen::Vector3d t_2 = plane_normal.cross(t_1).normalized();
 
-  Eigen::Matrix3d triangle;
-  triangle.col(0) = plane_origin;
-  triangle.col(1) = plane_origin + t_1;
-  triangle.col(2) = plane_origin + t_2;
+    Eigen::Matrix3d triangle;
+    triangle.col(0) = plane_origin;
+    triangle.col(1) = plane_origin + t_1;
+    triangle.col(2) = plane_origin + t_2;
 
-  return triangle;
+    return triangle;
 }
 // ***************************************************************************
 vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd &points, const bool &includeCollinear) const

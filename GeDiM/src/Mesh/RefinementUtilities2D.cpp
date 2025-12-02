@@ -1081,18 +1081,19 @@ RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCel
     return result;
 }
 // ***************************************************************************
-RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int &cell2DIndex,
-                                                              const unsigned int &cell1DIndex,
-                                                              const unsigned int &newCell0DIndex,
-                                                              const std::vector<unsigned int> &splitCell1DsIndex,
-                                                              const bool &cell2DEdgeDirection,
-                                                              const std::vector<Eigen::Matrix3d> &cell2DsRotation,
-                                                              const std::vector<Eigen::Vector3d> &cell2DsTranslation,
-                                                              Gedim::IMeshDAO &mesh) const
+RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::RefineTriangleCell_UpdateNeighbours(
+    const unsigned int &cell2DIndex,
+    const unsigned int &cell1DIndex,
+    const unsigned int &newCell0DIndex,
+    const std::vector<unsigned int> &splitCell1DsIndex,
+    const bool &cell2DEdgeDirection,
+    const std::vector<Eigen::Matrix3d> &cell2DsRotation,
+    const std::vector<Eigen::Vector3d> &cell2DsTranslation,
+    Gedim::IMeshDAO &mesh) const
 {
-  RefinePolygon_UpdateNeighbour_Result result;
+    RefinePolygon_UpdateNeighbour_Result result;
 
-  std::list<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D> newCell2DsIndex;
+    std::list<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D> newCell2DsIndex;
 
     // update neighbour cells
     for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
@@ -1110,23 +1111,20 @@ RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::R
         const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex, cell1DIndex);
         const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
-        const Eigen::Matrix3d cell2DRotation = cell2DsRotation.empty() ?
-                                                  Eigen::Matrix3d::Identity() :
-                                                  cell2DsRotation.at(n);
-        const Eigen::Vector3d cell2DTranslation = cell2DsTranslation.empty() ?
-                                                    Eigen::Vector3d::Zero() :
-                                                    cell2DsTranslation.at(n);
+        const Eigen::Matrix3d cell2DRotation = cell2DsRotation.empty() ? Eigen::Matrix3d::Identity() : cell2DsRotation.at(n);
+        const Eigen::Vector3d cell2DTranslation = cell2DsTranslation.empty() ? Eigen::Vector3d::Zero()
+                                                                             : cell2DsTranslation.at(n);
 
         const auto split_result = SplitPolygon_NewVertexTo(neighCell2DIndex,
-                                 3,
-                                 neighOppositeVertexIndex,
-                                 neighEdgeIndex,
-                                 cell2DRotation,
-                                 cell2DTranslation,
-                                 newCell0DIndex,
-                                 splitCell1DsIndex,
-                                 !cell2DEdgeDirection,
-                                 mesh);
+                                                           3,
+                                                           neighOppositeVertexIndex,
+                                                           neighEdgeIndex,
+                                                           cell2DRotation,
+                                                           cell2DTranslation,
+                                                           newCell0DIndex,
+                                                           splitCell1DsIndex,
+                                                           !cell2DEdgeDirection,
+                                                           mesh);
 
         for (const auto new_cell2D : split_result.NewCell2DsIndex)
         {

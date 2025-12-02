@@ -254,9 +254,9 @@ class RefinementUtilities final
         {
             enum struct StatusTypes
             {
-              Unknown = -1,
-              Active = 0,
-              Inactive = 1
+                Unknown = -1,
+                Active = 0,
+                Inactive = 1
             };
 
             std::vector<std::vector<unsigned int>> UnalignedVerticesIndex = {};
@@ -281,9 +281,9 @@ class RefinementUtilities final
         {
             enum struct StatusTypes
             {
-              Unknown = -1,
-              QualityChecked = 0,
-              QualityToCheck = 1
+                Unknown = -1,
+                QualityChecked = 0,
+                QualityToCheck = 1
             };
 
             unsigned int MaxAligned = 0;
@@ -455,14 +455,15 @@ class RefinementUtilities final
     /// \param splitCell1DsIndex the indices of the new Cell1Ds created by the splitting process, from 0 to
     /// Cell1DTotalNumber() \param cell2DEdgeDirection the direction of the Cell1D splitted in the Cell2D \param mesh
     /// the mesh to be updated
-    RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefineTriangleCell_UpdateNeighbours(const unsigned int &cell2DIndex,
-                                             const unsigned int &cell1DIndex,
-                                             const unsigned int &newCell0DIndex,
-                                             const std::vector<unsigned int> &splitCell1DsIndex,
-                                             const bool &cell2DEdgeDirection,
-                                             const std::vector<Eigen::Matrix3d> &cell2DsRotation,
-                                             const std::vector<Eigen::Vector3d> &cell2DsTranslation,
-                                             Gedim::IMeshDAO &mesh) const;
+    RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefineTriangleCell_UpdateNeighbours(
+        const unsigned int &cell2DIndex,
+        const unsigned int &cell1DIndex,
+        const unsigned int &newCell0DIndex,
+        const std::vector<unsigned int> &splitCell1DsIndex,
+        const bool &cell2DEdgeDirection,
+        const std::vector<Eigen::Matrix3d> &cell2DsRotation,
+        const std::vector<Eigen::Vector3d> &cell2DsTranslation,
+        Gedim::IMeshDAO &mesh) const;
 
     /// \brief Refine Polygon Cell2D By Direction
     Gedim::RefinementUtilities::RefinePolygon_CheckResult RefinePolygonCell_CheckRefinement(
@@ -519,10 +520,10 @@ class RefinementUtilities final
         const std::vector<unsigned int> &cell1DsAligned,
         const Gedim::IMeshDAO &mesh) const;
 
-    std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometry_utilities,
-                                                         const std::vector<unsigned int>& cell2DsToRefineIndex,
-                                                         Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
-                                                         Gedim::IMeshDAO& mesh) const;
+    std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities &geometry_utilities,
+                                                       const std::vector<unsigned int> &cell2DsToRefineIndex,
+                                                       Gedim::RefinementUtilities::Cell2Ds_GeometricData &meshGeometricData,
+                                                       Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim
