@@ -12,7 +12,6 @@
 #include "PlatonicSolid.hpp"
 
 #include "GeometryUtilities.hpp"
-#include "IMeshDAO.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include <numeric>
@@ -73,7 +72,7 @@ Gedim::GeometryUtilities::Polyhedron PlatonicSolid::dual_polyhedron(const Gedim:
                                       neighbourhood.end(),
                                       back_inserter(tmp));
 
-                assert(tmp.size() <= 1);
+                Gedim::Output::Assert(tmp.size() <= 1);
 
                 if (tmp.size() == 1)
                 {
@@ -173,7 +172,7 @@ void PlatonicSolid::first_class_geodesic_polyhedron(const GeometryUtilities::Pol
 
     for (unsigned int f = 0; f < numCell2Ds; f++)
     {
-        assert(mesh.Cell2DNumberVertices(f) == 3);
+        Gedim::Output::Assert(mesh.Cell2DNumberVertices(f) == 3);
 
         const unsigned int second_vertex = mesh.Cell2DVertex(f, 1);
 

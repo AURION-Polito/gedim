@@ -27,7 +27,7 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
                                const Eigen::MatrixXi &cell1Ds,
                                const std::vector<Eigen::MatrixXi> &cell2Ds,
                                const std::vector<Mesh3DPolyhedron> &cell3Ds,
-                               IMeshDAO &mesh) const
+                               Gedim::IMeshDAO &mesh) const
 {
     mesh.InitializeDimension(3);
 
@@ -123,7 +123,7 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
 // ***************************************************************************
 void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                                 const GeometryUtilities &geometryUtilities,
-                                const IMeshDAO &mesh) const
+                                const Gedim::IMeshDAO &mesh) const
 {
     Output::Assert(mesh.Dimension() == 3);
 
@@ -510,7 +510,7 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
 MeshUtilities::ComputeMesh3DAlignedCell1DsResult MeshUtilities::ComputeMesh3DAlignedCell1Ds(
     const std::vector<std::vector<std::vector<unsigned int>>> &cell3DsAlignedEdgesVertices,
     const std::vector<std::vector<std::vector<unsigned int>>> &cell3DsAlignedEdgesEdges,
-    const IMeshDAO &mesh) const
+    const Gedim::IMeshDAO &mesh) const
 {
     ComputeMesh3DAlignedCell1DsResult result;
 
@@ -639,7 +639,7 @@ MeshUtilities::ComputeMesh3DAlignedCell1DsResult MeshUtilities::ComputeMesh3DAli
 // ***************************************************************************
 void MeshUtilities::CheckMeshGeometricData3D(const CheckMeshGeometricData3DConfiguration &configuration,
                                              const GeometryUtilities &geometryUtilities,
-                                             const IMeshDAO &mesh,
+                                             const Gedim::IMeshDAO &mesh,
                                              const MeshGeometricData3D &geometricData) const
 {
     if (configuration.Cell1D_CheckMeasure)
@@ -858,7 +858,7 @@ void MeshUtilities::Mesh3DFromPolyhedron(const Eigen::MatrixXd &polyhedronVertic
                                          const std::vector<unsigned int> vertexMarkers,
                                          const std::vector<unsigned int> edgeMarkers,
                                          const std::vector<unsigned int> faceMarkers,
-                                         IMeshDAO &mesh) const
+                                         Gedim::IMeshDAO &mesh) const
 {
     mesh.InitializeDimension(3);
 
@@ -940,7 +940,7 @@ void MeshUtilities::SetMeshMarkersOnPlane(const GeometryUtilities &geometryUtili
                                           const Eigen::Vector3d &planeNormal,
                                           const Eigen::Vector3d &planeOrigin,
                                           const unsigned int &marker,
-                                          IMeshDAO &mesh) const
+                                          Gedim::IMeshDAO &mesh) const
 {
     // set cell0Ds markers
     std::vector<bool> vertices_on_plane(mesh.Cell0DTotalNumber(), false);
@@ -990,7 +990,7 @@ void MeshUtilities::SetMeshMarkersByFaceNormal(const GeometryUtilities &geometry
                                                const Eigen::Vector3d &normal,
                                                const std::vector<Eigen::Vector3d> &cell2Ds_normal,
                                                const unsigned int &marker,
-                                               IMeshDAO &mesh) const
+                                               Gedim::IMeshDAO &mesh) const
 {
     const double normal_norm = normal.norm();
 
@@ -1037,7 +1037,7 @@ void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUti
                                             const Eigen::Vector3d &polygon_translation,
                                             const Eigen::Matrix3d &polygon_rotation_matrix,
                                             const unsigned int &marker,
-                                            IMeshDAO &mesh) const
+                                            Gedim::IMeshDAO &mesh) const
 {
     // set cell0Ds markers
     std::vector<bool> vertices_on_polygon(mesh.Cell0DTotalNumber(), false);
@@ -1101,7 +1101,7 @@ void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUti
                                             const std::vector<Eigen::Vector3d> &cell1Ds_centroid,
                                             const std::vector<Eigen::Vector3d> &cell2Ds_centroid,
                                             const unsigned int &marker,
-                                            IMeshDAO &mesh) const
+                                            Gedim::IMeshDAO &mesh) const
 {
     // set cell0Ds markers
     std::vector<bool> vertices_on_polygon(mesh.Cell0DTotalNumber(), false);
@@ -1173,7 +1173,7 @@ void MeshUtilities::SetMeshMarkersOnPolygon(const GeometryUtilities &geometryUti
 }
 // ***************************************************************************
 MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const GeometryUtilities &geometryUtilities,
-                                                                          const IMeshDAO &convexMesh) const
+                                                                          const Gedim::IMeshDAO &convexMesh) const
 {
     MeshGeometricData3D result;
 
@@ -1416,8 +1416,8 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 }
 // ***************************************************************************
 MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const GeometryUtilities &geometryUtilities,
-                                                                          const IMeshDAO &mesh,
-                                                                          const IMeshDAO &convexMesh,
+                                                                          const Gedim::IMeshDAO &mesh,
+                                                                          const Gedim::IMeshDAO &convexMesh,
                                                                           const std::vector<std::vector<unsigned int>> &meshCell3DToConvexCell3DIndices) const
 {
     MeshGeometricData3D result;
@@ -1794,7 +1794,7 @@ MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(const 
 // ***************************************************************************
 MeshUtilities::MeshGeometricData3D MeshUtilities::FillMesh3DGeometricData(
     const GeometryUtilities &geometryUtilities,
-    const IMeshDAO &mesh,
+    const Gedim::IMeshDAO &mesh,
     const std::vector<std::vector<Eigen::MatrixXd>> &cell3Ds_tetra_vertices,
     const std::vector<std::vector<Eigen::Matrix3d>> &cell2Ds_triangles_3D_vertices) const
 {
@@ -2267,8 +2267,8 @@ void MeshUtilities::ExportMeshGeometricData3DToTxt(const MeshGeometricData3D &me
 MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConcaveCell3DFacesConvexCell2D(
     const GeometryUtilities &geometryUtilities,
     const unsigned int &concaveCell3DIndex,
-    const IMeshDAO &mesh,
-    const IMeshDAO &convexMesh,
+    const Gedim::IMeshDAO &mesh,
+    const Gedim::IMeshDAO &convexMesh,
     const std::vector<unsigned int> &convexCell3DIndices,
     const std::vector<Eigen::MatrixXd> &concaveCell3DFaces3DVertices,
     const std::vector<Eigen::MatrixXd> &concaveCell3DFaces2DVertices,
@@ -2376,7 +2376,7 @@ MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConca
 MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConcaveCell3DFacesConvexCell2D(
     const GeometryUtilities &geometryUtilities,
     const unsigned int &concaveCell3DIndex,
-    const IMeshDAO &mesh,
+    const Gedim::IMeshDAO &mesh,
     const std::vector<Eigen::MatrixXd> &concaveCell3DTetra,
     const std::vector<std::vector<Eigen::Matrix3d>> &concaveCell3D_faces_2D_triangles,
     const std::vector<Eigen::MatrixXd> &concaveCell3DFaces3DVertices,
@@ -2483,7 +2483,7 @@ MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult MeshUtilities::FindConca
 }
 // ***************************************************************************
 MeshUtilities::FindPointMeshPositionResult MeshUtilities::FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult &find_point_cell3D_result,
-                                                                                const IMeshDAO &mesh) const
+                                                                                const Gedim::IMeshDAO &mesh) const
 {
     if (find_point_cell3D_result.Cell3Ds_found.empty())
         return {};
@@ -2523,7 +2523,7 @@ MeshUtilities::FindPointMeshPositionResult MeshUtilities::FindPointMeshPosition(
 MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(
     const GeometryUtilities &geometryUtilities,
     const Eigen::Vector3d &point,
-    const IMeshDAO &mesh,
+    const Gedim::IMeshDAO &mesh,
     const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
     const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
     const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
@@ -2581,7 +2581,7 @@ MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(
 MeshUtilities::FindPointCell3DResult MeshUtilities::FindPointCell3D(
     const GeometryUtilities &geometryUtilities,
     const Eigen::Vector3d &point,
-    const IMeshDAO &mesh,
+    const Gedim::IMeshDAO &mesh,
     const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
     const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
     const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
@@ -2698,7 +2698,7 @@ void MeshUtilities::ComputeCell2DCell3DNeighbours(IMeshDAO &mesh) const
     }
 }
 // ***************************************************************************
-GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const IMeshDAO &mesh, const unsigned int &cell3DIndex) const
+GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const Gedim::IMeshDAO &mesh, const unsigned int &cell3DIndex) const
 {
     GeometryUtilities::Polyhedron polyhedron;
 
@@ -2739,7 +2739,7 @@ GeometryUtilities::Polyhedron MeshUtilities::MeshCell3DToPolyhedron(const IMeshD
     return polyhedron;
 }
 // ***************************************************************************
-MeshUtilities::VTPPolyhedron MeshUtilities::MeshCell3DToVTPPolyhedron(const IMeshDAO &mesh, const unsigned int &cell3DIndex) const
+MeshUtilities::VTPPolyhedron MeshUtilities::MeshCell3DToVTPPolyhedron(const Gedim::IMeshDAO &mesh, const unsigned int &cell3DIndex) const
 {
     VTPPolyhedron vtpPolyhedron;
 
@@ -2772,7 +2772,7 @@ std::vector<unsigned int> MeshUtilities::SplitCell3D(const unsigned int &cell3DI
                                                      const std::vector<std::vector<unsigned int>> &subCell3DsVertices,
                                                      const std::vector<std::vector<unsigned int>> &subCell3DsEdges,
                                                      const std::vector<std::vector<unsigned int>> &subCell3DsFaces,
-                                                     IMeshDAO &mesh) const
+                                                     Gedim::IMeshDAO &mesh) const
 {
     Gedim::Output::Assert(subCell3DsVertices.size() == subCell3DsEdges.size() &&
                           subCell3DsVertices.size() == subCell3DsFaces.size());
@@ -2831,7 +2831,7 @@ std::vector<unsigned int> MeshUtilities::SplitCell3D(const unsigned int &cell3DI
 }
 // ***************************************************************************
 MeshUtilities::AgglomerateCell3DInformation MeshUtilities::AgglomerateCell3Ds(const std::unordered_set<unsigned int> &cell3DsIndex,
-                                                                              const IMeshDAO &mesh) const
+                                                                              const Gedim::IMeshDAO &mesh) const
 {
     AgglomerateCell3DInformation result;
 
@@ -3002,7 +3002,7 @@ unsigned int MeshUtilities::AgglomerateCell3Ds(const std::unordered_set<unsigned
                                                const std::vector<unsigned int> &subCell3DsRemovedCell0Ds,
                                                const std::vector<unsigned int> &subCell3DsRemovedCell1Ds,
                                                const std::vector<unsigned int> &subCell3DsRemovedCell2Ds,
-                                               IMeshDAO &mesh,
+                                               Gedim::IMeshDAO &mesh,
                                                std::vector<std::vector<unsigned int>> &meshCell3DsOriginalCell3Ds) const
 {
     if (subCell3DsIndex.size() == 0)
@@ -3113,7 +3113,8 @@ unsigned int MeshUtilities::AgglomerateCell3Ds(const std::unordered_set<unsigned
     return agglomeratedCell3DIndex;
 }
 // ***************************************************************************
-MeshUtilities::FilterMeshData MeshUtilities::FilterMesh3D(const std::vector<unsigned int> &cell3DsFilter, const IMeshDAO &mesh) const
+MeshUtilities::FilterMeshData MeshUtilities::FilterMesh3D(const std::vector<unsigned int> &cell3DsFilter,
+                                                          const Gedim::IMeshDAO &mesh) const
 {
     std::list<unsigned int> cell3Ds;
     std::set<unsigned int> cell0Ds, cell1Ds, cell2Ds;
@@ -3164,8 +3165,8 @@ MeshUtilities::ExtractMeshData MeshUtilities::ExtractMesh3D(const std::vector<un
                                                             const std::vector<unsigned int> &cell1DsFilter,
                                                             const std::vector<unsigned int> &cell2DsFilter,
                                                             const std::vector<unsigned int> &cell3DsFilter,
-                                                            const IMeshDAO &originalMesh,
-                                                            IMeshDAO &mesh) const
+                                                            const Gedim::IMeshDAO &originalMesh,
+                                                            Gedim::IMeshDAO &mesh) const
 {
     ExtractMeshData result;
     result.NewCell0DToOldCell0D.resize(cell0DsFilter.size(), std::numeric_limits<unsigned int>::max());
@@ -3277,7 +3278,8 @@ MeshUtilities::ExtractMeshData MeshUtilities::ExtractMesh3D(const std::vector<un
     return result;
 }
 // ***************************************************************************
-void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>> &faces_triangulation, IMeshDAO &mesh) const
+void MeshUtilities::MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>> &faces_triangulation,
+                                            Gedim::IMeshDAO &mesh) const
 {
     const unsigned int num_faces = mesh.Cell2DTotalNumber();
     std::vector<std::vector<unsigned int>> cell2Ds_new_faces(num_faces);
@@ -3413,7 +3415,7 @@ void MeshUtilities::ChangePolyhedronMeshMarkers(const GeometryUtilities &geometr
                                                 const std::vector<unsigned int> &polyhedron_faces_marker,
                                                 const std::vector<Eigen::Vector3d> &cell1Ds_centroid,
                                                 const std::vector<Eigen::Vector3d> &cell2Ds_centroid,
-                                                IMeshDAO &mesh) const
+                                                Gedim::IMeshDAO &mesh) const
 {
     const unsigned int num_polyhedron_edges = polyhedron_edges.cols();
     const unsigned int num_polyhedron_faces = polyhedron_faces.size();

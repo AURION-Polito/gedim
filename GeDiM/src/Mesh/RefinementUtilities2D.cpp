@@ -177,7 +177,7 @@ bool RefinementUtilities::SplitPolygon_CheckIsToSplit_Relaxed(const RefinePolygo
 bool RefinementUtilities::SplitPolygon_IsAreaPositive(const Eigen::VectorXi &newCell2D_Indices,
                                                       const Eigen::Matrix3d &cell2DRotation,
                                                       const Eigen::Vector3d &cell2DTranslation,
-                                                      IMeshDAO &mesh) const
+                                                      Gedim::IMeshDAO &mesh) const
 {
     double area_2D = 0.0;
 
@@ -208,7 +208,7 @@ RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NoNew
                                                                                          const unsigned int toVertex,
                                                                                          const Eigen::Matrix3d &cell2DRotation,
                                                                                          const Eigen::Vector3d &cell2DTranslation,
-                                                                                         IMeshDAO &mesh) const
+                                                                                         Gedim::IMeshDAO &mesh) const
 {
     SplitPolygon_Result result;
 
@@ -316,7 +316,7 @@ RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVe
                                                                                          const unsigned int fromNewCell0DIndex,
                                                                                          const std::vector<unsigned int> &fromSplitCell1DsIndex,
                                                                                          const bool &fromEdgeDirection,
-                                                                                         IMeshDAO &mesh) const
+                                                                                         Gedim::IMeshDAO &mesh) const
 {
     SplitPolygon_Result result;
 
@@ -434,7 +434,7 @@ RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVe
                                                                                        const unsigned int toNewCell0DIndex,
                                                                                        const std::vector<unsigned int> &toSplitCell1DsIndex,
                                                                                        const bool &toEdgeDirection,
-                                                                                       IMeshDAO &mesh) const
+                                                                                       Gedim::IMeshDAO &mesh) const
 {
     SplitPolygon_Result result;
 
@@ -552,7 +552,7 @@ RefinementUtilities::SplitPolygon_Result RefinementUtilities::SplitPolygon_NewVe
                                                                                        const std::vector<unsigned int> &toSplitCell1DsIndex,
                                                                                        const bool &fromEdgeDirection,
                                                                                        const bool &toEdgeDirection,
-                                                                                       IMeshDAO &mesh) const
+                                                                                       Gedim::IMeshDAO &mesh) const
 {
     SplitPolygon_Result result;
 
@@ -679,7 +679,7 @@ RefinementUtilities::TriangleMaxEdgeDirection RefinementUtilities::ComputeTriang
     return result;
 }
 // ***************************************************************************
-RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const IMeshDAO &mesh) const
+RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const Gedim::IMeshDAO &mesh) const
 {
     Cell2Ds_GeometricData geometricData;
 
@@ -695,11 +695,13 @@ RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCel
     return geometricData;
 }
 // ***************************************************************************
-void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const IMeshDAO &mesh,
+void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const Gedim::IMeshDAO &mesh,
                                                                 const std::vector<unsigned int> &cell2DsIndex,
                                                                 Cell2Ds_GeometricData &geometricData) const
 {
     geometricData.Cell1Ds.Aligned.resize(mesh.Cell1DTotalNumber(), 0);
+    geometricData.Cell1Ds.Status.resize(mesh.Cell1DTotalNumber(),
+                                        Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityChecked);
 
     geometricData.Cell2Ds.Vertices.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Area.resize(mesh.Cell2DTotalNumber());
@@ -716,6 +718,8 @@ void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const IMeshDAO &
     geometricData.Cell2Ds.CentroidEdgesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.CentroidVerticesDistance.resize(mesh.Cell2DTotalNumber());
     geometricData.Cell2Ds.Quality.resize(mesh.Cell2DTotalNumber());
+    geometricData.Cell2Ds.Status.resize(mesh.Cell2DTotalNumber(),
+                                        Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData::StatusTypes::Active);
 
     for (unsigned int c = 0; c < cell2DsIndex.size(); c++)
     {
@@ -795,6 +799,7 @@ void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const IMeshDAO &
             {
                 const unsigned int originalCell1DIndex = mesh.Cell1DOriginalCell1D(cell1DIndex);
                 geometricData.Cell1Ds.Aligned[cell1DIndex] = geometricData.Cell1Ds.Aligned[originalCell1DIndex];
+                geometricData.Cell1Ds.Status[cell1DIndex] = geometricData.Cell1Ds.Status[originalCell1DIndex];
             }
             else if (geometricData.Cell1Ds.Aligned[cell1DIndex] == 0)
                 geometricData.Cell1Ds.Aligned[cell1DIndex] = ++(geometricData.Cell1Ds.MaxAligned);
@@ -811,7 +816,7 @@ RefinementUtilities::RefinePolygon_CheckResult::Cell1DToSplit RefinementUtilitie
     const double &cell1DsAlignedWeight,
     const std::vector<double> &cell2DsQuality,
     const std::vector<unsigned int> &cell1DsAligned,
-    const IMeshDAO &mesh) const
+    const Gedim::IMeshDAO &mesh) const
 {
     RefinePolygon_CheckResult::Cell1DToSplit result;
 
@@ -1010,7 +1015,7 @@ RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCel
                                                                                          const Eigen::Matrix3d &cell2DRotation,
                                                                                          const Eigen::Vector3d &cell2DTranslation,
                                                                                          const Eigen::VectorXd &cell2DEdgesLength,
-                                                                                         IMeshDAO &mesh) const
+                                                                                         Gedim::IMeshDAO &mesh) const
 {
     RefinePolygon_Result result;
 
@@ -1071,18 +1076,25 @@ RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefineTriangleCel
 
     result.NewCell2DsIndex = {splitResult.NewCell2DsIndex};
 
+    result.ResultType = RefinePolygon_Result::ResultTypes::Successfull;
+
     return result;
 }
 // ***************************************************************************
-void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int &cell2DIndex,
-                                                              const unsigned int &cell1DIndex,
-                                                              const unsigned int &newCell0DIndex,
-                                                              const std::vector<unsigned int> &splitCell1DsIndex,
-                                                              const bool &cell2DEdgeDirection,
-                                                              const std::vector<Eigen::Matrix3d> &cell2DsRotation,
-                                                              const std::vector<Eigen::Vector3d> &cell2DsTranslation,
-                                                              IMeshDAO &mesh) const
+RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::RefineTriangleCell_UpdateNeighbours(
+    const unsigned int &cell2DIndex,
+    const unsigned int &cell1DIndex,
+    const unsigned int &newCell0DIndex,
+    const std::vector<unsigned int> &splitCell1DsIndex,
+    const bool &cell2DEdgeDirection,
+    const std::vector<Eigen::Matrix3d> &cell2DsRotation,
+    const std::vector<Eigen::Vector3d> &cell2DsTranslation,
+    Gedim::IMeshDAO &mesh) const
 {
+    RefinePolygon_UpdateNeighbour_Result result;
+
+    std::list<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D> newCell2DsIndex;
+
     // update neighbour cells
     for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); n++)
     {
@@ -1099,20 +1111,34 @@ void RefinementUtilities::RefineTriangleCell_UpdateNeighbours(const unsigned int
         const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex, cell1DIndex);
         const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
-        const Eigen::Matrix3d &cell2DRotation = cell2DsRotation.at(n);
-        const Eigen::Vector3d &cell2DTranslation = cell2DsTranslation.at(n);
+        const Eigen::Matrix3d cell2DRotation = cell2DsRotation.empty() ? Eigen::Matrix3d::Identity() : cell2DsRotation.at(n);
+        const Eigen::Vector3d cell2DTranslation = cell2DsTranslation.empty() ? Eigen::Vector3d::Zero()
+                                                                             : cell2DsTranslation.at(n);
 
-        SplitPolygon_NewVertexTo(neighCell2DIndex,
-                                 3,
-                                 neighOppositeVertexIndex,
-                                 neighEdgeIndex,
-                                 cell2DRotation,
-                                 cell2DTranslation,
-                                 newCell0DIndex,
-                                 splitCell1DsIndex,
-                                 !cell2DEdgeDirection,
-                                 mesh);
+        const auto split_result = SplitPolygon_NewVertexTo(neighCell2DIndex,
+                                                           3,
+                                                           neighOppositeVertexIndex,
+                                                           neighEdgeIndex,
+                                                           cell2DRotation,
+                                                           cell2DTranslation,
+                                                           newCell0DIndex,
+                                                           splitCell1DsIndex,
+                                                           !cell2DEdgeDirection,
+                                                           mesh);
+
+        for (const auto new_cell2D : split_result.NewCell2DsIndex)
+        {
+            RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D updatedCell2D;
+            updatedCell2D.OriginalCell2DIndex = neighCell2DIndex;
+            updatedCell2D.NewCell2DIndex = new_cell2D;
+            newCell2DsIndex.push_back(updatedCell2D);
+        }
     }
+
+    result.UpdatedCell2Ds =
+        std::vector<RefinePolygon_UpdateNeighbour_Result::UpdatedCell2D>(newCell2DsIndex.begin(), newCell2DsIndex.end());
+
+    return result;
 }
 // ***************************************************************************
 RefinementUtilities::RefinePolygon_CheckResult RefinementUtilities::RefinePolygonCell_CheckRefinement(
@@ -1127,7 +1153,7 @@ RefinementUtilities::RefinePolygon_CheckResult RefinementUtilities::RefinePolygo
     const double &cell2DArea,
     const std::vector<Eigen::VectorXd> &cell2DsEdgesLength,
     const std::vector<bool> &cell2DEdgesDirection,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolygon_CheckResult result;
 
@@ -1257,7 +1283,7 @@ RefinementUtilities::RefinePolygon_Result RefinementUtilities::RefinePolygonCell
     const Eigen::Vector3d &cell2DTranslation,
     const std::vector<bool> &cell2DEdgesDirection,
     const bool &extendToNeighbours,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolygon_Result result;
 
@@ -1617,7 +1643,7 @@ RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::R
     const unsigned int &newCell0DIndex,
     const std::vector<unsigned int> &splitCell1DsIndex,
     const std::vector<std::vector<bool>> &cell2DsEdgesDirection,
-    IMeshDAO &mesh) const
+    Gedim::IMeshDAO &mesh) const
 {
     RefinePolygon_UpdateNeighbour_Result result;
 

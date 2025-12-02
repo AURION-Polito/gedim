@@ -1850,6 +1850,8 @@ class GeometryUtilities final
     Eigen::Matrix3d PlaneReflectionMatrix(const Eigen::Vector3d &plane_normal) const;
     Eigen::Vector3d PlaneReflectionTranslation(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &planeOrigin) const;
 
+    Eigen::MatrixXd PlaneToPolygon(const Eigen::Vector3d &plane_normal, const Eigen::Vector3d &plane_origin) const;
+
     /// \brief Rotate Points P using rotation matrix Q and translation t: Q * P + t
     /// \param points the points (size 3 x numPoints)
     /// \param rotationMatrix the rotation matrix, size 3x3

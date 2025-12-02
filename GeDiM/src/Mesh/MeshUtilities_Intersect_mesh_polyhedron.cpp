@@ -32,7 +32,7 @@ Gedim::MeshUtilities::Intersect_mesh_polyhedron_result Gedim::MeshUtilities::Int
     const std::vector<Eigen::Matrix3d> &polyhedron_faces_rotation_matrix,
     const std::vector<Eigen::MatrixXd> &polyhedron_faces_boudingBox,
     const Eigen::MatrixXd &polyhedron_boudingBox,
-    const IMeshDAO &mesh,
+    const Gedim::IMeshDAO &mesh,
     const std::vector<Eigen::MatrixXd> &mesh_cell1Ds_boudingBox,
     const std::vector<Eigen::MatrixXd> &mesh_cell1Ds_vertices,
     const std::vector<Eigen::Vector3d> &mesh_cell1Ds_tangent,
