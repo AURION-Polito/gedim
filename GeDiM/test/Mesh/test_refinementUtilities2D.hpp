@@ -281,6 +281,12 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
 
     const auto meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities,
                                                                          meshDAO);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration check_mesh_geometry;
+    meshUtilities.CheckMeshGeometricData2D(check_mesh_geometry,
+                                           geometryUtilities,
+                                           meshDAO,
+                                           meshGeometricData);
 }
 
 TEST(TestRefinementUtilities, TestRefinePolygons_NoNewVertices)
