@@ -15,23 +15,16 @@
 namespace Gedim
 {
 // ***************************************************************************
-  std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometryUtilities,
-                                                     const Gedim::RefinementUtilities& refinementUtilities,
+  std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometry_utilities,
                                                      const std::vector<unsigned int>& cell2DsToRefineIndex,
                                                      Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
-                                                     Gedim::IMeshDAO& networkMesh,
-                                                     const unsigned int refinementStep) const
+                                                     Gedim::IMeshDAO& mesh) const
   {
     struct Cell2DsToUpdateGeometricData final
     {
         unsigned int OriginalCell2DIndex = 0;
         unsigned int NewCell2DIndex = 0;
     };
-
-    std::vector<Eigen::Matrix3d> cell2DsRotationMatrix(networkMesh.Cell2DTotalNumber(),
-                                                       Eigen::Matrix3d::Identity());
-    std::vector<Eigen::Vector3d> cell2DsTranslation(networkMesh.Cell2DTotalNumber(),
-                                                    Eigen::Vector3d::Zero());
 
     std::list<unsigned int> toRefineCells(cell2DsToRefineIndex.begin(),
                                           cell2DsToRefineIndex.end());
@@ -46,7 +39,7 @@ namespace Gedim
       std::list<Cell2DsToUpdateGeometricData> cell2DsToUpdateGeometricData;
 
       std::list<unsigned int> updatedCell2Ds;
-      networkMesh.Cell2DUpdatedCell2Ds(cell2DIndex,
+      mesh.Cell2DUpdatedCell2Ds(cell2DIndex,
                                        updatedCell2Ds);
 
       if (updatedCell2Ds.size() > 1)
@@ -60,41 +53,36 @@ namespace Gedim
           Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData::StatusTypes::Inactive)
         continue;
 
-      const Eigen::Matrix3d& cell2DRotation = cell2DsRotationMatrix.at(cell2DToRefineIndex);
-      const Eigen::Vector3d& cell2DTranslation = cell2DsTranslation.at(cell2DToRefineIndex);
-
-      const Gedim::GeometryUtilities::PolygonTypes cell2DUnalignedPolygonType = (meshGeometricData.Cell2Ds.UnalignedVertices[cell2DToRefineIndex].cols() == 3) ?
+      const auto cell2DUnalignedPolygonType = (meshGeometricData.Cell2Ds.UnalignedVertices[cell2DToRefineIndex].cols() == 3) ?
                                                                                   Gedim::GeometryUtilities::PolygonTypes::Triangle :
                                                                                   Gedim::GeometryUtilities::PolygonTypes::Generic_Convex;
 
-      if (networkMesh.Cell2DHasUpdatedCell2Ds(cell2DToRefineIndex))
+      if (mesh.Cell2DHasUpdatedCell2Ds(cell2DToRefineIndex))
       {
-        Gedim::Output::Assert(!networkMesh.Cell2DIsActive(cell2DToRefineIndex));
+        Gedim::Output::Assert(!mesh.Cell2DIsActive(cell2DToRefineIndex));
         continue;
       }
 
-      if (geometryUtilities.IsValueZero(0.5 * meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
-                                        geometryUtilities.Tolerance2D()))
+      if (geometry_utilities.IsValueZero(0.5 * meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                        geometry_utilities.Tolerance2D()))
       {
         meshGeometricData.Cell2Ds.Status[cell2DToRefineIndex] =
             Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData::StatusTypes::Inactive;
         continue;
       }
 
-      const Gedim::RefinementUtilities::TriangleMaxEdgeDirection direction =
-          refinementUtilities.ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
+      const auto direction = ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
 
 
-      const Gedim::RefinementUtilities::RefinePolygon_Result refineResult =
-          refinementUtilities.RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+      const auto refineResult = RefineTriangleCell_ByEdge(cell2DToRefineIndex,
                                                         direction.MaxEdgeIndex,
                                                         direction.OppositeVertexIndex,
                                                         meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
                                                         meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
-                                                        cell2DRotation,
-                                                        cell2DTranslation,
+                                                        Eigen::Matrix3d::Identity(),
+                                                        Eigen::Vector3d::Zero(),
                                                         meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
-                                                        networkMesh);
+                                                        mesh);
 
       switch (refineResult.ResultType)
       {
@@ -102,7 +90,7 @@ namespace Gedim
           continue;
         case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Cell2DAlreadySplitted:
         {
-          Gedim::Output::Assert(!networkMesh.Cell2DIsActive(cell2DToRefineIndex));
+          Gedim::Output::Assert(!mesh.Cell2DIsActive(cell2DToRefineIndex));
         }
           continue;
         case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance:
@@ -115,7 +103,7 @@ namespace Gedim
         {
           Gedim::Output::Assert(cell2DUnalignedPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
 
-          const unsigned int cell1DIndex = networkMesh.Cell2DEdge(cell2DIndex,
+          const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex,
                                                                   direction.MaxEdgeIndex);
           meshGeometricData.Cell1Ds.Status[cell1DIndex] =
               Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
@@ -136,15 +124,15 @@ namespace Gedim
             Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
           continue;
 
-        const auto newNeighboursCell2DsIndex = refinementUtilities.RefineTriangleCell_UpdateNeighbours(
+        const auto newNeighboursCell2DsIndex = RefineTriangleCell_UpdateNeighbours(
                                                  cell2DToRefineIndex,
                                                  refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
                                                  refineResult.NewCell1DsIndex[e].NewCell0DIndex,
                                                  refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
                                                  meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                                                 cell2DsRotationMatrix,
-                                                 cell2DsTranslation,
-                                                 networkMesh);
+                                                 {},
+                                                 {},
+                                                 mesh);
 
         for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
           cell2DsToUpdateGeometricData.push_back({ newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].OriginalCell2DIndex,
@@ -153,21 +141,14 @@ namespace Gedim
 
       // update cell2Ds information
       std::vector<unsigned int> cell2DsToUpdate(cell2DsToUpdateGeometricData.size());
-      cell2DsRotationMatrix.resize(networkMesh.Cell2DTotalNumber());
-      cell2DsTranslation.resize(networkMesh.Cell2DTotalNumber());
       unsigned int cPosition = 0;
       for (const Cell2DsToUpdateGeometricData& cell2DIndexToUpdate : cell2DsToUpdateGeometricData)
       {
         cell2DsToUpdate[cPosition] = cell2DIndexToUpdate.NewCell2DIndex;
-        cell2DsRotationMatrix[cell2DIndexToUpdate.NewCell2DIndex] =
-            cell2DsRotationMatrix.at(cell2DIndexToUpdate.OriginalCell2DIndex);
-        cell2DsTranslation[cell2DIndexToUpdate.NewCell2DIndex] =
-            cell2DsTranslation.at(cell2DIndexToUpdate.OriginalCell2DIndex);
-
         cPosition++;
       }
 
-      RefinePolygonCell_UpdateGeometricData(networkMesh,
+      RefinePolygonCell_UpdateGeometricData(mesh,
                                             cell2DsToUpdate,
                                             meshGeometricData);
 
@@ -176,29 +157,29 @@ namespace Gedim
         std::unordered_set<unsigned int> cell2DsChecked;
         for (const unsigned int cell2DIndexToCheck : cell2DsToUpdate)
         {
-          for (unsigned int ce = 0; ce < networkMesh.Cell2DNumberEdges(cell2DIndexToCheck); ce++)
+          for (unsigned int ce = 0; ce < mesh.Cell2DNumberEdges(cell2DIndexToCheck); ce++)
           {
-            const unsigned int cell1DIndex = networkMesh.Cell2DEdge(cell2DIndexToCheck, ce);
+            const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndexToCheck, ce);
             const unsigned int aligned = meshGeometricData.Cell1Ds.Aligned.at(cell1DIndex);
 
             if (meshGeometricData.Cell1Ds.Status[cell1DIndex] ==
                 Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck)
             {
               unsigned int cell1DNumActiveNeighs = 0, cell1DQualityCheckNeighs = 0;
-              for (unsigned int c1Dn = 0; c1Dn < networkMesh.Cell1DNumberNeighbourCell2D(cell1DIndex); c1Dn++)
+              for (unsigned int c1Dn = 0; c1Dn < mesh.Cell1DNumberNeighbourCell2D(cell1DIndex); c1Dn++)
               {
-                if (!networkMesh.Cell1DHasNeighbourCell2D(cell1DIndex, c1Dn))
+                if (!mesh.Cell1DHasNeighbourCell2D(cell1DIndex, c1Dn))
                   continue;
 
-                const unsigned int cell2DNeighIndex = networkMesh.Cell1DNeighbourCell2D(cell1DIndex, c1Dn);
+                const unsigned int cell2DNeighIndex = mesh.Cell1DNeighbourCell2D(cell1DIndex, c1Dn);
                 const bool isNeighTriangle = (meshGeometricData.Cell2Ds.Vertices[cell2DNeighIndex].cols() == 3);
 
                 unsigned int numAligned = 0;
                 if (!isNeighTriangle)
                 {
-                  for (unsigned int c1Dne = 0; c1Dne < networkMesh.Cell2DNumberEdges(cell2DNeighIndex); c1Dne++)
+                  for (unsigned int c1Dne = 0; c1Dne < mesh.Cell2DNumberEdges(cell2DNeighIndex); c1Dne++)
                   {
-                    const unsigned int cell1DEdgeIndex = networkMesh.Cell2DEdge(cell2DNeighIndex, c1Dne);
+                    const unsigned int cell1DEdgeIndex = mesh.Cell2DEdge(cell2DNeighIndex, c1Dne);
 
                     if (meshGeometricData.Cell1Ds.Aligned.at(cell1DEdgeIndex) == aligned)
                       numAligned++;
@@ -227,16 +208,16 @@ namespace Gedim
                     Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityChecked;
 
                 unsigned int originalCell1DIndex = cell1DIndex;
-                while (networkMesh.Cell1DHasOriginalCell1D(originalCell1DIndex))
+                while (mesh.Cell1DHasOriginalCell1D(originalCell1DIndex))
                 {
-                  originalCell1DIndex = networkMesh.Cell1DOriginalCell1D(cell1DIndex);
+                  originalCell1DIndex = mesh.Cell1DOriginalCell1D(cell1DIndex);
 
                   if (meshGeometricData.Cell1Ds.Status[originalCell1DIndex] ==
                       Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityChecked)
                     break;
 
                   std::list<unsigned int> updatedCell1Ds;
-                  networkMesh.Cell1DUpdatedCell1Ds(originalCell1DIndex,
+                  mesh.Cell1DUpdatedCell1Ds(originalCell1DIndex,
                                                    updatedCell1Ds);
 
                   unsigned int childStatus = 0;
@@ -264,7 +245,7 @@ namespace Gedim
       }
     }
 
-    networkMesh.Compress();
+    mesh.Compress();
 
     return std::vector<unsigned int>(refinedCells.begin(),
                                      refinedCells.end());

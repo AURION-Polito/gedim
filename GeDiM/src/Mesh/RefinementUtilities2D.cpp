@@ -1110,8 +1110,12 @@ RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefinementUtilities::R
         const unsigned int neighEdgeIndex = mesh.Cell2DFindEdge(neighCell2DIndex, cell1DIndex);
         const unsigned int neighOppositeVertexIndex = (neighEdgeIndex + 2) % 3;
 
-        const Eigen::Matrix3d &cell2DRotation = cell2DsRotation.at(n);
-        const Eigen::Vector3d &cell2DTranslation = cell2DsTranslation.at(n);
+        const Eigen::Matrix3d cell2DRotation = cell2DsRotation.empty() ?
+                                                  Eigen::Matrix3d::Identity() :
+                                                  cell2DsRotation.at(n);
+        const Eigen::Vector3d cell2DTranslation = cell2DsTranslation.empty() ?
+                                                    Eigen::Vector3d::Zero() :
+                                                    cell2DsTranslation.at(n);
 
         const auto split_result = SplitPolygon_NewVertexTo(neighCell2DIndex,
                                  3,

@@ -519,12 +519,10 @@ class RefinementUtilities final
         const std::vector<unsigned int> &cell1DsAligned,
         const Gedim::IMeshDAO &mesh) const;
 
-    std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometryUtilities,
-                                                         const Gedim::RefinementUtilities& refinementUtilities,
+    std::vector<unsigned int> refine_mesh_2D_triangles(const Gedim::GeometryUtilities& geometry_utilities,
                                                          const std::vector<unsigned int>& cell2DsToRefineIndex,
                                                          Gedim::RefinementUtilities::Cell2Ds_GeometricData& meshGeometricData,
-                                                         Gedim::IMeshDAO& networkMesh,
-                                                         const unsigned int refinementStep) const;
+                                                         Gedim::IMeshDAO& mesh) const;
 };
 
 } // namespace Gedim

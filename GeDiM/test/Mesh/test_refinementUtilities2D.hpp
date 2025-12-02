@@ -262,11 +262,9 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
         cell2DsToRefineIndex.resize(0.5 * numActiveCell2Ds);
 
         const auto cell2Ds_refined = refinementUtilities.refine_mesh_2D_triangles(geometryUtilities,
-                                                                                  refinementUtilities,
                                                                                   cell2DsToRefineIndex,
                                                                                   refine_mesh_geometric_data,
-                                                                                  meshDAO,
-                                                                                  r);
+                                                                                  meshDAO);
 
         meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
     }
