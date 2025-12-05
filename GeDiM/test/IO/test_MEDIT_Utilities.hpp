@@ -77,7 +77,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test1Ds)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportSegments(exportFolder + "/Geometry1Ds.inp",
+    exporter.ExportSegments(exportFolder + "/Geometry1Ds.mesh",
                             points,
                             edges,
                             points_references_id,
@@ -109,7 +109,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test2Ds)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportPolygons(exportFolder + "/Geometry2Ds.inp",
+    exporter.ExportPolygons(exportFolder + "/Geometry2Ds.mesh",
                             points,
                             polygons,
                             points_references_id,
@@ -135,7 +135,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test3D)
     const vector<vector<unsigned int>> polyhedra = {{0, 2, 1, 5}, {5, 4, 7, 8}};
 
     std::vector<unsigned int> points_references_id(numPoints);
-    std::vector<unsigned int> faces_references_id(numGeometries);
+    std::vector<unsigned int> faces_references_id(numFaces);
     std::vector<unsigned int> cells_references_id(numGeometries);
 
     for (unsigned int p = 0; p < numPoints; p++)
@@ -147,7 +147,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test3D)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportPolyhedra(exportFolder + "/Geometry3Ds.inp",
+    exporter.ExportPolyhedra(exportFolder + "/Geometry3Ds.mesh",
                              points,
                              faces,
                              polyhedra,
