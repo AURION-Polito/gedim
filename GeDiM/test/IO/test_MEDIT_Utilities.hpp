@@ -161,11 +161,38 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_TestMesh3D)
     std::string exportFolder = "./Export/Test_MEDIT_Utilities/TestMesh3D";
     Gedim::Output::CreateFolder(exportFolder);
 
+    {
+      std::string tetra_exportFolder = exportFolder + "/Tetra";
+      Gedim::Output::CreateFolder(tetra_exportFolder);
+
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ExportMeshToMEDIT(mesh, exportFolder, "Mesh3D", false);
+    meshUtilities.ExportMeshToMEDIT(mesh, tetra_exportFolder, "Tetra_Mesh3D", false);
+    }
+
+    {
+      std::string hexa_exportFolder = exportFolder + "/Hexa";
+      Gedim::Output::CreateFolder(hexa_exportFolder);
+
+      Gedim::MeshMatrices mesh_data;
+      Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.CreateParallelepipedMesh(Eigen::Vector3d::Zero(),
+                                           Eigen::Vector3d(1.0, 0.0, 0.0),
+                                           Eigen::Vector3d(0.0, 0.0, 1.0),
+                                           Eigen::Vector3d(0.0, 1.0, 0.0),
+                                           { 0.0, 0.5, 1.0 },
+                                           { 0.0, 0.25, 0.75, 1.0 },
+                                           { 0.0, 0.33, 0.66, 1.0 },
+                                           mesh);
+
+    meshUtilities.ExportMeshToMEDIT(mesh, hexa_exportFolder,
+                                    "Hexa_Mesh3D",
+                                    false);
+    }
 }
 // ***************************************************************************
 
