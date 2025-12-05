@@ -795,6 +795,14 @@ class MeshUtilities final
                          const std::string &fileName,
                          const bool &separateFile = false) const;
 
+    /// \brief Export Mesh To MEDIT
+    /// \param mesh the mesh
+    /// \param exportFolder the folder in which the mesh is exported
+    void ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
+                         const std::string &exportFolder,
+                         const std::string &fileName,
+                         const bool &separateFile = false) const;
+
     /// \brief Export Cell2D To VTU
     /// \param mesh the mesh
     /// \param cell2DIndex the cell2D index

@@ -164,8 +164,8 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_TestMesh3D)
     GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
 
-//    Gedim::MeshUtilities meshUtilities;
-//    meshUtilities.ExportMeshToUCD(mesh, exportFolder, "Mesh3D", false);
+    Gedim::MeshUtilities meshUtilities;
+    meshUtilities.ExportMeshToMEDIT(mesh, exportFolder, "Mesh3D", false);
 }
 // ***************************************************************************
 
