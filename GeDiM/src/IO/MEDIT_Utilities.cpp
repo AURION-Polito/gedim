@@ -271,7 +271,7 @@ namespace Gedim
       case MEDIT_Cell::Types::Tetrahedron:
         return "Tetrahedra";
       case MEDIT_Cell::Types::Hexahedron:
-        return "Hexaedra";
+        return "Hexahedra";
       default:
         throw std::runtime_error("Type not supported");
     }
