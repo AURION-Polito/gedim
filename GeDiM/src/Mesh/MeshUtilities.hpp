@@ -361,8 +361,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -799,9 +799,9 @@ class MeshUtilities final
     /// \param mesh the mesh
     /// \param exportFolder the folder in which the mesh is exported
     void ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
-                         const std::string &exportFolder,
-                         const std::string &fileName,
-                         const bool &separateFile = false) const;
+                           const std::string &exportFolder,
+                           const std::string &fileName,
+                           const bool &separateFile = false) const;
 
     /// \brief Export Cell2D To VTU
     /// \param mesh the mesh

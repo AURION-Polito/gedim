@@ -21,9 +21,9 @@
 
 #include "GeometryUtilities.hpp"
 #include "IOUtilities.hpp"
+#include "MEDIT_Utilities.hpp"
 #include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
-#include "MEDIT_Utilities.hpp"
 
 namespace GedimUnitTesting
 {
@@ -48,9 +48,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test0Ds)
         references_id[g] = g + 1;
     }
 
-    exporter.ExportPoints(exportFolder + "/Geometry0Ds.mesh",
-                          points,
-                          references_id);
+    exporter.ExportPoints(exportFolder + "/Geometry0Ds.mesh", points, references_id);
 }
 // ***************************************************************************
 TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test1Ds)
@@ -77,11 +75,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test1Ds)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportSegments(exportFolder + "/Geometry1Ds.mesh",
-                            points,
-                            edges,
-                            points_references_id,
-                            cells_references_id);
+    exporter.ExportSegments(exportFolder + "/Geometry1Ds.mesh", points, edges, points_references_id, cells_references_id);
 }
 // ***************************************************************************
 TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test2Ds)
@@ -109,11 +103,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test2Ds)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportPolygons(exportFolder + "/Geometry2Ds.mesh",
-                            points,
-                            polygons,
-                            points_references_id,
-                            cells_references_id);
+    exporter.ExportPolygons(exportFolder + "/Geometry2Ds.mesh", points, polygons, points_references_id, cells_references_id);
 }
 // ***************************************************************************
 TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test3D)
@@ -131,7 +121,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test3D)
     const Eigen::MatrixXd points =
         (Eigen::MatrixXd(3, numPoints) << 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 2.0)
             .finished();
-    const vector<vector<unsigned int>> faces = {{0, 2, 5}, {2, 1, 5}, { 1, 5, 0 }, { 0, 2, 1 }, { 5, 4, 8 }, { 4, 7, 8 }, { 7, 8, 5 }, { 5, 4, 7 }};
+    const vector<vector<unsigned int>> faces = {{0, 2, 5}, {2, 1, 5}, {1, 5, 0}, {0, 2, 1}, {5, 4, 8}, {4, 7, 8}, {7, 8, 5}, {5, 4, 7}};
     const vector<vector<unsigned int>> polyhedra = {{0, 2, 1, 5}, {5, 4, 7, 8}};
 
     std::vector<unsigned int> points_references_id(numPoints);
@@ -147,13 +137,7 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_Test3D)
     for (unsigned int g = 0; g < numGeometries; g++)
         cells_references_id[g] = g + 1;
 
-    exporter.ExportPolyhedra(exportFolder + "/Geometry3Ds.mesh",
-                             points,
-                             faces,
-                             polyhedra,
-                             points_references_id,
-                             faces_references_id,
-                             cells_references_id);
+    exporter.ExportPolyhedra(exportFolder + "/Geometry3Ds.mesh", points, faces, polyhedra, points_references_id, faces_references_id, cells_references_id);
 }
 // ***************************************************************************
 TEST(Test_MEDIT_Utilities, MEDIT_Utilities_TestMesh3D)
@@ -162,36 +146,34 @@ TEST(Test_MEDIT_Utilities, MEDIT_Utilities_TestMesh3D)
     Gedim::Output::CreateFolder(exportFolder);
 
     {
-      std::string tetra_exportFolder = exportFolder + "/Tetra";
-      Gedim::Output::CreateFolder(tetra_exportFolder);
+        std::string tetra_exportFolder = exportFolder + "/Tetra";
+        Gedim::Output::CreateFolder(tetra_exportFolder);
 
-    GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
-    Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
+        GedimUnitTesting::MeshMatrices_3D_329Cells_Mock mockMesh;
+        Gedim::MeshMatricesDAO mesh(mockMesh.Mesh);
 
-    Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ExportMeshToMEDIT(mesh, tetra_exportFolder, "Tetra_Mesh3D", false);
+        Gedim::MeshUtilities meshUtilities;
+        meshUtilities.ExportMeshToMEDIT(mesh, tetra_exportFolder, "Tetra_Mesh3D", false);
     }
 
     {
-      std::string hexa_exportFolder = exportFolder + "/Hexa";
-      Gedim::Output::CreateFolder(hexa_exportFolder);
+        std::string hexa_exportFolder = exportFolder + "/Hexa";
+        Gedim::Output::CreateFolder(hexa_exportFolder);
 
-      Gedim::MeshMatrices mesh_data;
-      Gedim::MeshMatricesDAO mesh(mesh_data);
+        Gedim::MeshMatrices mesh_data;
+        Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    Gedim::MeshUtilities meshUtilities;
-    meshUtilities.CreateParallelepipedMesh(Eigen::Vector3d::Zero(),
-                                           Eigen::Vector3d(1.0, 0.0, 0.0),
-                                           Eigen::Vector3d(0.0, 0.0, 1.0),
-                                           Eigen::Vector3d(0.0, 1.0, 0.0),
-                                           { 0.0, 0.5, 1.0 },
-                                           { 0.0, 0.25, 0.75, 1.0 },
-                                           { 0.0, 0.33, 0.66, 1.0 },
-                                           mesh);
+        Gedim::MeshUtilities meshUtilities;
+        meshUtilities.CreateParallelepipedMesh(Eigen::Vector3d::Zero(),
+                                               Eigen::Vector3d(1.0, 0.0, 0.0),
+                                               Eigen::Vector3d(0.0, 0.0, 1.0),
+                                               Eigen::Vector3d(0.0, 1.0, 0.0),
+                                               {0.0, 0.5, 1.0},
+                                               {0.0, 0.25, 0.75, 1.0},
+                                               {0.0, 0.33, 0.66, 1.0},
+                                               mesh);
 
-    meshUtilities.ExportMeshToMEDIT(mesh, hexa_exportFolder,
-                                    "Hexa_Mesh3D",
-                                    false);
+        meshUtilities.ExportMeshToMEDIT(mesh, hexa_exportFolder, "Hexa_Mesh3D", false);
     }
 }
 // ***************************************************************************

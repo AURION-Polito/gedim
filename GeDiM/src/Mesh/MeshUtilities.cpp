@@ -11,10 +11,10 @@
 
 #include "MeshUtilities.hpp"
 
+#include "MEDIT_Utilities.hpp"
 #include "MeshDAOExporterToCsv.hpp"
 #include "ObjectFileFormatInterface.hpp"
 #include "OpenVolumeMeshInterface.hpp"
-#include "MEDIT_Utilities.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshInterface.hpp"
@@ -486,7 +486,11 @@ void MeshUtilities::ExportMeshToUCD(const Gedim::IMeshDAO &mesh,
         }
 
         Gedim::UCDUtilities exporter;
-        exporter.ExportSegments(cell1DsFolder + "/" + "Cell1Ds_" + fileName + ".inp", mesh.Cell0DsCoordinates(), mesh.Cell1DsExtremes(), {}, properties);
+        exporter.ExportSegments(cell1DsFolder + "/" + "Cell1Ds_" + fileName + ".inp",
+                                mesh.Cell0DsCoordinates(),
+                                mesh.Cell1DsExtremes(),
+                                {},
+                                properties);
     }
 
     // Export Cell2Ds
@@ -526,7 +530,11 @@ void MeshUtilities::ExportMeshToUCD(const Gedim::IMeshDAO &mesh,
         }
 
         Gedim::UCDUtilities exporter;
-        exporter.ExportPolygons(cell2DsFolder + "/" + "Cell2Ds_" + fileName + ".inp", mesh.Cell0DsCoordinates(), mesh.Cell2DsVertices(), {}, properties);
+        exporter.ExportPolygons(cell2DsFolder + "/" + "Cell2Ds_" + fileName + ".inp",
+                                mesh.Cell0DsCoordinates(),
+                                mesh.Cell2DsVertices(),
+                                {},
+                                properties);
     }
 
     // Export Cell3Ds
@@ -566,19 +574,23 @@ void MeshUtilities::ExportMeshToUCD(const Gedim::IMeshDAO &mesh,
         }
 
         Gedim::UCDUtilities exporter;
-        exporter.ExportPolyhedra(cell3DsFolder + "/" + "Cell3Ds_" + fileName + ".inp", mesh.Cell0DsCoordinates(), mesh.Cell3DsVertices(), {}, properties);
+        exporter.ExportPolyhedra(cell3DsFolder + "/" + "Cell3Ds_" + fileName + ".inp",
+                                 mesh.Cell0DsCoordinates(),
+                                 mesh.Cell3DsVertices(),
+                                 {},
+                                 properties);
     }
 }
 // ***************************************************************************
 void MeshUtilities::ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
-                                    const std::string &exportFolder,
-                                    const std::string &fileName,
-                                    const bool &separateFile) const
+                                      const std::string &exportFolder,
+                                      const std::string &fileName,
+                                      const bool &separateFile) const
 {
-  if (mesh.Cell0DTotalNumber() == 0)
-  {
-    return;
-  }
+    if (mesh.Cell0DTotalNumber() == 0)
+    {
+        return;
+    }
 
     std::string cell0DsFolder = exportFolder;
     std::string cell1DsFolder = exportFolder;
@@ -605,49 +617,35 @@ void MeshUtilities::ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
     {
 
         Gedim::MEDIT_Utilities exporter;
-        exporter.ExportPoints(cell0DsFolder + "/" +
-                              "Cell0Ds_" + fileName + ".mesh",
-                              points,
-                              points_references_id);
+        exporter.ExportPoints(cell0DsFolder + "/" + "Cell0Ds_" + fileName + ".mesh", points, points_references_id);
     }
 
     // Export Cell1Ds
     if (mesh.Cell1DTotalNumber() > 0)
     {
-      const auto cells_references_id = mesh.Cell1DsMarker();
+        const auto cells_references_id = mesh.Cell1DsMarker();
 
-      Gedim::MEDIT_Utilities exporter;
-      exporter.ExportSegments(cell1DsFolder + "/" +
-                              "Cell1Ds_" + fileName + ".mesh",
-                              points,
-                              mesh.Cell1DsExtremes(),
-                              points_references_id,
-                              cells_references_id);
+        Gedim::MEDIT_Utilities exporter;
+        exporter.ExportSegments(cell1DsFolder + "/" + "Cell1Ds_" + fileName + ".mesh", points, mesh.Cell1DsExtremes(), points_references_id, cells_references_id);
     }
 
     // Export Cell2Ds
     if (mesh.Cell2DTotalNumber() > 0)
     {
-      const auto cells_references_id = mesh.Cell2DsMarker();
+        const auto cells_references_id = mesh.Cell2DsMarker();
 
-      Gedim::MEDIT_Utilities exporter;
-      exporter.ExportPolygons(cell2DsFolder + "/" +
-                              "Cell2Ds_" + fileName + ".mesh",
-                              points,
-                              mesh.Cell2DsVertices(),
-                              points_references_id,
-                              cells_references_id);
+        Gedim::MEDIT_Utilities exporter;
+        exporter.ExportPolygons(cell2DsFolder + "/" + "Cell2Ds_" + fileName + ".mesh", points, mesh.Cell2DsVertices(), points_references_id, cells_references_id);
     }
 
     // Export Cell3Ds
     if (mesh.Cell3DTotalNumber() > 0)
     {
-      const auto faces_references_id = mesh.Cell2DsMarker();
-      const auto cells_references_id = mesh.Cell3DsMarker();
+        const auto faces_references_id = mesh.Cell2DsMarker();
+        const auto cells_references_id = mesh.Cell3DsMarker();
 
         Gedim::MEDIT_Utilities exporter;
-        exporter.ExportPolyhedra(cell3DsFolder + "/" +
-                                 "Cell3Ds_" + fileName + ".mesh",
+        exporter.ExportPolyhedra(cell3DsFolder + "/" + "Cell3Ds_" + fileName + ".mesh",
                                  points,
                                  mesh.Cell2DsVertices(),
                                  mesh.Cell3DsVertices(),
