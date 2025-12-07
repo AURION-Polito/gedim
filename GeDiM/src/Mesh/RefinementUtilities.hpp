@@ -274,7 +274,7 @@ class RefinementUtilities final
             std::vector<Eigen::VectorXd> CentroidVerticesDistance = {};
             std::vector<double> InRadius = {};
             std::vector<double> Quality = {};
-            std::vector<StatusTypes> Status;
+            std::vector<Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData::StatusTypes> Status;
         };
 
         struct Cell1D_GeometricData final
@@ -288,7 +288,7 @@ class RefinementUtilities final
 
             unsigned int MaxAligned = 0;
             std::vector<unsigned int> Aligned = {};
-            std::vector<StatusTypes> Status = {};
+            std::vector<Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes> Status = {};
         };
 
         Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData Cell1Ds;
