@@ -23,7 +23,7 @@ namespace Gedim
 /// \copyright See top level LICENSE file for details.
 class RefinementUtilities final
 {
-  public:
+public:
     struct TriangleMaxEdgeDirection final
     {
         unsigned int MaxEdgeIndex = 0;
@@ -295,11 +295,11 @@ class RefinementUtilities final
         Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData Cell2Ds;
     };
 
-  private:
+private:
     const Gedim::GeometryUtilities &geometryUtilities;
     const Gedim::MeshUtilities &meshUtilities;
 
-  public:
+public:
     RefinementUtilities(const Gedim::GeometryUtilities &geometryUtilities, const Gedim::MeshUtilities &meshUtilities);
     ~RefinementUtilities();
 
