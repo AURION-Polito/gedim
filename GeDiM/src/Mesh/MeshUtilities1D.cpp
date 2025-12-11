@@ -463,4 +463,162 @@ unsigned int MeshUtilities::AgglomerateCell1Ds(const std::unordered_set<unsigned
     return agglomeratedCell1DIndex;
 }
 // ***************************************************************************
+bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
+                                   Gedim::IMeshDAO &mesh) const
+{
+  const auto cell1D_origin_index = mesh.Cell1DOrigin(cell1D_index);
+  const auto cell1D_end_index = mesh.Cell1DEnd(cell1D_index);
+
+  const auto cell1D_cell2Ds = mesh.Cell1DNeighbourCell2Ds(cell1D_index);
+
+  // check possibility to collapse
+  if (cell1D_cell2Ds.empty())
+    return false;
+
+  const auto cell1D_end_index_cell1Ds = mesh.Cell0DNeighbourCell1Ds(cell1D_end_index);
+
+  if (cell1D_end_index_cell1Ds.empty())
+    return false;
+
+  const auto cell1D_end_index_cell2Ds = mesh.Cell0DNeighbourCell2Ds(cell1D_end_index);
+
+  if (cell1D_end_index_cell2Ds.empty())
+    return false;
+
+  for (const auto cell2D_index : cell1D_cell2Ds)
+  {
+    if (cell2D_index > mesh.Cell2DTotalNumber())
+      continue;
+
+    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
+
+    if (cell2D_num_vertices == 3)
+      return false;
+  }
+
+  // remove cell1D
+  mesh.Cell1DSetState(cell1D_index, false);
+  mesh.Cell0DSetState(cell1D_end_index, false);
+
+  // remove cell1D_end_index from cell1Ds
+  std::unordered_map<unsigned int, unsigned int> new_cell1Ds_index;
+  for (const auto cell1D_neigh_index : cell1D_end_index_cell1Ds)
+  {
+    if (cell1D_neigh_index > mesh.Cell1DTotalNumber())
+      continue;
+
+    if (cell1D_neigh_index == cell1D_index)
+      continue;
+
+    if (!mesh.Cell1DIsActive(cell1D_index))
+      continue;
+
+    const auto cell1D_n_extremes = mesh.Cell1DExtremes(cell1D_neigh_index);
+
+    Eigen::MatrixXi new_cell1D_extremes(2, 1);
+    for (unsigned int e = 0; e < 2; ++e)
+    {
+      new_cell1D_extremes(e, 0) =
+          static_cast<unsigned int>(cell1D_n_extremes[e]) == cell1D_end_index ?
+            cell1D_origin_index :
+            cell1D_n_extremes[e];
+    }
+
+    const auto new_cell1D_index = SplitCell1D(cell1D_neigh_index,
+                                              new_cell1D_extremes,
+                                              mesh);
+    new_cell1Ds_index.insert(std::make_pair(cell1D_neigh_index,
+                                            new_cell1D_index.at(0)));
+  }
+
+
+  // remove cell1D from cell2Ds
+  std::unordered_map<unsigned int, unsigned int> new_cell2Ds_index;
+  for (const auto cell2D_index : cell1D_cell2Ds)
+  {
+    if (cell2D_index > mesh.Cell2DTotalNumber())
+      continue;
+
+    if (!mesh.Cell2DIsActive(cell2D_index))
+      continue;
+
+    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
+    Eigen::MatrixXi new_cell2D_extremes(2, cell2D_num_vertices - 1);
+
+    unsigned int n_v = 0;
+    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
+    {
+      const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
+                                                   v);
+
+      const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
+                                                   v);
+
+      if (cell2D_edge_index != cell1D_index)
+      {
+        new_cell2D_extremes(0, n_v) = cell2D_vertex_index == cell1D_end_index ?
+                                        cell1D_origin_index :
+                                        cell2D_vertex_index;
+
+        const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
+        if (edge_found == new_cell1Ds_index.end())
+          new_cell2D_extremes(1, n_v) = cell2D_edge_index;
+        else
+          new_cell2D_extremes(1, n_v) = edge_found->second;
+
+        n_v++;
+      }
+    }
+    assert(n_v + 1 == cell2D_num_vertices);
+
+    const auto new_cell2D_index = SplitCell2D(cell2D_index,
+                                              { new_cell2D_extremes },
+                                              mesh);
+    new_cell2Ds_index.insert(std::make_pair(cell2D_index, new_cell2D_index.at(0)));
+  }
+
+  // update cell0D and cell1D from cell2Ds
+  for (const auto cell2D_index : cell1D_end_index_cell2Ds)
+  {
+    if (cell2D_index > mesh.Cell2DTotalNumber())
+      continue;
+
+    if (!mesh.Cell2DIsActive(cell2D_index))
+      continue;
+
+    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
+    Eigen::MatrixXi new_cell2D_extremes(2, cell2D_num_vertices);
+
+    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
+    {
+      const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
+                                                     v);
+
+      const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
+                                                   v);
+
+      if (cell2D_edge_index != cell1D_index)
+      {
+        new_cell2D_extremes(0, v) = cell2D_vertex_index == cell1D_end_index ?
+                                        cell1D_origin_index :
+                                        cell2D_vertex_index;
+
+        const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
+        if (edge_found == new_cell1Ds_index.end())
+          new_cell2D_extremes(1, v) = cell2D_edge_index;
+        else
+          new_cell2D_extremes(1, v) = edge_found->second;
+      }
+    }
+
+    const auto new_cell2D_index = SplitCell2D(cell2D_index,
+                                              { new_cell2D_extremes },
+                                              mesh);
+    new_cell2Ds_index.insert(std::make_pair(cell2D_index, new_cell2D_index.at(0)));
+  }
+
+
+  return true;
+}
+// ***************************************************************************
 } // namespace Gedim

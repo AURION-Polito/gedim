@@ -214,6 +214,62 @@ TEST(TestMeshUtilities, TestAgglomerateCell1Ds)
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
+
+TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D)
+{
+    std::string exportFolder = "./Export/TestMeshUtilities/Test_CollapseCell1D_Mesh2D";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.MinTolerance = 1.0e-14;
+    geometry_utilities_config.Tolerance1D = 1.0e-6;
+    geometry_utilities_config.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+    Gedim::MeshUtilities mesh_utilities;
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    {
+      const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(),
+                                                          1.0);
+
+      mesh_utilities.CreatePolygonalMesh(geometry_utilities,
+                                         square,
+                                         10,
+                                         10,
+                                         mesh,
+                                         10);
+    }
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
+
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
+    mesh_utilities.ExtractActiveMesh(mesh, extraction_data);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+
+    {
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        mesh_utilities.CheckMesh2D(config,
+                                   geometry_utilities,
+                                   mesh);
+    }
+
+    {
+        const std::vector<Gedim::GeometryUtilities::PolygonTypes> cell2Ds_types(mesh.Cell2DTotalNumber(),
+                                                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Concave);
+        const auto mesh_geometric_data = mesh_utilities.FillMesh2DGeometricData(geometry_utilities, mesh, cell2Ds_types);
+
+        Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration config;
+        mesh_utilities.CheckMeshGeometricData2D(config, geometry_utilities, mesh, mesh_geometric_data);
+    }
+
+}
+
+CollapseCell1D
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_UTILITIES1D_H

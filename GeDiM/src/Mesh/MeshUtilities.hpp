@@ -1124,6 +1124,9 @@ class MeshUtilities final
     void CreatePolygonIntersectionMesh(const Gedim::GeometryUtilities &geometry_utilities,
                                        const Eigen::MatrixXd &interface_vertices,
                                        Gedim::IMeshDAO &mesh) const;
+
+    bool CollapseCell1D(const unsigned int cell1D_index,
+                        Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim
