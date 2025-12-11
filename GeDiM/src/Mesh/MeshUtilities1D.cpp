@@ -546,8 +546,25 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     const auto new_cell1D_index = SplitCell1D(cell1D_neigh_index,
                                               new_cell1D_extremes,
                                               mesh);
+
     new_cell1Ds_index.insert(std::make_pair(cell1D_neigh_index,
                                             new_cell1D_index.at(0)));
+  }
+
+  for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell1D(cell1D_origin_index); n++)
+  {
+      if (!mesh.Cell0DHasNeighbourCell1D(cell1D_origin_index, n))
+          continue;
+
+      const auto cell1D_neigh = mesh.Cell0DNeighbourCell1D(cell1D_origin_index, n);
+
+      if (cell1D_neigh == cell1D_index)
+        mesh.Cell0DInsertNeighbourCell1D(cell1D_origin_index, n, mesh.Cell1DTotalNumber());
+
+      const auto edge_found = new_cell1Ds_index.find(cell1D_neigh);
+
+      if (edge_found != new_cell1Ds_index.end())
+        mesh.Cell0DInsertNeighbourCell1D(cell1D_origin_index, n, edge_found->second);
   }
 
   // update cell0D and cell1D from cell2Ds
