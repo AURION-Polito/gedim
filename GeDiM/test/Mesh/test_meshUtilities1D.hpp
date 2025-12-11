@@ -242,8 +242,16 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D)
                                          10);
     }
 
+    mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
+    mesh_utilities.ComputeCell0DCell2DNeighbours(mesh);
+    mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
+
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
 
+    mesh_utilities.CollapseCell1D(20,
+                                  mesh);
+    mesh_utilities.CollapseCell1D(18,
+                                  mesh);
 
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
     mesh_utilities.ExtractActiveMesh(mesh, extraction_data);

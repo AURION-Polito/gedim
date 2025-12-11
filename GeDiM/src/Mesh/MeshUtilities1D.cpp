@@ -466,6 +466,11 @@ unsigned int MeshUtilities::AgglomerateCell1Ds(const std::unordered_set<unsigned
 bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                    Gedim::IMeshDAO &mesh) const
 {
+  if (cell1D_index > mesh.Cell1DTotalNumber())
+    return false;
+  if (!mesh.Cell1DIsActive(cell1D_index))
+    return false;
+
   const auto cell1D_origin_index = mesh.Cell1DOrigin(cell1D_index);
   const auto cell1D_end_index = mesh.Cell1DEnd(cell1D_index);
 
