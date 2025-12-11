@@ -268,8 +268,6 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D)
 
 }
 
-CollapseCell1D
-
 } // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_UTILITIES1D_H
