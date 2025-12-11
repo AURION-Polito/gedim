@@ -2798,6 +2798,20 @@ std::vector<unsigned int> MeshUtilities::SplitCell3D(const unsigned int &cell3DI
 
         mesh.Cell3DInsertUpdatedCell3D(cell3DIndex, newCell3DIndex);
 
+        for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(newCell3DIndex); v++)
+        {
+            const unsigned int cell0DIndex = mesh.Cell3DVertex(newCell3DIndex, v);
+
+            for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell3D(cell0DIndex); n++)
+            {
+                if (!mesh.Cell0DHasNeighbourCell3D(cell0DIndex, n))
+                    continue;
+
+                if (mesh.Cell0DNeighbourCell3D(cell0DIndex, n) == cell3DIndex)
+                    mesh.Cell0DInsertNeighbourCell3D(cell0DIndex, n, newCell3DIndex);
+            }
+        }
+
         for (unsigned int e = 0; e < mesh.Cell3DNumberEdges(newCell3DIndex); e++)
         {
             const unsigned int cell1DIndex = mesh.Cell3DEdge(newCell3DIndex, e);

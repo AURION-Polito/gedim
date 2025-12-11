@@ -239,6 +239,20 @@ std::vector<unsigned int> MeshUtilities::SplitCell1D(const unsigned int &cell1DI
 
         mesh.Cell1DInsertUpdatedCell1D(cell1DIndex, newCell1DIndex);
 
+        for (unsigned int v = 0; v < 2; v++)
+        {
+            const unsigned int cell0DIndex = mesh.Cell1DVertex(newCell1DIndex, v);
+
+            for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell1D(cell0DIndex); n++)
+            {
+                if (!mesh.Cell0DHasNeighbourCell1D(cell0DIndex, n))
+                    continue;
+
+                if (mesh.Cell0DNeighbourCell1D(cell0DIndex, n) == cell1DIndex)
+                    mesh.Cell0DInsertNeighbourCell1D(cell0DIndex, n, newCell1DIndex);
+            }
+        }
+
         const unsigned int numCell1DNumberNeighbourCell2D = mesh.Cell1DNumberNeighbourCell2D(cell1DIndex);
 
         if (numCell1DNumberNeighbourCell2D > 0)
@@ -536,53 +550,8 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                             new_cell1D_index.at(0)));
   }
 
-
-  // remove cell1D from cell2Ds
-  std::unordered_map<unsigned int, unsigned int> new_cell2Ds_index;
-  for (const auto cell2D_index : cell1D_cell2Ds)
-  {
-    if (cell2D_index > mesh.Cell2DTotalNumber())
-      continue;
-
-    if (!mesh.Cell2DIsActive(cell2D_index))
-      continue;
-
-    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
-    Eigen::MatrixXi new_cell2D_extremes(2, cell2D_num_vertices - 1);
-
-    unsigned int n_v = 0;
-    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
-    {
-      const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
-                                                   v);
-
-      const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
-                                                   v);
-
-      if (cell2D_edge_index != cell1D_index)
-      {
-        new_cell2D_extremes(0, n_v) = cell2D_vertex_index == cell1D_end_index ?
-                                        cell1D_origin_index :
-                                        cell2D_vertex_index;
-
-        const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
-        if (edge_found == new_cell1Ds_index.end())
-          new_cell2D_extremes(1, n_v) = cell2D_edge_index;
-        else
-          new_cell2D_extremes(1, n_v) = edge_found->second;
-
-        n_v++;
-      }
-    }
-    assert(n_v + 1 == cell2D_num_vertices);
-
-    const auto new_cell2D_index = SplitCell2D(cell2D_index,
-                                              { new_cell2D_extremes },
-                                              mesh);
-    new_cell2Ds_index.insert(std::make_pair(cell2D_index, new_cell2D_index.at(0)));
-  }
-
   // update cell0D and cell1D from cell2Ds
+  std::unordered_map<unsigned int, unsigned int> new_cell2Ds_index;
   for (const auto cell2D_index : cell1D_end_index_cell2Ds)
   {
     if (cell2D_index > mesh.Cell2DTotalNumber())
@@ -591,35 +560,60 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     if (!mesh.Cell2DIsActive(cell2D_index))
       continue;
 
-    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
-    Eigen::MatrixXi new_cell2D_extremes(2, cell2D_num_vertices);
+    const bool has_edge_to_remove = std::find(cell1D_cell2Ds.begin(),
+                                              cell1D_cell2Ds.end(),
+                                              cell2D_index) != cell1D_cell2Ds.end();
 
+    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
+    const unsigned int num_new_vertices = has_edge_to_remove ?
+                                            cell2D_num_vertices - 1 :
+                                            cell2D_num_vertices;
+
+    Eigen::MatrixXi new_cell2D_extremes(2,
+                                        num_new_vertices);
+    unsigned int n_v = 0;
+    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
+    {
+      const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
+                                                     v);
+
+      if (cell2D_vertex_index == cell1D_end_index)
+      {
+        if (!has_edge_to_remove)
+          new_cell2D_extremes(0, n_v) = cell1D_origin_index;
+        else
+          continue;
+      }
+      else
+        new_cell2D_extremes(0, n_v) = cell2D_vertex_index;
+
+      n_v++;
+    }
+
+    n_v = 0;
     for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
     {
       const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
                                                      v);
 
-      const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
-                                                   v);
+      if (cell2D_edge_index == cell1D_index)
+        continue;
 
-      if (cell2D_edge_index != cell1D_index)
-      {
-        new_cell2D_extremes(0, v) = cell2D_vertex_index == cell1D_end_index ?
-                                        cell1D_origin_index :
-                                        cell2D_vertex_index;
+      const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
 
-        const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
-        if (edge_found == new_cell1Ds_index.end())
-          new_cell2D_extremes(1, v) = cell2D_edge_index;
-        else
-          new_cell2D_extremes(1, v) = edge_found->second;
-      }
+      if (edge_found == new_cell1Ds_index.end())
+        new_cell2D_extremes(1, n_v) = cell2D_edge_index;
+      else
+        new_cell2D_extremes(1, n_v) = edge_found->second;
+
+      n_v++;
     }
 
     const auto new_cell2D_index = SplitCell2D(cell2D_index,
                                               { new_cell2D_extremes },
                                               mesh);
-    new_cell2Ds_index.insert(std::make_pair(cell2D_index, new_cell2D_index.at(0)));
+    new_cell2Ds_index.insert(std::make_pair(cell2D_index,
+                                            new_cell2D_index.at(0)));
   }
 
 
