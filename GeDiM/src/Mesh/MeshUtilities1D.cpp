@@ -515,7 +515,7 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     if (cell1D_neigh_index == cell1D_index)
       continue;
 
-    if (!mesh.Cell1DIsActive(cell1D_index))
+    if (!mesh.Cell1DIsActive(cell1D_neigh_index))
       continue;
 
     const auto cell1D_n_extremes = mesh.Cell1DExtremes(cell1D_neigh_index);
