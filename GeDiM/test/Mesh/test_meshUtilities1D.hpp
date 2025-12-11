@@ -250,8 +250,8 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D)
 
     mesh_utilities.CollapseCell1D(20,
                                   mesh);
-    //mesh_utilities.CollapseCell1D(18,
-    //                              mesh);
+    mesh_utilities.CollapseCell1D(18,
+                                  mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
