@@ -637,7 +637,7 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                               mesh);
     new_cell2Ds_index.insert(std::make_pair(cell2D_index,
                                             new_cell2D_index.at(0)));
-    cell1D_origin_cell2Ds_neigh.insert(new_cell2Ds_index.at(0));
+    cell1D_origin_cell2Ds_neigh.insert(new_cell2D_index.at(0));
   }
 
   mesh.Cell0DInitializeNeighbourCell2Ds(cell1D_origin_index,
