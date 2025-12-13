@@ -599,23 +599,6 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     {
       const auto cell2D_vertex_index = mesh.Cell2DVertex(cell2D_index,
                                                      v);
-
-      if (cell2D_vertex_index == cell1D_end_index)
-      {
-        if (!has_edge_to_remove)
-          new_cell2D_extremes(0, n_v) = cell1D_origin_index;
-        else
-          continue;
-      }
-      else
-        new_cell2D_extremes(0, n_v) = cell2D_vertex_index;
-
-      n_v++;
-    }
-
-    n_v = 0;
-    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
-    {
       const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
                                                      v);
 
@@ -624,6 +607,13 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
 
       const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
 
+      if (cell2D_vertex_index == cell1D_end_index)
+      {
+        new_cell2D_extremes(0, n_v) = cell1D_origin_index;
+      }
+      else
+        new_cell2D_extremes(0, n_v) = cell2D_vertex_index;
+
       if (edge_found == new_cell1Ds_index.end())
         new_cell2D_extremes(1, n_v) = cell2D_edge_index;
       else
@@ -631,6 +621,25 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
 
       n_v++;
     }
+
+//    n_v = 0;
+//    for (unsigned int v = 0; v < cell2D_num_vertices; ++v)
+//    {
+//      const auto cell2D_edge_index = mesh.Cell2DEdge(cell2D_index,
+//                                                     v);
+
+//      if (cell2D_edge_index == cell1D_index)
+//        continue;
+
+//      const auto edge_found = new_cell1Ds_index.find(cell2D_edge_index);
+
+//      if (edge_found == new_cell1Ds_index.end())
+//        new_cell2D_extremes(1, n_v) = cell2D_edge_index;
+//      else
+//        new_cell2D_extremes(1, n_v) = edge_found->second;
+
+//      n_v++;
+//    }
 
     const auto new_cell2D_index = SplitCell2D(cell2D_index,
                                               { new_cell2D_extremes },

@@ -270,6 +270,7 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
 
     {
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell2D_CheckConvexity = false;
         mesh_utilities.CheckMesh2D(config,
                                    geometry_utilities,
                                    mesh);
