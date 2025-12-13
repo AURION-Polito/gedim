@@ -319,6 +319,7 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
 
     mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
     mesh_utilities.ComputeCell0DCell2DNeighbours(mesh);
+    mesh_utilities.ComputeCell0DCell3DNeighbours(mesh);
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
     mesh_utilities.ComputeCell1DCell3DNeighbours(mesh);
 
