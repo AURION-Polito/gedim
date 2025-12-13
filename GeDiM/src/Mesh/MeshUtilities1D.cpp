@@ -13,8 +13,7 @@
 
 #include "ImportExportUtilities.hpp"
 #include <fstream>
-#include "CommonUtilities.hpp"
-#include "IOStream.hpp"
+#include <set>
 
 namespace Gedim
 {
@@ -496,7 +495,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   if (cell1D_cell2Ds.empty())
     return false;
 
-  const auto cell1D_origin_cell1Ds_neigh = mesh.Cell0DNeighbourCell1Ds(cell1D_origin_index);
+  const auto cell1D_origin_cell1Ds_neigh_vec = mesh.Cell0DNeighbourCell1Ds(cell1D_origin_index);
+  std::set<unsigned int> cell1D_origin_cell1Ds_neigh(cell1D_origin_cell1Ds_neigh_vec.begin(),
+                                                     cell1D_origin_cell1Ds_neigh_vec.end());
   const auto cell1D_end_cell1Ds_neigh = mesh.Cell0DNeighbourCell1Ds(cell1D_end_index);
 
   if (cell1D_origin_cell1Ds_neigh.empty() ||
@@ -505,31 +506,23 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
 
   const auto cell1D_end_index_cell2Ds = mesh.Cell0DNeighbourCell2Ds(cell1D_end_index);
 
-  if (cell1D_end_index_cell2Ds.empty())
+  const auto cell1D_origin_cell2Ds_neigh_vec = mesh.Cell0DNeighbourCell2Ds(cell1D_origin_index);
+  std::set<unsigned int> cell1D_origin_cell2Ds_neigh(cell1D_origin_cell2Ds_neigh_vec.begin(),
+                                                     cell1D_origin_cell2Ds_neigh_vec.end());
+
+  if (cell1D_end_index_cell2Ds.empty() ||
+      cell1D_origin_cell2Ds_neigh.empty())
     return false;
 
-  // for (const auto cell2D_index : cell1D_cell2Ds)
-  // {
-  //   if (cell2D_index > mesh.Cell2DTotalNumber())
-  //     continue;
-
-  //   const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
-
-  //   if (cell2D_num_vertices == 3)
-  //     return false;
-  // }
-
-  std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1D_origin_edges;
-  for (const auto cell1D_neigh_index : cell1D_origin_cell1Ds_neigh)
+  for (const auto cell2D_index : cell1D_cell2Ds)
   {
-    const auto cell1D_n_extremes = mesh.Cell1DExtremes(cell1D_neigh_index);
+    if (cell2D_index > mesh.Cell2DTotalNumber())
+      continue;
 
-    cell1D_origin_edges.insert(std::make_pair(std::make_pair(cell1D_n_extremes[0],
-                                                             cell1D_n_extremes[1]),
-                                              cell1D_neigh_index));
-    cell1D_origin_edges.insert(std::make_pair(std::make_pair(cell1D_n_extremes[1],
-                                                             cell1D_n_extremes[0]),
-                                              cell1D_neigh_index));
+    const auto cell2D_num_vertices = mesh.Cell2DNumberVertices(cell2D_index);
+
+    if (cell2D_num_vertices == 3)
+      return false;
   }
 
   // remove cell1D
@@ -561,67 +554,23 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
             cell1D_n_extremes[e];
     }
 
-    const auto new_cell1D_exists = cell1D_origin_edges.find(std::make_pair(new_cell1D_extremes(0, 0),
-                                                                           new_cell1D_extremes(1, 0)));
+    const auto new_cell1D_index = SplitCell1D(cell1D_neigh_index,
+                                              new_cell1D_extremes,
+                                              mesh);
 
-    if (new_cell1D_exists == cell1D_origin_edges.end())
-    {
-      const auto new_cell1D_index = SplitCell1D(cell1D_neigh_index,
-                                                new_cell1D_extremes,
-                                                mesh);
-
-      new_cell1Ds_index.insert(std::make_pair(cell1D_neigh_index,
-                                              new_cell1D_index.at(0)));
-    }
-    else
-    {
-      const auto replace_cell1D_index = new_cell1D_exists->second;
-
-      mesh.Cell1DSetState(cell1D_neigh_index, false);
-      replace_cell1Ds_index.insert(std::make_pair(cell1D_neigh_index,
-                                                  replace_cell1D_index));
-
-      const auto cell1D_neigh_index_cell2Ds_array = mesh.Cell1DNeighbourCell2Ds(cell1D_neigh_index);
-      const auto replace_cell1D_index_cell2Ds_array = mesh.Cell1DNeighbourCell2Ds(replace_cell1D_index);
-
-      const auto neighs_2D_union = Gedim::Utilities::Union({ cell1D_neigh_index_cell2Ds_array,
-                                                         replace_cell1D_index_cell2Ds_array });
-
-      { using namespace Gedim;
-        std::cout<< "One "<< cell1D_neigh_index_cell2Ds_array<< std::endl;
-        std::cout<< "Two "<< replace_cell1D_index_cell2Ds_array<< std::endl;
-        std::cout<< "Union "<< neighs_2D_union<< std::endl;
-      }
-
-      if (neighs_2D_union.size() == 1)
-        throw std::runtime_error("edge internal to case not managed");
-
-      mesh.Cell1DInitializeNeighbourCell2Ds(replace_cell1D_index,
-                                            neighs_2D_union.size());
-
-      for (unsigned int n = 0; n < neighs_2D_union.size(); ++n)
-      {
-        mesh.Cell1DInsertNeighbourCell2D(replace_cell1D_index,
-                                         n,
-                                         neighs_2D_union.at(n));
-      }
-    }
+    new_cell1Ds_index.insert(std::make_pair(cell1D_neigh_index,
+                                            new_cell1D_index.at(0)));
+    cell1D_origin_cell1Ds_neigh.insert(new_cell1D_index.at(0));
   }
 
-  for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell1D(cell1D_origin_index); n++)
+  mesh.Cell0DInitializeNeighbourCell1Ds(cell1D_origin_index,
+                                        cell1D_origin_cell1Ds_neigh.size());
+  unsigned int c0D_1D_n = 0;
+  for (const auto c1D_n : cell1D_origin_cell1Ds_neigh)
   {
-      if (!mesh.Cell0DHasNeighbourCell1D(cell1D_origin_index, n))
-          continue;
-
-      const auto cell1D_neigh = mesh.Cell0DNeighbourCell1D(cell1D_origin_index, n);
-
-      if (cell1D_neigh == cell1D_index)
-        mesh.Cell0DResetNeighbourCell1D(cell1D_origin_index, n);
-
-      const auto edge_found = new_cell1Ds_index.find(cell1D_neigh);
-
-      if (edge_found != new_cell1Ds_index.end())
-        mesh.Cell0DInsertNeighbourCell1D(cell1D_origin_index, n, edge_found->second);
+    mesh.Cell0DInsertNeighbourCell1D(cell1D_origin_index,
+                                     c0D_1D_n++,
+                                     c1D_n);
   }
 
   // update cell0D and cell1D from cell2Ds
@@ -688,6 +637,17 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                               mesh);
     new_cell2Ds_index.insert(std::make_pair(cell2D_index,
                                             new_cell2D_index.at(0)));
+    cell1D_origin_cell2Ds_neigh.insert(new_cell2Ds_index.at(0));
+  }
+
+  mesh.Cell0DInitializeNeighbourCell2Ds(cell1D_origin_index,
+                                        cell1D_origin_cell2Ds_neigh.size());
+  unsigned int c0D_2D_n = 0;
+  for (const auto c2D_n : cell1D_origin_cell2Ds_neigh)
+  {
+    mesh.Cell0DInsertNeighbourCell2D(cell1D_origin_index,
+                                     c0D_2D_n++,
+                                     c2D_n);
   }
 
 
