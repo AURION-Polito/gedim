@@ -519,6 +519,17 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
       cell1D_origin_cell2Ds_neigh.empty())
     return false;
 
+  const auto cell1D_end_index_cell3Ds = mesh.Cell0DNeighbourCell3Ds(cell1D_end_index);
+
+  const auto cell1D_origin_cell3Ds_neigh_vec = mesh.Cell0DNeighbourCell3Ds(cell1D_origin_index);
+  std::set<unsigned int> cell1D_origin_cell3Ds_neigh(cell1D_origin_cell3Ds_neigh_vec.begin(),
+                                                     cell1D_origin_cell3Ds_neigh_vec.end());
+
+  if (mesh.Dimension() == 3 &&
+      (cell1D_end_index_cell3Ds.empty() ||
+      cell1D_origin_cell3Ds_neigh.empty()))
+    return false;
+
   for (const auto cell2D_index : cell1D_cell2Ds)
   {
     if (cell2D_index > mesh.Cell2DTotalNumber())
@@ -651,6 +662,115 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                      c2D_n);
   }
 
+  if (mesh.Dimension() < 3)
+    return true;
+
+  // update cell0D and cell1D from cell3Ds
+  for (const auto cell3D_index : cell1D_end_index_cell3Ds)
+  {
+    if (cell3D_index > mesh.Cell3DTotalNumber())
+      continue;
+
+    if (!mesh.Cell3DIsActive(cell3D_index))
+      continue;
+
+    const bool has_edge_to_remove = std::find(cell1D_cell3Ds.begin(),
+                                              cell1D_cell3Ds.end(),
+                                              cell3D_index) != cell1D_cell3Ds.end();
+
+    std::vector<unsigned int> new_vertices;
+    std::vector<unsigned int> new_edges;
+    std::vector<unsigned int> new_faces;
+
+    {
+    const auto cell3D_num_vertices = mesh.Cell3DNumberVertices(cell3D_index);
+    const unsigned int num_new_vertices = has_edge_to_remove ?
+                                            cell3D_num_vertices - 1 :
+                                            cell3D_num_vertices;
+    new_vertices.resize(num_new_vertices);
+
+    unsigned int n_v = 0;
+    for (unsigned int v = 0; v < cell3D_num_vertices; ++v)
+    {
+      const auto cell3D_vertex_index = mesh.Cell3DVertex(cell3D_index,
+                                                     v);
+
+      if (cell3D_vertex_index == cell1D_end_index)
+      {
+        if (!has_edge_to_remove)
+          new_vertices[n_v] = cell1D_origin_index;
+      }
+      else
+        new_vertices[n_v] = cell3D_vertex_index;
+
+      n_v++;
+    }
+    }
+
+    {
+      const auto cell3D_num_edges = mesh.Cell3DNumberEdges(cell3D_index);
+      const unsigned int num_new_edges = has_edge_to_remove ?
+                                              cell3D_num_edges - 1 :
+                                              cell3D_num_edges;
+      new_edges.resize(num_new_edges);
+
+      unsigned int n_e = 0;
+      for (unsigned int e = 0; e < cell3D_num_edges; ++e)
+      {
+        const auto cell3D_edge_index = mesh.Cell3DEdge(cell3D_index,
+                                                       e);
+
+        if (cell3D_edge_index == cell1D_index)
+          continue;
+
+        const auto edge_found = new_cell1Ds_index.find(cell3D_edge_index);
+
+
+        if (edge_found == new_cell1Ds_index.end())
+          new_edges[n_e] = cell3D_edge_index;
+        else
+          new_edges[n_e] = edge_found->second;
+
+        n_e++;
+      }
+    }
+
+    {
+      const auto cell3D_num_faces = mesh.Cell3DNumberFaces(cell3D_index);
+      new_faces.resize(cell3D_num_faces);
+
+      for (unsigned int f = 0; f < cell3D_num_faces; ++f)
+      {
+        const auto cell3D_face_index = mesh.Cell3DFace(cell3D_index,
+                                                       f);
+
+        const auto face_found = new_cell2Ds_index.find(cell3D_face_index);
+
+
+        if (face_found == new_cell2Ds_index.end())
+          new_faces[f] = cell3D_face_index;
+        else
+          new_faces[f] = face_found->second;
+      }
+    }
+
+    const auto new_cell3D_index = SplitCell3D(cell3D_index,
+                                              { new_vertices },
+                                              { new_edges },
+                                              { new_faces },
+                                              mesh);
+    cell1D_origin_cell3Ds_neigh.insert(new_cell3D_index.at(0));
+  }
+
+  mesh.Cell0DInitializeNeighbourCell3Ds(cell1D_origin_index,
+                                        cell1D_origin_cell3Ds_neigh.size());
+  unsigned int c0D_3D_n = 0;
+  for (const auto c3D_n : cell1D_origin_cell3Ds_neigh)
+  {
+    mesh.Cell0DInsertNeighbourCell3D(cell1D_origin_index,
+                                     c0D_3D_n++,
+                                     c3D_n);
+  }
 
   return true;
 }
