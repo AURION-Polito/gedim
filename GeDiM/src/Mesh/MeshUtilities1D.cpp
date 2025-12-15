@@ -683,28 +683,30 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     std::vector<unsigned int> new_faces;
 
     {
-    const auto cell3D_num_vertices = mesh.Cell3DNumberVertices(cell3D_index);
-    const unsigned int num_new_vertices = has_edge_to_remove ?
-                                            cell3D_num_vertices - 1 :
-                                            cell3D_num_vertices;
-    new_vertices.resize(num_new_vertices);
+      const auto cell3D_num_vertices = mesh.Cell3DNumberVertices(cell3D_index);
+      const unsigned int num_new_vertices = has_edge_to_remove ?
+                                              cell3D_num_vertices - 1 :
+                                              cell3D_num_vertices;
+      new_vertices.resize(num_new_vertices);
 
-    unsigned int n_v = 0;
-    for (unsigned int v = 0; v < cell3D_num_vertices; ++v)
-    {
-      const auto cell3D_vertex_index = mesh.Cell3DVertex(cell3D_index,
-                                                     v);
-
-      if (cell3D_vertex_index == cell1D_end_index)
+      unsigned int n_v = 0;
+      for (unsigned int v = 0; v < cell3D_num_vertices; ++v)
       {
-        if (!has_edge_to_remove)
-          new_vertices[n_v] = cell1D_origin_index;
-      }
-      else
-        new_vertices[n_v] = cell3D_vertex_index;
+        const auto cell3D_vertex_index = mesh.Cell3DVertex(cell3D_index,
+                                                       v);
 
-      n_v++;
-    }
+        if (cell3D_vertex_index == cell1D_end_index)
+        {
+          if (!has_edge_to_remove)
+            new_vertices[n_v] = cell1D_origin_index;
+          else
+            continue;
+        }
+        else
+          new_vertices[n_v] = cell3D_vertex_index;
+
+        n_v++;
+      }
     }
 
     {
