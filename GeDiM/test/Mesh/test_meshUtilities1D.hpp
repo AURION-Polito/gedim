@@ -295,8 +295,8 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
     geometry_utilities_config.MinTolerance = 1.0e-14;
     geometry_utilities_config.Tolerance1D = 1.0e-6;
-    geometry_utilities_config.Tolerance2D = 1.0e-12;
-    geometry_utilities_config.Tolerance3D = 1.0e-10;
+    geometry_utilities_config.Tolerance2D = 1.0e-10;
+    geometry_utilities_config.Tolerance3D = 1.0e-8;
     Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
     Gedim::MeshUtilities mesh_utilities;
 
