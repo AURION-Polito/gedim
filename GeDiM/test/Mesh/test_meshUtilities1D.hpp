@@ -335,10 +335,15 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
 
-//   mesh_utilities.CollapseCell1D(33,
-//                                 mesh);
+    mesh_utilities.CollapseCell1D(12,
+                                  mesh);
 
-//    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+
+    mesh_utilities.CollapseCell1D(17,
+                                  mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
     mesh_utilities.ExtractActiveMesh(mesh, extraction_data);
