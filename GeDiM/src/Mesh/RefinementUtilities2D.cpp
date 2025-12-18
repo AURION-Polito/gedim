@@ -695,6 +695,43 @@ RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCel
     return geometricData;
 }
 // ***************************************************************************
+Gedim::MeshUtilities::MeshGeometricData2D RefinementUtilities::ConvertRefinementGeometricData_to_MeshGeometricData(
+    const Gedim::RefinementUtilities::Cell2Ds_GeometricData &ref_mesh_geometric_data,
+    const Gedim::IMeshDAO &mesh) const
+{
+    Gedim::MeshUtilities::MeshGeometricData2D mesh_geometric_data;
+
+    const unsigned int total_cell2Ds = mesh.Cell2DTotalNumber();
+
+    mesh_geometric_data.Cell2DsBoundingBox.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsVertices.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsTriangulations.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsAreas.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsCentroids.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsDiameters.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsEdgeDirections.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsEdgesCentroid.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsEdgeLengths.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsEdgeTangents.resize(total_cell2Ds);
+    mesh_geometric_data.Cell2DsEdgeNormals.resize(total_cell2Ds);
+
+    for (unsigned int c = 0; c < total_cell2Ds; c++)
+    {
+        mesh_geometric_data.Cell2DsVertices[c] = ref_mesh_geometric_data.Cell2Ds.Vertices.at(c);
+        mesh_geometric_data.Cell2DsTriangulations[c] = ref_mesh_geometric_data.Cell2Ds.Triangulations.at(c);
+        mesh_geometric_data.Cell2DsAreas[c] = ref_mesh_geometric_data.Cell2Ds.Area.at(c);
+        mesh_geometric_data.Cell2DsCentroids[c] = ref_mesh_geometric_data.Cell2Ds.Centroid.at(c);
+        mesh_geometric_data.Cell2DsDiameters[c] = geometryUtilities.PolygonDiameter(mesh_geometric_data.Cell2DsVertices[c]);
+        mesh_geometric_data.Cell2DsEdgeDirections[c] = ref_mesh_geometric_data.Cell2Ds.EdgesDirection.at(c);
+        mesh_geometric_data.Cell2DsEdgeLengths[c] = ref_mesh_geometric_data.Cell2Ds.EdgesLength.at(c);
+        mesh_geometric_data.Cell2DsEdgeTangents[c] =
+            geometryUtilities.PolygonEdgeTangents(mesh_geometric_data.Cell2DsVertices[c]);
+        mesh_geometric_data.Cell2DsEdgeNormals[c] = ref_mesh_geometric_data.Cell2Ds.EdgesNormal.at(c);
+    }
+
+    return mesh_geometric_data;
+}
+// ***************************************************************************
 void RefinementUtilities::RefinePolygonCell_UpdateGeometricData(const Gedim::IMeshDAO &mesh,
                                                                 const std::vector<unsigned int> &cell2DsIndex,
                                                                 Cell2Ds_GeometricData &geometricData) const

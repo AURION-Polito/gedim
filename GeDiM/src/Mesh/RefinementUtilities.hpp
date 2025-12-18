@@ -23,7 +23,7 @@ namespace Gedim
 /// \copyright See top level LICENSE file for details.
 class RefinementUtilities final
 {
-  public:
+public:
     struct TriangleMaxEdgeDirection final
     {
         unsigned int MaxEdgeIndex = 0;
@@ -295,11 +295,11 @@ class RefinementUtilities final
         Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell2D_GeometricData Cell2Ds;
     };
 
-  private:
+private:
     const Gedim::GeometryUtilities &geometryUtilities;
     const Gedim::MeshUtilities &meshUtilities;
 
-  public:
+public:
     RefinementUtilities(const Gedim::GeometryUtilities &geometryUtilities, const Gedim::MeshUtilities &meshUtilities);
     ~RefinementUtilities();
 
@@ -503,6 +503,9 @@ class RefinementUtilities final
 
     /// Compute the geometric data for all the mesh
     Gedim::RefinementUtilities::Cell2Ds_GeometricData RefinePolygonCell_InitializeGeometricData(const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::MeshGeometricData2D ConvertRefinementGeometricData_to_MeshGeometricData(
+        const Gedim::RefinementUtilities::Cell2Ds_GeometricData &ref_mesh_geometric_data,
+        const IMeshDAO &mesh) const;
 
     /// \brief Update the geometric data for only cell2Ds
     void RefinePolygonCell_UpdateGeometricData(const Gedim::IMeshDAO &mesh,
@@ -524,6 +527,12 @@ class RefinementUtilities final
                                                        const std::vector<unsigned int> &cell2DsToRefineIndex,
                                                        Gedim::RefinementUtilities::Cell2Ds_GeometricData &meshGeometricData,
                                                        Gedim::IMeshDAO &mesh) const;
+
+    void RefineMesh2D(const std::vector<unsigned int> &cell2DsToRefineIndex,
+                      const double &cell1DsQualityWeight,
+                      const double &cell1DsAlignedWeight,
+                      Gedim::RefinementUtilities::Cell2Ds_GeometricData &meshGeometricData,
+                      Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim

@@ -237,4 +237,117 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
     return std::vector<unsigned int>(refinedCells.begin(), refinedCells.end());
 }
 // ***************************************************************************
+void RefinementUtilities::RefineMesh2D(const std::vector<unsigned int> &cell2DsToRefineIndex,
+                                       const double &cell1DsQualityWeight,
+                                       const double &cell1DsAlignedWeight,
+                                       Cell2Ds_GeometricData &meshGeometricData,
+                                       Gedim::IMeshDAO &mesh) const
+{
+    for (unsigned int c = 0; c < cell2DsToRefineIndex.size(); c++)
+    {
+        std::list<unsigned int> cell2DsToUpdateGeometricData;
+
+        std::list<unsigned int> updatedCell2Ds;
+        mesh.Cell2DUpdatedCell2Ds(cell2DsToRefineIndex[c], updatedCell2Ds);
+
+        if (updatedCell2Ds.size() > 1)
+            continue;
+
+        const unsigned int cell2DToRefineIndex = updatedCell2Ds.size() == 0 ? cell2DsToRefineIndex[c] : updatedCell2Ds.front();
+
+        Gedim::RefinementUtilities::PolygonDirection direction =
+            ComputePolygonMaxInertiaDirection(meshGeometricData.Cell2Ds.UnalignedVertices.at(cell2DToRefineIndex),
+                                              meshGeometricData.Cell2Ds.UnalignedEdgesLength.at(cell2DToRefineIndex),
+                                              meshGeometricData.Cell2Ds.Centroid.at(cell2DToRefineIndex),
+                                              meshGeometricData.Cell2Ds.Inertia[cell2DToRefineIndex]);
+
+        const Eigen::Matrix3d cell2DRotation = Eigen::Matrix3d::Identity();
+        const Eigen::Vector3d cell2DTranslation = Eigen::Vector3d::Zero();
+
+        const Gedim::RefinementUtilities::RefinePolygon_CheckResult refineCheckResult =
+            RefinePolygonCell_CheckRefinement(cell2DToRefineIndex,
+                                              meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
+                                              direction.LineTangent,
+                                              direction.LineOrigin,
+                                              meshGeometricData.Cell2Ds.Quality,
+                                              meshGeometricData.Cell1Ds.Aligned,
+                                              cell1DsQualityWeight,
+                                              cell1DsAlignedWeight,
+                                              meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                              meshGeometricData.Cell2Ds.EdgesLength,
+                                              meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+                                              mesh);
+
+        switch (refineCheckResult.ResultType)
+        {
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::SplitDirectionNotInsideCell2D:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DAlreadySplitted: {
+            Gedim::Output::Assert(!mesh.Cell2DIsActive(cell2DToRefineIndex));
+        }
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DSplitUnderTolerance:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DToBeSplitted:
+            break;
+        default:
+            throw std::runtime_error("Refine Check result not managed");
+        }
+
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult =
+            RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
+                                          refineCheckResult,
+                                          cell2DRotation,
+                                          cell2DTranslation,
+                                          meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+                                          false,
+                                          mesh);
+
+        switch (refineResult.ResultType)
+        {
+        case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::SplitDirectionNotInsideCell2D:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Cell2DAlreadySplitted: {
+            Gedim::Output::Assert(!mesh.Cell2DIsActive(cell2DToRefineIndex));
+        }
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Cell2DSplitUnderTolerance:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::SplitQualityCheckCell2DFailed:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Successfull:
+            break;
+        default:
+            throw std::runtime_error("Refine result not managed");
+        }
+
+        for (unsigned int rnc = 0; rnc < refineResult.NewCell2DsIndex.size(); rnc++)
+            cell2DsToUpdateGeometricData.push_back(refineResult.NewCell2DsIndex[rnc]);
+
+        for (unsigned int e = 0; e < refineResult.NewCell1DsIndex.size(); e++)
+        {
+            if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
+                continue;
+
+            const Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result newNeighboursCell2DsIndex =
+                RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                   refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                   meshGeometricData.Cell2Ds.EdgesDirection,
+                                                   mesh);
+            for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
+                cell2DsToUpdateGeometricData.push_back(newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].NewCell2DIndex);
+        }
+
+        RefinePolygonCell_UpdateGeometricData(
+            mesh,
+            std::vector<unsigned int>(cell2DsToUpdateGeometricData.begin(), cell2DsToUpdateGeometricData.end()),
+            meshGeometricData);
+    }
+}
+// ***************************************************************************
 } // namespace Gedim
