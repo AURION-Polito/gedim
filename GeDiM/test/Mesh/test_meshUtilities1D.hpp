@@ -354,6 +354,7 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
         config.Cell2D_CheckConvexity = false;
         config.Cell3D_CheckConvexity = false;
+        config.Cell3D_CheckMeasure = false;
         mesh_utilities.CheckMesh3D(config,
                                    geometry_utilities,
                                    mesh);

@@ -802,10 +802,6 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     if (!mesh.Cell3DIsActive(cell3D_index))
       continue;
 
-    const bool has_edge_to_remove = std::find(cell1D_cell3Ds.begin(),
-                                              cell1D_cell3Ds.end(),
-                                              cell3D_index) != cell1D_cell3Ds.end();
-
     std::set<unsigned int> new_vertices;
     std::set<unsigned int> new_edges;
     std::list<unsigned int> new_faces;
