@@ -261,6 +261,11 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
    mesh_utilities.CollapseCell1D(33,
                                  mesh);
 
+   mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+
+   mesh_utilities.CollapseCell1D(37,
+                                 mesh);
+
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;

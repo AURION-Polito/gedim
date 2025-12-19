@@ -543,6 +543,13 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   // remove cell1D
   mesh.Cell1DSetState(cell1D_index, false);
   mesh.Cell0DSetState(cell1D_end_index, false);
+  unsigned int c0D_new_marker =
+      mesh.Cell0DMarker(cell1D_origin_index) >
+      mesh.Cell0DMarker(cell1D_end_index) ?
+        mesh.Cell1DMarker(cell1D_origin_index) :
+        mesh.Cell1DMarker(cell1D_end_index);
+  mesh.Cell0DSetMarker(cell1D_origin_index,
+      c0D_new_marker);
 
   // remove cell1D_end_index from cell1Ds
   std::unordered_map<unsigned int, unsigned int> new_cell1Ds_index;
@@ -573,7 +580,14 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
           cell1Ds_to_collapse[0] = triangle_cell1D_index;
       }
 
+      unsigned int c1D_new_marker =
+          mesh.Cell1DMarker(cell1Ds_to_collapse[0]) >
+          mesh.Cell1DMarker(cell1Ds_to_collapse[1]) ?
+            mesh.Cell1DMarker(cell1Ds_to_collapse[0]) :
+            mesh.Cell1DMarker(cell1Ds_to_collapse[1]);
       mesh.Cell1DSetState(cell1Ds_to_collapse[1], false);
+      mesh.Cell1DSetMarker(cell1Ds_to_collapse[0],
+          c1D_new_marker);
       new_cell1Ds_index.insert(std::make_pair(cell1Ds_to_collapse[1],
                                cell1Ds_to_collapse[0]));
 
@@ -609,9 +623,17 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
 
           if (cell2D_neigh == cell2D_index)
           {
+            if (other_neigh_2D < mesh.Cell2DTotalNumber())
+            {
             mesh.Cell1DInsertNeighbourCell2D(cell1Ds_to_collapse[0],
                 n,
                 other_neigh_2D);
+            }
+            else
+            {
+              mesh.Cell1DResetNeighbourCell2D(cell1Ds_to_collapse[0],
+                  n);
+            }
           }
         }
       }
