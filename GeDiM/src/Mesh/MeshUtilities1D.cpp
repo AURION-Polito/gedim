@@ -817,16 +817,16 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
         const auto cell3D_face_index = mesh.Cell3DFace(cell3D_index,
                                                        f);
 
-        if (!mesh.Cell2DIsActive(cell3D_face_index))
-          continue;
-
         if (cell2D_to_collapse.contains(cell3D_face_index))
           continue;
 
         const auto face_found = new_cell2Ds_index.find(cell3D_face_index);
 
         if (face_found == new_cell2Ds_index.end())
+        {
+          assert(mesh.Cell2DIsActive(cell3D_face_index));
           new_faces.push_back(cell3D_face_index);
+        }
         else
           new_faces.push_back(face_found->second);
       }
