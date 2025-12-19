@@ -806,36 +806,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                               cell1D_cell3Ds.end(),
                                               cell3D_index) != cell1D_cell3Ds.end();
 
-    std::vector<unsigned int> new_vertices;
+    std::set<unsigned int> new_vertices;
     std::set<unsigned int> new_edges;
     std::list<unsigned int> new_faces;
-
-    {
-      const auto cell3D_num_vertices = mesh.Cell3DNumberVertices(cell3D_index);
-      const unsigned int num_new_vertices = has_edge_to_remove ?
-                                              cell3D_num_vertices - 1 :
-                                              cell3D_num_vertices;
-      new_vertices.resize(num_new_vertices);
-
-      unsigned int n_v = 0;
-      for (unsigned int v = 0; v < cell3D_num_vertices; ++v)
-      {
-        const auto cell3D_vertex_index = mesh.Cell3DVertex(cell3D_index,
-                                                       v);
-
-        if (cell3D_vertex_index == cell1D_end_index)
-        {
-          if (!has_edge_to_remove)
-            new_vertices[n_v] = cell1D_origin_index;
-          else
-            continue;
-        }
-        else
-          new_vertices[n_v] = cell3D_vertex_index;
-
-        n_v++;
-      }
-    }
 
     {
       const auto cell3D_num_faces = mesh.Cell3DNumberFaces(cell3D_index);
@@ -864,6 +837,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
       {
         for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(c2D); ++e)
           new_edges.insert(mesh.Cell2DEdge(c2D, e));
+
+        for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(c2D); ++v)
+          new_vertices.insert(mesh.Cell2DVertex(c2D, v));
       }
     }
 
