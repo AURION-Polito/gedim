@@ -9,22 +9,6 @@
 //
 // This file can be used citing references in CITATION.cff file.
 
-// Copyright (C) 2014 Vicini Fabio
-//
-// This file is part of the dissertation of the author.
-//
-// This is a free program: you can redistribute it and/or modify
-// it under the terms of the author.
-//
-// This program is distributed in the hope that it will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied
-// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-// PURPOSE.
-//
-// Modified by Vicini Fabio 2014
-//
-// First added:  2014-10-05
-
 #ifndef __GEDIM_IOStream_H
 #define __GEDIM_IOStream_H
 
