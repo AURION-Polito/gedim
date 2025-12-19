@@ -351,10 +351,16 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
 
     {
+      Gedim::Output::CreateFolder(exportFolder + "/Filtered_Mesh");
+      mesh_utilities.ExportMeshToCsv(mesh,
+                                     ';',
+                                     exportFolder + "/Filtered_Mesh");
+    }
+
+    {
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
         config.Cell2D_CheckConvexity = false;
         config.Cell3D_CheckConvexity = false;
-        config.Cell3D_CheckMeasure = false;
         mesh_utilities.CheckMesh3D(config,
                                    geometry_utilities,
                                    mesh);
@@ -365,6 +371,7 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
         const auto mesh_geometric_data = mesh_utilities.FillMesh3DGeometricData(geometry_utilities, mesh);
 
         Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration config;
+        config.Cell3D_CheckTetrahedra = false;
         mesh_utilities.CheckMeshGeometricData3D(config, geometry_utilities, mesh, mesh_geometric_data);
     }
 
