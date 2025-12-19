@@ -844,7 +844,8 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     }
 
     const auto new_cell3D_index = SplitCell3D(cell3D_index,
-                                              { new_vertices },
+                                              { std::vector<unsigned int>(new_vertices.begin(),
+                                                new_vertices.end()) },
                                               { std::vector<unsigned int>(new_edges.begin(),
                                                 new_edges.end()) },
                                               { std::vector<unsigned int>(new_faces.begin(),
