@@ -546,8 +546,8 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   unsigned int c0D_new_marker =
       mesh.Cell0DMarker(cell1D_origin_index) >
       mesh.Cell0DMarker(cell1D_end_index) ?
-        mesh.Cell1DMarker(cell1D_origin_index) :
-        mesh.Cell1DMarker(cell1D_end_index);
+        mesh.Cell0DMarker(cell1D_origin_index) :
+        mesh.Cell0DMarker(cell1D_end_index);
   mesh.Cell0DSetMarker(cell1D_origin_index,
       c0D_new_marker);
 
