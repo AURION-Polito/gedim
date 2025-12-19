@@ -530,15 +530,6 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
       cell1D_origin_cell3Ds_neigh.empty()))
     return false;
 
-  for (const auto cell2D_index : cell1D_cell2Ds)
-  {
-    if (cell2D_index > mesh.Cell2DTotalNumber())
-      continue;
-
-    if (mesh.Cell2DNumberVertices(cell2D_index) == 3)
-      return false;
-  }
-
   for (const auto cell3D_index : cell1D_cell3Ds)
   {
     if (cell3D_index > mesh.Cell3DTotalNumber())
@@ -554,11 +545,142 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   mesh.Cell0DSetState(cell1D_end_index, false);
 
   // remove cell1D_end_index from cell1Ds
-  std::unordered_map<unsigned int, unsigned int> replace_cell1Ds_index;
   std::unordered_map<unsigned int, unsigned int> new_cell1Ds_index;
+
+  std::set<unsigned int> cell2D_to_collapse;
+  for (const auto cell2D_index : cell1D_cell2Ds)
+  {
+    if (cell2D_index >= mesh.Cell2DTotalNumber())
+      continue;
+
+    if (mesh.Cell2DNumberVertices(cell2D_index) == 3)
+    {
+      cell2D_to_collapse.insert(cell2D_index);
+      mesh.Cell2DSetState(cell2D_index, false);
+
+      std::array<unsigned int, 2> cell1Ds_to_collapse;
+      for (unsigned int e = 0; e < 3; ++e)
+      {
+        const auto triangle_cell1D_index = mesh.Cell2DEdge(cell2D_index, e);
+
+        if (triangle_cell1D_index == cell1D_index)
+          continue;
+
+        if (mesh.Cell1DOrigin(triangle_cell1D_index) == cell1D_end_index ||
+            mesh.Cell1DEnd(triangle_cell1D_index) == cell1D_end_index)
+          cell1Ds_to_collapse[1] = triangle_cell1D_index;
+        else
+          cell1Ds_to_collapse[0] = triangle_cell1D_index;
+      }
+
+      mesh.Cell1DSetState(cell1Ds_to_collapse[1], false);
+      new_cell1Ds_index.insert(std::make_pair(cell1Ds_to_collapse[1],
+                               cell1Ds_to_collapse[0]));
+
+      if (mesh.Cell1DNumberNeighbourCell2D(cell1Ds_to_collapse[0]) == 2 &&
+          mesh.Cell1DNumberNeighbourCell2D(cell1Ds_to_collapse[1]) == 2)
+      {
+        unsigned int other_neigh_2D = -1;
+
+        for (unsigned int n = 0; n < 2; n++)
+        {
+          if (!mesh.Cell1DHasNeighbourCell2D(cell1Ds_to_collapse[1], n))
+            continue;
+
+          const auto cell2D_neigh = mesh.Cell1DNeighbourCell2D(cell1Ds_to_collapse[1],
+                                                               n);
+
+          if (cell2D_neigh == cell2D_index)
+            continue;
+
+          other_neigh_2D = cell2D_neigh;
+        }
+
+        for (unsigned int n = 0; n < 2; n++)
+        {
+          if (!mesh.Cell1DHasNeighbourCell2D(cell1Ds_to_collapse[0], n))
+            continue;
+
+          const auto cell2D_neigh = mesh.Cell1DNeighbourCell2D(cell1Ds_to_collapse[0],
+                                                               n);
+
+          if (cell2D_neigh == other_neigh_2D)
+            throw std::runtime_error("Not possible to collapse cell2D");
+
+          if (cell2D_neigh == cell2D_index)
+          {
+            mesh.Cell1DInsertNeighbourCell2D(cell1Ds_to_collapse[0],
+                n,
+                other_neigh_2D);
+          }
+        }
+      }
+      else
+      {
+        const auto cell1D_to_collapse_neigh = mesh.Cell1DNeighbourCell2Ds(cell1Ds_to_collapse[1]);
+        const auto cell1D_to_maintain_neigh = mesh.Cell1DNeighbourCell2Ds(cell1Ds_to_collapse[0]);
+        std::set<unsigned int> cell1D_to_maintain_new_neigh;
+        for (const auto ce2D_n : cell1D_to_collapse_neigh)
+        {
+          if (!mesh.Cell2DIsActive(ce2D_n))
+            continue;
+
+          cell1D_to_maintain_new_neigh.insert(ce2D_n);
+        }
+        for (const auto ce2D_n : cell1D_to_maintain_neigh)
+        {
+          if (!mesh.Cell2DIsActive(ce2D_n))
+            continue;
+
+          cell1D_to_maintain_new_neigh.insert(ce2D_n);
+        }
+
+        mesh.Cell1DInitializeNeighbourCell2Ds(cell1Ds_to_collapse[0],
+                                              cell1D_to_maintain_new_neigh.size());
+        unsigned int c1D_2D_n = 0;
+        for (const auto c2D_n : cell1D_to_maintain_new_neigh)
+        {
+          mesh.Cell1DInsertNeighbourCell2D(cell1Ds_to_collapse[0],
+                                           c1D_2D_n++,
+                                           c2D_n);
+        }
+      }
+
+      {
+        const auto cell1D_to_collapse_neigh = mesh.Cell1DNeighbourCell3Ds(cell1Ds_to_collapse[1]);
+        const auto cell1D_to_maintain_neigh = mesh.Cell1DNeighbourCell3Ds(cell1Ds_to_collapse[0]);
+        std::set<unsigned int> cell1D_to_maintain_new_neigh;
+        for (const auto ce3D_n : cell1D_to_collapse_neigh)
+        {
+          if (!mesh.Cell3DIsActive(ce3D_n))
+            continue;
+
+          cell1D_to_maintain_new_neigh.insert(ce3D_n);
+        }
+        for (const auto ce3D_n : cell1D_to_maintain_neigh)
+        {
+          if (!mesh.Cell3DIsActive(ce3D_n))
+            continue;
+
+          cell1D_to_maintain_new_neigh.insert(ce3D_n);
+        }
+
+        mesh.Cell1DInitializeNeighbourCell3Ds(cell1Ds_to_collapse[0],
+                                              cell1D_to_maintain_new_neigh.size());
+        unsigned int c1D_3D_n = 0;
+        for (const auto c3D_n : cell1D_to_maintain_new_neigh)
+        {
+          mesh.Cell1DInsertNeighbourCell3D(cell1Ds_to_collapse[0],
+                                           c1D_3D_n++,
+                                           c3D_n);
+        }
+      }
+    }
+  }
+
   for (const auto cell1D_neigh_index : cell1D_end_cell1Ds_neigh)
   {
-    if (cell1D_neigh_index > mesh.Cell1DTotalNumber())
+    if (cell1D_neigh_index >= mesh.Cell1DTotalNumber())
       continue;
 
     if (cell1D_neigh_index == cell1D_index)
@@ -592,6 +714,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   unsigned int c0D_1D_n = 0;
   for (const auto c1D_n : cell1D_origin_cell1Ds_neigh)
   {
+    if (!mesh.Cell1DIsActive(c1D_n))
+      continue;
+
     mesh.Cell0DInsertNeighbourCell1D(cell1D_origin_index,
                                      c0D_1D_n++,
                                      c1D_n);
@@ -601,7 +726,7 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   std::unordered_map<unsigned int, unsigned int> new_cell2Ds_index;
   for (const auto cell2D_index : cell1D_end_index_cell2Ds)
   {
-    if (cell2D_index > mesh.Cell2DTotalNumber())
+    if (cell2D_index >= mesh.Cell2DTotalNumber())
       continue;
 
     if (!mesh.Cell2DIsActive(cell2D_index))
@@ -657,6 +782,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   unsigned int c0D_2D_n = 0;
   for (const auto c2D_n : cell1D_origin_cell2Ds_neigh)
   {
+    if (!mesh.Cell2DIsActive(c2D_n))
+      continue;
+
     mesh.Cell0DInsertNeighbourCell2D(cell1D_origin_index,
                                      c0D_2D_n++,
                                      c2D_n);
@@ -668,7 +796,7 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   // update cell0D and cell1D from cell3Ds
   for (const auto cell3D_index : cell1D_end_index_cell3Ds)
   {
-    if (cell3D_index > mesh.Cell3DTotalNumber())
+    if (cell3D_index >= mesh.Cell3DTotalNumber())
       continue;
 
     if (!mesh.Cell3DIsActive(cell3D_index))
@@ -679,8 +807,8 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
                                               cell3D_index) != cell1D_cell3Ds.end();
 
     std::vector<unsigned int> new_vertices;
-    std::vector<unsigned int> new_edges;
-    std::vector<unsigned int> new_faces;
+    std::set<unsigned int> new_edges;
+    std::list<unsigned int> new_faces;
 
     {
       const auto cell3D_num_vertices = mesh.Cell3DNumberVertices(cell3D_index);
@@ -710,56 +838,41 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
     }
 
     {
-      const auto cell3D_num_edges = mesh.Cell3DNumberEdges(cell3D_index);
-      const unsigned int num_new_edges = has_edge_to_remove ?
-                                              cell3D_num_edges - 1 :
-                                              cell3D_num_edges;
-      new_edges.resize(num_new_edges);
-
-      unsigned int n_e = 0;
-      for (unsigned int e = 0; e < cell3D_num_edges; ++e)
-      {
-        const auto cell3D_edge_index = mesh.Cell3DEdge(cell3D_index,
-                                                       e);
-
-        if (cell3D_edge_index == cell1D_index)
-          continue;
-
-        const auto edge_found = new_cell1Ds_index.find(cell3D_edge_index);
-
-
-        if (edge_found == new_cell1Ds_index.end())
-          new_edges[n_e] = cell3D_edge_index;
-        else
-          new_edges[n_e] = edge_found->second;
-
-        n_e++;
-      }
-    }
-
-    {
       const auto cell3D_num_faces = mesh.Cell3DNumberFaces(cell3D_index);
-      new_faces.resize(cell3D_num_faces);
-
       for (unsigned int f = 0; f < cell3D_num_faces; ++f)
       {
         const auto cell3D_face_index = mesh.Cell3DFace(cell3D_index,
                                                        f);
 
+        if (!mesh.Cell2DIsActive(cell3D_face_index))
+          continue;
+
+        if (cell2D_to_collapse.contains(cell3D_face_index))
+          continue;
+
         const auto face_found = new_cell2Ds_index.find(cell3D_face_index);
 
-
         if (face_found == new_cell2Ds_index.end())
-          new_faces[f] = cell3D_face_index;
+          new_faces.push_back(cell3D_face_index);
         else
-          new_faces[f] = face_found->second;
+          new_faces.push_back(face_found->second);
+      }
+    }
+
+    {
+      for (const auto c2D : new_faces)
+      {
+        for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(c2D); ++e)
+          new_edges.insert(mesh.Cell2DEdge(c2D, e));
       }
     }
 
     const auto new_cell3D_index = SplitCell3D(cell3D_index,
                                               { new_vertices },
-                                              { new_edges },
-                                              { new_faces },
+                                              { std::vector<unsigned int>(new_edges.begin(),
+                                                new_edges.end()) },
+                                              { std::vector<unsigned int>(new_faces.begin(),
+                                              new_faces.end()) },
                                               mesh);
     cell1D_origin_cell3Ds_neigh.insert(new_cell3D_index.at(0));
   }
@@ -769,6 +882,9 @@ bool MeshUtilities::CollapseCell1D(const unsigned int cell1D_index,
   unsigned int c0D_3D_n = 0;
   for (const auto c3D_n : cell1D_origin_cell3Ds_neigh)
   {
+    if (!mesh.Cell3DIsActive(c3D_n))
+      continue;
+
     mesh.Cell0DInsertNeighbourCell3D(cell1D_origin_index,
                                      c0D_3D_n++,
                                      c3D_n);
