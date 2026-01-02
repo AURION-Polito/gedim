@@ -2412,6 +2412,12 @@ class GeometryUtilities final
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
 
+    void ExportPlanteToVTU(const Eigen::Vector3d& plane_origin,
+                           const Eigen::Vector3d& plane_normal,
+                           const Eigen::Vector3d& plane_translation,
+                           const Eigen::Matrix3d& plane_rotation_matrix,
+                           const std::string &exportFolder) const;
+
     MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2> &polyhedrons,
                                                 const std::array<unsigned int, 2> polyhedrons_common_face_index,
                                                 const bool remove_common_face) const;
