@@ -1539,8 +1539,8 @@ GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen:
           vertices_extracted.insert(facet[f_v]);
     }
 
-    std::vector<unsigned int> vertices_id(vertices_extracted.begin(),
-                                          vertices_extracted.end());
+    std::vector<unsigned int> vertices_id = std::vector<unsigned int>(vertices_extracted.begin(),
+                                                                      vertices_extracted.end());
     std::map<unsigned int, unsigned int> vertex_extracted_vertex;
 
     for (unsigned int v = 0; v < vertices_id.size(); ++v)
