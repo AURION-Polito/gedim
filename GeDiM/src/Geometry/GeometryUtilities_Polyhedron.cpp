@@ -1527,8 +1527,27 @@ GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen:
 {
     Polyhedron result;
 
-    result.Vertices = points;
     result.Faces.resize(facets.size());
+
+    std::set<unsigned int> vertices_extracted;
+
+    for (unsigned int f = 0; f < facets.size(); ++f)
+    {
+        const auto &facet = facets[f];
+        const unsigned int num_face_vertices = facet.size();
+        for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+          vertices_extracted.insert(facet[f_v]);
+    }
+
+    std::vector<unsigned int> vertices_id(vertices_extracted.begin(),
+                                          vertices_extracted.end());
+    std::map<unsigned int, unsigned int> vertex_extracted_vertex;
+
+    for (unsigned int v = 0; v < vertices_id.size(); ++v)
+      vertex_extracted_vertex.insert(std::make_pair(vertices_id.at(v), v));
+
+    result.Vertices = ExtractPoints(points,
+                                    vertices_id);
 
     std::map<std::pair<unsigned int, unsigned int>, unsigned int> edges;
 
@@ -1541,17 +1560,18 @@ GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen:
         face.resize(2, num_face_vertices);
         for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
         {
-            face(0, f_v) = facet[f_v];
+          const auto vertex_id = facet[f_v];
+          const auto next_vertex_id = facet[(f_v + 1) % num_face_vertices];
 
-            const unsigned int edge_origin = facet[f_v];
-            const unsigned int edge_end = facet[(f_v + 1) % num_face_vertices];
+            face(0, f_v) = vertex_extracted_vertex.at(vertex_id);
+
+            const unsigned int edge_origin = vertex_extracted_vertex.at(vertex_id);
+            const unsigned int edge_end = vertex_extracted_vertex.at(next_vertex_id);
 
             auto edge = std::make_pair(std::min(edge_origin, edge_end), std::max(edge_origin, edge_end));
 
-            if (!edges.contains(edge))
-                edges.insert({edge, edges.size()});
-
-            face(1, f_v) = edges.find(edge)->second;
+            const auto edge_inserted = edges.insert({edge, edges.size()});
+            face(1, f_v) = edge_inserted.first->second;
         }
     }
 
