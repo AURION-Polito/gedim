@@ -2428,6 +2428,9 @@ class GeometryUtilities final
     MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2> &polyhedrons,
                                             const MergePolyhedronsInput &merge_information = {}) const;
 
+    std::map<unsigned int, unsigned int> FacetsToVertices(const std::vector<std::vector<unsigned int>> &facets) const;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> FacetsToEdges(const std::vector<std::vector<unsigned int>> &facets) const;
+
     Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets) const;
     std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron &polyhedron) const;
 };
