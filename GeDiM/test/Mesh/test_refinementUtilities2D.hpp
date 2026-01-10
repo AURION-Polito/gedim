@@ -21,7 +21,6 @@
 
 #include "CommonUtilities.hpp"
 #include "ConformMeshUtilities.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "RefinementUtilities.hpp"
 #include "VTKUtilities.hpp"

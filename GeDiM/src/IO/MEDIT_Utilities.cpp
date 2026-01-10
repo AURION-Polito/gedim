@@ -55,14 +55,15 @@ void MEDIT_Utilities::ExportPolygons(const std::string &filePath,
                                      const Eigen::MatrixXd &points,
                                      const std::vector<std::vector<unsigned int>> &cells_vertices,
                                      const std::vector<unsigned int> &points_reference_ids,
-                                     const std::vector<unsigned int> &cells_reference_ids) const
+                                     const std::vector<unsigned int> &cells_reference_ids,
+                                     const unsigned int &order) const
 {
     ExportFormats format = ExportFormats::Ascii;
 
     switch (format)
     {
     case ExportFormats::Ascii:
-        ExportMEDIT_Ascii(points, points_reference_ids, {}, CreatePolygonCells(cells_vertices, cells_reference_ids), filePath);
+        ExportMEDIT_Ascii(points, points_reference_ids, {}, CreatePolygonCells(cells_vertices, cells_reference_ids, order), filePath);
         break;
     default:
         throw std::runtime_error("Unknown format");
@@ -75,7 +76,8 @@ void MEDIT_Utilities::ExportPolyhedra(const std::string &filePath,
                                       const std::vector<std::vector<unsigned int>> &cells_vertices,
                                       const std::vector<unsigned int> &points_reference_ids,
                                       const std::vector<unsigned int> &faces_reference_ids,
-                                      const std::vector<unsigned int> &cells_reference_ids) const
+                                      const std::vector<unsigned int> &cells_reference_ids,
+                                      const unsigned int &order) const
 {
     ExportFormats format = ExportFormats::Ascii;
 
@@ -84,8 +86,8 @@ void MEDIT_Utilities::ExportPolyhedra(const std::string &filePath,
     case ExportFormats::Ascii:
         ExportMEDIT_Ascii(points,
                           points_reference_ids,
-                          CreatePolygonCells(faces_vertices, faces_reference_ids),
-                          CreatePolyhedraCells(cells_vertices, cells_reference_ids),
+                          CreatePolygonCells(faces_vertices, faces_reference_ids, order),
+                          CreatePolyhedraCells(cells_vertices, cells_reference_ids, order),
                           filePath);
         break;
     default:
@@ -125,7 +127,8 @@ std::vector<MEDIT_Cell> MEDIT_Utilities::CreateEdgeCells(const Eigen::MatrixXi &
 }
 // ***************************************************************************
 std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolygonCells(const std::vector<std::vector<unsigned int>> &polygons_vertices,
-                                                            const std::vector<unsigned int> &reference_ids) const
+                                                            const std::vector<unsigned int> &reference_ids,
+                                                            const unsigned int &order) const
 {
     std::vector<MEDIT_Cell> cells;
     cells.reserve(polygons_vertices.size());
@@ -134,9 +137,9 @@ std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolygonCells(const std::vector<st
     {
         MEDIT_Cell::Types polygon_type = MEDIT_Cell::Types::Unknown;
 
-        if (polygons_vertices[l].size() == 3)
+        if (polygons_vertices[l].size() == 3 * order)
             polygon_type = MEDIT_Cell::Types::Triangle;
-        else if (polygons_vertices[l].size() == 4)
+        else if (polygons_vertices[l].size() == 4 * order)
             polygon_type = MEDIT_Cell::Types::Quadrilateral;
         else
             throw std::runtime_error("Polygon type not supported");
@@ -151,7 +154,8 @@ std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolygonCells(const std::vector<st
 }
 // ***************************************************************************
 std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolyhedraCells(const std::vector<std::vector<unsigned int>> &polyhedra_vertices,
-                                                              const std::vector<unsigned int> &reference_ids) const
+                                                              const std::vector<unsigned int> &reference_ids,
+                                                              const unsigned int &order) const
 {
     std::vector<MEDIT_Cell> cells;
     cells.reserve(polyhedra_vertices.size());
@@ -160,12 +164,12 @@ std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolyhedraCells(const std::vector<
     {
         MEDIT_Cell::Types polyhedra_type = MEDIT_Cell::Types::Unknown;
 
-        if (polyhedra_vertices[l].size() == 4)
+        if ((polyhedra_vertices[l].size() == 4 && order == 1) || (polyhedra_vertices[l].size() == 10 && order == 2))
             polyhedra_type = MEDIT_Cell::Types::Tetrahedron;
-        else if (polyhedra_vertices[l].size() == 8)
+        else if ((polyhedra_vertices[l].size() == 8 && order == 1) || (polyhedra_vertices[l].size() == 20 && order == 2))
             polyhedra_type = MEDIT_Cell::Types::Hexahedron;
         else
-            throw std::runtime_error("Polygon type not supported");
+            throw std::runtime_error("Polyhedron type not supported");
 
         cells.push_back(
             MEDIT_Cell(polyhedra_type,
