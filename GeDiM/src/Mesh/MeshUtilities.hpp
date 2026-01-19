@@ -427,6 +427,15 @@ class MeshUtilities final
                     const std::vector<Mesh3DPolyhedron> &cell3Ds,
                     Gedim::IMeshDAO &mesh) const;
 
+    void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                    const std::vector<std::pair<unsigned int, unsigned int>> &cell1Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell2Ds_edges,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_edges,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
+                    Gedim::IMeshDAO &mesh) const;
+
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
     /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
     /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size
