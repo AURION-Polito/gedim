@@ -798,10 +798,12 @@ class MeshUtilities final
     /// \brief Export Mesh To MEDIT
     /// \param mesh the mesh
     /// \param exportFolder the folder in which the mesh is exported
+    /// \param order = 1 or order 2 (mid points added)
     void ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
                            const std::string &exportFolder,
                            const std::string &fileName,
-                           const bool &separateFile = false) const;
+                           const bool &separateFile = false,
+                           const unsigned int &order = 1) const;
 
     /// \brief Export Cell2D To VTU
     /// \param mesh the mesh

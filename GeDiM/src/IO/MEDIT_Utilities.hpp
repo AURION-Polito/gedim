@@ -44,11 +44,10 @@ class MEDIT_Cell final
     static std::string CellLabel(const MEDIT_Cell::Types type);
 };
 
-///
 /// \brief The MEDIT_Utilities class for interface with MEDIT
 /// @see https://github.com/ISCDtoolbox/Medit
 /// @see https://www.ljll.math.upmc.fr/frey/publications/RT-0253.pdf
-///
+/// @see https://www.ljll.fr/~frey/publications/RT-0253.pdf
 class MEDIT_Utilities final
 {
   public:
@@ -60,10 +59,14 @@ class MEDIT_Utilities final
   private:
     std::vector<MEDIT_Cell> CreateVertexCells(const Eigen::MatrixXd &points, const std::vector<unsigned int> &reference_ids) const;
     std::vector<MEDIT_Cell> CreateEdgeCells(const Eigen::MatrixXi &edges, const std::vector<unsigned int> &reference_ids) const;
+
     std::vector<MEDIT_Cell> CreatePolygonCells(const std::vector<std::vector<unsigned int>> &polygons_vertices,
-                                               const std::vector<unsigned int> &reference_ids) const;
+                                               const std::vector<unsigned int> &reference_ids,
+                                               const unsigned int &order) const;
+
     std::vector<MEDIT_Cell> CreatePolyhedraCells(const std::vector<std::vector<unsigned int>> &polyhedra_vertices,
-                                                 const std::vector<unsigned int> &reference_ids) const;
+                                                 const std::vector<unsigned int> &reference_ids,
+                                                 const unsigned int &order) const;
 
     void ExportMEDIT_Ascii(const Eigen::MatrixXd &points,
                            const std::vector<unsigned int> &points_reference_ids,
@@ -91,7 +94,8 @@ class MEDIT_Utilities final
                         const Eigen::MatrixXd &points,
                         const std::vector<std::vector<unsigned int>> &cells_vertices,
                         const std::vector<unsigned int> &points_reference_ids,
-                        const std::vector<unsigned int> &cells_reference_ids) const;
+                        const std::vector<unsigned int> &cells_reference_ids,
+                        const unsigned int &order = 1) const;
 
     void ExportPolyhedra(const std::string &filePath,
                          const Eigen::MatrixXd &points,
@@ -99,7 +103,8 @@ class MEDIT_Utilities final
                          const std::vector<std::vector<unsigned int>> &cells_vertices,
                          const std::vector<unsigned int> &points_reference_ids,
                          const std::vector<unsigned int> &faces_reference_ids,
-                         const std::vector<unsigned int> &cells_reference_ids) const;
+                         const std::vector<unsigned int> &cells_reference_ids,
+                         const unsigned int &order = 1) const;
 };
 } // namespace Gedim
 
