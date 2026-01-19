@@ -12,7 +12,6 @@
 #include "CommonUtilities.hpp"
 #include "GeometryUtilities.hpp"
 #include "IOUtilities.hpp"
-#include "VTKUtilities.hpp"
 #include <cmath>
 
 using namespace std;
