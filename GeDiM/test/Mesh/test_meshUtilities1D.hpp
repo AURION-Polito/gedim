@@ -214,6 +214,144 @@ TEST(TestMeshUtilities, TestAgglomerateCell1Ds)
 
     meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
+
+TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
+{
+    std::string exportFolder = "./Export/TestMeshUtilities/Test_CollapseCell1D_Mesh2D_Polygon";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.MinTolerance = 1.0e-14;
+    geometry_utilities_config.Tolerance1D = 1.0e-6;
+    geometry_utilities_config.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+    Gedim::MeshUtilities mesh_utilities;
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    {
+        const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(), 1.0);
+
+        mesh_utilities.CreatePolygonalMesh(geometry_utilities, square, 10, 10, mesh, 10);
+    }
+
+    mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
+    mesh_utilities.ComputeCell0DCell2DNeighbours(mesh);
+    mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
+
+    mesh_utilities.CollapseCell1D(20, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
+
+    mesh_utilities.CollapseCell1D(18, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
+
+    mesh_utilities.CollapseCell1D(33, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+
+    mesh_utilities.CollapseCell1D(37, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
+    mesh_utilities.ExtractActiveMesh(mesh, extraction_data);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
+
+    {
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        config.Cell2D_CheckConvexity = false;
+        mesh_utilities.CheckMesh2D(config, geometry_utilities, mesh);
+    }
+
+    {
+        const std::vector<Gedim::GeometryUtilities::PolygonTypes> cell2Ds_types(mesh.Cell2DTotalNumber(),
+                                                                                Gedim::GeometryUtilities::PolygonTypes::Generic_Concave);
+        const auto mesh_geometric_data = mesh_utilities.FillMesh2DGeometricData(geometry_utilities, mesh, cell2Ds_types);
+
+        Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration config;
+        mesh_utilities.CheckMeshGeometricData2D(config, geometry_utilities, mesh, mesh_geometric_data);
+    }
+}
+
+TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
+{
+    std::string exportFolder = "./Export/TestMeshUtilities/Test_CollapseCell1D_Mesh3D_Polyhedron";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.MinTolerance = 1.0e-14;
+    geometry_utilities_config.Tolerance1D = 1.0e-6;
+    geometry_utilities_config.Tolerance2D = 1.0e-10;
+    geometry_utilities_config.Tolerance3D = 1.0e-8;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+    Gedim::MeshUtilities mesh_utilities;
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    {
+        const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d::Zero(), 1.0);
+
+        mesh_utilities.CreatePolyhedralMesh(geometry_utilities, cube.Vertices, cube.Edges, cube.Faces, 10, 100, mesh, 10);
+    }
+
+    mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
+    mesh_utilities.ComputeCell0DCell2DNeighbours(mesh);
+    mesh_utilities.ComputeCell0DCell3DNeighbours(mesh);
+    mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
+    mesh_utilities.ComputeCell1DCell3DNeighbours(mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
+
+    mesh_utilities.CollapseCell1D(14, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
+
+    mesh_utilities.CollapseCell1D(9, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
+
+    mesh_utilities.CollapseCell1D(12, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+
+    mesh_utilities.CollapseCell1D(17, mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
+    mesh_utilities.ExtractActiveMesh(mesh, extraction_data);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
+
+    {
+        Gedim::Output::CreateFolder(exportFolder + "/Filtered_Mesh");
+        mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Filtered_Mesh");
+    }
+
+    {
+        Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+        config.Cell2D_CheckConvexity = false;
+        config.Cell3D_CheckConvexity = false;
+        mesh_utilities.CheckMesh3D(config, geometry_utilities, mesh);
+    }
+
+    {
+        mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
+        const auto mesh_geometric_data = mesh_utilities.FillMesh3DGeometricData(geometry_utilities, mesh);
+
+        Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration config;
+        config.Cell3D_CheckTetrahedra = false;
+        mesh_utilities.CheckMeshGeometricData3D(config, geometry_utilities, mesh, mesh_geometric_data);
+    }
+}
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_MESH_UTILITIES1D_H

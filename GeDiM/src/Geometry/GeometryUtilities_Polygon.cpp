@@ -1721,4 +1721,38 @@ void GeometryUtilities::ExportPolygonToVTU(const unsigned int &index,
     }
 }
 // ***************************************************************************
+void GeometryUtilities::ExportPlanteToVTU(const Eigen::Vector3d &plane_origin,
+                                          const Eigen::Vector3d &plane_normal,
+                                          const Eigen::Vector3d &plane_translation,
+                                          const Eigen::Matrix3d &plane_rotation_matrix,
+                                          const string &exportFolder) const
+{
+    Eigen::Matrix3d plane_triangle_2D;
+    plane_triangle_2D.col(0) << 1.0, 0.0, 0.0;
+    plane_triangle_2D.col(1) << -0.5, +sqrt(3.0) / 2.0, 0.0;
+    plane_triangle_2D.col(2) << -0.5, -sqrt(3.0) / 2.0, 0.0;
+
+    const auto plane_triangle_3D = RotatePointsFrom2DTo3D(plane_triangle_2D, plane_rotation_matrix, plane_translation);
+
+    {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPolygon(plane_triangle_3D);
+        exporter.Export(exportFolder + "/" + "plane.vtu");
+    }
+
+    {
+        Gedim::VTKUtilities exporter;
+        exporter.AddPoint(plane_origin);
+        exporter.Export(exportFolder + "/" + "plane_origin.vtu");
+    }
+
+    {
+        Gedim::VTKUtilities exporter;
+
+        // Export Polyhedron
+        exporter.AddSegment(plane_origin, plane_origin + plane_normal);
+        exporter.Export(exportFolder + "/" + "plane_normal.vtu");
+    }
+}
+// ***************************************************************************
 } // namespace Gedim

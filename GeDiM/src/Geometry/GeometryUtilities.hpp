@@ -2412,6 +2412,12 @@ class GeometryUtilities final
                             const std::vector<bool> &polygon_edges_normal_direction,
                             const std::string &exportFolder) const;
 
+    void ExportPlanteToVTU(const Eigen::Vector3d &plane_origin,
+                           const Eigen::Vector3d &plane_normal,
+                           const Eigen::Vector3d &plane_translation,
+                           const Eigen::Matrix3d &plane_rotation_matrix,
+                           const std::string &exportFolder) const;
+
     MergePolyhedronsInput MergePolyhedronByFace(const std::array<Polyhedron, 2> &polyhedrons,
                                                 const std::array<unsigned int, 2> polyhedrons_common_face_index,
                                                 const bool remove_common_face) const;
@@ -2421,6 +2427,9 @@ class GeometryUtilities final
     /// \return the merged polyhedron data
     MergePolyhedronsResult MergePolyhedrons(const std::array<Polyhedron, 2> &polyhedrons,
                                             const MergePolyhedronsInput &merge_information = {}) const;
+
+    std::map<unsigned int, unsigned int> FacetsToVertices(const std::vector<std::vector<unsigned int>> &facets) const;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> FacetsToEdges(const std::vector<std::vector<unsigned int>> &facets) const;
 
     Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets) const;
     std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron &polyhedron) const;

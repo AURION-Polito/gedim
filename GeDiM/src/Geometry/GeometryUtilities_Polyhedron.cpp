@@ -1522,15 +1522,62 @@ GeometryUtilities::AlignedPolyhedronEdgesResult GeometryUtilities::AlignedPolyhe
     return result;
 }
 // ***************************************************************************
+std::map<unsigned int, unsigned int> GeometryUtilities::FacetsToVertices(const std::vector<std::vector<unsigned int>> &facets) const
+{
+    std::map<unsigned int, unsigned int> vertices;
+
+    for (unsigned int f = 0; f < facets.size(); ++f)
+    {
+        const auto &facet = facets[f];
+        const unsigned int num_face_vertices = facet.size();
+        for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+            vertices.insert({facet[f_v], vertices.size()});
+    }
+
+    return vertices;
+}
+// ***************************************************************************
+std::map<std::pair<unsigned int, unsigned int>, unsigned int> GeometryUtilities::FacetsToEdges(
+    const std::vector<std::vector<unsigned int>> &facets) const
+{
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> edges;
+
+    for (unsigned int f = 0; f < facets.size(); ++f)
+    {
+        const auto &facet = facets[f];
+
+        const unsigned int num_face_vertices = facet.size();
+        for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+        {
+            const auto vertex_id = facet[f_v];
+            const auto next_vertex_id = facet[(f_v + 1) % num_face_vertices];
+
+            const unsigned int edge_origin = vertex_id;
+            const unsigned int edge_end = next_vertex_id;
+
+            auto edge = std::make_pair(std::min(edge_origin, edge_end), std::max(edge_origin, edge_end));
+            edges.insert({edge, edges.size()});
+        }
+    }
+
+    return edges;
+}
+// ***************************************************************************
 GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen::MatrixXd &points,
                                                                     const std::vector<std::vector<unsigned int>> &facets) const
 {
     Polyhedron result;
 
-    result.Vertices = points;
     result.Faces.resize(facets.size());
 
-    std::map<std::pair<unsigned int, unsigned int>, unsigned int> edges;
+    const auto vertices_extracted = FacetsToVertices(facets);
+    std::vector<unsigned int> vertices_id(vertices_extracted.size());
+    for (const auto vertex : vertices_extracted)
+        vertices_id.at(vertex.second) = vertex.first;
+
+    result.Vertices = ExtractPoints(points, vertices_id);
+
+    const auto edges_extracted = FacetsToEdges(facets);
 
     for (unsigned int f = 0; f < facets.size(); ++f)
     {
@@ -1541,27 +1588,22 @@ GeometryUtilities::Polyhedron GeometryUtilities::FacetsToPolyhedron(const Eigen:
         face.resize(2, num_face_vertices);
         for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
         {
-            face(0, f_v) = facet[f_v];
+            const auto vertex_id = facet[f_v];
+            const auto next_vertex_id = facet[(f_v + 1) % num_face_vertices];
 
-            const unsigned int edge_origin = facet[f_v];
-            const unsigned int edge_end = facet[(f_v + 1) % num_face_vertices];
-
-            auto edge = std::make_pair(std::min(edge_origin, edge_end), std::max(edge_origin, edge_end));
-
-            if (!edges.contains(edge))
-                edges.insert({edge, edges.size()});
-
-            face(1, f_v) = edges.find(edge)->second;
+            face(0, f_v) = vertices_extracted.at(vertex_id);
+            face(1, f_v) =
+                edges_extracted.at(std::make_pair(std::min(vertex_id, next_vertex_id), std::max(vertex_id, next_vertex_id)));
         }
     }
 
-    result.Edges.resize(2, edges.size());
+    result.Edges.resize(2, edges_extracted.size());
 
-    for (const auto &edge_pair : edges)
+    for (const auto &edge_pair : edges_extracted)
     {
         const auto &edge = edge_pair.first;
-        result.Edges(0, edge_pair.second) = edge.first;
-        result.Edges(1, edge_pair.second) = edge.second;
+        result.Edges(0, edge_pair.second) = vertices_extracted.at(edge.first);
+        result.Edges(1, edge_pair.second) = vertices_extracted.at(edge.second);
     }
 
     return result;

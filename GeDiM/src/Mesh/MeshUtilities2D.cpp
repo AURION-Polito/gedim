@@ -1198,6 +1198,20 @@ std::vector<unsigned int> MeshUtilities::SplitCell2D(const unsigned int &cell2DI
 
         mesh.Cell2DInsertUpdatedCell2D(cell2DIndex, newCell2DIndex);
 
+        for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(newCell2DIndex); v++)
+        {
+            const unsigned int cell0DIndex = mesh.Cell2DVertex(newCell2DIndex, v);
+
+            for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell2D(cell0DIndex); n++)
+            {
+                if (!mesh.Cell0DHasNeighbourCell2D(cell0DIndex, n))
+                    continue;
+
+                if (mesh.Cell0DNeighbourCell2D(cell0DIndex, n) == cell2DIndex)
+                    mesh.Cell0DInsertNeighbourCell2D(cell0DIndex, n, newCell2DIndex);
+            }
+        }
+
         for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(newCell2DIndex); e++)
         {
             const unsigned int cell1DIndex = mesh.Cell2DEdge(newCell2DIndex, e);

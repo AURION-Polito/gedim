@@ -361,8 +361,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -425,6 +425,15 @@ class MeshUtilities final
                     const Eigen::MatrixXi &cell1Ds,
                     const std::vector<Eigen::MatrixXi> &cell2Ds,
                     const std::vector<Mesh3DPolyhedron> &cell3Ds,
+                    Gedim::IMeshDAO &mesh) const;
+
+    void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                    const std::vector<std::pair<unsigned int, unsigned int>> &cell1Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell2Ds_edges,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_edges,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
                     Gedim::IMeshDAO &mesh) const;
 
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
@@ -1126,6 +1135,8 @@ class MeshUtilities final
     void CreatePolygonIntersectionMesh(const Gedim::GeometryUtilities &geometry_utilities,
                                        const Eigen::MatrixXd &interface_vertices,
                                        Gedim::IMeshDAO &mesh) const;
+
+    bool CollapseCell1D(const unsigned int cell1D_index, Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim
