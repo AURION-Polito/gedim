@@ -650,11 +650,73 @@ void MeshUtilities::ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
         const auto faces_references_id = mesh.Cell2DsMarker();
         const auto cells_references_id = mesh.Cell3DsMarker();
 
+        std::vector<std::vector<unsigned int>> faces_vertices = mesh.Cell2DsVertices();
+        std::vector<std::vector<unsigned int>> polyhedra_vertices = mesh.Cell3DsVertices();
+
+        if (order == 2)
+        {
+            for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
+            {
+                const std::vector<unsigned int> &face_vertices = faces_vertices[f];
+                const unsigned int num_vertices = face_vertices.size();
+                std::vector<unsigned int> new_physics_face_vertices;
+                std::vector<unsigned int> new_hanging_face_vertices;
+
+                bool physic = true;
+                for (unsigned int v = 0; v < num_vertices; v++)
+                {
+                    if (mesh.Cell0DNeighbourCell1Ds(face_vertices[v]).size() != 2)
+                        new_physics_face_vertices.push_back(face_vertices[v]);
+                    else
+                    {
+                        if (v == 0)
+                            physic = false;
+
+                        new_hanging_face_vertices.push_back(face_vertices[v]);
+                    }
+                }
+
+                if (new_hanging_face_vertices.size() % new_physics_face_vertices.size() != 0)
+                    throw std::runtime_error("not valid polygon for medit format");
+
+                std::copy(new_physics_face_vertices.begin(), new_physics_face_vertices.end(), faces_vertices[f].begin());
+                if (!physic)
+                    std::rotate(new_hanging_face_vertices.begin(),
+                                new_hanging_face_vertices.begin() + 1,
+                                new_hanging_face_vertices.end());
+
+                std::copy(new_hanging_face_vertices.begin(),
+                          new_hanging_face_vertices.end(),
+                          faces_vertices[f].begin() + new_physics_face_vertices.size());
+            }
+
+            for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
+            {
+                const std::vector<unsigned int> &cell_vertices = polyhedra_vertices[c];
+                const unsigned int num_vertices = cell_vertices.size();
+                std::vector<unsigned int> new_physics_cell_vertices;
+                std::vector<unsigned int> new_hanging_cell_vertices;
+
+                for (unsigned int v = 0; v < num_vertices; v++)
+                {
+                    if (mesh.Cell0DNeighbourCell1Ds(cell_vertices[v]).size() != 2)
+                        new_physics_cell_vertices.push_back(cell_vertices[v]);
+                    else
+                        new_hanging_cell_vertices.push_back(cell_vertices[v]);
+                }
+
+                std::copy(new_physics_cell_vertices.begin(), new_physics_cell_vertices.end(), polyhedra_vertices[c].begin());
+                std::copy(new_hanging_cell_vertices.begin(),
+                          new_hanging_cell_vertices.end(),
+                          polyhedra_vertices[c].begin() + new_physics_cell_vertices.size());
+            }
+        }
+
         Gedim::MEDIT_Utilities exporter;
         exporter.ExportPolyhedra(cell3DsFolder + "/" + "Cell3Ds_" + fileName + ".mesh",
                                  points,
-                                 mesh.Cell2DsVertices(),
-                                 mesh.Cell3DsVertices(),
+                                 faces_vertices,
+                                 polyhedra_vertices,
                                  points_references_id,
                                  faces_references_id,
                                  cells_references_id,
