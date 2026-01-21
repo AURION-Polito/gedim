@@ -231,15 +231,9 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     {
-      const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(),
-                                                          1.0);
+        const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d::Zero(), 1.0);
 
-      mesh_utilities.CreatePolygonalMesh(geometry_utilities,
-                                         square,
-                                         10,
-                                         10,
-                                         mesh,
-                                         10);
+        mesh_utilities.CreatePolygonalMesh(geometry_utilities, square, 10, 10, mesh, 10);
     }
 
     mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
@@ -248,23 +242,19 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
 
-    mesh_utilities.CollapseCell1D(20,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(20, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
 
-    mesh_utilities.CollapseCell1D(18,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(18, mesh);
 
-   mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
 
-   mesh_utilities.CollapseCell1D(33,
-                                 mesh);
+    mesh_utilities.CollapseCell1D(33, mesh);
 
-   mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
 
-   mesh_utilities.CollapseCell1D(37,
-                                 mesh);
+    mesh_utilities.CollapseCell1D(37, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
@@ -276,20 +266,17 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
     {
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
         config.Cell2D_CheckConvexity = false;
-        mesh_utilities.CheckMesh2D(config,
-                                   geometry_utilities,
-                                   mesh);
+        mesh_utilities.CheckMesh2D(config, geometry_utilities, mesh);
     }
 
     {
         const std::vector<Gedim::GeometryUtilities::PolygonTypes> cell2Ds_types(mesh.Cell2DTotalNumber(),
-                                                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Concave);
+                                                                                Gedim::GeometryUtilities::PolygonTypes::Generic_Concave);
         const auto mesh_geometric_data = mesh_utilities.FillMesh2DGeometricData(geometry_utilities, mesh, cell2Ds_types);
 
         Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration config;
         mesh_utilities.CheckMeshGeometricData2D(config, geometry_utilities, mesh, mesh_geometric_data);
     }
-
 }
 
 TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
@@ -309,17 +296,9 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     {
-      const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d::Zero(),
-                                                          1.0);
+        const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d::Zero(), 1.0);
 
-      mesh_utilities.CreatePolyhedralMesh(geometry_utilities,
-                                         cube.Vertices,
-                                          cube.Edges,
-                                          cube.Faces,
-                                         10,
-                                         100,
-                                         mesh,
-                                         10);
+        mesh_utilities.CreatePolyhedralMesh(geometry_utilities, cube.Vertices, cube.Edges, cube.Faces, 10, 100, mesh, 10);
     }
 
     mesh_utilities.ComputeCell0DCell1DNeighbours(mesh);
@@ -330,23 +309,19 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
 
-    mesh_utilities.CollapseCell1D(14,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(14, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
 
-    mesh_utilities.CollapseCell1D(9,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(9, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
 
-    mesh_utilities.CollapseCell1D(12,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(12, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
 
-    mesh_utilities.CollapseCell1D(17,
-                                  mesh);
+    mesh_utilities.CollapseCell1D(17, mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
@@ -356,19 +331,15 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
 
     {
-      Gedim::Output::CreateFolder(exportFolder + "/Filtered_Mesh");
-      mesh_utilities.ExportMeshToCsv(mesh,
-                                     ';',
-                                     exportFolder + "/Filtered_Mesh");
+        Gedim::Output::CreateFolder(exportFolder + "/Filtered_Mesh");
+        mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Filtered_Mesh");
     }
 
     {
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;
         config.Cell2D_CheckConvexity = false;
         config.Cell3D_CheckConvexity = false;
-        mesh_utilities.CheckMesh3D(config,
-                                   geometry_utilities,
-                                   mesh);
+        mesh_utilities.CheckMesh3D(config, geometry_utilities, mesh);
     }
 
     {
@@ -379,9 +350,7 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
         config.Cell3D_CheckTetrahedra = false;
         mesh_utilities.CheckMeshGeometricData3D(config, geometry_utilities, mesh, mesh_geometric_data);
     }
-
 }
-
 
 } // namespace GedimUnitTesting
 

@@ -361,8 +361,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -1136,8 +1136,7 @@ class MeshUtilities final
                                        const Eigen::MatrixXd &interface_vertices,
                                        Gedim::IMeshDAO &mesh) const;
 
-    bool CollapseCell1D(const unsigned int cell1D_index,
-                        Gedim::IMeshDAO &mesh) const;
+    bool CollapseCell1D(const unsigned int cell1D_index, Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim

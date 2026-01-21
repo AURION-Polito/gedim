@@ -88,15 +88,14 @@ class Utilities
         return BinomialCoefficient(n - 1, k - 1) + BinomialCoefficient(n - 1, k);
     }
 
-    template <typename T>
-    static T Union(const std::initializer_list<T>& arrays)
+    template <typename T> static T Union(const std::initializer_list<T> &arrays)
     {
-      std::unordered_set<typename T::value_type> s;
+        std::unordered_set<typename T::value_type> s;
 
-      for (const auto& array : arrays)
-        s.insert(array.begin(), array.end());
+        for (const auto &array : arrays)
+            s.insert(array.begin(), array.end());
 
-      return T(s.begin(), s.end());
+        return T(s.begin(), s.end());
     }
 };
 } // namespace Gedim

@@ -150,15 +150,14 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
         mesh.Cell1DsInitialize(numCell1Ds);
         for (unsigned int e = 0; e < cell1Ds_vertices.size(); e++)
         {
-            const auto& edge = cell1Ds_vertices.at(e);
+            const auto &edge = cell1Ds_vertices.at(e);
             mesh.Cell1DInsertExtremes(e, edge.first, edge.second);
             mesh.Cell1DSetState(e, true);
         }
     }
 
     // Create Cell2Ds
-    if (cell2Ds_vertices.size() > 0 &&
-        cell2Ds_edges.size() > 0)
+    if (cell2Ds_vertices.size() > 0 && cell2Ds_edges.size() > 0)
     {
         assert(cell2Ds_vertices.size() == cell2Ds_edges.size());
 
@@ -188,9 +187,7 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
     }
 
     // Create Cell3Ds
-    if (cell3Ds_vertices.size() > 0 &&
-        cell3Ds_edges.size() > 0 &&
-        cell3Ds_faces.size() > 0)
+    if (cell3Ds_vertices.size() > 0 && cell3Ds_edges.size() > 0 && cell3Ds_faces.size() > 0)
     {
         assert(cell3Ds_vertices.size() == cell3Ds_edges.size());
         assert(cell3Ds_vertices.size() == cell3Ds_faces.size());
