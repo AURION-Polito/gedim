@@ -121,6 +121,104 @@ void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
     }
 }
 // ***************************************************************************
+void MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                               const std::vector<std::pair<unsigned int, unsigned int>> &cell1Ds_vertices,
+                               const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
+                               const std::vector<std::vector<unsigned int>> &cell2Ds_edges,
+                               const std::vector<std::vector<unsigned int>> &cell3Ds_vertices,
+                               const std::vector<std::vector<unsigned int>> &cell3Ds_edges,
+                               const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
+                               Gedim::IMeshDAO &mesh) const
+{
+    mesh.InitializeDimension(3);
+
+    // Create Cell0Ds
+    if (cell0Ds.size() > 0)
+    {
+        Output::Assert(cell0Ds.rows() == 3);
+        const unsigned int numCell0Ds = cell0Ds.cols();
+        mesh.Cell0DsInitialize(numCell0Ds);
+        mesh.Cell0DsInsertCoordinates(cell0Ds);
+        for (unsigned int v = 0; v < numCell0Ds; v++)
+            mesh.Cell0DSetState(v, true);
+    }
+
+    // Create Cell1Ds
+    if (cell1Ds_vertices.size() > 0)
+    {
+        unsigned int numCell1Ds = cell1Ds_vertices.size();
+        mesh.Cell1DsInitialize(numCell1Ds);
+        for (unsigned int e = 0; e < cell1Ds_vertices.size(); e++)
+        {
+            const auto &edge = cell1Ds_vertices.at(e);
+            mesh.Cell1DInsertExtremes(e, edge.first, edge.second);
+            mesh.Cell1DSetState(e, true);
+        }
+    }
+
+    // Create Cell2Ds
+    if (cell2Ds_vertices.size() > 0 && cell2Ds_edges.size() > 0)
+    {
+        assert(cell2Ds_vertices.size() == cell2Ds_edges.size());
+
+        const unsigned int &numCell2Ds = cell2Ds_vertices.size();
+        mesh.Cell2DsInitialize(numCell2Ds);
+
+        std::vector<unsigned int> cell2DsNumVertices(numCell2Ds);
+        std::vector<unsigned int> cell2DsNumEdges(numCell2Ds);
+        for (unsigned int f = 0; f < numCell2Ds; f++)
+        {
+            assert(cell2Ds_vertices.at(f).size() == cell2Ds_edges.at(f).size());
+
+            const unsigned int numVertices = cell2Ds_vertices.at(f).size();
+            cell2DsNumVertices[f] = numVertices;
+            cell2DsNumEdges[f] = numVertices;
+        }
+
+        mesh.Cell2DsInitializeVertices(cell2DsNumVertices);
+        mesh.Cell2DsInitializeEdges(cell2DsNumEdges);
+
+        for (unsigned int f = 0; f < numCell2Ds; f++)
+        {
+            mesh.Cell2DInsertVertices(f, cell2Ds_vertices.at(f));
+            mesh.Cell2DInsertEdges(f, cell2Ds_edges.at(f));
+            mesh.Cell2DSetState(f, true);
+        }
+    }
+
+    // Create Cell3Ds
+    if (cell3Ds_vertices.size() > 0 && cell3Ds_edges.size() > 0 && cell3Ds_faces.size() > 0)
+    {
+        assert(cell3Ds_vertices.size() == cell3Ds_edges.size());
+        assert(cell3Ds_vertices.size() == cell3Ds_faces.size());
+
+        const unsigned int &numCell3Ds = cell3Ds_vertices.size();
+        mesh.Cell3DsInitialize(numCell3Ds);
+        std::vector<unsigned int> cell3DsNumVertices(numCell3Ds);
+        std::vector<unsigned int> cell3DsNumEdges(numCell3Ds);
+        std::vector<unsigned int> cell3DsNumFaces(numCell3Ds);
+
+        for (unsigned int c = 0; c < numCell3Ds; c++)
+        {
+            cell3DsNumVertices[c] = cell3Ds_vertices.at(c).size();
+            cell3DsNumEdges[c] = cell3Ds_edges.at(c).size();
+            cell3DsNumFaces[c] = cell3Ds_faces.at(c).size();
+        }
+
+        mesh.Cell3DsInitializeVertices(cell3DsNumVertices);
+        mesh.Cell3DsInitializeEdges(cell3DsNumEdges);
+        mesh.Cell3DsInitializeFaces(cell3DsNumFaces);
+
+        for (unsigned int c = 0; c < numCell3Ds; c++)
+        {
+            mesh.Cell3DInsertVertices(c, cell3Ds_vertices.at(c));
+            mesh.Cell3DInsertEdges(c, cell3Ds_edges.at(c));
+            mesh.Cell3DInsertFaces(c, cell3Ds_faces.at(c));
+            mesh.Cell3DSetState(c, true);
+        }
+    }
+}
+// ***************************************************************************
 void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                                 const GeometryUtilities &geometryUtilities,
                                 const Gedim::IMeshDAO &mesh) const
@@ -2797,6 +2895,20 @@ std::vector<unsigned int> MeshUtilities::SplitCell3D(const unsigned int &cell3DI
         mesh.Cell3DSetState(newCell3DIndex, true);
 
         mesh.Cell3DInsertUpdatedCell3D(cell3DIndex, newCell3DIndex);
+
+        for (unsigned int v = 0; v < mesh.Cell3DNumberVertices(newCell3DIndex); v++)
+        {
+            const unsigned int cell0DIndex = mesh.Cell3DVertex(newCell3DIndex, v);
+
+            for (unsigned int n = 0; n < mesh.Cell0DNumberNeighbourCell3D(cell0DIndex); n++)
+            {
+                if (!mesh.Cell0DHasNeighbourCell3D(cell0DIndex, n))
+                    continue;
+
+                if (mesh.Cell0DNeighbourCell3D(cell0DIndex, n) == cell3DIndex)
+                    mesh.Cell0DInsertNeighbourCell3D(cell0DIndex, n, newCell3DIndex);
+            }
+        }
 
         for (unsigned int e = 0; e < mesh.Cell3DNumberEdges(newCell3DIndex); e++)
         {

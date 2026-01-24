@@ -835,6 +835,11 @@ class IMeshDAO
     virtual void Cell3DInsertVertex(const unsigned int &cell3DIndex,
                                     const unsigned int &vertexIndex,
                                     const unsigned int &vertexCell0DIndex) = 0;
+    /// \brief Insert the Cell3D vertex
+    /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
+    /// \param verticesCell0DIndices the Cell0D vertices index from 0 to Cell0DTotalNumber()
+    /// \note Cell3DInitializeVertices() should be called before using this method
+    virtual void Cell3DInsertVertices(const unsigned int &cell3DIndex, const std::vector<unsigned int> &verticesCell0DIndices) = 0;
     /// \brief Add the Cell3D vertices
     /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
     /// \param vertexCell0DIndices the Cell0D vertices indices from 0 to Cell0DTotalNumber()
@@ -846,6 +851,11 @@ class IMeshDAO
     /// \param edgeCell0DIndex the Cell1D edge index from 0 to Cell1DTotalNumber()
     /// \note Cell3DInitializeEdges() should be called before using this method
     virtual void Cell3DInsertEdge(const unsigned int &cell3DIndex, const unsigned int &edgeIndex, const unsigned int &edgeCell1DIndex) = 0;
+    /// \brief Insert the Cell3D edges
+    /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
+    /// \param edgesCell1DIndices the Cell1Ds index from 0 to Cell1DTotalNumber()
+    /// \note Cell3DInitializeEdges() should be called before using this method
+    virtual void Cell3DInsertEdges(const unsigned int &cell3DIndex, const std::vector<unsigned int> &edgesCell1DIndices) = 0;
     /// \brief Add the Cell3D edges
     /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
     /// \param edgesCell0DIndices the Cell1D edges indices from 0 to Cell1DTotalNumber()
@@ -881,6 +891,11 @@ class IMeshDAO
     /// \param faceCell0DIndex the Cell2D face index from 0 to Cell2DTotalNumber()
     /// \note Cell3DInitializeFaces() should be called before using this method
     virtual void Cell3DInsertFace(const unsigned int &cell3DIndex, const unsigned int &faceIndex, const unsigned int &faceCell2DIndex) = 0;
+    /// \brief Insert the Cell3D faces
+    /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
+    /// \param facesCell2DIndices the Cell2D index from 0 to Cell2DTotalNumber()
+    /// \note Cell3DInitializeFaces() should be called before using this method
+    virtual void Cell3DInsertFaces(const unsigned int &cell3DIndex, const std::vector<unsigned int> &facesCell2DIndices) = 0;
     /// \brief Add the Cell3D faces
     /// \param cell3DIndex the index of Cell3D from 0 to Cell3DTotalNumber()
     /// \param facesCell0DIndices the Cell2D faces indices from 0 to Cell2DTotalNumber()
@@ -1982,6 +1997,11 @@ class MeshMatricesDAO : public IMeshDAO
 
         _mesh.Cell3DVertices[_mesh.NumberCell3DVertices[cell3DIndex] + vertexIndex] = vertexCell0DIndex;
     }
+    inline void Cell3DInsertVertices(const unsigned int &cell3DIndex, const std::vector<unsigned int> &verticesCell0DIndices)
+    {
+        for (unsigned int v = 0; v < verticesCell0DIndices.size(); v++)
+            Cell3DInsertVertex(cell3DIndex, v, verticesCell0DIndices[v]);
+    }
     inline void Cell3DInsertEdge(const unsigned int &cell3DIndex, const unsigned int &edgeIndex, const unsigned int &edgeCell1DIndex)
     {
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
@@ -1990,6 +2010,11 @@ class MeshMatricesDAO : public IMeshDAO
 
         _mesh.Cell3DEdges[_mesh.NumberCell3DEdges[cell3DIndex] + edgeIndex] = edgeCell1DIndex;
     }
+    inline void Cell3DInsertEdges(const unsigned int &cell3DIndex, const std::vector<unsigned int> &edgesCell1DIndices)
+    {
+        for (unsigned int e = 0; e < edgesCell1DIndices.size(); e++)
+            Cell3DInsertEdge(cell3DIndex, e, edgesCell1DIndices[e]);
+    }
     inline void Cell3DInsertFace(const unsigned int &cell3DIndex, const unsigned int &faceIndex, const unsigned int &faceCell2DIndex)
     {
         Gedim::Output::Assert(cell3DIndex < Cell3DTotalNumber());
@@ -1997,6 +2022,11 @@ class MeshMatricesDAO : public IMeshDAO
         Gedim::Output::Assert(faceCell2DIndex < Cell2DTotalNumber());
 
         _mesh.Cell3DFaces[_mesh.NumberCell3DFaces[cell3DIndex] + faceIndex] = faceCell2DIndex;
+    }
+    inline void Cell3DInsertFaces(const unsigned int &cell3DIndex, const std::vector<unsigned int> &facesCell2DIndices)
+    {
+        for (unsigned int f = 0; f < facesCell2DIndices.size(); f++)
+            Cell3DInsertFace(cell3DIndex, f, facesCell2DIndices[f]);
     }
     void Cell3DAddVertices(const unsigned int &cell3DIndex, const std::vector<unsigned int> &verticesCell0DIndices);
     void Cell3DAddEdges(const unsigned int &cell3DIndex, const std::vector<unsigned int> &edgesCell1DIndices);

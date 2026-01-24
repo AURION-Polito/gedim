@@ -563,7 +563,8 @@ GeometryUtilities::IntersectionPolyhedronPlaneResult GeometryUtilities::Intersec
             for (const auto &intersection : intersectionCoordinates)
                 convexHull3DPoints.col(numIntersection++) << intersection;
 
-            Eigen::MatrixXd convexHull2DPoints = RotatePointsFrom3DTo2D(convexHull3DPoints, planeRotationMatrix, planeTranslation);
+            Eigen::MatrixXd convexHull2DPoints =
+                RotatePointsFrom3DTo2D(convexHull3DPoints, planeRotationMatrix.transpose(), planeTranslation);
 
             vector<unsigned int> convexHull = ConvexHull(convexHull2DPoints);
             Output::Assert(convexHull.size() == numIntersions);
