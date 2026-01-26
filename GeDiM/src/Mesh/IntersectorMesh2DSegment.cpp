@@ -90,7 +90,8 @@ IntersectorMesh2DSegment::IntersectionMesh::IntersectionMeshPoint &IntersectorMe
 // ***************************************************************************
 void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &segmentOrigin,
                                                                 const Vector3d &segmentEnd,
-                                                                IntersectorMesh2DSegment::IntersectionMesh &result)
+                                                                IntersectorMesh2DSegment::IntersectionMesh &result,
+                                                                const bool concave)
 {
     for (unsigned int c = 0; c < _mesh.Cell2DTotalNumber(); c++)
     {
@@ -99,8 +100,11 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
 
         const MatrixXd cell2DVertices = _mesh.Cell2DVerticesCoordinates(c);
 
-        Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult =
-            _geometryUtilities.PointPolygonPosition(segmentOrigin, cell2DVertices);
+        Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult;
+        if (concave)
+            pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition_RayCasting(segmentOrigin, cell2DVertices);
+        else
+            pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(segmentOrigin, cell2DVertices);
 
         bool cellFound = false;
         switch (pointPolygonPositionResult.Type)
@@ -148,8 +152,11 @@ void IntersectorMesh2DSegment::CheckOriginAndEndSegmentPosition(const Vector3d &
         const MatrixXd cell2DVertices = _mesh.Cell2DVerticesCoordinates(c);
 
         // check end position
-        Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult =
-            _geometryUtilities.PointPolygonPosition(segmentEnd, cell2DVertices);
+        Gedim::GeometryUtilities::PointPolygonPositionResult pointPolygonPositionResult;
+        if (concave)
+            pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition_RayCasting(segmentEnd, cell2DVertices);
+        else
+            pointPolygonPositionResult = _geometryUtilities.PointPolygonPosition(segmentEnd, cell2DVertices);
 
         bool cellFound = false;
         switch (pointPolygonPositionResult.Type)
@@ -597,10 +604,11 @@ void IntersectorMesh2DSegment::CreateIntersectionMesh(const Vector3d &segmentOri
                                                       const Vector3d &segmentTangent,
                                                       const Vector3d &segmentBarycenter,
                                                       const double &segmentLength,
-                                                      IntersectorMesh2DSegment::IntersectionMesh &result)
+                                                      IntersectorMesh2DSegment::IntersectionMesh &result,
+                                                      const bool concave)
 {
     // check if segment origin is inside a single cell
-    CheckOriginAndEndSegmentPosition(segmentOrigin, segmentEnd, result);
+    CheckOriginAndEndSegmentPosition(segmentOrigin, segmentEnd, result, concave);
 
     // check all segment intersection points with mesh edges
     CreateIntersectionPoints(segmentOrigin, segmentEnd, segmentTangent, segmentBarycenter, segmentLength, result);

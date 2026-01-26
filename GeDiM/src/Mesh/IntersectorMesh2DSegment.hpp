@@ -53,7 +53,12 @@ class IntersectorMesh2DSegment final
     IntersectionMesh::IntersectionMeshPoint &InsertNewIntersection(const double &curvilinearCoordinate,
                                                                    IntersectionMesh &result,
                                                                    bool &found);
-    void CheckOriginAndEndSegmentPosition(const Eigen::Vector3d &segmentOrigin, const Eigen::Vector3d &segmentEnd, IntersectionMesh &result);
+
+    void CheckOriginAndEndSegmentPosition(const Eigen::Vector3d &segmentOrigin,
+                                          const Eigen::Vector3d &segmentEnd,
+                                          IntersectionMesh &result,
+                                          const bool concave = false);
+
     void CreateIntersectionPoints(const Eigen::Vector3d &segmentOrigin,
                                   const Eigen::Vector3d &segmentEnd,
                                   const Eigen::Vector3d &segmentTangent,
@@ -75,7 +80,8 @@ class IntersectorMesh2DSegment final
                                 const Eigen::Vector3d &segmentTangent,
                                 const Eigen::Vector3d &segmentBarycenter,
                                 const double &segmentLength,
-                                IntersectionMesh &result);
+                                IntersectionMesh &result,
+                                const bool concave = false);
 };
 } // namespace Gedim
 
