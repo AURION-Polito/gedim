@@ -50,7 +50,6 @@ struct Simplex
         EQ = 2, // equality
         LE = 3, // lower or equal
     };
-    unsigned int max_iteration = 1000;
 
     unsigned int m; // num constraints
     unsigned int n; // num variables
@@ -86,7 +85,10 @@ struct Simplex
             const Eigen::VectorXd &LB_data,
             const Eigen::VectorXd &UB_data);
 
-    void solve_primal_simplex(std::vector<unsigned int> &basis, std::vector<unsigned int> &no_basis);
+    void solve_primal_simplex(std::vector<unsigned int> &basis,
+                              std::vector<unsigned int> &no_basis,
+                              const unsigned int max_iteration = 1000,
+                              const double &tolerance = 1.0e-12);
 };
 
 } // namespace LPUtilties

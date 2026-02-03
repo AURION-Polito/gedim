@@ -2433,6 +2433,15 @@ class GeometryUtilities final
 
     Polyhedron FacetsToPolyhedron(const Eigen::MatrixXd &points, const std::vector<std::vector<unsigned int>> &facets) const;
     std::vector<std::vector<unsigned int>> PolyhedronToFacets(const Polyhedron &polyhedron) const;
+
+    /// Compute the PolgonChebyshevCenter by solving max r (x, r)s.t. n_e'x + r = b_e for all edge and 0.0 <= r <= r_0
+    /// r is the in radius and x the chebishev center
+    void PolygonChebyshevCenter(const Eigen::MatrixXd &polygonVertices,
+                                const Eigen::MatrixXd &edgeNormals,
+                                Eigen::Vector3d &in_center,
+                                double &in_radius,
+                                const double r0,
+                                const bool use_r0) const;
 };
 
 } // namespace Gedim

@@ -142,7 +142,10 @@ Simplex::Simplex(const unsigned int n_data,
         result.exit_value = PrimalResult::ExitValue::NOSLACK;
 }
 //**********************************************************
-void Simplex::solve_primal_simplex(std::vector<unsigned int> &basis, std::vector<unsigned int> &no_basis)
+void Simplex::solve_primal_simplex(std::vector<unsigned int> &basis,
+                                   std::vector<unsigned int> &no_basis,
+                                   const unsigned int max_iteration,
+                                   const double &tolerance)
 {
     if (basis.size() != m_final && basis.size() + no_basis.size() != n_final)
         throw std::runtime_error("not valid basis");
@@ -150,15 +153,16 @@ void Simplex::solve_primal_simplex(std::vector<unsigned int> &basis, std::vector
     Eigen::MatrixXd AB = A_final(Eigen::all, basis);
     Eigen::MatrixXd ANB = A_final(Eigen::all, no_basis);
 
-    Eigen::MatrixXd alpha = -AB.lu().solve(ANB);
-    Eigen::VectorXd beta = AB.lu().solve(b_final);
+    auto AB_lu = AB.lu();
+    Eigen::MatrixXd alpha = -AB_lu.solve(ANB);
+    Eigen::VectorXd beta = AB_lu.solve(b_final);
     Eigen::VectorXd r = cost_vector_final(no_basis) + alpha.transpose() * cost_vector_final(basis);
 
     unsigned int q = std::numeric_limits<unsigned int>::max();
     bool new_iteration = false;
     for (unsigned int i = 0; i < no_basis.size(); i++)
     {
-        if (r(i) > 1.0e-12)
+        if (r(i) > tolerance)
         {
             q = i;
             new_iteration = true;
@@ -180,7 +184,7 @@ void Simplex::solve_primal_simplex(std::vector<unsigned int> &basis, std::vector
 
         for (unsigned int i = 0; i < basis.size(); i++)
         {
-            if (alpha(i, q) >= -1.0e-12)
+            if (alpha(i, q) >= -tolerance)
                 continue;
 
             const double ratio_alpha_beta = -beta(i) / alpha(i, q);
@@ -204,15 +208,16 @@ void Simplex::solve_primal_simplex(std::vector<unsigned int> &basis, std::vector
         AB = A_final(Eigen::all, basis);
         ANB = A_final(Eigen::all, no_basis);
 
-        alpha = -AB.lu().solve(ANB);
-        beta = AB.lu().solve(b_final);
+        AB_lu = AB.lu();
+        alpha = -AB_lu.solve(ANB);
+        beta = AB_lu.solve(b_final);
         r = cost_vector_final(no_basis) + alpha.transpose() * cost_vector_final(basis);
 
         q = std::numeric_limits<unsigned int>::max();
         new_iteration = false;
         for (unsigned int i = 0; i < no_basis.size(); i++)
         {
-            if (r(i) > 1.0e-12)
+            if (r(i) > tolerance)
             {
                 q = i;
                 new_iteration = true;

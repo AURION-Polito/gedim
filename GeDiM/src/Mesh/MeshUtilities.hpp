@@ -14,7 +14,6 @@
 
 #include "GeometryUtilities.hpp"
 #include "IMeshDAO.hpp"
-#include "MeshMatricesDAO.hpp"
 
 namespace Gedim
 {
@@ -158,6 +157,26 @@ class MeshUtilities final
         std::vector<Eigen::VectorXd> Cell2DsEdgeLengths;                 ///< cell2D edge lengths
         std::vector<Eigen::MatrixXd> Cell2DsEdgeTangents;                ///< cell2D edge tangents
         std::vector<Eigen::MatrixXd> Cell2DsEdgeNormals;                 ///< cell2D edge normals
+        std::vector<Eigen::Vector3d> Cell2DsChebyshevCenter;             ///< cell2D chebycev node
+        std::vector<std::vector<Eigen::Matrix3d>> Cell2DsTriangulationsByChebyshevCenter; ///< cell2D triangulations
+        std::vector<double> Cell2DsInRadius;                                              ///< cell2D triangulations
+    };
+
+    struct MeshGeometricData2DConfig final
+    {
+        bool Cell2DsBoundingBox = true;
+        bool Cell2DsTriangulations = true; ///< cell2D triangulations
+        bool Cell2DsAreas = true;          ///< cell2D areas
+        bool Cell2DsCentroids = true;      ///< cell2D centroids
+        bool Cell2DsDiameters = true;      ///< cell2D diameters
+        bool Cell2DsEdgeDirections = true; ///< cell2D edge directions
+        bool Cell2DsEdgesCentroid = true;  ///< cell2D edge centroid
+        bool Cell2DsEdgeLengths = true;    ///< cell2D edge lengths
+        bool Cell2DsEdgeTangents = true;   ///< cell2D edge tangents
+        bool Cell2DsEdgeNormals = true;    ///< cell2D edge normals
+        bool Cell2DsChebyshevCenter = true;
+        bool Cell2DsTriangulationsByChebyshevCenter = true;            ///< cell2D triangulations
+        bool Cell2DsInRadius = Cell2DsTriangulationsByChebyshevCenter; ///< cell2D triangulations
     };
 
     struct MeshGeometricData3D final
@@ -591,9 +610,12 @@ class MeshUtilities final
     /// \param mesh the mesh
     /// \param meshCell2DsPolygonType the cell2D polygon type
     /// \return the MeshGeometricData computed
-    MeshGeometricData2D FillMesh2DGeometricData(const Gedim::GeometryUtilities &geometryUtilities,
-                                                const Gedim::IMeshDAO &mesh,
-                                                const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType) const;
+    MeshUtilities::MeshGeometricData2D FillMesh2DGeometricData(
+        const Gedim::GeometryUtilities &geometryUtilities,
+        const Gedim::IMeshDAO &mesh,
+        const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType,
+        const MeshGeometricData2DConfig &config = MeshGeometricData2DConfig(
+            {true, true, true, true, true, true, true, true, true, true, false, false, false})) const;
 
     /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
     /// \param mesh the mesh

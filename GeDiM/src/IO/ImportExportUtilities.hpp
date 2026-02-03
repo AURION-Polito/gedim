@@ -87,7 +87,7 @@ template <class T, int Rows, int Cols> std::istream &operator>>(std::istream &in
     }
 
     if (matrix.cols() == 0)
-      in >> separator;
+        in >> separator;
 
     return in;
 }
@@ -109,7 +109,7 @@ template <class T, std::size_t s> std::istream &operator>>(std::istream &in, std
     }
 
     if (size == 0)
-      in >> separator;
+        in >> separator;
 
     return in;
 }
@@ -132,7 +132,7 @@ template <class T> std::istream &operator>>(std::istream &in, std::vector<T> &el
     }
 
     if (size == 0)
-      in >> separator;
+        in >> separator;
 
     return in;
 }

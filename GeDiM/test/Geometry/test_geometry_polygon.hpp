@@ -2872,6 +2872,76 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
                                          export_polygon_folder);
 }
 
+TEST(TestGeometryUtilities, Test_PolygonChebyshevCenter_Convex)
+{
+
+    const std::string exportFolder = "ExportParaview/TestGeometryUtilities/Test_PolygonChebyshevCenter_Convex";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1.0e-12;
+    geometry_utilities_config.Tolerance1D = 1.0e-14;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Eigen::MatrixXd polygon_vertices = Eigen::MatrixXd::Zero(3, 4);
+    polygon_vertices << 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0;
+
+    Eigen::Vector3d in_center;
+    double in_radius;
+    const Eigen::MatrixXd edges_normal = geometry_utilities.PolygonEdgeNormals(polygon_vertices);
+    geometry_utilities.PolygonChebyshevCenter(polygon_vertices,
+                                              edges_normal,
+                                              in_center,
+                                              in_radius,
+                                              geometry_utilities.PolygonDiameter(polygon_vertices),
+                                              true);
+
+    Eigen::Vector3d exact_in_center;
+    exact_in_center << 0.5, 0.5, 0.0;
+    ASSERT_TRUE(abs(in_radius - 0.5) < 1.0e-12);
+    ASSERT_TRUE((in_center - exact_in_center).norm() < 1.0e-12);
+
+    // Export domain
+    {
+        Gedim::VTKUtilities vtkUtilities;
+        vtkUtilities.AddPolygon(polygon_vertices);
+        vtkUtilities.AddPoint(in_center);
+        vtkUtilities.Export(exportFolder + "/Polygon.vtu");
+    }
+}
+
+TEST(TestGeometryUtilities, Test_ZFEM_PCC_Utilities_Concave)
+{
+
+    const std::string exportFolder = "ExportParaview/TestGeometryUtilities/Test_ZFEM_PCC_Utilities_Concave";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1.0e-12;
+    geometry_utilities_config.Tolerance1D = 1.0e-14;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Eigen::MatrixXd polygon_vertices = Eigen::MatrixXd::Zero(3, 4);
+    polygon_vertices << 0.0, -1.0, 0.0, 1.0, 0.0, 2.0, -1.0, 2.0, 0.0, 0.0, 0.0, 0.0;
+
+    Eigen::Vector3d in_center;
+    double in_radius;
+    const Eigen::MatrixXd edges_normal = geometry_utilities.PolygonEdgeNormals(polygon_vertices);
+    geometry_utilities.PolygonChebyshevCenter(polygon_vertices,
+                                              edges_normal,
+                                              in_center,
+                                              in_radius,
+                                              geometry_utilities.PolygonDiameter(polygon_vertices),
+                                              true);
+    // Export domain
+    {
+        Gedim::VTKUtilities vtkUtilities;
+        vtkUtilities.AddPolygon(polygon_vertices);
+        vtkUtilities.AddPoint(in_center);
+        vtkUtilities.Export(exportFolder + "/Polygon.vtu");
+    }
+}
+
 } // namespace GedimUnitTesting
 
 #endif // __TEST_GEOMETRY_POLYGON_H
