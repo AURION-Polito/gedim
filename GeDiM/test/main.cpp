@@ -38,6 +38,7 @@
 #include "test_PETSc.hpp"
 #include "test_mesh_bulk_face.hpp"
 #include "test_MEDIT_Utilities.hpp"
+#include "test_LPUtilities.hpp"
 
 #include <gtest/gtest.h>
 
