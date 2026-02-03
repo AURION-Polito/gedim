@@ -1055,6 +1055,8 @@ MeshUtilities::MeshGeometricData2D MeshUtilities::ImportMeshGeometricData2DFromT
     inFile >> mesh_geometric_data.Cell2DsEdgeLengths;
     inFile >> mesh_geometric_data.Cell2DsEdgeTangents;
     inFile >> mesh_geometric_data.Cell2DsEdgeNormals;
+    inFile >> mesh_geometric_data.Cell2DsChebyshevCenter;
+    inFile >> mesh_geometric_data.Cell2DsTriangulationsByChebyshevCenter;
 
     return mesh_geometric_data;
 }
@@ -1081,6 +1083,8 @@ void MeshUtilities::ExportMeshGeometricData2DToTxt(const MeshGeometricData2D &me
     file << std::scientific << mesh_geometric_data.Cell2DsEdgeLengths << std::endl;
     file << std::scientific << mesh_geometric_data.Cell2DsEdgeTangents << std::endl;
     file << std::scientific << mesh_geometric_data.Cell2DsEdgeNormals << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell2DsChebyshevCenter << std::endl;
+    file << std::scientific << mesh_geometric_data.Cell2DsTriangulationsByChebyshevCenter << std::endl;
 
     file.close();
 }
