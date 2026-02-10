@@ -15,6 +15,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_BiCGSTABSolver.h
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_Array.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_SparseArray.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_KSPSolver.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/LPUtilities.hpp)
 
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/LAPACK_utilities.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_Array.cpp)
@@ -30,6 +31,7 @@ list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Eigen_BiCGSTABSolver.c
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_Array.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_SparseArray.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/PETSc_KSPSolver.cpp)
+list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/LPUtilities.cpp)
 
 list(APPEND gedim_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 

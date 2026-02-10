@@ -12,6 +12,7 @@
 #include "Eigen_Utilities.hpp"
 #include "GeometryUtilities.hpp"
 #include "IOUtilities.hpp"
+#include "LPUtilities.hpp"
 #include "MapTriangle.hpp"
 #include "VTKUtilities.hpp"
 #include <numeric>
@@ -232,6 +233,48 @@ double GeometryUtilities::PolygonAreaByInternalIntegral(const std::vector<Eigen:
     }
 
     return quadratureWeights.sum();
+}
+// ***************************************************************************
+void GeometryUtilities::PolygonChebyshevCenter(const Eigen::MatrixXd &polygonVertices,
+                                               const Eigen::MatrixXd &edgeNormals,
+                                               Eigen::Vector3d &in_center,
+                                               double &in_radius,
+                                               const double r0,
+                                               const bool use_r0) const
+{
+    const unsigned int num_edges = polygonVertices.cols();
+    const unsigned int nvars = 3; // due per il centro una per raggio
+
+    Eigen::VectorXd cost_vector_data = Eigen::VectorXd::Zero(nvars);
+    cost_vector_data(2) = 1.0;
+
+    Eigen::MatrixXd A = Eigen::MatrixXd::Ones(num_edges, nvars);
+    A.leftCols(2) = edgeNormals.topRows(2).transpose();
+
+    Eigen::VectorXd b = Eigen::VectorXd::Zero(num_edges);
+    for (unsigned int e = 0; e < num_edges; e++)
+        b(e) = edgeNormals.col(e).transpose() * polygonVertices.col(e);
+    const std::vector<Gedim::LPUtilties::Simplex::ConstraintType> constraint_types_data(num_edges,
+                                                                                        Gedim::LPUtilties::Simplex::ConstraintType::LE);
+
+    Eigen::VectorXd LB_data = Eigen::VectorXd::Constant(nvars, std::nan(""));
+    LB_data(2) = 0.0;
+    Eigen::VectorXd UB_data = Eigen::VectorXd::Constant(nvars, std::nan(""));
+    UB_data(2) = use_r0 ? r0 : std::nan("");
+
+    Gedim::LPUtilties::Simplex simplex(nvars, cost_vector_data, A, b, constraint_types_data, LB_data, UB_data);
+
+    if (simplex.result.exit_value == Gedim::LPUtilties::Simplex::PrimalResult::ExitValue::NOSLACK)
+        throw std::runtime_error("not valid initializer for simplex");
+
+    simplex.solve_primal_simplex(simplex.slack_indices, simplex.no_slack_indices);
+
+    if (simplex.result.exit_value != Gedim::LPUtilties::Simplex::PrimalResult::ExitValue::SUCCESS)
+        throw std::runtime_error("simplex algorithm fails");
+
+    // Extract solution
+    in_center << simplex.result.solution(0), simplex.result.solution(1), 0.0;
+    in_radius = simplex.result.solution(2);
 }
 // ***************************************************************************
 Vector3d GeometryUtilities::PolygonCentroidByIntegral(const Eigen::MatrixXd &polygonVertices,

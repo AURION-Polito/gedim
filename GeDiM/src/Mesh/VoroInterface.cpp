@@ -280,7 +280,7 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygo
             } while (vl.inc());
         }
 
-        if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
+        if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
             throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
     }
 
