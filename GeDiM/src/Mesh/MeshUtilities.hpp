@@ -21,7 +21,7 @@ namespace Gedim
 /// \copyright See top level LICENSE file for details.
 class MeshUtilities final
 {
-  public:
+public:
     struct CheckMesh2DConfiguration final
     {
         bool Cell0D_CheckCoordinates2D = true;
@@ -174,9 +174,40 @@ class MeshUtilities final
         bool Cell2DsEdgeLengths = true;    ///< cell2D edge lengths
         bool Cell2DsEdgeTangents = true;   ///< cell2D edge tangents
         bool Cell2DsEdgeNormals = true;    ///< cell2D edge normals
-        bool Cell2DsChebyshevCenter = true;
-        bool Cell2DsTriangulationsByChebyshevCenter = true;            ///< cell2D triangulations
-        bool Cell2DsInRadius = Cell2DsTriangulationsByChebyshevCenter; ///< cell2D triangulations
+        bool Cell2DsChebyshevCenter = false;
+        bool Cell2DsTriangulationsByChebyshevCenter = false;            ///< cell2D triangulations
+        bool Cell2DsInRadius = false; ///< cell2D triangulations
+
+        MeshGeometricData2DConfig()
+        {
+            Cell2DsBoundingBox = true;
+            Cell2DsTriangulations = true;
+            Cell2DsAreas = true;
+            Cell2DsCentroids = true;
+            Cell2DsDiameters = true;
+            Cell2DsEdgeDirections = true;
+            Cell2DsEdgesCentroid = true;
+            Cell2DsEdgeLengths = true;
+            Cell2DsEdgeTangents = true;
+            Cell2DsEdgeNormals = true;
+            Cell2DsChebyshevCenter = false;
+            Cell2DsTriangulationsByChebyshevCenter = false;
+            Cell2DsInRadius = false;
+        }
+
+        MeshGeometricData2DConfig(bool Cell2DsBoundingBox,
+                                  bool Cell2DsTriangulations,
+                                  bool Cell2DsAreas,
+                                  bool Cell2DsCentroids,
+                                  bool Cell2DsDiameters,
+                                  bool Cell2DsEdgeDirections,
+                                  bool Cell2DsEdgesCentroid,
+                                  bool Cell2DsEdgeLengths,
+                                  bool Cell2DsEdgeTangents,
+                                  bool Cell2DsEdgeNormals,
+                                  bool Cell2DsChebyshevCenter,
+                                  bool Cell2DsTriangulationsByChebyshevCenter,
+                                  bool Cell2DsInRadius);
     };
 
     struct MeshGeometricData3D final
@@ -379,7 +410,7 @@ class MeshUtilities final
         Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Mesh_Intersections Mesh_intersections;
     };
 
-  public:
+public:
     MeshUtilities(){};
     ~MeshUtilities(){};
 
