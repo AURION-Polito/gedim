@@ -645,8 +645,7 @@ public:
         const Gedim::GeometryUtilities &geometryUtilities,
         const Gedim::IMeshDAO &mesh,
         const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType,
-        const MeshGeometricData2DConfig &config = MeshGeometricData2DConfig(
-            {true, true, true, true, true, true, true, true, true, true, false, false, false})) const;
+        const MeshGeometricData2DConfig &config = MeshGeometricData2DConfig()) const;
 
     /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
     /// \param mesh the mesh
