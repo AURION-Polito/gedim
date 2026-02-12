@@ -2875,7 +2875,7 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
 TEST(TestGeometryUtilities, Test_PolygonChebyshevCenter_Convex)
 {
 
-    const std::string exportFolder = "ExportParaview/TestGeometryUtilities/Test_PolygonChebyshevCenter_Convex";
+    const std::string exportFolder = "Export/TestGeometryUtilities/Test_PolygonChebyshevCenter_Convex";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
@@ -2913,7 +2913,7 @@ TEST(TestGeometryUtilities, Test_PolygonChebyshevCenter_Convex)
 TEST(TestGeometryUtilities, Test_ZFEM_PCC_Utilities_Concave)
 {
 
-    const std::string exportFolder = "ExportParaview/TestGeometryUtilities/Test_ZFEM_PCC_Utilities_Concave";
+    const std::string exportFolder = "Export/TestGeometryUtilities/Test_ZFEM_PCC_Utilities_Concave";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
