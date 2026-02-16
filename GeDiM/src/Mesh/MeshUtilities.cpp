@@ -38,22 +38,14 @@ MeshUtilities::MeshGeometricData2DConfig::MeshGeometricData2DConfig(bool Cell2Ds
                                                                     bool Cell2DsEdgeNormals,
                                                                     bool Cell2DsChebyshevCenter,
                                                                     bool Cell2DsTriangulationsByChebyshevCenter,
-                                                                    bool Cell2DsInRadius):
-    Cell2DsBoundingBox(Cell2DsBoundingBox),
-    Cell2DsTriangulations(Cell2DsTriangulations),
-    Cell2DsAreas(Cell2DsAreas),
-    Cell2DsCentroids(Cell2DsCentroids),
-    Cell2DsDiameters(Cell2DsDiameters),
-    Cell2DsEdgeDirections(Cell2DsEdgeDirections),
-    Cell2DsEdgesCentroid(Cell2DsEdgesCentroid),
-    Cell2DsEdgeLengths(Cell2DsEdgeLengths),
-    Cell2DsEdgeTangents(Cell2DsEdgeTangents),
-    Cell2DsEdgeNormals(Cell2DsEdgeNormals),
-    Cell2DsChebyshevCenter(Cell2DsChebyshevCenter),
-    Cell2DsTriangulationsByChebyshevCenter(Cell2DsTriangulationsByChebyshevCenter),
-    Cell2DsInRadius(Cell2DsInRadius)
+                                                                    bool Cell2DsInRadius)
+    : Cell2DsBoundingBox(Cell2DsBoundingBox), Cell2DsTriangulations(Cell2DsTriangulations), Cell2DsAreas(Cell2DsAreas),
+      Cell2DsCentroids(Cell2DsCentroids), Cell2DsDiameters(Cell2DsDiameters),
+      Cell2DsEdgeDirections(Cell2DsEdgeDirections), Cell2DsEdgesCentroid(Cell2DsEdgesCentroid),
+      Cell2DsEdgeLengths(Cell2DsEdgeLengths), Cell2DsEdgeTangents(Cell2DsEdgeTangents),
+      Cell2DsEdgeNormals(Cell2DsEdgeNormals), Cell2DsChebyshevCenter(Cell2DsChebyshevCenter),
+      Cell2DsTriangulationsByChebyshevCenter(Cell2DsTriangulationsByChebyshevCenter), Cell2DsInRadius(Cell2DsInRadius)
 {
-
 }
 // ***************************************************************************
 void MeshUtilities::ExtractActiveMesh(Gedim::IMeshDAO &mesh, ExtractActiveMeshData &extractionData) const

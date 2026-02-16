@@ -21,7 +21,7 @@ namespace Gedim
 /// \copyright See top level LICENSE file for details.
 class MeshUtilities final
 {
-public:
+  public:
     struct CheckMesh2DConfiguration final
     {
         bool Cell0D_CheckCoordinates2D = true;
@@ -175,8 +175,8 @@ public:
         bool Cell2DsEdgeTangents = true;   ///< cell2D edge tangents
         bool Cell2DsEdgeNormals = true;    ///< cell2D edge normals
         bool Cell2DsChebyshevCenter = false;
-        bool Cell2DsTriangulationsByChebyshevCenter = false;            ///< cell2D triangulations
-        bool Cell2DsInRadius = false; ///< cell2D triangulations
+        bool Cell2DsTriangulationsByChebyshevCenter = false; ///< cell2D triangulations
+        bool Cell2DsInRadius = false;                        ///< cell2D triangulations
 
         MeshGeometricData2DConfig()
         {
@@ -410,7 +410,7 @@ public:
         Gedim::MeshUtilities::Intersect_mesh_polyhedron_result::Mesh_Intersections Mesh_intersections;
     };
 
-public:
+  public:
     MeshUtilities(){};
     ~MeshUtilities(){};
 
@@ -641,11 +641,10 @@ public:
     /// \param mesh the mesh
     /// \param meshCell2DsPolygonType the cell2D polygon type
     /// \return the MeshGeometricData computed
-    MeshUtilities::MeshGeometricData2D FillMesh2DGeometricData(
-        const Gedim::GeometryUtilities &geometryUtilities,
-        const Gedim::IMeshDAO &mesh,
-        const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType,
-        const MeshGeometricData2DConfig &config = MeshGeometricData2DConfig()) const;
+    MeshUtilities::MeshGeometricData2D FillMesh2DGeometricData(const Gedim::GeometryUtilities &geometryUtilities,
+                                                               const Gedim::IMeshDAO &mesh,
+                                                               const std::vector<Gedim::GeometryUtilities::PolygonTypes> &meshCell2DsPolygonType,
+                                                               const MeshGeometricData2DConfig &config = MeshGeometricData2DConfig()) const;
 
     /// \brief Fill Mesh2D Geometric Data starting given a mesh with non convex mesh cells and its convex sub-mesh cells
     /// \param mesh the mesh
