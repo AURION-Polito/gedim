@@ -16,6 +16,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "FileTextReader.hpp"
+#include "MeshDAOImporterFromCsv.hpp"
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 
@@ -26,6 +28,7 @@
 #include "VTKUtilities.hpp"
 
 #include <array>
+#include <string>
 
 using namespace testing;
 using namespace std;
@@ -217,6 +220,115 @@ TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
     EXPECT_EQ(21, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(48, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(28, meshDAO.Cell2DTotalNumber());
+}
+
+TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
+{
+    std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTriangles_Mesh_Import";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1.0e-8;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Gedim::MeshUtilities mesh_utilities;
+    Gedim::RefinementUtilities refinement_utilities(geometry_utilities,
+                                                    mesh_utilities);
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    unsigned int starting_r = 0;
+
+    {
+      Gedim::MeshFromCsvUtilities importerUtilities;
+      Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+      meshImporterConfiguration.Folder = "/home/geoscore/Downloads/Graded/Estimators_R" +
+                                         std::to_string(starting_r);
+      meshImporterConfiguration.Separator = ';';
+      Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+      importer.Import(meshImporterConfiguration, mesh);
+    }
+    mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Original");
+
+    const unsigned int maxRefinements = 1;
+
+    auto refine_mesh_geometric_data = refinement_utilities.RefinePolygonCell_InitializeGeometricData(mesh);
+
+    for (unsigned int r = starting_r; r < maxRefinements; r++)
+    {
+        Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData =
+            mesh_utilities.FillMesh2DGeometricData(geometry_utilities,
+                                                   mesh);
+
+        std::set<unsigned int> cell2DsToRefineIndex;
+
+        {
+          const std::string cell2D_to_refine_file = std::string("/home/geoscore/Downloads/Graded/") +
+                                                    "ToRefine_R" + std::to_string(r) + ".csv";
+
+          std::vector<std::string> lines;
+
+          Gedim::FileReader fileReader(cell2D_to_refine_file);
+          if (!fileReader.Open())
+            throw std::runtime_error("cell2D_to_refine_file file not found");
+
+          fileReader.GetAllLines(lines);
+          fileReader.Close();
+
+          const unsigned int numCell2Ds = lines.size();
+
+          if (numCell2Ds > 0)
+          {
+            const char separator = ';';
+
+            for (unsigned int v = 0; v < numCell2Ds; v++)
+            {
+              std::istringstream converter(lines[v]);
+
+              char temp;
+              unsigned int cell2D_id;
+              bool to_refine;
+              converter >> cell2D_id;
+              if (separator != ' ')
+                converter >> temp;
+              converter >> to_refine;
+
+              if (mesh.Cell2DIsActive(cell2D_id) &&
+                  to_refine)
+              {
+                cell2DsToRefineIndex.insert(cell2D_id);
+              }
+            }
+          }
+
+          fileReader.Close();
+        }
+
+        const auto cell2Ds_refined =
+            refinement_utilities.refine_mesh_2D_triangles(geometry_utilities,
+                                                          std::vector<unsigned int>(cell2DsToRefineIndex.begin(),
+                                                                                    cell2DsToRefineIndex.end()),
+                                                          refine_mesh_geometric_data,
+                                                          mesh);
+
+        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_R" + to_string(r));
+    }
+
+    Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
+    mesh_utilities.ExtractActiveMesh(mesh, extractionData);
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Refined");
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
+    mesh_utilities.CheckMesh2D(checkConfig, geometry_utilities, mesh);
+
+    const auto meshGeometricData = mesh_utilities.FillMesh2DGeometricData(geometry_utilities, mesh);
+
+    Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration check_mesh_geometry;
+    mesh_utilities.CheckMeshGeometricData2D(check_mesh_geometry, geometry_utilities, mesh, meshGeometricData);
 }
 
 TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
