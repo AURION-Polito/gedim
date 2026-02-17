@@ -238,7 +238,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    unsigned int starting_r = 0;
+    unsigned int starting_r = 1;
 
     {
       Gedim::MeshFromCsvUtilities importerUtilities;
@@ -253,7 +253,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Original");
 
-    const unsigned int maxRefinements = 1;
+    const unsigned int maxRefinements = starting_r + 1;
 
     auto refine_mesh_geometric_data = refinement_utilities.RefinePolygonCell_InitializeGeometricData(mesh);
 
