@@ -679,6 +679,25 @@ RefinementUtilities::TriangleMaxEdgeDirection RefinementUtilities::ComputeTriang
     return result;
 }
 // ***************************************************************************
+RefinementUtilities::PolygonDirection RefinementUtilities::ComputeTriangleMaxEdgeDirection(const Eigen::MatrixXd& triangle_vertices,
+                                                                                           const Eigen::VectorXd& triangle_edges_length) const
+{
+  PolygonDirection result;
+
+  Eigen::VectorXd::Index max_edge_origin_index;
+  triangle_edges_length.maxCoeff(&max_edge_origin_index);
+
+  const auto max_edge_end_index = (max_edge_origin_index + 1) % 3;
+  const auto opposite_vertex_index = (max_edge_origin_index + 2) % 3;
+
+  const Eigen::VectorXd edge_middle_point = 0.5 * (triangle_vertices.col(max_edge_end_index) +
+                                                   triangle_vertices.col(max_edge_origin_index));
+  result.LineOrigin = triangle_vertices.col(opposite_vertex_index);
+  result.LineTangent = (edge_middle_point - result.LineOrigin);
+
+  return result;
+}
+// ***************************************************************************
 RefinementUtilities::Cell2Ds_GeometricData RefinementUtilities::RefinePolygonCell_InitializeGeometricData(const Gedim::IMeshDAO &mesh) const
 {
     Cell2Ds_GeometricData geometricData;
