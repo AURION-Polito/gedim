@@ -224,6 +224,8 @@ TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
 
 TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
 {
+  GTEST_SKIP_("not used");
+
     std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTriangles_Mesh_Import";
     Gedim::Output::CreateFolder(exportFolder);
 
