@@ -457,7 +457,7 @@ class RefinementUtilities final
     /// \param splitCell1DsIndex the indices of the new Cell1Ds created by the splitting process, from 0 to
     /// Cell1DTotalNumber() \param cell2DEdgeDirection the direction of the Cell1D splitted in the Cell2D \param mesh
     /// the mesh to be updated
-    RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefineTriangleCell_UpdateNeighbours(
+    Gedim::RefinementUtilities::RefinePolygon_UpdateNeighbour_Result RefineTriangleCell_UpdateNeighbours(
         const unsigned int &cell2DIndex,
         const unsigned int &cell1DIndex,
         const unsigned int &newCell0DIndex,
@@ -488,7 +488,7 @@ class RefinementUtilities final
         const Gedim::GeometryUtilities::PolygonTypes &cell2DPolygonType,
         const Gedim::GeometryUtilities::PolygonTypes &cell2DUnalignedPolygonType,
         const Eigen::MatrixXd &cell2DVertices,
-        const RefinePolygon_CheckResult &cell2DCheckToRefine,
+        const Gedim::RefinementUtilities::RefinePolygon_CheckResult &cell2DCheckToRefine,
         const Eigen::Matrix3d &cell2DRotation,
         const Eigen::Vector3d &cell2DTranslation,
         const std::vector<bool> &cell2DEdgesDirection,
