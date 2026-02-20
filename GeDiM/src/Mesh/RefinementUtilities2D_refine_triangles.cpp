@@ -67,17 +67,64 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
             continue;
         }
 
-        const auto direction = ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
+        // const auto direction =
+        // ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
 
-        const auto refineResult = RefineTriangleCell_ByEdge(cell2DToRefineIndex,
-                                                            direction.MaxEdgeIndex,
-                                                            direction.OppositeVertexIndex,
-                                                            meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
-                                                            meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
-                                                            Eigen::Matrix3d::Identity(),
-                                                            Eigen::Vector3d::Zero(),
-                                                            meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
-                                                            mesh);
+        // const auto refineResult = RefineTriangleCell_ByEdge(cell2DToRefineIndex,
+        //                                                     direction.MaxEdgeIndex,
+        //                                                     direction.OppositeVertexIndex,
+        //                                                     meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+        //                                                     meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+        //                                                     Eigen::Matrix3d::Identity(),
+        //                                                     Eigen::Vector3d::Zero(),
+        //                                                     meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
+        //                                                     mesh);
+
+        const auto direction =
+            ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.UnalignedVertices[cell2DToRefineIndex],
+                                            meshGeometricData.Cell2Ds.UnalignedEdgesLength[cell2DToRefineIndex]);
+
+        const Gedim::RefinementUtilities::RefinePolygon_CheckResult refineCheckResult =
+            RefinePolygonCell_CheckRefinement(cell2DToRefineIndex,
+                                              meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
+                                              direction.LineTangent,
+                                              direction.LineOrigin,
+                                              meshGeometricData.Cell2Ds.Quality,
+                                              meshGeometricData.Cell1Ds.Aligned,
+                                              0.5,
+                                              1.0,
+                                              meshGeometricData.Cell2Ds.Area.at(cell2DToRefineIndex),
+                                              meshGeometricData.Cell2Ds.EdgesLength,
+                                              meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+                                              mesh);
+
+        switch (refineCheckResult.ResultType)
+        {
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::SplitDirectionNotInsideCell2D:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DAlreadySplitted: {
+            Gedim::Output::Assert(!mesh.Cell2DIsActive(cell2DToRefineIndex));
+        }
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DSplitUnderTolerance:
+            continue;
+        case Gedim::RefinementUtilities::RefinePolygon_CheckResult::ResultTypes::Cell2DToBeSplitted:
+            break;
+        default:
+            throw std::runtime_error("Refine Check result not managed");
+        }
+
+        const Gedim::RefinementUtilities::RefinePolygon_Result refineResult =
+            RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
+                                          refineCheckResult,
+                                          Eigen::Matrix3d::Identity(),
+                                          Eigen::Vector3d::Zero(),
+                                          meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+                                          false,
+                                          mesh);
 
         switch (refineResult.ResultType)
         {
@@ -95,9 +142,15 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
         case Gedim::RefinementUtilities::RefinePolygon_Result::ResultTypes::Successfull: {
             Gedim::Output::Assert(cell2DUnalignedPolygonType == Gedim::GeometryUtilities::PolygonTypes::Triangle);
 
-            const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, direction.MaxEdgeIndex);
-            meshGeometricData.Cell1Ds.Status[cell1DIndex] =
-                Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
+            // const unsigned int cell1DIndex = mesh.Cell2DEdge(cell2DIndex, direction.MaxEdgeIndex);
+            // meshGeometricData.Cell1Ds.Status[cell1DIndex] =
+            //     Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
+
+            for (const auto &nex_cell1D_index : refineResult.NewCell1DsIndex)
+            {
+                meshGeometricData.Cell1Ds.Status[nex_cell1D_index.OriginalCell1DIndex] =
+                    Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
+            }
 
             refinedCells.push_back(cell2DToRefineIndex);
         }
@@ -114,15 +167,23 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
             if (refineResult.NewCell1DsIndex[e].Type != Gedim::RefinementUtilities::RefinePolygon_Result::RefinedCell1D::Types::Updated)
                 continue;
 
-            const auto newNeighboursCell2DsIndex = RefineTriangleCell_UpdateNeighbours(
-                cell2DToRefineIndex,
-                refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
-                {},
-                {},
-                mesh);
+            // const auto newNeighboursCell2DsIndex = RefineTriangleCell_UpdateNeighbours(
+            //     cell2DToRefineIndex,
+            //     refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+            //     refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+            //     refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+            //     meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex).at(refineResult.NewCell1DsIndex[e].OriginalCell2DEdgeIndex),
+            //     {},
+            //     {},
+            //     mesh);
+
+            const auto newNeighboursCell2DsIndex =
+                RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                   refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                   meshGeometricData.Cell2Ds.EdgesDirection,
+                                                   mesh);
 
             for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
                 cell2DsToUpdateGeometricData.push_back({newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].OriginalCell2DIndex,

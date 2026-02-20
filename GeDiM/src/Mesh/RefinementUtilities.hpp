@@ -382,6 +382,8 @@ class RefinementUtilities final
                                                                              Gedim::IMeshDAO &mesh) const;
 
     Gedim::RefinementUtilities::TriangleMaxEdgeDirection ComputeTriangleMaxEdgeDirection(const Eigen::VectorXd &edgesLength) const;
+    Gedim::RefinementUtilities::PolygonDirection ComputeTriangleMaxEdgeDirection(const Eigen::MatrixXd &triangle_vertices,
+                                                                                 const Eigen::VectorXd &triangle_edges_length) const;
 
     Gedim::RefinementUtilities::PolygonDirection ComputePolygonMaxDiameterDirection(const Eigen::MatrixXd unalignedVertices,
                                                                                     const Eigen::Vector3d &centroid) const;
