@@ -224,7 +224,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
 
 TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
 {
-  GTEST_SKIP_("not used");
+    GTEST_SKIP_("not used");
 
     std::string exportFolder = "./Export/TestRefinementUtilities/TestRefineTriangles_Mesh_Import";
     Gedim::Output::CreateFolder(exportFolder);
@@ -234,8 +234,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
     Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
 
     Gedim::MeshUtilities mesh_utilities;
-    Gedim::RefinementUtilities refinement_utilities(geometry_utilities,
-                                                    mesh_utilities);
+    Gedim::RefinementUtilities refinement_utilities(geometry_utilities, mesh_utilities);
 
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
@@ -243,13 +242,12 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
     unsigned int starting_r = 1;
 
     {
-      Gedim::MeshFromCsvUtilities importerUtilities;
-      Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
-      meshImporterConfiguration.Folder = "/home/geoscore/Downloads/Graded/Estimators_R" +
-                                         std::to_string(starting_r);
-      meshImporterConfiguration.Separator = ';';
-      Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
-      importer.Import(meshImporterConfiguration, mesh);
+        Gedim::MeshFromCsvUtilities importerUtilities;
+        Gedim::MeshFromCsvUtilities::Configuration meshImporterConfiguration;
+        meshImporterConfiguration.Folder = "/home/geoscore/Downloads/Graded/Estimators_R" + std::to_string(starting_r);
+        meshImporterConfiguration.Separator = ';';
+        Gedim::MeshDAOImporterFromCsv importer(importerUtilities);
+        importer.Import(meshImporterConfiguration, mesh);
     }
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
@@ -262,59 +260,56 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
     for (unsigned int r = starting_r; r < maxRefinements; r++)
     {
         Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData =
-            mesh_utilities.FillMesh2DGeometricData(geometry_utilities,
-                                                   mesh);
+            mesh_utilities.FillMesh2DGeometricData(geometry_utilities, mesh);
 
         std::set<unsigned int> cell2DsToRefineIndex;
 
         {
-          const std::string cell2D_to_refine_file = std::string("/home/geoscore/Downloads/Graded/") +
-                                                    "ToRefine_R" + std::to_string(r) + ".csv";
+            const std::string cell2D_to_refine_file =
+                std::string("/home/geoscore/Downloads/Graded/") + "ToRefine_R" + std::to_string(r) + ".csv";
 
-          std::vector<std::string> lines;
+            std::vector<std::string> lines;
 
-          Gedim::FileReader fileReader(cell2D_to_refine_file);
-          if (!fileReader.Open())
-            throw std::runtime_error("cell2D_to_refine_file file not found");
+            Gedim::FileReader fileReader(cell2D_to_refine_file);
+            if (!fileReader.Open())
+                throw std::runtime_error("cell2D_to_refine_file file not found");
 
-          fileReader.GetAllLines(lines);
-          fileReader.Close();
+            fileReader.GetAllLines(lines);
+            fileReader.Close();
 
-          const unsigned int numCell2Ds = lines.size();
+            const unsigned int numCell2Ds = lines.size();
 
-          if (numCell2Ds > 0)
-          {
-            const char separator = ';';
-
-            for (unsigned int v = 0; v < numCell2Ds; v++)
+            if (numCell2Ds > 0)
             {
-              std::istringstream converter(lines[v]);
+                const char separator = ';';
 
-              char temp;
-              unsigned int cell2D_id;
-              bool to_refine;
-              converter >> cell2D_id;
-              if (separator != ' ')
-                converter >> temp;
-              converter >> to_refine;
+                for (unsigned int v = 0; v < numCell2Ds; v++)
+                {
+                    std::istringstream converter(lines[v]);
 
-              if (mesh.Cell2DIsActive(cell2D_id) &&
-                  to_refine)
-              {
-                cell2DsToRefineIndex.insert(cell2D_id);
-              }
+                    char temp;
+                    unsigned int cell2D_id;
+                    bool to_refine;
+                    converter >> cell2D_id;
+                    if (separator != ' ')
+                        converter >> temp;
+                    converter >> to_refine;
+
+                    if (mesh.Cell2DIsActive(cell2D_id) && to_refine)
+                    {
+                        cell2DsToRefineIndex.insert(cell2D_id);
+                    }
+                }
             }
-          }
 
-          fileReader.Close();
+            fileReader.Close();
         }
 
-        const auto cell2Ds_refined =
-            refinement_utilities.refine_mesh_2D_triangles(geometry_utilities,
-                                                          std::vector<unsigned int>(cell2DsToRefineIndex.begin(),
-                                                                                    cell2DsToRefineIndex.end()),
-                                                          refine_mesh_geometric_data,
-                                                          mesh);
+        const auto cell2Ds_refined = refinement_utilities.refine_mesh_2D_triangles(
+            geometry_utilities,
+            std::vector<unsigned int>(cell2DsToRefineIndex.begin(), cell2DsToRefineIndex.end()),
+            refine_mesh_geometric_data,
+            mesh);
 
         mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_R" + to_string(r));
     }

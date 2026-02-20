@@ -67,7 +67,8 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
             continue;
         }
 
-        //const auto direction = ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
+        // const auto direction =
+        // ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex));
 
         // const auto refineResult = RefineTriangleCell_ByEdge(cell2DToRefineIndex,
         //                                                     direction.MaxEdgeIndex,
@@ -79,8 +80,9 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
         //                                                     meshGeometricData.Cell2Ds.EdgesLength.at(cell2DToRefineIndex),
         //                                                     mesh);
 
-        const auto direction = ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.UnalignedVertices[cell2DToRefineIndex],
-                                                               meshGeometricData.Cell2Ds.UnalignedEdgesLength[cell2DToRefineIndex]);
+        const auto direction =
+            ComputeTriangleMaxEdgeDirection(meshGeometricData.Cell2Ds.UnalignedVertices[cell2DToRefineIndex],
+                                            meshGeometricData.Cell2Ds.UnalignedEdgesLength[cell2DToRefineIndex]);
 
         const Gedim::RefinementUtilities::RefinePolygon_CheckResult refineCheckResult =
             RefinePolygonCell_CheckRefinement(cell2DToRefineIndex,
@@ -113,16 +115,16 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
         }
 
         const Gedim::RefinementUtilities::RefinePolygon_Result refineResult =
-        RefinePolygonCell_ByDirection(cell2DToRefineIndex,
-                                      Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
-                                      Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
-                                      meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
-                                      refineCheckResult,
-                                      Eigen::Matrix3d::Identity(),
-                                      Eigen::Vector3d::Zero(),
-                                      meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
-                                      false,
-                                      mesh);
+            RefinePolygonCell_ByDirection(cell2DToRefineIndex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          Gedim::GeometryUtilities::PolygonTypes::Generic_Convex,
+                                          meshGeometricData.Cell2Ds.Vertices[cell2DToRefineIndex],
+                                          refineCheckResult,
+                                          Eigen::Matrix3d::Identity(),
+                                          Eigen::Vector3d::Zero(),
+                                          meshGeometricData.Cell2Ds.EdgesDirection.at(cell2DToRefineIndex),
+                                          false,
+                                          mesh);
 
         switch (refineResult.ResultType)
         {
@@ -144,10 +146,10 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
             // meshGeometricData.Cell1Ds.Status[cell1DIndex] =
             //     Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
 
-            for (const auto& nex_cell1D_index : refineResult.NewCell1DsIndex)
+            for (const auto &nex_cell1D_index : refineResult.NewCell1DsIndex)
             {
-            meshGeometricData.Cell1Ds.Status[nex_cell1D_index.OriginalCell1DIndex] =
-                Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
+                meshGeometricData.Cell1Ds.Status[nex_cell1D_index.OriginalCell1DIndex] =
+                    Gedim::RefinementUtilities::Cell2Ds_GeometricData::Cell1D_GeometricData::StatusTypes::QualityToCheck;
             }
 
             refinedCells.push_back(cell2DToRefineIndex);
@@ -175,12 +177,13 @@ std::vector<unsigned int> RefinementUtilities::refine_mesh_2D_triangles(const Ge
             //     {},
             //     mesh);
 
-            const auto newNeighboursCell2DsIndex = RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
-                                                                                      refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
-                                                                                      refineResult.NewCell1DsIndex[e].NewCell0DIndex,
-                                                                                      refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
-                                                                                      meshGeometricData.Cell2Ds.EdgesDirection,
-                                                                                      mesh);
+            const auto newNeighboursCell2DsIndex =
+                RefinePolygonCell_UpdateNeighbours(cell2DToRefineIndex,
+                                                   refineResult.NewCell1DsIndex[e].OriginalCell1DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell0DIndex,
+                                                   refineResult.NewCell1DsIndex[e].NewCell1DsIndex,
+                                                   meshGeometricData.Cell2Ds.EdgesDirection,
+                                                   mesh);
 
             for (unsigned int rnc = 0; rnc < newNeighboursCell2DsIndex.UpdatedCell2Ds.size(); rnc++)
                 cell2DsToUpdateGeometricData.push_back({newNeighboursCell2DsIndex.UpdatedCell2Ds[rnc].OriginalCell2DIndex,
