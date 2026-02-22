@@ -39,6 +39,7 @@
 #include "test_mesh_bulk_face.hpp"
 #include "test_MEDIT_Utilities.hpp"
 #include "test_LPUtilities.hpp"
+#include "test_meshUtilities2D_ImportTriangularMesh.hpp"
 
 #include <gtest/gtest.h>
 
