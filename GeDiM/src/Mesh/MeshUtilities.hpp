@@ -797,9 +797,11 @@ class MeshUtilities final
     /// \param cell0Ds_file_path cell0Ds coordinates
     /// \param cell2Ds_file_path cell2Ds connectivity
     /// \param marker_file_path markers file
-    void ImportTriangularMesh(const std::string &cell0Ds_file_path,
+    void ImportTriangularMesh(const GeometryUtilities& geometry_utilities,
+                              const std::string &cell0Ds_file_path,
                               const std::string &cell2Ds_file_path,
                               const std::string &marker_file_path,
+                              const char separator,
                               Gedim::IMeshDAO &mesh) const;
 
     /// \brief Import 3D mesh from OVM file
