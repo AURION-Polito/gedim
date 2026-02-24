@@ -411,8 +411,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -797,7 +797,7 @@ class MeshUtilities final
     /// \param cell0Ds_file_path cell0Ds coordinates
     /// \param cell2Ds_file_path cell2Ds connectivity
     /// \param marker_file_path markers file
-    void ImportTriangularMesh(const GeometryUtilities& geometry_utilities,
+    void ImportTriangularMesh(const GeometryUtilities &geometry_utilities,
                               const std::string &cell0Ds_file_path,
                               const std::string &cell2Ds_file_path,
                               const std::string &marker_file_path,

@@ -43,15 +43,10 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_ImportTriangularMesh)
                                         ',',
                                         mesh);
 
-    mesh_utilities.ExportMeshToVTU(mesh,
-                                   exportFolder,
-                                   "mesh");
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
 
     Gedim::Output::CreateFolder(exportFolder + "/Mesh");
-    mesh_utilities.ExportMeshToCsv(mesh,
-                                   ';',
-                                   exportFolder + "/Mesh");
-
+    mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Mesh");
 
     {
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
