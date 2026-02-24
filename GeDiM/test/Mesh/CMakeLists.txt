@@ -1,3 +1,5 @@
+add_subdirectory(Triangular_Test_Mesh)
+
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_platonic_solid.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_mesh.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities1D.hpp)
@@ -26,7 +28,7 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_intersectorM
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/VTK_Unstructured_Grid_Mesh_Mock.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_sphere_mesh_utilities.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_mesh_bulk_face.hpp)
-
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities2D_ImportTriangularMesh.hpp)
 
 list(APPEND gedim_test_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/test_exportMeshUtilities.cpp)
 

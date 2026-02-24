@@ -411,8 +411,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -792,6 +792,17 @@ class MeshUtilities final
                               const unsigned int random_seed = 0) const;
 
     void MakeMeshTriangularFaces(const std::vector<std::vector<unsigned int>> &faces_triangulation, Gedim::IMeshDAO &mesh) const;
+
+    /// \brief Import triangular 2D mesh (non standard simple format)
+    /// \param cell0Ds_file_path cell0Ds coordinates
+    /// \param cell2Ds_file_path cell2Ds connectivity
+    /// \param marker_file_path markers file
+    void ImportTriangularMesh(const GeometryUtilities &geometry_utilities,
+                              const std::string &cell0Ds_file_path,
+                              const std::string &cell2Ds_file_path,
+                              const std::string &marker_file_path,
+                              const char separator,
+                              Gedim::IMeshDAO &mesh) const;
 
     /// \brief Import 3D mesh from OVM file
     void ImportOpenVolumeMesh(const std::string &ovmFilePath,
