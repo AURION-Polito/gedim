@@ -715,6 +715,13 @@ class MeshUtilities final
                              const std::vector<double> &heightMeshCurvilinearCoordinates,
                              Gedim::IMeshDAO &mesh) const;
 
+    void CreateStructuredTriangularMesh(const Eigen::Vector3d &rectangleOrigin,
+                                        const Eigen::Vector3d &rectangleBaseTangent,
+                                        const Eigen::Vector3d &rectangleHeightTangent,
+                                        const std::vector<double> &baseMeshCurvilinearCoordinates,
+                                        const std::vector<double> &heightMeshCurvilinearCoordinates,
+                                        Gedim::IMeshDAO &mesh) const;
+
     void CreateParallelepipedMesh(const Eigen::Vector3d &rectangleOrigin,
                                   const Eigen::Vector3d &rectangleLengthTangent,
                                   const Eigen::Vector3d &rectangleHeightTangent,
