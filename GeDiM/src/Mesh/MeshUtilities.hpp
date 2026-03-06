@@ -488,7 +488,8 @@ class MeshUtilities final
 
     void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
                     const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
-                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces) const;
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
+                    Gedim::IMeshDAO &mesh) const;
 
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
     /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
