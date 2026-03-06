@@ -36,6 +36,10 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_ImportRegnFaceMesh)
 
     const std::string import_folder = "./Mesh/regn_face_test_mesh";
 
+    mesh_utilities.ImportRegnFaceMesh(geometry_utilities,
+                                      import_folder + "/mesh.node",
+                                      import_folder + "/mesh.ele",
+                                      mesh);
    
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
 

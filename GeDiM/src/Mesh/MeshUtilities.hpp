@@ -486,6 +486,10 @@ class MeshUtilities final
                     const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
                     Gedim::IMeshDAO &mesh) const;
 
+    void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                    const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
+                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces) const;
+
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
     /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
     /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size
@@ -817,7 +821,6 @@ class MeshUtilities final
     void ImportRegnFaceMesh(const Gedim::GeometryUtilities &geometry_utilities,
                             const std::string &node_file_path,
                             const std::string &ele_file_path,
-                            const char separator,
                             IMeshDAO &mesh) const;
 
     /// \brief Import 3D mesh from OVM file

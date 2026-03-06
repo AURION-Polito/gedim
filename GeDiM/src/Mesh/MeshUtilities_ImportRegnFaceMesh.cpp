@@ -14,48 +14,47 @@
 
 namespace Gedim
 {
-// ***************************************************************************
-void Gedim::MeshUtilities::ImportRegnFaceMesh(const Gedim::GeometryUtilities &geometry_utilities,
+  // ***************************************************************************
+  void Gedim::MeshUtilities::ImportRegnFaceMesh(const Gedim::GeometryUtilities &geometry_utilities,
                                                 const std::string &node_file_path,
                                                 const std::string &ele_file_path,
-                                                const char separator,
                                                 IMeshDAO &mesh) const
-{
+  {
     Eigen::MatrixXd cell0Ds;
-    std::vector<Eigen::VectorXi> originalCell2Ds;
-    std::vector<Eigen::VectorXi> cell2Ds;
 
     {
-        std::vector<std::string> cell0DsLines;
-        Gedim::FileReader csvFileReader(node_file_path);
+      std::vector<std::string> cell0DsLines;
+      Gedim::FileReader csvFileReader(node_file_path);
 
-        if (!csvFileReader.Open())
-            throw std::runtime_error("File cell0Ds not found");
+      if (!csvFileReader.Open())
+        throw std::runtime_error("File cell0Ds not found");
 
-        csvFileReader.GetAllLines(cell0DsLines);
-        csvFileReader.Close();
+      csvFileReader.GetAllLines(cell0DsLines);
+      csvFileReader.Close();
 
-        unsigned int numCell0Ds = cell0DsLines.size() - 1;
-        if (numCell0Ds == 0)
-            throw std::runtime_error("File cell0Ds empty");
+      unsigned int numCell0Ds = cell0DsLines.size() - 1;
+      if (numCell0Ds == 0)
+        throw std::runtime_error("File cell0Ds empty");
 
-        cell0Ds.setZero(3, numCell0Ds);
+      cell0Ds.setZero(3, numCell0Ds);
 
-        char temp;
-        unsigned int id;
-        for (unsigned int v = 0; v < numCell0Ds; v++)
-        {
-            std::istringstream converter(cell0DsLines[v + 1]);
+      unsigned int id;
+      for (unsigned int v = 0; v < numCell0Ds; v++)
+      {
+        std::istringstream converter(cell0DsLines[v + 1]);
 
-            converter >> id;
-            if (separator != ' ')
-                converter >> temp;
-            converter >> cell0Ds(0, v);
-            if (separator != ' ')
-                converter >> temp;
-            converter >> cell0Ds(1, v);
-        }
+        converter >> id;
+        converter >> cell0Ds(0, v);
+        converter >> cell0Ds(1, v);
+      }
     }
-}
-// ***************************************************************************
+  }
+  // ***************************************************************************
+  void Gedim::MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                                        const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
+                                        const std::vector<std::vector<unsigned int>> &cell3Ds_faces) const
+  {
+
+  }
+  // ***************************************************************************
 } // namespace Gedim
