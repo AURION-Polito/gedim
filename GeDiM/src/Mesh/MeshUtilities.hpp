@@ -811,6 +811,15 @@ class MeshUtilities final
                               const char separator,
                               Gedim::IMeshDAO &mesh) const;
 
+    /// \brief Import regn_face 3D mesh (non standard polyhedral format)
+    /// \param node_file_path cell0Ds coordinates
+    /// \param ele_file_path cell2Ds-cell3Ds connectivity
+    void ImportRegnFaceMesh(const Gedim::GeometryUtilities &geometry_utilities,
+                            const std::string &node_file_path,
+                            const std::string &ele_file_path,
+                            const char separator,
+                            IMeshDAO &mesh) const;
+
     /// \brief Import 3D mesh from OVM file
     void ImportOpenVolumeMesh(const std::string &ovmFilePath,
                               Gedim::IMeshDAO &mesh,
