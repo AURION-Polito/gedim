@@ -228,15 +228,24 @@ namespace Gedim
 
       for (unsigned int c = 0; c < cell3Ds_faces.size(); ++c)
       {
+        std::set<unsigned int> cell3D_vertices;
         std::set<unsigned int> cell3D_edges;
 
         for (unsigned int c_f = 0; c_f < cell3Ds_faces.at(c).size(); ++c_f)
         {
+          const auto& face_vertices = cell2Ds_vertices.at(c_f);
+
+          for (unsigned int f_v = 0; f_v < face_vertices.size(); ++f_v)
+            cell3D_vertices.insert(face_vertices.at(f_v));
+
           const auto& face_edges = cell2Ds_edges.at(c_f);
 
           for (unsigned int f_e = 0; f_e < face_edges.size(); ++f_e)
             cell3D_edges.insert(face_edges.at(f_e));
         }
+
+        cell3Ds_vertices.at(c) = std::vector<unsigned int>(cell3D_vertices.begin(),
+                                                           cell3D_vertices.end());
 
         cell3Ds_edges.at(c) = std::vector<unsigned int>(cell3D_edges.begin(),
                                                         cell3D_edges.end());
