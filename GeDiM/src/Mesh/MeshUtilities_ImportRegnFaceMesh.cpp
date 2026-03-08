@@ -165,8 +165,6 @@ namespace Gedim
             }
           }
 
-          Gedim::Output::Assert(face_id > -1);
-
           if (face_id == -1)
           {
             const auto cell2d_id = make_cell2D_id(cell3D_face.at(0),
