@@ -21,15 +21,14 @@ namespace Gedim
                                                 IMeshDAO &mesh) const
   {
     Eigen::MatrixXd cell0Ds;
-    std::vector<std::vector<unsigned int>> cell2Ds_vertices;
-    std::vector<std::vector<unsigned int>> cell3Ds_faces;
+    std::vector<std::vector<std::vector<unsigned int>>> cell3Ds_faces_vertices;
 
     {
       std::vector<std::string> cell0DsLines;
       Gedim::FileReader csvFileReader(node_file_path);
 
       if (!csvFileReader.Open())
-        throw std::runtime_error("File cell0Ds not found");
+        throw std::runtime_error("File node not found");
 
       csvFileReader.GetAllLines(cell0DsLines);
       csvFileReader.Close();
@@ -41,7 +40,7 @@ namespace Gedim
       }
 
       if (numCell0Ds == 0)
-        throw std::runtime_error("File cell0Ds empty");
+        throw std::runtime_error("File node empty");
 
       cell0Ds.setZero(3, numCell0Ds);
 
@@ -57,18 +56,75 @@ namespace Gedim
       }
     }
 
+    {
+      std::vector<std::string> cell3DsLines;
+      Gedim::FileReader csvFileReader(ele_file_path);
+
+      if (!csvFileReader.Open())
+        throw std::runtime_error("File ele not found");
+
+      csvFileReader.GetAllLines(cell3DsLines);
+      csvFileReader.Close();
+
+      unsigned int numCell3Ds = 0;
+      {
+        std::istringstream converter(cell3DsLines[1]);
+        converter >> numCell3Ds;
+      }
+
+      if (numCell3Ds == 0)
+        throw std::runtime_error("File ele empty");
+
+      cell3Ds_faces_vertices.resize(numCell3Ds);
+
+      unsigned int num_line = 2;
+      unsigned int id, num_faces;
+      for (unsigned int c = 0; c < numCell3Ds; c++)
+      {
+        std::istringstream converter(cell3DsLines.at(num_line++));
+
+        converter >> id;
+        converter >> num_faces;
+
+        cell3Ds_faces_vertices.at(c).resize(num_faces);
+
+        unsigned int num_face_vertices;
+        for (unsigned int f = 0; f < num_faces; ++f)
+        {
+          std::istringstream converter_face(cell3DsLines.at(num_line++));
+          converter_face >> id;
+          converter_face >> num_face_vertices;
+
+          cell3Ds_faces_vertices.at(c).at(f).resize(num_face_vertices);
+
+
+          unsigned int ver_id;
+          for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+          {
+            converter_face >> ver_id;
+            cell3Ds_faces_vertices.at(c).at(f).at(f_v) = ver_id;
+          }
+        }
+      }
+    }
+
     FillMesh3D(cell0Ds,
-               cell2Ds_vertices,
-               cell3Ds_faces,
+               cell3Ds_faces_vertices,
                mesh);
   }
   // ***************************************************************************
   void Gedim::MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
-                                        const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
-                                        const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
+                                        const std::vector<std::vector<std::vector<unsigned int>>> &cell3Ds_faces_vertices,
                                         Gedim::IMeshDAO &mesh) const
-  {
-
+  {    
+    FillMesh3D(cell0Ds,
+               {},
+               {},
+               {},
+               {},
+               {},
+               {},
+               mesh);
   }
   // ***************************************************************************
 } // namespace Gedim

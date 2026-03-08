@@ -487,8 +487,7 @@ class MeshUtilities final
                     Gedim::IMeshDAO &mesh) const;
 
     void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
-                    const std::vector<std::vector<unsigned int>> &cell2Ds_vertices,
-                    const std::vector<std::vector<unsigned int>> &cell3Ds_faces,
+                    const std::vector<std::vector<std::vector<unsigned int> > >& cell3Ds_faces_vertices,
                     Gedim::IMeshDAO &mesh) const;
 
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
