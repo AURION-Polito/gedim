@@ -185,6 +185,51 @@ namespace Gedim
                                                                 list_cell2Ds_vertices.end());
     }
 
+    {
+      std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds_id;
+      std::list<std::pair<unsigned int, unsigned int>> list_cell1Ds_vertices;
+
+      cell2Ds_edges.resize(cell2Ds_vertices.size());
+
+      auto make_cell1D_id = [](const unsigned int v_0, const unsigned int v_1)
+      {
+        return v_0 > v_1 ?
+              std::make_pair(v_1, v_0) :
+              std::make_pair(v_0, v_1);
+      };
+
+      for (unsigned int f = 0; f < cell2Ds_vertices.size(); ++f)
+      {
+        const auto cell2d_vertices = cell2Ds_vertices.at(f);
+        const unsigned int n_vertices = cell2d_vertices.size();
+
+        cell2Ds_edges.at(f).resize(n_vertices);
+
+        for (unsigned int f_v = 0; f_v < n_vertices; ++f_v)
+        {
+          int edge_id = -1;
+
+          const auto cell1d_id = make_cell1D_id(cell2d_vertices.at(f_v),
+                                                cell2d_vertices.at((f_v + 1) % n_vertices));
+
+          if (!cell1Ds_id.contains(cell1d_id))
+          {
+            edge_id = cell1Ds_id.size();
+            cell1Ds_id.insert(std::make_pair(cell1d_id, edge_id));
+
+            list_cell1Ds_vertices.push_back(cell1d_id);
+          }
+          else
+            edge_id = cell1Ds_id.at(cell1d_id);
+
+          cell2Ds_edges.at(f).at(f_v) = edge_id;
+        }
+      }
+
+      cell1Ds_vertices = std::vector<std::pair<unsigned int, unsigned int>>(list_cell1Ds_vertices.begin(),
+                                                                            list_cell1Ds_vertices.end());
+    }
+
     FillMesh3D(cell0Ds,
                cell1Ds_vertices,
                cell2Ds_vertices,
