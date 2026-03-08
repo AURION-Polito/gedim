@@ -40,6 +40,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_ImportRegnFaceMesh)
                                       import_folder + "/mesh.node",
                                       import_folder + "/mesh.ele",
                                       mesh);
+    mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
    
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
 
