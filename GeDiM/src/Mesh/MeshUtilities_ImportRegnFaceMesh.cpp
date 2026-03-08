@@ -226,6 +226,22 @@ namespace Gedim
         }
       }
 
+      for (unsigned int c = 0; c < cell3Ds_faces.size(); ++c)
+      {
+        std::set<unsigned int> cell3D_edges;
+
+        for (unsigned int c_f = 0; c_f < cell3Ds_faces.at(c).size(); ++c_f)
+        {
+          const auto& face_edges = cell2Ds_edges.at(c_f);
+
+          for (unsigned int f_e = 0; f_e < face_edges.size(); ++f_e)
+            cell3D_edges.insert(face_edges.at(f_e));
+        }
+
+        cell3Ds_edges.at(c) = std::vector<unsigned int>(cell3D_edges.begin(),
+                                                        cell3D_edges.end());
+      }
+
       cell1Ds_vertices = std::vector<std::pair<unsigned int, unsigned int>>(list_cell1Ds_vertices.begin(),
                                                                             list_cell1Ds_vertices.end());
     }
