@@ -116,14 +116,84 @@ namespace Gedim
   void Gedim::MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
                                         const std::vector<std::vector<std::vector<unsigned int>>> &cell3Ds_faces_vertices,
                                         Gedim::IMeshDAO &mesh) const
-  {    
+  {
+    const unsigned int num_cell3Ds = cell3Ds_faces_vertices.size();
+
+    std::vector<std::pair<unsigned int, unsigned int>> cell1Ds_vertices;
+    std::vector<std::vector<unsigned int>> cell2Ds_vertices;
+    std::vector<std::vector<unsigned int>> cell2Ds_edges;
+    std::vector<std::vector<unsigned int>> cell3Ds_vertices(num_cell3Ds);
+    std::vector<std::vector<unsigned int>> cell3Ds_edges(num_cell3Ds);
+    std::vector<std::vector<unsigned int>> cell3Ds_faces(num_cell3Ds);
+
+    {
+      std::map<std::array<unsigned int, 3>, unsigned int> cell2Ds_id;
+      std::list<std::vector<unsigned int>> list_cell2Ds_vertices;
+
+      auto make_cell2D_id = [](const unsigned int v_0, const unsigned int v_1, const unsigned int v_2)
+      {
+        std::array<unsigned int, 3> cell2D_id = { v_0, v_1, v_2};
+        std::sort(cell2D_id.begin(),
+                  cell2D_id.end());
+
+        return cell2D_id;
+      };
+
+      for (unsigned int c = 0; c < num_cell3Ds; ++c)
+      {
+        const auto& cell3D_faces_vertices = cell3Ds_faces_vertices.at(c);
+        unsigned int cell3D_num_face = cell3D_faces_vertices.size();
+
+        cell3Ds_faces.at(c).resize(cell3D_num_face);
+
+        for (unsigned int c_f = 0; c_f < cell3D_num_face; ++c_f)
+        {
+          const auto& cell3D_face = cell3D_faces_vertices.at(c_f);
+
+          int face_id = -1;
+          const unsigned int n_vertices = cell3D_face.size();
+          for (unsigned int v = 0; v < n_vertices; ++v)
+          {
+            const auto cell2d_id = make_cell2D_id(cell3D_face.at(v),
+                                                  cell3D_face.at((v + 1) % n_vertices),
+                                                  cell3D_face.at((v + 2) % n_vertices));
+
+            if (cell2Ds_id.contains(cell2d_id))
+            {
+              face_id = cell2Ds_id.at(cell2d_id);
+              break;
+            }
+          }
+
+          Gedim::Output::Assert(face_id > -1);
+
+          if (face_id == -1)
+          {
+            const auto cell2d_id = make_cell2D_id(cell3D_face.at(0),
+                                                  cell3D_face.at(1),
+                                                  cell3D_face.at(2));
+
+            face_id = cell2Ds_id.size();
+            cell2Ds_id.insert(std::make_pair(cell2d_id, face_id));
+
+            list_cell2Ds_vertices.push_back(cell3D_face);
+          }
+
+          cell3Ds_faces.at(c).at(c_f) = face_id;
+        }
+      }
+
+      cell2Ds_vertices = std::vector<std::vector<unsigned int>>(list_cell2Ds_vertices.begin(),
+                                                                list_cell2Ds_vertices.end());
+    }
+
     FillMesh3D(cell0Ds,
-               {},
-               {},
-               {},
-               {},
-               {},
-               {},
+               cell1Ds_vertices,
+               cell2Ds_vertices,
+               cell2Ds_edges,
+               cell3Ds_vertices,
+               cell3Ds_edges,
+               cell3Ds_faces,
                mesh);
   }
   // ***************************************************************************
