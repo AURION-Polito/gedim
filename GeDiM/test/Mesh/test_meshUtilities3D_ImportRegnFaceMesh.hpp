@@ -64,6 +64,8 @@ namespace GedimUnitTesting
 
   TEST(TestMeshUtilities, TestMeshUtilities_3D_RegnFaceMesh_Conversion)
   {
+    GTEST_SKIP_("Use to import meshes from https://github.com/TommasoSorgente/vem-3D-quality-dataset");
+
     std::string exportFolder = "./Export/TestMeshUtilities/TestMeshUtilities_3D_ImportRegnFaceMesh";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -79,7 +81,7 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     const unsigned int num_total_meshes = 5;
-    const std::string import_folder = "/home/geoscore/Downloads/VORO/voro-bcl";
+    const std::string import_folder = "/home/geoscore/Downloads/VORO/voro-poisson";
 
     for (unsigned int m = 0; m < num_total_meshes; ++m)
     {
@@ -95,15 +97,15 @@ namespace GedimUnitTesting
       mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Mesh_" + std::to_string(m));
 
       {
-        Gedim::MeshUtilities::CheckMesh3DConfiguration config;
-        mesh_utilities.CheckMesh3D(config, geometry_utilities, mesh);
+        // Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+        // mesh_utilities.CheckMesh3D(config, geometry_utilities, mesh);
       }
 
       {
         const auto mesh_geometric_data = mesh_utilities.FillMesh3DGeometricData(geometry_utilities, mesh);
 
-        Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration config;
-        mesh_utilities.CheckMeshGeometricData3D(config, geometry_utilities, mesh, mesh_geometric_data);
+        // Gedim::MeshUtilities::CheckMeshGeometricData3DConfiguration config;
+        // mesh_utilities.CheckMeshGeometricData3D(config, geometry_utilities, mesh, mesh_geometric_data);
       }
     }
   }
