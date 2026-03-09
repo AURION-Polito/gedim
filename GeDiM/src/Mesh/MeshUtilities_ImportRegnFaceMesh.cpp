@@ -20,10 +20,13 @@ namespace Gedim
                                                 const std::string &ele_file_path,
                                                 IMeshDAO &mesh) const
   {
+    std::vector<unsigned int> original_cell0Ds_id_to_new_id;
     Eigen::MatrixXd cell0Ds;
     std::vector<std::vector<std::vector<unsigned int>>> cell3Ds_faces_vertices;
 
     {
+      std::list<Eigen::Vector3d> lst_cell0Ds;
+
       std::vector<std::string> cell0DsLines;
       Gedim::FileReader csvFileReader(node_file_path);
 
@@ -42,17 +45,47 @@ namespace Gedim
       if (numCell0Ds == 0)
         throw std::runtime_error("File node empty");
 
-      cell0Ds.setZero(3, numCell0Ds);
+      original_cell0Ds_id_to_new_id.resize(numCell0Ds);
 
       unsigned int id;
       for (unsigned int v = 0; v < numCell0Ds; v++)
       {
         std::istringstream converter(cell0DsLines[v + 2]);
 
+        Eigen::Vector3d cell0D;
+
         converter >> id;
-        converter >> cell0Ds(0, v);
-        converter >> cell0Ds(1, v);
-        converter >> cell0Ds(2, v);
+        converter >> cell0D.x();
+        converter >> cell0D.y();
+        converter >> cell0D.z();
+
+        unsigned int new_cell_id = 0;
+        for (const auto& other_cell0D : lst_cell0Ds)
+        {
+          if (geometry_utilities.PointsAreCoincident(cell0D,
+                                                     other_cell0D))
+          {
+            original_cell0Ds_id_to_new_id[v] = new_cell_id;
+            break;
+          }
+
+          new_cell_id++;
+        }
+
+        if (new_cell_id == lst_cell0Ds.size())
+        {
+          original_cell0Ds_id_to_new_id[v] = lst_cell0Ds.size();
+          lst_cell0Ds.push_back(cell0D);
+        }
+      }
+
+      if (lst_cell0Ds.size() > 0)
+      {
+        cell0Ds.resize(3, lst_cell0Ds.size());
+
+        unsigned int v = 0;
+        for (const auto& cell0D : lst_cell0Ds)
+          cell0Ds.col(v++) = cell0D;
       }
     }
 
@@ -102,7 +135,7 @@ namespace Gedim
           for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
           {
             converter_face >> ver_id;
-            cell3Ds_faces_vertices.at(c).at(f).at(f_v) = ver_id;
+            cell3Ds_faces_vertices.at(c).at(f).at(f_v) = original_cell0Ds_id_to_new_id.at(ver_id);
           }
         }
       }
