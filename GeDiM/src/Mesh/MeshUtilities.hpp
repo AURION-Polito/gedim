@@ -490,6 +490,12 @@ class MeshUtilities final
                     const std::vector<std::vector<std::vector<unsigned int> > >& cell3Ds_faces_vertices,
                     Gedim::IMeshDAO &mesh) const;
 
+    void FixCell2DsOrientation(const Gedim::GeometryUtilities& geometryUtilities,
+                               IMeshDAO& mesh) const;
+
+    void SetMesh3DMarker(const unsigned int marker,
+                         Gedim::IMeshDAO& mesh) const;
+
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
     /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
     /// \param cell2Ds the vertices indices of the cell2Ds ordered counterclockwise, size

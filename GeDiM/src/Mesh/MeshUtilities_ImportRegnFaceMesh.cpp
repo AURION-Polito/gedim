@@ -144,6 +144,14 @@ namespace Gedim
     FillMesh3D(cell0Ds,
                cell3Ds_faces_vertices,
                mesh);
+
+    FixCell2DsOrientation(geometry_utilities,
+                          mesh);
+
+    ComputeCell2DCell3DNeighbours(mesh);
+
+    SetMesh3DMarker(1,
+                    mesh);
   }
   // ***************************************************************************
   void Gedim::MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
@@ -296,6 +304,113 @@ namespace Gedim
                cell3Ds_edges,
                cell3Ds_faces,
                mesh);
+  }
+  // ***************************************************************************
+  void Gedim::MeshUtilities::FixCell2DsOrientation(const Gedim::GeometryUtilities& geometryUtilities,
+                                                   Gedim::IMeshDAO& mesh) const
+  {
+
+    for(unsigned int cc = 0; cc <  mesh.Cell3DTotalNumber(); cc++)
+    {
+      if (!mesh.Cell3DIsActive(cc))
+        continue;
+
+      const unsigned int cell3DIndex = cc;
+
+      const auto cell3DPolyhedron = MeshCell3DToPolyhedron(mesh,
+                                                           cell3DIndex);
+
+      const auto cell3DFaces3DVertices = geometryUtilities.PolyhedronFaceVertices(cell3DPolyhedron.Vertices,
+                                                                                  cell3DPolyhedron.Faces);
+      const auto cell3DFacesTranslation = geometryUtilities.PolyhedronFaceTranslations(cell3DFaces3DVertices);
+      const auto cell3DFaces3DNormal = geometryUtilities.PolyhedronFaceNormals(cell3DFaces3DVertices);
+      const auto cell3DFaces3DRotationMatrices = geometryUtilities.PolyhedronFaceRotationMatrices(cell3DFaces3DVertices,
+                                                                                                  cell3DFaces3DNormal,
+                                                                                                  cell3DFacesTranslation);
+
+      const auto cell3DFaces2DVertices = geometryUtilities.PolyhedronFaceRotatedVertices(cell3DFaces3DVertices,
+                                                                                         cell3DFacesTranslation,
+                                                                                         cell3DFaces3DRotationMatrices);
+
+      for (unsigned int ccf = 0; ccf < cell3DFaces2DVertices.size(); ccf++)
+      {
+        const auto faceConvexHull = geometryUtilities.ConvexHull(cell3DFaces2DVertices[ccf],
+                                                                 false);
+
+        switch (geometryUtilities.PolygonOrientation(faceConvexHull))
+        {
+          case Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise:
+            continue;
+          case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
+            break;
+          default:
+            throw std::runtime_error("Orientation case not managed");
+        }
+
+        const auto cell2DIndex = mesh.Cell3DFace(cell3DIndex,
+                                                 ccf);
+
+        const unsigned int numVertices = mesh.Cell2DNumberVertices(cell2DIndex);
+        const std::vector<unsigned int> vertices = mesh.Cell2DVertices(cell2DIndex);
+        const std::vector<unsigned int> edges = mesh.Cell2DEdges(cell2DIndex);
+
+        Gedim::Output::Assert(faceConvexHull.size() == numVertices);
+
+        std::vector<unsigned int> orderedVertices(numVertices);
+        std::vector<unsigned int> orderedEdges(numVertices);
+        for(unsigned int v = 0; v < numVertices; v++)
+        {
+          orderedVertices[v] = vertices[faceConvexHull[v]];
+          orderedEdges[v] = edges[faceConvexHull[(v + 1) % numVertices]];
+        }
+
+        mesh.Cell2DInsertVertices(cell2DIndex, orderedVertices);
+        mesh.Cell2DInsertEdges(cell2DIndex, orderedEdges);
+      }
+    }
+  }
+  // ***************************************************************************
+  void Gedim::MeshUtilities::SetMesh3DMarker(const unsigned int marker,
+                                             Gedim::IMeshDAO& mesh) const
+  {
+    for (unsigned int c_2D = 0; c_2D < mesh.Cell2DTotalNumber(); ++c_2D)
+    {
+      if (!mesh.Cell2DIsActive(c_2D))
+        continue;
+
+      const unsigned int c_2D_num_neigh_3D = mesh.Cell2DNumberNeighbourCell3D(c_2D);
+
+      if (c_2D_num_neigh_3D == 0)
+        throw std::runtime_error("Mesh 3D cell2Ds neighbours must computed");
+
+      unsigned int num_active_3D_neighs = 0;
+      for (unsigned int n = 0; n < c_2D_num_neigh_3D; ++n)
+      {
+        if (!mesh.Cell2DHasNeighbourCell3D(c_2D, n))
+          continue;
+
+        num_active_3D_neighs++;
+      }
+
+      Gedim::Output::Assert(num_active_3D_neighs > 0);
+
+      if (num_active_3D_neighs == 2)
+        continue;
+
+      mesh.Cell2DSetMarker(c_2D, marker);
+
+      for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(c_2D); ++v)
+      {
+        mesh.Cell0DSetMarker(mesh.Cell2DVertex(c_2D, v),
+                             marker);
+      }
+
+      for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(c_2D); ++e)
+      {
+        mesh.Cell1DSetMarker(mesh.Cell2DEdge(c_2D, e),
+                             marker);
+      }
+    }
   }
   // ***************************************************************************
 } // namespace Gedim
