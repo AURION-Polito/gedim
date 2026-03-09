@@ -105,6 +105,7 @@ class Eigen_SparseArray final : public ISparseArray
 
     inline ISparseArray &operator+=(const ISparseArray &A)
     {
+        Gedim::Output::Assert(A.Type() == Type());
         _matrix += Cast(A);
         return *this;
     }
