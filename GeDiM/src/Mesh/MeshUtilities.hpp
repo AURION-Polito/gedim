@@ -411,8 +411,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -487,14 +487,12 @@ class MeshUtilities final
                     Gedim::IMeshDAO &mesh) const;
 
     void FillMesh3D(const Eigen::MatrixXd &cell0Ds,
-                    const std::vector<std::vector<std::vector<unsigned int> > >& cell3Ds_faces_vertices,
+                    const std::vector<std::vector<std::vector<unsigned int>>> &cell3Ds_faces_vertices,
                     Gedim::IMeshDAO &mesh) const;
 
-    void FixCell2DsOrientation(const Gedim::GeometryUtilities& geometryUtilities,
-                               IMeshDAO& mesh) const;
+    void FixCell2DsOrientation(const Gedim::GeometryUtilities &geometryUtilities, IMeshDAO &mesh) const;
 
-    void SetMesh3DMarker(const unsigned int marker,
-                         Gedim::IMeshDAO& mesh) const;
+    void SetMesh3DMarker(const unsigned int marker, Gedim::IMeshDAO &mesh) const;
 
     /// \brief Compute edges in a Mesh 2D with vertices and polygons
     /// \param cell0Ds the coordinates as Eigen MatrixXd of cell0Ds, size 3xCell0DTotalNumber()
