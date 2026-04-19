@@ -34,7 +34,7 @@ class PlatonicSolid final
     {
     }
 
-    virtual ~PlatonicSolid() {};
+    virtual ~PlatonicSolid(){};
 
     void project_to_unit_sphere(Gedim::GeometryUtilities::Polyhedron &polyhedron) const
     {
