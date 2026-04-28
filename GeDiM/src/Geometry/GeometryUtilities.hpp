@@ -757,7 +757,7 @@ class GeometryUtilities final
 
     struct MergePolyhedronsInput
     {
-        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
+        constexpr static unsigned int none = UINT_MAX;
         enum struct MergeTypes
         {
             None = 0,
@@ -775,7 +775,7 @@ class GeometryUtilities final
 
     struct MergePolyhedronsResult
     {
-        constexpr static unsigned int none = std::numeric_limits<unsigned int>::max();
+        constexpr static unsigned int none = UINT_MAX;
         std::array<std::vector<unsigned int>, 2> OriginalToMergedVertices;
         std::array<std::vector<unsigned int>, 2> OriginalToMergedEdges;
         std::array<std::vector<unsigned int>, 2> OriginalToMergedFaces;
