@@ -34,10 +34,10 @@ struct GeometryUtilitiesConfig final
 /// \brief The GeometryUtilities class intersects 3D segments
 class GeometryUtilities final
 {
-  private:
+private:
     const GeometryUtilitiesConfig &_configuration;
 
-  public:
+public:
     enum struct CompareTypes
     {
         Unknown = 0,
@@ -124,9 +124,9 @@ class GeometryUtilities final
         };
 
         std::vector<Gedim::GeometryUtilities::IntersectionPolygonCircleResult::Intersection> Intersections = {}; ///< ordered
-                                                                                                                 ///< by
-                                                                                                                 ///< edge
-                                                                                                                 ///< order
+        ///< by
+        ///< edge
+        ///< order
     };
 
     struct PolygonDivisionByAngleQuadrantResult final
@@ -142,7 +142,7 @@ class GeometryUtilities final
         Eigen::MatrixXd Points;                             ///< Coordinates of generated points
         std::vector<std::vector<unsigned int>> SubPolygons; ///< Subpolygon formed
         std::vector<Gedim::GeometryUtilities::PolygonDivisionByAngleQuadrantResult::Types> SubPolygonTypes; ///< SubPolygon
-                                                                                                            ///< types
+        ///< types
     };
 
     struct PolygonDivisionByCircleResult final
@@ -292,7 +292,7 @@ class GeometryUtilities final
                 Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::Types::Unknown;
             Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::ArcTypes ArcType =
                 Gedim::GeometryUtilities::SplitPolygonWithCircleResult::NewEdge::ArcTypes::Unknown; ///< Valid only if
-                                                                                                    ///< Type is Arc
+            ///< Type is Arc
             std::vector<unsigned int> VertexIndices; ///< Index of vertices in NewVertices
             unsigned int PolygonIndex;               ///< Index of Edge in polygon intersections
         };
@@ -405,10 +405,10 @@ class GeometryUtilities final
         Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types Type =
             Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::Unknown; ///< The intersection type
         Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Intersection SingleIntersection; ///< The single
-                                                                                                   ///< intersection,
-                                                                                                   ///< available only
-                                                                                                   ///< is Type is
-                                                                                                   ///< SingleIntersection
+        ///< intersection,
+        ///< available only
+        ///< is Type is
+        ///< SingleIntersection
     };
 
     struct IntersectionPolyhedronLineResult final
@@ -477,8 +477,8 @@ class GeometryUtilities final
 
             Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types PolyhedronType =
                 Gedim::GeometryUtilities::IntersectionPolyhedronLineResult::LineIntersection::Types::Unknown; ///< Type
-                                                                                                              ///< of
-                                                                                                              ///< intersection
+            ///< of
+            ///< intersection
             unsigned int PolyhedronIndex = 0; ///<  Index of the intersecting element of the Polyhedron (face, edge or
             ///<  vertex index)
             double CurvilinearCoordinate = 0.0; ///< Curvilinear coordinate in the line
@@ -541,7 +541,7 @@ class GeometryUtilities final
         struct EdgeIntersection final
         {
             Gedim::GeometryUtilities::IntersectionSegmentPlaneResult Intersection; ///< Intersection between edge and
-                                                                                   ///< plane
+            ///< plane
         };
 
         struct VertexIntersection final
@@ -757,7 +757,6 @@ class GeometryUtilities final
 
     struct MergePolyhedronsInput
     {
-        constexpr static unsigned int none = UINT_MAX;
         enum struct MergeTypes
         {
             None = 0,
@@ -765,6 +764,7 @@ class GeometryUtilities final
             Remove = 2
         };
 
+        constexpr static unsigned int none = UINT_MAX;
         std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Vertices_Type;
         std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Edges_Type;
         std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Faces_Type;
@@ -785,7 +785,7 @@ class GeometryUtilities final
         Gedim::GeometryUtilities::Polyhedron MergedPolyhedron;
     };
 
-  public:
+public:
     GeometryUtilities(const GeometryUtilitiesConfig &configuration);
     ~GeometryUtilities();
 
@@ -927,9 +927,9 @@ class GeometryUtilities final
                              const double &norm_v_next_v) const
     {
         return IsValueZero(norm_v_prev_v, Tolerance1D()) || IsValueZero(norm_v_next_v, Tolerance1D())
-                   ? 0.0
-                   : (v.x() - v_prev.x()) * (v_next.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v) -
-                         (v_next.x() - v_prev.x()) * (v.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v);
+        ? 0.0
+        : (v.x() - v_prev.x()) * (v_next.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v) -
+                (v_next.x() - v_prev.x()) * (v.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v);
     }
 
     /// \brief compute the Point distance
