@@ -34,10 +34,10 @@ struct GeometryUtilitiesConfig final
 /// \brief The GeometryUtilities class intersects 3D segments
 class GeometryUtilities final
 {
-private:
+  private:
     const GeometryUtilitiesConfig &_configuration;
 
-public:
+  public:
     enum struct CompareTypes
     {
         Unknown = 0,
@@ -785,7 +785,7 @@ public:
         Gedim::GeometryUtilities::Polyhedron MergedPolyhedron;
     };
 
-public:
+  public:
     GeometryUtilities(const GeometryUtilitiesConfig &configuration);
     ~GeometryUtilities();
 
@@ -927,9 +927,9 @@ public:
                              const double &norm_v_next_v) const
     {
         return IsValueZero(norm_v_prev_v, Tolerance1D()) || IsValueZero(norm_v_next_v, Tolerance1D())
-        ? 0.0
-        : (v.x() - v_prev.x()) * (v_next.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v) -
-                (v_next.x() - v_prev.x()) * (v.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v);
+                   ? 0.0
+                   : (v.x() - v_prev.x()) * (v_next.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v) -
+                         (v_next.x() - v_prev.x()) * (v.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v);
     }
 
     /// \brief compute the Point distance
