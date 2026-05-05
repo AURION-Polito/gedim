@@ -12,6 +12,7 @@
 #include "MeshUtilities.hpp"
 
 #include "ImportExportUtilities.hpp"
+#include <cassert>
 #include <fstream>
 #include <set>
 
