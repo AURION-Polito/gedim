@@ -765,9 +765,12 @@ class GeometryUtilities final
         };
 
         constexpr static unsigned int none = UINT_MAX;
-        std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Vertices_Type;
-        std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Edges_Type;
-        std::array<std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>, 2> Faces_Type;
+
+        using MergeTypesList = std::vector<std::pair<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypes, unsigned int>>;
+
+        std::array<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypesList, 2> Vertices_Type;
+        std::array<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypesList, 2> Edges_Type;
+        std::array<Gedim::GeometryUtilities::MergePolyhedronsInput::MergeTypesList, 2> Faces_Type;
         std::vector<std::array<unsigned int, 2>> Common_vertices;
         std::vector<std::array<unsigned int, 2>> Common_edges;
         std::vector<std::array<unsigned int, 2>> Common_faces;
