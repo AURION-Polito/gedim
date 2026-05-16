@@ -40,6 +40,7 @@
 #include "test_MEDIT_Utilities.hpp"
 #include "test_LPUtilities.hpp"
 #include "test_meshUtilities2D_ImportTriangularMesh.hpp"
+#include "test_meshUtilities3D_ImportRegnFaceMesh.hpp"
 
 #include <gtest/gtest.h>
 

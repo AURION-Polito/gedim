@@ -238,7 +238,7 @@ double GeometryUtilities::PolyhedronVolumeByBoundaryIntegral(const std::vector<s
                 (mapTriangle.DetJ(mapData, referenceQuadratureWeights).array().abs() * referenceQuadratureWeights.array())
                     .matrix() *
                 faceNormal.transpose();
-            const Eigen::MatrixXd faceQuadraturePoints = faceRotationMatrix * mapData.B * referenceQuadraturePoints +
+            const Eigen::MatrixXd faceQuadraturePoints = faceRotationMatrix * mapData.BMatrix * referenceQuadraturePoints +
                                                          faceRotationMatrix * mapData.b + faceTranslation;
 
             volume += 1.0 / 3.0 *
@@ -319,13 +319,13 @@ Eigen::Vector3d GeometryUtilities::PolyhedronCentroid(const std::vector<std::vec
                 RotatePointsFrom2DTo3D(mappedQuadraturePoints, faceRotationMatrix, faceTranslation);
 
             centroid(0) += quadraturePoints3D.row(0) *
-                           (faceNormal(0) * quadratureWeights * mapData.B.determinant()).asDiagonal() *
+                           (faceNormal(0) * quadratureWeights * mapData.BMatrix.determinant()).asDiagonal() *
                            quadraturePoints3D.row(0).transpose();
             centroid(1) += quadraturePoints3D.row(1) *
-                           (faceNormal(1) * quadratureWeights * mapData.B.determinant()).asDiagonal() *
+                           (faceNormal(1) * quadratureWeights * mapData.BMatrix.determinant()).asDiagonal() *
                            quadraturePoints3D.row(1).transpose();
             centroid(2) += quadraturePoints3D.row(2) *
-                           (faceNormal(2) * quadratureWeights * mapData.B.determinant()).asDiagonal() *
+                           (faceNormal(2) * quadratureWeights * mapData.BMatrix.determinant()).asDiagonal() *
                            quadraturePoints3D.row(2).transpose();
         }
     }

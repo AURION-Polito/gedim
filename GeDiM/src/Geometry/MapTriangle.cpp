@@ -21,11 +21,11 @@ MapTriangle::MapTriangleData MapTriangle::Compute(const Eigen::Matrix3d &vertice
 {
     MapTriangleData result;
 
-    result.B = B(vertices);
-    result.BInv = result.B.inverse();
+    result.BMatrix = BMatrix(vertices);
+    result.BMatrixInv = result.BMatrix.inverse();
     result.b = b(vertices);
-    result.DetB = result.B.determinant();
-    result.DetBInv = result.BInv.determinant();
+    result.DetBMatrix = result.BMatrix.determinant();
+    result.DetBMatrixInv = result.BMatrixInv.determinant();
 
     return result;
 }
@@ -36,7 +36,7 @@ MatrixXd MapTriangle::J(const MapTriangleData &mapData, const MatrixXd &x)
     MatrixXd jacb(3, 3 * numPoints);
 
     for (unsigned int p = 0; p < numPoints; p++)
-        jacb.block(0, 3 * p, 3, 3) = mapData.B;
+        jacb.block(0, 3 * p, 3, 3) = mapData.BMatrix;
 
     return jacb;
 }

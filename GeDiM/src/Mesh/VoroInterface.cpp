@@ -281,7 +281,7 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygo
         }
 
         if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
-            throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
+            throw runtime_error("Error generating Voronoi cells: areas do not mathc each other");
     }
 
     double vvol = 0.0;
@@ -454,11 +454,8 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygo
         } while (vl.inc());
     }
 
-    //    if(!geometryUtilities.IsValue3DZero(cvol - vvol))
-    //        throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
-
-    if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
-        throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
+    if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
+        throw runtime_error("Error generating Voronoi cells: areas do not mathc each other");
 
     /// <li> Set Cell0Ds
     const unsigned int numberOfPointsMesh = cell0Ds.size();

@@ -1,0 +1,382 @@
+// _LICENSE_HEADER_
+//
+// Copyright (C) 2019 - 2025.
+// Terms register on the GPL-3.0 license.
+//
+// This file can be redistributed and/or modified under the license terms.
+//
+// See top level LICENSE file for more details.
+//
+// This file can be used citing references in CITATION.cff file.
+
+#include "FileTextReader.hpp"
+#include "MeshUtilities.hpp"
+
+namespace Gedim
+{
+// ***************************************************************************
+void Gedim::MeshUtilities::ImportRegnFaceMesh(const Gedim::GeometryUtilities &geometry_utilities,
+                                              const std::string &node_file_path,
+                                              const std::string &ele_file_path,
+                                              IMeshDAO &mesh) const
+{
+    std::vector<unsigned int> original_cell0Ds_id_to_new_id;
+    Eigen::MatrixXd cell0Ds;
+    std::vector<std::vector<std::vector<unsigned int>>> cell3Ds_faces_vertices;
+
+    {
+        std::list<Eigen::Vector3d> lst_cell0Ds;
+
+        std::vector<std::string> cell0DsLines;
+        Gedim::FileReader csvFileReader(node_file_path);
+
+        if (!csvFileReader.Open())
+            throw std::runtime_error("File node not found");
+
+        csvFileReader.GetAllLines(cell0DsLines);
+        csvFileReader.Close();
+
+        unsigned int numCell0Ds = 0;
+        {
+            std::istringstream converter(cell0DsLines[1]);
+            converter >> numCell0Ds;
+        }
+
+        if (numCell0Ds == 0)
+            throw std::runtime_error("File node empty");
+
+        original_cell0Ds_id_to_new_id.resize(numCell0Ds);
+
+        unsigned int id;
+        for (unsigned int v = 0; v < numCell0Ds; v++)
+        {
+            std::istringstream converter(cell0DsLines[v + 2]);
+
+            Eigen::Vector3d cell0D;
+
+            converter >> id;
+            converter >> cell0D.x();
+            converter >> cell0D.y();
+            converter >> cell0D.z();
+
+            unsigned int new_cell_id = 0;
+            for (const auto &other_cell0D : lst_cell0Ds)
+            {
+                if (geometry_utilities.PointsAreCoincident(cell0D, other_cell0D))
+                {
+                    original_cell0Ds_id_to_new_id[v] = new_cell_id;
+                    break;
+                }
+
+                new_cell_id++;
+            }
+
+            if (new_cell_id == lst_cell0Ds.size())
+            {
+                original_cell0Ds_id_to_new_id[v] = lst_cell0Ds.size();
+                lst_cell0Ds.push_back(cell0D);
+            }
+        }
+
+        if (lst_cell0Ds.size() > 0)
+        {
+            cell0Ds.resize(3, lst_cell0Ds.size());
+
+            unsigned int v = 0;
+            for (const auto &cell0D : lst_cell0Ds)
+                cell0Ds.col(v++) = cell0D;
+        }
+    }
+
+    {
+        std::vector<std::string> cell3DsLines;
+        Gedim::FileReader csvFileReader(ele_file_path);
+
+        if (!csvFileReader.Open())
+            throw std::runtime_error("File ele not found");
+
+        csvFileReader.GetAllLines(cell3DsLines);
+        csvFileReader.Close();
+
+        unsigned int numCell3Ds = 0;
+        {
+            std::istringstream converter(cell3DsLines[1]);
+            converter >> numCell3Ds;
+        }
+
+        if (numCell3Ds == 0)
+            throw std::runtime_error("File ele empty");
+
+        cell3Ds_faces_vertices.resize(numCell3Ds);
+
+        unsigned int num_line = 2;
+        unsigned int id, num_faces;
+        for (unsigned int c = 0; c < numCell3Ds; c++)
+        {
+            std::istringstream converter(cell3DsLines.at(num_line++));
+
+            converter >> id;
+            converter >> num_faces;
+
+            cell3Ds_faces_vertices.at(c).resize(num_faces);
+
+            unsigned int num_face_vertices;
+            for (unsigned int f = 0; f < num_faces; ++f)
+            {
+                std::istringstream converter_face(cell3DsLines.at(num_line++));
+                converter_face >> id;
+                converter_face >> num_face_vertices;
+
+                cell3Ds_faces_vertices.at(c).at(f).resize(num_face_vertices);
+
+                unsigned int ver_id;
+                for (unsigned int f_v = 0; f_v < num_face_vertices; ++f_v)
+                {
+                    converter_face >> ver_id;
+                    cell3Ds_faces_vertices.at(c).at(f).at(f_v) = original_cell0Ds_id_to_new_id.at(ver_id);
+                }
+            }
+        }
+    }
+
+    FillMesh3D(cell0Ds, cell3Ds_faces_vertices, mesh);
+
+    FixCell2DsOrientation(geometry_utilities, mesh);
+
+    ComputeCell2DCell3DNeighbours(mesh);
+
+    SetMesh3DMarker(1, mesh);
+}
+// ***************************************************************************
+void Gedim::MeshUtilities::FillMesh3D(const Eigen::MatrixXd &cell0Ds,
+                                      const std::vector<std::vector<std::vector<unsigned int>>> &cell3Ds_faces_vertices,
+                                      Gedim::IMeshDAO &mesh) const
+{
+    const unsigned int num_cell3Ds = cell3Ds_faces_vertices.size();
+
+    std::vector<std::pair<unsigned int, unsigned int>> cell1Ds_vertices;
+    std::vector<std::vector<unsigned int>> cell2Ds_vertices;
+    std::vector<std::vector<unsigned int>> cell2Ds_edges;
+    std::vector<std::vector<unsigned int>> cell3Ds_vertices(num_cell3Ds);
+    std::vector<std::vector<unsigned int>> cell3Ds_edges(num_cell3Ds);
+    std::vector<std::vector<unsigned int>> cell3Ds_faces(num_cell3Ds);
+
+    {
+        std::map<std::array<unsigned int, 3>, unsigned int> cell2Ds_id;
+        std::list<std::vector<unsigned int>> list_cell2Ds_vertices;
+
+        auto make_cell2D_id = [](const unsigned int v_0, const unsigned int v_1, const unsigned int v_2) {
+            std::array<unsigned int, 3> cell2D_id = {v_0, v_1, v_2};
+            std::sort(cell2D_id.begin(), cell2D_id.end());
+
+            return cell2D_id;
+        };
+
+        for (unsigned int c = 0; c < num_cell3Ds; ++c)
+        {
+            const auto &cell3D_faces_vertices = cell3Ds_faces_vertices.at(c);
+            unsigned int cell3D_num_face = cell3D_faces_vertices.size();
+
+            cell3Ds_faces.at(c).resize(cell3D_num_face);
+
+            for (unsigned int c_f = 0; c_f < cell3D_num_face; ++c_f)
+            {
+                const auto &cell3D_face = cell3D_faces_vertices.at(c_f);
+
+                int face_id = -1;
+                const unsigned int n_vertices = cell3D_face.size();
+                for (unsigned int v = 0; v < n_vertices; ++v)
+                {
+                    const auto cell2d_id =
+                        make_cell2D_id(cell3D_face.at(v), cell3D_face.at((v + 1) % n_vertices), cell3D_face.at((v + 2) % n_vertices));
+
+                    if (cell2Ds_id.contains(cell2d_id))
+                    {
+                        face_id = cell2Ds_id.at(cell2d_id);
+                        break;
+                    }
+                }
+
+                if (face_id == -1)
+                {
+                    const auto cell2d_id = make_cell2D_id(cell3D_face.at(0), cell3D_face.at(1), cell3D_face.at(2));
+
+                    face_id = cell2Ds_id.size();
+                    cell2Ds_id.insert(std::make_pair(cell2d_id, face_id));
+
+                    list_cell2Ds_vertices.push_back(cell3D_face);
+                }
+
+                cell3Ds_faces.at(c).at(c_f) = face_id;
+            }
+        }
+
+        cell2Ds_vertices = std::vector<std::vector<unsigned int>>(list_cell2Ds_vertices.begin(), list_cell2Ds_vertices.end());
+    }
+
+    {
+        std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds_id;
+        std::list<std::pair<unsigned int, unsigned int>> list_cell1Ds_vertices;
+
+        cell2Ds_edges.resize(cell2Ds_vertices.size());
+
+        auto make_cell1D_id = [](const unsigned int v_0, const unsigned int v_1) {
+            return v_0 > v_1 ? std::make_pair(v_1, v_0) : std::make_pair(v_0, v_1);
+        };
+
+        for (unsigned int f = 0; f < cell2Ds_vertices.size(); ++f)
+        {
+            const auto cell2d_vertices = cell2Ds_vertices.at(f);
+            const unsigned int n_vertices = cell2d_vertices.size();
+
+            cell2Ds_edges.at(f).resize(n_vertices);
+
+            for (unsigned int f_v = 0; f_v < n_vertices; ++f_v)
+            {
+                int edge_id = -1;
+
+                const auto cell1d_id = make_cell1D_id(cell2d_vertices.at(f_v), cell2d_vertices.at((f_v + 1) % n_vertices));
+
+                if (!cell1Ds_id.contains(cell1d_id))
+                {
+                    edge_id = cell1Ds_id.size();
+                    cell1Ds_id.insert(std::make_pair(cell1d_id, edge_id));
+
+                    list_cell1Ds_vertices.push_back(cell1d_id);
+                }
+                else
+                    edge_id = cell1Ds_id.at(cell1d_id);
+
+                cell2Ds_edges.at(f).at(f_v) = edge_id;
+            }
+        }
+
+        for (unsigned int c = 0; c < cell3Ds_faces.size(); ++c)
+        {
+            std::set<unsigned int> cell3D_vertices;
+            std::set<unsigned int> cell3D_edges;
+
+            for (const unsigned int c_f : cell3Ds_faces.at(c))
+            {
+                const auto &face_vertices = cell2Ds_vertices.at(c_f);
+
+                for (unsigned int f_v = 0; f_v < face_vertices.size(); ++f_v)
+                    cell3D_vertices.insert(face_vertices.at(f_v));
+
+                const auto &face_edges = cell2Ds_edges.at(c_f);
+
+                for (unsigned int f_e = 0; f_e < face_edges.size(); ++f_e)
+                    cell3D_edges.insert(face_edges.at(f_e));
+            }
+
+            cell3Ds_vertices.at(c) = std::vector<unsigned int>(cell3D_vertices.begin(), cell3D_vertices.end());
+
+            cell3Ds_edges.at(c) = std::vector<unsigned int>(cell3D_edges.begin(), cell3D_edges.end());
+        }
+
+        cell1Ds_vertices =
+            std::vector<std::pair<unsigned int, unsigned int>>(list_cell1Ds_vertices.begin(), list_cell1Ds_vertices.end());
+    }
+
+    FillMesh3D(cell0Ds, cell1Ds_vertices, cell2Ds_vertices, cell2Ds_edges, cell3Ds_vertices, cell3Ds_edges, cell3Ds_faces, mesh);
+}
+// ***************************************************************************
+void Gedim::MeshUtilities::FixCell2DsOrientation(const Gedim::GeometryUtilities &geometryUtilities, Gedim::IMeshDAO &mesh) const
+{
+
+    for (unsigned int cc = 0; cc < mesh.Cell3DTotalNumber(); cc++)
+    {
+        if (!mesh.Cell3DIsActive(cc))
+            continue;
+
+        const unsigned int cell3DIndex = cc;
+
+        const auto cell3DPolyhedron = MeshCell3DToPolyhedron(mesh, cell3DIndex);
+
+        const auto cell3DFaces3DVertices =
+            geometryUtilities.PolyhedronFaceVertices(cell3DPolyhedron.Vertices, cell3DPolyhedron.Faces);
+        const auto cell3DFacesTranslation = geometryUtilities.PolyhedronFaceTranslations(cell3DFaces3DVertices);
+        const auto cell3DFaces3DNormal = geometryUtilities.PolyhedronFaceNormals(cell3DFaces3DVertices);
+        const auto cell3DFaces3DRotationMatrices =
+            geometryUtilities.PolyhedronFaceRotationMatrices(cell3DFaces3DVertices, cell3DFaces3DNormal, cell3DFacesTranslation);
+
+        const auto cell3DFaces2DVertices =
+            geometryUtilities.PolyhedronFaceRotatedVertices(cell3DFaces3DVertices, cell3DFacesTranslation, cell3DFaces3DRotationMatrices);
+
+        for (unsigned int ccf = 0; ccf < cell3DFaces2DVertices.size(); ccf++)
+        {
+            const auto faceConvexHull = geometryUtilities.ConvexHull(cell3DFaces2DVertices[ccf], false);
+
+            switch (geometryUtilities.PolygonOrientation(faceConvexHull))
+            {
+            case Gedim::GeometryUtilities::PolygonOrientations::CounterClockwise:
+                continue;
+            case Gedim::GeometryUtilities::PolygonOrientations::Clockwise:
+                break;
+            default:
+                throw std::runtime_error("Orientation case not managed");
+            }
+
+            const auto cell2DIndex = mesh.Cell3DFace(cell3DIndex, ccf);
+
+            const unsigned int numVertices = mesh.Cell2DNumberVertices(cell2DIndex);
+            const std::vector<unsigned int> vertices = mesh.Cell2DVertices(cell2DIndex);
+            const std::vector<unsigned int> edges = mesh.Cell2DEdges(cell2DIndex);
+
+            Gedim::Output::Assert(faceConvexHull.size() == numVertices);
+
+            std::vector<unsigned int> orderedVertices(numVertices);
+            std::vector<unsigned int> orderedEdges(numVertices);
+            for (unsigned int v = 0; v < numVertices; v++)
+            {
+                orderedVertices[v] = vertices[faceConvexHull[v]];
+                orderedEdges[v] = edges[faceConvexHull[(v + 1) % numVertices]];
+            }
+
+            mesh.Cell2DInsertVertices(cell2DIndex, orderedVertices);
+            mesh.Cell2DInsertEdges(cell2DIndex, orderedEdges);
+        }
+    }
+}
+// ***************************************************************************
+void Gedim::MeshUtilities::SetMesh3DMarker(const unsigned int marker, Gedim::IMeshDAO &mesh) const
+{
+    for (unsigned int c_2D = 0; c_2D < mesh.Cell2DTotalNumber(); ++c_2D)
+    {
+        if (!mesh.Cell2DIsActive(c_2D))
+            continue;
+
+        const unsigned int c_2D_num_neigh_3D = mesh.Cell2DNumberNeighbourCell3D(c_2D);
+
+        if (c_2D_num_neigh_3D == 0)
+            throw std::runtime_error("Mesh 3D cell2Ds neighbours must computed");
+
+        unsigned int num_active_3D_neighs = 0;
+        for (unsigned int n = 0; n < c_2D_num_neigh_3D; ++n)
+        {
+            if (!mesh.Cell2DHasNeighbourCell3D(c_2D, n))
+                continue;
+
+            num_active_3D_neighs++;
+        }
+
+        Gedim::Output::Assert(num_active_3D_neighs > 0);
+
+        if (num_active_3D_neighs == 2)
+            continue;
+
+        mesh.Cell2DSetMarker(c_2D, marker);
+
+        for (unsigned int v = 0; v < mesh.Cell2DNumberVertices(c_2D); ++v)
+        {
+            mesh.Cell0DSetMarker(mesh.Cell2DVertex(c_2D, v), marker);
+        }
+
+        for (unsigned int e = 0; e < mesh.Cell2DNumberEdges(c_2D); ++e)
+        {
+            mesh.Cell1DSetMarker(mesh.Cell2DEdge(c_2D, e), marker);
+        }
+    }
+}
+// ***************************************************************************
+} // namespace Gedim

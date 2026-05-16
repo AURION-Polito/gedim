@@ -21,16 +21,16 @@ class MapParallelogram
   public:
     struct MapParallelogramData final
     {
-        Eigen::Matrix3d B;
-        Eigen::Matrix3d BInv;
+        Eigen::Matrix3d BMatrix;
+        Eigen::Matrix3d BMatrixInv;
         Eigen::Vector3d b;
-        double DetB;
-        double DetBInv;
+        double DetBMatrix;
+        double DetBMatrixInv;
     };
     Eigen::MatrixXd ReferenceVertices;
 
   private:
-    static inline Eigen::Matrix3d B(const Eigen::MatrixXd &vertices)
+    static inline Eigen::Matrix3d BMatrix(const Eigen::MatrixXd &vertices)
     {
         Eigen::Matrix3d B;
         B.row(0) << vertices(0, 1) - vertices(0, 0), vertices(0, 3) - vertices(0, 0), 0.0;
@@ -64,12 +64,12 @@ class MapParallelogram
 
     static Eigen::MatrixXd F(const MapParallelogramData &mapData, const Eigen::MatrixXd &x)
     {
-        return (mapData.B * x).colwise() + mapData.b;
+        return (mapData.BMatrix * x).colwise() + mapData.b;
     }
 
     static Eigen::MatrixXd FInv(const MapParallelogramData &mapData, const Eigen::MatrixXd &x)
     {
-        return mapData.BInv * (x.colwise() - mapData.b);
+        return mapData.BMatrixInv * (x.colwise() - mapData.b);
     }
 
     /// Compute the jacobian matrix of the transformation F
@@ -80,12 +80,12 @@ class MapParallelogram
 
     static Eigen::VectorXd DetJ(const MapParallelogramData &mapData, const Eigen::MatrixXd &x)
     {
-        return Eigen::VectorXd::Constant(x.cols(), mapData.DetB);
+        return Eigen::VectorXd::Constant(x.cols(), mapData.DetBMatrix);
     }
 
     static double DetJ(const MapParallelogramData &mapData)
     {
-        return mapData.DetB;
+        return mapData.DetBMatrix;
     }
 };
 } // namespace Gedim
