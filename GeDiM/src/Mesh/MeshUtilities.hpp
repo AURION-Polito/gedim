@@ -49,6 +49,7 @@ class MeshUtilities final
         bool Cell3D_CheckEdgesAreActive = true;
         bool Cell3D_CheckConvexity = true;
         bool Cell3D_CheckMeasure = true;
+        bool Cell3D_CheckFaces = true;
     };
 
     struct CheckMeshGeometricData2DConfiguration final

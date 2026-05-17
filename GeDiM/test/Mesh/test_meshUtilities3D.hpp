@@ -500,6 +500,9 @@ TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
 
 TEST(TestMeshUtilities, TestCheckMesh3D)
 {
+  std::string exportFolder = "./Export/TestCheckMesh3D";
+  Gedim::Output::CreateFolder(exportFolder);
+
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1e-12;
     Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
@@ -507,6 +510,8 @@ TEST(TestMeshUtilities, TestCheckMesh3D)
     GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     Gedim::MeshUtilities meshUtilities;
+
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
 
     Gedim::MeshUtilities::CheckMesh3DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh3D(config, geometryUtilities, meshDao));
