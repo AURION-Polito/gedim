@@ -103,6 +103,7 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             if (!mesh.Cell2DIsActive(p))
                 continue;
 
+            const unsigned int cell2DNumVertices = mesh.Cell2DNumberVertices(p);
             const unsigned int cell2DNumEdges = mesh.Cell2DNumberEdges(p);
 
             for (unsigned int v = 0; v < cell2DNumEdges; v++)
@@ -118,6 +119,12 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                 {
                     throw std::runtime_error("Cell2D " + std::to_string(p) + " has wrong edge " + std::to_string(v));
                 }
+
+                if (mesh.Cell2DFindVertex(p, eO) == cell2DNumVertices)
+                  throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eO) + " not found");
+
+                if (mesh.Cell2DFindVertex(p, eE) == cell2DNumVertices)
+                  throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eE) + " not found");
             }
         }
     }
@@ -284,6 +291,20 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
         {
             if (!mesh.Cell3DIsActive(p))
                 continue;
+
+            const unsigned int c_num_edges = mesh.Cell3DNumberEdges(p);
+            for (unsigned int e = 0; e < c_num_edges; ++e)
+            {
+              const unsigned int c_1D = mesh.Cell3DEdge(p, e);
+
+              const unsigned int c_1D_origin = mesh.Cell1DOrigin(c_1D);
+              if (mesh.Cell3DFindVertex(p, c_1D_origin) == c_num_edges)
+                throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_origin) + " not found");
+
+              const unsigned int c_1D_end = mesh.Cell1DEnd(c_1D);
+              if (mesh.Cell3DFindVertex(p, c_1D_end) == c_num_edges)
+                throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_end) + " not found");
+            }
 
             std::vector<unsigned int> cell3DEdges = mesh.Cell3DEdges(p);
             sort(cell3DEdges.begin(), cell3DEdges.end());
