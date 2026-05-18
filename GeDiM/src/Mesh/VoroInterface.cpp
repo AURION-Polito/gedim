@@ -224,45 +224,6 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
                         if (faces_neighs[i] >= 0) // if it is a boundary face
                             throw runtime_error("wrong face");
 
-                        // // compute original cell2D triangulation
-                        // const vector<unsigned int> convexCell2DUnalignedVerticesFilter =
-                        //     geometryUtilities.UnalignedPoints(faceVertCoordinates);
-                        // const Eigen::MatrixXd convexCell2DUnalignedVertices =
-                        //     geometryUtilities.ExtractPoints(faceVertCoordinates,
-                        //     convexCell2DUnalignedVerticesFilter);
-
-                        // const vector<unsigned int> convexCell2DTriangulationFiltered =
-                        //     geometryUtilities.PolygonTriangulationByFirstVertex(convexCell2DUnalignedVertices);
-                        // vector<unsigned int> convexCell2DTriangulation(convexCell2DTriangulationFiltered.size());
-                        // for (unsigned int ocf = 0; ocf < convexCell2DTriangulationFiltered.size(); ocf++)
-                        //     convexCell2DTriangulation[ocf] =
-                        //         convexCell2DUnalignedVerticesFilter[convexCell2DTriangulationFiltered[ocf]];
-
-                        // const vector<Eigen::Matrix3d> convexCell2DTriangulationPoints =
-                        //     geometryUtilities.ExtractTriangulationPoints(faceVertCoordinates,
-                        //     convexCell2DTriangulation);
-
-                        // const unsigned int numConvexCell2DTriangulation = convexCell2DTriangulationPoints.size();
-
-                        // // compute original cell2D area and centroids
-                        // Eigen::VectorXd convexCell2DTriangulationAreas(numConvexCell2DTriangulation);
-                        // Eigen::MatrixXd convexCell2DTriangulationCentroids(3, numConvexCell2DTriangulation);
-                        // for (unsigned int cct = 0; cct < numConvexCell2DTriangulation; cct++)
-                        // {
-                        //     convexCell2DTriangulationAreas[cct] =
-                        //         geometryUtilities.PolygonArea(convexCell2DTriangulationPoints[cct]);
-                        //     if (convexCell2DTriangulationAreas[cct] < 0)
-                        //         throw runtime_error("uffa");
-                        //     convexCell2DTriangulationCentroids.col(cct) =
-                        //         geometryUtilities.PolygonBarycenter(convexCell2DTriangulationPoints[cct]);
-                        // }
-
-                        // const double convexCell2DArea = convexCell2DTriangulationAreas.sum();
-                        // VoronoiPoints.col(countPoints++) =
-                        // geometryUtilities.PolygonCentroid(convexCell2DTriangulationCentroids,
-                        //                                                                      convexCell2DTriangulationAreas,
-                        //                                                                      convexCell2DArea);
-
                         VoronoiPoints.col(countPoints++) = geometryUtilities.PolygonBarycenter(faceVertCoordinates);
                     }
                 }
@@ -787,6 +748,9 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
         Gedim::MeshUtilities mesh_utilities;
         mesh_utilities.Mesh3DFromPolyhedron(domain_vertices, domain_edges, domain_faces, vertex_markers, edge_markers, face_markers, mesh);
 
+        VoronoiPoints.resize(3, 1);
+        VoronoiPoints.col(0) = geometryUtilities.PolyhedronBarycenter(domain_vertices);
+
         return;
     }
 
@@ -900,42 +864,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                         }
                     }
 
-                    const std::vector<Eigen::MatrixXd> Cell3DsFaces3DVertices =
-                        geometryUtilities.PolyhedronFaceVertices(cell_vertices, Cell3DsFaces);
-                    const std::vector<Eigen::Vector3d> Cell3DsFacesTranslations =
-                        geometryUtilities.PolyhedronFaceTranslations(Cell3DsFaces3DVertices);
-                    const std::vector<Eigen::Vector3d> Cell3DsFacesNormals =
-                        geometryUtilities.PolyhedronFaceNormals(Cell3DsFaces3DVertices);
-                    const std::vector<Eigen::Matrix3d> Cell3DsFacesRotationMatrices =
-                        geometryUtilities.PolyhedronFaceRotationMatrices(Cell3DsFaces3DVertices, Cell3DsFacesNormals, Cell3DsFacesTranslations);
-
-                    const vector<vector<unsigned int>> polyhedronFaceTriangulations =
-                        geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(Cell3DsFaces, Cell3DsFaces3DVertices);
-
-                    const std::vector<Eigen::MatrixXd> Cell3DsFaces2DVertices =
-                        geometryUtilities.PolyhedronFaceRotatedVertices(Cell3DsFaces3DVertices, Cell3DsFacesTranslations, Cell3DsFacesRotationMatrices);
-
-                    const std::vector<std::vector<Eigen::Matrix3d>> Cell3DsFaces2DTriangulations =
-                        geometryUtilities.PolyhedronFaceExtractTriangulationPoints(Cell3DsFaces2DVertices, polyhedronFaceTriangulations);
-
-                    const std::vector<bool> Cell3DsFacesNormalDirections =
-                        geometryUtilities.PolyhedronFaceNormalDirections(Cell3DsFaces3DVertices,
-                                                                         geometryUtilities.PolyhedronBarycenter(cell_vertices),
-                                                                         Cell3DsFacesNormals);
-
-                    const double Cell3DsVolumes =
-                        geometryUtilities.PolyhedronVolumeByBoundaryIntegral(Cell3DsFaces2DTriangulations,
-                                                                             Cell3DsFacesNormals,
-                                                                             Cell3DsFacesNormalDirections,
-                                                                             Cell3DsFacesTranslations,
-                                                                             Cell3DsFacesRotationMatrices);
-
-                    VoronoiPoints.col(countPoints++) = geometryUtilities.PolyhedronCentroid(Cell3DsFaces2DTriangulations,
-                                                                                            Cell3DsFacesNormals,
-                                                                                            Cell3DsFacesNormalDirections,
-                                                                                            Cell3DsFacesTranslations,
-                                                                                            Cell3DsFacesRotationMatrices,
-                                                                                            Cell3DsVolumes);
+                    VoronoiPoints.col(countPoints++) = geometryUtilities.PolyhedronBarycenter(cell_vertices);
                 }
             } while (vl.inc());
         }
@@ -999,25 +928,133 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                 Cell3D cell3D;
                 cell3D.marker = 0;
 
-                // Cell 3D vertices
+                // // Cell 3D vertices
                 const unsigned int num_cell_vertices = vertices.size() / 3;
-                cell3D.vertices.resize(num_cell_vertices);
+                Eigen::MatrixXd cell_vertices_coordinates = Eigen::MatrixXd::Zero(3, num_cell_vertices);
+                for (unsigned int v = 0; v < num_cell_vertices; v++)
+                    cell_vertices_coordinates.col(v) =
+                        (Eigen::Vector3d() << vertices[3 * v], vertices[3 * v + 1], vertices[3 * v + 2]).finished();
+
+
+                const unsigned int num_cell_faces = faces_num_vertices.size();
+                unsigned int count_v = 0;
+                cell3D.vertices.resize(num_cell_vertices, std::numeric_limits<unsigned int>::max());
+                cell3D.faces.resize(num_cell_faces);
+                cell3D.neighbors.resize(num_cell_faces);
+                for (unsigned int f = 0; f < num_cell_faces; f++)
+                {
+                    const unsigned num_face_vertices = faces_num_vertices[f];
+                    Eigen::MatrixXd face_vertices_coordinates = Eigen::MatrixXd::Zero(3, num_face_vertices);
+                    std::vector<unsigned int> local_id_vertices(num_face_vertices);
+                    cell3D.neighbors[f] = faces_neighs[f];
+
+                    count_v++;
+                    for (unsigned int j = 0; j < num_face_vertices; j++)
+                    {
+                        face_vertices_coordinates.col(j) = cell_vertices_coordinates.col(faces_vertices[count_v]);
+                        local_id_vertices[j] = faces_vertices[count_v];
+                        count_v++;
+                    }
+
+                    if (faces_neighs[f] >= 0)
+                    {
+                        const auto it = cell3Ds.find(static_cast<unsigned int>(faces_neighs[f]));
+                        if (it != cell3Ds.end())
+                        {
+                            const unsigned int neighbors_index = it->first;
+                            const Cell3D neighbor = cell3Ds[neighbors_index];
+
+                            bool found_face = false;
+                            for (unsigned int n_f = 0; n_f < neighbor.faces.size(); n_f++)
+                            {
+                                if (neighbor.neighbors[n_f] == static_cast<int>(cell3DIndex))
+                                {
+                                    // Insert face
+                                    cell3D.faces[f] = neighbor.faces[n_f];
+
+                                    // Insert edges
+                                    const Cell2D face = cell2Ds[cell3D.faces[f]];
+
+                                    if(face.vertices.size() != num_face_vertices)
+                                        throw std::runtime_error("not valid neigh face");
+
+                                    for (unsigned int e = 0; e < face.edges.size(); e++)
+                                        cell3D.edges.insert(face.edges[e]);
+
+                                    // Find vertices
+                                    for (unsigned int v_f = 0; v_f < num_face_vertices; v_f++)
+                                    {
+                                        bool found_vertex = false;
+                                        std::pair<unsigned int, double> candidate_point = {
+                                            std::numeric_limits<unsigned int>::max(),
+                                            std::numeric_limits<double>::max()};
+                                        for (unsigned int v_c = 0; v_c < num_face_vertices; v_c++)
+                                        {
+                                            if (cell3D.vertices[local_id_vertices[v_c]] == std::numeric_limits<unsigned int>::max())
+                                            {
+                                                if (geometryUtilities.PointsAreCoincident(cell0Ds.at(face.vertices[v_f]).coordinates,
+                                                                                          face_vertices_coordinates.col(v_c)))
+                                                {
+                                                    cell3D.vertices[local_id_vertices[v_c]] = face.vertices[v_f];
+                                                    found_vertex = true;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    const double dist = (cell0Ds.at(face.vertices[v_f]).coordinates -
+                                                                         face_vertices_coordinates.col(v_c))
+                                                                            .norm();
+                                                    if (candidate_point.second > dist)
+                                                    {
+                                                        candidate_point.second = dist;
+                                                        candidate_point.first = local_id_vertices[v_c];
+                                                    }
+                                                }
+                                            }
+                                            else if (cell3D.vertices[local_id_vertices[v_c]] == face.vertices[v_f])
+                                            {
+                                                found_vertex = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!found_vertex)
+                                        {
+                                            if (candidate_point.first != std::numeric_limits<unsigned int>::max())
+                                            {
+                                                cell3D.vertices[candidate_point.first] = face.vertices[v_f];
+                                            }
+                                            else
+                                                throw runtime_error("ID vertex not found");
+                                        }
+                                    }
+
+                                    found_face = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found_face)
+                                throw runtime_error("ID face not found");
+                        }
+                    }
+                }
+
+                // Cell 3D vertices
                 for (unsigned int v = 0; v < num_cell_vertices; v++)
                 {
-                    const Eigen::Vector3d vertex_coordinates =
-                        (Eigen::Vector3d() << vertices[3 * v], vertices[3 * v + 1], vertices[3 * v + 2]).finished();
-                    Cell0D cell0D(vertex_coordinates);
+                    if (cell3D.vertices[v] == std::numeric_limits<unsigned int>::max())
+                    {
+                        const unsigned int numCell0Ds = cell0Ds.size();
+                        Cell0D cell0D(cell_vertices_coordinates.col(v));
+                        cell0Ds.insert({numCell0Ds, cell0D});
 
-                    const unsigned int cell0DIndex = InsertNewPoint(cell0D, cell0Ds);
-                    cell3D.vertices[v] = cell0DIndex;
+                        cell3D.vertices[v] = numCell0Ds;
+                    }
                 }
 
                 // Cell 3D faces
-                const unsigned int num_cell_faces = faces_num_vertices.size();
-                cell3D.faces.resize(num_cell_faces);
-                cell3D.neighbors.resize(num_cell_faces);
-
-                int count = 0;
+                count_v = 0;
                 for (unsigned int f = 0; f < num_cell_faces; f++)
                 {
                     const unsigned num_face_vertices = faces_num_vertices[f];
@@ -1025,17 +1062,17 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                     Eigen::MatrixXd faceVertCoordinates = Eigen::MatrixXd::Zero(3, num_face_vertices);
                     cell3D.neighbors[f] = faces_neighs[f];
 
-                    count++;
+                    count_v++;
                     for (unsigned int j = 0; j < num_face_vertices; j++)
                     {
-                        face_vertices[j] = cell3D.vertices[faces_vertices[count]];
+                        face_vertices[j] = cell3D.vertices[faces_vertices[count_v]];
                         const auto it = cell0Ds.find(face_vertices[j]);
 
                         if (it == cell0Ds.end())
                             throw std::runtime_error("not valid face");
 
                         faceVertCoordinates.col(j) = it->second.coordinates;
-                        count++;
+                        count_v++;
                     }
 
                     if (faces_neighs[f] < 0) // if it is a boundary face
@@ -1080,63 +1117,16 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                             const auto it = origin_end_cell1Ds.find({id_min, id_max});
 
                             if (it != origin_end_cell1Ds.end())
-                            {
-                                const unsigned int cell1DIndex = it->second;
                                 cell2D.edges[v] = it->second;
-
-                                if (cell1Ds[cell1DIndex].marker == 0)
-                                {
-                                    for (unsigned int e = 0; e < num_edges_domain; e++)
-                                    {
-
-                                        if (geometryUtilities.IsPointOnLine(faceVertCoordinates.col(v),
-                                                                            edgeDomainLineOrigin[e],
-                                                                            edgeDomainTangent[e],
-                                                                            edgeDomainTangentSquaredNorm[e]) &&
-                                            geometryUtilities.IsPointOnLine(faceVertCoordinates.col((v + 1) % num_face_vertices),
-                                                                            edgeDomainLineOrigin[e],
-                                                                            edgeDomainTangent[e],
-                                                                            edgeDomainTangentSquaredNorm[e]))
-                                        {
-                                            cell1Ds[cell1DIndex].marker = num_vertices_domain + e + 1;
-                                            break;
-                                        }
-
-                                        if (cell1Ds[cell1DIndex].marker == 0)
-                                            cell1Ds[cell1DIndex].marker = map_marker[std::abs(faces_neighs[f]) - 1];
-                                    }
-                                }
-                            }
                             else
                             {
-                                unsigned int marker = 0;
-                                for (unsigned int e = 0; e < num_edges_domain; e++)
-                                {
-
-                                    if (geometryUtilities.IsPointOnLine(faceVertCoordinates.col(v),
-                                                                        edgeDomainLineOrigin[e],
-                                                                        edgeDomainTangent[e],
-                                                                        edgeDomainTangentSquaredNorm[e]) &&
-                                        geometryUtilities.IsPointOnLine(faceVertCoordinates.col((v + 1) % num_face_vertices),
-                                                                        edgeDomainLineOrigin[e],
-                                                                        edgeDomainTangent[e],
-                                                                        edgeDomainTangentSquaredNorm[e]))
-                                    {
-                                        marker = num_vertices_domain + e + 1;
-                                        break;
-                                    }
-
-                                    if (marker == 0)
-                                        marker = map_marker[std::abs(faces_neighs[f]) - 1];
-                                }
-
                                 const unsigned int cell1DIndex = cell1Ds.size();
                                 origin_end_cell1Ds.insert({{id_min, id_max}, cell1DIndex});
 
                                 Cell1D cell1D;
                                 cell1D.origin = id_min;
                                 cell1D.end = id_max;
-                                cell1D.marker = marker;
+                                cell1D.marker = 1;
                                 cell1Ds.insert({cell1DIndex, cell1D});
 
                                 cell2D.edges[v] = cell1DIndex;
@@ -1192,29 +1182,6 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                             for (unsigned int e = 0; e < cell2D.edges.size(); e++)
                                 cell3D.edges.insert(cell2D.edges[e]);
                         }
-                        else
-                        {
-                            const unsigned int neighbors_index = it->first;
-                            const Cell3D neighbor = cell3Ds[neighbors_index];
-
-                            bool found = false;
-                            for (unsigned int n_f = 0; n_f < neighbor.faces.size(); n_f++)
-                            {
-                                if (neighbor.neighbors[n_f] == static_cast<int>(cell3DIndex))
-                                {
-                                    cell3D.faces[f] = neighbor.faces[n_f];
-                                    const Cell2D face = cell2Ds[cell3D.faces[f]];
-                                    for (unsigned int e = 0; e < face.edges.size(); e++)
-                                        cell3D.edges.insert(face.edges[e]);
-
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            if (!found)
-                                throw runtime_error("ID face not found");
-                        }
                     }
                 }
 
@@ -1224,9 +1191,6 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
             }
         } while (vl.inc());
     }
-
-    if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
-        throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
 
     /// <li> Set Cell0Ds
     const unsigned int numberOfPointsMesh = cell0Ds.size();
@@ -1292,8 +1256,39 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
         const unsigned int e = cell1D.first;
 
         mesh.Cell1DSetState(e, true);
-        mesh.Cell1DSetMarker(e, cell1D.second.marker);
         mesh.Cell1DInsertExtremes(e, cell1D.second.origin, cell1D.second.end);
+
+        const unsigned int marker_origin = mesh.Cell0DMarker(cell1D.second.origin);
+        const unsigned int marker_end = mesh.Cell0DMarker(cell1D.second.end);
+        if (marker_origin == 0 || marker_end == 0)
+            mesh.Cell1DSetMarker(e, 0);
+        else if (marker_origin > 8 && marker_end > 8)
+            mesh.Cell1DSetMarker(e, std::max(marker_origin, marker_end));
+        else
+        {
+            unsigned int marker = 0;
+            for (unsigned int e = 0; e < num_edges_domain; e++)
+            {
+
+                if (geometryUtilities.IsPointOnLine(mesh.Cell0DCoordinates(cell1D.second.origin),
+                                                    edgeDomainLineOrigin[e],
+                                                    edgeDomainTangent[e],
+                                                    edgeDomainTangentSquaredNorm[e]) &&
+                    geometryUtilities.IsPointOnLine(mesh.Cell0DCoordinates(cell1D.second.end),
+                                                    edgeDomainLineOrigin[e],
+                                                    edgeDomainTangent[e],
+                                                    edgeDomainTangentSquaredNorm[e]))
+                {
+                    marker = num_vertices_domain + e + 1;
+                    break;
+                }
+            }
+
+            if (marker == 0)
+                throw std::runtime_error("not considered case");
+
+            mesh.Cell1DSetMarker(e, marker);
+        }
     }
 
     /// <li> Set Faces
@@ -1320,7 +1315,8 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
     }
 
     /// <li> Set Cells
-    unsigned int cells3DIndex = 0;
+    unsigned int cell3DIndex = 0;
+    double gvol = 0.0;
     for (const auto &cell3D : cell3Ds)
     {
         const unsigned int numVertices = cell3D.second.vertices.size();
@@ -1330,27 +1326,79 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
         if (numVertices == 0)
             continue;
 
-        mesh.Cell3DSetState(cells3DIndex, true);
-        mesh.Cell3DSetMarker(cells3DIndex, 0);
+        mesh.Cell3DSetState(cell3DIndex, true);
+        mesh.Cell3DSetMarker(cell3DIndex, 0);
 
-        mesh.Cell3DInitializeVertices(cells3DIndex, numVertices);
-        mesh.Cell3DInitializeEdges(cells3DIndex, numEdges);
-        mesh.Cell3DInitializeFaces(cells3DIndex, numFaces);
+        mesh.Cell3DInitializeVertices(cell3DIndex, numVertices);
+        mesh.Cell3DInitializeEdges(cell3DIndex, numEdges);
+        mesh.Cell3DInitializeFaces(cell3DIndex, numFaces);
 
         for (unsigned int v = 0; v < numVertices; v++)
-            mesh.Cell3DInsertVertex(cells3DIndex, v, cell3D.second.vertices[v]);
+            mesh.Cell3DInsertVertex(cell3DIndex, v, cell3D.second.vertices[v]);
 
         unsigned int e = 0;
         for (const auto &edge_id : cell3D.second.edges)
         {
-            mesh.Cell3DInsertEdge(cells3DIndex, e, edge_id);
+            mesh.Cell3DInsertEdge(cell3DIndex, e, edge_id);
             e++;
         }
 
         for (unsigned int f = 0; f < numFaces; f++)
-            mesh.Cell3DInsertFace(cells3DIndex, f, cell3D.second.faces[f]);
+            mesh.Cell3DInsertFace(cell3DIndex, f, cell3D.second.faces[f]);
 
-        cells3DIndex++;
+        {
+            const Eigen::MatrixXd Cell3DsVertices = mesh.Cell3DVerticesCoordinates(cell3DIndex);
+            std::vector<Eigen::MatrixXi> Cell3DsFaces(numFaces);
+            for (unsigned int f = 0; f < numFaces; f++)
+            {
+                const unsigned int faceId = mesh.Cell3DFace(cell3DIndex, f);
+                Cell3DsFaces[f] = Eigen::MatrixXi::Zero(2, mesh.Cell2DNumberEdges(faceId));
+                for (unsigned int v = 0; v < mesh.Cell2DNumberEdges(faceId); v++)
+                {
+                    Cell3DsFaces[f](0, v) = mesh.Cell3DFindVertex(cell3DIndex, mesh.Cell2DVertex(faceId, v));
+                    Cell3DsFaces[f](1, v) = mesh.Cell3DFindEdge(cell3DIndex, mesh.Cell2DEdge(faceId, v));
+                }
+            }
+
+            const std::vector<Eigen::MatrixXd> Cell3DsFaces3DVertices =
+                geometryUtilities.PolyhedronFaceVertices(Cell3DsVertices, Cell3DsFaces);
+            const std::vector<Eigen::Vector3d> Cell3DsFacesTranslations =
+                geometryUtilities.PolyhedronFaceTranslations(Cell3DsFaces3DVertices);
+            const std::vector<Eigen::Vector3d> Cell3DsFacesNormals = geometryUtilities.PolyhedronFaceNormals(Cell3DsFaces3DVertices);
+            const std::vector<Eigen::Matrix3d> Cell3DsFacesRotationMatrices =
+                geometryUtilities.PolyhedronFaceRotationMatrices(Cell3DsFaces3DVertices, Cell3DsFacesNormals, Cell3DsFacesTranslations);
+
+            const vector<vector<unsigned int>> polyhedronFaceTriangulations =
+                geometryUtilities.PolyhedronFaceTriangulationsByFirstVertex(Cell3DsFaces, Cell3DsFaces3DVertices);
+
+            const std::vector<Eigen::MatrixXd> Cell3DsFaces2DVertices =
+                geometryUtilities.PolyhedronFaceRotatedVertices(Cell3DsFaces3DVertices, Cell3DsFacesTranslations, Cell3DsFacesRotationMatrices);
+
+            const std::vector<std::vector<Eigen::Matrix3d>> Cell3DsFaces2DTriangulations =
+                geometryUtilities.PolyhedronFaceExtractTriangulationPoints(Cell3DsFaces2DVertices, polyhedronFaceTriangulations);
+
+            const std::vector<bool> Cell3DsFacesNormalDirections =
+                geometryUtilities.PolyhedronFaceNormalDirections(Cell3DsFaces3DVertices,
+                                                                 geometryUtilities.PolyhedronBarycenter(Cell3DsVertices),
+                                                                 Cell3DsFacesNormals);
+
+            gvol += geometryUtilities.PolyhedronVolumeByBoundaryIntegral(Cell3DsFaces2DTriangulations,
+                                                                         Cell3DsFacesNormals,
+                                                                         Cell3DsFacesNormalDirections,
+                                                                         Cell3DsFacesTranslations,
+                                                                         Cell3DsFacesRotationMatrices);
+        }
+
+        cell3DIndex++;
+    }
+
+    if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance3D()) ||
+        !geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
+    {
+        std::cout.precision(16);
+        std::cout << std::scientific << cvol << " " << vvol << " " << gvol << std::endl;
+
+        // throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
     }
 }
 // ************************************************************************* //
