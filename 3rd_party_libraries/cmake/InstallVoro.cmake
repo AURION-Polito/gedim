@@ -6,12 +6,12 @@ set(VORO_SOURCE_DIR ${MAIN_SOURCE_DIR}/voro)
 set(VORO_BINARY_DIR ${MAIN_BINARY_DIR}/voro)
 set(VORO_INSTALL_PREFIX ${MAIN_INSTALL_PREFIX}/voro)
 
-message(STATUS "Install VORO last commit on main on 25/8/2023")
+message(STATUS "Install VORO last commit on main on 4/3/2026")
 message("Installing voro in ${VORO_INSTALL_PREFIX}")
 
 ExternalProject_Add(VORO
-    GIT_REPOSITORY https://github.com/ltalirz/voro.git
-    GIT_TAG f35fff4cbc09d00c2e28cfb948a686f7789ab16e # pull request of 3/11/2022
+    GIT_REPOSITORY https://github.com/chr1shr/voro
+    GIT_TAG b0dac575a47af0f90b5b100e6dc199a493c7cb83 # main on 4/3/2026
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     SOURCE_DIR ${VORO_SOURCE_DIR}
