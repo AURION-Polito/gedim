@@ -138,6 +138,19 @@ TEST(TestGeometryUtilities, TestPolarAngle)
     ASSERT_DOUBLE_EQ(std::numbers::pi / 3.0 - std::numbers::pi,
                      geometryUtilities.AngleDegreeToRadians(-120.0));
 
+    ASSERT_DOUBLE_EQ(-45.0,
+                     geometryUtilities.AngleRadiansToDegree(std::numbers::pi / 4.0 - std::numbers::pi / 2.0));
+    ASSERT_DOUBLE_EQ(std::numbers::pi / 4.0 - std::numbers::pi / 2.0,
+                     geometryUtilities.AngleDegreeToRadians(-45.0));
+    ASSERT_DOUBLE_EQ(-60.0,
+                     geometryUtilities.AngleRadiansToDegree(std::numbers::pi / 6.0 - std::numbers::pi / 2.0));
+    ASSERT_DOUBLE_EQ(std::numbers::pi / 6.0 - std::numbers::pi / 2.0,
+                     geometryUtilities.AngleDegreeToRadians(-60.0));
+    ASSERT_DOUBLE_EQ(-30.0,
+                     geometryUtilities.AngleRadiansToDegree(std::numbers::pi / 3.0 - std::numbers::pi / 2.0));
+    ASSERT_DOUBLE_EQ(std::numbers::pi / 3.0 - std::numbers::pi / 2.0,
+                     geometryUtilities.AngleDegreeToRadians(-30.0));
+
     ASSERT_DOUBLE_EQ(-1.0,
                      geometryUtilities.PolarAngle(Eigen::Vector3d(0.0, 0.0, 0.0),
                                                   Eigen::Vector3d(0.5, 0.5, 0.0),
