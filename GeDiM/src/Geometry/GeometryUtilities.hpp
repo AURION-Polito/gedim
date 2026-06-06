@@ -935,6 +935,34 @@ class GeometryUtilities final
                          (v_next.x() - v_prev.x()) * (v.y() - v_prev.y()) / (norm_v_prev_v * norm_v_next_v);
     }
 
+    /// \param v_prev the previous point
+    /// \param v the middle point
+    /// \param v_next the next point
+    /// \return the angle between the three points, computed in radians [-pi,pi]
+    inline double Angle(const Eigen::Vector3d &v_prev,
+                        const Eigen::Vector3d &v,
+                        const Eigen::Vector3d &v_next,
+                        const double &norm_v_prev_v,
+                        const double &norm_v_next_v) const
+    {
+      return IsValueZero(norm_v_prev_v, Tolerance1D()) || IsValueZero(norm_v_next_v, Tolerance1D())
+                   ? 0.0
+                   : std::atan2(((v_prev.x() - v.x()) * (v_next.y() - v.y()) - (v_prev.y() - v.y()) * (v_next.x() - v.x())) / (norm_v_prev_v * norm_v_next_v),
+                                (v_prev.x() - v.x()) * (v_next.x() - v.x()) + (v_prev.y() - v.y()) * (v_next.y() - v.y()) / (norm_v_prev_v * norm_v_next_v));
+    }
+
+    inline double AngleRadiansToDegree(const double& rad_angle)
+    {
+      return std::atan2(std::sin(rad_angle), std::cos(rad_angle)) * 180.0 / std::numbers::pi;
+    }
+
+    inline double AngleDegreeToRadians(const double& deg_angle)
+    {
+      return IsValueZero(std::fmod(deg_angle, 180.0), Tolerance1D()) ?
+            std::numbers::pi :
+            std::atan2(std::sin(deg_angle * M_PI / 180.0), std::cos(deg_angle * M_PI / 180.0));
+    }
+
     /// \brief compute the Point distance
     /// \param firstPoint the first point
     /// \param secondPoint the second point

@@ -1,6 +1,6 @@
 // #include "test_StringsUtilities.hpp"
 // #include "test_Configurations.hpp"
-// #include "test_geometry.hpp"
+#include "test_geometry.hpp"
 // #include "test_geometry_intersection.hpp"
 // #include "test_geometry_point.hpp"
 // #include "test_geometry_segment.hpp"
