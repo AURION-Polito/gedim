@@ -939,6 +939,7 @@ class GeometryUtilities final
     /// \param v the middle point
     /// \param v_next the next point
     /// \return the angle between the three points, computed in radians [-pi,pi]
+    ///  as the atan2((v_next-v) x (v_prev-v),(v_next-v) . (v_prev-v))
     inline double Angle(const Eigen::Vector3d &v_prev,
                         const Eigen::Vector3d &v,
                         const Eigen::Vector3d &v_next,
@@ -947,8 +948,8 @@ class GeometryUtilities final
     {
       return IsValueZero(norm_v_prev_v, Tolerance1D()) || IsValueZero(norm_v_next_v, Tolerance1D())
                    ? 0.0
-                   : std::atan2(((v_prev.x() - v.x()) * (v_next.y() - v.y()) - (v_prev.y() - v.y()) * (v_next.x() - v.x())) / (norm_v_prev_v * norm_v_next_v),
-                                (v_prev.x() - v.x()) * (v_next.x() - v.x()) + (v_prev.y() - v.y()) * (v_next.y() - v.y()) / (norm_v_prev_v * norm_v_next_v));
+                   : std::atan2((v_next - v).cross(v_prev - v).norm(),
+                                (v_next - v).dot(v_prev - v));
     }
 
     inline double AngleRadiansToDegree(const double& rad_angle)

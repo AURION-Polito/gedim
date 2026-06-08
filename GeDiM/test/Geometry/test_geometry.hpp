@@ -112,6 +112,7 @@ TEST(TestGeometryUtilities, TestPolarAngle)
     ASSERT_DOUBLE_EQ(std::numbers::pi / 3.0,
                      geometryUtilities.AngleDegreeToRadians(60.0));
 
+
     ASSERT_DOUBLE_EQ(135.0,
                      geometryUtilities.AngleRadiansToDegree(std::numbers::pi / 4.0 + std::numbers::pi / 2.0));
     ASSERT_DOUBLE_EQ(std::numbers::pi / 4.0 + std::numbers::pi / 2.0,
@@ -158,15 +159,7 @@ TEST(TestGeometryUtilities, TestPolarAngle)
                                                   (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm(),
                                                   (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm()));
 
-    std::cout.precision(2);
-    std::cout<< std::scientific<< geometryUtilities.AngleRadiansToDegree(std::numbers::pi / 4.0)<< std::endl;
-    std::cout<< std::scientific<< geometryUtilities.AngleRadiansToDegree(                     geometryUtilities.Angle(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                                                      Eigen::Vector3d(0.5, 0.5, 0.0),
-                                                                                                                      Eigen::Vector3d(1.0, 0.0, 0.0),
-                                                                                                                      (Eigen::Vector3d(0.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm(),
-                                                                                                                      (Eigen::Vector3d(1.0, 0.0, 0.0) - Eigen::Vector3d(0.5, 0.5, 0.0)).norm()))<< std::endl;
-
-    ASSERT_DOUBLE_EQ(std::numbers::pi / 4.0,
+    ASSERT_DOUBLE_EQ(std::numbers::pi / 2.0,
                      geometryUtilities.Angle(Eigen::Vector3d(0.0, 0.0, 0.0),
                                              Eigen::Vector3d(0.5, 0.5, 0.0),
                                              Eigen::Vector3d(1.0, 0.0, 0.0),
