@@ -959,8 +959,12 @@ class GeometryUtilities final
 
     inline double AngleDegreeToRadians(const double& deg_angle)
     {
-      return IsValueZero(std::fmod(deg_angle, 180.0), Tolerance1D()) ?
-            std::numbers::pi :
+      return IsValueZero(deg_angle, Tolerance1D()) ?
+           0.0 :
+          IsValueZero(std::fmod(deg_angle, 180.0), Tolerance1D()) ?
+             IsValuePositive(deg_angle, Tolerance1D()) ?
+                std::numbers::pi :
+              -std::numbers::pi :
             std::atan2(std::sin(deg_angle * M_PI / 180.0), std::cos(deg_angle * M_PI / 180.0));
     }
 
