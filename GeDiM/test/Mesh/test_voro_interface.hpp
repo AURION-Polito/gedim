@@ -170,15 +170,29 @@ TEST(TestVoroInterface, TestVoroInterface3D)
 
         std::cout << voro_seed << " " << num_cells << std::endl;
 
-        Eigen::MatrixXd VoronoiPoints = voro_interface.GenerateRandomPoints(vertices, num_cells, voro_seed);
-        voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, VoronoiPoints, mesh);
+        Eigen::MatrixXd voronoi_points = voro_interface.GenerateRandomPoints(vertices, num_cells, voro_seed);
+
+        {
+          Gedim::VTKUtilities exporter;
+
+          exporter.AddPoints(voronoi_points);
+          exporter.Export(exportFolder + "/voro_points.vtu");
+        }
+
+
+        voro_interface.GenerateVoronoiTassellations3D(vertices,
+                                                      edges,
+                                                      faces,
+                                                      numIterations,
+                                                      voronoi_points,
+                                                      mesh);
         std::cout << "created" << std::endl;
 
         mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
 
         {
             Gedim::VTKUtilities vtk_utilities;
-            vtk_utilities.AddPoints(VoronoiPoints);
+            vtk_utilities.AddPoints(voronoi_points);
             vtk_utilities.Export(exportFolderTest + "/Points.vtu");
         }
 
