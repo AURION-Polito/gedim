@@ -164,9 +164,9 @@ std::vector<MEDIT_Cell> MEDIT_Utilities::CreatePolyhedraCells(const std::vector<
     {
         MEDIT_Cell::Types polyhedra_type = MEDIT_Cell::Types::Unknown;
 
-        if ((polyhedra_vertices[l].size() == 4 && order == 1) || (polyhedra_vertices[l].size() == 10 && order == 2))
+        if (polyhedra_vertices[l].size() == 4 + 6 * (order - 1))
             polyhedra_type = MEDIT_Cell::Types::Tetrahedron;
-        else if ((polyhedra_vertices[l].size() == 8 && order == 1) || (polyhedra_vertices[l].size() == 20 && order == 2))
+        else if (polyhedra_vertices[l].size() == 8 + 12 * (order - 1))
             polyhedra_type = MEDIT_Cell::Types::Hexahedron;
         else
             throw std::runtime_error("Polyhedron type not supported");
