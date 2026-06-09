@@ -952,12 +952,12 @@ class GeometryUtilities final
                                 (v_prev.x() - v.x()) * (v_next.x() - v.x()) + (v_prev.y() - v.y()) * (v_next.y() - v.y()));
     }
 
-    inline double AngleRadiansToDegree(const double& rad_angle)
+    inline double AngleRadiansToDegree(const double& rad_angle) const
     {
       return std::atan2(std::sin(rad_angle), std::cos(rad_angle)) * 180.0 / std::numbers::pi;
     }
 
-    inline double AngleDegreeToRadians(const double& deg_angle)
+    inline double AngleDegreeToRadians(const double& deg_angle) const
     {
       return IsValueZero(deg_angle, Tolerance1D()) ?
            0.0 :
