@@ -7,6 +7,8 @@ It provides a flexible framework for the common geometrical operations in 1D, 2D
 
 This file can be used by citing references in CITATION.cff file.
 
+For further information see the official website [polydim](https://www.polydim.it/).
+
 ## How To Install
 
 Installation is based on [CMake](https://cmake.org/).
