@@ -41,11 +41,12 @@
 #include "test_LPUtilities.hpp"
 #include "test_meshUtilities2D_ImportTriangularMesh.hpp"
 #include "test_meshUtilities3D_ImportRegnFaceMesh.hpp"
+#include "test_voro_interface.hpp"
 
 #include <gtest/gtest.h>
 
 int main(int argc, char *argv[])
 {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

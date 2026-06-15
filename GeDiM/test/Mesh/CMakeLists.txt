@@ -31,6 +31,7 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_sphere_mesh_
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_mesh_bulk_face.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities2D_ImportTriangularMesh.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities3D_ImportRegnFaceMesh.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_voro_interface.hpp)
 
 list(APPEND gedim_test_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/test_exportMeshUtilities.cpp)
 
