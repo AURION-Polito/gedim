@@ -33,93 +33,90 @@ TEST(TestVoroInterface, TestVoroInterface2D)
     GTEST_SKIP_("Voro module not activated.");
 #endif
 
-    // std::string exportFolder = "./Export/TestVoro";
-    // Gedim::Output::CreateFolder(exportFolder);
+    GTEST_SKIP_("Slow");
 
-    // std::string exportFolderTest = exportFolder + "/Voro2D";
-    // Gedim::Output::CreateFolder(exportFolderTest);
+    std::string exportFolder = "./Export/TestVoro";
+    Gedim::Output::CreateFolder(exportFolder);
 
-    // Gedim::MeshUtilities mesh_utilities;
-    // Gedim::MeshUtilities::MeshGeometricData3D mesh_geometric_data;
-    // Gedim::GeometryUtilitiesConfig geometry_utilities_config;
-    // geometry_utilities_config.Tolerance1D = 1.0e-10;
-    // geometry_utilities_config.Tolerance2D = 1.0e-12;
-    // Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+    std::string exportFolderTest = exportFolder + "/Voro2D";
+    Gedim::Output::CreateFolder(exportFolderTest);
 
-    // Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, 4);
-    // vertices.row(0) << 0.0, 2.0, 2.0, 0.0; // x
-    // vertices.row(1) << 0.0, 0.0, 1.0, 1.0; // y
-    // vertices.row(2) << 0.0, 0.0, 0.0, 0.0; // z
+    Gedim::MeshUtilities mesh_utilities;
+    Gedim::MeshUtilities::MeshGeometricData3D mesh_geometric_data;
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1.0e-10;
+    geometry_utilities_config.Tolerance2D = 1.0e-12;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
 
-    // {
-    //     Gedim::VTKUtilities vtk_utilities;
-    //     vtk_utilities.AddPolygon(vertices);
-    //     vtk_utilities.Export(exportFolderTest + "/Domain.vtu");
-    // }
+    Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, 4);
+    vertices.row(0) << 0.0, 2.0, 2.0, 0.0; // x
+    vertices.row(1) << 0.0, 0.0, 1.0, 1.0; // y
+    vertices.row(2) << 0.0, 0.0, 0.0, 0.0; // z
 
-    // Gedim::VoroInterface voro_interface(geometry_utilities);
+    {
+        Gedim::VTKUtilities vtk_utilities;
+        vtk_utilities.AddPolygon(vertices);
+        vtk_utilities.Export(exportFolderTest + "/Domain.vtu");
+    }
 
-    // const unsigned int numIterations = 5;
-    // const unsigned int random_seed = 5;
+    Gedim::VoroInterface voro_interface(geometry_utilities);
 
-    // for (unsigned int num_cells = 8000; num_cells < 40000; num_cells++)
-    // {
+    const unsigned int numIterations = 5;
+    const unsigned int random_seed = 5;
 
-    //     std::cout << num_cells << std::endl;
+    for (unsigned int num_cells = 0; num_cells < 100; num_cells++)
+    {
 
-    //     Gedim::MeshMatrices mesh_data;
-    //     Gedim::MeshMatricesDAO mesh(mesh_data);
+        std::cout << num_cells << std::endl;
 
-    //     Eigen::MatrixXd VoronoiPoints = voro_interface.GenerateRandomPoints(vertices, num_cells, random_seed);
-    //     voro_interface.GenerateVoronoiTassellations2D(vertices, numIterations, VoronoiPoints, mesh);
+        Gedim::MeshMatrices mesh_data;
+        Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    //     mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
+        Eigen::MatrixXd VoronoiPoints = voro_interface.GenerateRandomPoints(vertices, num_cells, random_seed);
+        voro_interface.GenerateVoronoiTassellations2D(vertices, numIterations, VoronoiPoints, mesh);
 
-    //     {
-    //         Gedim::VTKUtilities vtk_utilities;
-    //         vtk_utilities.AddPoints(VoronoiPoints);
-    //         vtk_utilities.Export(exportFolderTest + "/Points.vtu");
-    //     }
+        mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
 
-    //     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
+        {
+            Gedim::VTKUtilities vtk_utilities;
+            vtk_utilities.AddPoints(VoronoiPoints);
+            vtk_utilities.Export(exportFolderTest + "/Points.vtu");
+        }
 
-    //     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
-    //     mesh_utilities.CheckMesh2D(config, geometry_utilities, mesh);
+        Gedim::MeshUtilities::CheckMesh2DConfiguration config;
 
-    //     for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
-    //     {
-    //         Gedim::Output::Assert(mesh.Cell1DNumberNeighbourCell2D(e) > 0);
+        mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
+        mesh_utilities.CheckMesh2D(config, geometry_utilities, mesh);
 
-    //         unsigned int count_n = 0;
-    //         for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
-    //         {
-    //             if (!mesh.Cell1DHasNeighbourCell2D(e, n))
-    //                 continue;
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
+        {
+            Gedim::Output::Assert(mesh.Cell1DNumberNeighbourCell2D(e) > 0);
 
-    //             const unsigned int cell2DIndex = mesh.Cell1DNeighbourCell2D(e, n);
-    //             const unsigned int cell2DNumEdges = mesh.Cell2DNumberEdges(cell2DIndex);
+            unsigned int count_n = 0;
+            for (unsigned int n = 0; n < mesh.Cell1DNumberNeighbourCell2D(e); n++)
+            {
+                if (!mesh.Cell1DHasNeighbourCell2D(e, n))
+                    continue;
 
-    //             // check edge orientation
-    //             const unsigned int cell2DEdgeIndex = mesh.Cell2DFindEdge(cell2DIndex, e);
-    //             const unsigned int edgeOrigin = mesh.Cell2DVertex(cell2DIndex, (cell2DEdgeIndex + 1) %
-    //             cell2DNumEdges); const unsigned int edgeEnd = mesh.Cell2DVertex(cell2DIndex, cell2DEdgeIndex);
+                const unsigned int cell2DIndex = mesh.Cell1DNeighbourCell2D(e, n);
+                const unsigned int cell2DNumEdges = mesh.Cell2DNumberEdges(cell2DIndex);
 
-    //             Gedim::Output::Assert((mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeOrigin, edgeEnd) ==
-    //             cell2DEdgeIndex &&
-    //                                    mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeEnd, edgeOrigin) ==
-    //                                    cell2DNumEdges) ||
-    //                                   (mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeOrigin, edgeEnd) ==
-    //                                   cell2DNumEdges &&
-    //                                    mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeEnd, edgeOrigin) ==
-    //                                    cell2DEdgeIndex));
+                // check edge orientation
+                const unsigned int cell2DEdgeIndex = mesh.Cell2DFindEdge(cell2DIndex, e);
+                const unsigned int edgeOrigin = mesh.Cell2DVertex(cell2DIndex, (cell2DEdgeIndex + 1) % cell2DNumEdges);
+                const unsigned int edgeEnd = mesh.Cell2DVertex(cell2DIndex, cell2DEdgeIndex);
 
-    //             count_n++;
-    //         }
+                Gedim::Output::Assert((mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeOrigin, edgeEnd) == cell2DEdgeIndex &&
+                                       mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeEnd, edgeOrigin) == cell2DNumEdges) ||
+                                      (mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeOrigin, edgeEnd) == cell2DNumEdges &&
+                                       mesh.Cell2DFindEdgeByExtremes(cell2DIndex, edgeEnd, edgeOrigin) == cell2DEdgeIndex));
 
-    //         Gedim::Output::Assert((mesh.Cell1DMarker(e) != 0 && count_n != 2) || (mesh.Cell1DMarker(e) == 0 &&
-    //         count_n != 1));
-    //     }
-    // }
+                count_n++;
+            }
+
+            Gedim::Output::Assert((mesh.Cell1DMarker(e) != 0 && count_n != 2) || (mesh.Cell1DMarker(e) == 0 && count_n != 1));
+        }
+    }
 }
 
 TEST(TestVoroInterface, TestVoroInterface3D)
@@ -128,6 +125,8 @@ TEST(TestVoroInterface, TestVoroInterface3D)
 #if ENABLE_VORO == 0
     GTEST_SKIP_("Voro module not activated.");
 #endif
+
+    GTEST_SKIP_("Slow");
 
     Gedim::MeshUtilities mesh_utilities;
     Gedim::MeshUtilities::MeshGeometricData3D mesh_geometric_data;

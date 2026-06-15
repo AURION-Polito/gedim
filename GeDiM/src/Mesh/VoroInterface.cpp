@@ -935,7 +935,6 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                     cell_vertices_coordinates.col(v) =
                         (Eigen::Vector3d() << vertices[3 * v], vertices[3 * v + 1], vertices[3 * v + 2]).finished();
 
-
                 const unsigned int num_cell_faces = faces_num_vertices.size();
                 unsigned int count_v = 0;
                 cell3D.vertices.resize(num_cell_vertices, std::numeric_limits<unsigned int>::max());
@@ -975,7 +974,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                                     // Insert edges
                                     const Cell2D face = cell2Ds[cell3D.faces[f]];
 
-                                    if(face.vertices.size() != num_face_vertices)
+                                    if (face.vertices.size() != num_face_vertices)
                                         throw std::runtime_error("not valid neigh face");
 
                                     for (unsigned int e = 0; e < face.edges.size(); e++)

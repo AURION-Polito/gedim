@@ -500,8 +500,8 @@ TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
 
 TEST(TestMeshUtilities, TestCheckMesh3D)
 {
-  std::string exportFolder = "./Export/TestCheckMesh3D";
-  Gedim::Output::CreateFolder(exportFolder);
+    std::string exportFolder = "./Export/TestCheckMesh3D";
+    Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
     geometryUtilitiesConfig.Tolerance1D = 1e-12;

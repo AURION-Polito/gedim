@@ -121,10 +121,10 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
                 }
 
                 if (mesh.Cell2DFindVertex(p, eO) == cell2DNumVertices)
-                  throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eO) + " not found");
+                    throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eO) + " not found");
 
                 if (mesh.Cell2DFindVertex(p, eE) == cell2DNumVertices)
-                  throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eE) + " not found");
+                    throw std::runtime_error("Cell2D " + std::to_string(p) + " vertex " + std::to_string(eE) + " not found");
             }
         }
     }
@@ -295,15 +295,15 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
             const unsigned int c_num_edges = mesh.Cell3DNumberEdges(p);
             for (unsigned int e = 0; e < c_num_edges; ++e)
             {
-              const unsigned int c_1D = mesh.Cell3DEdge(p, e);
+                const unsigned int c_1D = mesh.Cell3DEdge(p, e);
 
-              const unsigned int c_1D_origin = mesh.Cell1DOrigin(c_1D);
-              if (mesh.Cell3DFindVertex(p, c_1D_origin) == c_num_edges)
-                throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_origin) + " not found");
+                const unsigned int c_1D_origin = mesh.Cell1DOrigin(c_1D);
+                if (mesh.Cell3DFindVertex(p, c_1D_origin) == c_num_edges)
+                    throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_origin) + " not found");
 
-              const unsigned int c_1D_end = mesh.Cell1DEnd(c_1D);
-              if (mesh.Cell3DFindVertex(p, c_1D_end) == c_num_edges)
-                throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_end) + " not found");
+                const unsigned int c_1D_end = mesh.Cell1DEnd(c_1D);
+                if (mesh.Cell3DFindVertex(p, c_1D_end) == c_num_edges)
+                    throw std::runtime_error("Cell3D " + std::to_string(p) + " vertex " + std::to_string(c_1D_end) + " not found");
             }
 
             std::vector<unsigned int> cell3DEdges = mesh.Cell3DEdges(p);
@@ -427,37 +427,37 @@ void MeshUtilities::CheckMesh3D(const CheckMesh3DConfiguration &configuration,
 
     if (configuration.Cell3D_CheckFaces)
     {
-      for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
-      {
-          if (!mesh.Cell3DIsActive(c))
-              continue;
+        for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)
+        {
+            if (!mesh.Cell3DIsActive(c))
+                continue;
 
-          for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(c); ++f)
-          {
-            const unsigned int c2D_index = mesh.Cell3DFace(c, f);
-
-            if (!mesh.Cell2DIsActive(c2D_index))
-              throw std::runtime_error("Cell3D " + std::to_string(c) + " face " + std::to_string(c2D_index) + " is not active");
-
-            const unsigned int c_n_vertices = mesh.Cell3DNumberVertices(c);
-            for (unsigned int f_v = 0; f_v < mesh.Cell2DNumberVertices(c2D_index); ++f_v)
+            for (unsigned int f = 0; f < mesh.Cell3DNumberFaces(c); ++f)
             {
-              const unsigned int c0D_index = mesh.Cell2DVertex(c2D_index, f_v);
+                const unsigned int c2D_index = mesh.Cell3DFace(c, f);
 
-              if (mesh.Cell3DFindVertex(c, c0D_index) == c_n_vertices)
-                throw std::runtime_error("Cell3D " + std::to_string(c) + " vertex " + std::to_string(c0D_index) + " not found");
+                if (!mesh.Cell2DIsActive(c2D_index))
+                    throw std::runtime_error("Cell3D " + std::to_string(c) + " face " + std::to_string(c2D_index) + " is not active");
+
+                const unsigned int c_n_vertices = mesh.Cell3DNumberVertices(c);
+                for (unsigned int f_v = 0; f_v < mesh.Cell2DNumberVertices(c2D_index); ++f_v)
+                {
+                    const unsigned int c0D_index = mesh.Cell2DVertex(c2D_index, f_v);
+
+                    if (mesh.Cell3DFindVertex(c, c0D_index) == c_n_vertices)
+                        throw std::runtime_error("Cell3D " + std::to_string(c) + " vertex " + std::to_string(c0D_index) + " not found");
+                }
+
+                const unsigned int c_n_edges = mesh.Cell3DNumberEdges(c);
+                for (unsigned int f_e = 0; f_e < mesh.Cell2DNumberEdges(c2D_index); ++f_e)
+                {
+                    const unsigned int c1D_index = mesh.Cell2DEdge(c2D_index, f_e);
+
+                    if (mesh.Cell3DFindEdge(c, c1D_index) == c_n_edges)
+                        throw std::runtime_error("Cell3D " + std::to_string(c) + " edge " + std::to_string(c1D_index) + " not found");
+                }
             }
-
-            const unsigned int c_n_edges = mesh.Cell3DNumberEdges(c);
-            for (unsigned int f_e = 0; f_e < mesh.Cell2DNumberEdges(c2D_index); ++f_e)
-            {
-              const unsigned int c1D_index = mesh.Cell2DEdge(c2D_index, f_e);
-
-              if (mesh.Cell3DFindEdge(c, c1D_index) == c_n_edges)
-                throw std::runtime_error("Cell3D " + std::to_string(c) + " edge " + std::to_string(c1D_index) + " not found");
-            }
-          }
-      }
+        }
     }
 }
 // ***************************************************************************
