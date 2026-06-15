@@ -675,41 +675,51 @@ void MeshUtilities::ExportMeshToMEDIT(const Gedim::IMeshDAO &mesh,
         std::vector<std::vector<unsigned int>> faces_vertices = mesh.Cell2DsVertices();
         std::vector<std::vector<unsigned int>> polyhedra_vertices = mesh.Cell3DsVertices();
 
-        if (order == 2)
+        if (order > 1)
         {
             for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
             {
                 const std::vector<unsigned int> &face_vertices = faces_vertices[f];
                 const unsigned int num_vertices = face_vertices.size();
-                std::vector<unsigned int> new_physics_face_vertices;
+                std::vector<unsigned int> new_physical_face_vertices;
                 std::vector<unsigned int> new_hanging_face_vertices;
 
-                bool physic = true;
+                bool physical = true;
+                bool first_occurence = true;
+                int first_physical = 0;
                 for (unsigned int v = 0; v < num_vertices; v++)
                 {
                     if (mesh.Cell0DNeighbourCell1Ds(face_vertices[v]).size() != 2)
-                        new_physics_face_vertices.push_back(face_vertices[v]);
+                    {
+                        new_physical_face_vertices.push_back(face_vertices[v]);
+
+                        if (first_occurence)
+                            first_occurence = false;
+                    }
                     else
                     {
                         if (v == 0)
-                            physic = false;
+                            physical = false;
+
+                        if (first_occurence)
+                            first_physical++;
 
                         new_hanging_face_vertices.push_back(face_vertices[v]);
                     }
                 }
 
-                if (new_hanging_face_vertices.size() % new_physics_face_vertices.size() != 0)
+                if (new_hanging_face_vertices.size() % new_physical_face_vertices.size() != 0)
                     throw std::runtime_error("not valid polygon for medit format");
 
-                std::copy(new_physics_face_vertices.begin(), new_physics_face_vertices.end(), faces_vertices[f].begin());
-                if (!physic)
+                std::copy(new_physical_face_vertices.begin(), new_physical_face_vertices.end(), faces_vertices[f].begin());
+                if (!physical)
                     std::rotate(new_hanging_face_vertices.begin(),
-                                new_hanging_face_vertices.begin() + 1,
+                                new_hanging_face_vertices.begin() + first_physical,
                                 new_hanging_face_vertices.end());
 
                 std::copy(new_hanging_face_vertices.begin(),
                           new_hanging_face_vertices.end(),
-                          faces_vertices[f].begin() + new_physics_face_vertices.size());
+                          faces_vertices[f].begin() + new_physical_face_vertices.size());
             }
 
             for (unsigned int c = 0; c < mesh.Cell3DTotalNumber(); c++)

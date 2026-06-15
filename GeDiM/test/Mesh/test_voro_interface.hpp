@@ -159,9 +159,14 @@ TEST(TestVoroInterface, TestVoroInterface3D)
     std::string exportFolderTest = exportFolder + "/Voro3D";
     Gedim::Output::CreateFolder(exportFolderTest);
 
+    // const unsigned int numIterations = 5;
+    // const unsigned int voro_seed = 35;
+    // for (unsigned int num_cells = 2411; num_cells < 2412; num_cells++)
+    // {
+
     const unsigned int numIterations = 5;
     const unsigned int voro_seed = 35;
-    for (unsigned int num_cells = 2411; voro_seed < 2412; num_cells++)
+    for (unsigned int num_cells = 0; num_cells < 200; num_cells++)
     {
 
         Gedim::MeshMatrices mesh_data;
@@ -169,15 +174,24 @@ TEST(TestVoroInterface, TestVoroInterface3D)
 
         std::cout << voro_seed << " " << num_cells << std::endl;
 
-        Eigen::MatrixXd VoronoiPoints = voro_interface.GenerateRandomPoints(vertices, num_cells, voro_seed);
-        voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, VoronoiPoints, mesh);
+        Eigen::MatrixXd voronoi_points = voro_interface.GenerateRandomPoints(vertices, num_cells, voro_seed);
+
+        if (voronoi_points.cols() > 0)
+        {
+            Gedim::VTKUtilities exporter;
+
+            exporter.AddPoints(voronoi_points);
+            exporter.Export(exportFolder + "/voro_points.vtu");
+        }
+
+        voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, voronoi_points, mesh);
         std::cout << "created" << std::endl;
 
         mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
 
         {
             Gedim::VTKUtilities vtk_utilities;
-            vtk_utilities.AddPoints(VoronoiPoints);
+            vtk_utilities.AddPoints(voronoi_points);
             vtk_utilities.Export(exportFolderTest + "/Points.vtu");
         }
 

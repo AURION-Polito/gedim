@@ -17,6 +17,8 @@
 #include <numeric>
 #include <unistd.h>
 
+#include "VTKUtilities.hpp"
+
 using namespace std;
 
 namespace Gedim
@@ -708,12 +710,15 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
         cell2DIndex++;
     }
 
-    if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
-    {
-        std::cout.precision(16);
-        std::cout << std::scientific << cvol << " vs " << vvol << " " << gvol << std::endl;
-        // throw runtime_error("Error generating Voronoi cells: areas do not mathc each other");
-    }
+    // if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
+    // {
+    //     std::cout.precision(16);
+    //     std::cout << std::scientific << cvol << " vs " << vvol << " " << gvol << std::endl;
+    //     // throw runtime_error("Error generating Voronoi cells: areas do not mathc each other");
+    // }
+
+    if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance2D()))
+        throw runtime_error("Error generating Voronoi cells: areas do not match each other");
 }
 // ************************************************************************* //
 void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain_vertices,
@@ -879,7 +884,6 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
         con.put(i, VoronoiPoints(0, i), VoronoiPoints(1, i), VoronoiPoints(2, i));
 
     // Get cell number
-
     std::map<unsigned int, Cell0D> cell0Ds;
     std::map<unsigned int, Cell2D> cell2Ds;
     std::map<unsigned int, Cell3D> cell3Ds;
@@ -975,7 +979,63 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                                     const Cell2D face = cell2Ds[cell3D.faces[f]];
 
                                     if (face.vertices.size() != num_face_vertices)
+                                    {
+
+                                        // {
+                                        //     std::string dbg_export_folder = "./TEST_DBG";
+                                        //     Gedim::Output::CreateFolder(dbg_export_folder);
+
+                                        //     {
+                                        //         Gedim::VTKUtilities exporter;
+                                        //         exporter.AddPoints(cell_vertices_coordinates);
+                                        //         exporter.Export(dbg_export_folder + "/cell3D_points.vtu");
+                                        //     }
+
+                                        //     {
+                                        //         Eigen::MatrixXd neigh_cell_vertices_coordinates =
+                                        //         Eigen::MatrixXd::Zero(3, neighbor.vertices.size()); for (unsigned int
+                                        //         j = 0; j < neighbor.vertices.size(); j++)
+                                        //         {
+                                        //             const auto c0D = cell0Ds.at(neighbor.vertices.at(j));
+                                        //             neigh_cell_vertices_coordinates.col(j) = c0D.coordinates;
+                                        //         }
+
+                                        //         Gedim::VTKUtilities exporter;
+                                        //         exporter.AddPoints(neigh_cell_vertices_coordinates);
+                                        //         exporter.Export(dbg_export_folder + "/neigh_cell3D_points.vtu");
+                                        //     }
+
+                                        //     {
+                                        //         Gedim::VTKUtilities exporter;
+                                        //         exporter.AddPoints(face_vertices_coordinates);
+                                        //         exporter.Export(dbg_export_folder +
+                                        //                         "/cell3D_face_" +
+                                        //                         std::to_string(f) +
+                                        //                         "_points.vtu");
+                                        //     }
+
+                                        //     {
+                                        //         Eigen::MatrixXd neigh_face_vertices_coordinates =
+                                        //         Eigen::MatrixXd::Zero(3, face.vertices.size()); for (unsigned int j =
+                                        //         0; j < face.vertices.size(); j++)
+                                        //         {
+                                        //             const auto c0D = cell0Ds.at(face.vertices.at(j));
+                                        //             neigh_face_vertices_coordinates.col(j) = c0D.coordinates;
+                                        //         }
+
+                                        //         {
+                                        //             Gedim::VTKUtilities exporter;
+                                        //             exporter.AddPoints(neigh_face_vertices_coordinates);
+                                        //             exporter.Export(dbg_export_folder +
+                                        //                             "/cell3D_neigh_face_" +
+                                        //                             std::to_string(n_f) +
+                                        //                             "_points.vtu");
+                                        //         }
+                                        //     }
+                                        // }
+
                                         throw std::runtime_error("not valid neigh face");
+                                    }
 
                                     for (unsigned int e = 0; e < face.edges.size(); e++)
                                         cell3D.edges.insert(face.edges[e]);
@@ -1391,14 +1451,17 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
         cell3DIndex++;
     }
 
-    if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance3D()) ||
-        !geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
-    {
-        std::cout.precision(16);
-        std::cout << std::scientific << cvol << " " << vvol << " " << gvol << std::endl;
+    // if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance3D()) ||
+    //     !geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance3D()))
+    // {
+    //     std::cout.precision(16);
+    //     std::cout << std::scientific << cvol << " " << vvol << " " << gvol << std::endl;
 
-        // throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
-    }
+    //     // throw runtime_error("Error generating Voronoi cells: volumes do not mathc each other");
+    // }
+
+    if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance3D()))
+        throw runtime_error("Error generating Voronoi cells: volumes do not match each other");
 }
 // ************************************************************************* //
 Eigen::MatrixXd VoroInterface::GenerateRandomPoints(const Eigen::MatrixXd &domainVertices,
