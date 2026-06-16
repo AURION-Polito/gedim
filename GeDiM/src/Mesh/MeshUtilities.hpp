@@ -758,6 +758,17 @@ class MeshUtilities final
                                              const Gedim::GeometryUtilities &geometryUtilities,
                                              Gedim::IMeshDAO &mesh) const;
 
+    /// \brief Create a quadrilateral mesh starting from a triangular mesh: the mesh is created by dividing triangles
+    /// intro 3 quadrilaterals obtained by connecting the centroid to edge midpoints
+    void CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+                                                   const Gedim::IMeshDAO &triangular_mesh,
+                                                   Gedim::IMeshDAO &mesh) const;
+
+    void CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+                                                   const Eigen::MatrixXd &polygonVertices,
+                                                   const double &maxTriangleArea,
+                                                   Gedim::IMeshDAO &mesh) const;
+
     /// \brief Create triangular mesh on 2D polygon
     /// \param polygonVertices the 2D polygon vertices, size 3xnumVertices
     /// \param maxTriangleArea the maximum triangular area

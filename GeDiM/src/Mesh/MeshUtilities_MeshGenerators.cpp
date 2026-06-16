@@ -2195,6 +2195,133 @@ void MeshUtilities::CreatePolygonalMesh(const GeometryUtilities &geometryUtiliti
     voroInterface.GenerateVoronoiTassellations2D(polygonVertices, numPoints, numIterations, mesh, random_seed);
 }
 // ***************************************************************************
+void MeshUtilities::CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+                                                              const Gedim::IMeshDAO &triangular_mesh,
+                                                              Gedim::IMeshDAO &mesh) const
+{
+    mesh.InitializeDimension(2);
+
+    mesh.Cell0DsInitialize(triangular_mesh.Cell0DTotalNumber() + triangular_mesh.Cell1DTotalNumber() +
+                           triangular_mesh.Cell2DTotalNumber());
+    mesh.Cell1DsInitialize(2 * triangular_mesh.Cell1DTotalNumber() + 3 * triangular_mesh.Cell2DTotalNumber());
+    mesh.Cell2DsInitialize(3 * triangular_mesh.Cell2DTotalNumber());
+    mesh.Cell2DsInitializeVertices(4);
+    mesh.Cell2DsInitializeEdges(4);
+
+    unsigned int cell0DIndex = 0;
+    unsigned int cell1DIndex = 0;
+    unsigned int cell2DIndex = 0;
+
+    for (unsigned int v = 0; v < triangular_mesh.Cell0DTotalNumber(); v++)
+    {
+        mesh.Cell0DSetState(cell0DIndex, true);
+        mesh.Cell0DInsertCoordinates(cell0DIndex, triangular_mesh.Cell0DCoordinates(v));
+        mesh.Cell0DSetMarker(cell0DIndex, triangular_mesh.Cell0DMarker(v));
+        cell0DIndex++;
+    }
+
+    Eigen::MatrixX<unsigned int> edge_structure = Eigen::MatrixX<unsigned int>::Zero(triangular_mesh.Cell1DTotalNumber(), 3);
+    for (unsigned int e = 0; e < triangular_mesh.Cell1DTotalNumber(); e++)
+    {
+        const unsigned int cell1D_origin = triangular_mesh.Cell1DOrigin(e);
+        const unsigned int cell1D_end = triangular_mesh.Cell1DEnd(e);
+
+        const Eigen::Vector3d cell1D_origin_coordinates = triangular_mesh.Cell0DCoordinates(cell1D_origin);
+        const Eigen::Vector3d cell1D_end_coordinates = triangular_mesh.Cell0DCoordinates(cell1D_end);
+
+        const Eigen::Vector3d coordinate = cell1D_origin_coordinates + 0.5 * (cell1D_end_coordinates - cell1D_origin_coordinates);
+
+        // create cell0D
+        mesh.Cell0DSetState(cell0DIndex, true);
+        mesh.Cell0DInsertCoordinates(cell0DIndex, coordinate);
+        mesh.Cell0DSetMarker(cell0DIndex, triangular_mesh.Cell1DMarker(e));
+
+        // create cell1D
+        mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DInsertExtremes(cell1DIndex, cell1D_origin, cell0DIndex);
+        mesh.Cell1DSetMarker(cell1DIndex, triangular_mesh.Cell1DMarker(e));
+        cell1DIndex++;
+
+        // create cell1D
+        mesh.Cell1DSetState(cell1DIndex, true);
+        mesh.Cell1DInsertExtremes(cell1DIndex, cell0DIndex, cell1D_end);
+        mesh.Cell1DSetMarker(cell1DIndex, triangular_mesh.Cell1DMarker(e));
+        cell1DIndex++;
+
+        edge_structure.row(e) << cell1DIndex - 2, cell1DIndex - 1, cell0DIndex;
+
+        cell0DIndex++;
+    }
+
+    for (unsigned int c = 0; c < triangular_mesh.Cell2DTotalNumber(); c++)
+    {
+
+        const Eigen::MatrixXd vertex_points = triangular_mesh.Cell2DVerticesCoordinates(c);
+        const Eigen::Vector3d centroid = geometryUtilities.PolygonBarycenter(vertex_points);
+
+        // create cell0D
+        mesh.Cell0DSetState(cell0DIndex, true);
+        mesh.Cell0DInsertCoordinates(cell0DIndex, centroid);
+        mesh.Cell0DSetMarker(cell0DIndex, 0);
+        cell0DIndex++;
+
+        for (unsigned int e = 0; e < 3; e++)
+        {
+            const unsigned int previous_edge_index = (e > 0) ? triangular_mesh.Cell2DEdge(c, (e - 1) % 3)
+                                                             : triangular_mesh.Cell2DEdge(c, 2);
+            const unsigned int edge_index = triangular_mesh.Cell2DEdge(c, e);
+
+            // create cell1D
+            mesh.Cell1DSetState(cell1DIndex, true);
+            mesh.Cell1DInsertExtremes(cell1DIndex, edge_structure(edge_index, 2), cell0DIndex - 1);
+            mesh.Cell1DSetMarker(cell1DIndex, 0);
+            cell1DIndex++;
+
+            // vertices
+            const std::vector<unsigned int> cell2DVertices = {triangular_mesh.Cell2DVertex(c, e),
+                                                              edge_structure(edge_index, 2),
+                                                              cell0DIndex - 1,
+                                                              edge_structure(previous_edge_index, 2)};
+
+            // edges
+            const unsigned int new_edge = (e == 0) ? cell1DIndex + 1 : cell1DIndex - 2;
+
+            unsigned int idx_e = 1;
+            if (triangular_mesh.Cell1DOrigin(edge_index) == triangular_mesh.Cell2DVertex(c, e))
+                idx_e = 0;
+
+            unsigned int idx_prev_e = 0;
+            if (triangular_mesh.Cell1DEnd(previous_edge_index) == triangular_mesh.Cell2DVertex(c, e))
+                idx_prev_e = 1;
+
+            const std::vector<unsigned int> cell2DEdges = {edge_structure(edge_index, idx_e),
+                                                           cell1DIndex - 1,
+                                                           new_edge,
+                                                           edge_structure(previous_edge_index, idx_prev_e)};
+
+            // create cell2D
+            mesh.Cell2DInsertVertices(cell2DIndex, cell2DVertices);
+            mesh.Cell2DInsertEdges(cell2DIndex, cell2DEdges);
+            mesh.Cell2DSetState(cell2DIndex, true);
+            mesh.Cell2DSetMarker(cell2DIndex, 0);
+            cell2DIndex++;
+        }
+    }
+}
+// ***************************************************************************
+void MeshUtilities::CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+                                                              const Eigen::MatrixXd &polygonVertices,
+                                                              const double &maxTriangleArea,
+                                                              Gedim::IMeshDAO &mesh) const
+{
+    Gedim::MeshMatrices triangular_mesh_data;
+    Gedim::MeshMatricesDAO triangular_mesh(triangular_mesh_data);
+
+    CreateTriangularMesh(polygonVertices, maxTriangleArea, triangular_mesh);
+
+    CreateQuadrilateralMeshFromTriangularMesh(geometryUtilities, triangular_mesh, mesh);
+}
+// ***************************************************************************
 void MeshUtilities::CreateTetrahedralMesh(const Eigen::MatrixXd &polyhedronVertices,
                                           const Eigen::MatrixXi &polyhedronEdges,
                                           const std::vector<Eigen::MatrixXi> &polyhedronFaces,
