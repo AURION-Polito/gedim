@@ -1625,4 +1625,42 @@ std::vector<std::vector<unsigned int>> GeometryUtilities::PolyhedronToFacets(con
     return facets;
 }
 // ***************************************************************************
+Eigen::MatrixXi GeometryUtilities::ChangePolyhedronFaceOrientation(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
+                                                                   const unsigned int face_index) const
+{
+  const unsigned int num_face_vertices = polyhedron.Faces.at(face_index).cols();
+  const auto new_face_vertex_indices = ChangePolygonOrientation(num_face_vertices);
+
+  Eigen::MatrixXi new_face_orientation(2, num_face_vertices);
+
+  for (unsigned int v = 0; v < num_face_vertices; ++v)
+  {
+    const unsigned int n_v = new_face_vertex_indices.at(v);
+    const unsigned int n_e = n_v == 0 ? num_face_vertices - 1 :
+                                        n_v - 1;
+
+    new_face_orientation(0, v) = polyhedron.Faces.at(face_index)(0, n_v);
+    new_face_orientation(1, v) = polyhedron.Faces.at(face_index)(1, n_e);
+  }
+
+  return new_face_orientation;
+}
+// ***************************************************************************
+std::vector<MatrixXi> GeometryUtilities::ChangePolyhedronFacesOrientation(const Polyhedron& polyhedron,
+                                                                          const std::vector<bool>& faces_normal_direction) const
+{
+  std::vector<MatrixXi> new_faces = polyhedron.Faces;
+
+  for (unsigned int f = 0; f < new_faces.size(); ++f)
+  {
+    if (faces_normal_direction.at(f))
+      continue;
+
+    new_faces.at(f) = ChangePolyhedronFaceOrientation(polyhedron,
+                                                      f);
+  }
+
+  return new_faces;
+}
+// ***************************************************************************
 } // namespace Gedim
