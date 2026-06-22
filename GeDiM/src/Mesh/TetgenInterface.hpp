@@ -63,25 +63,25 @@ class TetgenInterface final
     TetgenInterface();
     ~TetgenInterface();
 
-    void CreateDelaunay(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, IMeshDAO &mesh) const;
+    void CreateDelaunay(const Eigen::MatrixXd &points, const std::vector<unsigned int> &points_marker, Gedim::IMeshDAO &mesh) const;
 
     void CreateMesh(const Eigen::MatrixXd &polyhedronVertices,
                     const Eigen::MatrixXi &polyhedronEdges,
                     const std::vector<Eigen::MatrixXi> &polyhedronFaces,
                     const double &maxTetrahedronVolume,
-                    IMeshDAO &mesh,
+                    Gedim::IMeshDAO &mesh,
                     const std::string &tetgenOptions = "Qpqfezna") const;
 
     void CreateMesh(const Eigen::MatrixXd &points,
                     const std::vector<std::vector<unsigned int>> &facets,
                     const double &maxTetrahedronVolume,
-                    IMeshDAO &mesh,
+                    Gedim::IMeshDAO &mesh,
                     const std::string &tetgenOptions = "Qpqfezna") const;
 
     void CreateMesh(const Eigen::MatrixXd &points,
                     const std::vector<std::vector<unsigned int>> &facets,
                     const std::vector<Region> &regions,
-                    IMeshDAO &mesh,
+                    Gedim::IMeshDAO &mesh,
                     const std::string &tetgenOptions = "QpqfeznaA") const;
 };
 
