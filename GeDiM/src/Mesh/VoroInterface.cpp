@@ -17,7 +17,6 @@
 #include <numeric>
 #include <unistd.h>
 
-#include "CommonUtilities.hpp"
 #include "VTKUtilities.hpp"
 
 using namespace std;

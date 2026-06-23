@@ -29,6 +29,11 @@ class Utilities
     {
     }
 
+    static unsigned int RandomSeed()
+    {
+        return static_cast<unsigned int>(time(nullptr));
+    }
+
     /// \brief create Combination With Repetition with n elements in k subset
     /// \param n size of elements
     /// \param k size of subset

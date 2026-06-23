@@ -15,6 +15,7 @@
 #include "Gedim_Macro.hpp"
 #include "GeometryUtilities.hpp"
 
+#include "CommonUtilities.hpp"
 #include "IMeshDAO.hpp"
 
 #if ENABLE_VORO == 1
@@ -77,11 +78,6 @@ class VoroInterface final
     {
         return double(rand()) / RAND_MAX;
     }
-
-    static inline unsigned int RandomSeed()
-    {
-        return static_cast<unsigned int>(time(nullptr));
-    }
     void GenerateCartesianPoints3D(const Eigen::MatrixXd &polyhedronVertices, const unsigned int &numPoints, voro::container &con);
 #endif
   public:
@@ -98,13 +94,13 @@ class VoroInterface final
     /// @return Matrix containing the generated points, with one point per column.
     Eigen::MatrixXd GenerateRandomPoints(const Eigen::MatrixXd &domainVertices,
                                          const unsigned int &numPoints,
-                                         const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
+                                         const unsigned int random_seed = Gedim::Utilities::RandomSeed());
 
     void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
                                         const unsigned int &numPoints,
                                         const unsigned int &numIterations,
                                         Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
+                                        const unsigned int random_seed = Gedim::Utilities::RandomSeed());
 
     /// @brief Generate a 2D centroidal Voronoi tessellation from prescribed seeds.
     /// The function computes a centroidal Voronoi tessellation inside the input
@@ -128,7 +124,7 @@ class VoroInterface final
                                         const unsigned int &numPoints,
                                         const unsigned int &numIterations,
                                         Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
+                                        const unsigned int random_seed = Gedim::Utilities::RandomSeed());
 
     /// @brief Generate a 3D centroidal Voronoi tessellation from prescribed seeds.
     /// The function computes a centroidal Voronoi tessellation inside the input
