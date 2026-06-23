@@ -2183,7 +2183,7 @@ void MeshUtilities::CreateTriangularMesh(const Eigen::MatrixXd &polygonVertices,
     triangleInterface.CreateMesh(polygonVertices, maxTriangleArea, mesh, options);
 }
 // ***************************************************************************
-void MeshUtilities::CreatePolygonalMesh(const GeometryUtilities &geometryUtilities,
+void MeshUtilities::CreatePolygonalMesh(const Gedim::GeometryUtilities &geometryUtilities,
                                         const Eigen::MatrixXd &polygonVertices,
                                         const unsigned int numPoints,
                                         const unsigned int numIterations,

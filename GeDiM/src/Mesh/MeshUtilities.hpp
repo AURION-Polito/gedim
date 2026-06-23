@@ -760,11 +760,11 @@ class MeshUtilities final
 
     /// \brief Create a quadrilateral mesh starting from a triangular mesh: the mesh is created by dividing triangles
     /// intro 3 quadrilaterals obtained by connecting the centroid to edge midpoints
-    void CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+    void CreateQuadrilateralMeshFromTriangularMesh(const Gedim::GeometryUtilities &geometryUtilities,
                                                    const Gedim::IMeshDAO &triangular_mesh,
                                                    Gedim::IMeshDAO &mesh) const;
 
-    void CreateQuadrilateralMeshFromTriangularMesh(const GeometryUtilities &geometryUtilities,
+    void CreateQuadrilateralMeshFromTriangularMesh(const Gedim::GeometryUtilities &geometryUtilities,
                                                    const Eigen::MatrixXd &polygonVertices,
                                                    const double &maxTriangleArea,
                                                    Gedim::IMeshDAO &mesh) const;
@@ -824,7 +824,7 @@ class MeshUtilities final
     /// \param cell0Ds_file_path cell0Ds coordinates
     /// \param cell2Ds_file_path cell2Ds connectivity
     /// \param marker_file_path markers file
-    void ImportTriangularMesh(const GeometryUtilities &geometry_utilities,
+    void ImportTriangularMesh(const Gedim::GeometryUtilities &geometry_utilities,
                               const std::string &cell0Ds_file_path,
                               const std::string &cell2Ds_file_path,
                               const std::string &marker_file_path,
@@ -988,15 +988,15 @@ class MeshUtilities final
                                           const std::vector<std::vector<unsigned int>> &subCell3DsFaces,
                                           Gedim::IMeshDAO &mesh) const;
 
-    AgglomerateCell1DInformation AgglomerateCell1Ds(const std::unordered_set<unsigned int> &cell1DsIndex,
-                                                    const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::AgglomerateCell1DInformation AgglomerateCell1Ds(const std::unordered_set<unsigned int> &cell1DsIndex,
+                                                                          const Gedim::IMeshDAO &mesh) const;
 
-    AgglomerateCell2DInformation AgglomerateCell2Ds(const Gedim::GeometryUtilities &geometryUtilities,
-                                                    const std::unordered_set<unsigned int> &cell2DsIndex,
-                                                    const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::AgglomerateCell2DInformation AgglomerateCell2Ds(const Gedim::GeometryUtilities &geometryUtilities,
+                                                                          const std::unordered_set<unsigned int> &cell2DsIndex,
+                                                                          const Gedim::IMeshDAO &mesh) const;
 
-    AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int> &cell3DsIndex,
-                                                    const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::AgglomerateCell3DInformation AgglomerateCell3Ds(const std::unordered_set<unsigned int> &cell3DsIndex,
+                                                                          const Gedim::IMeshDAO &mesh) const;
 
     unsigned int AgglomerateCell1Ds(const std::unordered_set<unsigned int> &subCell1DsIndex,
                                     const std::vector<unsigned int> &agglomerateCell1DVertices,
@@ -1053,7 +1053,7 @@ class MeshUtilities final
     /// \return the Cell1D indices
     std::vector<unsigned int> FindCell2DsCommonEdges(const std::vector<unsigned int> &cell2DsIndex, const Gedim::IMeshDAO &mesh) const;
 
-    FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(
+    Gedim::MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(
         const Gedim::GeometryUtilities &geometryUtilities,
         const unsigned int &concaveCell3DIndex,
         const Gedim::IMeshDAO &mesh,
@@ -1067,7 +1067,7 @@ class MeshUtilities final
         const std::vector<std::vector<Eigen::MatrixXd>> &convexCell3DsFaces3DVertices,
         const std::vector<std::vector<std::vector<unsigned int>>> &convexCell3DsFacesUnalignedVertices) const;
 
-    FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(
+    Gedim::MeshUtilities::FindConcaveCell3DFacesConvexCell2DResult FindConcaveCell3DFacesConvexCell2D(
         const Gedim::GeometryUtilities &geometryUtilities,
         const unsigned int &concaveCell3DIndex,
         const Gedim::IMeshDAO &mesh,
@@ -1080,59 +1080,62 @@ class MeshUtilities final
         const std::vector<std::vector<Eigen::MatrixXd>> &convexCell3DsFaces3DVertices,
         const std::vector<std::vector<std::vector<unsigned int>>> &convexCell3DsFacesUnalignedVertices) const;
 
-    FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell2DResult &find_cell2D_result,
-                                                      const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell2DResult &find_cell2D_result,
+                                                                            const Gedim::IMeshDAO &mesh) const;
 
-    FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult &find_cell3D_result,
-                                                      const Gedim::IMeshDAO &mesh) const;
+    Gedim::MeshUtilities::FindPointMeshPositionResult FindPointMeshPosition(const MeshUtilities::FindPointCell3DResult &find_cell3D_result,
+                                                                            const Gedim::IMeshDAO &mesh) const;
 
-    FindPointCell2DResult FindPointCell2D(const Gedim::GeometryUtilities &geometryUtilities,
-                                          const Eigen::Vector3d &point,
-                                          const Gedim::IMeshDAO &mesh,
-                                          const std::vector<Eigen::MatrixXd> &cell2DsVertices,
-                                          const std::vector<Eigen::MatrixXd> &cell2DsBoundingBox,
-                                          const bool find_only_first_cell2D = true,
-                                          const unsigned int starting_cell2D_index = 0) const;
+    Gedim::MeshUtilities::FindPointCell2DResult FindPointCell2D(const Gedim::GeometryUtilities &geometryUtilities,
+                                                                const Eigen::Vector3d &point,
+                                                                const Gedim::IMeshDAO &mesh,
+                                                                const std::vector<Eigen::MatrixXd> &cell2DsVertices,
+                                                                const std::vector<Eigen::MatrixXd> &cell2DsBoundingBox,
+                                                                const bool find_only_first_cell2D = true,
+                                                                const unsigned int starting_cell2D_index = 0) const;
 
-    FindPointCell3DResult FindPointCell3D(const Gedim::GeometryUtilities &geometryUtilities,
-                                          const Eigen::Vector3d &point,
-                                          const Gedim::IMeshDAO &mesh,
-                                          const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
-                                          const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
-                                          const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
-                                          const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceNormals,
-                                          const std::vector<std::vector<bool>> &cell3DsFaceNormalDirections,
-                                          const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceTranslations,
-                                          const std::vector<std::vector<Eigen::Matrix3d>> &cell3DsFaceRotationMatrices,
-                                          const std::vector<Eigen::MatrixXd> &cell3DsBoundingBox,
-                                          const bool find_only_first_cell3D = true,
-                                          const unsigned int starting_cell3D_index = 0) const;
+    Gedim::MeshUtilities::FindPointCell3DResult FindPointCell3D(
+        const Gedim::GeometryUtilities &geometryUtilities,
+        const Eigen::Vector3d &point,
+        const Gedim::IMeshDAO &mesh,
+        const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
+        const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
+        const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
+        const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceNormals,
+        const std::vector<std::vector<bool>> &cell3DsFaceNormalDirections,
+        const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceTranslations,
+        const std::vector<std::vector<Eigen::Matrix3d>> &cell3DsFaceRotationMatrices,
+        const std::vector<Eigen::MatrixXd> &cell3DsBoundingBox,
+        const bool find_only_first_cell3D = true,
+        const unsigned int starting_cell3D_index = 0) const;
 
-    FindPointCell3DResult FindPointCell3D(const Gedim::GeometryUtilities &geometryUtilities,
-                                          const Eigen::Vector3d &point,
-                                          const Gedim::IMeshDAO &mesh,
-                                          const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
-                                          const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
-                                          const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
-                                          const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceNormals,
-                                          const std::vector<std::vector<bool>> &cell3DsFaceNormalDirections,
-                                          const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceTranslations,
-                                          const std::vector<std::vector<Eigen::Matrix3d>> &cell3DsFaceRotationMatrices,
-                                          const std::vector<Eigen::MatrixXd> &cell3DsBoundingBox,
-                                          const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsTetrahedra,
-                                          const bool find_only_first_cell3D,
-                                          const unsigned int starting_cell3D_index) const;
+    Gedim::MeshUtilities::FindPointCell3DResult FindPointCell3D(
+        const Gedim::GeometryUtilities &geometryUtilities,
+        const Eigen::Vector3d &point,
+        const Gedim::IMeshDAO &mesh,
+        const std::vector<std::vector<Eigen::MatrixXi>> &cell3DsFaces,
+        const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceVertices,
+        const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsFaceRotatedVertices,
+        const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceNormals,
+        const std::vector<std::vector<bool>> &cell3DsFaceNormalDirections,
+        const std::vector<std::vector<Eigen::Vector3d>> &cell3DsFaceTranslations,
+        const std::vector<std::vector<Eigen::Matrix3d>> &cell3DsFaceRotationMatrices,
+        const std::vector<Eigen::MatrixXd> &cell3DsBoundingBox,
+        const std::vector<std::vector<Eigen::MatrixXd>> &cell3DsTetrahedra,
+        const bool find_only_first_cell3D,
+        const unsigned int starting_cell3D_index) const;
 
     /// \brief Agglomerate Triangles with one vertex in common
     /// \param trianglesIndexToAgglomerate the cell2Ds triangular index in the mesh
     /// \param triangularMesh the triangular mesh
     /// \return the agglomearted polygon indices
     /// \note the triangular index shall be done counterclockwise
-    AgglomerateTrianglesResult AgglomerateTriangles(const std::vector<unsigned int> &trianglesIndexToAgglomerate,
-                                                    Gedim::IMeshDAO &triangularMesh) const;
+    Gedim::MeshUtilities::AgglomerateTrianglesResult AgglomerateTriangles(const std::vector<unsigned int> &trianglesIndexToAgglomerate,
+                                                                          Gedim::IMeshDAO &triangularMesh) const;
 
-    AgglomerateMeshFromTriangularMeshResult AgglomerateMeshFromTriangularMesh(const std::vector<std::vector<unsigned int>> &trianglesIndicesToAgglomerate,
-                                                                              Gedim::IMeshDAO &triangularMesh) const;
+    Gedim::MeshUtilities::AgglomerateMeshFromTriangularMeshResult AgglomerateMeshFromTriangularMesh(
+        const std::vector<std::vector<unsigned int>> &trianglesIndicesToAgglomerate,
+        Gedim::IMeshDAO &triangularMesh) const;
 
     /// \brief Import Agglomeration mesh Information From file Csv
     /// \param Gedim::GeometryUtilities the geometry utilities
@@ -1146,11 +1149,11 @@ class MeshUtilities final
     /// \param agglomeratedCell0DToOriginalCell0Ds agglomerated Cell0Ds to original Cell0Ds
     /// \param agglomeratedCell1DToOriginalCell1Ds agglomerated Cell1Ds to original Cell1Ds
     /// \param agglomeratedCell2DToOriginalCell2Ds agglomerated Cell2Ds to original Cell2Ds
-    AgglomerationInformation ImportAgglomerationInformationFromCsv(const Gedim::GeometryUtilities &geometryUtilities,
-                                                                   const Gedim::IMeshDAO &originalMesh,
-                                                                   const Gedim::IMeshDAO &agglomeratedMesh,
-                                                                   const std::string &fileName,
-                                                                   const char &separator) const;
+    Gedim::MeshUtilities::AgglomerationInformation ImportAgglomerationInformationFromCsv(const Gedim::GeometryUtilities &geometryUtilities,
+                                                                                         const Gedim::IMeshDAO &originalMesh,
+                                                                                         const Gedim::IMeshDAO &agglomeratedMesh,
+                                                                                         const std::string &fileName,
+                                                                                         const char &separator) const;
 
     /// \brief Import Agglomeration mesh Information From file OFF
     /// \param Gedim::GeometryUtilities the geometry utilities
@@ -1164,11 +1167,11 @@ class MeshUtilities final
     /// \param agglomeratedCell0DToOriginalCell0Ds agglomerated Cell0Ds to original Cell0Ds
     /// \param agglomeratedCell1DToOriginalCell1Ds agglomerated Cell1Ds to original Cell1Ds
     /// \param agglomeratedCell2DToOriginalCell2Ds agglomerated Cell2Ds to original Cell2Ds
-    AgglomerationInformation ImportAgglomerationInformationFromOFF(const Gedim::GeometryUtilities &geometryUtilities,
-                                                                   const Gedim::IMeshDAO &originalMesh,
-                                                                   const Gedim::IMeshDAO &agglomeratedMesh,
-                                                                   const std::string &fileName,
-                                                                   const char &separator) const;
+    Gedim::MeshUtilities::AgglomerationInformation ImportAgglomerationInformationFromOFF(const Gedim::GeometryUtilities &geometryUtilities,
+                                                                                         const Gedim::IMeshDAO &originalMesh,
+                                                                                         const Gedim::IMeshDAO &agglomeratedMesh,
+                                                                                         const std::string &fileName,
+                                                                                         const char &separator) const;
 
     /// \brief Export mesh to csv file
     void ExportMeshToCsv(const Gedim::IMeshDAO &mesh, const char &separator, const std::string &exportFolderPath) const;
@@ -1183,7 +1186,7 @@ class MeshUtilities final
                                         const std::vector<Eigen::MatrixXd> &cells_points,
                                         const unsigned int default_mark) const;
 
-    Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(
+    Gedim::MeshUtilities::Intersect_mesh_polyhedron_result Intersect_mesh_polyhedron(
         const Gedim::GeometryUtilities &geometry_utilities,
         const Eigen::MatrixXd &polyhedron_vertices,
         const Eigen::MatrixXi &polyhedron_edges,
@@ -1224,8 +1227,8 @@ class MeshUtilities final
                                const std::vector<unsigned int> &cell1DMarkers,
                                Gedim::IMeshDAO &mesh) const;
 
-    void CheckMeshGeometricData2D(const CheckMeshGeometricData2DConfiguration &configuration,
-                                  const GeometryUtilities &geometryUtilities,
+    void CheckMeshGeometricData2D(const Gedim::MeshUtilities::CheckMeshGeometricData2DConfiguration &configuration,
+                                  const Gedim::GeometryUtilities &geometryUtilities,
                                   const Gedim::IMeshDAO &mesh,
                                   const MeshGeometricData2D &geometricData) const;
 
