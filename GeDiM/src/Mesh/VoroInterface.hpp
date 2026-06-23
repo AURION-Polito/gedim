@@ -98,13 +98,13 @@ class VoroInterface final
     /// @return Matrix containing the generated points, with one point per column.
     Eigen::MatrixXd GenerateRandomPoints(const Eigen::MatrixXd &domainVertices,
                                          const unsigned int &numPoints,
-                                         const unsigned int random_seed = RandomSeed());
+                                         const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
 
     void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
                                         const unsigned int &numPoints,
                                         const unsigned int &numIterations,
                                         Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = RandomSeed());
+                                        const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
 
     /// @brief Generate a 2D centroidal Voronoi tessellation from prescribed seeds.
     /// The function computes a centroidal Voronoi tessellation inside the input
@@ -128,7 +128,7 @@ class VoroInterface final
                                         const unsigned int &numPoints,
                                         const unsigned int &numIterations,
                                         Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = RandomSeed());
+                                        const unsigned int random_seed = Gedim::VoroInterface::RandomSeed());
 
     /// @brief Generate a 3D centroidal Voronoi tessellation from prescribed seeds.
     /// The function computes a centroidal Voronoi tessellation inside the input
