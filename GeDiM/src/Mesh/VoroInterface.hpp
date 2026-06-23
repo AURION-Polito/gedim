@@ -78,14 +78,49 @@ class VoroInterface final
         return double(rand()) / RAND_MAX;
     }
 
+    static inline unsigned int RandomSeed()
+    {
+        return static_cast<unsigned int>(time(nullptr));
+    }
     void GenerateCartesianPoints3D(const Eigen::MatrixXd &polyhedronVertices, const unsigned int &numPoints, voro::container &con);
 #endif
   public:
     VoroInterface(const Gedim::GeometryUtilities &geometryUtilities);
 
+    /// @brief Generate a set of random points inside a parallelepipedal/parallelogram domain.
+    ///
+    /// The function generates @p numPoints points uniformly distributed inside the
+    /// domain defined by @p domainVertices.
+    ///
+    /// @param domainVertices Matrix 3 x NumVertices containing the coordinates of the domain vertices.
+    /// @param numPoints Number of random points to generate.
+    /// @param random_seed Seed used to initialize the random number generator.
+    /// @return Matrix containing the generated points, with one point per column.
     Eigen::MatrixXd GenerateRandomPoints(const Eigen::MatrixXd &domainVertices,
                                          const unsigned int &numPoints,
-                                         const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
+                                         const unsigned int random_seed = RandomSeed());
+
+    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
+                                        const unsigned int &numPoints,
+                                        const unsigned int &numIterations,
+                                        Gedim::IMeshDAO &mesh,
+                                        const unsigned int random_seed = RandomSeed());
+
+    /// @brief Generate a 2D centroidal Voronoi tessellation from prescribed seeds.
+    /// The function computes a centroidal Voronoi tessellation inside the input
+    /// parallelogram using the points contained in @p VoronoiPoints as initial seeds.
+    /// The seed positions are updated during the iterative relaxation process.
+    /// On output, @p VoronoiPoints contains the final seed positions.
+    /// @param polygonVertices Vertices of the bounding polygon.
+    /// @param numIterations Number of centroidal relaxation iterations.
+    /// @param VoronoiPoints Input/output matrix containing the Voronoi seed
+    ///                      coordinates.
+    /// @param mesh Mesh object where the generated tessellation is stored.
+
+    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
+                                        const unsigned int &numIterations,
+                                        Eigen::MatrixXd &VoronoiPoints,
+                                        Gedim::IMeshDAO &mesh);
 
     void GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhedronVertices,
                                         const Eigen::MatrixXi &polyhedronEdges,
@@ -93,19 +128,20 @@ class VoroInterface final
                                         const unsigned int &numPoints,
                                         const unsigned int &numIterations,
                                         Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
+                                        const unsigned int random_seed = RandomSeed());
 
-    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
-                                        const unsigned int &numPoints,
-                                        const unsigned int &numIterations,
-                                        Gedim::IMeshDAO &mesh,
-                                        const unsigned int random_seed = static_cast<unsigned int>(time(nullptr)));
-
-    void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
-                                        const unsigned int &numIterations,
-                                        Eigen::MatrixXd &VoronoiPoints,
-                                        Gedim::IMeshDAO &mesh);
-
+    /// @brief Generate a 3D centroidal Voronoi tessellation from prescribed seeds.
+    /// The function computes a centroidal Voronoi tessellation inside the input
+    /// parallelepiped using the points contained in @p VoronoiPoints as initial seeds.
+    /// The seed positions are updated during the iterative relaxation process.
+    /// On output, @p VoronoiPoints contains the final seed positions.
+    /// @param domain_vertices Vertices of the bounding polyhedron.
+    /// @param domain_edges Edge connectivity of the bounding polyhedron.
+    /// @param domain_faces Face connectivity of the bounding polyhedron.
+    /// @param num_iterations Number of centroidal relaxation iterations.
+    /// @param VoronoiPoints Input/output matrix containing the Voronoi seed
+    ///                      coordinates.
+    /// @param mesh Mesh object where the generated tessellation is stored.
     void GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain_vertices,
                                         const Eigen::MatrixXi &domain_edges,
                                         const std::vector<Eigen::MatrixXi> &domain_faces,
