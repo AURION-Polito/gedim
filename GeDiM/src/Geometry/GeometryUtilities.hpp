@@ -15,6 +15,7 @@
 #include "Eigen/Eigen"
 #include "IOUtilities.hpp"
 #include <iostream>
+#include <numbers>
 
 namespace Gedim
 {
@@ -962,7 +963,7 @@ class GeometryUtilities final
         return IsValueZero(deg_angle, Tolerance1D()) ? 0.0
                : IsValueZero(std::fmod(deg_angle, 180.0), Tolerance1D())
                    ? IsValuePositive(deg_angle, Tolerance1D()) ? std::numbers::pi : -std::numbers::pi
-                   : std::atan2(std::sin(deg_angle * M_PI / 180.0), std::cos(deg_angle * M_PI / 180.0));
+                   : std::atan2(std::sin(deg_angle * std::numbers::pi / 180.0), std::cos(deg_angle * std::numbers::pi / 180.0));
     }
 
     /// \brief compute the Point distance

@@ -57,7 +57,7 @@ class TriangleInterface final
 
     void CreateMesh(const Eigen::MatrixXd &polygonVertices,
                     const double &maxTriangleArea,
-                    IMeshDAO &mesh,
+                    Gedim::IMeshDAO &mesh,
                     const std::string &triangleOptions = "-QDzpqnea") const;
 };
 } // namespace Gedim

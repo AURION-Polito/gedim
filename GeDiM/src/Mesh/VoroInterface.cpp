@@ -60,6 +60,43 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygo
     Gedim::Utilities::Unused(random_seed);
     throw std::runtime_error("Not active module VORO");
 }
+
+Eigen::MatrixXd GenerateRandomPoints(const Eigen::MatrixXd &domainVertices, const unsigned int &numPoints, const unsigned int random_seed)
+{
+    Gedim::Utilities::Unused(domainVertices);
+    Gedim::Utilities::Unused(numPoints);
+    Gedim::Utilities::Unused(random_seed);
+    throw std::runtime_error("Not active module VORO");
+}
+
+void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
+                                    const unsigned int &numIterations,
+                                    Eigen::MatrixXd &VoronoiPoints,
+                                    Gedim::IMeshDAO &mesh)
+{
+    Gedim::Utilities::Unused(polygonVertices);
+    Gedim::Utilities::Unused(VoronoiPoints);
+    Gedim::Utilities::Unused(numIterations);
+    Gedim::Utilities::Unused(mesh);
+    throw std::runtime_error("Not active module VORO");
+}
+
+void GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain_vertices,
+                                    const Eigen::MatrixXi &domain_edges,
+                                    const std::vector<Eigen::MatrixXi> &domain_faces,
+                                    const unsigned int &num_iterations,
+                                    Eigen::MatrixXd &VoronoiPoints,
+                                    Gedim::IMeshDAO &mesh)
+{
+    Gedim::Utilities::Unused(domain_vertices);
+    Gedim::Utilities::Unused(domain_edges);
+    Gedim::Utilities::Unused(domain_faces);
+    Gedim::Utilities::Unused(VoronoiPoints);
+    Gedim::Utilities::Unused(num_iterations);
+    Gedim::Utilities::Unused(mesh);
+    throw std::runtime_error("Not active module VORO");
+}
+
 #else
 // ************************************************************************* //
 unsigned int VoroInterface::InsertNewPoint(const Cell0D &cell0D, std::map<unsigned int, Cell0D> &cell0Ds)
