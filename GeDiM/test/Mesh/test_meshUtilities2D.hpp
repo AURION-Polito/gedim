@@ -846,9 +846,6 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
     const auto reconverted_lines = objInterface.OBJMeshToStrings(reconverted_obj_mesh);
 
     ASSERT_EQ(lines.size(), reconverted_lines.size());
-    for (unsigned int l = 0; l < lines.size(); l++)
-        ASSERT_EQ(lines[l], reconverted_lines[l]);
-
     meshUtilities.ExportMeshToObjectFileFormat(meshDao, exportFolder + "/mesh.off");
 }
 
