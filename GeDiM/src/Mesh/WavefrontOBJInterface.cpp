@@ -119,7 +119,7 @@ namespace Gedim
       ostringstream stream;
       stream << "f"<< " ";
       for (unsigned int fv = 0; fv < mesh.Cell2Ds[f].size(); fv++)
-        stream << " " << mesh.Cell2Ds[f][fv];
+        stream << " " << mesh.Cell2Ds[f][fv] + 1;
 
       lines.push_back(stream.str());
     }

@@ -825,6 +825,7 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
     checkMeshConfig.Cell0D_CheckCoordinates2D = false;
     checkMeshConfig.Cell1D_CheckNeighbours = false;
     checkMeshConfig.Cell2D_CheckConvexity = false;
+    checkMeshConfig.Cell2D_CheckMeasure = false;
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOBJMesh";
     Gedim::Output::CreateFolder(exportFolder);
