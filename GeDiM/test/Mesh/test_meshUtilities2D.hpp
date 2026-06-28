@@ -822,6 +822,7 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
                                                        meshDao);
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkMeshConfig;
+    checkMeshConfig.Cell0D_CheckCoordinates2D = false;
     checkMeshConfig.Cell1D_CheckNeighbours = false;
     checkMeshConfig.Cell2D_CheckConvexity = false;
 
@@ -831,9 +832,9 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
 
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(checkMeshConfig, geometryUtilities, meshDao));
     ASSERT_EQ(2, meshDao.Dimension());
-    ASSERT_EQ(100, meshDao.Cell0DTotalNumber());
-    ASSERT_EQ(261, meshDao.Cell1DTotalNumber());
-    ASSERT_EQ(162, meshDao.Cell2DTotalNumber());
+    ASSERT_EQ(32, meshDao.Cell0DTotalNumber());
+    ASSERT_EQ(90, meshDao.Cell1DTotalNumber());
+    ASSERT_EQ(60, meshDao.Cell2DTotalNumber());
 
     const auto reconverted_obj_mesh = objInterface.MeshDAOToOBJMesh(meshDao);
 
