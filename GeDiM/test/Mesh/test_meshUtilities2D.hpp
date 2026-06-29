@@ -846,7 +846,7 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
     const auto reconverted_lines = objInterface.OBJMeshToStrings(reconverted_obj_mesh);
 
     ASSERT_EQ(lines.size(), reconverted_lines.size());
-    meshUtilities.ExportMeshToObjectFileFormat(meshDao, exportFolder + "/mesh.obj");
+    meshUtilities.ExportMeshToWavefrontOBJ(meshDao, exportFolder + "/mesh.obj");
 }
 
 TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)

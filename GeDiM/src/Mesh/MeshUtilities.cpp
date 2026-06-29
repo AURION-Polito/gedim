@@ -14,6 +14,7 @@
 #include "MEDIT_Utilities.hpp"
 #include "MeshDAOExporterToCsv.hpp"
 #include "ObjectFileFormatInterface.hpp"
+#include "WavefrontOBJInterface.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
@@ -225,6 +226,18 @@ void MeshUtilities::ExportMeshToObjectFileFormat(const Gedim::IMeshDAO &mesh, co
 {
     ObjectFileFormatInterface objectFileFormatInterface;
     objectFileFormatInterface.ExportMeshToFile(mesh, offFilePath);
+}
+// ***************************************************************************
+void MeshUtilities::ImportWavefrontOBJ(const std::string &offFilePath, Gedim::IMeshDAO &mesh) const
+{
+    WavefrontOBJInterface wavefrontOBJInterface;
+    wavefrontOBJInterface.ImportMeshFromFile(offFilePath, *this, mesh);
+}
+// ***************************************************************************
+void MeshUtilities::ExportMeshToWavefrontOBJ(const Gedim::IMeshDAO &mesh, const std::string &offFilePath) const
+{
+    WavefrontOBJInterface wavefrontOBJInterface;
+    wavefrontOBJInterface.ExportMeshToFile(mesh, offFilePath);
 }
 // ***************************************************************************
 void MeshUtilities::ExportMeshToVTU(const Gedim::IMeshDAO &mesh, const string &exportFolder, const string &fileName, const bool &separateFile) const
