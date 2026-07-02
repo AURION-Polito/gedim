@@ -27,10 +27,19 @@ namespace Gedim
         unsigned int idx;
     };
 
+    struct cell2D_filter
+    {
+        std::vector<unsigned int> edges;
+        std::vector<unsigned int> vertices;
+        unsigned int idx;
+    };
+
     std::vector<std::vector<unsigned int>> polyhedra_cell0Ds(polyhedra.size());
     std::vector<std::vector<unsigned int>> polyhedra_cell1Ds(polyhedra.size());
+    std::vector<std::vector<unsigned int>> polyhedra_cell2Ds(polyhedra.size());
     std::list<cell0D_filter> cell0Ds_filter;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds_filter;
+    std::map<std::array<unsigned int, 3>, cell2D_filter> cell2Ds_filter;
 
     {
       unsigned int p = 0;
@@ -76,10 +85,11 @@ namespace Gedim
 
         for (unsigned int p_e = 0; p_e < polyhedron.Edges.cols(); ++p_e)
         {
-          const Eigen::Vector2i edge = polyhedron.Edges.col(p_e);
+          const unsigned int edge_org = vertices.at(polyhedron.Edges(0, p_e));
+          const unsigned int edge_end = vertices.at(polyhedron.Edges(1, p_e));
 
           std::pair<unsigned int, unsigned int> edge_extr =
-          { std::min(edge[0], edge[1]), std::max(edge[0], edge[1]) };
+          { std::min(edge_org, edge_end), std::max(edge_org, edge_end) };
 
           auto found = cell1Ds_filter.find(edge_extr);
 
@@ -96,9 +106,72 @@ namespace Gedim
           }
         }
 
+        auto& faces = polyhedra_cell2Ds.at(p);
+        faces.resize(polyhedron.Faces.size());
+
+        for (unsigned int p_f = 0; p_f < polyhedron.Faces.size(); ++p_f)
+        {
+          std::vector<unsigned int> face_vertices(polyhedron.Faces.at(p_f).cols());
+          std::vector<unsigned int> face_edges(polyhedron.Faces.at(p_f).cols());
+
+          unsigned int prev_p_f_v_max = 0;
+          unsigned int p_f_v_max = 0;
+          unsigned int next_p_f_v_max = 0;
+          unsigned int vertex_max = 0;
+
+          for (unsigned int p_f_v = 0; p_f_v < face_vertices.size(); ++p_f_v)
+          {
+            face_vertices.at(p_f_v) = vertices.at(polyhedron.Faces.at(p_f)(0, p_f_v));
+            face_edges.at(p_f_v) = edges.at(polyhedron.Faces.at(p_f)(1, p_f_v));
+
+            if (vertex_max < face_vertices.at(p_f_v))
+            {
+              vertex_max = face_vertices.at(p_f_v);
+              p_f_v_max = p_f_v;
+              prev_p_f_v_max = (p_f_v == 0) ? face_vertices.size() - 1 :
+                                              p_f_v - 1;
+              next_p_f_v_max = (p_f_v + 1) % face_vertices.size();
+            }
+          }
+
+          std::array<unsigned int, 3> face_key = {
+            face_vertices.at(prev_p_f_v_max),
+            face_vertices.at(p_f_v_max),
+            face_vertices.at(next_p_f_v_max)
+          };
+          std::sort(face_key.begin(),
+                    face_key.end());
+
+          auto found = cell2Ds_filter.find(face_key);
+
+          if (found == cell2Ds_filter.end())
+          {
+            faces.at(p_f) = cell2Ds_filter.size();
+
+            cell2Ds_filter.insert(std::make_pair(face_key,
+                                                 cell2D_filter({
+                                                                 face_vertices,
+                                                                 face_edges,
+                                                                 static_cast<unsigned int>(cell2Ds_filter.size())
+                                                               })));
+          }
+          else
+          {
+            faces.at(p_f) = found->second.idx;
+          }
+        }
+
         p++;
       }
     }
+
+    Eigen::MatrixXd cell0Ds(3, cell0Ds_filter.size());
+    for (const auto& cell0D_filter : cell0Ds_filter)
+      cell0Ds.col(cell0D_filter.idx) = cell0D_filter.coordinate;
+
+
+
+
 
     std::cout<< "Num vertices "<< cell0Ds_filter.size()<< std::endl;
   }
