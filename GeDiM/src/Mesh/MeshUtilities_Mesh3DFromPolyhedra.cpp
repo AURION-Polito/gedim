@@ -189,8 +189,6 @@ namespace Gedim
                polyhedra_cell1Ds,
                polyhedra_cell2Ds,
                mesh);
-
-    std::cout<< "Num vertices "<< cell0Ds_filter.size()<< std::endl;
   }
   // ***************************************************************************
 } // namespace Gedim
