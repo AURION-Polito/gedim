@@ -20,6 +20,7 @@
 
 namespace GedimUnitTesting
 {
+
 TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
 {
     std::string exportFolder = "./Export/TestMeshUtilities/TestMeshUtilities_3D_Mesh3DFromPolyhedra";
@@ -36,9 +37,11 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    const std::string import_folder = "./Mesh/regn_face_test_mesh";
+    const std::vector<Gedim::GeometryUtilities::Polyhedron> polyhedra = {};
 
-    mesh_utilities.ImportRegnFaceMesh(geometry_utilities, import_folder + "/mesh.node", import_folder + "/mesh.ele", mesh);
+    mesh_utilities.Mesh3DFromPolyhedra(geometry_utilities,
+                                       polyhedra,
+                                       mesh);
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
@@ -59,7 +62,6 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
     }
 }
 
-}
 } // namespace GedimUnitTesting
 
-#endif // __TEST_MESH_H
+#endif // __TEST_meshUtilities3D_Mesh3DFromPolyhedra_H

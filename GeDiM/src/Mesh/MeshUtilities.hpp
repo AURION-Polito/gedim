@@ -1244,7 +1244,8 @@ class MeshUtilities final
 
     bool CollapseCell1D(const unsigned int cell1D_index, Gedim::IMeshDAO &mesh) const;
 
-    void Mesh3DFromPolyhedra(const std::vector<Gedim::GeometryUtilities::Polyhedron>& polyhedra,
+    void Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &geometry_utilities,
+                             const std::vector<Gedim::GeometryUtilities::Polyhedron>& polyhedra,
                               Gedim::IMeshDAO &mesh) const;
 };
 
