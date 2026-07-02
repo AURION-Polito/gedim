@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include "MeshUtilities.hpp"
+#include "VTKUtilities.hpp"
 
 namespace GedimUnitTesting
 {
@@ -37,11 +38,42 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    const std::vector<Gedim::GeometryUtilities::Polyhedron> polyhedra = {};
+    std::vector<Gedim::GeometryUtilities::Polyhedron> polyhedra(4);
+    polyhedra.at(0) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                              1.0);
+    polyhedra.at(1) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                              1.0);
+    polyhedra.at(2) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 1.0, 0.0),
+                                                              1.0);
+    polyhedra.at(3) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 1.0, 0.0),
+                                                              1.0);
+
+    {
+      Gedim::VTKUtilities exporter;
+
+      for (const auto& polyhedron : polyhedra)
+      {
+        exporter.AddPolyhedron(polyhedron.Vertices,
+                               polyhedron.Edges,
+                               polyhedron.Faces);
+      }
+
+      exporter.Export(exportFolder + "/polyhedra.vtu");
+    }
 
     mesh_utilities.Mesh3DFromPolyhedra(geometry_utilities,
                                        polyhedra,
                                        mesh);
+
+    ASSERT_EQ(18,
+              mesh.Cell0DTotalNumber());
+    ASSERT_EQ(33,
+              mesh.Cell1DTotalNumber());
+    ASSERT_EQ(20,
+              mesh.Cell2DTotalNumber());
+    ASSERT_EQ(4,
+              mesh.Cell3DTotalNumber());
+
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
     mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
