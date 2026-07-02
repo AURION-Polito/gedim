@@ -29,8 +29,8 @@ namespace Gedim
 
     struct cell2D_filter
     {
-        std::vector<unsigned int> edges;
         std::vector<unsigned int> vertices;
+        std::vector<unsigned int> edges;
         unsigned int idx;
     };
 
@@ -169,9 +169,26 @@ namespace Gedim
     for (const auto& cell0D_filter : cell0Ds_filter)
       cell0Ds.col(cell0D_filter.idx) = cell0D_filter.coordinate;
 
+    std::vector<std::pair<unsigned int, unsigned int>> cell1Ds(cell1Ds_filter.size());
+    for (const auto& cell1D_filter : cell1Ds_filter)
+      cell1Ds.at(cell1D_filter.second) = cell1D_filter.first;
 
+    std::vector<std::vector<unsigned int>> cell2Ds_vertices(cell2Ds_filter.size());
+    std::vector<std::vector<unsigned int>> cell2Ds_edges(cell2Ds_filter.size());
+    for (const auto& cell2D_filter : cell2Ds_filter)
+    {
+      cell2Ds_vertices.at(cell2D_filter.second.idx) = cell2D_filter.second.vertices;
+      cell2Ds_edges.at(cell2D_filter.second.idx) = cell2D_filter.second.edges;
+    }
 
-
+    FillMesh3D(cell0Ds,
+               cell1Ds,
+               cell2Ds_vertices,
+               cell2Ds_edges,
+               polyhedra_cell0Ds,
+               polyhedra_cell1Ds,
+               polyhedra_cell2Ds,
+               mesh);
 
     std::cout<< "Num vertices "<< cell0Ds_filter.size()<< std::endl;
   }
