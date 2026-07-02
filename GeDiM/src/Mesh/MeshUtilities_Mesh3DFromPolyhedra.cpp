@@ -28,7 +28,9 @@ namespace Gedim
     };
 
     std::vector<std::vector<unsigned int>> polyhedra_cell0Ds(polyhedra.size());
+    std::vector<std::vector<unsigned int>> polyhedra_cell1Ds(polyhedra.size());
     std::list<cell0D_filter> cell0Ds_filter;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> cell1Ds_filter;
 
     {
       unsigned int p = 0;
@@ -66,6 +68,31 @@ namespace Gedim
           else
           {
             vertices.at(p_v) = found->idx;
+          }
+        }
+
+        auto& edges = polyhedra_cell1Ds.at(p);
+        edges.resize(polyhedron.Edges.cols());
+
+        for (unsigned int p_e = 0; p_e < polyhedron.Edges.cols(); ++p_e)
+        {
+          const Eigen::Vector2d edge = polyhedron.Edges.col(p_e);
+
+          std::pair<unsigned int, unsigned int> edge_extr =
+          { std::min(edge[0], edge[1]), std::max(edge[0], edge[1]) };
+
+          auto found = cell1Ds_filter.find(edge_extr);
+
+          if (found == cell1Ds_filter.end())
+          {
+            edges.at(p_e) = cell1Ds_filter.size();
+
+            cell1Ds_filter.insert(std::make_pair(edge_extr,
+                                                 static_cast<unsigned int>(cell1Ds_filter.size())));
+          }
+          else
+          {
+            edges.at(p_e) = found->second;
           }
         }
 
