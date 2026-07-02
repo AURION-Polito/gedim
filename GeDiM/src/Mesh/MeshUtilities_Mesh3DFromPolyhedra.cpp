@@ -76,7 +76,7 @@ namespace Gedim
 
         for (unsigned int p_e = 0; p_e < polyhedron.Edges.cols(); ++p_e)
         {
-          const Eigen::Vector2d edge = polyhedron.Edges.col(p_e);
+          const Eigen::Vector2i edge = polyhedron.Edges.col(p_e);
 
           std::pair<unsigned int, unsigned int> edge_extr =
           { std::min(edge[0], edge[1]), std::max(edge[0], edge[1]) };
