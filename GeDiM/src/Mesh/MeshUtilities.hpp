@@ -412,8 +412,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -858,6 +858,12 @@ class MeshUtilities final
     /// \brief Export 2D mesh to OFF file
     void ExportMeshToObjectFileFormat(const Gedim::IMeshDAO &mesh, const std::string &offFilePath) const;
 
+    /// \brief Import 2D mesh from OBJ file
+    void ImportWavefrontOBJ(const std::string &offFilePath, Gedim::IMeshDAO &mesh) const;
+
+    /// \brief Export 2D mesh to OBJ file
+    void ExportMeshToWavefrontOBJ(const Gedim::IMeshDAO &mesh, const std::string &offFilePath) const;
+
     /// \brief Change Polygon Mesh Markers from { 1, 2, 3, 4, ..., numVertices } for cell0Ds and { 5, 6, 7, 8, ..., 2 *
     /// numVertices } for cell1Ds to cell0DMarkers and cell1DMarkers \param polygonVertices the 2D polygon vertices,
     /// size 3xnumVertices \param cell0DMarkers the new cell0D markers, size 1xnumPolygonVertices \param cell1DMarkers
@@ -1237,6 +1243,10 @@ class MeshUtilities final
                                        Gedim::IMeshDAO &mesh) const;
 
     bool CollapseCell1D(const unsigned int cell1D_index, Gedim::IMeshDAO &mesh) const;
+
+    void Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &geometry_utilities,
+                             const std::vector<Gedim::GeometryUtilities::Polyhedron> &polyhedra,
+                             Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim

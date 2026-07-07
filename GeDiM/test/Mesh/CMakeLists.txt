@@ -32,10 +32,14 @@ list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_mesh_bulk_fa
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities2D_ImportTriangularMesh.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities3D_ImportRegnFaceMesh.hpp)
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_voro_interface.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_meshUtilities3D_Mesh3DFromPolyhedra.hpp)
 
 list(APPEND gedim_test_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/test_exportMeshUtilities.cpp)
 
 list(APPEND gedim_test_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/wavefront_OBJ_mesh_mock.obj
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 set(gedim_test_src_sources ${gedim_test_src_sources} PARENT_SCOPE)
 set(gedim_test_src_headers ${gedim_test_src_headers} PARENT_SCOPE)

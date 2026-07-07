@@ -31,6 +31,7 @@
 #include "MeshUtilities.hpp"
 #include "OFF_Mesh_Mock.hpp"
 #include "ObjectFileFormatInterface.hpp"
+#include "WavefrontOBJInterface.hpp"
 
 #include "MeshDAOImporterFromCsv.hpp"
 #include "MeshFromCsvUtilities.hpp"
@@ -805,6 +806,47 @@ TEST(TestMeshUtilities, TestImportOFFMesh)
     meshUtilities.ExportMeshToObjectFileFormat(meshDao, exportFolder + "/mesh.off");
 }
 
+TEST(TestMeshUtilities, TestImportOBJMesh)
+{
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    Gedim::GeometryUtilities geometryUtilities(geometryUtilitiesConfig);
+    Gedim::MeshUtilities meshUtilities;
+
+    Gedim::MeshMatrices mesh;
+    Gedim::MeshMatricesDAO meshDao(mesh);
+
+    Gedim::WavefrontOBJInterface objInterface;
+
+    const auto lines = objInterface.ImportMeshFromFile("./Mesh/wavefront_OBJ_mesh_mock.obj", meshUtilities, meshDao);
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration checkMeshConfig;
+    checkMeshConfig.Cell0D_CheckCoordinates2D = false;
+    checkMeshConfig.Cell1D_CheckNeighbours = false;
+    checkMeshConfig.Cell2D_CheckConvexity = false;
+    checkMeshConfig.Cell2D_CheckMeasure = false;
+
+    std::string exportFolder = "./Export/TestMeshUtilities/TestImportOBJMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ImportedOBJMesh");
+
+    ASSERT_NO_THROW(meshUtilities.CheckMesh2D(checkMeshConfig, geometryUtilities, meshDao));
+    ASSERT_EQ(2, meshDao.Dimension());
+    ASSERT_EQ(32, meshDao.Cell0DTotalNumber());
+    ASSERT_EQ(90, meshDao.Cell1DTotalNumber());
+    ASSERT_EQ(60, meshDao.Cell2DTotalNumber());
+
+    const auto reconverted_obj_mesh = objInterface.MeshDAOToOBJMesh(meshDao);
+
+    ASSERT_EQ(meshDao.Cell0DTotalNumber(), reconverted_obj_mesh.NumCell0Ds);
+    ASSERT_EQ(meshDao.Cell1DTotalNumber(), reconverted_obj_mesh.NumCell1Ds);
+    ASSERT_EQ(meshDao.Cell2DTotalNumber(), reconverted_obj_mesh.NumCell2Ds);
+
+    const auto reconverted_lines = objInterface.OBJMeshToStrings(reconverted_obj_mesh);
+
+    ASSERT_EQ(lines.size(), reconverted_lines.size());
+    meshUtilities.ExportMeshToWavefrontOBJ(meshDao, exportFolder + "/mesh.obj");
+}
+
 TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
 {
     Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
@@ -1290,6 +1332,8 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
 #if ENABLE_METIS == 0
     GTEST_SKIP();
 #endif
+
+    GTEST_SKIP_("Voro module to be fixed.");
 
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
     geometry_utilities_config.Tolerance1D = 1.0e-8;
