@@ -5,7 +5,7 @@ list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss2D_Tri
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss2D_Square.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss3D_Tetrahedron.hpp)
 list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss3D_Hexahedron.hpp)
-list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss3D_Tetrahedron_PositiveWeights.hpp)
+list(APPEND gedim_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss3D_Tetrahedron_PositiveWeights.hpp)
 
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss2D_Triangle.cpp)
 list(APPEND gedim_src_sources ${CMAKE_CURRENT_SOURCE_DIR}/Quadrature_Gauss2D_Square.cpp)
