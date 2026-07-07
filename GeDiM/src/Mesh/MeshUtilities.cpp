@@ -14,11 +14,11 @@
 #include "MEDIT_Utilities.hpp"
 #include "MeshDAOExporterToCsv.hpp"
 #include "ObjectFileFormatInterface.hpp"
-#include "WavefrontOBJInterface.hpp"
 #include "OpenVolumeMeshInterface.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshInterface.hpp"
+#include "WavefrontOBJInterface.hpp"
 #include <fstream>
 
 using namespace std;

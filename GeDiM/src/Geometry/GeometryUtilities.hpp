@@ -2477,11 +2477,11 @@ class GeometryUtilities final
                                 const double r0,
                                 const bool use_r0) const;
 
-    Eigen::MatrixXi ChangePolyhedronFaceOrientation(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
-                                         const unsigned int face_index) const;
+    Eigen::MatrixXi ChangePolyhedronFaceOrientation(const Gedim::GeometryUtilities::Polyhedron &polyhedron,
+                                                    const unsigned int face_index) const;
     /// \brief Change Polyhedron Face Orientation if face_normal_direction is false
-    std::vector<Eigen::MatrixXi> ChangePolyhedronFacesOrientation(const Gedim::GeometryUtilities::Polyhedron& polyhedron,
-                                         const std::vector<bool>& faces_normal_direction) const;
+    std::vector<Eigen::MatrixXi> ChangePolyhedronFacesOrientation(const Gedim::GeometryUtilities::Polyhedron &polyhedron,
+                                                                  const std::vector<bool> &faces_normal_direction) const;
 };
 
 } // namespace Gedim

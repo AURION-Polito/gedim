@@ -412,8 +412,8 @@ class MeshUtilities final
     };
 
   public:
-    MeshUtilities(){};
-    ~MeshUtilities(){};
+    MeshUtilities() {};
+    ~MeshUtilities() {};
 
     /// \brief Extract Active Cells from mesh
     /// \note the resulting mesh has no inactive elements
@@ -1245,8 +1245,8 @@ class MeshUtilities final
     bool CollapseCell1D(const unsigned int cell1D_index, Gedim::IMeshDAO &mesh) const;
 
     void Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &geometry_utilities,
-                             const std::vector<Gedim::GeometryUtilities::Polyhedron>& polyhedra,
-                              Gedim::IMeshDAO &mesh) const;
+                             const std::vector<Gedim::GeometryUtilities::Polyhedron> &polyhedra,
+                             Gedim::IMeshDAO &mesh) const;
 };
 
 } // namespace Gedim

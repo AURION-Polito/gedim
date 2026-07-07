@@ -39,40 +39,28 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     std::vector<Gedim::GeometryUtilities::Polyhedron> polyhedra(4);
-    polyhedra.at(0) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                              1.0);
-    polyhedra.at(1) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 0.0, 0.0),
-                                                              1.0);
-    polyhedra.at(2) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 1.0, 0.0),
-                                                              1.0);
-    polyhedra.at(3) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 1.0, 0.0),
-                                                              1.0);
+    polyhedra.at(0) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+    polyhedra.at(1) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 0.0, 0.0), 1.0);
+    polyhedra.at(2) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 1.0, 0.0), 1.0);
+    polyhedra.at(3) = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(1.0, 1.0, 0.0), 1.0);
 
     {
-      Gedim::VTKUtilities exporter;
+        Gedim::VTKUtilities exporter;
 
-      for (const auto& polyhedron : polyhedra)
-      {
-        exporter.AddPolyhedron(polyhedron.Vertices,
-                               polyhedron.Edges,
-                               polyhedron.Faces);
-      }
+        for (const auto &polyhedron : polyhedra)
+        {
+            exporter.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
+        }
 
-      exporter.Export(exportFolder + "/polyhedra.vtu");
+        exporter.Export(exportFolder + "/polyhedra.vtu");
     }
 
-    mesh_utilities.Mesh3DFromPolyhedra(geometry_utilities,
-                                       polyhedra,
-                                       mesh);
+    mesh_utilities.Mesh3DFromPolyhedra(geometry_utilities, polyhedra, mesh);
 
-    ASSERT_EQ(18,
-              mesh.Cell0DTotalNumber());
-    ASSERT_EQ(33,
-              mesh.Cell1DTotalNumber());
-    ASSERT_EQ(20,
-              mesh.Cell2DTotalNumber());
-    ASSERT_EQ(4,
-              mesh.Cell3DTotalNumber());
+    ASSERT_EQ(18, mesh.Cell0DTotalNumber());
+    ASSERT_EQ(33, mesh.Cell1DTotalNumber());
+    ASSERT_EQ(20, mesh.Cell2DTotalNumber());
+    ASSERT_EQ(4, mesh.Cell3DTotalNumber());
 
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 

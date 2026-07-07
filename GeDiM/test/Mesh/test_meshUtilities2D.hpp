@@ -817,9 +817,7 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
 
     Gedim::WavefrontOBJInterface objInterface;
 
-    const auto lines = objInterface.ImportMeshFromFile("./Mesh/wavefront_OBJ_mesh_mock.obj",
-                                                       meshUtilities,
-                                                       meshDao);
+    const auto lines = objInterface.ImportMeshFromFile("./Mesh/wavefront_OBJ_mesh_mock.obj", meshUtilities, meshDao);
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkMeshConfig;
     checkMeshConfig.Cell0D_CheckCoordinates2D = false;
