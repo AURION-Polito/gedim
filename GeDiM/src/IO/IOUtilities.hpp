@@ -49,6 +49,7 @@ class Output
     static std::string RedColor;
     static std::string GreenColor;
     static std::string YellowColor;
+    static std::string MagentaColor;
     static std::string EndColor;
 
     static int MaxElementToPrint;    ///< Max elements to print in vectors
