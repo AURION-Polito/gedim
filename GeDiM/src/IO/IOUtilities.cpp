@@ -78,6 +78,7 @@ string Output::BlueColor = "";
 string Output::RedColor = "";
 string Output::GreenColor = "";
 string Output::YellowColor = "";
+string Output::MagentaColor = "";
 string Output::EndColor = "";
 #endif // _WIN32
 int Output::MaxElementToPrint = 0;
