@@ -74,12 +74,12 @@ string Output::YellowColor = "\033[1;33m";
 string Output::MagentaColor = "\033[1;35m";
 string Output::EndColor = "\033[0m";
 #elif __APPLE__
-string Output::BlueColor = "";
-string Output::RedColor = "";
-string Output::GreenColor = "";
-string Output::YellowColor = "";
-string Output::MagentaColor = "";
-string Output::EndColor = "";
+string Output::BlueColor = "\033[1;34m";
+string Output::RedColor = "\033[1;31m";
+string Output::GreenColor = "\033[1;32m";
+string Output::YellowColor = "\033[1;33m";
+string Output::MagentaColor = "\033[1;35m";
+string Output::EndColor = "\033[0m";
 #endif // _WIN32
 int Output::MaxElementToPrint = 0;
 int Output::StartingIndexToPrint = 0;
