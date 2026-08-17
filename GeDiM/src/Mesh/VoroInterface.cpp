@@ -263,7 +263,8 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
                         if (faces_neighs[i] >= 0) // if it is a boundary face
                             throw runtime_error("wrong face");
 
-                        VoronoiPoints.col(countPoints++) = geometryUtilities.PolygonBarycenter(faceVertCoordinates);
+                        const double area = geometryUtilities.PolygonArea(faceVertCoordinates);
+                        VoronoiPoints.col(countPoints++) = geometryUtilities.PolygonCentroid(faceVertCoordinates, area);
                     }
                 }
             } while (vl.inc());
