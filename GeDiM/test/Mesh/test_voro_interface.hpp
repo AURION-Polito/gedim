@@ -18,6 +18,7 @@
 
 #include "MeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "Voro3D_Points_Mock.hpp"
 #include "VoroInterface.hpp"
 
 using namespace testing;
@@ -66,9 +67,6 @@ TEST(TestVoroInterface, TestVoroInterface2D)
 
     for (unsigned int num_cells = 0; num_cells < 100; num_cells++)
     {
-
-        std::cout << num_cells << std::endl;
-
         Gedim::MeshMatrices mesh_data;
         Gedim::MeshMatricesDAO mesh(mesh_data);
 
@@ -119,19 +117,55 @@ TEST(TestVoroInterface, TestVoroInterface2D)
     }
 }
 
-TEST(TestVoroInterface, TestVoroInterface3D)
+TEST(TestVoroInterface, TestPolyhedronCentroid)
+{
+    Gedim::GeometryUtilitiesConfig geometryUtilitiesConfig;
+    geometryUtilitiesConfig.Tolerance1D = 1.0e-14;
+    Gedim::GeometryUtilities geometry_utilities(geometryUtilitiesConfig);
+    Gedim::VoroInterface voro_interface(geometry_utilities);
+
+    // check cube centroid
+    {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =
+            geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+
+        const Eigen::Vector3d polyhedronCentroid = voro_interface.PolyhedronCentroid(polyhedron.Vertices, polyhedron.Faces);
+
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.x(), 0.5, geometry_utilities.Tolerance1D()));
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.y(), 0.5, geometry_utilities.Tolerance1D()));
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.z(), 0.5, geometry_utilities.Tolerance1D()));
+    }
+
+    // check tetrahedron
+    {
+        const Gedim::GeometryUtilities::Polyhedron polyhedron =
+            geometry_utilities.CreateTetrahedronWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                           Eigen::Vector3d(1.0, 0.0, 0.0),
+                                                           Eigen::Vector3d(0.0, 0.0, 1.0),
+                                                           Eigen::Vector3d(0.0, 1.0, 0.0));
+
+        const Eigen::Vector3d polyhedronCentroid = voro_interface.PolyhedronCentroid(polyhedron.Vertices, polyhedron.Faces);
+
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.x(), 1.0 / 4.0, geometry_utilities.Tolerance1D()));
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.y(), 1.0 / 4.0, geometry_utilities.Tolerance1D()));
+        ASSERT_TRUE(geometry_utilities.AreValuesEqual(polyhedronCentroid.z(), 1.0 / 4.0, geometry_utilities.Tolerance1D()));
+    }
+}
+
+TEST(TestVoroInterface, TestVoroInterface3DNotValidNeighFaces)
 {
 
 #if ENABLE_VORO == 0
     GTEST_SKIP_("Voro module not activated.");
 #endif
 
-    GTEST_SKIP_("Slow");
+    GTEST_SKIP_("Error in Voro++");
 
     Gedim::MeshUtilities mesh_utilities;
     Gedim::MeshUtilities::MeshGeometricData3D mesh_geometric_data;
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
     geometry_utilities_config.Tolerance1D = 1.0e-12;
+    geometry_utilities_config.Tolerance2D = 1.0e-13;
     geometry_utilities_config.Tolerance3D = 1.0e-14;
     Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
 
@@ -159,42 +193,118 @@ TEST(TestVoroInterface, TestVoroInterface3D)
     std::string exportFolderTest = exportFolder + "/Voro3D";
     Gedim::Output::CreateFolder(exportFolderTest);
 
-    // const unsigned int numIterations = 5;
-    // const unsigned int voro_seed = 35;
-    // for (unsigned int num_cells = 2411; num_cells < 2412; num_cells++)
-    // {
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
 
-    const unsigned int numIterations = 5;
-    const unsigned int voro_seed = 35;
+    Eigen::MatrixXd voronoi_points = Voro3D_Points_Mock::GetPoints().transpose();
+
+    voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, 0, voronoi_points, mesh);
+
+    {
+        Gedim::VTKUtilities vtk_utilities;
+        vtk_utilities.AddPoints(voronoi_points);
+        vtk_utilities.Export(exportFolderTest + "/Points.vtu");
+    }
+
+    mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
+    mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration config;
+    config.Cell2D_CheckMeasure = false;
+    config.Cell1D_CheckMeasure = false;
+    mesh_utilities.CheckMesh3D(config, geometry_utilities, mesh);
+
+    for (unsigned int f = 0; f < mesh.Cell2DTotalNumber(); f++)
+    {
+        Gedim::Output::Assert(mesh.Cell2DNumberNeighbourCell3D(f) > 0);
+
+        Gedim::Output::Assert((mesh.Cell2DMarker(f) != 0 && mesh.Cell2DNumberNeighbourCell3D(f) != 2) ||
+                              (mesh.Cell2DMarker(f) == 0 && mesh.Cell2DNumberNeighbourCell3D(f) != 1));
+
+        const std::vector<unsigned int> face_vertices = mesh.Cell2DVertices(f);
+        for (unsigned int n = 0; n < mesh.Cell2DNumberNeighbourCell3D(f); n++)
+        {
+            const unsigned int cell3DIndex = mesh.Cell2DNeighbourCell3D(f, n);
+            const std::vector<unsigned int> cell3D_vertices = mesh.Cell3DVertices(cell3DIndex);
+            unsigned int count_v = 0;
+            for (unsigned int v1 = 0; v1 < face_vertices.size(); v1++)
+            {
+                for (unsigned int v2 = 0; v2 < cell3D_vertices.size(); v2++)
+                {
+                    if (face_vertices[v1] == cell3D_vertices[v2])
+                    {
+                        count_v++;
+                        break;
+                    }
+                }
+            }
+
+            Gedim::Output::Assert(count_v == face_vertices.size());
+        }
+    }
+}
+
+TEST(TestVoroInterface, TestVoroInterface3D)
+{
+
+#if ENABLE_VORO == 0
+    GTEST_SKIP_("Voro module not activated.");
+#endif
+
+    GTEST_SKIP_("Slow");
+
+    Gedim::MeshUtilities mesh_utilities;
+    Gedim::MeshUtilities::MeshGeometricData3D mesh_geometric_data;
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1.0e-12;
+    geometry_utilities_config.Tolerance2D = 1.0e-13;
+    geometry_utilities_config.Tolerance3D = 1.0e-14;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Eigen::MatrixXd vertices = Eigen::MatrixXd::Zero(3, 8);
+    vertices.row(0) << 0.0, 2.0, 2.0, 0.0, 0.0, 2.0, 2.0, 0.0; // x
+    vertices.row(1) << 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0; // y
+    vertices.row(2) << 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0; // z up
+    Eigen::MatrixXi edges = Eigen::MatrixXi::Zero(2, 12);
+    edges.row(0) << 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3;
+    edges.row(1) << 1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7;
+    std::vector<Eigen::MatrixXi> faces;
+    faces.assign(6, Eigen::MatrixXi::Zero(2, 4));
+    faces[0] << 3, 2, 1, 0, 2, 1, 0, 3;
+    faces[1] << 4, 5, 6, 7, 4, 5, 6, 7;
+    faces[2] << 0, 1, 5, 4, 0, 9, 4, 8;
+    faces[3] << 1, 2, 6, 5, 1, 10, 5, 9;
+    faces[4] << 2, 3, 7, 6, 2, 11, 6, 10;
+    faces[5] << 3, 0, 4, 7, 3, 8, 7, 11;
+
+    Gedim::VoroInterface voro_interface(geometry_utilities);
+
+    std::string exportFolder = "./Export/TestVoro";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    std::string exportFolderTest = exportFolder + "/Voro3D";
+    Gedim::Output::CreateFolder(exportFolderTest);
+
+    const unsigned int numIterations = 20;
+    const unsigned int random_seed = 5;
+
     for (unsigned int num_cells = 0; num_cells < 200; num_cells++)
     {
-
         Gedim::MeshMatrices mesh_data;
         Gedim::MeshMatricesDAO mesh(mesh_data);
 
-        std::cout << voro_seed << " " << num_cells << std::endl;
-
-        Eigen::MatrixXd voronoi_points = voro_interface.GenerateRandomPoints(vertices, num_cells, voro_seed);
+        Eigen::MatrixXd voronoi_points = voro_interface.GenerateRandomPoints(vertices, num_cells, random_seed);
 
         if (voronoi_points.cols() > 0)
-        {
-            Gedim::VTKUtilities exporter;
-
-            exporter.AddPoints(voronoi_points);
-            exporter.Export(exportFolder + "/voro_points.vtu");
-        }
-
-        voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, voronoi_points, mesh);
-        std::cout << "created" << std::endl;
-
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
-
         {
             Gedim::VTKUtilities vtk_utilities;
             vtk_utilities.AddPoints(voronoi_points);
             vtk_utilities.Export(exportFolderTest + "/Points.vtu");
         }
 
+        voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, voronoi_points, mesh);
+
+        mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
         mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;

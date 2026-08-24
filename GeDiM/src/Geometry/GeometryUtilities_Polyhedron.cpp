@@ -431,24 +431,19 @@ vector<Matrix3d> GeometryUtilities::PolyhedronFaceRotationMatrices(const vector<
                                                                    const vector<Eigen::Vector3d> &polyhedronFaceNormals,
                                                                    const vector<Eigen::Vector3d> &polyhedronFaceTranslations) const
 {
-    vector<Matrix3d> rotationMatrices;
-    rotationMatrices.reserve(polyhedronFaceVertices.size());
-
+    vector<Matrix3d> rotationMatrices(polyhedronFaceVertices.size());
     for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
-    {
-        rotationMatrices.push_back(
-            PolygonRotationMatrix(polyhedronFaceVertices[f], polyhedronFaceNormals[f], polyhedronFaceTranslations[f]));
-    }
+        rotationMatrices[f] =
+            PolygonRotationMatrix(polyhedronFaceVertices[f], polyhedronFaceNormals[f], polyhedronFaceTranslations[f]);
 
     return rotationMatrices;
 }
 // ***************************************************************************
 vector<Vector3d> GeometryUtilities::PolyhedronFaceTranslations(const vector<Eigen::MatrixXd> &polyhedronFaceVertices) const
 {
-    vector<Vector3d> translations;
-    translations.reserve(polyhedronFaceVertices.size());
+    vector<Vector3d> translations(polyhedronFaceVertices.size());
     for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
-        translations.push_back(PolygonTranslation(polyhedronFaceVertices[f]));
+        translations[f] = PolygonTranslation(polyhedronFaceVertices[f]);
 
     return translations;
 }
@@ -483,11 +478,10 @@ std::vector<std::vector<unsigned int>> GeometryUtilities::PolyhedronFacesUnalign
 // ***************************************************************************
 vector<Vector3d> GeometryUtilities::PolyhedronFaceNormals(const vector<Eigen::MatrixXd> &polyhedronFaceVertices) const
 {
-    vector<Vector3d> faceNormals;
-    faceNormals.reserve(polyhedronFaceVertices.size());
+    vector<Vector3d> faceNormals(polyhedronFaceVertices.size());
 
     for (unsigned int f = 0; f < polyhedronFaceVertices.size(); f++)
-        faceNormals.push_back(PolygonNormal(polyhedronFaceVertices[f]));
+        faceNormals[f] = PolygonNormal(polyhedronFaceVertices[f]);
 
     return faceNormals;
 }

@@ -2191,7 +2191,6 @@ void MeshUtilities::CreatePolygonalMesh(const Gedim::GeometryUtilities &geometry
                                         const unsigned int random_seed) const
 {
     VoroInterface voroInterface(geometryUtilities);
-
     voroInterface.GenerateVoronoiTassellations2D(polygonVertices, numPoints, numIterations, mesh, random_seed);
 }
 // ***************************************************************************
