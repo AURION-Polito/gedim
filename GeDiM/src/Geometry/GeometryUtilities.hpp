@@ -1985,6 +1985,10 @@ class GeometryUtilities final
     /// numPoints
     std::vector<unsigned int> UnalignedPoints(const Eigen::MatrixXd &points, const unsigned int numDesiredUnalignedPoints = 0) const;
 
+    unsigned int FindPolygonThirdUnalignedPoint(const Eigen::MatrixXd &polygon,
+                                                const unsigned int first_vertex,
+                                                const unsigned int second_vertex) const;
+
     /// \brief Extract the circumscribed unaligned points (minimum 4) in a polyhedron
     /// \return the unaligned points, size numUnalignedPoints, 4 <= numUnalignedPoints <= numPoints
     /// \warning works only for convex polyhedron
