@@ -104,7 +104,7 @@ class VoroInterface final
 
     /// @brief Generate a 2D centroidal Voronoi tessellation from prescribed seeds.
     /// The function computes a centroidal Voronoi tessellation inside the input
-    /// parallelogram using the points contained in @p VoronoiPoints as initial seeds.
+    /// box (must be a square) using the points contained in @p VoronoiPoints as initial seeds.
     /// The seed positions are updated during the iterative relaxation process.
     /// On output, @p VoronoiPoints contains the final seed positions.
     /// @param polygonVertices Vertices of the bounding polygon.
@@ -112,7 +112,6 @@ class VoroInterface final
     /// @param VoronoiPoints Input/output matrix containing the Voronoi seed
     ///                      coordinates.
     /// @param mesh Mesh object where the generated tessellation is stored.
-
     void GenerateVoronoiTassellations2D(const Eigen::MatrixXd &polygonVertices,
                                         const unsigned int &numIterations,
                                         Eigen::MatrixXd &VoronoiPoints,
@@ -144,6 +143,8 @@ class VoroInterface final
                                         const unsigned int &num_iterations,
                                         Eigen::MatrixXd &VoronoiPoints,
                                         Gedim::IMeshDAO &mesh);
+
+    Eigen::Vector3d PolyhedronCentroid(const Eigen::MatrixXd &vertices, const std::vector<Eigen::MatrixXi> &faces);
 };
 
 } // namespace Gedim

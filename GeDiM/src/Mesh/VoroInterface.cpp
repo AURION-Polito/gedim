@@ -28,6 +28,58 @@ VoroInterface::VoroInterface(const Gedim::GeometryUtilities &geometryUtilities) 
 {
 }
 // ************************************************************************* //
+Eigen::Vector3d VoroInterface::PolyhedronCentroid(const Eigen::MatrixXd &vertices, const std::vector<Eigen::MatrixXi> &faces)
+{
+
+    const vector<Eigen::MatrixXd> Faces3DVertices = geometryUtilities.PolyhedronFaceVertices(vertices, faces);
+    const vector<Eigen::Vector3d> FacesNormals = geometryUtilities.PolyhedronFaceNormals(Faces3DVertices);
+    const vector<bool> FacesNormalDirections =
+        geometryUtilities.PolyhedronFaceNormalDirections(Faces3DVertices, geometryUtilities.PolyhedronBarycenter(vertices), FacesNormals);
+
+    Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
+    double volume = 0.0;
+
+    for (unsigned int f = 0; f < faces.size(); f++)
+    {
+        Eigen::VectorXi face_vertices = faces[f].row(0);
+        const unsigned int num_face_vertices = face_vertices.size();
+
+        if (!FacesNormalDirections[f])
+        {
+            Eigen::VectorXi tmp = face_vertices;
+            for (unsigned int i = 0; i < num_face_vertices; i++)
+                face_vertices[i] = tmp[num_face_vertices - 1 - i];
+        }
+
+        const Eigen::Vector3d &a = vertices.col(face_vertices(0));
+
+        for (unsigned int k = 1; k < num_face_vertices - 1; k++)
+        {
+            const Eigen::Vector3d &b = vertices.col(face_vertices(k));
+            const Eigen::Vector3d &c = vertices.col(face_vertices(k + 1));
+
+            const Eigen::Vector3d n_hat = (b - a).cross(c - a);
+
+            volume += a.dot(n_hat);
+
+            const Eigen::Vector3d ab = a + b;
+            const Eigen::Vector3d bc = b + c;
+            const Eigen::Vector3d ca = c + a;
+
+            centroid += (n_hat.array() * (ab.array() * ab.array() + bc.array() * bc.array() + ca.array() * ca.array())).matrix();
+        }
+    }
+
+    volume = volume / 6.0;
+
+    if (volume < geometryUtilities.Tolerance3D())
+        throw std::runtime_error("volume is wrong: " + std::to_string(volume));
+
+    centroid = centroid / (48.0 * volume);
+
+    return centroid;
+}
+// ************************************************************************* //
 #if ENABLE_VORO == 0
 void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &polyhedronVertices,
                                                    const Eigen::MatrixXi &polyhedronEdges,
@@ -271,8 +323,6 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
         }
     }
 
-    double vvol = 0.0;
-
     // Get cell number
     std::map<unsigned int, Cell0D> cell0Ds;
     std::map<unsigned int, Cell2D> cell2Ds;
@@ -451,7 +501,6 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
 #endif
 
                 cell2Ds.insert({cell2DIndex, cell2D});
-                vvol += c.volume();
             }
         } while (vl.inc());
     }
@@ -659,19 +708,50 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
         mesh.Cell0DSetState(cell0DIndex, true);
         mesh.Cell0DInsertCoordinates(cell0DIndex, cell0D.second.coordinates);
 
-        const bool is_xmin =
-            (geometryUtilities.IsValueZero(cell0D.second.coordinates(0) - x_min, geometryUtilities.Tolerance1D())); // l == 0
-        const bool is_xmax =
-            (geometryUtilities.IsValueZero(cell0D.second.coordinates(0) - x_max, geometryUtilities.Tolerance1D())); // l == (numLengthPoints - 1)
-        const bool is_ymin =
-            (geometryUtilities.IsValueZero(cell0D.second.coordinates(1) - y_min, geometryUtilities.Tolerance1D())); // h == 0
-        const bool is_ymax =
-            (geometryUtilities.IsValueZero(cell0D.second.coordinates(1) - y_max, geometryUtilities.Tolerance1D())); // h == (numHeightPoints - 1)
+        // const bool is_xmin =
+        //     (geometryUtilities.IsValueZero(cell0D.second.coordinates(0) - x_min, geometryUtilities.Tolerance1D()));
+        //     // l == 0
+        // const bool is_xmax =
+        //     (geometryUtilities.IsValueZero(cell0D.second.coordinates(0) - x_max, geometryUtilities.Tolerance1D()));
+        //     // l == (numLengthPoints - 1)
+        // const bool is_ymin =
+        //     (geometryUtilities.IsValueZero(cell0D.second.coordinates(1) - y_min, geometryUtilities.Tolerance1D()));
+        //     // h == 0
+        // const bool is_ymax =
+        //     (geometryUtilities.IsValueZero(cell0D.second.coordinates(1) - y_max, geometryUtilities.Tolerance1D()));
+        //     // h == (numHeightPoints - 1)
 
-        const unsigned int marker = 1 * (is_xmin && is_ymin) + 2 * (is_xmax && is_ymin) + 4 * (is_xmin && is_ymax) +
-                                    3 * (is_xmax && is_ymax) + 5 * (is_ymin && !is_xmin && !is_xmax) +
-                                    7 * (is_ymax && !is_xmin && !is_xmax) + 8 * (is_xmin && !is_ymin && !is_ymax) +
-                                    6 * (is_xmax && !is_ymin && !is_ymax);
+        // const unsigned int marker = 1 * (is_xmin && is_ymin) + 2 * (is_xmax && is_ymin) + 4 * (is_xmin && is_ymax) +
+        //                             3 * (is_xmax && is_ymax) + 5 * (is_ymin && !is_xmin && !is_xmax) +
+        //                             7 * (is_ymax && !is_xmin && !is_xmax) + 8 * (is_xmin && !is_ymin && !is_ymax) +
+        //                             6 * (is_xmax && !is_ymin && !is_ymax);
+
+        unsigned int marker = 0;
+        if (geometryUtilities.IsValueZero((cell0D.second.coordinates - domain_vertices.col(0)).norm(), geometryUtilities.Tolerance1D()))
+            marker = 1;
+        else if (geometryUtilities.IsValueZero((cell0D.second.coordinates - domain_vertices.col(1)).norm(),
+                                               geometryUtilities.Tolerance1D()))
+            marker = 2;
+        else if (geometryUtilities.IsValueZero((cell0D.second.coordinates - domain_vertices.col(2)).norm(),
+                                               geometryUtilities.Tolerance1D()))
+            marker = 3;
+        else if (geometryUtilities.IsValueZero((cell0D.second.coordinates - domain_vertices.col(3)).norm(),
+                                               geometryUtilities.Tolerance1D()))
+            marker = 4;
+        else
+        {
+            for (unsigned int e = 0; e < cell0D.second.neighbors_1D.size(); e++)
+            {
+                if (!cell1Ds[cell0D.second.neighbors_1D[e]].active)
+                    continue;
+
+                if (cell1Ds[cell0D.second.neighbors_1D[e]].marker != 0)
+                {
+                    marker = cell1Ds[cell0D.second.neighbors_1D[e]].marker;
+                    break;
+                }
+            }
+        }
 
         mesh.Cell0DSetMarker(cell0DIndex, marker);
         cell0DIndex++;
@@ -747,13 +827,6 @@ void VoroInterface::GenerateVoronoiTassellations2D(const Eigen::MatrixXd &domain
         gvol += geometryUtilities.PolygonArea(mesh.Cell2DVerticesCoordinates(f));
         cell2DIndex++;
     }
-
-    // if (!geometryUtilities.AreValuesEqual(cvol, vvol, geometryUtilities.Tolerance2D()))
-    // {
-    //     std::cout.precision(16);
-    //     std::cout << std::scientific << cvol << " vs " << vvol << " " << gvol << std::endl;
-    //     // throw runtime_error("Error generating Voronoi cells: areas do not mathc each other");
-    // }
 
     if (!geometryUtilities.AreValuesEqual(cvol, gvol, geometryUtilities.Tolerance2D()))
         throw runtime_error("Error generating Voronoi cells: areas do not match each other");
@@ -907,7 +980,7 @@ void VoroInterface::GenerateVoronoiTassellations3D(const Eigen::MatrixXd &domain
                         }
                     }
 
-                    VoronoiPoints.col(countPoints++) = geometryUtilities.PolyhedronBarycenter(cell_vertices);
+                    VoronoiPoints.col(countPoints++) = PolyhedronCentroid(cell_vertices, Cell3DsFaces);
                 }
             } while (vl.inc());
         }
