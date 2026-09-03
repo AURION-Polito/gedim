@@ -265,7 +265,7 @@ vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd &points
         if (IsValueZero(orientation_polar, Tolerance1D()))
         {
             const double squared_norm_a_p0 = (p0.Point - a.Point).squaredNorm();
-            return IsValueGreater(squared_norm_b_p0, squared_norm_a_p0, Tolerance1DSquared());
+            return IsValueGreaterOrEqual(squared_norm_b_p0, squared_norm_a_p0, Tolerance1DSquared());
         }
 
         return IsValueNegative(orientation_polar, Tolerance1D());
@@ -300,6 +300,7 @@ vector<unsigned int> GeometryUtilities::ConvexHull(const Eigen::MatrixXd &points
             const double norm_b_c = (st[st.size() - 2].Point - structPoints[i].Point).norm();
             const double orientation_polar =
                 PolarAngle(st.back().Point, structPoints.at(i).Point, st.at(st.size() - 2).Point, norm_b_a, norm_b_c);
+
             if (IsValueNegative(orientation_polar, Tolerance1D()) ||
                 (includeCollinear && IsValueZero(orientation_polar, Tolerance1D())))
                 break;
