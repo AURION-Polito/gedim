@@ -358,124 +358,123 @@ GeometryUtilities::IntersectionPolyhedronPlaneResult GeometryUtilities::Intersec
     result.EdgeIntersections.resize(numPolyhedronEdges);
     result.FaceIntersections.resize(numPolyhedronFaces);
 
-    for (auto &vertexIntersection : result.VertexIntersections)
-        vertexIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::NoIntersection;
     for (auto &faceIntersection : result.FaceIntersections)
         faceIntersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::NoIntersection;
 
+    for (unsigned int v = 0; v < numPolyhedronVertices; v++)
+    {
+      const Eigen::Vector3d vertex = polyhedronVertices.col(v);
+
+      auto& vertex_intersection = result.VertexIntersections.at(v);
+      vertex_intersection.PlanePosition = PointPlanePosition(PointPlaneDistance(vertex,
+                                                                                planeNormal,
+                                                                                planeOrigin));
+      switch (vertex_intersection.PlanePosition)
+      {
+        case PointPlanePositionTypes::Negative:
+        case PointPlanePositionTypes::Positive:
+          vertex_intersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::NoIntersection;
+          break;
+        case PointPlanePositionTypes::OnPlane:
+        {
+          vertex_intersection.Type = Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
+          numberOfIntersections++;
+
+          intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
+          intersectionCoordinates.push_back(vertex);
+          GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
+          intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
+          intersection.VertexId = v;
+        }
+          break;
+        default:
+          throw std::runtime_error("Unknown vertex plane position");
+      }
+    }
+
     for (unsigned int e = 0; e < numPolyhedronEdges; e++)
     {
+        auto& edge_intersection = result.EdgeIntersections[e];
+
         const unsigned int edgeOriginId = polyhedronEdges(0, e);
         const unsigned int edgeEndId = polyhedronEdges(1, e);
 
         const Vector3d edgeOrigin = polyhedronVertices.col(edgeOriginId);
         const Vector3d edgeEnd = polyhedronVertices.col(edgeEndId);
 
-        result.EdgeIntersections[e].Intersection =
-            GeometryUtilities::IntersectionSegmentPlane(edgeOrigin, edgeEnd, planeNormal, planeOrigin);
-        const IntersectionSegmentPlaneResult &intersectionEdge = result.EdgeIntersections[e].Intersection;
+        const auto& origin_intersection = result.VertexIntersections.at(edgeOriginId);
+        const auto& end_intersection = result.VertexIntersections.at(edgeEndId);
 
-        if (intersectionEdge.Type == Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection)
-            continue;
+        if (origin_intersection.Type == Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Unknown ||
+            end_intersection.Type == Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Unknown)
+          throw std::runtime_error("Unknown edge plane position");
 
-        if (intersectionEdge.Type == Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections)
+        if (origin_intersection.Type == Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection &&
+            end_intersection.Type == Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection)
         {
-            // edge intersection
-            if (result.VertexIntersections[edgeOriginId].Type !=
-                Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection)
-            {
-                result.VertexIntersections[edgeOriginId].Type =
-                    Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
-                numberOfIntersections++;
-
-                intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
-                intersectionCoordinates.push_back(polyhedronVertices.col(edgeOriginId));
-                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
-                intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
-                intersection.VertexId = edgeOriginId;
-            }
-
-            if (result.VertexIntersections[edgeEndId].Type !=
-                Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection)
-            {
-                result.VertexIntersections[edgeEndId].Type =
-                    Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
-                numberOfIntersections++;
-
-                intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
-                intersectionCoordinates.push_back(polyhedronVertices.col(edgeEndId));
-                GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
-                intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
-                intersection.VertexId = edgeEndId;
-            }
-
-            continue;
+          edge_intersection.Intersection.Type =
+              Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections;
+        }
+        else if (origin_intersection.PlanePosition == end_intersection.PlanePosition)
+        {
+          edge_intersection.Intersection.Type =
+              Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection;
+        }
+        else
+        {
+          edge_intersection.Intersection =
+            GeometryUtilities::IntersectionSegmentPlane(edgeOrigin, edgeEnd, planeNormal, planeOrigin);
         }
 
-        switch (intersectionEdge.Type)
+        switch (edge_intersection.Intersection.Type)
         {
-        case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection: {
-            switch (intersectionEdge.SingleIntersection.Type)
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::NoIntersection:
+            continue;
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::MultipleIntersections:
+            continue;
+          case Gedim::GeometryUtilities::IntersectionSegmentPlaneResult::Types::SingleIntersection:
+          {
+            switch (edge_intersection.Intersection.SingleIntersection.Type)
             {
-            case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin: {
-                // edge origin intersection (vertex)
-                if (result.VertexIntersections[edgeOriginId].Type !=
-                    Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection)
-                {
-                    result.VertexIntersections[edgeOriginId].Type =
-                        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
-                    numberOfIntersections++;
-
-                    intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
-                    intersectionCoordinates.push_back(polyhedronVertices.col(edgeOriginId));
-                    GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
-                    intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
-                    intersection.VertexId = edgeOriginId;
-                }
-            }
-            break;
-            case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment: {
+              case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentOrigin:
+              {
+                Gedim::Output::Assert(origin_intersection.Type ==
+                                      Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection);
+              }
+              break;
+              case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd:
+              {
+                Gedim::Output::Assert(end_intersection.Type ==
+                                      Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection);
+              }
+              break;
+              case Gedim::GeometryUtilities::PointSegmentPositionTypes::InsideSegment:
+              {
                 // inside edge intersection
                 numberOfIntersections++;
 
                 intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
-                intersectionCoordinates.push_back(edgeOrigin + intersectionEdge.SingleIntersection.CurvilinearCoordinate *
+                intersectionCoordinates.push_back(edgeOrigin +
+                                                  edge_intersection.Intersection.SingleIntersection.CurvilinearCoordinate *
                                                                    (edgeEnd - edgeOrigin));
                 GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
                 intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Edge;
                 intersection.EdgeId = e;
-            }
-            break;
-            case Gedim::GeometryUtilities::PointSegmentPositionTypes::OnSegmentEnd: {
-                // edge end intersection (vertex)
-                if (result.VertexIntersections[edgeEndId].Type !=
-                    Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection)
-                {
-                    result.VertexIntersections[edgeEndId].Type =
-                        Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Intersection;
-                    numberOfIntersections++;
-
-                    intersectionsList.push_back(GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection());
-                    intersectionCoordinates.push_back(polyhedronVertices.col(edgeEndId));
-                    GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection &intersection = intersectionsList.back();
-                    intersection.Type = GeometryUtilities::IntersectionPolyhedronPlaneResult::Intersection::Types::Vertex;
-                    intersection.VertexId = edgeEndId;
-                }
-            }
-            break;
-            default:
+              }
+              break;
+              default:
                 continue;
             }
-        }
-        break;
-        default:
+          }
+          break;
+          default:
             throw runtime_error("Unknwon intersection edge type");
         }
     }
 
     switch (numberOfIntersections)
     {
-    case 0: {
+      case 0: {
         // no intersection found
         result.Type = IntersectionPolyhedronPlaneResult::Types::None;
     }
@@ -536,8 +535,7 @@ GeometryUtilities::IntersectionPolyhedronPlaneResult GeometryUtilities::Intersec
                 }
             }
 
-            if (!faceEdgesIntersection)
-                continue;
+            Gedim::Output::Assert(faceEdgesIntersection);
 
             result.FaceIntersections[f].Type =
                 Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::FaceIntersection::Types::Intersection;

@@ -554,6 +554,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
+            Gedim::GeometryUtilities::PointPlanePositionTypes PlanePosition;
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types Type =
                 Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Unknown;
         };
