@@ -103,27 +103,31 @@ void Gedim::MeshUtilities::Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &g
 
             for (unsigned int p_f = 0; p_f < polyhedron.Faces.size(); ++p_f)
             {
+                Eigen::MatrixXd face_coordinates(3, polyhedron.Faces.at(p_f).cols());
                 std::vector<unsigned int> face_vertices(polyhedron.Faces.at(p_f).cols());
                 std::vector<unsigned int> face_edges(polyhedron.Faces.at(p_f).cols());
 
-                unsigned int prev_p_f_v_max = 0;
                 unsigned int p_f_v_max = 0;
-                unsigned int next_p_f_v_max = 0;
                 unsigned int vertex_max = 0;
 
                 for (unsigned int p_f_v = 0; p_f_v < face_vertices.size(); ++p_f_v)
                 {
                     face_vertices.at(p_f_v) = vertices.at(polyhedron.Faces.at(p_f)(0, p_f_v));
                     face_edges.at(p_f_v) = edges.at(polyhedron.Faces.at(p_f)(1, p_f_v));
+                    face_coordinates.col(p_f_v) = polyhedron.Vertices.col(polyhedron.Faces.at(p_f)(0, p_f_v));
 
                     if (vertex_max < face_vertices.at(p_f_v))
                     {
                         vertex_max = face_vertices.at(p_f_v);
                         p_f_v_max = p_f_v;
-                        prev_p_f_v_max = (p_f_v == 0) ? face_vertices.size() - 1 : p_f_v - 1;
-                        next_p_f_v_max = (p_f_v + 1) % face_vertices.size();
                     }
                 }
+
+                const unsigned int prev_p_f_v_max = (p_f_v_max == 0) ? face_vertices.size() - 1 : p_f_v_max - 1;
+                const unsigned int next_p_f_v_max =
+                    geometry_utilities.FindPolygonThirdUnalignedPoint(face_coordinates, prev_p_f_v_max, p_f_v_max);
+                if (next_p_f_v_max >= face_coordinates.cols())
+                    throw std::runtime_error("Face not correct!");
 
                 std::array<unsigned int, 3> face_key = {face_vertices.at(prev_p_f_v_max),
                                                         face_vertices.at(p_f_v_max),

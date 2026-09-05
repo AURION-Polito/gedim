@@ -554,6 +554,7 @@ class GeometryUtilities final
                 NoIntersection = 2
             };
 
+            Gedim::GeometryUtilities::PointPlanePositionTypes PlanePosition;
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types Type =
                 Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult::VertexIntersection::Types::Unknown;
         };
@@ -1984,6 +1985,10 @@ class GeometryUtilities final
     /// \return the unaligned points indices counterclockwise, size numUnalignedPoints, 2 <= numUnalignedPoints <=
     /// numPoints
     std::vector<unsigned int> UnalignedPoints(const Eigen::MatrixXd &points, const unsigned int numDesiredUnalignedPoints = 0) const;
+
+    unsigned int FindPolygonThirdUnalignedPoint(const Eigen::MatrixXd &polygon,
+                                                const unsigned int first_vertex,
+                                                const unsigned int second_vertex) const;
 
     /// \brief Extract the circumscribed unaligned points (minimum 4) in a polyhedron
     /// \return the unaligned points, size numUnalignedPoints, 4 <= numUnalignedPoints <= numPoints
