@@ -1802,26 +1802,22 @@ unsigned int GeometryUtilities::FindPolygonThirdUnalignedPoint(const Eigen::Matr
                                                                const unsigned int first_vertex,
                                                                const unsigned int second_vertex) const
 {
-  const Eigen::Vector3d segment_origin = polygon.col(first_vertex);
-  const auto segment_tangent = SegmentTangent(segment_origin,
-                                              polygon.col(second_vertex));
+    const Eigen::Vector3d segment_origin = polygon.col(first_vertex);
+    const auto segment_tangent = SegmentTangent(segment_origin, polygon.col(second_vertex));
 
-  unsigned int num_tests = 0;
-  unsigned int third_vertex = (second_vertex + 1) % polygon.cols();
-  while (PointsAreOnLine(polygon.col(third_vertex),
-                         segment_origin,
-                         segment_tangent).at(0) &&
-         (num_tests + 2) < polygon.cols())
-  {
-    third_vertex = (third_vertex + 1) % polygon.cols();
-    num_tests++;
-  }
+    unsigned int num_tests = 0;
+    unsigned int third_vertex = (second_vertex + 1) % polygon.cols();
+    while (PointsAreOnLine(polygon.col(third_vertex), segment_origin, segment_tangent).at(0) &&
+           (num_tests + 2) < polygon.cols())
+    {
+        third_vertex = (third_vertex + 1) % polygon.cols();
+        num_tests++;
+    }
 
-  if (third_vertex == first_vertex ||
-      third_vertex == second_vertex)
-    return polygon.cols(); // not found
+    if (third_vertex == first_vertex || third_vertex == second_vertex)
+        return polygon.cols(); // not found
 
-  return third_vertex;
+    return third_vertex;
 }
 // ***************************************************************************
 } // namespace Gedim

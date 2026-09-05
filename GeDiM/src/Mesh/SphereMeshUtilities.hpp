@@ -34,7 +34,7 @@ class SphereMeshUtilities final
     {
     }
 
-    virtual ~SphereMeshUtilities(){};
+    virtual ~SphereMeshUtilities() {};
 
     Eigen::MatrixXd circle(const Eigen::Vector3d &center, const double &radius, const unsigned int &num_points) const
     {

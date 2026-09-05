@@ -103,7 +103,7 @@ void Gedim::MeshUtilities::Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &g
 
             for (unsigned int p_f = 0; p_f < polyhedron.Faces.size(); ++p_f)
             {
-              Eigen::MatrixXd face_coordinates(3, polyhedron.Faces.at(p_f).cols());
+                Eigen::MatrixXd face_coordinates(3, polyhedron.Faces.at(p_f).cols());
                 std::vector<unsigned int> face_vertices(polyhedron.Faces.at(p_f).cols());
                 std::vector<unsigned int> face_edges(polyhedron.Faces.at(p_f).cols());
 
@@ -124,11 +124,10 @@ void Gedim::MeshUtilities::Mesh3DFromPolyhedra(const Gedim::GeometryUtilities &g
                 }
 
                 const unsigned int prev_p_f_v_max = (p_f_v_max == 0) ? face_vertices.size() - 1 : p_f_v_max - 1;
-                const unsigned int next_p_f_v_max = geometry_utilities.FindPolygonThirdUnalignedPoint(face_coordinates,
-                                                                                                    prev_p_f_v_max,
-                                                                                                    p_f_v_max);
+                const unsigned int next_p_f_v_max =
+                    geometry_utilities.FindPolygonThirdUnalignedPoint(face_coordinates, prev_p_f_v_max, p_f_v_max);
                 if (next_p_f_v_max >= face_coordinates.cols())
-                  throw std::runtime_error("Face not correct!");
+                    throw std::runtime_error("Face not correct!");
 
                 std::array<unsigned int, 3> face_key = {face_vertices.at(prev_p_f_v_max),
                                                         face_vertices.at(p_f_v_max),

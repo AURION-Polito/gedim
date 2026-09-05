@@ -37,7 +37,7 @@ class VoroInterface final
         std::vector<unsigned int> neighbors_1D;
         std::vector<unsigned int> neighbors_2D;
 
-        Cell0D(const Eigen::VectorXd &coordinates) : coordinates(coordinates){};
+        Cell0D(const Eigen::VectorXd &coordinates) : coordinates(coordinates) {};
     };
 
     struct Cell1D

@@ -739,11 +739,7 @@ TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
             Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
             Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
 
-            geometryUtilities.ExportPlanteToVTU(planeOrigin,
-                                                planeNormal,
-                                                planeTranslation,
-                                                planeRotationMatrix,
-                                                exportFolder);
+            geometryUtilities.ExportPlanteToVTU(planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
 
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result =
                 geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
@@ -821,11 +817,7 @@ TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
             Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
             Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
 
-            geometryUtilities.ExportPlanteToVTU(planeOrigin,
-                                                planeNormal,
-                                                planeTranslation,
-                                                planeRotationMatrix,
-                                                exportFolder);
+            geometryUtilities.ExportPlanteToVTU(planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
 
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result =
                 geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
