@@ -1,0 +1,3 @@
+[submodule "GeDiM-core"]
+	path = GeDiM-core
+	url = git@github.com:AURION-Polito/GeDiM-core.git
