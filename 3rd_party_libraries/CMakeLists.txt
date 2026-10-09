@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(Gedim_3rd_party_libraries LANGUAGES CXX C VERSION 1.0)
+project(Gedim_3rd_party_libraries LANGUAGES CXX C Fortran VERSION 1.0)
 
 # Set C++ Standard
 ###########################################################################################
@@ -12,6 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON FORCE)
 set(MAIN_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Main_Source CACHE PATH "Main Source Directory")
 set(MAIN_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Main_Build CACHE PATH "Main Build Directory")
 set(MAIN_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/Main_Install CACHE PATH "Main Install Directory")
+
+message(STATUS "C compiler: ${CMAKE_C_COMPILER}")
+message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER}")
+message(STATUS "Fortran compiler: ${CMAKE_Fortran_COMPILER}")
 
 option(INSTALL_EIGEN3 "Install Eigen3" ON)
 option(INSTALL_GOOGLETEST "Install GoogleTest" ON)

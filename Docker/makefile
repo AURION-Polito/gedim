@@ -8,7 +8,7 @@ initial_conditions_folder = not-set
 ifeq ($(main_folder), not-set)
 	MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 	MAKEFILE_DIR  := $(dir $(MAKEFILE_PATH))
-	main_folder = ${MAKEFILE_DIR}..
+	main_folder = ${MAKEFILE_DIR}../..
 endif
 
 clean:
