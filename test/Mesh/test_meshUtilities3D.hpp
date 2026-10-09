@@ -123,7 +123,7 @@ TEST(TestMeshUtilities, TestCreateDelaunayMesh)
     points_marker[25] = 7;
     points_marker[26] = 8;
 
-    meshUtilities.CreateDelaunayMesh3D(points, points_marker, meshDao);
+    Gedim::External::MeshUtilities::CreateDelaunayMesh3D(points, points_marker, meshDao);
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -157,7 +157,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
     const Gedim::GeometryUtilities::Polyhedron polyhedron =
         geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-    meshUtilities.CreateTetrahedralMesh(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, 0.03, meshDao, "Qpqfezna");
+    Gedim::External::MeshUtilities::CreateTetrahedralMesh(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, 0.03, meshDao, "Qpqfezna");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -204,7 +204,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
     facets[7] = {3, 7, 4};
     facets[8] = {2, 3, 4, 5};
 
-    meshUtilities.CreateTetrahedralMesh(points, facets, 0.03, meshDao, "Qpqfezna");
+    Gedim::External::MeshUtilities::CreateTetrahedralMesh(points, facets, 0.03, meshDao, "Qpqfezna");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets";
     Gedim::Output::CreateFolder(exportFolder);
@@ -316,7 +316,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
 
     const auto facets = geometryUtilities.PolyhedronToFacets(merged_polyhedron.MergedPolyhedron);
 
-    meshUtilities.CreateTetrahedralMesh(merged_polyhedron.MergedPolyhedron.Vertices, facets, 0.3, meshDao, "Qpqfezna");
+    Gedim::External::MeshUtilities::CreateTetrahedralMesh(merged_polyhedron.MergedPolyhedron.Vertices, facets, 0.3, meshDao, "Qpqfezna");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons";
     Gedim::Output::CreateFolder(exportFolder);
