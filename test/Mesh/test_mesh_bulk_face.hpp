@@ -15,6 +15,7 @@
 #include "GeometryUtilities.hpp"
 #include "MeshUtilities.hpp"
 #include "SphereMeshUtilities.hpp"
+#include "TriangleInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshExporter.hpp"
 #include <gmock/gmock-matchers.h>
@@ -52,7 +53,7 @@ TEST(TestBulkFaceMesh, TestCreateTriangularMeshCircle)
 
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
-    mesh_utilities.CreateTriangularMesh(vertices, max_cell_area, mesh);
+    Gedim::External::MeshUtilities::CreateTriangularMesh(vertices, max_cell_area, mesh);
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -687,7 +688,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_7)
         Gedim::MeshMatrices original_mesh_data;
         Gedim::MeshMatricesDAO original_mesh(original_mesh_data);
 
-        mesh_utilities.CreateTriangularMesh(domain_2D, domain_2D_max_area, domain_2D_mesh);
+        Gedim::External::MeshUtilities::CreateTriangularMesh(domain_2D, domain_2D_max_area, domain_2D_mesh);
         mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
         {

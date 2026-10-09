@@ -21,6 +21,7 @@
 #include "CommonUtilities.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MetisUtilities.hpp"
+#include "TriangleInterface.hpp"
 #include "VTKUtilities.hpp"
 
 #include "MeshMatrices.hpp"
@@ -223,7 +224,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
 
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
+    Gedim::External::MeshUtilities::CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
@@ -284,7 +285,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshConcave)
 
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
+    Gedim::External::MeshUtilities::CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
@@ -312,7 +313,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMesh)
 
     const Eigen::MatrixXd polygon = geometryUtilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-    meshUtilities.CreateTriangularMesh(polygon, 0.033, meshDao, "-QDzpqnea");
+    Gedim::External::MeshUtilities::CreateTriangularMesh(polygon, 0.033, meshDao, "-QDzpqnea");
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMesh";
     Gedim::Output::CreateFolder(exportFolder);
@@ -1361,7 +1362,7 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
     switch (mesh_type)
     {
     case 0: {
-        mesh_utilities.CreateTriangularMesh(domain_2D, domain_2D_max_area, original_mesh);
+        Gedim::External::MeshUtilities::CreateTriangularMesh(domain_2D, domain_2D_max_area, original_mesh);
         mesh_utilities.ComputeCell0DCell1DNeighbours(original_mesh);
         mesh_utilities.ComputeCell1DCell2DNeighbours(original_mesh);
     }
