@@ -12,7 +12,7 @@
 #ifndef __VoroInterface_H
 #define __VoroInterface_H
 
-#include "3rd_party_libraries_Macro.hpp"
+#include "Gedim_Macro.hpp"
 #include "GeometryUtilities.hpp"
 
 #include "CommonUtilities.hpp"
