@@ -6,9 +6,12 @@ set(ENABLE_GEDIM_UNIT_TESTS OFF CACHE BOOL "Enable Unit Tests")
 # Include library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/GeDiM-core)
 
+# Include 3rd_party_libraries
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd_party_libraries)
+
 # Include unit tests
 if(${ENABLE_GEDIM_UNIT_TESTS})
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/GeDiM-core/test)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cppcheck.cmake)
