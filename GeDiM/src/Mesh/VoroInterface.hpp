@@ -12,7 +12,7 @@
 #ifndef __VoroInterface_H
 #define __VoroInterface_H
 
-#include "Gedim_Macro.hpp"
+#include "3rd_party_libraries_Macro.hpp"
 #include "GeometryUtilities.hpp"
 
 #include "CommonUtilities.hpp"
@@ -37,7 +37,7 @@ class VoroInterface final
         std::vector<unsigned int> neighbors_1D;
         std::vector<unsigned int> neighbors_2D;
 
-        Cell0D(const Eigen::VectorXd &coordinates) : coordinates(coordinates) {};
+        Cell0D(const Eigen::VectorXd &coordinates) : coordinates(coordinates){};
     };
 
     struct Cell1D
