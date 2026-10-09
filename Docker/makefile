@@ -6,7 +6,9 @@ mesh_folder = not-set
 initial_conditions_folder = not-set
 
 ifeq ($(main_folder), not-set)
-	main_folder = /home/geoscore/Desktop/GEO++/public/addim/PolyDiM
+	MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+	MAKEFILE_DIR  := $(dir $(MAKEFILE_PATH))
+	main_folder = ${MAKEFILE_DIR}..
 endif
 
 clean:
@@ -17,6 +19,7 @@ create:
 	@docker build --progress=plain -f Dockerfile --target build_windows . -t build_windows:1.0.0
 
 run:
+	@echo "Shared folder: ${main_folder}"
 	@docker run --rm -it -v ${main_folder}:/main_folder -p 8080:8080 build_windows:1.0.0 bash
 
 distclean:
