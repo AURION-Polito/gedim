@@ -16,6 +16,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "3rd_party_libraries_Macro.hpp"
+
 #include "FileTextReader.hpp"
 #include "GeometryUtilities.hpp"
 #include "GraphUtilities.hpp"
