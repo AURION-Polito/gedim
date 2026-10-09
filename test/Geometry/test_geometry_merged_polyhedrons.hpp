@@ -18,7 +18,7 @@
 
 #include "GeometryUtilities.hpp"
 #include "PlatonicSolid.hpp"
-#include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 namespace GedimUnitTesting
 {
@@ -40,11 +40,11 @@ TEST(TestGeometryUtilities, Test_MergePolyhedrons_no_intersections)
     std::string exportFolder = "./Export/TestGeometryUtilities/Test_MergePolyhedrons_no_intersections";
     Gedim::Output::CreateFolder(exportFolder);
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
     Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron");
-    geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
 
     ASSERT_EQ(merged_polyhedron.MergedToOriginalVertices.size(),
               polyhedrons[0].Vertices.cols() + polyhedrons[1].Vertices.cols());
@@ -133,11 +133,11 @@ TEST(TestGeometryUtilities, Test_MergePolyhedrons_face_intersections)
     std::string exportFolder = "./Export/TestGeometryUtilities/Test_MergePolyhedrons_face_intersections";
     Gedim::Output::CreateFolder(exportFolder);
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
     Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron");
-    geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
 
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Vertices.cols(),
               polyhedrons[0].Vertices.cols() + polyhedrons[1].Vertices.cols() - merged_polyhedron_input.Common_vertices.size());
@@ -278,11 +278,11 @@ TEST(TestGeometryUtilities, Test_MergePolyhedrons_edge_removed)
     std::string exportFolder = "./Export/TestGeometryUtilities/Test_MergePolyhedrons_edge_removed";
     Gedim::Output::CreateFolder(exportFolder);
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_one");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_one, exportFolder + "/polyhedron_one");
     Gedim::Output::CreateFolder(exportFolder + "/polyhedron_two");
-    geometryUtilities.ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron_two, exportFolder + "/polyhedron_two");
     Gedim::Output::CreateFolder(exportFolder + "/merged_polyhedron");
-    geometryUtilities.ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(merged_polyhedron.MergedPolyhedron, exportFolder + "/merged_polyhedron");
 
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Vertices.cols(), 4);
     ASSERT_EQ(merged_polyhedron.MergedPolyhedron.Edges.cols(), 6);

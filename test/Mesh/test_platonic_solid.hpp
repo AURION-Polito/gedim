@@ -17,10 +17,10 @@
 #include <gtest/gtest.h>
 #include <numeric>
 
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "PlatonicSolid.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -69,7 +69,7 @@ TEST(TestPlatonicSolid, TestTetrahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
         vtpUtilities.Export(exportFolder + "/Original.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -116,7 +116,7 @@ TEST(TestPlatonicSolid, TestDualTetrahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(dual.Vertices, dual.Edges, dual.Faces);
         vtpUtilities.Export(exportFolder + "/Dual.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -161,7 +161,7 @@ TEST(TestPlatonicSolid, TestHexahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
         vtpUtilities.Export(exportFolder + "/Original.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -206,7 +206,7 @@ TEST(TestPlatonicSolid, TestOctahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
         vtpUtilities.Export(exportFolder + "/Original.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -251,7 +251,7 @@ TEST(TestPlatonicSolid, TestIcosahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
         vtpUtilities.Export(exportFolder + "/Original.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -296,7 +296,7 @@ TEST(TestPlatonicSolid, TestDodecahedron)
         //  original polyhedron
         vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
         vtpUtilities.Export(exportFolder + "/Original.vtu", Gedim::VTKUtilities::Ascii);
-        meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
     }
 }
 
@@ -325,7 +325,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -352,7 +352,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -379,7 +379,7 @@ TEST(TestPlatonicSolid, TestTriangulateI)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -435,7 +435,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_tetrahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -475,7 +475,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_octahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -515,7 +515,7 @@ TEST(TestPlatonicSolid, TestTriangulateII)
 
             // Export to VTK
             {
-                meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
+                Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_icosahedron_Triangle_" + to_string(i));
             }
 
             meshUtilities.ComputeCell1DCell2DNeighbours(mesh);
@@ -567,7 +567,7 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Geodesic_Tetrahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
         }
     }
 
@@ -594,7 +594,7 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Geodesic_Octahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
         }
     }
 
@@ -621,7 +621,7 @@ TEST(TestPlatonicSolid, TestGeodesicPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Geodesic_Icosahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
         }
     }
 }
@@ -663,7 +663,7 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Goldberg_Tetrahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Tetrahedron_" + to_string(i));
         }
     }
 
@@ -690,7 +690,7 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Goldberg_Octahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Octahedron_" + to_string(i));
         }
     }
 
@@ -717,7 +717,7 @@ TEST(TestPlatonicSolid, TestGoldbergPolyhedron)
             //  original polyhedron
             vtpUtilities.AddPolyhedron(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces);
             vtpUtilities.Export(exportFolder + "/Goldberg_Icosahedron_" + to_string(i) + ".vtu", Gedim::VTKUtilities::Ascii);
-            meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Icosahedron_" + to_string(i));
         }
     }
 }

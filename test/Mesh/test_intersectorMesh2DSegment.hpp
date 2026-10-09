@@ -18,12 +18,12 @@
 
 #include "GeometryUtilities.hpp"
 #include "IntersectorMesh2DSegment.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
 #include "MeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 
@@ -225,7 +225,7 @@ TEST(TestIntersectorMesh2DSegment, TestIntersectPolygonMesh)
             Gedim::Output::CreateFolder(exportFolder);
 
             {
-                meshUtilities.ExportMeshToVTU(domainMesh, exportFolder, "Mesh");
+                Gedim::External::MeshUtilities::ExportMeshToVTU(domainMesh, exportFolder, "Mesh");
             }
 
             const Eigen::Vector3d segmentOrigin(4.3603822504511447e-01, 1.1740861406549512e+00, 0.0);

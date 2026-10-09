@@ -13,14 +13,13 @@
 #define __test_mesh_bulk_face_H
 
 #include "GeometryUtilities.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "SphereMeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 #include <gmock/gmock-matchers.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <numeric>
 
 using namespace testing;
 using namespace std;
@@ -59,7 +58,7 @@ TEST(TestBulkFaceMesh, TestCreateTriangularMeshCircle)
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
     mesh_utilities.CheckMesh2D(config, geometryUtilities, mesh);
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "CircleDomain");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "CircleDomain");
 }
 
 TEST(TestBulkFaceMesh, TestCreateIntersectionMesh)
@@ -123,7 +122,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -137,7 +136,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -205,7 +204,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_1)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -219,7 +218,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_1)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -287,7 +286,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_2)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -301,7 +300,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_2)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -370,7 +369,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_3)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -384,7 +383,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_3)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -450,7 +449,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_5)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -464,7 +463,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_5)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -532,7 +531,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_6)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -546,7 +545,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_6)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -616,7 +615,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_4)
     mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh");
     }
 
     mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -630,7 +629,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_4)
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
     {
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
     }
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -692,7 +691,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_7)
         mesh_utilities.ComputeCell1DCell2DNeighbours(domain_2D_mesh);
 
         {
-            mesh_utilities.ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh" + to_string(a));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(domain_2D_mesh, exportFolder, "original_mesh" + to_string(a));
         }
 
         mesh_utilities.CreatePolygonIntersectionMesh(geometry_utilities, vertices, domain_2D_mesh);
@@ -706,7 +705,7 @@ TEST(TestBulkFaceMesh, TestCreateIntersectionMesh_7)
         mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
         {
-            mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh" + to_string(a));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh" + to_string(a));
         }
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;

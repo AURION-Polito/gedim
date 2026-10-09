@@ -19,11 +19,11 @@
 #include "ConformerMeshPolygon.hpp"
 #include "ConformerMeshSegment.hpp"
 #include "IntersectorMesh2DSegment.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 #include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
 #include "UnionMeshSegment.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -475,7 +475,7 @@ TEST(TestConformMesh, TestConformMesh2DTwoPoints)
             GedimUnitTesting::MeshMatrices_2D_2Cells_Mock mockMeshOne;
             Gedim::MeshMatricesDAO fractureMeshOne(mockMeshOne.Mesh);
 
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "DomainOne_Original");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "DomainOne_Original");
 
             const Eigen::Vector3d segmentOneOrigin(0.75, 0.0, 0.0);
             const Eigen::Vector3d segmentOneEnd(0.0, 0.75, 0.0);
@@ -535,7 +535,7 @@ TEST(TestConformMesh, TestConformMesh2DTwoPoints)
 
             ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin, segmentOneEnd, segmentOneTangent, conformMeshOne, fractureMeshOne));
 
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "DomainOne_Conformed");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "DomainOne_Conformed");
 
             Gedim::MeshUtilities::CheckMesh2DConfiguration config;
             meshUtilities.CheckMesh2D(config, geometryUtilities, fractureMeshOne);
@@ -656,11 +656,11 @@ TEST(TestConformMesh, TestConformMesh2DFivePoints)
             Gedim::Output::CreateFolder(exportFolder);
 
             Gedim::MeshUtilities meshUtilities;
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "Original");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "Original");
 
             ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin, segmentOneEnd, segmentOneTangent, conformMeshOne, fractureMeshOne));
 
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "Conformed");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "Conformed");
 
             Gedim::MeshUtilities::CheckMesh2DConfiguration config;
             meshUtilities.CheckMesh2D(config, geometryUtilities, fractureMeshOne);
@@ -787,11 +787,11 @@ TEST(TestConformMesh, TestConformMesh2DTwentysixPoints)
             std::string exportFolder = "./Export/TestConformMesh2D/TestTwentysixPointsMesh";
             Gedim::Output::CreateFolder(exportFolder);
 
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "Original");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "Original");
 
             ASSERT_NO_THROW(conformerMeshPolygonOne.CreateConformMesh(segmentOneOrigin, segmentOneEnd, segmentOneTangent, conformMeshOne, fractureMeshOne));
 
-            meshUtilities.ExportMeshToVTU(fractureMeshOne, exportFolder, "Conformed");
+            Gedim::External::MeshUtilities::ExportMeshToVTU(fractureMeshOne, exportFolder, "Conformed");
 
             Gedim::MeshUtilities::CheckMesh2DConfiguration config;
             meshUtilities.CheckMesh2D(config, geometryUtilities, fractureMeshOne);

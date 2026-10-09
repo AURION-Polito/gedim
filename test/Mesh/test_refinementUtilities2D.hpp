@@ -26,6 +26,7 @@
 #include "MeshUtilities.hpp"
 #include "RefinementUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 #include <array>
 #include <string>
@@ -49,7 +50,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
 
@@ -111,7 +112,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles)
     EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
     EXPECT_EQ(4, meshDAO.Cell2DTotalNumber());
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 }
 
 TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
@@ -128,7 +129,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 5;
@@ -206,13 +207,13 @@ TEST(TestRefinementUtilities, TestRefineTriangles_ByArea)
             }
         }
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
@@ -251,7 +252,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
     }
     mesh_utilities.ComputeCell1DCell2DNeighbours(mesh);
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Original");
 
     const unsigned int maxRefinements = starting_r + 1;
 
@@ -311,13 +312,13 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_Import)
             refine_mesh_geometric_data,
             mesh);
 
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_R" + to_string(r));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_R" + to_string(r));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     mesh_utilities.ExtractActiveMesh(mesh, extractionData);
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_Refined");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     mesh_utilities.CheckMesh2D(checkConfig, geometry_utilities, mesh);
@@ -342,7 +343,7 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 5;
@@ -372,13 +373,13 @@ TEST(TestRefinementUtilities, TestRefineTriangles_Mesh_ByArea)
         const auto cell2Ds_refined =
             refinementUtilities.refine_mesh_2D_triangles(geometryUtilities, cell2DsToRefineIndex, refine_mesh_geometric_data, meshDAO);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
@@ -403,7 +404,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NoNewVertices)
     MeshMatrices_2D_1Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
     const std::vector<double> cell2DsQualityParameter = {meshGeometricData.Cell2DsEdgeLengths[0].minCoeff()};
@@ -469,7 +470,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NoNewVertices)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(4, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(5, meshDAO.Cell1DTotalNumber());
@@ -490,7 +491,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertexOne)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
     const std::vector<double> cell2DsQualityParameter = {meshGeometricData.Cell2DsEdgeLengths[0].minCoeff(),
@@ -557,7 +558,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertexOne)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(5, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(7, meshDAO.Cell1DTotalNumber());
@@ -578,7 +579,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertexTwo)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
     const std::vector<double> cell2DsQualityParameter = {meshGeometricData.Cell2DsEdgeLengths[0].minCoeff(),
@@ -645,7 +646,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertexTwo)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(5, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(7, meshDAO.Cell1DTotalNumber());
@@ -666,7 +667,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertices)
     MeshMatrices_2D_2Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData2D meshGeometricData = meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
     const std::vector<double> cell2DsQualityParameter = {meshGeometricData.Cell2DsEdgeLengths[0].minCoeff(),
@@ -733,7 +734,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_NewVertices)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(6, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(8, meshDAO.Cell1DTotalNumber());
@@ -764,7 +765,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NoNewVertices)
     meshUtilities.CreateRectangleMesh(rectangleOrigin, rectangleBaseTangent, rectangleHeightTangent, baseCoordinates, heightCoordinates, meshDAO);
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData =
         refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
@@ -827,7 +828,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NoNewVertices)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(8, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(11, meshDAO.Cell1DTotalNumber());
@@ -858,7 +859,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NewVertexOne)
     meshUtilities.CreateRectangleMesh(rectangleOrigin, rectangleBaseTangent, rectangleHeightTangent, baseCoordinates, heightCoordinates, meshDAO);
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData =
         refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
@@ -921,7 +922,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NewVertexOne)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(9, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(12, meshDAO.Cell1DTotalNumber());
@@ -952,7 +953,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NewVertexTwo)
     meshUtilities.CreateRectangleMesh(rectangleOrigin, rectangleBaseTangent, rectangleHeightTangent, baseCoordinates, heightCoordinates, meshDAO);
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::RefinementUtilities::Cell2Ds_GeometricData meshGeometricData =
         refinementUtilities.RefinePolygonCell_InitializeGeometricData(meshDAO);
@@ -1015,7 +1016,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_CheckQuality_NewVertexTwo)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     EXPECT_EQ(9, meshDAO.Cell0DTotalNumber());
     EXPECT_EQ(12, meshDAO.Cell1DTotalNumber());
@@ -1036,7 +1037,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxDiameter)
     MeshMatrices_2D_1Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
@@ -1149,7 +1150,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxDiameter)
         Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
         meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
 
         {
             // Export Cell1Ds
@@ -1181,7 +1182,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxDiameter)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
@@ -1205,7 +1206,7 @@ TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxInertia)
     MeshMatrices_2D_1Cells_Mock mockMesh;
     Gedim::MeshMatricesDAO meshDAO(mockMesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 6;
@@ -1320,13 +1321,13 @@ TEST(TestRefinementUtilities, TestRefinePolygons_ByArea_MaxInertia)
         Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
         meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
     meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
@@ -1390,7 +1391,7 @@ TEST(TestRefinementUtilities, TestRefineMeshTwoSegments_ByArea_MaxInertia)
         std::vector<Gedim::ConformerMeshSegment::ConformMesh> segmentsConformMesh(numSegments);
         Gedim::ConformMeshUtilities::ComputeDomainConformedMeshOptions options;
         options.PrintStatus = false;
-        options.VtkExportFolder = exportFolder;
+        // options.VtkExportFolder = exportFolder;
 
         conformMeshUtilities.ComputeConformedMeshWithSegments(
             segmentsAdditionalPoints,
@@ -1433,7 +1434,7 @@ TEST(TestRefinementUtilities, TestRefineMeshTwoSegments_ByArea_MaxInertia)
             options);
 
         // refine mesh
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
         const unsigned int seed = 10;
         const unsigned int maxRefinements = 6;
@@ -1540,13 +1541,13 @@ TEST(TestRefinementUtilities, TestRefineMeshTwoSegments_ByArea_MaxInertia)
             Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
             meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);
 
-            meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
+            Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(r));
         }
 
         Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
         meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 
         Gedim::MeshUtilities::CheckMesh2DConfiguration checkConfig;
         meshUtilities.CheckMesh2D(checkConfig, geometryUtilities, meshDAO);

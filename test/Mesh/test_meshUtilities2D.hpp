@@ -16,7 +16,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "Gedim_Macro.hpp"
+#include "3rd_party_libraries_Macro.hpp"
 
 #include "CommonUtilities.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
@@ -31,6 +31,7 @@
 #include "OFF_Mesh_Mock.hpp"
 #include "ObjectFileFormatInterface.hpp"
 #include "VoroInterface.hpp"
+#include "VtkMeshExporter.hpp"
 #include "WavefrontOBJInterface.hpp"
 
 #include "MeshDAOImporterFromCsv.hpp"
@@ -63,7 +64,7 @@ TEST(TestMeshUtilities, TestMesh2DFromPolygon)
 
     std::string exportFolder = "./Export/TestMesh2DFromPolygon/";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     EXPECT_EQ(meshDao.Dimension(), 2);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 4);
@@ -225,7 +226,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshComplex)
     meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
@@ -286,7 +287,7 @@ TEST(TestMeshUtilities, TestCreateTriangleMeshConcave)
     meshUtilities.CreateTriangularMesh(vertices2D, 0.01 * polygonArea, meshDao, "-QDzpqnea");
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
 
     Gedim::MeshUtilities::CheckMesh2DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(config, geometryUtilities, meshDao));
@@ -315,19 +316,19 @@ TEST(TestMeshUtilities, TestCreateTriangleMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTriangleMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "CreatedTriangleMesh");
-    meshUtilities.ExportMeshToVTU(expectedMesh, exportFolder, "ExpectedTriangleMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "CreatedTriangleMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(expectedMesh, exportFolder, "ExpectedTriangleMesh");
 
     Gedim::MeshUtilities::MeshGeometricData2D cell2DsGeometricData =
         meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDao);
     const unsigned int cell2DToExportIndex = 0;
-    meshUtilities.ExportCell2DToVTU(meshDao,
-                                    cell2DToExportIndex,
-                                    cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
-                                    exportFolder);
+    Gedim::External::MeshUtilities::ExportCell2DToVTU(meshDao,
+                                                      cell2DToExportIndex,
+                                                      cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
+                                                      exportFolder);
 
     EXPECT_EQ(expectedMesh.Dimension(), meshDao.Dimension());
     EXPECT_EQ(expectedMesh.Cell0DTotalNumber(), meshDao.Cell0DTotalNumber());
@@ -396,7 +397,7 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreatePolygonalMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "CreatedPolygonalMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "CreatedPolygonalMesh");
 
     {
         ExportMeshData exportData;
@@ -437,13 +438,13 @@ TEST(TestMeshUtilities, TestCreatePolygonalMesh)
     }
 
     const unsigned int cell2DToExportIndex = 0;
-    meshUtilities.ExportCell2DToVTU(meshDao,
-                                    cell2DToExportIndex,
-                                    cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
-                                    cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
-                                    exportFolder);
+    Gedim::External::MeshUtilities::ExportCell2DToVTU(meshDao,
+                                                      cell2DToExportIndex,
+                                                      cell2DsGeometricData.Cell2DsVertices[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsTriangulations[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsAreas[cell2DToExportIndex],
+                                                      cell2DsGeometricData.Cell2DsCentroids[cell2DToExportIndex],
+                                                      exportFolder);
 }
 
 TEST(TestMeshUtilities, TestCheckMesh2D)
@@ -644,7 +645,7 @@ TEST(TestMeshUtilities, TestRefineMesh2D)
     Gedim::MeshUtilities meshUtilities;
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R0");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R0");
 
     // first refine
     {
@@ -700,7 +701,7 @@ TEST(TestMeshUtilities, TestRefineMesh2D)
         EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(4, 1));
         EXPECT_EQ(1, meshDAO.Cell1DNeighbourCell2D(5, 1));
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
     }
 
     // second refine
@@ -751,13 +752,13 @@ TEST(TestMeshUtilities, TestRefineMesh2D)
         EXPECT_EQ(2, meshDAO.Cell1DNeighbourCell2D(6, 0));
         EXPECT_EQ(3, meshDAO.Cell1DNeighbourCell2D(6, 1));
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R2");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R2");
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Final");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Final");
 }
 
 TEST(TestMeshUtilities, TestImportOFFMesh)
@@ -781,7 +782,7 @@ TEST(TestMeshUtilities, TestImportOFFMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOFFMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ImportedOFFMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ImportedOFFMesh");
 
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(checkMeshConfig, geometryUtilities, meshDao));
     ASSERT_EQ(2, meshDao.Dimension());
@@ -827,7 +828,7 @@ TEST(TestMeshUtilities, TestImportOBJMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOBJMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ImportedOBJMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ImportedOBJMesh");
 
     ASSERT_NO_THROW(meshUtilities.CheckMesh2D(checkMeshConfig, geometryUtilities, meshDao));
     ASSERT_EQ(2, meshDao.Dimension());
@@ -859,7 +860,7 @@ TEST(TestMeshUtilities, TestFindCell2DsCommonVertices)
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
 
     ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23, 29, 13, 30}, meshDao), std::vector<unsigned int>({11}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonVertices({0, 23}, meshDao), std::vector<unsigned int>({11, 18}));
@@ -878,7 +879,7 @@ TEST(TestMeshUtilities, TestFindCell2DsCommonEdges)
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
 
     ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23, 29, 13, 30}, meshDao), std::vector<unsigned int>({}));
     ASSERT_EQ(meshUtilities.FindCell2DsCommonEdges({0, 23}, meshDao), std::vector<unsigned int>({0}));
@@ -897,7 +898,7 @@ TEST(TestMeshUtilities, TestAgglomerateTriangles)
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
 
     const Gedim::MeshUtilities::AgglomerateTrianglesResult result =
         meshUtilities.AgglomerateTriangles({0, 23, 29, 13, 30}, meshDao);
@@ -919,7 +920,7 @@ TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
     GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
 
     const std::vector<std::vector<unsigned int>> trianglesToAgglomerate{{4, 31, 32}, {0, 23, 29, 13, 30}};
 
@@ -950,7 +951,7 @@ TEST(TestMeshUtilities, TestAgglomerateMeshFromTriangularMesh)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDao, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
 
     std::vector<std::vector<unsigned int>> extractedConvexCell2DsIndex(meshDao.Cell2DTotalNumber());
 
@@ -1002,7 +1003,7 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
 
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConvexMesh");
 
     const unsigned int convexCell2DNumber = meshDao.Cell2DTotalNumber();
 
@@ -1095,7 +1096,7 @@ TEST(TestMeshUtilities, TestAgglomerateWithRandom)
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDao, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
 
     std::vector<std::vector<unsigned int>> extractedConvexCell2DsIndex(meshDao.Cell2DTotalNumber());
 
@@ -1137,7 +1138,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
         meshCell2DToConvexCell2DIndices.at(c2D_index) = std::vector<unsigned int>({c2D_index});
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
 
     {
         const auto cell2Ds = meshDao.Cell1DNeighbourCell2Ds(4);
@@ -1198,7 +1199,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell2Ds_ByFace)
             meshCell2DToConvexCell2DIndices.at(activeMeshData.NewCell2DToOldCell2D.at(c2D_index));
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
 
 TEST(TestMeshUtilities, TestFindPointCell2D)
@@ -1213,7 +1214,7 @@ TEST(TestMeshUtilities, TestFindPointCell2D)
 
     std::string exportFolder = "./Export/TestFindPointCell2D";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     meshUtilities.ComputeCell1DCell2DNeighbours(meshDao);
 
@@ -1394,7 +1395,7 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
     }
 
     {
-        mesh_utilities.ExportMeshToVTU(original_mesh, exportFolder, "OriginalMesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(original_mesh, exportFolder, "OriginalMesh");
     }
 
     Gedim::MeshMatrices agglomerated_mesh_data = original_mesh_data;
@@ -1467,7 +1468,7 @@ TEST(TestAgglomerateMesh, TestAgglomerateWithMetis2D)
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
     mesh_utilities.ExtractActiveMesh(agglomerated_mesh, extraction_data);
 
-    mesh_utilities.ExportMeshToVTU(agglomerated_mesh, exportFolder, "AgglomeratedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(agglomerated_mesh, exportFolder, "AgglomeratedMesh");
 
     std::vector<std::vector<unsigned int>> extractedAgglomeratedCell2DsIndex(agglomerated_mesh.Cell2DTotalNumber());
 

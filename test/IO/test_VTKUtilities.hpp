@@ -21,9 +21,9 @@
 
 #include "GeometryUtilities.hpp"
 #include "IOUtilities.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 namespace GedimUnitTesting
 {
@@ -671,7 +671,7 @@ TEST(TestVTPUtilities, VTPUtilities_TestMesh3D_ExportMesh)
     std::string exportFolder = "./Export/TestVTPUtilities";
     Gedim::Output::CreateFolder(exportFolder);
 
-    meshUtilities.ExportMeshToVTU(mesh, exportFolder, "ExportMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "ExportMesh");
 }
 // ***************************************************************************
 } // namespace GedimUnitTesting

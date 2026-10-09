@@ -19,6 +19,7 @@
 #include "GeometryUtilities.hpp"
 #include "RefinementUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -592,7 +593,10 @@ TEST(TestGeometryUtilities, TestSplitPolyhedronWithPlane_AlignedTetrahedron)
         polyhedron.Faces[4].row(1) << 8, 12, 13;
 
         Gedim::Output::CreateFolder(exportFolder + "/Original_Polyhedron");
-        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder + "/Original_Polyhedron");
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices,
+                                                                  polyhedron.Edges,
+                                                                  polyhedron.Faces,
+                                                                  exportFolder + "/Original_Polyhedron");
 
         const vector<Eigen::MatrixXd> polyhedronFacesVertices =
             geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
@@ -637,10 +641,10 @@ TEST(TestGeometryUtilities, TestSplitPolyhedronWithPlane_AlignedTetrahedron)
                                                             polyhedron.Vertices.col(unalignedVertices.at(3)));
 
         Gedim::Output::CreateFolder(exportFolder + "/Unaligned_Polyhedron");
-        geometryUtilities.ExportPolyhedronToVTU(unalignedTetrahedron.Vertices,
-                                                unalignedTetrahedron.Edges,
-                                                unalignedTetrahedron.Faces,
-                                                exportFolder + "/Unaligned_Polyhedron");
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(unalignedTetrahedron.Vertices,
+                                                                  unalignedTetrahedron.Edges,
+                                                                  unalignedTetrahedron.Faces,
+                                                                  exportFolder + "/Unaligned_Polyhedron");
 
         const Eigen::VectorXd unalignedEdgesLength =
             geometryUtilities.PolyhedronEdgesLength(unalignedTetrahedron.Vertices, unalignedTetrahedron.Edges);
@@ -705,15 +709,15 @@ TEST(TestGeometryUtilities, TestSplitPolyhedronWithPlane_AlignedTetrahedron)
             geometryUtilities.SplitPolyhedronWithPlaneResultToPolyhedra(result);
 
         Gedim::Output::CreateFolder(exportFolder + "/Positive_Polyhedron");
-        geometryUtilities.ExportPolyhedronToVTU(splitPolyhedra[0].Vertices,
-                                                splitPolyhedra[0].Edges,
-                                                splitPolyhedra[0].Faces,
-                                                exportFolder + "/Positive_Polyhedron");
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(splitPolyhedra[0].Vertices,
+                                                                  splitPolyhedra[0].Edges,
+                                                                  splitPolyhedra[0].Faces,
+                                                                  exportFolder + "/Positive_Polyhedron");
         Gedim::Output::CreateFolder(exportFolder + "/Negative_Polyhedron");
-        geometryUtilities.ExportPolyhedronToVTU(splitPolyhedra[1].Vertices,
-                                                splitPolyhedra[1].Edges,
-                                                splitPolyhedra[1].Faces,
-                                                exportFolder + "/Negative_Polyhedron");
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(splitPolyhedra[1].Vertices,
+                                                                  splitPolyhedra[1].Edges,
+                                                                  splitPolyhedra[1].Faces,
+                                                                  exportFolder + "/Negative_Polyhedron");
 
         ASSERT_EQ(result.Type, Gedim::GeometryUtilities::SplitPolyhedronWithPlaneResult::Types::Split);
         ASSERT_EQ(

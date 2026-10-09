@@ -20,6 +20,7 @@
 #include "MeshMatrices_2D_1Cells_Mock.hpp"
 #include "MeshUtilities.hpp"
 #include "VoroInterface.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -44,7 +45,7 @@ TEST(TestMeshUtilities, TestMesh1DFromSegment)
 
     std::string exportFolder = "./Export/TestMesh1DFromSegment/";
     Gedim::Output::CreateFolder(exportFolder);
-    Gedim::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     EXPECT_EQ(meshDao.Dimension(), 1);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 2);
@@ -182,7 +183,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell1Ds)
         meshCell1DToConvexCell1DIndices.at(c1D_index) = std::vector<unsigned int>({c1D_index});
     }
 
-    Gedim::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
 
     {
         const auto agglomerationInfo =
@@ -211,7 +212,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell1Ds)
             meshCell1DToConvexCell1DIndices.at(activeMeshData.NewCell1DToOldCell1D.at(c1D_index));
     }
 
-    Gedim::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
 
 TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
@@ -241,28 +242,28 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh2D_Polygon)
     Gedim::MeshUtilities::ComputeCell0DCell2DNeighbours(mesh);
     Gedim::MeshUtilities::ComputeCell1DCell2DNeighbours(mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
 
     Gedim::MeshUtilities::CollapseCell1D(20, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
 
     Gedim::MeshUtilities::CollapseCell1D(18, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
 
     Gedim::MeshUtilities::CollapseCell1D(33, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
 
     Gedim::MeshUtilities::CollapseCell1D(37, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
     Gedim::MeshUtilities::ExtractActiveMesh(mesh, extraction_data);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
 
     {
         Gedim::MeshUtilities::CheckMesh2DConfiguration config;
@@ -310,28 +311,28 @@ TEST(TestMeshUtilities, Test_CollapseCell1D_Mesh3D_Polyhedron)
     Gedim::MeshUtilities::ComputeCell1DCell2DNeighbours(mesh);
     Gedim::MeshUtilities::ComputeCell1DCell3DNeighbours(mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Original_Mesh");
 
     Gedim::MeshUtilities::CollapseCell1D(14, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_1");
 
     Gedim::MeshUtilities::CollapseCell1D(9, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_2");
 
     Gedim::MeshUtilities::CollapseCell1D(12, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh_3");
 
     Gedim::MeshUtilities::CollapseCell1D(17, mesh);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Final_Mesh");
 
     Gedim::MeshUtilities::ExtractActiveMeshData extraction_data;
     Gedim::MeshUtilities::ExtractActiveMesh(mesh, extraction_data);
 
-    Gedim::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Filtered_Mesh");
 
     {
         Gedim::Output::CreateFolder(exportFolder + "/Filtered_Mesh");

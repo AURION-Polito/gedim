@@ -21,6 +21,7 @@
 #include "VTKUtilities.hpp"
 #include "Voro3D_Points_Mock.hpp"
 #include "VoroInterface.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -74,7 +75,7 @@ TEST(TestVoroInterface, TestVoroInterface2D)
         Eigen::MatrixXd VoronoiPoints = voro_interface.GenerateRandomPoints(vertices, num_cells, random_seed);
         voro_interface.GenerateVoronoiTassellations2D(vertices, numIterations, VoronoiPoints, mesh);
 
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
 
         {
             Gedim::VTKUtilities vtk_utilities;
@@ -207,7 +208,7 @@ TEST(TestVoroInterface, TestVoroInterface3DNotValidNeighFaces)
         vtk_utilities.Export(exportFolderTest + "/Points.vtu");
     }
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
     Gedim::MeshUtilities::CheckMesh3DConfiguration config;
@@ -305,7 +306,7 @@ TEST(TestVoroInterface, TestVoroInterface3D)
 
         voro_interface.GenerateVoronoiTassellations3D(vertices, edges, faces, numIterations, voronoi_points, mesh);
 
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolderTest, "Mesh");
         mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
         Gedim::MeshUtilities::CheckMesh3DConfiguration config;

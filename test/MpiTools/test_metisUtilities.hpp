@@ -17,29 +17,21 @@
 #include <gtest/gtest.h>
 
 #include "FileTextReader.hpp"
-#include "Gedim_Macro.hpp"
 #include "GeometryUtilities.hpp"
 #include "GraphUtilities.hpp"
 #include "IOUtilities.hpp"
 #include "MeshDAOImporterFromCsv.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "MetisUtilities.hpp"
-#include "OpenVolumeMeshInterface.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
-#include "MeshMatrices_2D_2Cells_Mock.hpp"
 #include "MeshMatrices_2D_4Cells_Mock.hpp"
 
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
-#include "MeshMatrices_3D_329Cells_Mock.hpp"
-#include "OVM_Mesh_Mock.hpp"
-
 #include "OFF_Mesh_Mock.hpp"
 #include "ObjectFileFormatInterface.hpp"
-
-#include "CommonUtilities.hpp"
 
 namespace UnitTesting
 {
@@ -290,7 +282,7 @@ TEST(TestMetisUtilities, TestNetworkPartition_Mesh2D_Graph_Weights)
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh");
 
     {
         Gedim::VTKUtilities exporter;
@@ -623,7 +615,7 @@ TEST(TestMetisUtilities, TestNetworkPartition_ImportMesh2D_DualGraph)
     Gedim::MeshDAOImporterFromCsv importer(meshFromCsvUtilities);
     importer.Import(meshImporterConfiguration, meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ImportedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ImportedMesh");
 
     const Gedim::MeshUtilities::MeshGeometricData2D geometricData =
         meshUtilities.FillMesh2DGeometricData(geometryUtilities, meshDAO);
@@ -1238,7 +1230,7 @@ TEST(TestMetisUtilities, TestNetworkPartition_ExportMesh3D)
     std::string exportFolder = "./Export/TestMetisUtilities/TestNetworkPartition_ExportMesh3D";
     Gedim::Output::CreateFolder(exportFolder);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ImportedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ImportedMesh");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
     const Gedim::MeshUtilities::MeshGeometricData3D geometricData =

@@ -18,6 +18,7 @@
 
 #include "MeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 namespace GedimUnitTesting
 {
@@ -64,7 +65,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_Mesh3DFromPolyhedra)
 
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
 
     Gedim::Output::CreateFolder(exportFolder + "/Mesh");
     mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Mesh");

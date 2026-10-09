@@ -20,11 +20,11 @@
 #include "GeometryUtilities.hpp"
 #include "GraphUtilities.hpp"
 #include "MapTetrahedron.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "PlatonicSolid.hpp"
 #include "QuadratureData.hpp"
 #include "Quadrature_Gauss3D_Tetrahedron_PositiveWeights.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -349,23 +349,24 @@ TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals)
                                                                  faceRotationMatrices);
             const string exportTetraFolder = exportFolder + "/Tetra2";
             Gedim::Output::CreateFolder(exportTetraFolder);
-            geometryUtilities.ExportPolyhedronToVTU(0,
-                                                    tetraVertices,
-                                                    tetraEdges,
-                                                    tetraFaces,
-                                                    {tetraVertices},
-                                                    0.0,
-                                                    barycenter,
-                                                    faceVertices,
-                                                    {0.0, 0.0, 0.0, 0.0},
-                                                    face2DCentroid,
-                                                    faceTranslations,
-                                                    faceRotationMatrices,
-                                                    faces3DTriangulationPoints,
-                                                    faceInternalPoints,
-                                                    faceNormals,
-                                                    face2DNormalDirections,
-                                                    exportTetraFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(geometryUtilities,
+                                                                      0,
+                                                                      tetraVertices,
+                                                                      tetraEdges,
+                                                                      tetraFaces,
+                                                                      {tetraVertices},
+                                                                      0.0,
+                                                                      barycenter,
+                                                                      faceVertices,
+                                                                      {0.0, 0.0, 0.0, 0.0},
+                                                                      face2DCentroid,
+                                                                      faceTranslations,
+                                                                      faceRotationMatrices,
+                                                                      faces3DTriangulationPoints,
+                                                                      faceInternalPoints,
+                                                                      faceNormals,
+                                                                      face2DNormalDirections,
+                                                                      exportTetraFolder);
 
             ASSERT_EQ(vector<bool>({true, false, false, true}), face2DNormalDirections);
             ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices, barycenter, faceNormals),
@@ -426,23 +427,24 @@ TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals)
                                                                  faceRotationMatrices);
             const string exportTetraFolder = exportFolder + "/Tetra3";
             Gedim::Output::CreateFolder(exportTetraFolder);
-            geometryUtilities.ExportPolyhedronToVTU(0,
-                                                    tetraVertices,
-                                                    tetraEdges,
-                                                    tetraFaces,
-                                                    {tetraVertices},
-                                                    0.0,
-                                                    barycenter,
-                                                    faceVertices,
-                                                    {0.0, 0.0, 0.0, 0.0},
-                                                    face2DCentroid,
-                                                    faceTranslations,
-                                                    faceRotationMatrices,
-                                                    faces3DTriangulationPoints,
-                                                    faceInternalPoints,
-                                                    faceNormals,
-                                                    face2DNormalDirections,
-                                                    exportTetraFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(geometryUtilities,
+                                                                      0,
+                                                                      tetraVertices,
+                                                                      tetraEdges,
+                                                                      tetraFaces,
+                                                                      {tetraVertices},
+                                                                      0.0,
+                                                                      barycenter,
+                                                                      faceVertices,
+                                                                      {0.0, 0.0, 0.0, 0.0},
+                                                                      face2DCentroid,
+                                                                      faceTranslations,
+                                                                      faceRotationMatrices,
+                                                                      faces3DTriangulationPoints,
+                                                                      faceInternalPoints,
+                                                                      faceNormals,
+                                                                      face2DNormalDirections,
+                                                                      exportTetraFolder);
 
             ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices, barycenter, faceNormals),
                       vector<bool>({true, true, true, false}));
@@ -503,23 +505,24 @@ TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals)
                                                                  faceRotationMatrices);
             const string exportTetraFolder = exportFolder + "/Tetra4";
             Gedim::Output::CreateFolder(exportTetraFolder);
-            geometryUtilities.ExportPolyhedronToVTU(0,
-                                                    tetraVertices,
-                                                    tetraEdges,
-                                                    tetraFaces,
-                                                    {tetraVertices},
-                                                    0.0,
-                                                    barycenter,
-                                                    faceVertices,
-                                                    {0.0, 0.0, 0.0, 0.0},
-                                                    face2DCentroid,
-                                                    faceTranslations,
-                                                    faceRotationMatrices,
-                                                    faces3DTriangulationPoints,
-                                                    faceInternalPoints,
-                                                    faceNormals,
-                                                    face2DNormalDirections,
-                                                    exportTetraFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(geometryUtilities,
+                                                                      0,
+                                                                      tetraVertices,
+                                                                      tetraEdges,
+                                                                      tetraFaces,
+                                                                      {tetraVertices},
+                                                                      0.0,
+                                                                      barycenter,
+                                                                      faceVertices,
+                                                                      {0.0, 0.0, 0.0, 0.0},
+                                                                      face2DCentroid,
+                                                                      faceTranslations,
+                                                                      faceRotationMatrices,
+                                                                      faces3DTriangulationPoints,
+                                                                      faceInternalPoints,
+                                                                      faceNormals,
+                                                                      face2DNormalDirections,
+                                                                      exportTetraFolder);
 
             ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices, barycenter, faceNormals),
                       vector<bool>({true, true, true, false}));
@@ -583,23 +586,24 @@ TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals)
                                                                  faceRotationMatrices);
             const string exportTetraFolder = exportFolder + "/Tetra5";
             Gedim::Output::CreateFolder(exportTetraFolder);
-            geometryUtilities.ExportPolyhedronToVTU(0,
-                                                    tetraVertices,
-                                                    tetraEdges,
-                                                    tetraFaces,
-                                                    {tetraVertices},
-                                                    0.0,
-                                                    barycenter,
-                                                    faceVertices,
-                                                    {0.0, 0.0, 0.0, 0.0},
-                                                    face2DCentroid,
-                                                    faceTranslations,
-                                                    faceRotationMatrices,
-                                                    faces3DTriangulationPoints,
-                                                    faceInternalPoints,
-                                                    faceNormals,
-                                                    face2DNormalDirections,
-                                                    exportTetraFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(geometryUtilities,
+                                                                      0,
+                                                                      tetraVertices,
+                                                                      tetraEdges,
+                                                                      tetraFaces,
+                                                                      {tetraVertices},
+                                                                      0.0,
+                                                                      barycenter,
+                                                                      faceVertices,
+                                                                      {0.0, 0.0, 0.0, 0.0},
+                                                                      face2DCentroid,
+                                                                      faceTranslations,
+                                                                      faceRotationMatrices,
+                                                                      faces3DTriangulationPoints,
+                                                                      faceInternalPoints,
+                                                                      faceNormals,
+                                                                      face2DNormalDirections,
+                                                                      exportTetraFolder);
 
             ASSERT_EQ(geometryUtilities.PolyhedronFaceNormalDirections(faceVertices, barycenter, faceNormals),
                       vector<bool>({true, false, false, false}));
@@ -635,7 +639,7 @@ TEST(TestGeometryUtilities, TestPolyhedron_TestPolyhedronFaceNormals_Concave)
                 geometryUtilities.CreatePolyhedronWithExtrusion(polygon, Eigen::Vector3d(0.0, 0.0, 1.0));
 
             {
-                geometryUtilities.ExportPolyhedronToVTU(concave.Vertices, concave.Edges, concave.Faces, exportFolder);
+                Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(concave.Vertices, concave.Edges, concave.Faces, exportFolder);
             }
 
             const std::vector<Eigen::MatrixXd> faceVertices =
@@ -1706,7 +1710,7 @@ TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Tetrahedron)
                                                               Eigen::Vector3d(0.0, 0.0, 1.0),
                                                               Eigen::Vector3d(0.0, 1.0, 0.0));
 
-            geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
             const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
             const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
@@ -1755,7 +1759,7 @@ TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Cube)
             const Gedim::GeometryUtilities::Polyhedron polyhedron =
                 geometryUtilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-            geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
             const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
             const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
@@ -1810,7 +1814,7 @@ TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Parallelepiped)
             const Gedim::GeometryUtilities::Polyhedron polyhedron =
                 geometryUtilities.CreatePolyhedronWithExtrusion(polygon, Eigen::Vector3d(0.5, 0.25, 1.0));
 
-            geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
             const Eigen::Vector3d polyhedronBarycenter = geometryUtilities.PolyhedronBarycenter(polyhedron.Vertices);
             const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
@@ -1894,7 +1898,7 @@ TEST(TestGeometryUtilities, TestPolyhedronIsConvex_Concave)
             polyhedron.Faces[4].row(1) << 5, 8, 7;
             polyhedron.Faces[5].row(1) << 4, 6, 8;
 
-            geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
             const Eigen::Vector3d polyhedronPointInside(0.125, 0.125, 0.125);
             const vector<Eigen::MatrixXd> polyhedronFace3DVertices =
@@ -1994,7 +1998,7 @@ TEST(TestGeometryUtilities, TestUnalignedPolyhedronPoints)
         polyhedron.Faces[4].row(0) << 7, 9, 10;
         polyhedron.Faces[4].row(1) << 8, 12, 13;
 
-        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
         const vector<Eigen::MatrixXd> faceVertices =
             geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
@@ -2089,7 +2093,7 @@ TEST(TestGeometryUtilities, TestAlignedPolyhedronEdges)
         polyhedron.Faces[4].row(0) << 7, 9, 10;
         polyhedron.Faces[4].row(1) << 8, 12, 13;
 
-        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
         const Eigen::MatrixXd edgesTangent = geometryUtilities.PolyhedronEdgeTangents(polyhedron.Vertices, polyhedron.Edges);
 
@@ -2175,7 +2179,7 @@ TEST(TestGeometryUtilities, TestUnalignedPolyhedronPoints_Two)
         polyhedron.Faces[4].row(0) << 5, 4, 0;
         polyhedron.Faces[4].row(1) << 2, 6, 8;
 
-        geometryUtilities.ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
+        Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron.Vertices, polyhedron.Edges, polyhedron.Faces, exportFolder);
 
         const vector<Eigen::MatrixXd> faceVertices =
             geometryUtilities.PolyhedronFaceVertices(polyhedron.Vertices, polyhedron.Faces);
@@ -2405,15 +2409,15 @@ TEST(TestGeometryUtilities, Test_Export_Polyhedron)
         const auto polygon_edges_length =
             geometryUtilities.PolygonEdgeLengths(polyhedron_faces_rotated_vertices.at(polyhedron_face_index));
 
-        geometryUtilities.ExportPolygonToVTU(polyhedron_face_index,
-                                             polyhedron_faces_rotated_vertices.at(polyhedron_face_index),
-                                             polyhedron_faces_rotated_triangulation.at(polyhedron_face_index),
-                                             0.0,
-                                             polyhedron_faces_rotated_centroid.at(polyhedron_face_index),
-                                             polygon_edges_centroid,
-                                             polygon_edges_normal,
-                                             std::vector<bool>(polygon_edges_normal.cols(), true),
-                                             export_polygon_folder);
+        Gedim::External::GeometryUtilities::ExportPolygonToVTU(polyhedron_face_index,
+                                                               polyhedron_faces_rotated_vertices.at(polyhedron_face_index),
+                                                               polyhedron_faces_rotated_triangulation.at(polyhedron_face_index),
+                                                               0.0,
+                                                               polyhedron_faces_rotated_centroid.at(polyhedron_face_index),
+                                                               polygon_edges_centroid,
+                                                               polygon_edges_normal,
+                                                               std::vector<bool>(polygon_edges_normal.cols(), true),
+                                                               export_polygon_folder);
     }
 
     {
@@ -2454,23 +2458,24 @@ TEST(TestGeometryUtilities, Test_Export_Polyhedron)
 
     const std::string export_polyhedron_folder = exportFolder + "/Polyhedron";
     Gedim::Output::CreateFolder(export_polyhedron_folder);
-    geometryUtilities.ExportPolyhedronToVTU(0,
-                                            polyhedron.Vertices,
-                                            polyhedron.Edges,
-                                            polyhedron.Faces,
-                                            tetrahedrons,
-                                            polyhedron_volume,
-                                            polyhedron_centroid,
-                                            polyhedron_faces_vertices,
-                                            std::vector<double>(polyhedron.Faces.size(), 0.0),
-                                            polyhedron_faces_rotated_centroid,
-                                            polyhedron_faces_translation,
-                                            polyhedron_faces_rotation,
-                                            polyhedron_faces_triangulation_vertices,
-                                            polyhedron_faces_centroid,
-                                            polyhedron_faces_normal,
-                                            polyhedron_faces_normal_direction,
-                                            export_polyhedron_folder);
+    Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(geometryUtilities,
+                                                              0,
+                                                              polyhedron.Vertices,
+                                                              polyhedron.Edges,
+                                                              polyhedron.Faces,
+                                                              tetrahedrons,
+                                                              polyhedron_volume,
+                                                              polyhedron_centroid,
+                                                              polyhedron_faces_vertices,
+                                                              std::vector<double>(polyhedron.Faces.size(), 0.0),
+                                                              polyhedron_faces_rotated_centroid,
+                                                              polyhedron_faces_translation,
+                                                              polyhedron_faces_rotation,
+                                                              polyhedron_faces_triangulation_vertices,
+                                                              polyhedron_faces_centroid,
+                                                              polyhedron_faces_normal,
+                                                              polyhedron_faces_normal_direction,
+                                                              export_polyhedron_folder);
 }
 
 TEST(TestGeometryUtilities, TestPolyhedron_Facets)

@@ -19,11 +19,10 @@
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
 
 #include "CommonUtilities.hpp"
-#include "ConformMeshUtilities.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshUtilities.hpp"
 #include "RefinementUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 #include <array>
 
@@ -48,7 +47,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons)
     meshUtilities.ComputeCell1DCell3DNeighbours(meshDAO);
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Original");
 
     Gedim::MeshUtilities::MeshGeometricData3D meshGeometricData = meshUtilities.FillMesh3DGeometricData(geometryUtilities, meshDAO);
 
@@ -123,7 +122,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons)
 
     unsigned int step = 0;
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
 
     std::map<unsigned int, unsigned int> updatedNeighCell2Ds;
 
@@ -163,7 +162,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons)
                 meshGeometricData.Cell3DsFacesEdgeDirections,
                 updatedNeighCell2Ds,
                 meshDAO);
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
     }
 
     for (unsigned int e = 0; e < result.NewCell1DsIndex.size(); e++)
@@ -181,7 +180,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons)
                                                                           meshGeometricData.Cell3DsFacesEdgeDirections,
                                                                           updatedNeighCell2Ds,
                                                                           meshDAO);
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined_Step" + std::to_string(step++));
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
@@ -192,7 +191,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons)
     ASSERT_EQ(65, meshDAO.Cell2DTotalNumber());
     ASSERT_EQ(23, meshDAO.Cell3DTotalNumber());
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Refined");
 }
 
 TEST(TestRefinementUtilities, TestRefineTetrahedrons_ByVolume)
@@ -215,7 +214,7 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons_ByVolume)
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
 
     unsigned int step = 0;
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
 
     const unsigned int seed = 10;
     const unsigned int maxRefinements = 5;
@@ -433,13 +432,13 @@ TEST(TestRefinementUtilities, TestRefineTetrahedrons_ByVolume)
                 cell2DsAligned[updatedNeighCell2D.second] = cell2DsAligned.at(updatedNeighCell2D.first);
         }
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R" + to_string(step++), true);
 
     Gedim::MeshUtilities::CheckMesh3DConfiguration checkConfig;
     meshUtilities.CheckMesh3D(checkConfig, geometryUtilities, meshDAO);

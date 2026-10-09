@@ -90,10 +90,14 @@ if(${ENABLE_VORO})
 endif()
 
 ## triangle
-find_package(triangle CONFIG REQUIRED)
+if(${ENABLE_TRIANGLE})
+    find_package(triangle CONFIG REQUIRED)
+endif()
 
 ## tetgen
-find_package(tetgen CONFIG REQUIRED)
+if(${ENABLE_TETGEN})
+    find_package(tetgen CONFIG REQUIRED)
+endif()
 
 ## METIS
 if(${ENABLE_METIS})

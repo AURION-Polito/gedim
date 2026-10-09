@@ -18,6 +18,7 @@
 
 #include "GeometryUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -392,7 +393,7 @@ TEST(TestGeometryUtilities, TestPlaneReflectionMatrix)
         {
             const std::string export_poly_folder = exportFolder + "/polyhedron";
             Gedim::Output::CreateFolder(export_poly_folder);
-            geometryUtilities.ExportPolyhedronToVTU(polyhedron, export_poly_folder);
+            Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(polyhedron, export_poly_folder);
         }
 
         {
@@ -438,7 +439,7 @@ TEST(TestGeometryUtilities, TestPlaneReflectionMatrix)
             {
                 const std::string export_poly_folder = exportFolder + "/reflected_polyhedron_xy";
                 Gedim::Output::CreateFolder(export_poly_folder);
-                geometryUtilities.ExportPolyhedronToVTU(reflected_polyhedron, export_poly_folder);
+                Gedim::External::GeometryUtilities::ExportPolyhedronToVTU(reflected_polyhedron, export_poly_folder);
             }
         }
     }

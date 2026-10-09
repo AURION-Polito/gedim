@@ -18,13 +18,13 @@
 
 #include "GeometryUtilities.hpp"
 #include "IntersectorMesh3DSegment.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshMatrices_3D_1Cells_Mock.hpp"
 #include "MeshMatrices_3D_22Cells_Mock.hpp"
 #include "MeshMatrices_3D_329Cells_Mock.hpp"
 #include "MeshMatrices_3D_68Cells_Mock.hpp"
 #include "MeshUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 
@@ -54,7 +54,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentFullInsideOneCell)
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -93,7 +93,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentFullInsideOneCell)
 
     meshUtilities.FillMesh1D(geometryUtilities, segmentOrigin, segmentTangent, coordinates, mesh_1D);
     {
-        meshUtilities.ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
     }
 }
 
@@ -122,7 +122,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnFace)
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -152,7 +152,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnFace)
 
     meshUtilities.FillMesh1D(geometryUtilities, segmentOrigin, segmentTangent, coordinates, mesh_1D);
     {
-        meshUtilities.ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
     }
 }
 
@@ -181,7 +181,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentInsideOneCell)
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -210,7 +210,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentInsideOneCell)
 
     meshUtilities.FillMesh1D(geometryUtilities, segmentOrigin, segmentTangent, coordinates, mesh_1D);
     {
-        meshUtilities.ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
     }
 }
 
@@ -243,7 +243,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnEdge)
     const Eigen::Vector3d segmentTangent = geometryUtilities.SegmentTangent(segmentOrigin, segmentEnd);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -283,7 +283,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_SegmentOnEdge)
 
     meshUtilities.FillMesh1D(geometryUtilities, segmentOrigin, segmentTangent, coordinates, mesh_1D);
     {
-        meshUtilities.ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh_1D, exportFolder, "mesh1D");
     }
 }
 
@@ -316,7 +316,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_FullInside)
     const Eigen::Vector3d segmentEnd(0.2, 0.2, 0.6);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -378,7 +378,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceInside
     const Eigen::Vector3d segmentEnd(0.2, 0.2, 0.6);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -440,7 +440,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceFace)
     const Eigen::Vector3d segmentEnd(0.2, 0.2, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -502,7 +502,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceFace)
     const Eigen::Vector3d segmentEnd(0.4, 0.4, 1.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -561,7 +561,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceVertex
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -620,7 +620,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceVertex)
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 1.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -678,7 +678,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_FaceEdge)
     const Eigen::Vector3d segmentEnd(0.0, 0.2, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -736,7 +736,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_FaceEdge)
     const Eigen::Vector3d segmentEnd(0.2, 0.0, 1.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -794,7 +794,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_EdgeEdge)
     const Eigen::Vector3d segmentEnd(0.0, 0.2, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -852,7 +852,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_EdgeEdge)
     const Eigen::Vector3d segmentEnd(0.0, 0.2, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -911,7 +911,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_EdgeEdge)
     const Eigen::Vector3d segmentEnd(0.0, 0.5, 1.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -969,7 +969,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_EdgeVertex
     const Eigen::Vector3d segmentEnd(1.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -1028,7 +1028,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_EdgeVertex)
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -1087,7 +1087,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_EdgeVertex)
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -1147,7 +1147,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Inside_VertexVert
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -1207,7 +1207,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Face_VertexVertex
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;
@@ -1267,7 +1267,7 @@ TEST(TestIntersectorMesh3DSegment, TestIntersectMesh_Positions_Edge_VertexVertex
     const Eigen::Vector3d segmentEnd(0.0, 0.0, 0.0);
 
     {
-        meshUtilities.ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh3D, exportFolder, "mesh3D");
 
         {
             Gedim::VTKUtilities exporter;

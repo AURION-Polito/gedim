@@ -17,11 +17,10 @@
 #include <gtest/gtest.h>
 
 #include "GeometryUtilities.hpp"
-#include "MeshDAOExporterToCsv.hpp"
 #include "MeshUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 #include "MeshMatrices.hpp"
-#include "MeshMatricesDAO.hpp"
 #include "MeshMatrices_2D_26Cells_Mock.hpp"
 
 #include "VTKUtilities.hpp"
@@ -50,7 +49,7 @@ TEST(TestConformMeshUtilities, TestConformMeshTwoSegments)
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
         Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
 
         Gedim::ConformMeshUtilities conformMeshUtilities(geometryUtilities, meshUtilities);
 
@@ -95,7 +94,7 @@ TEST(TestConformMeshUtilities, TestConformMeshTwoSegments)
         std::vector<Gedim::ConformerMeshSegment::ConformMesh> segmentsConformMesh(numSegments);
         Gedim::ConformMeshUtilities::ComputeDomainConformedMeshOptions options;
         options.PrintStatus = false;
-        options.VtkExportFolder = exportFolder;
+        // options.Vt kExportFolder = exportFolder;
 
         conformMeshUtilities.ComputeConformedMeshWithSegments(
             segmentsAdditionalPoints,
@@ -157,7 +156,7 @@ TEST(TestConformMeshUtilities, TestConformMeshTwoSegments)
         ASSERT_EQ(103, mesh.Mesh.NumberCell1D);
         ASSERT_EQ(54, mesh.Mesh.NumberCell2D);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
     }
     catch (const exception &exception)
     {
@@ -183,7 +182,7 @@ TEST(TestConformMeshUtilities, TestConformMeshRandomSegments)
         GedimUnitTesting::MeshMatrices_2D_26Cells_Mock mesh;
         Gedim::MeshMatricesDAO meshDAO(mesh.Mesh);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
 
         Gedim::ConformMeshUtilities conformMeshUtilities(geometryUtilities, meshUtilities);
 
@@ -235,7 +234,7 @@ TEST(TestConformMeshUtilities, TestConformMeshRandomSegments)
         std::vector<Gedim::ConformerMeshSegment::ConformMesh> segmentsConformMesh(numSegments);
         Gedim::ConformMeshUtilities::ComputeDomainConformedMeshOptions options;
         options.PrintStatus = false;
-        options.VtkExportFolder = exportFolder;
+        // options.VtkExportFolder = exportFolder;
 
         conformMeshUtilities.ComputeConformedMeshWithSegments(
             segmentsAdditionalPoints,
@@ -293,7 +292,7 @@ TEST(TestConformMeshUtilities, TestConformMeshRandomSegments)
 
         conformMeshUtilities.AddConformedMeshProperties(segmentsConformMesh, meshDAO);
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "ConformedMesh");
 
         // export mesh
         //      Gedim::MeshFromCsvUtilities meshFromCsvUtilities;

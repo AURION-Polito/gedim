@@ -2861,15 +2861,15 @@ TEST(TestGeometryUtilities, Test_Export_Polygon)
 
     const std::string export_polygon_folder = exportFolder + "/Polygon";
     Gedim::Output::CreateFolder(export_polygon_folder);
-    geometryUtilities.ExportPolygonToVTU(0,
-                                         polygonVertices,
-                                         triangulation_points,
-                                         0.0,
-                                         polygon_centroid,
-                                         polygon_edges_centroid,
-                                         polygon_edges_normal,
-                                         std::vector<bool>(polygon_edges_normal.cols(), true),
-                                         export_polygon_folder);
+    Gedim::External::GeometryUtilities::ExportPolygonToVTU(0,
+                                                           polygonVertices,
+                                                           triangulation_points,
+                                                           0.0,
+                                                           polygon_centroid,
+                                                           polygon_edges_centroid,
+                                                           polygon_edges_normal,
+                                                           std::vector<bool>(polygon_edges_normal.cols(), true),
+                                                           export_polygon_folder);
 }
 
 TEST(TestGeometryUtilities, Test_PolygonChebyshevCenter_Convex)

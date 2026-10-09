@@ -18,6 +18,7 @@
 
 #include "GeometryUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 using namespace testing;
 using namespace std;
@@ -739,7 +740,7 @@ TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
             Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
             Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
 
-            geometryUtilities.ExportPlanteToVTU(planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPlanteToVTU(geometryUtilities, planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
 
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result =
                 geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,
@@ -817,7 +818,7 @@ TEST(TestGeometryUtilities, TestIntersectionPolyhedronPlane)
             Eigen::Matrix3d planeRotationMatrix = geometryUtilities.PlaneRotationMatrix(planeNormal);
             Eigen::Vector3d planeTranslation = geometryUtilities.PlaneTranslation(planeOrigin);
 
-            geometryUtilities.ExportPlanteToVTU(planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
+            Gedim::External::GeometryUtilities::ExportPlanteToVTU(geometryUtilities, planeOrigin, planeNormal, planeTranslation, planeRotationMatrix, exportFolder);
 
             Gedim::GeometryUtilities::IntersectionPolyhedronPlaneResult result =
                 geometryUtilities.IntersectionPolyhedronPlane(polyhedron.Vertices,

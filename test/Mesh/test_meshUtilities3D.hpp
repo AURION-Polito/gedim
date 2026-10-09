@@ -16,7 +16,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "Gedim_Macro.hpp"
+#include "3rd_party_libraries_Macro.hpp"
 
 #include "GraphUtilities.hpp"
 #include "MeshMatrices.hpp"
@@ -32,6 +32,8 @@
 #include "TetgenInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "VTK_Unstructured_Grid_Mesh_Mock.hpp"
+#include "VtkMeshExporter.hpp"
+#include "VtkMeshInterface.hpp"
 #include "test_exportMeshUtilities.hpp"
 
 using namespace testing;
@@ -59,7 +61,7 @@ TEST(TestMeshUtilities, TestMesh3DFromPolyhedron)
 
     std::string exportFolder = "./Export/TestMesh3DFromPolyhedron/";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     EXPECT_EQ(meshDao.Dimension(), 3);
     EXPECT_EQ(meshDao.Cell0DTotalNumber(), 8);
@@ -125,7 +127,7 @@ TEST(TestMeshUtilities, TestCreateDelaunayMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateDelaunayMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     std::vector<std::vector<bool>> cell3Ds_faces_orientation(meshDao.Cell3DTotalNumber(), std::vector<bool>(4, true));
 
@@ -159,7 +161,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "CreatedTetrahedralMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "CreatedTetrahedralMesh");
 
     EXPECT_EQ(3, meshDao.Dimension());
     EXPECT_EQ(28, meshDao.Cell0DTotalNumber());
@@ -206,7 +208,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
     {
         std::vector<double> facets_id(facets.size());
         for (unsigned int f = 0; f < facets.size(); ++f)
@@ -271,7 +273,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacetsAndRegions)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacetsAndRegions";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
     {
         std::vector<double> facets_id(facets.size());
         for (unsigned int f = 0; f < facets.size(); ++f)
@@ -318,7 +320,7 @@ TEST(TestMeshUtilities, TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestCreateTetrahedralMeshWithFacets_MergedPolyhedrons";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
     {
         std::vector<double> facets_id(facets.size());
         for (unsigned int f = 0; f < facets.size(); ++f)
@@ -401,7 +403,7 @@ TEST(TestMeshUtilities, TestCreatePolyhedralMesh)
         ASSERT_FALSE(true);
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "TestCreatePolyhedralMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "TestCreatePolyhedralMesh");
 
     {
         ExportMeshData exportData;
@@ -514,7 +516,7 @@ TEST(TestMeshUtilities, TestCheckMesh3D)
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
 
     Gedim::MeshUtilities::CheckMesh3DConfiguration config;
     ASSERT_NO_THROW(meshUtilities.CheckMesh3D(config, geometryUtilities, meshDao));
@@ -556,7 +558,7 @@ TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Convex)
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "mesh");
 
     const Gedim::MeshUtilities::MeshGeometricData3D result = meshUtilities.FillMesh3DGeometricData(geometryUtilities, meshDao);
 
@@ -604,7 +606,7 @@ TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave)
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
@@ -722,7 +724,7 @@ TEST(TestMeshUtilities, TestFillMesh3DGeometricData_Concave_Tetra)
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ConcaveMesh");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
@@ -877,11 +879,11 @@ TEST(TestMeshUtilities, TestSetMeshMarkersOnPlane)
 
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh_Original");
 
     meshUtilities.SetMeshMarkersOnPlane(geometryUtilities, Eigen::Vector3d{-1.0, 0.0, 0.0}, Eigen::Vector3d{0.0, 0.0, 0.0}, 100, meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh_Modified");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh_Modified");
 
     ASSERT_EQ(100, meshDao.Cell0DMarker(0));
     ASSERT_EQ(100, meshDao.Cell0DMarker(3));
@@ -928,7 +930,7 @@ TEST(TestMeshUtilities, TestSetMeshMarkersByFaceNormal)
 
     Gedim::MeshUtilities meshUtilities;
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh_Original");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh_Original");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
@@ -940,7 +942,7 @@ TEST(TestMeshUtilities, TestSetMeshMarkersByFaceNormal)
 
     meshUtilities.SetMeshMarkersByFaceNormal(geometryUtilities, Eigen::Vector3d{-1.0, 0.0, 0.0}, cell2Ds_normal, 100, meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh_Modified");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh_Modified");
 
     ASSERT_EQ(100, meshDao.Cell0DMarker(0));
     ASSERT_EQ(100, meshDao.Cell0DMarker(3));
@@ -1018,7 +1020,7 @@ TEST(TestMeshUtilities, TestImportOVMMesh)
 
     std::string exportFolder = "./Export/TestMeshUtilities/TestImportOVMMesh";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ImportedOVMMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ImportedOVMMesh");
 
     ASSERT_EQ(3, meshDao.Dimension());
     ASSERT_EQ(64, meshDao.Cell0DTotalNumber());
@@ -1066,7 +1068,7 @@ TEST(TestMeshUtilities, TestRefineMesh3D)
     Gedim::MeshUtilities meshUtilities;
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDAO);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R0");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R0");
 
     // first refine
     {
@@ -1172,13 +1174,13 @@ TEST(TestMeshUtilities, TestRefineMesh3D)
         EXPECT_EQ(2, meshDAO.Cell2DNeighbourCell3D(9, 0));
         EXPECT_EQ(2, meshDAO.Cell2DNeighbourCell3D(10, 0));
 
-        meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_R1");
     }
 
     Gedim::MeshUtilities::ExtractActiveMeshData extractionData;
     meshUtilities.ExtractActiveMesh(meshDAO, extractionData);
 
-    meshUtilities.ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Final");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDAO, exportFolder, "Mesh_Final");
 }
 
 TEST(TestMeshUtilities, TestFillMesh3D)
@@ -1238,7 +1240,7 @@ TEST(TestMeshUtilities, TestFillMesh3D)
 
     meshUtilities.FillMesh3D(vertices, edges, triangles, polyhedrons, meshDao);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     ASSERT_EQ(vertices, meshDao.Cell0DsCoordinates());
     ASSERT_EQ(edges, meshDao.Cell1DsExtremes());
@@ -1308,7 +1310,7 @@ TEST(TestMeshUtilities, TestComputeMesh3DAlignedCell1Ds)
 
     meshUtilities.FillMesh3D(vertices, edges, triangles, polyhedrons, mesh);
 
-    meshUtilities.ExportMeshToVTU(mesh, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "Mesh");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(mesh);
 
@@ -1433,7 +1435,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByFace)
         meshCell3DToConvexCell3DIndices.at(c3D_index) = std::vector<unsigned int>({c3D_index});
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
 
     {
         const auto cell3Ds = meshDao.Cell2DNeighbourCell3Ds(1);
@@ -1518,7 +1520,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByFace)
             meshCell3DToConvexCell3DIndices.at(activeMeshData.NewCell3DToOldCell3D.at(c3D_index));
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
 
 TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByVertex)
@@ -1553,7 +1555,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByVertex)
         meshCell3DToConvexCell3DIndices.at(c3D_index) = std::vector<unsigned int>({c3D_index});
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "OriginalMesh");
 
     {
         const auto cell3Ds = meshDao.Cell0DNeighbourCell3Ds(18);
@@ -1594,7 +1596,7 @@ TEST(TestMeshUtilities, TestAgglomerateCell3Ds_ByVertex)
             meshCell3DToConvexCell3DIndices.at(activeMeshData.NewCell3DToOldCell3D.at(c3D_index));
     }
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "AgglomeratedMesh");
 }
 
 TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
@@ -1628,7 +1630,7 @@ TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
 
     std::string exportFolder = "./Export/TestMakeMeshTriangularFaces/";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     Gedim::MeshMatrices new_mesh = mesh;
     Gedim::MeshMatricesDAO new_meshDao(new_mesh);
@@ -1652,7 +1654,7 @@ TEST(TestMeshUtilities, TestMakeMeshTriangularFaces)
     Gedim::MeshUtilities::ExtractActiveMeshData extract_data;
     meshUtilities.ExtractActiveMesh(new_meshDao, extract_data);
 
-    meshUtilities.ExportMeshToVTU(new_meshDao, exportFolder, "TriangularFaceMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(new_meshDao, exportFolder, "TriangularFaceMesh");
 
     ASSERT_EQ(meshDao.Cell0DTotalNumber(), new_meshDao.Cell0DTotalNumber());
     ASSERT_EQ(meshDao.Cell1DTotalNumber() + meshDao.Cell2DTotalNumber(), new_meshDao.Cell1DTotalNumber());
@@ -1675,7 +1677,7 @@ TEST(TestMeshUtilities, TestFindPointCell3D)
 
     std::string exportFolder = "./Export/TestFindPointCell3D";
     Gedim::Output::CreateFolder(exportFolder);
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     meshUtilities.ComputeCell2DCell3DNeighbours(meshDao);
 
@@ -1857,7 +1859,7 @@ TEST(TestMeshUtilities, TestMarkCell3Ds)
     GedimUnitTesting::MeshMatrices_3D_68Cells_Mock mesh;
     Gedim::MeshMatricesDAO meshDao(mesh.Mesh);
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "Mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "Mesh");
 
     auto marking_function = [&geometryUtilities](const Eigen::MatrixXd &points) {
         Eigen::VectorXi marks(points.cols());
@@ -1930,7 +1932,7 @@ TEST(TestMeshUtilities, TestImportVtkMesh)
     GedimUnitTesting::VTK_Unstructured_Grid_Mesh_Mock::ExportFile(file_test_path);
 
     Gedim::MeshUtilities meshUtilities;
-    meshUtilities.ImportVtkMesh3D(file_test_path, meshDao);
+    Gedim::External::MeshUtilities::ImportVtkMesh3D(file_test_path, meshDao);
 
 #if ENABLE_VTK == 1
     ASSERT_EQ(5, meshDao.Cell0DTotalNumber());
@@ -1939,7 +1941,7 @@ TEST(TestMeshUtilities, TestImportVtkMesh)
     ASSERT_EQ(2, meshDao.Cell3DTotalNumber());
 #endif
 
-    meshUtilities.ExportMeshToVTU(meshDao, exportFolder, "ImportedMesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(meshDao, exportFolder, "ImportedMesh");
 }
 
 TEST(TestMeshUtilities, TestIntersect_mesh_polyhedron)
@@ -1999,7 +2001,7 @@ TEST(TestMeshUtilities, TestIntersect_mesh_polyhedron)
     {
         std::string mesh_3D_export_folder = exportFolder + "/Mesh3D";
         Gedim::Output::CreateFolder(mesh_3D_export_folder);
-        meshUtilities.ExportMeshToVTU(mesh_3D, mesh_3D_export_folder, "Mesh3D");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh_3D, mesh_3D_export_folder, "Mesh3D");
     }
 
     std::vector<Eigen::MatrixXd> cell2Ds_vertices(mesh_3D.Cell2DTotalNumber());

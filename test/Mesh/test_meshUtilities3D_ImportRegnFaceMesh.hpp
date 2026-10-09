@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include "MeshUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 namespace GedimUnitTesting
 {
@@ -41,7 +42,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_ImportRegnFaceMesh)
     mesh_utilities.ImportRegnFaceMesh(geometry_utilities, import_folder + "/mesh.node", import_folder + "/mesh.ele", mesh);
     mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
-    mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh");
 
     Gedim::Output::CreateFolder(exportFolder + "/Mesh");
     mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Mesh");
@@ -88,7 +89,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_RegnFaceMesh_Conversion)
                                           mesh);
         mesh_utilities.ComputeCell2DCell3DNeighbours(mesh);
 
-        mesh_utilities.ExportMeshToVTU(mesh, exportFolder, "mesh_" + std::to_string(m));
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "mesh_" + std::to_string(m));
 
         Gedim::Output::CreateFolder(exportFolder + "/Mesh_" + std::to_string(m));
         mesh_utilities.ExportMeshToCsv(mesh, ';', exportFolder + "/Mesh_" + std::to_string(m));
