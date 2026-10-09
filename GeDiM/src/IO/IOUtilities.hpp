@@ -14,6 +14,7 @@
 
 #include "Gedim_Macro.hpp"
 #include <unordered_set>
+#include <ctime>
 
 #if USE_MPI == 1
 #include <mpi.h>
