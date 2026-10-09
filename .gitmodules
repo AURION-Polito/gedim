@@ -1,3 +1,6 @@
 [submodule "GeDiM-core"]
 	path = GeDiM-core
 	url = git@github.com:AURION-Polito/GeDiM-core.git
+[submodule "3rd_party_libraries"]
+	path = 3rd_party_libraries
+	url = git@github.com:AURION-Polito/3rd_party_libraries.git
