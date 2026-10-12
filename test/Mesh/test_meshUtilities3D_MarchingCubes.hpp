@@ -108,7 +108,7 @@ namespace GedimUnitTesting
 
     auto surface_implicit_equation = [](const Eigen::MatrixXd &points)
     {
-      float L = 4.0f; // splitp = 5.0f, nevious = 3.0f.
+      float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
       float scale = (2.0 * std::numbers::pi) / L;
       float c = 0.0f;
 
@@ -118,9 +118,9 @@ namespace GedimUnitTesting
         const Eigen::Vector3d point = points.col(p);
         double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
         const double suface_value = std::sin(x) * std::sin(y) * std::sin(z) +
-                            std::sin(x) * std::cos(y) * std::cos(z) +
-                            std::cos(x) * std::sin(y) * std::cos(z) +
-                            std::cos(x) * std::cos(y) * std::sin(z) - c;
+                                    std::sin(x) * std::cos(y) * std::cos(z) +
+                                    std::cos(x) * std::sin(y) * std::cos(z) +
+                                    std::cos(x) * std::cos(y) * std::sin(z) - c;
 
         surface_values[p] = suface_value;
 
@@ -134,33 +134,43 @@ namespace GedimUnitTesting
                                                                            mesh);
 
     {
-//      {
-//        Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-//        const auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(10000,
-//                                                                                               1.0);
-//        const auto surface_values = surface_implicit_equation(random_points);
+        auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(200000,
+                                                                                         std::sqrt(2.0));
+        random_points.colwise() += Eigen::Vector3d(0.5, 0.5, 0.5);
+        const auto surface_values = surface_implicit_equation(random_points);
 
-//        for (unsigned int c = 0; c < random_points.cols(); ++c)
-//        {
-//          const double surface_value = surface_values[c];
+        for (unsigned int c = 0; c < random_points.cols(); ++c)
+        {
+          const double surface_value = surface_values[c];
 
-//          if (!geometry_utilities.IsValueZero(surface_value,
-//                                              geometry_utilities.Tolerance1D()))
-//            continue;
+          if (!geometry_utilities.IsValueLowerOrEqual(std::abs(surface_value),
+                                                      1.0e-2,
+                                                      geometry_utilities.Tolerance1D()))
+            continue;
 
-//          exporter.AddPoint(random_points.col(c));
-//        }
+          exporter.AddPoint(random_points.col(c),
+                            {
+                              {
+                                "surface_value",
+                                Gedim::VTPProperty::Formats::Cells,
+                                static_cast<unsigned int>(1),
+                                &surface_value
+                              }
+                            });
+        }
 
-//        exporter.Export(exportFolder + "/surface.vtu");
-//      }
+        exporter.Export(exportFolder + "/surface.vtu");
+      }
 
       {
         Gedim::VTKUtilities exporter;
 
         for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
         {
-          double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
+          const double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
 
           exporter.AddPoint(mesh.Cell0DCoordinates(c),
                             {
