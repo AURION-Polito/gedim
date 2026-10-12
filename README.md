@@ -30,10 +30,10 @@ To change the installation folder set the CMake variable `CMAKE_INSTALL_PREFIX`.
 
 **`GeDiM`** interfaces external libraries.
 
-The installation requires the external dependencies already compiled and installed.
+The installation requires the external dependencies to be already compiled and installed.
 Set the CMake variable `CMAKE_PREFIX_PATH` to give **`GeDiM`** the path where the external libraries are installed.
 
-The installation of most of the external dependencies can be found in `3rd_party_libraries` subfolder.
+The installation of most of the external dependencies can be found in `3rd_party_libraries/install_libraries` subfolder.
 
 #### Required Libraries
 
