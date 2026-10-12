@@ -81,25 +81,25 @@ namespace GedimUnitTesting
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     {
-    const Gedim::GeometryUtilities::Polyhedron cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                              1.0);
-    const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
-    const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
-    const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
+      const Gedim::GeometryUtilities::Polyhedron cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
+                                                                                                1.0);
+      const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
+      const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
+      const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-    const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
-    const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
-    const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
+      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
 
 
-    Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
-                                                   parallelepipedsLengthTangent,
-                                                   parallelepipedsHeightTangent,
-                                                   parallelepipedsWidthTangent,
-                                                   lengthMeshCurvilinearCoordinates,
-                                                   heightMeshCurvilinearCoordinates,
-                                                   widthMeshCurvilinearCoordinates,
-                                                   mesh);
+      Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
+                                                     parallelepipedsLengthTangent,
+                                                     parallelepipedsHeightTangent,
+                                                     parallelepipedsWidthTangent,
+                                                     lengthMeshCurvilinearCoordinates,
+                                                     heightMeshCurvilinearCoordinates,
+                                                     widthMeshCurvilinearCoordinates,
+                                                     mesh);
     }
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(mesh,
@@ -117,10 +117,13 @@ namespace GedimUnitTesting
       {
         const Eigen::Vector3d point = points.col(p);
         double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-        surface_values[p] = std::sin(x) * std::sin(y) * std::sin(z) +
+        const double suface_value = std::sin(x) * std::sin(y) * std::sin(z) +
                             std::sin(x) * std::cos(y) * std::cos(z) +
                             std::cos(x) * std::sin(y) * std::cos(z) +
                             std::cos(x) * std::cos(y) * std::sin(z) - c;
+
+        surface_values[p] = suface_value;
+
       }
 
       return surface_values;
@@ -131,24 +134,47 @@ namespace GedimUnitTesting
                                                                            mesh);
 
     {
-      Gedim::VTKUtilities exporter;
-
-      for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
       {
-        double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
+        Gedim::VTKUtilities exporter;
 
-         exporter.AddPoint(mesh.Cell0DCoordinates(c),
-                           {
-                             {
-                               "sign",
-                               Gedim::VTPProperty::Formats::Cells,
-                               static_cast<unsigned int>(1),
-                               &cell0D_mark
-                             }
-                           });
+        const auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(10000,
+                                                                                               1.0);
+        const auto surface_values = surface_implicit_equation(random_points);
+
+        for (unsigned int c = 0; c < random_points.cols(); ++c)
+        {
+          const double surface_value = surface_values[c];
+
+          if (geometry_utilities.IsValueZero(surface_value,
+                                             geometry_utilities.Tolerance1D()))
+            continue;
+
+          exporter.AddPoint(random_points.col(c));
+        }
+
+        exporter.Export(exportFolder + "/surface.vtu");
       }
 
-      exporter.Export(exportFolder + "/marching_cubes_points.vtu");
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
+        {
+          double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
+
+          exporter.AddPoint(mesh.Cell0DCoordinates(c),
+                            {
+                              {
+                                "sign",
+                                Gedim::VTPProperty::Formats::Cells,
+                                static_cast<unsigned int>(1),
+                                &cell0D_mark
+                              }
+                            });
+        }
+
+        exporter.Export(exportFolder + "/marching_cubes_points.vtu");
+      }
     }
 
   }
