@@ -1899,7 +1899,7 @@ TEST(TestMeshUtilities, TestMarkCell3Ds)
 
     const auto cell3Ds_marked = meshUtilities.MarkCells(marking_function, cell3Ds_points, 0);
 
-    ASSERT_EQ(std::vector<unsigned int>({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ASSERT_EQ(std::vector<int>({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                          0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
                                          0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0}),
               cell3Ds_marked);
