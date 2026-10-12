@@ -38,7 +38,6 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
 
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
-
 }
 
 } // namespace GedimUnitTesting
