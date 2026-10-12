@@ -134,26 +134,26 @@ namespace GedimUnitTesting
                                                                            mesh);
 
     {
-      {
-        Gedim::VTKUtilities exporter;
+//      {
+//        Gedim::VTKUtilities exporter;
 
-        const auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(10000,
-                                                                                               1.0);
-        const auto surface_values = surface_implicit_equation(random_points);
+//        const auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(10000,
+//                                                                                               1.0);
+//        const auto surface_values = surface_implicit_equation(random_points);
 
-        for (unsigned int c = 0; c < random_points.cols(); ++c)
-        {
-          const double surface_value = surface_values[c];
+//        for (unsigned int c = 0; c < random_points.cols(); ++c)
+//        {
+//          const double surface_value = surface_values[c];
 
-          if (geometry_utilities.IsValueZero(surface_value,
-                                             geometry_utilities.Tolerance1D()))
-            continue;
+//          if (!geometry_utilities.IsValueZero(surface_value,
+//                                              geometry_utilities.Tolerance1D()))
+//            continue;
 
-          exporter.AddPoint(random_points.col(c));
-        }
+//          exporter.AddPoint(random_points.col(c));
+//        }
 
-        exporter.Export(exportFolder + "/surface.vtu");
-      }
+//        exporter.Export(exportFolder + "/surface.vtu");
+//      }
 
       {
         Gedim::VTKUtilities exporter;
