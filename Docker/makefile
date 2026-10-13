@@ -16,7 +16,7 @@ clean:
 	@docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
 
 create:
-	@docker build --progress=plain -f Dockerfile --target build_windows . -t build_windows:1.0.0
+	@docker build --build-arg UID="$$(id -u)" --build-arg GID="$$(id -g)" --progress=plain -f Dockerfile --target build_windows . -t build_windows:1.0.0
 
 run:
 	@echo "Shared folder: ${main_folder}"

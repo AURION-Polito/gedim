@@ -30,4 +30,20 @@ apt install -y cmake && \
 apt install -y cmake-curses-gui && \
 apt install -y git
 
+ARG UID=1000
+ARG GID=1000
+
+RUN set -eux; \
+    if ! getent group "${GID}" >/dev/null; then \
+        groupadd -g "${GID}" appuser; \
+    fi; \
+    if ! getent passwd "${UID}" >/dev/null; then \
+        useradd -m -u "${UID}" -g "${GID}" appuser; \
+    fi; \
+    mkdir -p /main_folder; \
+    USER_HOME="$(getent passwd "${UID}" | cut -d: -f6)"; \
+    mkdir -p "${USER_HOME}"; \
+    chown -R "${UID}:${GID}" /main_folder "${USER_HOME}"
+
+USER ${UID}:${GID}
 WORKDIR /main_folder
