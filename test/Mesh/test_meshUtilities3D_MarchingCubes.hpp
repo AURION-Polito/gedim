@@ -103,21 +103,49 @@ namespace GedimUnitTesting
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "original_mesh");
 
-    auto surface_implicit_equation = [](const Eigen::MatrixXd &points) {
+    auto gyroid = [](
+                  const Eigen::Vector3d &point,
+                  const double& L,
+                  const double& c) {
+      const double scale = (2.0 * std::numbers::pi) / L;
+      const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+      return std::sin(x) * std::sin(y) * std::sin(z) + std::sin(x) * std::cos(y) * std::cos(z) +
+          std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c;
+    };
+
+    auto diamond = [](
+                   const Eigen::Vector3d &point,
+                   const double& L,
+                   const double& c) {
+      const double scale = (2.0 * std::numbers::pi) / L;
+      const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+      return std::sin(x) * std::sin(y) * std::sin(z) +
+          std::sin(x) * std::cos(y) * std::cos(z) +
+          std::cos(x) * std::sin(y) * std::cos(z) +
+          std::cos(x) * std::cos(y) * std::sin(z) - c;
+    };
+
+    auto split_p = [](
+                   const Eigen::Vector3d &point,
+                   const double& L,
+                   const double& c) {
+      const double scale = (2.0 * std::numbers::pi) / L;
+      const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+      return 1.1 * (std::sin(2.0 * x) * std::sin(z) * std::cos(y) +
+                    std::sin(2.0 * y) * std::sin(x) * std::cos(z) +
+                    std::sin(2.0 * z)*std::sin(y)*std::cos(x)) -
+          0.2 * (std::cos(2.0 * x) * std::cos(2.0 * y) + std::cos(2.0 * y) * std::cos(2.0 * z) +
+                 std::cos(2.0 * z) * std::cos(2.0 * x)) -
+          0.4 * (std::cos(2.0 * x) * std::cos(2.0 * y) * std::cos(2.0 * z)) - c;
+    };
+
+    auto surface_implicit_equation = [&gyroid, &diamond, &split_p](const Eigen::MatrixXd &points) {
       float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
-      float scale = (2.0 * std::numbers::pi) / L;
       float c = 0.0f;
 
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-      {
-        const Eigen::Vector3d point = points.col(p);
-        double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-        const double suface_value = std::sin(x) * std::sin(y) * std::sin(z) + std::sin(x) * std::cos(y) * std::cos(z) +
-                                    std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c;
-
-        surface_values[p] = suface_value;
-      }
+        surface_values[p] = split_p(points.col(p), L, c);
 
       return surface_values;
     };
@@ -237,16 +265,25 @@ namespace GedimUnitTesting
 
       {
         Gedim::VTKUtilities exporter;
-;
+        ;
         for (unsigned int p = 0; p < marching_cubes_result.surface_triangles.size(); ++p)
         {
           const auto& triangle_ids = marching_cubes_result.surface_triangles.at(p);
           Eigen::Matrix3d triangle;
-          triangle.col(0) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(0)).coordinate;
-          triangle.col(1) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(1)).coordinate;
-          triangle.col(2) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(2)).coordinate;
+          triangle.col(0) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.indices.at(0)).coordinate;
+          triangle.col(1) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.indices.at(1)).coordinate;
+          triangle.col(2) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.indices.at(2)).coordinate;
+          const double cell3D_id = triangle_ids.cell3D_id;
 
-          exporter.AddPolygon(triangle);
+          exporter.AddPolygon(triangle,
+                              {
+                                {
+                                  "cell3D_id",
+                                  Gedim::VTPProperty::Formats::Cells,
+                                  static_cast<unsigned int>(1),
+                                  &cell3D_id
+                                }
+                              });
         }
 
         exporter.Export(exportFolder + "/marching_cubes_triangles.vtu");
