@@ -17,14 +17,14 @@
 #include <gtest/gtest.h>
 
 #include "MeshUtilities.hpp"
-#include "VtkMeshExporter.hpp"
 #include "VTKUtilities.hpp"
+#include "VtkMeshExporter.hpp"
 
 namespace GedimUnitTesting
 {
 
-  TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
-  {
+TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
+{
     // TPMS EQUATION
 
     // N.B. all variables (x,y,z) are intended as already scaled (x->x*2*Pi/L and so on).
@@ -79,119 +79,88 @@ namespace GedimUnitTesting
 
     Gedim::MeshMatrices mesh_data;
     Gedim::MeshMatricesDAO mesh(mesh_data);
-<<<<<<< HEAD
-}
-=======
 
     {
-      const Gedim::GeometryUtilities::Polyhedron cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0),
-                                                                                                1.0);
-      const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
-      const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
-      const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
+        const Gedim::GeometryUtilities::Polyhedron cube =
+            geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+        const Eigen::Vector3d parallelepipedsLengthTangent = cube.Vertices.col(1) - cube.Vertices.col(0);
+        const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
+        const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
-      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+        const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
+        const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
+        const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
 
-
-      Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
-                                                     parallelepipedsLengthTangent,
-                                                     parallelepipedsHeightTangent,
-                                                     parallelepipedsWidthTangent,
-                                                     lengthMeshCurvilinearCoordinates,
-                                                     heightMeshCurvilinearCoordinates,
-                                                     widthMeshCurvilinearCoordinates,
-                                                     mesh);
+        Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
+                                                       parallelepipedsLengthTangent,
+                                                       parallelepipedsHeightTangent,
+                                                       parallelepipedsWidthTangent,
+                                                       lengthMeshCurvilinearCoordinates,
+                                                       heightMeshCurvilinearCoordinates,
+                                                       widthMeshCurvilinearCoordinates,
+                                                       mesh);
     }
 
-    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh,
-                                                    exportFolder,
-                                                    "original_mesh");
+    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "original_mesh");
 
-    auto surface_implicit_equation = [](const Eigen::MatrixXd &points)
-    {
-      float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
-      float scale = (2.0 * std::numbers::pi) / L;
-      float c = 0.0f;
+    auto surface_implicit_equation = [](const Eigen::MatrixXd &points) {
+        float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
+        float scale = (2.0 * std::numbers::pi) / L;
+        float c = 0.0f;
 
-      Eigen::VectorXd surface_values(points.cols());
-      for (unsigned int p = 0; p < surface_values.size(); p++)
-      {
-        const Eigen::Vector3d point = points.col(p);
-        double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-        const double suface_value = std::sin(x) * std::sin(y) * std::sin(z) +
-                                    std::sin(x) * std::cos(y) * std::cos(z) +
-                                    std::cos(x) * std::sin(y) * std::cos(z) +
-                                    std::cos(x) * std::cos(y) * std::sin(z) - c;
+        Eigen::VectorXd surface_values(points.cols());
+        for (unsigned int p = 0; p < surface_values.size(); p++)
+        {
+            const Eigen::Vector3d point = points.col(p);
+            double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+            const double suface_value = std::sin(x) * std::sin(y) * std::sin(z) + std::sin(x) * std::cos(y) * std::cos(z) +
+                                        std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c;
 
-        surface_values[p] = suface_value;
+            surface_values[p] = suface_value;
+        }
 
-      }
-
-      return surface_values;
+        return surface_values;
     };
 
-    const auto marching_cubes_result = Gedim::MeshUtilities::MarchingCubes(geometry_utilities,
-                                                                           surface_implicit_equation,
-                                                                           mesh);
+    const auto marching_cubes_result = Gedim::MeshUtilities::MarchingCubes(geometry_utilities, surface_implicit_equation, mesh);
 
     {
-      {
-        Gedim::VTKUtilities exporter;
-
-        auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(200000,
-                                                                                         std::sqrt(2.0));
-        random_points.colwise() += Eigen::Vector3d(0.5, 0.5, 0.5);
-        const auto surface_values = surface_implicit_equation(random_points);
-
-        for (unsigned int c = 0; c < random_points.cols(); ++c)
         {
-          const double surface_value = surface_values[c];
+            Gedim::VTKUtilities exporter;
 
-          if (!geometry_utilities.IsValueLowerOrEqual(std::abs(surface_value),
-                                                      1.0e-2,
-                                                      geometry_utilities.Tolerance1D()))
-            continue;
+            auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(200000, std::sqrt(2.0));
+            random_points.colwise() += Eigen::Vector3d(0.5, 0.5, 0.5);
+            const auto surface_values = surface_implicit_equation(random_points);
 
-          exporter.AddPoint(random_points.col(c),
-                            {
-                              {
-                                "surface_value",
-                                Gedim::VTPProperty::Formats::Cells,
-                                static_cast<unsigned int>(1),
-                                &surface_value
-                              }
-                            });
+            for (unsigned int c = 0; c < random_points.cols(); ++c)
+            {
+                const double surface_value = surface_values[c];
+
+                if (!geometry_utilities.IsValueLowerOrEqual(std::abs(surface_value), 1.0e-2, geometry_utilities.Tolerance1D()))
+                    continue;
+
+                exporter.AddPoint(random_points.col(c),
+                                  {{"surface_value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &surface_value}});
+            }
+
+            exporter.Export(exportFolder + "/surface.vtu");
         }
 
-        exporter.Export(exportFolder + "/surface.vtu");
-      }
-
-      {
-        Gedim::VTKUtilities exporter;
-
-        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
         {
-          const double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
+            Gedim::VTKUtilities exporter;
 
-          exporter.AddPoint(mesh.Cell0DCoordinates(c),
-                            {
-                              {
-                                "sign",
-                                Gedim::VTPProperty::Formats::Cells,
-                                static_cast<unsigned int>(1),
-                                &cell0D_mark
-                              }
-                            });
+            for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
+            {
+                const double cell0D_mark = marching_cubes_result.cell0Ds_marked[c];
+
+                exporter.AddPoint(mesh.Cell0DCoordinates(c),
+                                  {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_mark}});
+            }
+
+            exporter.Export(exportFolder + "/marching_cubes_points.vtu");
         }
-
-        exporter.Export(exportFolder + "/marching_cubes_points.vtu");
-      }
     }
-
-  }
->>>>>>> a9932bf404820ede233e1f41db53270ee5dd8cb8
+}
 
 } // namespace GedimUnitTesting
 
