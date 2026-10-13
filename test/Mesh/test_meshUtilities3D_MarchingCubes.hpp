@@ -234,6 +234,23 @@ namespace GedimUnitTesting
 
         exporter.Export(exportFolder + "/marching_cubes_points.vtu");
       }
+
+      {
+        Gedim::VTKUtilities exporter;
+;
+        for (unsigned int p = 0; p < marching_cubes_result.surface_triangles.size(); ++p)
+        {
+          const auto& triangle_ids = marching_cubes_result.surface_triangles.at(p);
+          Eigen::Matrix3d triangle;
+          triangle.col(0) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(0)).coordinate;
+          triangle.col(1) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(1)).coordinate;
+          triangle.col(2) = marching_cubes_result.surface_intersections.surface_intersection_points.at(triangle_ids.at(2)).coordinate;
+
+          exporter.AddPolygon(triangle);
+        }
+
+        exporter.Export(exportFolder + "/marching_cubes_triangles.vtu");
+      }
     }
   }
 
