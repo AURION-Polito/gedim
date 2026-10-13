@@ -43,6 +43,7 @@
 #include "test_meshUtilities3D_ImportRegnFaceMesh.hpp"
 #include "test_voro_interface.hpp"
 #include "test_meshUtilities3D_Mesh3DFromPolyhedra.hpp"
+#include "test_meshUtilities3D_MarchingCubes.hpp"
 
 #include <gtest/gtest.h>
 
