@@ -87,9 +87,9 @@ namespace GedimUnitTesting
       const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
       const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(40, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(50, 0.0, 1.0, 1);
-      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(60, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
+      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                      parallelepipedsLengthTangent,
