@@ -14,7 +14,7 @@ struct IDomain
 {
     // The first represents the domain, the others represent holes.
     std::vector<Gedim::GeometryUtilities::Polyhedron> domains;
-    Eigen::Vector3d internal_point; // point internal to the domain
+    std::vector<Eigen::Vector3d> internal_points; // point internal to the domain
     double volume;
 };
 
@@ -60,7 +60,10 @@ struct SquareDomainWithOneHole : IDomain
         domains[1].Faces[4] << 0, 1, 5, 4, 0, 9, 4, 8;
         domains[1].Faces[5] << 3, 2, 6, 7, 2, 10, 6, 11;
 
-        internal_point << 0.0, 0.0, -0.7;
+        internal_points.resize(2);
+
+        internal_points[0] << 0.0, 0.0, -0.7;
+        internal_points[1] << 0.0, 0.0, 0.0;
 
         volume = 8.0;
     }
@@ -92,11 +95,18 @@ struct Program_configuration final
 
         // Mesh parameters
         Gedim::Configurations::AddProperty("MeshGenerator",
-                                           static_cast<unsigned int>(MeshGenerator_Types_3D::Tetrahedral),
+                                           static_cast<unsigned int>(MeshGenerator_Types_3D::PureTetrahedral),
                                            "Mesh 3D gereator type, 0 - PureTetrahedral; 1 - Tetrahedral; 2 - "
                                            "Minimal; 3 - Polyhedral; 4 - Cubic (Default: 0)");
         Gedim::Configurations::AddProperty("MeshImportFilePath", "./", "Mesh imported file path (Default: './')");
-        Gedim::Configurations::AddProperty("MeshMaxVolume", 0.1, "Mesh 3D maximum relative cell volume (Default: 0.1)");
+        Gedim::Configurations::AddProperty("MeshMaxVolume", 0.1, "Mesh 3D maximum relative cell volume for tetrahedral and voronoi mesh (Default: 0.1)");
+        Gedim::Configurations::AddProperty("NumCellsHeight",
+                                           static_cast<unsigned int>(1),
+                                           "Mesh 3D NumCellsHeightfor parallelpipedal mesh (Default: 1)");
+        Gedim::Configurations::AddProperty("NumCellsBase",
+                                           static_cast<unsigned int>(1),
+                                           "Mesh 3D NumCellsBase volume for parallelpipedal mesh (Default: 1)");
+        Gedim::Configurations::AddProperty("NumCellsWidth", static_cast<unsigned int>(1), "Mesh 3D NumCellsWidth for parallelpipedal mesh (Default: 1)");
         Gedim::Configurations::AddProperty("GeometricTolerance1D", 1.0e-12, "Geometric Tolerance 1D (Default: 1.0e-12)");
         Gedim::Configurations::AddProperty("GeometricTolerance2D", 1.0e-14, "Geometric Tolerance 2D (Default: 1.0e-14)");
         Gedim::Configurations::AddProperty("GeometricTolerance3D", 1.0e-15, "Geometric Tolerance 3D (Default: 1.0e-15)");
@@ -152,6 +162,21 @@ struct Program_configuration final
     inline unsigned int MethodOrder() const
     {
         return Gedim::Configurations::GetPropertyValue<unsigned int>("MethodOrder");
+    }
+
+    inline unsigned int NumCellsHeight() const
+    {
+        return Gedim::Configurations::GetPropertyValue<unsigned int>("NumCellsHeight");
+    }
+
+    inline unsigned int NumCellsBase() const
+    {
+        return Gedim::Configurations::GetPropertyValue<unsigned int>("NumCellsBase");
+    }
+
+    inline unsigned int NumCellsWidth() const
+    {
+        return Gedim::Configurations::GetPropertyValue<unsigned int>("NumCellsWidth");
     }
 
     inline std::vector<unsigned int> ExportFormat() const

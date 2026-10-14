@@ -1,3 +1,4 @@
+#include "CreateMeshUtilitiesWithHoles.hpp"
 #include "MeshDAOExporterToCsv.hpp"
 #include "MeshUtilities.hpp"
 #include "QuadratureData.hpp"
@@ -5,8 +6,10 @@
 #include "TetgenInterface.hpp"
 #include "UCDUtilities.hpp"
 #include "VTKUtilities.hpp"
+#include "VoroInterface.hpp"
 #include "VtkMeshExporter.hpp"
 #include "program_configuration.hpp"
+#include <numeric>
 
 using namespace std;
 using namespace Eigen;
@@ -33,21 +36,13 @@ void ExportDomain3DToUCD(const string &file_path, const std::vector<Gedim::Geome
     }
 }
 
-void ExportMesh3DToUCD(const string &exportVtuMeshFolder, const Gedim::MeshMatricesDAO &mesh)
-{
-
-    Gedim::MeshUtilities::ExportMeshToUCD(mesh, exportVtuMeshFolder, "Domain_Mesh", false);
-
-    Gedim::Output::PrintGenericMessage(
-        Gedim::Output::MagentaColor + "Export 3D mesh to paraview. File path: " + exportVtuMeshFolder + Gedim::Output::EndColor,
-        true);
-}
-
 void AddEdgeInternalPoints(const Gedim::GeometryUtilities &geometryUtilities,
                            const unsigned int &num_internal_points,
                            const InternalPointsType &internal_points_type,
                            Gedim::IMeshDAO &mesh)
 {
+    if (num_internal_points == 0)
+        return;
 
     std::map<unsigned int, std::vector<double>> hanging_per_edges;
 
@@ -79,83 +74,99 @@ void AddEdgeInternalPoints(const Gedim::GeometryUtilities &geometryUtilities,
     Gedim::MeshUtilities::AddHangingNodesToMesh(hanging_per_edges, mesh);
 }
 
-void ExportMesh3DToCSV(const std::string &exportCsvMeshFolder, const Gedim::IMeshDAO &mesh)
+void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
+                  const Program_configuration &config,
+                  const IDomain &domain_data,
+                  Gedim::MeshMatrices &mesh_data,
+                  Gedim::IMeshDAO &mesh)
 {
 
-    Gedim::MeshUtilities meshUtilities;
-    const Gedim::MeshFromCsvUtilities utilities;
-    Gedim::MeshDAOExporterToCsv exporter(utilities);
-    Gedim::MeshFromCsvUtilities::Configuration configuration;
-    configuration.Folder = exportCsvMeshFolder;
-    exporter.Export(configuration, mesh);
+    Gedim::MeshMatrices full_mesh_data;
+    Gedim::MeshMatricesDAO full_mesh(full_mesh_data);
 
-    Gedim::Output::PrintGenericMessage(
-        Gedim::Output::MagentaColor + "Export 3D mesh to csv. File path: " + exportCsvMeshFolder + Gedim::Output::EndColor,
-        true);
-}
-
-void ExportMesh3DToMEDIT(const std::string &exportMeditMeshFolder, const unsigned int &method_order, Gedim::IMeshDAO &mesh)
-{
-
+    switch (config.MeshGenerator())
     {
-        Gedim::MeshUtilities meshUtilities;
-        meshUtilities.ComputeCell0DCell1DNeighbours(mesh);
-        meshUtilities.ExportMeshToMEDIT(mesh, exportMeditMeshFolder, "Domain_Mesh", false, method_order);
+    case MeshGenerator_Types_3D::Tetrahedral: {
+#if ENABLE_TRIANGLE == 0
+        throw std::runtime_error("Triangle library not active");
+#endif
+        Gedim::External::MeshUtilities::CreateTetrahedralMesh(domain_data.domains[0].Vertices,
+                                                              domain_data.domains[0].Edges,
+                                                              domain_data.domains[0].Faces,
+                                                              config.MeshMaxVolume() * domain_data.volume,
+                                                              full_mesh);
+    }
+    break;
+    case MeshGenerator_Types_3D::Minimal: {
+        std::vector<unsigned int> marker_vertices(domain_data.domains[0].Vertices.cols());
+        std::iota(marker_vertices.begin(), marker_vertices.end(), 1);
+        std::vector<unsigned int> marker_edges(domain_data.domains[0].Edges.cols());
+        std::iota(marker_edges.begin(), marker_edges.end(), domain_data.domains[0].Vertices.cols() + 1);
+        std::vector<unsigned int> marker_faces(domain_data.domains[0].Faces.size());
+        std::iota(marker_faces.begin(),
+                  marker_faces.end(),
+                  domain_data.domains[0].Vertices.cols() + domain_data.domains[0].Edges.cols() + 1);
+        Gedim::MeshUtilities::Mesh3DFromPolyhedron(domain_data.domains[0].Vertices,
+                                                   domain_data.domains[0].Edges,
+                                                   domain_data.domains[0].Faces,
+                                                   marker_vertices,
+                                                   marker_edges,
+                                                   marker_faces,
+                                                   full_mesh);
+    }
+    break;
+    case MeshGenerator_Types_3D::Polyhedral: {
+#if ENABLE_VORO == 0
+        throw std::runtime_error("Voro library not active");
+#endif
+        const unsigned num_cells = static_cast<unsigned int>(std::max(1.0, 1.0 / config.MeshMaxVolume()));
+
+        Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometryUtilities,
+                                                             domain_data.domains[0].Vertices,
+                                                             domain_data.domains[0].Edges,
+                                                             domain_data.domains[0].Faces,
+                                                             num_cells,
+                                                             10,
+                                                             mesh,
+                                                             10);
+    }
+    break;
+    case MeshGenerator_Types_3D::Cubic: {
+        const Eigen::Vector3d domain_origin = domain_data.domains[0].Vertices.col(0);
+        const Eigen::Vector3d domain_base_tangent = domain_data.domains[0].Vertices.col(1) - domain_origin;
+        const Eigen::Vector3d domain_width_tangent = domain_data.domains[0].Vertices.col(4) - domain_origin;
+        const Eigen::Vector3d domain_heigth_tangent = domain_data.domains[0].Vertices.col(3) - domain_origin;
+
+        Gedim::MeshUtilities::CreateParallelepipedMesh(
+            domain_origin,
+            domain_base_tangent,
+            domain_heigth_tangent,
+            domain_width_tangent,
+            geometryUtilities.EquispaceCoordinates(config.NumCellsBase() + 1, 0.0, 1.0, true),
+            geometryUtilities.EquispaceCoordinates(config.NumCellsHeight() + 1, 0.0, 1.0, true),
+            geometryUtilities.EquispaceCoordinates(config.NumCellsWidth() + 1, 0.0, 1.0, true),
+            full_mesh);
+    }
+    break;
+    default:
+        throw std::runtime_error("not valid mesh generator type");
     }
 
-    Gedim::Output::PrintGenericMessage(
-        Gedim::Output::MagentaColor + "Export 3D mesh to MEDIT. File path: " + exportMeditMeshFolder + Gedim::Output::EndColor,
-        true);
-}
-
-void CreateParallepipedMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
-                              const Program_configuration &config,
-                              const std::vector<Gedim::GeometryUtilities::Polyhedron> &domains,
-                              const unsigned int &num_cells_base,
-                              const unsigned int &num_cells_width,
-                              const unsigned int &num_cells_height,
-                              Gedim::IMeshDAO &mesh)
-{
-    if (domains.size() == 1)
+#ifdef EXPORT_TEST_VTU
     {
-        switch (config.MeshGenerator())
-        {
-        case MeshGenerator_Types_3D::Tetrahedral:
-        case MeshGenerator_Types_3D::Minimal:
-        case MeshGenerator_Types_3D::Polyhedral:
-        case MeshGenerator_Types_3D::Cubic: {
-            const Eigen::Vector3d domain_origin = domains[0].Vertices.col(0);
-            const Eigen::Vector3d domain_base_tangent = domains[0].Vertices.col(1) - domain_origin;
-            const Eigen::Vector3d domain_width_tangent = domains[0].Vertices.col(4) - domain_origin;
-            const Eigen::Vector3d domain_heigth_tangent = domains[0].Vertices.col(3) - domain_origin;
+        std::string mesh_3D_export_folder = "./TEST";
+        Gedim::Output::CreateFolder(mesh_3D_export_folder);
+        Gedim::External::MeshUtilities::ExportMeshToVTU(full_mesh, mesh_3D_export_folder, "Full_Mesh");
+    }
+#endif
 
-            Gedim::MeshUtilities::CreateParallelepipedMesh(
-                domain_origin,
-                domain_base_tangent,
-                domain_heigth_tangent,
-                domain_width_tangent,
-                geometryUtilities.EquispaceCoordinates(num_cells_base + 1, 0.0, 1.0, true),
-                geometryUtilities.EquispaceCoordinates(num_cells_height + 1, 0.0, 1.0, true),
-                geometryUtilities.EquispaceCoordinates(num_cells_width + 1, 0.0, 1.0, true),
-                mesh);
-        }
-        break;
-        default:
-            throw std::runtime_error("not valid mesh generator type");
-        }
-    }
-    else
+    if (domain_data.domains.size() == 1)
     {
-        // Polydim::examples::Elliptic_PCC_3D::program_utilities::create_mesh_with_holes(
-        //     geometryUtilities,
-        //     num_cells_base,
-        //     num_cells_width,
-        //     num_cells_height,
-        //     Polydim::PDETools::Mesh::PDE_Mesh_Utilities::MeshGenerator_Types_3D::Cubic,
-        //     domains,
-        //     meshData,
-        //     mesh);
+        mesh_data = full_mesh_data;
+        return;
     }
+
+    Gedim::External::MeshUtilities::CreateMeshWithHoles(geometryUtilities, domain_data.domains, full_mesh_data, full_mesh, mesh);
 }
 
 void CreateTetrahedralMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
@@ -163,6 +174,10 @@ void CreateTetrahedralMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
                              const double &max_volume,
                              Gedim::IMeshDAO &mesh)
 {
+#if ENABLE_TRIANGLE == 0
+    throw std::runtime_error("Triangle library not active");
+#endif
+
     if (domain_data.domains.size() == 1)
     {
         Gedim::External::MeshUtilities::CreateTetrahedralMesh(domain_data.domains[0].Vertices,
@@ -202,13 +217,17 @@ void CreateTetrahedralMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
             offset_vertices += num_local_vertices;
         }
 
+        std::vector<Eigen::Vector3d> holes_points(domain_data.domains.size() - 1);
+        for (unsigned int d = 0; d < domain_data.domains.size() - 1; d++)
+            holes_points[d] = domain_data.internal_points[1 + d];
+
         std::vector<Gedim::TetgenInterface::Region> regions(1);
-        regions[0].centroid = domain_data.internal_point;
+        regions[0].centroid = domain_data.internal_points[0];
         regions[0].id = 1;
         regions[0].max_volume = max_volume * domain_data.volume;
 
         Gedim::TetgenInterface tetgen_interface;
-        tetgen_interface.CreateMesh(points, facets, regions, mesh, "QpqfezAa");
+        tetgen_interface.CreateMesh(points, facets, regions, holes_points, mesh, "QpqfezAa");
 
         for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
         {
@@ -275,8 +294,8 @@ int main(int argc, char **argv)
         ExportDomain3DToUCD(exportUCDFolder, domain_data.domains);
     }
 
-    Gedim::MeshMatrices meshData;
-    Gedim::MeshMatricesDAO mesh(meshData);
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
 
     switch (config.MeshGenerator())
     {
@@ -287,19 +306,55 @@ int main(int argc, char **argv)
     case MeshGenerator_Types_3D::Tetrahedral:
     case MeshGenerator_Types_3D::Minimal:
     case MeshGenerator_Types_3D::Polyhedral:
-    case MeshGenerator_Types_3D::Cubic:
-        break;
+    case MeshGenerator_Types_3D::Cubic: {
+        CreateMesh3D(geometryUtilities, config, domain_data, mesh_data, mesh);
+    }
+    break;
     default:
         throw std::runtime_error("not valid mesh generator type");
     }
 
     AddEdgeInternalPoints(geometryUtilities, config.MethodOrder() - 1, config.InternalPoints(), mesh);
 
+    if (config.ExportFormat()[0])
+    {
+        Gedim::MeshUtilities meshUtilities;
+        const Gedim::MeshFromCsvUtilities utilities;
+        Gedim::MeshDAOExporterToCsv exporter(utilities);
+        Gedim::MeshFromCsvUtilities::Configuration configuration;
+        configuration.Folder = exportCsvFolder;
+        exporter.Export(configuration, mesh);
+
+        Gedim::Output::PrintGenericMessage(
+            Gedim::Output::MagentaColor + "Export 3D mesh to Csv. File path: " + exportCsvFolder + Gedim::Output::EndColor,
+            true);
+    }
+
     if (config.ExportFormat()[1])
     {
-        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportVtuFolder, "Mesh");
+        Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportVtuFolder, "Domain_Mesh");
         Gedim::Output::PrintGenericMessage(
-            Gedim::Output::MagentaColor + "Mesh is exported in VTU format in: " + exportVtuFolder + Gedim::Output::EndColor,
+            Gedim::Output::MagentaColor + "Export 3D mesh to VTU. File path:: " + exportVtuFolder + Gedim::Output::EndColor,
+            true);
+    }
+
+    if (config.ExportFormat()[2])
+    {
+
+        Gedim::MeshUtilities::ExportMeshToUCD(mesh, exportUCDFolder, "Domain_Mesh", false);
+
+        Gedim::Output::PrintGenericMessage(
+            Gedim::Output::MagentaColor + "Export 3D mesh to UCD. File path: " + exportUCDFolder + Gedim::Output::EndColor,
+            true);
+    }
+
+    if (config.ExportFormat()[3])
+    {
+        Gedim::MeshUtilities::ComputeCell0DCell1DNeighbours(mesh);
+        Gedim::MeshUtilities::ExportMeshToMEDIT(mesh, exportMeditFolder, "Domain_Mesh", false, config.MethodOrder());
+
+        Gedim::Output::PrintGenericMessage(
+            Gedim::Output::MagentaColor + "Export 3D mesh to MEDIT. File path: " + exportMeditFolder + Gedim::Output::EndColor,
             true);
     }
 
