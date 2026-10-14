@@ -101,12 +101,14 @@ struct Program_configuration final
         Gedim::Configurations::AddProperty("MeshImportFilePath", "./", "Mesh imported file path (Default: './')");
         Gedim::Configurations::AddProperty("MeshMaxVolume", 0.1, "Mesh 3D maximum relative cell volume for tetrahedral and voronoi mesh (Default: 0.1)");
         Gedim::Configurations::AddProperty("NumCellsHeight",
-                                           static_cast<unsigned int>(1),
-                                           "Mesh 3D NumCellsHeightfor parallelpipedal mesh (Default: 1)");
+                                           static_cast<unsigned int>(12),
+                                           "Mesh 3D number of cells Height for parallelpipedal mesh (Default: 12)");
         Gedim::Configurations::AddProperty("NumCellsBase",
-                                           static_cast<unsigned int>(1),
-                                           "Mesh 3D NumCellsBase volume for parallelpipedal mesh (Default: 1)");
-        Gedim::Configurations::AddProperty("NumCellsWidth", static_cast<unsigned int>(1), "Mesh 3D NumCellsWidth for parallelpipedal mesh (Default: 1)");
+                                           static_cast<unsigned int>(12),
+                                           "Mesh 3D number of cells Base for parallelpipedal mesh (Default: 12)");
+        Gedim::Configurations::AddProperty("NumCellsWidth",
+                                           static_cast<unsigned int>(12),
+                                           "Mesh 3D number of cells Width for parallelpipedal mesh (Default: 12)");
         Gedim::Configurations::AddProperty("GeometricTolerance1D", 1.0e-12, "Geometric Tolerance 1D (Default: 1.0e-12)");
         Gedim::Configurations::AddProperty("GeometricTolerance2D", 1.0e-14, "Geometric Tolerance 2D (Default: 1.0e-14)");
         Gedim::Configurations::AddProperty("GeometricTolerance3D", 1.0e-15, "Geometric Tolerance 3D (Default: 1.0e-15)");
