@@ -25,49 +25,6 @@ namespace GedimUnitTesting
 
 TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
 {
-    // TPMS EQUATION
-
-    // N.B. all variables (x,y,z) are intended as already scaled (x->x*2*Pi/L and so on).
-
-    /*
-  Gyroid:
-  double val = std::sin(x) * std::cos(y) +
-               std::sin(y) * std::cos(z) +
-               std::sin(z) * std::cos(x)-c;
-
-  Diamond:
-  double val = std::sin(x) * std::sin(y) * std::sin(z) +
-               std::sin(x) * std::cos(y) * std::cos(z) +
-               std::cos(x) * std::sin(y) * std::cos(z) +
-               std::cos(x) * std::cos(y) * std::sin(z) - c;
-
-
-  Split-P:
-  double val = 1.1*(std::sin(2*x) * std::sin(z) * std::cos(y) +
-                    std::sin(2*y) * std::sin(x) * std::cos(z) +
-                    std::sin(2*z)*std::sin(y)*std::cos(x)) -
-               0.2*(std::cos(2*x) * std::cos(2*y) + std::cos(2*y) * std::cos(2*z) +
-                    std::cos(2*z) * std::cos(2*x)) -
-               0.4*(std::cos(2*x) * std::cos(2*y) * std::cos(2*z)) - c;
-
-
-  Other (instable) TPMS:
-
-  Lidinoid:
-  double val = std::sin(2*x) * std::cos(y) * std::sin(z) +
-               std::sin(2*y) * std::cos(z) * std::sin(x) +
-               std::sin(2*z) * std::cos(x) * std::sin(y) -
-               std::cos(2*x) * std::cos(2*y) -
-               std::cos(2*y) * std::cos(2*z) -
-               std::cos(2*z) * std::cos(2*x) + 0.3;
-
-  Neovius:
-  double val = 3.0*(std::cos(x) +std::cos(y) +std::cos(z)) +
-               4 * std::cos(x) *std::cos(y) *std::cos(z);
-
-
-  */
-
     std::string exportFolder = "./Export/TestMeshUtilities/TestMeshUtilities_3D_MarchingCubes";
     Gedim::Output::CreateFolder(exportFolder);
 
@@ -103,6 +60,12 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "original_mesh");
 
+    auto sphere = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+        const double scale = 1.0;
+        const double x = scale * (point.x() - c - 0.5), y = scale * (point.y() - c - 0.5), z = scale * (point.z() - c - 0.5);
+        return x * x + y * y + z * z - std::sqrt(0.05);
+    };
+
     auto gyroid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
         const double scale = (2.0 * std::numbers::pi) / L;
         const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
@@ -127,13 +90,31 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
                0.4 * (std::cos(2.0 * x) * std::cos(2.0 * y) * std::cos(2.0 * z)) - c;
     };
 
-    auto surface_implicit_equation = [&gyroid, &diamond, &split_p](const Eigen::MatrixXd &points) {
-        float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
+    auto lidinoid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+        const double scale = (2.0 * std::numbers::pi) / L;
+        const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+        return std::sin(2.0 * x) * std::cos(y) * std::sin(z) +
+            std::sin(2.0 * y) * std::cos(z) * std::sin(x) +
+            std::sin(2.0 * z) * std::cos(x) * std::sin(y) -
+            std::cos(2.0 * x) * std::cos(2.0 * y) -
+            std::cos(2.0 * y) * std::cos(2.0 * z) -
+            std::cos(2.0 * z) * std::cos(2.0 * x) - c;
+    };
+
+    auto neovius = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+        const double scale = (2.0 * std::numbers::pi) / L;
+        const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+        return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) +
+            4.0 * std::cos(x) *std::cos(y) *std::cos(z) - c;
+    };
+
+    auto surface_implicit_equation = [&sphere, &gyroid, &diamond, &split_p, &lidinoid, &neovius](const Eigen::MatrixXd &points) {
+        float L = 1.0f;
         float c = 0.0f;
 
         Eigen::VectorXd surface_values(points.cols());
         for (unsigned int p = 0; p < surface_values.size(); p++)
-            surface_values[p] = split_p(points.col(p), L, c);
+            surface_values[p] = sphere(points.col(p), L, c);
 
         return surface_values;
     };
@@ -141,32 +122,6 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
     const auto marching_cubes_result = Gedim::MeshUtilities::MarchingCubes(geometry_utilities, surface_implicit_equation, mesh);
 
     {
-        //        {
-        //            Gedim::VTKUtilities exporter;
-
-        //            auto random_points = geometry_utilities.generate_uniform_random_points_in_sphere(100000,
-        //                                                                                             0.5 *
-        //                                                                                             std::sqrt(3.0));
-        //            random_points.colwise() += Eigen::Vector3d(0.5, 0.5, 0.5);
-        //            const auto surface_values = surface_implicit_equation(random_points);
-
-        //            for (unsigned int c = 0; c < random_points.cols(); ++c)
-        //            {
-        //                const double surface_value = surface_values[c];
-
-        //                if (!geometry_utilities.IsValueLowerOrEqual(std::abs(surface_value),
-        //                                                            1.0e-2,
-        //                                                            geometry_utilities.Tolerance1D()))
-        //                    continue;
-
-        //                exporter.AddPoint(random_points.col(c),
-        //                                  {{"surface_value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned
-        //                                  int>(1), &surface_value}});
-        //            }
-
-        //            exporter.Export(exportFolder + "/surface.vtu");
-        //        }
-
         {
             Gedim::VTKUtilities exporter;
 
