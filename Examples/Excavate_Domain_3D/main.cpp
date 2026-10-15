@@ -308,7 +308,13 @@ int main(int argc, char **argv)
     case MeshGenerator_Types_3D::Tetrahedral:
     case MeshGenerator_Types_3D::Minimal:
     case MeshGenerator_Types_3D::Polyhedral:
+        throw std::runtime_error("Case not supported yet");
     case MeshGenerator_Types_3D::Cubic: {
+        if (config.NumCellsBase() % 4 != 0 ||
+            config.NumCellsWidth() % 4 != 0 ||
+            config.NumCellsHeight() % 4 != 0)
+          throw std::runtime_error("Case not supported yet");
+
         CreateMesh3D(geometryUtilities, config, domain_data, mesh_data, mesh);
     }
     break;
