@@ -38,8 +38,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
     Gedim::MeshMatricesDAO mesh(mesh_data);
 
     {
-        const auto square =
-            geometry_utilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+        const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
         const Eigen::Vector3d square_LengthTangent = square.col(1) - square.col(0);
         const Eigen::Vector3d square_HeightTangent = square.col(3) - square.col(0);
 
@@ -65,8 +64,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
     auto gyroid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
         const double scale = (2.0 * std::numbers::pi) / L;
         const double x = scale * point.x(), y = scale * point.y();
-        return std::sin(x) * std::cos(y) +
-               std::sin(y) - c;
+        return std::sin(x) * std::cos(y) + std::sin(y) - c;
     };
 
     auto surface_implicit_equation = [&circle, &gyroid](const Eigen::MatrixXd &points) {
@@ -80,9 +78,8 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
         return surface_values;
     };
 
-    const auto marching_squares_result = Gedim::MeshUtilities::MarchingSquares(geometry_utilities,
-                                                                             surface_implicit_equation,
-                                                                             mesh);
+    const auto marching_squares_result =
+        Gedim::MeshUtilities::MarchingSquares(geometry_utilities, surface_implicit_equation, mesh);
 
     {
         {
@@ -154,11 +151,11 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
                 Eigen::MatrixXd segment;
                 segment.resize(3, 2);
                 segment.col(0) = marching_squares_result.surface_intersections.surface_intersection_points
-                                      .at(segment_ids.indices.at(0))
-                                      .coordinate;
+                                     .at(segment_ids.indices.at(0))
+                                     .coordinate;
                 segment.col(1) = marching_squares_result.surface_intersections.surface_intersection_points
-                                      .at(segment_ids.indices.at(1))
-                                      .coordinate;
+                                     .at(segment_ids.indices.at(1))
+                                     .coordinate;
                 const double cell2D_id = segment_ids.cell2D_id;
 
                 exporter.AddSegment(segment,
