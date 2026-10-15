@@ -66,7 +66,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
         const double scale = (2.0 * std::numbers::pi) / L;
         const double x = scale * point.x(), y = scale * point.y();
         return std::sin(x) * std::cos(y) +
-               std::cos(x) * std::sin(y) - c;
+               std::sin(y) - c;
     };
 
     auto surface_implicit_equation = [&circle, &gyroid](const Eigen::MatrixXd &points) {
@@ -75,7 +75,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
 
         Eigen::VectorXd surface_values(points.cols());
         for (unsigned int p = 0; p < surface_values.size(); p++)
-            surface_values[p] = gyroid(points.col(p), L, c);
+            surface_values[p] = circle(points.col(p), L, c);
 
         return surface_values;
     };
