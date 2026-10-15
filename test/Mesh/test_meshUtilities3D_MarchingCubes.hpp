@@ -87,9 +87,9 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
         const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
         const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-        const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
-        const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
-        const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+        const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(20, 0.0, 1.0, 1);
+        const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(21, 0.0, 1.0, 1);
+        const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(22, 0.0, 1.0, 1);
 
         Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                        parallelepipedsLengthTangent,
@@ -127,13 +127,31 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
                0.4 * (std::cos(2.0 * x) * std::cos(2.0 * y) * std::cos(2.0 * z)) - c;
     };
 
-    auto surface_implicit_equation = [&gyroid, &diamond, &split_p](const Eigen::MatrixXd &points) {
-        float L = 1.0f; // splitp = 5.0f, nevious = 3.0f.
+    auto lidinoid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+        const double scale = (2.0 * std::numbers::pi) / L;
+        const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+        return std::sin(2.0 * x) * std::cos(y) * std::sin(z) +
+            std::sin(2.0 * y) * std::cos(z) * std::sin(x) +
+            std::sin(2.0 * z) * std::cos(x) * std::sin(y) -
+            std::cos(2.0 * x) * std::cos(2.0 * y) -
+            std::cos(2.0 * y) * std::cos(2.0 * z) -
+            std::cos(2.0 * z) * std::cos(2.0 * x) - c;
+    };
+
+    auto neovius = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+        const double scale = (2.0 * std::numbers::pi) / L;
+        const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
+        return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) +
+            4.0 * std::cos(x) *std::cos(y) *std::cos(z) - c;
+    };
+
+    auto surface_implicit_equation = [&gyroid, &diamond, &split_p, &lidinoid, &neovius](const Eigen::MatrixXd &points) {
+        float L = 1.0f;
         float c = 0.0f;
 
         Eigen::VectorXd surface_values(points.cols());
         for (unsigned int p = 0; p < surface_values.size(); p++)
-            surface_values[p] = split_p(points.col(p), L, c);
+            surface_values[p] = neovius(points.col(p), L, c);
 
         return surface_values;
     };
