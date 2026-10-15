@@ -93,19 +93,15 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
     auto lidinoid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
         const double scale = (2.0 * std::numbers::pi) / L;
         const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-        return std::sin(2.0 * x) * std::cos(y) * std::sin(z) +
-            std::sin(2.0 * y) * std::cos(z) * std::sin(x) +
-            std::sin(2.0 * z) * std::cos(x) * std::sin(y) -
-            std::cos(2.0 * x) * std::cos(2.0 * y) -
-            std::cos(2.0 * y) * std::cos(2.0 * z) -
-            std::cos(2.0 * z) * std::cos(2.0 * x) - c;
+        return std::sin(2.0 * x) * std::cos(y) * std::sin(z) + std::sin(2.0 * y) * std::cos(z) * std::sin(x) +
+               std::sin(2.0 * z) * std::cos(x) * std::sin(y) - std::cos(2.0 * x) * std::cos(2.0 * y) -
+               std::cos(2.0 * y) * std::cos(2.0 * z) - std::cos(2.0 * z) * std::cos(2.0 * x) - c;
     };
 
     auto neovius = [](const Eigen::Vector3d &point, const double &L, const double &c) {
         const double scale = (2.0 * std::numbers::pi) / L;
         const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-        return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) +
-            4.0 * std::cos(x) *std::cos(y) *std::cos(z) - c;
+        return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) + 4.0 * std::cos(x) * std::cos(y) * std::cos(z) - c;
     };
 
     auto surface_implicit_equation = [&sphere, &gyroid, &diamond, &split_p, &lidinoid, &neovius](const Eigen::MatrixXd &points) {
