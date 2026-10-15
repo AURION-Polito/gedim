@@ -133,13 +133,13 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
                 double cell0D_sign = 0.0;
                 switch (cell0D_mark)
                 {
-                case Gedim::MeshUtilities::MarchingCubesResult::SurfacePositions::OnSurface:
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
                     cell0D_sign = 0.0;
                     break;
-                case Gedim::MeshUtilities::MarchingCubesResult::SurfacePositions::Positive:
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
                     cell0D_sign = +1.0;
                     break;
-                case Gedim::MeshUtilities::MarchingCubesResult::SurfacePositions::Negative:
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
                     cell0D_sign = -1.0;
                     break;
                 default:
