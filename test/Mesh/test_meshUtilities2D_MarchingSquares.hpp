@@ -148,26 +148,24 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
 
         {
             Gedim::VTKUtilities exporter;
-            for (unsigned int p = 0; p < marching_squares_result.surface_triangles.surface_triangles.size(); ++p)
+            for (unsigned int p = 0; p < marching_squares_result.surface_segments.surface_segments.size(); ++p)
             {
-                const auto &triangle_ids = marching_squares_result.surface_triangles.surface_triangles.at(p);
-                Eigen::Matrix3d triangle;
-                triangle.col(0) = marching_squares_result.surface_intersections.surface_intersection_points
-                                      .at(triangle_ids.indices.at(0))
+                const auto &segment_ids = marching_squares_result.surface_segments.surface_segments.at(p);
+                Eigen::MatrixXd segment;
+                segment.resize(3, 2);
+                segment.col(0) = marching_squares_result.surface_intersections.surface_intersection_points
+                                      .at(segment_ids.indices.at(0))
                                       .coordinate;
-                triangle.col(1) = marching_squares_result.surface_intersections.surface_intersection_points
-                                      .at(triangle_ids.indices.at(1))
+                segment.col(1) = marching_squares_result.surface_intersections.surface_intersection_points
+                                      .at(segment_ids.indices.at(1))
                                       .coordinate;
-                triangle.col(2) = marching_squares_result.surface_intersections.surface_intersection_points
-                                      .at(triangle_ids.indices.at(2))
-                                      .coordinate;
-                const double cell2D_id = triangle_ids.cell2D_id;
+                const double cell2D_id = segment_ids.cell2D_id;
 
-                exporter.AddPolygon(triangle,
+                exporter.AddSegment(segment,
                                     {{"cell2D_id", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell2D_id}});
             }
 
-            exporter.Export(exportFolder + "/marching_squares_triangles.vtu");
+            exporter.Export(exportFolder + "/marching_squares_segments.vtu");
         }
     }
 }
