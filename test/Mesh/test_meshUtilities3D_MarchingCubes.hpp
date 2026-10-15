@@ -185,10 +185,9 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
 
         {
             Gedim::VTKUtilities exporter;
-            ;
-            for (unsigned int p = 0; p < marching_cubes_result.surface_triangles.size(); ++p)
+            for (unsigned int p = 0; p < marching_cubes_result.surface_triangles.surface_triangles.size(); ++p)
             {
-                const auto &triangle_ids = marching_cubes_result.surface_triangles.at(p);
+                const auto &triangle_ids = marching_cubes_result.surface_triangles.surface_triangles.at(p);
                 Eigen::Matrix3d triangle;
                 triangle.col(0) = marching_cubes_result.surface_intersections.surface_intersection_points
                                       .at(triangle_ids.indices.at(0))
