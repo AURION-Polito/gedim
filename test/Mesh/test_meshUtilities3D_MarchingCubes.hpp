@@ -123,11 +123,10 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
 
             for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
             {
-                const double cell0D_value = marching_cubes_result.cell0Ds_surface_value[c];
-                const auto cell0D_mark = marching_cubes_result.cell0Ds_surface_position.at(c);
+                const auto &cell0D_surface_point = marching_cubes_result.surface_intersections.cell0Ds_surface_point.at(c);
 
                 double cell0D_sign = 0.0;
-                switch (cell0D_mark)
+                switch (cell0D_surface_point.surface_position)
                 {
                 case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
                     cell0D_sign = 0.0;
@@ -142,9 +141,10 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
                     throw std::runtime_error("Position not managed");
                 }
 
-                exporter.AddPoint(mesh.Cell0DCoordinates(c),
-                                  {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
-                                   {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_value}});
+                exporter.AddPoint(
+                    mesh.Cell0DCoordinates(c),
+                    {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
+                     {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_surface_point.surface_value}});
             }
 
             exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
@@ -201,6 +201,81 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
             }
 
             exporter.Export(exportFolder + "/marching_cubes_triangles.vtu");
+        }
+    }
+
+    const auto conform_result = Gedim::MeshUtilities::ConformMesh2DToSurface(marching_cubes_result.surface_intersections,
+                                                                             marching_cubes_result.surface_segments,
+                                                                             mesh);
+
+    {
+        {
+            Gedim::VTKUtilities exporter;
+
+            for (unsigned int c = 0; c < conform_result.surface_intersection_graph.vertices.size(); ++c)
+            {
+                const auto &vertex = conform_result.surface_intersection_graph.vertices.at(c);
+
+                const double vertex_original_surface = vertex.original_surface_point_index;
+
+                double vertex_position = 0.0;
+                switch (vertex.surface_type)
+                {
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+                    vertex_position = 0.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+                    vertex_position = +1.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+                    vertex_position = -1.0;
+                    break;
+                default:
+                    throw std::runtime_error("Position not managed");
+                }
+
+                exporter.AddPoint(
+                    vertex.coordinate,
+                    {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
+                     {"original_surface_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface}});
+            }
+
+            exporter.Export(exportFolder + "/conformed_mesh_cell0Ds.vtu");
+        }
+
+        {
+            Gedim::VTKUtilities exporter;
+            for (unsigned int p = 0; p < conform_result.surface_intersection_graph.edges.size(); ++p)
+            {
+                const auto &edge = conform_result.surface_intersection_graph.edges.at(p);
+
+                Eigen::MatrixXd segment;
+                segment.resize(3, 2);
+                segment.col(0) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(0)).coordinate;
+                segment.col(1) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(1)).coordinate;
+
+                double edge_position = 0.0;
+                switch (edge.surface_type)
+                {
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+                    edge_position = 0.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+                    edge_position = +1.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+                    edge_position = -1.0;
+                    break;
+                default:
+                    throw std::runtime_error("Position not managed");
+                }
+
+                exporter.AddSegment(
+                    segment,
+                    {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
+            }
+
+            exporter.Export(exportFolder + "/conformed_mesh_cell1Ds.vtu");
         }
     }
 }
