@@ -177,7 +177,7 @@ namespace GedimUnitTesting
         {
           const auto& vertex = conform_result.surface_intersection_graph.vertices.at(c);
 
-          const double vertex_original_surface = vertex.original_surface_index;
+          const double vertex_original_surface = vertex.original_surface_point_index;
 
           double vertex_position = 0.0;
           switch (vertex.surface_type)
