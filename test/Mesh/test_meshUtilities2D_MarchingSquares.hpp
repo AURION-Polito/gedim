@@ -168,6 +168,7 @@ namespace GedimUnitTesting
 
     const auto conform_result = Gedim::MeshUtilities::ConformMesh2DToSurface(marching_squares_result.cell0Ds_surface_position,
                                                                              marching_squares_result.surface_intersections,
+                                                                             marching_squares_result.surface_segments,
                                                                              mesh);
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "updated_mesh");
