@@ -198,11 +198,49 @@ namespace GedimUnitTesting
           }
 
           exporter.AddPoint(vertex.coordinate,
-                            {{"position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
+                            {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
                              {"original_surface_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface}});
         }
 
         exporter.Export(exportFolder + "/conformed_mesh_cell0Ds.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        for (unsigned int p = 0; p < conform_result.surface_intersection_graph.edges.size(); ++p)
+        {
+          const auto& edge = conform_result.surface_intersection_graph.edges.at(p);
+
+          Eigen::MatrixXd segment;
+          segment.resize(3, 2);
+          segment.col(0) = conform_result.surface_intersection_graph.vertices
+                           .at(edge.extremes.at(0))
+                           .coordinate;
+          segment.col(1) = conform_result.surface_intersection_graph.vertices
+                           .at(edge.extremes.at(1))
+                           .coordinate;
+
+          double edge_position = 0.0;
+          switch (edge.surface_type)
+          {
+            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+              edge_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+              edge_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+              edge_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddSegment(segment,
+                              {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
+        }
+
+        exporter.Export(exportFolder + "/marching_squares_segments.vtu");
       }
     }
 
