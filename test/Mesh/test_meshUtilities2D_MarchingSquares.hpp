@@ -87,11 +87,10 @@ namespace GedimUnitTesting
 
         for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
         {
-          const double cell0D_value = marching_squares_result.cell0Ds_surface_value[c];
-          const auto cell0D_mark = marching_squares_result.cell0Ds_surface_position.at(c);
+          const auto& cell0D_surface_point = marching_squares_result.surface_intersections.cell0Ds_surface_point.at(c);
 
           double cell0D_sign = 0.0;
-          switch (cell0D_mark)
+          switch (cell0D_surface_point.surface_position)
           {
             case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
               cell0D_sign = 0.0;
@@ -108,7 +107,7 @@ namespace GedimUnitTesting
 
           exporter.AddPoint(mesh.Cell0DCoordinates(c),
                             {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
-                             {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_value}});
+                             {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_surface_point.surface_value}});
         }
 
         exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
@@ -166,8 +165,7 @@ namespace GedimUnitTesting
       }
     }
 
-    const auto conform_result = Gedim::MeshUtilities::ConformMesh2DToSurface(marching_squares_result.cell0Ds_surface_position,
-                                                                             marching_squares_result.surface_intersections,
+    const auto conform_result = Gedim::MeshUtilities::ConformMesh2DToSurface(marching_squares_result.surface_intersections,
                                                                              marching_squares_result.surface_segments,
                                                                              mesh);
 
@@ -240,7 +238,7 @@ namespace GedimUnitTesting
                               {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
         }
 
-        exporter.Export(exportFolder + "/marching_squares_segments.vtu");
+        exporter.Export(exportFolder + "/conformed_mesh_cell1Ds.vtu");
       }
     }
 

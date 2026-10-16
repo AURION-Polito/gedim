@@ -118,37 +118,36 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
     const auto marching_cubes_result = Gedim::MeshUtilities::MarchingCubes(geometry_utilities, surface_implicit_equation, mesh);
 
     {
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
         {
-            Gedim::VTKUtilities exporter;
+          const auto& cell0D_surface_point = marching_cubes_result.surface_intersections.cell0Ds_surface_point.at(c);
 
-            for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
-            {
-                const double cell0D_value = marching_cubes_result.cell0Ds_surface_value[c];
-                const auto cell0D_mark = marching_cubes_result.cell0Ds_surface_position.at(c);
+          double cell0D_sign = 0.0;
+          switch (cell0D_surface_point.surface_position)
+          {
+            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+              cell0D_sign = 0.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+              cell0D_sign = +1.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+              cell0D_sign = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
 
-                double cell0D_sign = 0.0;
-                switch (cell0D_mark)
-                {
-                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
-                    cell0D_sign = 0.0;
-                    break;
-                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
-                    cell0D_sign = +1.0;
-                    break;
-                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
-                    cell0D_sign = -1.0;
-                    break;
-                default:
-                    throw std::runtime_error("Position not managed");
-                }
-
-                exporter.AddPoint(mesh.Cell0DCoordinates(c),
-                                  {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
-                                   {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_value}});
-            }
-
-            exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
+          exporter.AddPoint(mesh.Cell0DCoordinates(c),
+                            {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
+                             {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_surface_point.surface_value}});
         }
+
+        exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
+      }
 
         {
             Gedim::VTKUtilities exporter;
