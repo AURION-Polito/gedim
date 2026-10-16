@@ -118,36 +118,37 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
     const auto marching_cubes_result = Gedim::MeshUtilities::MarchingCubes(geometry_utilities, surface_implicit_equation, mesh);
 
     {
-      {
-        Gedim::VTKUtilities exporter;
-
-        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
         {
-          const auto& cell0D_surface_point = marching_cubes_result.surface_intersections.cell0Ds_surface_point.at(c);
+            Gedim::VTKUtilities exporter;
 
-          double cell0D_sign = 0.0;
-          switch (cell0D_surface_point.surface_position)
-          {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
-              cell0D_sign = 0.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
-              cell0D_sign = +1.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
-              cell0D_sign = -1.0;
-              break;
-            default:
-              throw std::runtime_error("Position not managed");
-          }
+            for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
+            {
+                const auto &cell0D_surface_point = marching_cubes_result.surface_intersections.cell0Ds_surface_point.at(c);
 
-          exporter.AddPoint(mesh.Cell0DCoordinates(c),
-                            {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
-                             {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_surface_point.surface_value}});
+                double cell0D_sign = 0.0;
+                switch (cell0D_surface_point.surface_position)
+                {
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+                    cell0D_sign = 0.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+                    cell0D_sign = +1.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+                    cell0D_sign = -1.0;
+                    break;
+                default:
+                    throw std::runtime_error("Position not managed");
+                }
+
+                exporter.AddPoint(
+                    mesh.Cell0DCoordinates(c),
+                    {{"sign", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_sign},
+                     {"value", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_surface_point.surface_value}});
+            }
+
+            exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
         }
-
-        exporter.Export(exportFolder + "/cell0Ds_surface_position.vtu");
-      }
 
         {
             Gedim::VTKUtilities exporter;
@@ -208,76 +209,74 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
                                                                              mesh);
 
     {
-      {
-        Gedim::VTKUtilities exporter;
-
-        for (unsigned int c = 0; c < conform_result.surface_intersection_graph.vertices.size(); ++c)
         {
-          const auto& vertex = conform_result.surface_intersection_graph.vertices.at(c);
+            Gedim::VTKUtilities exporter;
 
-          const double vertex_original_surface = vertex.original_surface_point_index;
+            for (unsigned int c = 0; c < conform_result.surface_intersection_graph.vertices.size(); ++c)
+            {
+                const auto &vertex = conform_result.surface_intersection_graph.vertices.at(c);
 
-          double vertex_position = 0.0;
-          switch (vertex.surface_type)
-          {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
-              vertex_position = 0.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
-              vertex_position = +1.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
-              vertex_position = -1.0;
-              break;
-            default:
-              throw std::runtime_error("Position not managed");
-          }
+                const double vertex_original_surface = vertex.original_surface_point_index;
 
-          exporter.AddPoint(vertex.coordinate,
-                            {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
-                             {"original_surface_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface}});
+                double vertex_position = 0.0;
+                switch (vertex.surface_type)
+                {
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+                    vertex_position = 0.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+                    vertex_position = +1.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+                    vertex_position = -1.0;
+                    break;
+                default:
+                    throw std::runtime_error("Position not managed");
+                }
+
+                exporter.AddPoint(
+                    vertex.coordinate,
+                    {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
+                     {"original_surface_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface}});
+            }
+
+            exporter.Export(exportFolder + "/conformed_mesh_cell0Ds.vtu");
         }
 
-        exporter.Export(exportFolder + "/conformed_mesh_cell0Ds.vtu");
-      }
-
-      {
-        Gedim::VTKUtilities exporter;
-        for (unsigned int p = 0; p < conform_result.surface_intersection_graph.edges.size(); ++p)
         {
-          const auto& edge = conform_result.surface_intersection_graph.edges.at(p);
+            Gedim::VTKUtilities exporter;
+            for (unsigned int p = 0; p < conform_result.surface_intersection_graph.edges.size(); ++p)
+            {
+                const auto &edge = conform_result.surface_intersection_graph.edges.at(p);
 
-          Eigen::MatrixXd segment;
-          segment.resize(3, 2);
-          segment.col(0) = conform_result.surface_intersection_graph.vertices
-                           .at(edge.extremes.at(0))
-                           .coordinate;
-          segment.col(1) = conform_result.surface_intersection_graph.vertices
-                           .at(edge.extremes.at(1))
-                           .coordinate;
+                Eigen::MatrixXd segment;
+                segment.resize(3, 2);
+                segment.col(0) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(0)).coordinate;
+                segment.col(1) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(1)).coordinate;
 
-          double edge_position = 0.0;
-          switch (edge.surface_type)
-          {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
-              edge_position = 0.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
-              edge_position = +1.0;
-              break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
-              edge_position = -1.0;
-              break;
-            default:
-              throw std::runtime_error("Position not managed");
-          }
+                double edge_position = 0.0;
+                switch (edge.surface_type)
+                {
+                case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+                    edge_position = 0.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+                    edge_position = +1.0;
+                    break;
+                case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+                    edge_position = -1.0;
+                    break;
+                default:
+                    throw std::runtime_error("Position not managed");
+                }
 
-          exporter.AddSegment(segment,
-                              {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
+                exporter.AddSegment(
+                    segment,
+                    {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
+            }
+
+            exporter.Export(exportFolder + "/conformed_mesh_cell1Ds.vtu");
         }
-
-        exporter.Export(exportFolder + "/conformed_mesh_cell1Ds.vtu");
-      }
     }
 }
 
