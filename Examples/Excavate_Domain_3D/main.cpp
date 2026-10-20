@@ -77,12 +77,8 @@ void AddEdgeInternalPoints(const Gedim::GeometryUtilities &geometryUtilities,
 void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
                   const Program_configuration &config,
                   const IDomain &domain_data,
-                  Gedim::MeshMatrices &mesh_data,
                   Gedim::IMeshDAO &mesh)
 {
-
-    Gedim::MeshMatrices full_mesh_data;
-    Gedim::MeshMatricesDAO full_mesh(full_mesh_data);
 
     switch (config.MeshGenerator())
     {
@@ -94,7 +90,7 @@ void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
                                                               domain_data.domains[0].Edges,
                                                               domain_data.domains[0].Faces,
                                                               config.MeshMaxVolume() * domain_data.volume,
-                                                              full_mesh);
+                                                              mesh);
     }
     break;
     case MeshGenerator_Types_3D::Minimal: {
@@ -112,7 +108,7 @@ void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
                                                    marker_vertices,
                                                    marker_edges,
                                                    marker_faces,
-                                                   full_mesh);
+                                                   mesh);
     }
     break;
     case MeshGenerator_Types_3D::Polyhedral: {
@@ -145,7 +141,7 @@ void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
             geometryUtilities.EquispaceCoordinates(config.NumCellsBase() + 1, 0.0, 1.0, true),
             geometryUtilities.EquispaceCoordinates(config.NumCellsHeight() + 1, 0.0, 1.0, true),
             geometryUtilities.EquispaceCoordinates(config.NumCellsWidth() + 1, 0.0, 1.0, true),
-            full_mesh);
+            mesh);
     }
     break;
     default:
@@ -159,12 +155,33 @@ void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
         Gedim::External::MeshUtilities::ExportMeshToVTU(full_mesh, mesh_3D_export_folder, "Full_Mesh");
     }
 #endif
+}
+
+void ExcavateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
+                    const Program_configuration &config,
+                    const IDomain &domain_data,
+                    Gedim::IMeshDAO &mesh)
+{
 
     if (domain_data.domains.size() == 1)
     {
-        mesh_data = full_mesh_data;
+        CreateMesh3D(geometryUtilities, config, domain_data, mesh);
+
         return;
     }
+
+    Gedim::MeshMatrices full_mesh_data;
+    Gedim::MeshMatricesDAO full_mesh(full_mesh_data);
+
+    CreateMesh3D(geometryUtilities, config, domain_data, full_mesh);
+
+#ifdef EXPORT_TEST_VTU
+    {
+        std::string mesh_3D_export_folder = "./TEST";
+        Gedim::Output::CreateFolder(mesh_3D_export_folder);
+        Gedim::External::MeshUtilities::ExportMeshToVTU(full_mesh, mesh_3D_export_folder, "Full_Mesh");
+    }
+#endif
 
     Gedim::External::MeshUtilities::CreateMeshWithHoles(geometryUtilities, domain_data.domains, full_mesh_data, full_mesh, mesh);
 }
@@ -316,7 +333,7 @@ int main(int argc, char **argv)
         if (config.NumCellsBase() % 4 != 0 || config.NumCellsWidth() % 4 != 0 || config.NumCellsHeight() % 4 != 0)
             throw std::runtime_error("Case not supported yet");
 
-        CreateMesh3D(geometryUtilities, config, domain_data, mesh_data, mesh);
+        ExcavateMesh3D(geometryUtilities, config, domain_data, mesh);
     }
     break;
     default:
