@@ -169,10 +169,7 @@ void CreateMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
     Gedim::External::MeshUtilities::CreateMeshWithHoles(geometryUtilities, domain_data.domains, full_mesh_data, full_mesh, mesh);
 }
 
-void CreateTetrahedralMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
-                             const IDomain &domain_data,
-                             const double &max_volume,
-                             Gedim::IMeshDAO &mesh)
+void CreateTetrahedralMesh3D(const IDomain &domain_data, const double &max_volume, Gedim::IMeshDAO &mesh)
 {
 #if ENABLE_TRIANGLE == 0
     throw std::runtime_error("Triangle library not active");
@@ -228,6 +225,12 @@ void CreateTetrahedralMesh3D(const Gedim::GeometryUtilities &geometryUtilities,
 
         Gedim::TetgenInterface tetgen_interface;
         tetgen_interface.CreateMesh(points, facets, regions, holes_points, mesh, "QpqfezAa");
+
+        for (unsigned int v = 0; v < mesh.Cell0DTotalNumber(); v++)
+        {
+            if (mesh.Cell0DMarker(v) == std::numeric_limits<unsigned int>::max())
+                mesh.Cell0DSetMarker(v, num_faces + num_vertices + 1);
+        }
 
         for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); e++)
         {
@@ -302,7 +305,7 @@ int main(int argc, char **argv)
     switch (config.MeshGenerator())
     {
     case MeshGenerator_Types_3D::PureTetrahedral: {
-        CreateTetrahedralMesh3D(geometryUtilities, domain_data, config.MeshMaxVolume(), mesh);
+        CreateTetrahedralMesh3D(domain_data, config.MeshMaxVolume(), mesh);
     }
     break;
     case MeshGenerator_Types_3D::Tetrahedral:

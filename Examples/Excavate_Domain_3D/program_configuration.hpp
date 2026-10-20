@@ -98,7 +98,6 @@ struct Program_configuration final
                                            static_cast<unsigned int>(MeshGenerator_Types_3D::PureTetrahedral),
                                            "Mesh 3D gereator type, 0 - PureTetrahedral; 1 - Tetrahedral; 2 - "
                                            "Minimal; 3 - Polyhedral; 4 - Cubic (Default: 0)");
-        Gedim::Configurations::AddProperty("MeshImportFilePath", "./", "Mesh imported file path (Default: './')");
         Gedim::Configurations::AddProperty("MeshMaxVolume", 0.1, "Mesh 3D maximum relative cell volume for tetrahedral and voronoi mesh (Default: 0.1)");
         Gedim::Configurations::AddProperty("NumCellsHeight",
                                            static_cast<unsigned int>(12),
@@ -140,10 +139,6 @@ struct Program_configuration final
         return (MeshGenerator_Types_3D)Gedim::Configurations::GetPropertyValue<unsigned int>("MeshGenerator");
     }
 
-    inline std::string MeshImportFilePath() const
-    {
-        return Gedim::Configurations::GetPropertyValue<std::string>("MeshImportFilePath");
-    }
     inline double MeshMaxVolume() const
     {
         return Gedim::Configurations::GetPropertyValue<double>("MeshMaxVolume");
