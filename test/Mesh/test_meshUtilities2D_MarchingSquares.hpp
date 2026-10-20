@@ -166,8 +166,9 @@ TEST(TestMeshUtilities, TestMeshUtilities_2D_MarchingSquares)
         }
     }
 
-    const auto conform_result = Gedim::MeshUtilities::ConformMesh2DToSurface(marching_squares_result.surface_intersections,
+    const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(marching_squares_result.surface_intersections,
                                                                              marching_squares_result.surface_segments,
+                                                                           {},
                                                                              mesh);
 
     {
