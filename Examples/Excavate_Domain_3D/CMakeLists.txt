@@ -87,7 +87,6 @@ endif()
 #########################################################
 #add_subdirectory(src)
 list(APPEND Excavate_Domain_3D_headers "${CMAKE_CURRENT_SOURCE_DIR}/program_configuration.hpp")
-list(APPEND Excavate_Domain_3D_sources "${CMAKE_CURRENT_SOURCE_DIR}/program_configuration.cpp")
 
 list(APPEND Excavate_Domain_3D_HEADERS ${Excavate_Domain_3D_headers})
 list(APPEND Excavate_Domain_3D_SOURCES ${Excavate_Domain_3D_sources} main.cpp)

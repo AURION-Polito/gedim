@@ -19,6 +19,8 @@
 #include "VTKUtilities.hpp"
 #include "VoroInterface.hpp"
 #include "VtkMeshExporter.hpp"
+#include <fstream>
+#include <numbers>
 
 #include <gmock/gmock-matchers.h>
 #include <gmock/gmock.h>
@@ -698,11 +700,15 @@ TEST(Test_mesh_with_holes, Test_one_plane)
         Eigen::VectorXi marks(points.cols());
 
         auto surface_one = [domain_3D_width, domain_3D_height](const Eigen::Vector3d &p) {
-            return Eigen::Vector3d(p.x(), p.y(), domain_3D_height * (0.1 * (1.0 - std::cos(M_PI * p.y() / domain_3D_width)) + 0.45));
+            return Eigen::Vector3d(p.x(),
+                                   p.y(),
+                                   domain_3D_height * (0.1 * (1.0 - std::cos(std::numbers::pi * p.y() / domain_3D_width)) + 0.45));
         };
 
         auto surface_two = [domain_3D_width, domain_3D_height](const Eigen::Vector3d &p) {
-            return Eigen::Vector3d(p.x(), p.y(), domain_3D_height * (0.1 * (1.0 - std::cos(M_PI * p.y() / domain_3D_width)) + 0.15));
+            return Eigen::Vector3d(p.x(),
+                                   p.y(),
+                                   domain_3D_height * (0.1 * (1.0 - std::cos(std::numbers::pi * p.y() / domain_3D_width)) + 0.15));
         };
 
         for (unsigned int p = 0; p < points.cols(); p++)
