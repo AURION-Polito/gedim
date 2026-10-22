@@ -181,6 +181,28 @@ namespace GedimUnitTesting
 
       {
         Gedim::VTKUtilities exporter;
+        for (unsigned int p = 0; p < marching_cubes_result.surface_segments.surface_segments.size(); ++p)
+        {
+          const auto &segment_ids = marching_cubes_result.surface_segments.surface_segments.at(p);
+          Eigen::MatrixXd segment;
+          segment.resize(3, 2);
+          segment.col(0) = marching_cubes_result.surface_intersections.surface_intersection_points
+                           .at(segment_ids.indices.at(0))
+                           .coordinate;
+          segment.col(1) = marching_cubes_result.surface_intersections.surface_intersection_points
+                           .at(segment_ids.indices.at(1))
+                           .coordinate;
+          const double cell2D_id = segment_ids.cell2D_id;
+
+          exporter.AddSegment(segment,
+                              {{"cell2D_id", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell2D_id}});
+        }
+
+        exporter.Export(exportFolder + "/marching_cubes_segments.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
         for (unsigned int p = 0; p < marching_cubes_result.surface_triangles.surface_triangles.size(); ++p)
         {
           const auto &triangle_ids = marching_cubes_result.surface_triangles.surface_triangles.at(p);
