@@ -351,17 +351,21 @@ namespace GedimUnitTesting
           Eigen::MatrixXd volume_vertices;
           volume_vertices.resize(3,
                                  volume.intersection_graph_vertices.size());
+          std::map<unsigned int, unsigned int> vertices_to_idx;
           for (unsigned int vv = 0; vv < volume.intersection_graph_vertices.size(); ++vv)
           {
             volume_vertices.col(vv) =
                 conform_result.surface_intersection_graph.vertices.at(volume.intersection_graph_vertices.at(vv)).coordinate;
+            vertices_to_idx.insert(std::make_pair(volume.intersection_graph_vertices.at(vv), vv));
           }
 
           std::vector<std::vector<unsigned int>> volume_facets(volume.intersection_graph_faces.size());
           for (unsigned int vf = 0; vf < volume.intersection_graph_faces.size(); ++vf)
           {
-            const auto volume_face = conform_result.surface_intersection_graph.faces.at(volume.intersection_graph_faces.at(v));
-            volume_facets.at(vf) = volume_face.intersection_graph_vertices;
+            const auto volume_face = conform_result.surface_intersection_graph.faces.at(volume.intersection_graph_faces.at(vf));
+            volume_facets.at(vf).resize(volume_face.intersection_graph_vertices.size());
+            for (unsigned vfv = 0; vfv < volume_face.intersection_graph_vertices.size(); ++vfv)
+              volume_facets.at(vf).at(vfv) = vertices_to_idx.at(volume_face.intersection_graph_vertices.at(vfv));
           }
 
           double volume_position = 0.0;
