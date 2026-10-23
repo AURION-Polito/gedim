@@ -341,6 +341,53 @@ namespace GedimUnitTesting
 
         exporter.Export(exportFolder + "/conformed_mesh_cell2Ds.vtu");
       }
+
+      {
+        Gedim::VTKUtilities exporter;
+        for (unsigned int v = 0; v < conform_result.surface_intersection_graph.volumes.size(); ++v)
+        {
+          const auto &volume = conform_result.surface_intersection_graph.volumes.at(v);
+
+          Eigen::MatrixXd volume_vertices;
+          volume_vertices.resize(3,
+                                 volume.intersection_graph_vertices.size());
+          for (unsigned int vv = 0; vv < volume.intersection_graph_vertices.size(); ++vv)
+          {
+            volume_vertices.col(vv) =
+                conform_result.surface_intersection_graph.vertices.at(volume.intersection_graph_vertices.at(vv)).coordinate;
+          }
+
+          std::vector<std::vector<unsigned int>> volume_facets(volume.intersection_graph_faces.size());
+          for (unsigned int vf = 0; vf < volume.intersection_graph_faces.size(); ++vf)
+          {
+            const auto volume_face = conform_result.surface_intersection_graph.faces.at(volume.intersection_graph_faces.at(v));
+            volume_facets.at(vf) = volume_face.intersection_graph_vertices;
+          }
+
+          double volume_position = 0.0;
+          switch (volume.surface_type)
+          {
+            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+              volume_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+              volume_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+              volume_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddPolyhedron(
+                volume_vertices,
+                volume_facets,
+                {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &volume_position}});
+        }
+
+        exporter.Export(exportFolder + "/conformed_mesh_cell3Ds.vtu");
+      }
     }
   }
 
