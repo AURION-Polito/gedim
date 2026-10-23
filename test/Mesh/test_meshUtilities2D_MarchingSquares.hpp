@@ -67,7 +67,11 @@ namespace GedimUnitTesting
       return std::sin(x) * std::cos(y) + std::sin(y) - c;
     };
 
-    auto surface_implicit_equation = [&circle, &gyroid](const Eigen::MatrixXd &points) {
+    auto gyroid_shifted = [&gyroid](const Eigen::Vector3d &point, const double &L, const double &c) {
+      return gyroid(point, L, c + 0.1)*gyroid(point, L, c + 0.0);
+    };
+
+    auto surface_implicit_equation = [&circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
       float L = 1.0f;
       float c = 0.0f;
 
