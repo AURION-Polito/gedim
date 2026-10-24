@@ -42,8 +42,8 @@ namespace GedimUnitTesting
       const Eigen::Vector3d square_LengthTangent = square.col(1) - square.col(0);
       const Eigen::Vector3d square_HeightTangent = square.col(3) - square.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(40, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(41, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateRectangleMesh(square.col(0),
                                                 square_LengthTangent,
@@ -64,11 +64,11 @@ namespace GedimUnitTesting
     auto gyroid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const double scale = (2.0 * std::numbers::pi) / L;
       const double x = scale * point.x(), y = scale * point.y();
-      return std::sin(x) * std::cos(y) + std::sin(y) - c;
+      return std::sin(x) * std::cos(y) + std::sin(y) - c * scale;
     };
 
     auto gyroid_shifted = [&gyroid](const Eigen::Vector3d &point, const double &L, const double &c) {
-      return gyroid(point, L, c + 0.1)*gyroid(point, L, c + 0.0);
+      return gyroid(point, L, c + 0.1) * gyroid(point, L, c + 0.0);
     };
 
     auto surface_implicit_equation = [&circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
@@ -77,7 +77,7 @@ namespace GedimUnitTesting
 
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = circle(points.col(p), L, c);
+        surface_values[p] = gyroid_shifted(points.col(p), L, c) ;
 
       return surface_values;
     };

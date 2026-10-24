@@ -44,9 +44,9 @@ namespace GedimUnitTesting
       const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
       const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
-      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(20, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(21, 0.0, 1.0, 1);
+      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(22, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                      parallelepipedsLengthTangent,
@@ -69,15 +69,23 @@ namespace GedimUnitTesting
     auto gyroid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const double scale = (2.0 * std::numbers::pi) / L;
       const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-      return std::sin(x) * std::sin(y) * std::sin(z) + std::sin(x) * std::cos(y) * std::cos(z) +
-          std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c;
+
+      return std::sin(x) * std::cos(y) + std::sin(y) * std::cos(z) + std::sin(z) * std::cos(x) - c * scale;
+    };
+
+    auto gyroid_shifted = [&gyroid](const Eigen::Vector3d &point, const double &L, const double &c) {
+      return gyroid(point, L, c + 0.1) * gyroid(point, L, c + 0.0);
     };
 
     auto diamond = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const double scale = (2.0 * std::numbers::pi) / L;
       const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
       return std::sin(x) * std::sin(y) * std::sin(z) + std::sin(x) * std::cos(y) * std::cos(z) +
-          std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c;
+          std::cos(x) * std::sin(y) * std::cos(z) + std::cos(x) * std::cos(y) * std::sin(z) - c * scale;
+    };
+
+    auto diamond_shifted = [&diamond](const Eigen::Vector3d &point, const double &L, const double &c) {
+      return diamond(point, L, c + 0.1) * diamond(point, L, c + 0.0);
     };
 
     auto split_p = [](const Eigen::Vector3d &point, const double &L, const double &c) {
@@ -87,7 +95,7 @@ namespace GedimUnitTesting
                     std::sin(2.0 * z) * std::sin(y) * std::cos(x)) -
           0.2 * (std::cos(2.0 * x) * std::cos(2.0 * y) + std::cos(2.0 * y) * std::cos(2.0 * z) +
                  std::cos(2.0 * z) * std::cos(2.0 * x)) -
-          0.4 * (std::cos(2.0 * x) * std::cos(2.0 * y) * std::cos(2.0 * z)) - c;
+          0.4 * (std::cos(2.0 * x) * std::cos(2.0 * y) * std::cos(2.0 * z)) - c * scale;
     };
 
     auto lidinoid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
@@ -95,22 +103,22 @@ namespace GedimUnitTesting
       const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
       return std::sin(2.0 * x) * std::cos(y) * std::sin(z) + std::sin(2.0 * y) * std::cos(z) * std::sin(x) +
           std::sin(2.0 * z) * std::cos(x) * std::sin(y) - std::cos(2.0 * x) * std::cos(2.0 * y) -
-          std::cos(2.0 * y) * std::cos(2.0 * z) - std::cos(2.0 * z) * std::cos(2.0 * x) - c;
+          std::cos(2.0 * y) * std::cos(2.0 * z) - std::cos(2.0 * z) * std::cos(2.0 * x) - c * scale;
     };
 
     auto neovius = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const double scale = (2.0 * std::numbers::pi) / L;
       const double x = scale * point.x(), y = scale * point.y(), z = scale * point.z();
-      return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) + 4.0 * std::cos(x) * std::cos(y) * std::cos(z) - c;
+      return 3.0 * (std::cos(x) + std::cos(y) + std::cos(z)) + 4.0 * std::cos(x) * std::cos(y) * std::cos(z) - c * scale;
     };
 
-    auto surface_implicit_equation = [&sphere, &gyroid, &diamond, &split_p, &lidinoid, &neovius](const Eigen::MatrixXd &points) {
+    auto surface_implicit_equation = [&sphere, &gyroid, &diamond, &split_p, &lidinoid, &neovius, &gyroid_shifted, &diamond_shifted](const Eigen::MatrixXd &points) {
       float L = 1.0f;
       float c = 0.0f;
 
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = sphere(points.col(p), L, c);
+        surface_values[p] = gyroid_shifted(points.col(p), L, c);
 
       return surface_values;
     };
