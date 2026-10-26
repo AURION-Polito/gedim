@@ -53,7 +53,11 @@ namespace GedimUnitTesting
                                                 mesh);
     }
 
-    Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "original_mesh");
+    {
+      const std::string mesh_folder = exportFolder + "/original_mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
+    }
 
     auto plane_x = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const Eigen::Vector3d p0 = Eigen::Vector3d(0.4, 0.4, 0.0);
@@ -185,16 +189,6 @@ namespace GedimUnitTesting
                                                                                                       {},
                                                                                                       mesh);
 
-    Gedim::MeshMatrices conformed_mesh_data;
-    Gedim::MeshMatricesDAO conformed_mesh(conformed_mesh_data);
-
-    const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(marching_squares_result.surface_intersections,
-                                                                           marching_squares_result.surface_segments,
-                                                                           {},
-                                                                           mesh,
-                                                                           surface_intersection_graph,
-                                                                           conformed_mesh);
-
     {
       {
         Gedim::VTKUtilities exporter;
@@ -304,6 +298,22 @@ namespace GedimUnitTesting
 
         exporter.Export(exportFolder + "/conformed_mesh_cell2Ds.vtu");
       }
+    }
+
+    Gedim::MeshMatrices conformed_mesh_data;
+    Gedim::MeshMatricesDAO conformed_mesh(conformed_mesh_data);
+
+    const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(marching_squares_result.surface_intersections,
+                                                                           marching_squares_result.surface_segments,
+                                                                           {},
+                                                                           mesh,
+                                                                           surface_intersection_graph,
+                                                                           conformed_mesh);
+
+    {
+      const std::string mesh_folder = exportFolder + "/conformed_mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(conformed_mesh, mesh_folder, "mesh");
     }
   }
 
