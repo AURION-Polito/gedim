@@ -434,6 +434,11 @@ namespace GedimUnitTesting
       Gedim::Output::CreateFolder(mesh_folder);
       Gedim::External::MeshUtilities::ExportMeshToVTU(conformed_mesh, mesh_folder, "mesh");
     }
+
+    Gedim::MeshUtilities::CheckMesh3DConfiguration check_mesh_config;
+    Gedim::MeshUtilities::CheckMesh3D(check_mesh_config,
+                                      geometry_utilities,
+                                      conformed_mesh);
   }
 
 } // namespace GedimUnitTesting

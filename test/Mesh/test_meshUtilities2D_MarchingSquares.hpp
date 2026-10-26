@@ -91,7 +91,7 @@ namespace GedimUnitTesting
     auto surface_implicit_equation = [&plane_x, &generic_plane, &circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = plane_x(points.col(p), 1.0, 0.0) ;
+        surface_values[p] = circle(points.col(p), 1.0, 0.0) ;
 
       return surface_values;
     };
