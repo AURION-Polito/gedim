@@ -42,8 +42,8 @@ namespace GedimUnitTesting
       const Eigen::Vector3d square_LengthTangent = square.col(1) - square.col(0);
       const Eigen::Vector3d square_HeightTangent = square.col(3) - square.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(40, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(41, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateRectangleMesh(square.col(0),
                                                 square_LengthTangent,
@@ -55,10 +55,23 @@ namespace GedimUnitTesting
 
     Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, exportFolder, "original_mesh");
 
+    auto plane_x = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+      const Eigen::Vector3d p0 = Eigen::Vector3d(0.4, 0.4, 0.0);
+      const Eigen::Vector3d n = Eigen::Vector3d(0.0, 1.0, 0.0).normalized();
+      return (point - p0).dot(n);
+    };
+
+    auto generic_plane = [](const Eigen::Vector3d &point, const double &L, const double &c) {
+      const Eigen::Vector3d p0 = Eigen::Vector3d(0.6, 0.4, 0.0);
+      const Eigen::Vector3d n = Eigen::Vector3d(0.5, 1.0, 0.0).normalized();
+      return (point - p0).dot(n);
+    };
+
     auto circle = [](const Eigen::Vector3d &point, const double &L, const double &c) {
       const double scale = 1.0;
+      const double radius = 0.45;
       const double x = scale * (point.x() - c - 0.5), y = scale * (point.y() - c - 0.5);
-      return x * x + y * y - std::sqrt(0.05);
+      return x * x + y * y - radius * radius;
     };
 
     auto gyroid = [](const Eigen::Vector3d &point, const double &L, const double &c) {
@@ -71,13 +84,10 @@ namespace GedimUnitTesting
       return gyroid(point, L, c + 0.1) * gyroid(point, L, c + 0.0);
     };
 
-    auto surface_implicit_equation = [&circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
-      float L = 1.0f;
-      float c = 0.0f;
-
+    auto surface_implicit_equation = [&plane_x, &generic_plane, &circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = gyroid_shifted(points.col(p), L, c) ;
+        surface_values[p] = plane_x(points.col(p), 1.0, 0.0) ;
 
       return surface_values;
     };
@@ -96,13 +106,13 @@ namespace GedimUnitTesting
           double cell0D_sign = 0.0;
           switch (cell0D_surface_point.surface_position)
           {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               cell0D_sign = 0.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
               cell0D_sign = +1.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
               cell0D_sign = -1.0;
               break;
             default:
@@ -170,31 +180,41 @@ namespace GedimUnitTesting
       }
     }
 
+    const auto surface_intersection_graph = Gedim::MeshUtilities::ComputeMeshSurfaceIntersectionGraph(marching_squares_result.surface_intersections,
+                                                                                                      marching_squares_result.surface_segments,
+                                                                                                      {},
+                                                                                                      mesh);
+
+    Gedim::MeshMatrices conformed_mesh_data;
+    Gedim::MeshMatricesDAO conformed_mesh(conformed_mesh_data);
+
     const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(marching_squares_result.surface_intersections,
                                                                            marching_squares_result.surface_segments,
                                                                            {},
-                                                                           mesh);
+                                                                           mesh,
+                                                                           surface_intersection_graph,
+                                                                           conformed_mesh);
 
     {
       {
         Gedim::VTKUtilities exporter;
 
-        for (unsigned int c = 0; c < conform_result.surface_intersection_graph.vertices.size(); ++c)
+        for (unsigned int c = 0; c < surface_intersection_graph.vertices.size(); ++c)
         {
-          const auto &vertex = conform_result.surface_intersection_graph.vertices.at(c);
+          const auto &vertex = surface_intersection_graph.vertices.at(c);
 
           const double vertex_original_surface = vertex.original_surface_point_index;
 
           double vertex_position = 0.0;
           switch (vertex.surface_type)
           {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               vertex_position = 0.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
               vertex_position = +1.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
               vertex_position = -1.0;
               break;
             default:
@@ -212,25 +232,25 @@ namespace GedimUnitTesting
 
       {
         Gedim::VTKUtilities exporter;
-        for (unsigned int p = 0; p < conform_result.surface_intersection_graph.edges.size(); ++p)
+        for (unsigned int p = 0; p < surface_intersection_graph.edges.size(); ++p)
         {
-          const auto &edge = conform_result.surface_intersection_graph.edges.at(p);
+          const auto &edge = surface_intersection_graph.edges.at(p);
 
           Eigen::MatrixXd segment;
           segment.resize(3, 2);
-          segment.col(0) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(0)).coordinate;
-          segment.col(1) = conform_result.surface_intersection_graph.vertices.at(edge.extremes.at(1)).coordinate;
+          segment.col(0) = surface_intersection_graph.vertices.at(edge.extremes.at(0)).coordinate;
+          segment.col(1) = surface_intersection_graph.vertices.at(edge.extremes.at(1)).coordinate;
 
           double edge_position = 0.0;
           switch (edge.surface_type)
           {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               edge_position = 0.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
               edge_position = +1.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
               edge_position = -1.0;
               break;
             default:
@@ -247,9 +267,9 @@ namespace GedimUnitTesting
 
       {
         Gedim::VTKUtilities exporter;
-        for (unsigned int f = 0; f < conform_result.surface_intersection_graph.faces.size(); ++f)
+        for (unsigned int f = 0; f < surface_intersection_graph.faces.size(); ++f)
         {
-          const auto &face = conform_result.surface_intersection_graph.faces.at(f);
+          const auto &face = surface_intersection_graph.faces.at(f);
 
           Eigen::MatrixXd face_vertices;
           face_vertices.resize(3,
@@ -257,20 +277,20 @@ namespace GedimUnitTesting
           for (unsigned int fv = 0; fv < face.intersection_graph_vertices.size(); ++fv)
           {
             face_vertices.col(fv) =
-                conform_result.surface_intersection_graph.vertices.at(face.intersection_graph_vertices.at(fv)).coordinate;
+                surface_intersection_graph.vertices.at(face.intersection_graph_vertices.at(fv)).coordinate;
           }
 
 
           double face_position = 0.0;
           switch (face.surface_type)
           {
-            case Gedim::MeshUtilities::PointSurfacePositions::OnSurface:
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               face_position = 0.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Positive:
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
               face_position = +1.0;
               break;
-            case Gedim::MeshUtilities::PointSurfacePositions::Negative:
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
               face_position = -1.0;
               break;
             default:
