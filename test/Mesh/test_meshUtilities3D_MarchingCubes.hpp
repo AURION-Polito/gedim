@@ -556,7 +556,7 @@ namespace GedimUnitTesting
           std::vector<std::vector<unsigned int>> volume_facets(conformed_mesh.Cell3DNumberFaces(v));
           for (unsigned int vf = 0; vf < conformed_mesh.Cell3DNumberFaces(v); ++vf)
           {
-            const auto face_vertices = conformed_mesh.Cell2DVertices(mesh.Cell3DFace(v, vf));
+            const auto face_vertices = conformed_mesh.Cell2DVertices(conformed_mesh.Cell3DFace(v, vf));
             volume_facets.at(vf).resize(face_vertices.size());
             for (unsigned vfv = 0; vfv < face_vertices.size(); ++vfv)
               volume_facets.at(vf).at(vfv) = vertices_to_idx.at(face_vertices.at(vfv));
