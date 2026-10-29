@@ -424,6 +424,7 @@ namespace GedimUnitTesting
       }
     }
 
+    Gedim::MeshUtilities::ComputeCell1DCell2DNeighbours(conformed_mesh);
     Gedim::MeshUtilities::CheckMesh2DConfiguration check_mesh_config;
     Gedim::MeshUtilities::CheckMesh2D(check_mesh_config,
                                       geometry_utilities,

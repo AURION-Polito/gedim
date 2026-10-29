@@ -44,9 +44,9 @@ namespace GedimUnitTesting
       const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
       const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
-      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(20, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(21, 0.0, 1.0, 1);
+      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(22, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                      parallelepipedsLengthTangent,
@@ -135,7 +135,7 @@ namespace GedimUnitTesting
 
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = sphere(points.col(p), L, c);
+        surface_values[p] = gyroid_shifted(points.col(p), L, c);
 
       return surface_values;
     };
@@ -257,6 +257,9 @@ namespace GedimUnitTesting
                                                                                               mesh);
 
     {
+      const std::string graph_folder = exportFolder + "/intersection_graph";
+      Gedim::Output::CreateFolder(graph_folder);
+
       {
         Gedim::VTKUtilities exporter;
 
@@ -288,7 +291,7 @@ namespace GedimUnitTesting
                  {"original_surface_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface}});
         }
 
-        exporter.Export(exportFolder + "/conformed_mesh_cell0Ds.vtu");
+        exporter.Export(graph_folder + "/graph_vertices.vtu");
       }
 
 
@@ -324,7 +327,7 @@ namespace GedimUnitTesting
                 {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position}});
         }
 
-        exporter.Export(exportFolder + "/conformed_mesh_cell1Ds.vtu");
+        exporter.Export(graph_folder + "/graph_edges.vtu");
       }
 
       {
@@ -364,7 +367,7 @@ namespace GedimUnitTesting
                 {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &face_position}});
         }
 
-        exporter.Export(exportFolder + "/conformed_mesh_cell2Ds.vtu");
+        exporter.Export(graph_folder + "/graph_faces.vtu");
       }
 
       {
@@ -415,7 +418,7 @@ namespace GedimUnitTesting
                 {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &volume_position}});
         }
 
-        exporter.Export(exportFolder + "/conformed_mesh_cell3Ds.vtu");
+        exporter.Export(graph_folder + "/graph_volumes.vtu");
       }
     }
 
@@ -432,7 +435,158 @@ namespace GedimUnitTesting
     {
       const std::string mesh_folder = exportFolder + "/conformed_mesh";
       Gedim::Output::CreateFolder(mesh_folder);
-      Gedim::External::MeshUtilities::ExportMeshToVTU(conformed_mesh, mesh_folder, "mesh");
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < conformed_mesh.Cell0DTotalNumber(); ++c)
+        {
+          const double vertex_original_cell0D = conform_result.new_cell0Ds_to_original_cell0D.at(c);
+          const double vertex_original_surface = conform_result.new_cell0Ds_to_surface_vertex.at(c);
+
+          double vertex_position = 0.0;
+          switch (conform_result.new_cell0Ds_surface_position.at(c))
+          {
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
+              vertex_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
+              vertex_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
+              vertex_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddPoint(
+                conformed_mesh.Cell0DCoordinates(c),
+                {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_position},
+                 {"original_surface_vertex", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_surface},
+                 {"original_cell0D_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_original_cell0D}});
+        }
+
+        exporter.Export(mesh_folder + "/conformed_mesh_cell0Ds.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        for (unsigned int p = 0; p < conformed_mesh.Cell1DTotalNumber(); ++p)
+        {
+          const double edge_original_cell1D = conform_result.new_cell1Ds_to_original_cell1D.at(p);
+          const double edge_original_surface = conform_result.new_cell1Ds_to_surface_segment.at(p);
+
+          Eigen::MatrixXd segment;
+          segment.resize(3, 2);
+          segment.col(0) = conformed_mesh.Cell1DOriginCoordinates(p);
+          segment.col(1) = conformed_mesh.Cell1DEndCoordinates(p);
+
+          double edge_position = 0.0;
+          switch (conform_result.new_cell1Ds_surface_position.at(p))
+          {
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
+              edge_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
+              edge_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
+              edge_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddSegment(
+                segment,
+                {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_position},
+                 {"original_surface_edge", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_original_surface},
+                 {"original_cell1D_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &edge_original_cell1D}});
+        }
+
+        exporter.Export(mesh_folder + "/conformed_mesh_cell1Ds.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        for (unsigned int f = 0; f < conformed_mesh.Cell2DTotalNumber(); ++f)
+        {
+          const double face_original_cell2D = conform_result.new_cell2Ds_to_original_cell2D.at(f);
+          const double face_original_surface = conform_result.new_cell2Ds_to_surface_triangle.at(f);
+          const auto face_vertices = conformed_mesh.Cell2DVerticesCoordinates(f);
+
+          double face_position = 0.0;
+          switch (conform_result.new_cell2Ds_surface_position.at(f))
+          {
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
+              face_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
+              face_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
+              face_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddPolygon(
+                face_vertices,
+                {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &face_position},
+                 {"original_surface_triangle", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &face_original_surface},
+                 {"original_cell2D_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &face_original_cell2D}});
+        }
+
+        exporter.Export(mesh_folder + "/conformed_mesh_cell2Ds.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+        for (unsigned int v = 0; v < conformed_mesh.Cell3DTotalNumber(); ++v)
+        {
+          const double volume_original_cell3D = conform_result.new_cell3Ds_to_original_cell3D.at(v);
+
+          const auto volume_vertices = conformed_mesh.Cell3DVerticesCoordinates(v);
+          std::map<unsigned int, unsigned int> vertices_to_idx;
+          for (unsigned int vv = 0; vv < conformed_mesh.Cell3DNumberVertices(v); ++vv)
+            vertices_to_idx.insert(std::make_pair(conformed_mesh.Cell3DVertex(v, vv), vv));
+
+          std::vector<std::vector<unsigned int>> volume_facets(conformed_mesh.Cell3DNumberFaces(v));
+          for (unsigned int vf = 0; vf < conformed_mesh.Cell3DNumberFaces(v); ++vf)
+          {
+            const auto face_vertices = conformed_mesh.Cell2DVertices(mesh.Cell3DFace(v, vf));
+            volume_facets.at(vf).resize(face_vertices.size());
+            for (unsigned vfv = 0; vfv < face_vertices.size(); ++vfv)
+              volume_facets.at(vf).at(vfv) = vertices_to_idx.at(face_vertices.at(vfv));
+          }
+
+          double volume_position = 0.0;
+          switch (conform_result.new_cell3Ds_surface_position.at(v))
+          {
+            case Gedim::MeshUtilities::SurfacePositions::OnSurface:
+              volume_position = 0.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Positive:
+              volume_position = +1.0;
+              break;
+            case Gedim::MeshUtilities::SurfacePositions::Negative:
+              volume_position = -1.0;
+              break;
+            default:
+              throw std::runtime_error("Position not managed");
+          }
+
+          exporter.AddPolyhedron(
+                volume_vertices,
+                volume_facets,
+                {{"surface_position", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &volume_position},
+                {"original_cell3D_index", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &volume_original_cell3D}});
+        }
+
+        exporter.Export(mesh_folder + "/conformed_mesh_cell3Ds.vtu");
+      }
     }
 
     Gedim::MeshUtilities::CheckMesh3DConfiguration check_mesh_config;
