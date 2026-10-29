@@ -424,10 +424,7 @@ TEST(TestMeshUtilities, TestMeshUtilities_3D_MarchingCubes)
     Gedim::MeshMatrices conformed_mesh_data;
     Gedim::MeshMatricesDAO conformed_mesh(conformed_mesh_data);
 
-    const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(marching_cubes_result.surface_intersections,
-                                                                           marching_cubes_result.surface_segments,
-                                                                           marching_cubes_result.surface_triangles,
-                                                                           mesh,
+    const auto conform_result = Gedim::MeshUtilities::ConformMeshToSurface(mesh,
                                                                            surface_intersection_graph,
                                                                            conformed_mesh);
 
