@@ -395,7 +395,7 @@ namespace GedimUnitTesting
         {
           const double face_original_cell2D = conform_result.new_cell2Ds_to_original_cell2D.at(f);
           const double face_original_surface = conform_result.new_cell2Ds_to_surface_triangle.at(f);
-          const auto face_vertices = mesh.Cell2DVerticesCoordinates(f);
+          const auto face_vertices = conformed_mesh.Cell2DVerticesCoordinates(f);
 
           double face_position = 0.0;
           switch (conform_result.new_cell2Ds_surface_position.at(f))
