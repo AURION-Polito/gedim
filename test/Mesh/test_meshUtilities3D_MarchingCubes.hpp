@@ -267,7 +267,7 @@ namespace GedimUnitTesting
           const double vertex_original_surface = vertex.original_surface_point_index;
 
           double vertex_position = 0.0;
-          switch (vertex.surface_type)
+          switch (vertex.surface_position)
           {
             case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               vertex_position = 0.0;
@@ -304,7 +304,7 @@ namespace GedimUnitTesting
           segment.col(1) = surface_intersection_graph.vertices.at(edge.extremes.at(1)).coordinate;
 
           double edge_position = 0.0;
-          switch (edge.surface_type)
+          switch (edge.surface_position)
           {
             case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               edge_position = 0.0;
@@ -344,7 +344,7 @@ namespace GedimUnitTesting
 
 
           double face_position = 0.0;
-          switch (face.surface_type)
+          switch (face.surface_position)
           {
             case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               face_position = 0.0;
@@ -394,7 +394,7 @@ namespace GedimUnitTesting
           }
 
           double volume_position = 0.0;
-          switch (volume.surface_type)
+          switch (volume.surface_position)
           {
             case Gedim::MeshUtilities::SurfacePositions::OnSurface:
               volume_position = 0.0;
