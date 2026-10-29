@@ -42,8 +42,8 @@ namespace GedimUnitTesting
       const Eigen::Vector3d square_LengthTangent = square.col(1) - square.col(0);
       const Eigen::Vector3d square_HeightTangent = square.col(3) - square.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(20, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(21, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateRectangleMesh(square.col(0),
                                                 square_LengthTangent,
@@ -91,7 +91,7 @@ namespace GedimUnitTesting
     auto surface_implicit_equation = [&plane_x, &generic_plane, &circle, &gyroid, &gyroid_shifted](const Eigen::MatrixXd &points) {
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = gyroid_shifted(points.col(p), 1.0, 0.0) ;
+        surface_values[p] = circle(points.col(p), 1.0, 0.0) ;
 
       return surface_values;
     };

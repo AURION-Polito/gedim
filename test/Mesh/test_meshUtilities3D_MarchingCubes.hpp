@@ -44,9 +44,9 @@ namespace GedimUnitTesting
       const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
       const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(20, 0.0, 1.0, 1);
-      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(21, 0.0, 1.0, 1);
-      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(22, 0.0, 1.0, 1);
+      const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(4, 0.0, 1.0, 1);
+      const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(5, 0.0, 1.0, 1);
+      const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(6, 0.0, 1.0, 1);
 
       Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                      parallelepipedsLengthTangent,
@@ -135,7 +135,7 @@ namespace GedimUnitTesting
 
       Eigen::VectorXd surface_values(points.cols());
       for (unsigned int p = 0; p < surface_values.size(); p++)
-        surface_values[p] = gyroid_shifted(points.col(p), L, c);
+        surface_values[p] = sphere(points.col(p), L, c);
 
       return surface_values;
     };
