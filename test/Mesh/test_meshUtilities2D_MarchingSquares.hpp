@@ -423,6 +423,11 @@ namespace GedimUnitTesting
         exporter.Export(mesh_folder + "/conformed_mesh_cell2Ds.vtu");
       }
     }
+
+    Gedim::MeshUtilities::CheckMesh2DConfiguration check_mesh_config;
+    Gedim::MeshUtilities::CheckMesh2D(check_mesh_config,
+                                      geometry_utilities,
+                                      conformed_mesh);
   }
 
 } // namespace GedimUnitTesting
