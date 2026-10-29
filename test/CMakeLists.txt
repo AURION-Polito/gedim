@@ -115,6 +115,7 @@ add_subdirectory(Mesh)
 add_subdirectory(IO)
 add_subdirectory(MpiTools)
 add_subdirectory(Quadrature)
+add_subdirectory(Algorithms)
 
 list(APPEND ${GEDIM_LIBRARY_TEST_PUBLIC_HEADERS} ${gedim_test_src_headers})
 list(APPEND ${GEDIM_LIBRARY_TEST_SOURCES} ${gedim_test_src_sources})
