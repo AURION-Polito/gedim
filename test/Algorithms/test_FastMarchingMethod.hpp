@@ -55,10 +55,43 @@ namespace UnitTesting
 
     const double speed = 1.0;
     const unsigned int source = mesh.Cell0DTotalNumber() > 3 ? 4 : 0;
-    Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
-                                                                   mesh,
-                                                                   speed,
-                                                                   source);
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
+                                                                                       mesh,
+                                                                                       speed,
+                                                                                       source);
+
+    {
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
+        {
+          double cell0D_status = 0.0;
+          switch (result.vertices_status.at(c))
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Far:
+              cell0D_status = -1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Trial:
+              cell0D_status = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Verified:
+              cell0D_status = +1.0;
+              break;
+            default:
+              throw std::runtime_error("status not managed");
+          }
+
+          exporter.AddPoint(
+                mesh.Cell0DCoordinates(c),
+                {{"status", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_status},
+                 {"time", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &result.vertices_time.at(c)}});
+        }
+
+        exporter.Export(exportFolder + "/cell0Ds_time.vtu");
+      }
+
+    }
   }
 
 } // namespace UnitTesting
