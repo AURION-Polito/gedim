@@ -47,6 +47,7 @@
 #include "test_meshUtilities2D_MarchingSquares.hpp"
 #include "test_mesh_with_holes.hpp"
 #include "test_FastMarchingMethod.hpp"
+#include "test_BrentMinimization.hpp"
 
 #include <gtest/gtest.h>
 

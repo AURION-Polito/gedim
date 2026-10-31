@@ -1,4 +1,5 @@
 list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_FastMarchingMethod.hpp)
+list(APPEND gedim_test_src_headers ${CMAKE_CURRENT_SOURCE_DIR}/test_BrentMinimization.hpp)
 
 list(APPEND gedim_test_src_includes ${CMAKE_CURRENT_SOURCE_DIR})
 
