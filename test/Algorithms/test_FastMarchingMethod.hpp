@@ -58,7 +58,10 @@ namespace UnitTesting
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
                                                                                        mesh,
                                                                                        speed,
-                                                                                       source);
+                                                                                       source,
+                                                                                       {
+                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear
+                                                                                       });
 
     {
       {
@@ -180,7 +183,7 @@ namespace UnitTesting
       auto surface_implicit_equation = [&plane_x, &generic_plane, &circle, &gyroid, &gyroid_shifted, &circle_shifted](const Eigen::MatrixXd &points) {
         Eigen::VectorXd surface_values(points.cols());
         for (unsigned int p = 0; p < surface_values.size(); p++)
-          surface_values[p] = gyroid_shifted(points.col(p), 1.0, 0.0);
+          surface_values[p] = circle_shifted(points.col(p), 1.0, 0.0);
 
         return surface_values;
       };
@@ -259,7 +262,10 @@ namespace UnitTesting
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
                                                                                        mesh,
                                                                                        speed,
-                                                                                       source);
+                                                                                       source,
+                                                                                       {
+                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear
+                                                                                       });
 
     {
       {
