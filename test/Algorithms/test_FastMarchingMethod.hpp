@@ -91,6 +91,16 @@ namespace UnitTesting
         exporter.Export(exportFolder + "/cell0Ds_time.vtu");
       }
 
+      {
+        Gedim::VTKUtilities exporter;
+
+        exporter.AddPolygons(mesh.Cell0DsCoordinates(),
+                             mesh.Cell2DsVertices(),
+                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+
+        exporter.Export(exportFolder + "/cell2Ds_time.vtu");
+      }
+
     }
   }
 
