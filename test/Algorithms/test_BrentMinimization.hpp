@@ -21,17 +21,8 @@
 
 namespace UnitTesting
 {
-  TEST(TestBrentMinimization, TestBrentMinimization_Parabola)
+  TEST(TestBrentMinimization, TestBrentMinimization_Functions)
   {
-    std::string exportFolder = "./Export/TestBrentMinimization/TestBrentMinimization_Parabola";
-    Gedim::Output::CreateFolder(exportFolder);
-
-    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
-    geometry_utilities_config.Tolerance1D = 1e-8;
-    geometry_utilities_config.Tolerance2D = 1e-12;
-    geometry_utilities_config.Tolerance3D = 1e-10;
-    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
-
     struct TestCase final
     {
         std::string name;
@@ -88,16 +79,8 @@ namespace UnitTesting
 
     for (const auto& test : tests)
     {
-      unsigned evaluations = 0;
-
-      auto counted_f =
-          [&](double x) {
-        ++evaluations;
-        return test.f(x);
-      };
-
       const auto min_result = Gedim::Algorithms::Minimization::brent_minimize(
-                                counted_f, test.a, test.b, test.tolerance, test.max_iterations
+                                test.f, test.a, test.b, test.tolerance, test.max_iterations
                                 );
 
 //      std::cout.precision(2);
@@ -113,7 +96,7 @@ namespace UnitTesting
 //               << std::endl;
 
       ASSERT_TRUE(min_result.converged);
-      ASSERT_TRUE(std::abs(min_result.f_min - counted_f(test.expected_x)) < test.tolerance * (std::abs(counted_f(test.expected_x)) < 1.0 ? 1.0 : std::abs(counted_f(test.expected_x))));
+      ASSERT_TRUE(std::abs(min_result.f_min - test.f(test.expected_x)) < test.tolerance * (std::abs(test.f(test.expected_x)) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x))));
     }
   }
 } // namespace UnitTesting
