@@ -126,6 +126,40 @@ namespace UnitTesting
       {
         Gedim::VTKUtilities exporter;
 
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+        {
+          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+
+          double cell1D_restriction_type = 0.0;
+          switch (edge_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
+              cell1D_restriction_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
+              cell1D_restriction_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
+              cell1D_restriction_type = std::numeric_limits<double>::infinity();
+              break;
+            default:
+              throw std::runtime_error("restriction not managed");
+          }
+
+          exporter.AddSegment(
+                mesh.Cell1DOriginCoordinates(e),
+                mesh.Cell1DEndCoordinates(e),
+                {
+                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
         exporter.AddPolygons(mesh.Cell0DsCoordinates(),
                              mesh.Cell2DsVertices(),
                              {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
@@ -235,6 +269,40 @@ namespace UnitTesting
         }
 
         exporter.Export(exportFolder + "/cell0Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+        {
+          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+
+          double cell1D_restriction_type = 0.0;
+          switch (edge_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
+              cell1D_restriction_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
+              cell1D_restriction_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
+              cell1D_restriction_type = std::numeric_limits<double>::infinity();
+              break;
+            default:
+              throw std::runtime_error("restriction not managed");
+          }
+
+          exporter.AddSegment(
+                mesh.Cell1DOriginCoordinates(e),
+                mesh.Cell1DEndCoordinates(e),
+                {
+                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
       }
 
       {
@@ -469,6 +537,39 @@ namespace UnitTesting
         exporter.Export(exportFolder + "/cell0Ds_time.vtu");
       }
 
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+        {
+          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+
+          double cell1D_restriction_type = 0.0;
+          switch (edge_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
+              cell1D_restriction_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
+              cell1D_restriction_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
+              cell1D_restriction_type = std::numeric_limits<double>::infinity();
+              break;
+            default:
+              throw std::runtime_error("restriction not managed");
+          }
+
+          exporter.AddSegment(
+                mesh.Cell1DOriginCoordinates(e),
+                mesh.Cell1DEndCoordinates(e),
+                {
+                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
+      }
 
       {
         Gedim::VTKUtilities exporter;
@@ -705,7 +806,7 @@ namespace UnitTesting
       Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
     }
 
-    const double R = 0.01;
+    const double R = 0.025;
     const double speed = 1.0;
     const unsigned int source = mesh.Cell0DTotalNumber() > 3 ? 4 : 0;
     const auto fmm_mesh_graph = Gedim::Algorithms::FastMarchingMethod::create_mesh_graph(mesh);
@@ -775,6 +876,40 @@ namespace UnitTesting
         }
 
         exporter.Export(exportFolder + "/cell0Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+        {
+          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+
+          double cell1D_restriction_type = 0.0;
+          switch (edge_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
+              cell1D_restriction_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
+              cell1D_restriction_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
+              cell1D_restriction_type = std::numeric_limits<double>::infinity();
+              break;
+            default:
+              throw std::runtime_error("restriction not managed");
+          }
+
+          exporter.AddSegment(
+                mesh.Cell1DOriginCoordinates(e),
+                mesh.Cell1DEndCoordinates(e),
+                {
+                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
       }
 
       {
