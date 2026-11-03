@@ -683,9 +683,19 @@ namespace UnitTesting
         cell2Ds_triangles[f] = geometry_utilities.PolygonTriangulationByFirstVertex(face_vertices);
       }
 
-      mesh_data = filtered_mesh_data;
+      Gedim::MeshMatrices triangular_mesh_data = filtered_mesh_data;
+      Gedim::MeshMatricesDAO triangular_mesh(triangular_mesh_data);
 
-      Gedim::MeshUtilities::MakeMeshTriangularFaces(cell2Ds_triangles, mesh);
+      Gedim::MeshUtilities::MakeMeshTriangularFaces(cell2Ds_triangles,
+                                                    triangular_mesh);
+
+      const auto active_mesh_filter = Gedim::MeshUtilities::FilterActiveMesh(triangular_mesh);
+      Gedim::MeshUtilities::ExtractMesh2D(active_mesh_filter.Cell0Ds,
+                                          active_mesh_filter.Cell1Ds,
+                                          active_mesh_filter.Cell2Ds,
+                                          triangular_mesh,
+                                          mesh);
+
       Gedim::MeshUtilities::ComputeCell0DCell1DNeighbours(mesh);
     }
 
