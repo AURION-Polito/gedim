@@ -806,7 +806,7 @@ namespace UnitTesting
       Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
     }
 
-    const double R = 0.025;
+    const double R = 0.05;
     const double speed = 1.0;
     const unsigned int source = mesh.Cell0DTotalNumber() > 3 ? 4 : 0;
     const auto fmm_mesh_graph = Gedim::Algorithms::FastMarchingMethod::create_mesh_graph(mesh);
