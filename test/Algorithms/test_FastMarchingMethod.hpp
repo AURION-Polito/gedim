@@ -18,15 +18,16 @@
 
 #include "FastMarchingMethod.hpp"
 #include "MeshUtilities.hpp"
+#include "TetgenInterface.hpp"
 #include "TriangleInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshExporter.hpp"
 
 namespace UnitTesting
 {
-  TEST(TestFastMarchingMethod, TestFastMarchingMethod_Simple)
+  TEST(TestFastMarchingMethod, TestFastMarchingMethod_2D_Simple)
   {
-    std::string exportFolder = "./Export/TestFastMarchingMethod/TestFastMarchingMethod_Simple";
+    std::string exportFolder = "./Export/TestFastMarchingMethod/TestFastMarchingMethod_2D_Simple";
     Gedim::Output::CreateFolder(exportFolder);
 
     Gedim::GeometryUtilitiesConfig geometry_utilities_config;
@@ -63,8 +64,8 @@ namespace UnitTesting
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
-                                                                                       fmm_mesh_graph,
-                                                                                       fmm_config);
+                                                                                    fmm_mesh_graph,
+                                                                                    fmm_config);
 
     {
       {
@@ -170,6 +171,164 @@ namespace UnitTesting
     }
   }
 
+  TEST(TestFastMarchingMethod, TestFastMarchingMethod_3D_Simple)
+  {
+    std::string exportFolder = "./Export/TestFastMarchingMethod/TestFastMarchingMethod_3D_Simple";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1e-8;
+    geometry_utilities_config.Tolerance2D = 1e-12;
+    geometry_utilities_config.Tolerance3D = 1e-10;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    {
+      const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+
+      Gedim::External::MeshUtilities::CreateTetrahedralMesh(cube.Vertices,
+                                                            cube.Edges,
+                                                            cube.Faces,
+                                                            0.001,
+                                                            mesh);
+      Gedim::MeshUtilities::ComputeCell0DCell1DNeighbours(mesh);
+    }
+
+    {
+      const std::string mesh_folder = exportFolder + "/mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
+    }
+
+    const double speed = 1.0;
+    const unsigned int source = mesh.Cell0DTotalNumber() > 3 ? 4 : 0;
+    const auto fmm_mesh_graph = Gedim::Algorithms::FastMarchingMethod::create_mesh_graph(mesh);
+    const auto fmm_config = Gedim::Algorithms::FastMarchingMethod::create_configuration(geometry_utilities,
+                                                                                        fmm_mesh_graph,
+                                                                                        { source },
+                                                                                        0.0,
+                                                                                        speed,
+                                                                                        Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
+                                                                                    fmm_mesh_graph,
+                                                                                    fmm_config);
+
+    {
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < mesh.Cell0DTotalNumber(); ++c)
+        {
+          const auto& vertex_config = fmm_config.cell0Ds_initial_condition.at(c);
+
+          double cell0D_init_type = 0.0;
+          switch (vertex_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::VertexInitialCondition::InitializationTypes::Source:
+              cell0D_init_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::VertexInitialCondition::InitializationTypes::Initialized:
+              cell0D_init_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::VertexInitialCondition::InitializationTypes::Unreachable:
+              cell0D_init_type = std::numeric_limits<double>::infinity();
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::VertexInitialCondition::InitializationTypes::Unknown:
+              cell0D_init_type = -1.0;
+              break;
+            default:
+              throw std::runtime_error("status not managed");
+          }
+
+          double cell0D_status = 0.0;
+          switch (result.vertices_status.at(c))
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Far:
+              cell0D_status = -1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Trial:
+              cell0D_status = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodResult::StatusTypes::Verified:
+              cell0D_status = +1.0;
+              break;
+            default:
+              throw std::runtime_error("status not managed");
+          }
+
+          exporter.AddPoint(
+                mesh.Cell0DCoordinates(c),
+                {
+                  {"init_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_init_type},
+                  {"init_time", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_config.initial_time},
+                  {"border_distance", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &vertex_config.border_distance},
+                  {"status", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell0D_status},
+                  {"final_time", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &result.vertices_time.at(c)}
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell0Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
+        {
+          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+
+          double cell1D_restriction_type = 0.0;
+          switch (edge_config.type)
+          {
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
+              cell1D_restriction_type = 0.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
+              cell1D_restriction_type = 1.0;
+              break;
+            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
+              cell1D_restriction_type = std::numeric_limits<double>::infinity();
+              break;
+            default:
+              throw std::runtime_error("restriction not managed");
+          }
+
+          exporter.AddSegment(
+                mesh.Cell1DOriginCoordinates(e),
+                mesh.Cell1DEndCoordinates(e),
+                {
+                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
+                });
+        }
+
+        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        exporter.AddPolygons(mesh.Cell0DsCoordinates(),
+                             mesh.Cell2DsVertices(),
+                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+
+        exporter.Export(exportFolder + "/cell2Ds_time.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        exporter.AddPolyhedrons(mesh.Cell0DsCoordinates(),
+                             mesh.Cell3DsFacesVertices(),
+                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+
+        exporter.Export(exportFolder + "/cell3Ds_time.vtu");
+      }
+
+    }
+  }
+
   TEST(TestFastMarchingMethod, TestFastMarchingMethod_Simple_Circle)
   {
     std::string exportFolder = "./Export/TestFastMarchingMethod/TestFastMarchingMethod_Simple_Circle";
@@ -210,8 +369,8 @@ namespace UnitTesting
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
-                                                                                       fmm_mesh_graph,
-                                                                                       fmm_config);
+                                                                                    fmm_mesh_graph,
+                                                                                    fmm_config);
 
 
     {
@@ -478,8 +637,8 @@ namespace UnitTesting
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
-                                                                                       fmm_mesh_graph,
-                                                                                       fmm_config);
+                                                                                    fmm_mesh_graph,
+                                                                                    fmm_config);
     {
       {
         Gedim::VTKUtilities exporter;
@@ -817,8 +976,8 @@ namespace UnitTesting
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
     const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
-                                                                                       fmm_mesh_graph,
-                                                                                       fmm_config);
+                                                                                    fmm_mesh_graph,
+                                                                                    fmm_config);
 
 
     {
