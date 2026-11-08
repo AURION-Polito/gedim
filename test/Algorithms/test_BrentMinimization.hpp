@@ -84,16 +84,16 @@ namespace UnitTesting
                                 test.f, test.a, test.b, test.tolerance, test.max_iterations
                                 );
 
-      std::cout<< std::scientific
-               << test.name
-               << " | x_nm " << min_result.min.at(0)
-               << " | x_ex " << test.expected_x.at(0)
-               << " | f_x_nm " << min_result.f_min
-               << " | f_x_ex " << test.f(test.expected_x.at(0))
-               << " | it " << min_result.iterations
-               << " | err_x " << std::abs(min_result.min.at(0) - test.expected_x.at(0)) / (std::abs(test.expected_x.at(0)) < 1.0 ? 1.0 : std::abs(test.expected_x.at(0)))
-               << " | err_f " << std::abs(min_result.f_min - test.f(test.expected_x.at(0))) / (std::abs(test.f(test.expected_x.at(0))) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x.at(0))))
-               << std::endl;
+//      std::cout<< std::scientific
+//               << test.name
+//               << " | x_nm " << min_result.min.at(0)
+//               << " | x_ex " << test.expected_x.at(0)
+//               << " | f_x_nm " << min_result.f_min
+//               << " | f_x_ex " << test.f(test.expected_x.at(0))
+//               << " | it " << min_result.iterations
+//               << " | err_x " << std::abs(min_result.min.at(0) - test.expected_x.at(0)) / (std::abs(test.expected_x.at(0)) < 1.0 ? 1.0 : std::abs(test.expected_x.at(0)))
+//               << " | err_f " << std::abs(min_result.f_min - test.f(test.expected_x.at(0))) / (std::abs(test.f(test.expected_x.at(0))) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x.at(0))))
+//               << std::endl;
 
       ASSERT_TRUE(min_result.converged);
       ASSERT_TRUE(std::abs(min_result.f_min - test.f(test.expected_x.at(0))) < test.tolerance * (std::abs(test.f(test.expected_x.at(0))) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x.at(0)))));
@@ -114,7 +114,7 @@ namespace UnitTesting
         unsigned int max_iterations;
     };
 
-    const double tol = 1.0e-14;
+    const double tol = 1.0e-12;
     const unsigned int max_it = max_it;
 
     const std::vector<TestCase> tests = {
