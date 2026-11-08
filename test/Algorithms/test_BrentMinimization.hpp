@@ -84,17 +84,16 @@ namespace UnitTesting
                                 test.f, test.a, test.b, test.tolerance, test.max_iterations
                                 );
 
-      //      std::cout.precision(2);
-      //      std::cout<< std::scientific
-      //               << test.name
-      //               << " | x_nm " << min_result.min
-      //               << " | x_ex " << test.expected_x
-      //               << " | f_x_nm " << min_result.f_min
-      //               << " | f_x_ex " << counted_f(test.expected_x)
-      //               << " | it " << min_result.iterations
-      //               << " | err_x " << std::abs(min_result.min - test.expected_x) / (std::abs(test.expected_x) < 1.0 ? 1.0 : std::abs(test.expected_x))
-      //               << " | err_ " << std::abs(min_result.f_min - counted_f(test.expected_x)) / (std::abs(counted_f(test.expected_x)) < 1.0 ? 1.0 : std::abs(counted_f(test.expected_x)))
-      //               << std::endl;
+      std::cout<< std::scientific
+               << test.name
+               << " | x_nm " << min_result.min.at(0)
+               << " | x_ex " << test.expected_x.at(0)
+               << " | f_x_nm " << min_result.f_min
+               << " | f_x_ex " << test.f(test.expected_x.at(0))
+               << " | it " << min_result.iterations
+               << " | err_x " << std::abs(min_result.min.at(0) - test.expected_x.at(0)) / (std::abs(test.expected_x.at(0)) < 1.0 ? 1.0 : std::abs(test.expected_x.at(0)))
+               << " | err_f " << std::abs(min_result.f_min - test.f(test.expected_x.at(0))) / (std::abs(test.f(test.expected_x.at(0))) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x.at(0))))
+               << std::endl;
 
       ASSERT_TRUE(min_result.converged);
       ASSERT_TRUE(std::abs(min_result.f_min - test.f(test.expected_x.at(0))) < test.tolerance * (std::abs(test.f(test.expected_x.at(0))) < 1.0 ? 1.0 : std::abs(test.f(test.expected_x.at(0)))));
