@@ -62,7 +62,7 @@ namespace UnitTesting
                                                                                         0.0,
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
-    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
                                                                                        fmm_mesh_graph,
                                                                                        fmm_config);
 
@@ -209,7 +209,7 @@ namespace UnitTesting
                                                                                         R,
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
-    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
                                                                                        fmm_mesh_graph,
                                                                                        fmm_config);
 
@@ -477,7 +477,7 @@ namespace UnitTesting
                                                                                         0.0,
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
-    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
                                                                                        fmm_mesh_graph,
                                                                                        fmm_config);
     {
@@ -816,7 +816,7 @@ namespace UnitTesting
                                                                                         R,
                                                                                         speed,
                                                                                         Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EikonalMinimizationTypes::Linear);
-    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method_2D(geometry_utilities,
+    const auto result = Gedim::Algorithms::FastMarchingMethod::fast_marching_method(geometry_utilities,
                                                                                        fmm_mesh_graph,
                                                                                        fmm_config);
 
