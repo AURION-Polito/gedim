@@ -48,6 +48,7 @@
 #include "test_mesh_with_holes.hpp"
 #include "test_FastMarchingMethod.hpp"
 #include "test_BrentMinimization.hpp"
+#include "test_meshUtilities3D_ExtractTetrahedralMesh.hpp"
 
 #include <gtest/gtest.h>
 
