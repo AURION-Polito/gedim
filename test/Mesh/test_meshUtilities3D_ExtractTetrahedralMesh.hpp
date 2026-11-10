@@ -61,6 +61,7 @@ namespace GedimUnitTesting
 
     const auto cell3Ds_tetra = Gedim::MeshUtilities::ComputeMeshCell3DsTetrahedra(geometry_utilities,
                                                                                   cell2Ds_triangulation,
+                                                                                  Gedim::MeshUtilities::MeshCell3DsTetrahedraData::TetrahedraTypes::ByBarycenter,
                                                                                   mesh);
 
   }
