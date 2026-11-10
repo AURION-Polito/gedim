@@ -54,6 +54,15 @@ namespace GedimUnitTesting
       Gedim::Output::CreateFolder(mesh_folder);
       Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
     }
+
+    const auto cell2Ds_triangulation = Gedim::MeshUtilities::ComputeMeshCell2DsTriangles(geometry_utilities,
+                                                                                         Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
+                                                                                         mesh);
+
+    const auto cell3Ds_tetra = Gedim::MeshUtilities::ComputeMeshCell3DsTetrahedra(geometry_utilities,
+                                                                                  cell2Ds_triangulation,
+                                                                                  mesh);
+
   }
 } // namespace GedimUnitTesting
 
