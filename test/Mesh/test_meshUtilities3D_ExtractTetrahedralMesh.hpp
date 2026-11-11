@@ -77,7 +77,9 @@ namespace GedimUnitTesting
         for (unsigned int c = 0; c < extract_tetra.vertices.size(); ++c)
         {
           const auto& vertex = extract_tetra.vertices.at(c);
-          const double original_cell0D = vertex.original_cell0D_index;
+          const double original_cell0D = vertex.original_cell0D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           vertex.original_cell0D_index;
 
           exporter.AddPoint(
                 vertex.coordinate,
@@ -89,39 +91,27 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_vertices.vtu");
       }
 
-//      {
-//        Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-//        for (unsigned int e = 0; e < mesh.Cell1DTotalNumber(); ++e)
-//        {
-//          const auto& edge_config = fmm_config.cell1Ds_restriction.at(e);
+        for (unsigned int e = 0; e < extract_tetra.edges.size(); ++e)
+        {
+          const auto& edge = extract_tetra.edges.at(e);
 
-//          double cell1D_restriction_type = 0.0;
-//          switch (edge_config.type)
-//          {
-//            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Free:
-//              cell1D_restriction_type = 0.0;
-//              break;
-//            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Constrained:
-//              cell1D_restriction_type = 1.0;
-//              break;
-//            case Gedim::Algorithms::FastMarchingMethod::FastMarchingMethodConfig::EdgeRestriction::RestrictionTypes::Unreachable:
-//              cell1D_restriction_type = std::numeric_limits<double>::infinity();
-//              break;
-//            default:
-//              throw std::runtime_error("restriction not managed");
-//          }
+          const double original_cell1D = edge.original_cell1D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           edge.original_cell1D_index;
 
-//          exporter.AddSegment(
-//                mesh.Cell1DOriginCoordinates(e),
-//                mesh.Cell1DEndCoordinates(e),
-//                {
-//                  {"restriction_type", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &cell1D_restriction_type},
-//                });
-//        }
+          exporter.AddSegment(
+                extract_tetra.vertices.at(edge.extremes.at(0)).coordinate,
+                extract_tetra.vertices.at(edge.extremes.at(1)).coordinate,
+                {
+                  {"original_cell1D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell1D},
+                });
+        }
 
-//        exporter.Export(exportFolder + "/cell1Ds_time.vtu");
-//      }
+        exporter.Export(exportFolder + "/extract_edges.vtu");
+      }
 
 //      {
 //        Gedim::VTKUtilities exporter;
