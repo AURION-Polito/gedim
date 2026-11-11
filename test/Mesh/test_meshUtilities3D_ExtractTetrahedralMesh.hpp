@@ -160,20 +160,14 @@ namespace GedimUnitTesting
     {
       const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-      Gedim::External::MeshUtilities::CreateTetrahedralMesh(cube.Vertices,
+      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
+                                                           cube.Vertices,
                                                            cube.Edges,
                                                            cube.Faces,
-                                                           0.1,
-                                                           mesh);
-
-//      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
-//                                                           cube.Vertices,
-//                                                           cube.Edges,
-//                                                           cube.Faces,
-//                                                           10,
-//                                                           1000,
-//                                                           mesh,
-//                                                           10);
+                                                           10,
+                                                           1000,
+                                                           mesh,
+                                                           10);
     }
 
     {
