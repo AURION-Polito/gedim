@@ -128,6 +128,18 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_triangles.vtu");
       }
     }
+
+    Gedim::MeshMatrices triangles_mesh_data;
+    Gedim::MeshMatricesDAO triangles_mesh(triangles_mesh_data);
+    Gedim::MeshUtilities::TetrahedralMeshDataToMeshDAO(extract_tetra,
+                                                       mesh,
+                                                       triangles_mesh);
+
+    {
+      const std::string mesh_folder = exportFolder + "/triangles_mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(triangles_mesh, mesh_folder, "mesh");
+    }
   }
 
   TEST(TestMeshUtilities, TestMeshUtilities_3D_ExtractTetrahedralMesh)
@@ -283,6 +295,18 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_tetrahedra.vtu");
       }
 
+    }
+
+    Gedim::MeshMatrices tetrahedra_mesh_data;
+    Gedim::MeshMatricesDAO tetrahedra_mesh(tetrahedra_mesh_data);
+    Gedim::MeshUtilities::TetrahedralMeshDataToMeshDAO(extract_tetra,
+                                                       mesh,
+                                                       tetrahedra_mesh);
+
+    {
+      const std::string mesh_folder = exportFolder + "/tetrahedra_mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(tetrahedra_mesh, mesh_folder, "mesh");
     }
 
   }
