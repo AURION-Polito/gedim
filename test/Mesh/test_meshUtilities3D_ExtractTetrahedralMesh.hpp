@@ -287,8 +287,8 @@ namespace GedimUnitTesting
           for (unsigned int t_f = 0; t_f < tetrahedron.faces.size(); ++t_f)
           {
             const auto& triangle = extract_tetra.triangles.at(tetrahedron.faces.at(t_f));
-            facets.at(t_f).resize(4);
-            for (unsigned int t_f_v = 0; t_f_v < 4; ++t_f_v)
+            facets.at(t_f).resize(3);
+            for (unsigned int t_f_v = 0; t_f_v < 3; ++t_f_v)
               facets.at(t_f).at(t_f_v) = vertex_position.at(triangle.vertices.at(t_f_v));
           }
 
