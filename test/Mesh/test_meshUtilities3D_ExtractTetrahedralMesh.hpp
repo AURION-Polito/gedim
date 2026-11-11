@@ -144,15 +144,44 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_triangles.vtu");
       }
 
-      //      {
-      //        Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-      //        exporter.AddPolyhedrons(mesh.Cell0DsCoordinates(),
-      //                             mesh.Cell3DsFacesVertices(),
-      //                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+        for (unsigned int t = 0; t < extract_tetra.tetrahedra.size(); ++t)
+        {
+          const auto& tetrahedron = extract_tetra.tetrahedra.at(t);
 
-      //        exporter.Export(exportFolder + "/cell3Ds_time.vtu");
-      //      }
+          const double original_cell3D = tetrahedron.original_cell3D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           tetrahedron.original_cell3D_index;
+
+          Eigen::MatrixXd vertices(3, 4);
+          std::map<unsigned int, unsigned int> vertex_position;
+          for (unsigned int t_v = 0; t_v < 4; ++t_v)
+          {
+            vertices.col(t_v) = extract_tetra.vertices.at(tetrahedron.vertices.at(t_v)).coordinate;
+            vertex_position.insert(std::make_pair(tetrahedron.vertices.at(t_v),
+                                                  t_v));
+          }
+
+          std::vector<std::vector<unsigned int>> facets(tetrahedron.faces.size());
+          for (unsigned int t_f = 0; t_f < tetrahedron.faces.size(); ++t_f)
+          {
+            const auto& triangle = extract_tetra.triangles.at(tetrahedron.faces.at(t_f));
+            facets.at(t_f).resize(4);
+            for (unsigned int t_f_v = 0; t_f_v < 3; ++t_f_v)
+              facets.at(t_f).at(t_f_v) = vertex_position.at(triangle.vertices.at(t_f_v));
+          }
+
+          exporter.AddPolyhedron(vertices,
+                                 facets,
+                              {
+                                {"original_cell3D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell3D},
+                              });
+        }
+
+        exporter.Export(exportFolder + "/extract_tetrahedra.vtu");
+      }
 
     }
 
