@@ -1089,8 +1089,11 @@ namespace UnitTesting
 
       {
         const double domain_volume = 1.0;
-        const double max_relative_volume = 0.001;
+        const double max_relative_volume = 0.01;
         const double max_cell_edge = std::cbrt(domain_volume * max_relative_volume);
+        const unsigned int num_cells_length = std::ceil(1.0 / max_cell_edge) + 1;
+        const unsigned int num_cells_height = std::ceil(1.0 / max_cell_edge) + 1;
+        const unsigned int num_cells_width = std::ceil(1.0 / max_cell_edge) + 1;
 
         const Gedim::GeometryUtilities::Polyhedron cube =
             geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
@@ -1098,9 +1101,9 @@ namespace UnitTesting
         const Eigen::Vector3d parallelepipedsHeightTangent = cube.Vertices.col(3) - cube.Vertices.col(0);
         const Eigen::Vector3d parallelepipedsWidthTangent = cube.Vertices.col(4) - cube.Vertices.col(0);
 
-        const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(max_cell_edge, 0.0, 1.0, 1);
-        const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(max_cell_edge, 0.0, 1.0, 1);
-        const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(max_cell_edge, 0.0, 1.0, 1);
+        const std::vector<double> lengthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(num_cells_length, 0.0, 1.0, 1);
+        const std::vector<double> heightMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(num_cells_height, 0.0, 1.0, 1);
+        const std::vector<double> widthMeshCurvilinearCoordinates = geometry_utilities.EquispaceCoordinates(num_cells_width, 0.0, 1.0, 1);
 
         Gedim::MeshUtilities::CreateParallelepipedMesh(cube.Vertices.col(0),
                                                        parallelepipedsLengthTangent,
