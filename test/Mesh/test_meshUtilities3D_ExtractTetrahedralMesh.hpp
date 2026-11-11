@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include "MeshUtilities.hpp"
+#include "TetgenInterface.hpp"
 #include "VTKUtilities.hpp"
 #include "VtkMeshExporter.hpp"
 #include "VoroInterface.hpp"
@@ -159,14 +160,20 @@ namespace GedimUnitTesting
     {
       const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
-                                                           cube.Vertices,
+      Gedim::External::MeshUtilities::CreateTetrahedralMesh(cube.Vertices,
                                                            cube.Edges,
                                                            cube.Faces,
-                                                           10,
-                                                           1000,
-                                                           mesh,
-                                                           10);
+                                                           0.1,
+                                                           mesh);
+
+//      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
+//                                                           cube.Vertices,
+//                                                           cube.Edges,
+//                                                           cube.Faces,
+//                                                           10,
+//                                                           1000,
+//                                                           mesh,
+//                                                           10);
     }
 
     {
