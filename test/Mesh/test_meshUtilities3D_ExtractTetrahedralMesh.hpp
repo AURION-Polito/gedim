@@ -23,6 +23,113 @@
 
 namespace GedimUnitTesting
 {
+  TEST(TestMeshUtilities, TestMeshUtilities_2D_ExtractTriangularMesh)
+  {
+    std::string exportFolder = "./Export/TestMeshUtilities/TestMeshUtilities_2D_ExtractTriangularMesh";
+    Gedim::Output::CreateFolder(exportFolder);
+
+    Gedim::GeometryUtilitiesConfig geometry_utilities_config;
+    geometry_utilities_config.Tolerance1D = 1e-6;
+    geometry_utilities_config.Tolerance2D = 1e-12;
+    Gedim::GeometryUtilities geometry_utilities(geometry_utilities_config);
+
+    Gedim::MeshMatrices mesh_data;
+    Gedim::MeshMatricesDAO mesh(mesh_data);
+
+    {
+      const auto square = geometry_utilities.CreateSquare(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
+
+      Gedim::External::MeshUtilities::CreatePolygonalMesh(geometry_utilities,
+                                                          square,
+                                                          10,
+                                                          1000,
+                                                          mesh,
+                                                          10);
+    }
+
+    {
+      const std::string mesh_folder = exportFolder + "/mesh";
+      Gedim::Output::CreateFolder(mesh_folder);
+      Gedim::External::MeshUtilities::ExportMeshToVTU(mesh, mesh_folder, "mesh");
+    }
+
+    const auto cell2Ds_triangles = Gedim::MeshUtilities::ComputeMeshCell2DsTriangles(geometry_utilities,
+                                                                                     Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
+                                                                                     mesh);
+
+    const auto extract_tetra = Gedim::MeshUtilities::ExtractTriangularMesh(cell2Ds_triangles,
+                                                                           mesh);
+
+
+    {
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int c = 0; c < extract_tetra.vertices.size(); ++c)
+        {
+          const auto& vertex = extract_tetra.vertices.at(c);
+          const double original_cell0D = vertex.original_cell0D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           vertex.original_cell0D_index;
+
+          exporter.AddPoint(
+                vertex.coordinate,
+                {
+                  {"original_cell0D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell0D}
+                });
+        }
+
+        exporter.Export(exportFolder + "/extract_vertices.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int e = 0; e < extract_tetra.edges.size(); ++e)
+        {
+          const auto& edge = extract_tetra.edges.at(e);
+
+          const double original_cell1D = edge.original_cell1D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           edge.original_cell1D_index;
+
+          exporter.AddSegment(
+                extract_tetra.vertices.at(edge.extremes.at(0)).coordinate,
+                extract_tetra.vertices.at(edge.extremes.at(1)).coordinate,
+                {
+                  {"original_cell1D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell1D},
+                });
+        }
+
+        exporter.Export(exportFolder + "/extract_edges.vtu");
+      }
+
+      {
+        Gedim::VTKUtilities exporter;
+
+        for (unsigned int f = 0; f < extract_tetra.triangles.size(); ++f)
+        {
+          const auto& triangle = extract_tetra.triangles.at(f);
+
+          const double original_cell2D = triangle.original_cell2D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           triangle.original_cell2D_index;
+
+          Eigen::Matrix3d vertices;
+          for (unsigned int t_v = 0; t_v < 3; ++t_v)
+            vertices.col(t_v) = extract_tetra.vertices.at(triangle.vertices.at(t_v)).coordinate;
+
+          exporter.AddPolygon(vertices,
+                              {
+                                {"original_cell2D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell2D},
+                              });
+        }
+
+        exporter.Export(exportFolder + "/extract_triangles.vtu");
+      }
+    }
+  }
+
   TEST(TestMeshUtilities, TestMeshUtilities_3D_ExtractTetrahedralMesh)
   {
     std::string exportFolder = "./Export/TestMeshUtilities/TestMeshUtilities_3D_ExtractTetrahedralMesh";
@@ -40,13 +147,6 @@ namespace GedimUnitTesting
     {
       const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-      //      Gedim::MeshUtilities::Mesh3DFromPolyhedron(cube.Vertices,
-      //                                                 cube.Edges,
-      //                                                 cube.Faces,
-      //                                                 {},
-      //                                                 {},
-      //                                                 {},
-      //                                                 mesh);
       Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
                                                            cube.Vertices,
                                                            cube.Edges,
@@ -175,9 +275,9 @@ namespace GedimUnitTesting
 
           exporter.AddPolyhedron(vertices,
                                  facets,
-                              {
-                                {"original_cell3D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell3D},
-                              });
+                                 {
+                                   {"original_cell3D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell3D},
+                                 });
         }
 
         exporter.Export(exportFolder + "/extract_tetrahedra.vtu");
