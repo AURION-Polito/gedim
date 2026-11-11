@@ -606,18 +606,18 @@ namespace UnitTesting
                                           conformed_mesh,
                                           filtered_mesh);
 
-      std::vector<std::vector<unsigned int>> cell2Ds_triangles(filtered_mesh.Cell2DTotalNumber());
+      const auto cell2Ds_triangles = Gedim::MeshUtilities::ComputeMeshCell2DsTriangles(geometry_utilities,
+                                                                                       Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
+                                                                                       filtered_mesh);
 
-      for (unsigned int f = 0; f < filtered_mesh.Cell2DTotalNumber(); f++)
-      {
-        const auto face_vertices = filtered_mesh.Cell2DVerticesCoordinates(f);
+      const auto extract_tetra = Gedim::MeshUtilities::ExtractTriangularMesh(cell2Ds_triangles,
+                                                                             filtered_mesh);
 
-        cell2Ds_triangles[f] = geometry_utilities.PolygonTriangulationByFirstVertex(face_vertices);
-      }
-
-      mesh_data = filtered_mesh_data;
-
-      Gedim::MeshUtilities::MakeMeshTriangularFaces(cell2Ds_triangles, mesh);
+      Gedim::MeshMatrices triangles_mesh_data;
+      Gedim::MeshMatricesDAO triangles_mesh(triangles_mesh_data);
+      Gedim::MeshUtilities::TetrahedralMeshDataToMeshDAO(extract_tetra,
+                                                         filtered_mesh,
+                                                         mesh);
       Gedim::MeshUtilities::ComputeCell0DCell1DNeighbours(mesh);
     }
 
@@ -934,28 +934,18 @@ namespace UnitTesting
                                           conformed_mesh,
                                           filtered_mesh);
 
-      std::vector<std::vector<unsigned int>> cell2Ds_triangles(filtered_mesh.Cell2DTotalNumber());
+      const auto cell2Ds_triangles = Gedim::MeshUtilities::ComputeMeshCell2DsTriangles(geometry_utilities,
+                                                                                       Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
+                                                                                       filtered_mesh);
 
-      for (unsigned int f = 0; f < filtered_mesh.Cell2DTotalNumber(); f++)
-      {
-        const auto face_vertices = filtered_mesh.Cell2DVerticesCoordinates(f);
+      const auto extract_tetra = Gedim::MeshUtilities::ExtractTriangularMesh(cell2Ds_triangles,
+                                                                             filtered_mesh);
 
-        cell2Ds_triangles[f] = geometry_utilities.PolygonTriangulationByFirstVertex(face_vertices);
-      }
-
-      Gedim::MeshMatrices triangular_mesh_data = filtered_mesh_data;
-      Gedim::MeshMatricesDAO triangular_mesh(triangular_mesh_data);
-
-      Gedim::MeshUtilities::MakeMeshTriangularFaces(cell2Ds_triangles,
-                                                    triangular_mesh);
-
-      const auto active_mesh_filter = Gedim::MeshUtilities::FilterActiveMesh(triangular_mesh);
-      Gedim::MeshUtilities::ExtractMesh2D(active_mesh_filter.Cell0Ds,
-                                          active_mesh_filter.Cell1Ds,
-                                          active_mesh_filter.Cell2Ds,
-                                          triangular_mesh,
-                                          mesh);
-
+      Gedim::MeshMatrices triangles_mesh_data;
+      Gedim::MeshMatricesDAO triangles_mesh(triangles_mesh_data);
+      Gedim::MeshUtilities::TetrahedralMeshDataToMeshDAO(extract_tetra,
+                                                         filtered_mesh,
+                                                         mesh);
       Gedim::MeshUtilities::ComputeCell0DCell1DNeighbours(mesh);
     }
 
