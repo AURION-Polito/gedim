@@ -40,21 +40,21 @@ namespace GedimUnitTesting
     {
       const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-      Gedim::MeshUtilities::Mesh3DFromPolyhedron(cube.Vertices,
-                                                 cube.Edges,
-                                                 cube.Faces,
-                                                 {},
-                                                 {},
-                                                 {},
-                                                 mesh);
-      //      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
-      //                                                           cube.Vertices,
-      //                                                           cube.Edges,
-      //                                                           cube.Faces,
-      //                                                           10,
-      //                                                           1000,
-      //                                                           mesh,
-      //                                                           10);
+      //      Gedim::MeshUtilities::Mesh3DFromPolyhedron(cube.Vertices,
+      //                                                 cube.Edges,
+      //                                                 cube.Faces,
+      //                                                 {},
+      //                                                 {},
+      //                                                 {},
+      //                                                 mesh);
+      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
+                                                           cube.Vertices,
+                                                           cube.Edges,
+                                                           cube.Faces,
+                                                           10,
+                                                           1000,
+                                                           mesh,
+                                                           10);
     }
 
     {
@@ -120,15 +120,30 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_edges.vtu");
       }
 
-      //      {
-      //        Gedim::VTKUtilities exporter;
+      {
+        Gedim::VTKUtilities exporter;
 
-      //        exporter.AddPolygons(mesh.Cell0DsCoordinates(),
-      //                             mesh.Cell2DsVertices(),
-      //                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+        for (unsigned int f = 0; f < extract_tetra.triangles.size(); ++f)
+        {
+          const auto& triangle = extract_tetra.triangles.at(f);
 
-      //        exporter.Export(exportFolder + "/cell2Ds_time.vtu");
-      //      }
+          const double original_cell2D = triangle.original_cell2D_index == Gedim::MeshUtilities::None ?
+                                           -1.0 :
+                                           triangle.original_cell2D_index;
+
+          Eigen::Matrix3d vertices;
+          for (unsigned int t_v = 0; t_v < 3; ++t_v)
+            vertices.col(t_v) = extract_tetra.vertices.at(triangle.vertices.at(t_v)).coordinate;
+
+          exporter.AddPolygon(vertices,
+                              {
+                                {"original_cell2D", Gedim::VTPProperty::Formats::Cells, static_cast<unsigned int>(1), &original_cell2D},
+                              });
+        }
+
+        exporter.Export(exportFolder + "/extract_triangles.vtu");
+      }
+
       //      {
       //        Gedim::VTKUtilities exporter;
 
