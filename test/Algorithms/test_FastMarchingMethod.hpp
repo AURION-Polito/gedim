@@ -1089,7 +1089,7 @@ namespace UnitTesting
 
       {
         const double domain_volume = 1.0;
-        const double max_relative_volume = 0.01;
+        const double max_relative_volume = 0.001;
         const double max_cell_edge = std::cbrt(domain_volume * max_relative_volume);
         const unsigned int num_cells_length = std::ceil(1.0 / max_cell_edge) + 1;
         const unsigned int num_cells_height = std::ceil(1.0 / max_cell_edge) + 1;
@@ -1188,7 +1188,7 @@ namespace UnitTesting
 
               Eigen::VectorXd surface_values(points.cols());
               for (unsigned int p = 0; p < surface_values.size(); p++)
-                  surface_values[p] = sphere(points.col(p), L, c);
+                  surface_values[p] = gyroid(points.col(p), L, c);
 
               return surface_values;
           };
