@@ -40,14 +40,21 @@ namespace GedimUnitTesting
     {
       const auto cube = geometry_utilities.CreateCubeWithOrigin(Eigen::Vector3d(0.0, 0.0, 0.0), 1.0);
 
-      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
-                                                           cube.Vertices,
-                                                           cube.Edges,
-                                                           cube.Faces,
-                                                           10,
-                                                           1000,
-                                                           mesh,
-                                                           10);
+      Gedim::MeshUtilities::Mesh3DFromPolyhedron(cube.Vertices,
+                                                 cube.Edges,
+                                                 cube.Faces,
+                                                 {},
+                                                 {},
+                                                 {},
+                                                 mesh);
+      //      Gedim::External::MeshUtilities::CreatePolyhedralMesh(geometry_utilities,
+      //                                                           cube.Vertices,
+      //                                                           cube.Edges,
+      //                                                           cube.Faces,
+      //                                                           10,
+      //                                                           1000,
+      //                                                           mesh,
+      //                                                           10);
     }
 
     {
@@ -57,8 +64,8 @@ namespace GedimUnitTesting
     }
 
     const auto cell2Ds_triangles = Gedim::MeshUtilities::ComputeMeshCell2DsTriangles(geometry_utilities,
-                                                                                         Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
-                                                                                         mesh);
+                                                                                     Gedim::MeshUtilities::MeshCell2DsTrianglesData::TrianglesTypes::ByBarycenter,
+                                                                                     mesh);
 
     const auto cell3Ds_tetra = Gedim::MeshUtilities::ComputeMeshCell3DsTetrahedra(geometry_utilities,
                                                                                   cell2Ds_triangles,
@@ -113,24 +120,24 @@ namespace GedimUnitTesting
         exporter.Export(exportFolder + "/extract_edges.vtu");
       }
 
-//      {
-//        Gedim::VTKUtilities exporter;
+      //      {
+      //        Gedim::VTKUtilities exporter;
 
-//        exporter.AddPolygons(mesh.Cell0DsCoordinates(),
-//                             mesh.Cell2DsVertices(),
-//                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+      //        exporter.AddPolygons(mesh.Cell0DsCoordinates(),
+      //                             mesh.Cell2DsVertices(),
+      //                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
 
-//        exporter.Export(exportFolder + "/cell2Ds_time.vtu");
-//      }
-//      {
-//        Gedim::VTKUtilities exporter;
+      //        exporter.Export(exportFolder + "/cell2Ds_time.vtu");
+      //      }
+      //      {
+      //        Gedim::VTKUtilities exporter;
 
-//        exporter.AddPolyhedrons(mesh.Cell0DsCoordinates(),
-//                             mesh.Cell3DsFacesVertices(),
-//                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
+      //        exporter.AddPolyhedrons(mesh.Cell0DsCoordinates(),
+      //                             mesh.Cell3DsFacesVertices(),
+      //                             {{"time", Gedim::VTPProperty::Formats::Points, static_cast<unsigned int>(result.vertices_time.size()), result.vertices_time.data()}});
 
-//        exporter.Export(exportFolder + "/cell3Ds_time.vtu");
-//      }
+      //        exporter.Export(exportFolder + "/cell3Ds_time.vtu");
+      //      }
 
     }
 
